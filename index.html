@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSoC 2026 — Find Your Org</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #05070f;
+  --bg2: #0c1020;
+  --card: #0f1628;
+  --card-hover: #151e35;
+  --border: #1a2440;
+  --border-bright: #2a3a60;
+  --text: #c8d4f0;
+  --muted: #4a5a80;
+  --white: #eef2ff;
+  --accent: #38bdf8;
+  --accent2: #f472b6;
+  --accent3: #34d399;
+  --accent4: #fb923c;
+  --yellow: #fbbf24;
+  --pill-bg: #0d1830;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-glow {
+  position: fixed; z-index: 0; pointer-events: none;
+  border-radius: 50%; filter: blur(120px); opacity: 0.12;
+}
+.glow1 { width: 600px; height: 600px; background: #38bdf8; top: -200px; left: -100px; }
+.glow2 { width: 500px; height: 500px; background: #f472b6; bottom: -150px; right: -100px; }
+.glow3 { width: 400px; height: 400px; background: #34d399; top: 40%; left: 40%; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+/* ── HERO ── */
+hero-section {
+  display: block;
+  padding: 80px 0 60px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(56,189,248,0.07);
+  border: 1px solid rgba(56,189,248,0.2);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 11px; font-weight: 500;
+  color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.dot-live {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.8s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 6vw, 76px);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+h1 .highlight {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 15px; color: var(--muted); line-height: 1.7;
+  max-width: 520px; margin: 0 auto 40px;
+  font-family: 'JetBrains Mono', monospace; font-weight: 300;
+}
+
+.hero-stats {
+  display: flex; justify-content: center; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  width: fit-content;
+  margin: 0 auto 60px;
+}
+
+.stat-box {
+  padding: 16px 32px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+  background: var(--card);
+}
+
+.stat-box:last-child { border-right: none; }
+
+.stat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px; font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-l { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── QUIZ SECTION ── */
+.quiz-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.quiz-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.filters-row {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+}
+
+.filter-group { display: flex; flex-direction: column; gap: 6px; }
+
+.filter-group label {
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.filter-group select,
+.filter-group input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--white);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  min-width: 160px;
+}
+
+.filter-group select { appearance: none; padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5a80' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+
+.filter-group select:focus,
+.filter-group input:focus { border-color: var(--accent); }
+
+.filter-group input { min-width: 220px; }
+.filter-group input::placeholder { color: var(--muted); }
+
+.search-wrap { position: relative; }
+.search-wrap input { padding-left: 36px; }
+.search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); pointer-events: none; font-size: 14px;
+}
+
+.btn-reset {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 18px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-reset:hover { border-color: var(--accent2); color: var(--accent2); }
+
+/* ── TAGS (language pills) ── */
+.lang-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 20px;
+}
+
+.pill {
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--pill-bg);
+  font-size: 11px; color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: 'JetBrains Mono', monospace;
+  user-select: none;
+}
+
+.pill:hover { border-color: var(--border-bright); color: var(--text); }
+.pill.active { border-color: var(--accent); background: rgba(56,189,248,0.08); color: var(--accent); }
+
+/* ── RESULTS BAR ── */
+.results-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+}
+
+.results-count {
+  font-size: 13px; color: var(--muted);
+}
+
+.results-count span { color: var(--accent); font-weight: 500; }
+
+.sort-wrap { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.sort-wrap select {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 10px;
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; outline: none; cursor: pointer;
+}
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 60px;
+}
+
+/* ── ORG CARD ── */
+.org-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.org-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  opacity: 0; transition: opacity 0.2s;
+}
+
+.org-card:hover {
+  border-color: var(--border-bright);
+  background: var(--card-hover);
+  transform: translateY(-2px);
+}
+
+.org-card:hover::before { opacity: 1; }
+
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; margin-bottom: 12px;
+}
+
+.org-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 700;
+  color: var(--white);
+  line-height: 1.3;
+  flex: 1;
+}
+
+.org-cat-badge {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 9px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.org-desc {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+  margin-bottom: 14px; font-weight: 300;
+}
+
+.org-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+.tag {
+  font-size: 10px; padding: 3px 9px; border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--muted); background: var(--bg2);
+  font-weight: 400;
+}
+
+.match-badge {
+  position: absolute; top: 16px; right: 16px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  padding: 3px 8px; border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.match-high { background: rgba(52,211,153,0.12); color: var(--accent3); border: 1px solid rgba(52,211,153,0.25); }
+.match-med { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+
+/* Category colors */
+.cat-science { background: rgba(56,189,248,0.08); color: #7dd3fc; }
+.cat-programming { background: rgba(244,114,182,0.08); color: #f9a8d4; }
+.cat-data { background: rgba(52,211,153,0.08); color: #6ee7b7; }
+.cat-web { background: rgba(251,191,36,0.08); color: #fcd34d; }
+.cat-os { background: rgba(251,146,60,0.08); color: #fdba74; }
+.cat-security { background: rgba(239,68,68,0.08); color: #fca5a5; }
+.cat-media { background: rgba(167,139,250,0.08); color: #c4b5fd; }
+.cat-infra { background: rgba(34,211,238,0.08); color: #67e8f9; }
+.cat-other { background: rgba(148,163,184,0.08); color: #94a3b8; }
+.cat-ai { background: rgba(99,102,241,0.08); color: #a5b4fc; }
+.cat-dev { background: rgba(20,184,166,0.08); color: #5eead4; }
+
+/* Card accent lines by category */
+.card-science::before { background: linear-gradient(90deg, #38bdf8, transparent); }
+.card-programming::before { background: linear-gradient(90deg, #f472b6, transparent); }
+.card-data::before { background: linear-gradient(90deg, #34d399, transparent); }
+.card-web::before { background: linear-gradient(90deg, #fbbf24, transparent); }
+.card-os::before { background: linear-gradient(90deg, #fb923c, transparent); }
+.card-security::before { background: linear-gradient(90deg, #ef4444, transparent); }
+.card-media::before { background: linear-gradient(90deg, #a78bfa, transparent); }
+.card-infra::before { background: linear-gradient(90deg, #22d3ee, transparent); }
+.card-ai::before { background: linear-gradient(90deg, #6366f1, transparent); }
+
+/* ── EMPTY STATE ── */
+.empty {
+  grid-column: 1/-1; text-align: center; padding: 80px 20px;
+  color: var(--muted);
+}
+
+.empty .emoji { font-size: 48px; margin-bottom: 16px; }
+.empty h3 { font-family: 'Syne', sans-serif; font-size: 20px; color: var(--text); margin-bottom: 8px; }
+.empty p { font-size: 13px; line-height: 1.6; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  width: 100%; max-width: 560px;
+  max-height: 90vh; overflow-y: auto;
+  padding: 36px;
+  position: relative;
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--muted); width: 32px; height: 32px;
+  border-radius: 8px; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover { color: var(--white); border-color: var(--border-bright); }
+
+.modal-cat { margin-bottom: 12px; }
+
+.modal-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px; font-weight: 800;
+  color: var(--white); line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.modal-desc {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+  margin-bottom: 24px; font-weight: 300;
+}
+
+.modal-section { margin-bottom: 20px; }
+
+.modal-section-title {
+  font-size: 10px; color: var(--accent); letter-spacing: 0.15em;
+  text-transform: uppercase; margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.modal-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.modal-tag {
+  font-size: 11px; padding: 5px 12px; border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--text); background: var(--bg2);
+}
+
+.modal-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--accent), #0ea5e9);
+  color: #020c18; padding: 12px 24px; border-radius: 10px;
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  text-decoration: none; transition: opacity 0.2s;
+  margin-top: 8px;
+}
+
+.modal-link:hover { opacity: 0.88; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  text-align: center;
+  color: var(--muted); font-size: 12px;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero-stats { flex-direction: column; width: 100%; }
+  .stat-box { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-box:last-child { border-bottom: none; }
+  .filters-row { flex-direction: column; }
+  .filter-group select, .filter-group input { min-width: 100%; }
+  .modal { padding: 24px; }
+  .modal-name { font-size: 20px; }
+  h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+<div class="bg-glow glow3"></div>
+
+<!-- HERO -->
+<div class="wrap">
+  <hero-section>
+    <div class="eyebrow"><span class="dot-live"></span> GSoC 2026 · Applications Open Mar 16</div>
+    <h1>Find Your<br><span class="highlight">Perfect Org</span></h1>
+    <p class="hero-sub">Filter 185 selected organizations by your tech stack, domain, and interests — then apply with confidence.</p>
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-n" style="color:var(--accent)">185</div>
+        <div class="stat-l">Organizations</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-n" style="color:var(--accent2)" id="filteredStat">185</div>
+        <div class="stat-l">Matching You</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-n" style="color:var(--accent3)">Mar 16</div>
+        <div class="stat-l">Apps Open</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-n" style="color:var(--yellow)">12wk</div>
+        <div class="stat-l">Project Length</div>
+      </div>
+    </div>
+  </hero-section>
+
+  <!-- FILTERS -->
+  <div class="quiz-bar">
+    <div class="quiz-title">⚡ Match by your stack</div>
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Domain / Category</label>
+        <select id="catFilter" onchange="applyFilters()">
+          <option value="">All Categories</option>
+          <option value="science">Science & Medicine</option>
+          <option value="programming">Programming Languages</option>
+          <option value="data">Data</option>
+          <option value="web">Web</option>
+          <option value="os">Operating Systems</option>
+          <option value="security">Security</option>
+          <option value="media">Media</option>
+          <option value="infra">Infrastructure & Cloud</option>
+          <option value="ai">Artificial Intelligence</option>
+          <option value="dev">Dev Tools</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Primary Language</label>
+        <select id="langFilter" onchange="applyFilters()">
+          <option value="">All Languages</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript / TypeScript</option>
+          <option value="c++">C / C++</option>
+          <option value="java">Java / Kotlin</option>
+          <option value="rust">Rust</option>
+          <option value="go">Go</option>
+          <option value="ruby">Ruby</option>
+          <option value="haskell">Haskell</option>
+          <option value="scala">Scala</option>
+          <option value="r">R</option>
+          <option value="julia">Julia</option>
+          <option value="flutter">Flutter / Dart</option>
+          <option value="lua">Lua</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Search by name</label>
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="searchInput" placeholder="e.g. Linux, ML, audio..." oninput="applyFilters()">
+        </div>
+      </div>
+      <div class="filter-group" style="justify-content:flex-end">
+        <label>&nbsp;</label>
+        <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
+      </div>
+    </div>
+
+    <!-- Language quick pills -->
+    <div class="lang-pills" id="langPills">
+      <span class="pill" data-lang="python" onclick="togglePill(this)">Python</span>
+      <span class="pill" data-lang="javascript" onclick="togglePill(this)">JavaScript</span>
+      <span class="pill" data-lang="typescript" onclick="togglePill(this)">TypeScript</span>
+      <span class="pill" data-lang="c++" onclick="togglePill(this)">C / C++</span>
+      <span class="pill" data-lang="java" onclick="togglePill(this)">Java</span>
+      <span class="pill" data-lang="rust" onclick="togglePill(this)">Rust</span>
+      <span class="pill" data-lang="go" onclick="togglePill(this)">Go</span>
+      <span class="pill" data-lang="ruby" onclick="togglePill(this)">Ruby</span>
+      <span class="pill" data-lang="haskell" onclick="togglePill(this)">Haskell</span>
+      <span class="pill" data-lang="scala" onclick="togglePill(this)">Scala</span>
+      <span class="pill" data-lang="r" onclick="togglePill(this)">R</span>
+      <span class="pill" data-lang="julia" onclick="togglePill(this)">Julia</span>
+      <span class="pill" data-lang="flutter" onclick="togglePill(this)">Flutter</span>
+      <span class="pill" data-lang="lua" onclick="togglePill(this)">Lua</span>
+      <span class="pill" data-lang="android" onclick="togglePill(this)">Android</span>
+      <span class="pill" data-lang="machine learning" onclick="togglePill(this)">Machine Learning</span>
+      <span class="pill" data-lang="embedded" onclick="togglePill(this)">Embedded</span>
+      <span class="pill" data-lang="compiler" onclick="togglePill(this)">Compilers</span>
+      <span class="pill" data-lang="graphics" onclick="togglePill(this)">Graphics / OpenGL</span>
+      <span class="pill" data-lang="linux" onclick="togglePill(this)">Linux Kernel</span>
+      <span class="pill" data-lang="networking" onclick="togglePill(this)">Networking</span>
+      <span class="pill" data-lang="bioinformatics" onclick="togglePill(this)">Bioinformatics</span>
+      <span class="pill" data-lang="robotics" onclick="togglePill(this)">Robotics</span>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-bar">
+    <div class="results-count">Showing <span id="countDisplay">185</span> organizations</div>
+    <div class="sort-wrap">
+      Sort:
+      <select id="sortSelect" onchange="applyFilters()">
+        <option value="alpha">A → Z</option>
+        <option value="cat">By Category</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid" id="orgGrid"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    GSoC 2026 Org Finder · Data from <a href="https://summerofcode.withgoogle.com" target="_blank">summerofcode.withgoogle.com</a> · Built for applicants, by applicants 🚀
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-cat" id="mCat"></div>
+    <div class="modal-name" id="mName"></div>
+    <div class="modal-desc" id="mDesc"></div>
+    <div class="modal-section">
+      <div class="modal-section-title">Technologies & Languages</div>
+      <div class="modal-tags" id="mTags"></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Best Fit For</div>
+      <div class="modal-tags" id="mFit"></div>
+    </div>
+    <a id="mLink" class="modal-link" href="#" target="_blank">View on GSoC Site →</a>
+  </div>
+</div>
+
+<script>
+const ORGS = [
+  { name:"52°North Spatial Information Research GmbH", cat:"science", tags:["python","javascript","java","web services","ogc standards","gis","geospatial"], desc:"Innovative ideas & technologies in geoinformatics and spatial data.", fit:["GIS enthusiasts","Python/Java devs","Web services"] },
+  { name:"AFLplusplus", cat:"security", tags:["c","c++","llvm","fuzzing","qemu","assembly"], desc:"State of the art fuzzing for better software security.", fit:["Security researchers","C/C++ devs","Low-level systems"] },
+  { name:"AOSSIE", cat:"other", tags:["scala","javascript","html","css","android","ios","python"], desc:"Australian umbrella org for open-source projects spanning AI, civic tech, and education.", fit:["Full-stack devs","Scala lovers","Mobile devs"] },
+  { name:"AboutCode", cat:"security", tags:["python","javascript","c","c++","shell script","license compliance","sbom"], desc:"Scan code for origin, license and vulnerabilities.", fit:["Python devs","Open source compliance","Security"] },
+  { name:"Accord Project", cat:"programming", tags:["javascript","react","ocaml","coq","compiler","smart contracts"], desc:"Open source software for smart legal contracts.", fit:["JavaScript devs","Compiler/PL enthusiasts","Legal tech"] },
+  { name:"Alaska", cat:"science", tags:["python","mysql","java","matlab","dicom","medical imaging"], desc:"Many Traditions, One Alaska — biomedical research platform.", fit:["Python/Java devs","Medical imaging","Data science"] },
+  { name:"AnkiDroid", cat:"other", tags:["java","android","javascript","gradle","rust","kotlin"], desc:"AnkiDroid makes remembering things easy — open source flashcard app.", fit:["Android devs","Kotlin/Java","Mobile"] },
+  { name:"Apache DataFusion", cat:"data", tags:["python","rust","sql","arrow","query engine"], desc:"Foundational library for databases and compute engines built in Rust.", fit:["Rust devs","Database engineers","Performance"] },
+  { name:"API Dash", cat:"dev", tags:["flutter","dart","api","ai","ui/ux"], desc:"Next-gen AI powered open source API DevTool built with Flutter.", fit:["Flutter/Dart devs","API tooling","UI/UX"] },
+  { name:"Apertium", cat:"science", tags:["python","perl","c++","xml","finite-state","nlp","machine translation"], desc:"A free/open-source machine translation platform for lesser-resourced languages.", fit:["NLP enthusiasts","Python/C++ devs","Linguistics"] },
+  { name:"ArduPilot", cat:"science", tags:["python","c++","embedded","ros","rtos","drones","autonomous"], desc:"World's most advanced autonomous vehicle software.", fit:["Embedded devs","Robotics","C++ devs"] },
+  { name:"AsyncAPI", cat:"programming", tags:["javascript","java","go","typescript","event-driven","api"], desc:"Building the future of Event-Driven Architectures.", fit:["API developers","JavaScript/TS devs","Backend"] },
+  { name:"BRL-CAD", cat:"media", tags:["python","c","c++","opengl","opencl","3d","cad"], desc:"3D CAD & computer-aided technology — one of the oldest OSS projects.", fit:["C/C++ devs","3D graphics","CAD"] },
+  { name:"BeagleBoard.org", cat:"science", tags:["c","python","linux","javascript","embedded","beaglebone","hardware"], desc:"Open hardware computing for educators and makers.", fit:["Embedded Linux","Hardware hackers","IoT"] },
+  { name:"Blender Foundation", cat:"other", tags:["python","c","c++","opengl","opencl","3d","animation","vfx"], desc:"The Freedom to Create — world's leading open 3D creation suite.", fit:["3D/Graphics devs","Python scripters","C/C++ devs"] },
+  { name:"Boa", cat:"programming", tags:["javascript","rust","ecmascript","parser","interpreter"], desc:"An ECMAScript engine written in Rust.", fit:["Rust devs","PL/compiler enthusiasts","JavaScript engine"] },
+  { name:"Boost C++ Libraries", cat:"programming", tags:["c++","c++11","c++14","c++17","templates","metaprogramming"], desc:"Free peer-reviewed portable C++ source libraries.", fit:["C++ experts","Library devs","Systems programmers"] },
+  { name:"C2SI", cat:"other", tags:["python","java","go","node.js","tensorflow","ml"], desc:"C2SI develops FOSS software for everyone.", fit:["Python/Go devs","ML beginners","Full-stack"] },
+  { name:"CERN-HSF", cat:"science", tags:["python","c++","machine learning","data analysis","physics","root"], desc:"Umbrella for Particle Physics-related software projects at CERN.", fit:["Physics enthusiasts","C++/Python","HPC"] },
+  { name:"CGAL Project", cat:"science", tags:["c++","python","geometry","computational geometry","swig","github"], desc:"C++ library of computational geometry algorithms.", fit:["C++ devs","Math/geometry","Algorithms"] },
+  { name:"CHAOSS", cat:"data", tags:["javascript","python","mysql","jupyter","open source metrics","community health"], desc:"Community Health Analytics Open Source Software.", fit:["Data analysts","Python/JS devs","Open source community"] },
+  { name:"CHIPS Alliance", cat:"programming", tags:["fpga","chisel","risc-v","systemverilog","asic"], desc:"Open source IP, tools & standards for ASIC/FPGA design.", fit:["Hardware engineers","RISC-V","FPGA devs"] },
+  { name:"CNCF", cat:"data", tags:["prometheus","go","kubernetes","fluentd","grpc","cloud native"], desc:"Building sustainable ecosystems for cloud native software.", fit:["DevOps/SRE","Go devs","Kubernetes enthusiasts"] },
+  { name:"CRIU", cat:"os", tags:["linux","docker","containers","kernel","c","checkpoint/restore"], desc:"Checkpoint/Restore for Linux tasks and containers.", fit:["Linux kernel devs","Container enthusiasts","Systems"] },
+  { name:"CVAT", cat:"web", tags:["python","django","react","kubernetes","typescript","computer vision","annotation"], desc:"Computer Vision Data Annotation Platform for AI.", fit:["CV engineers","React devs","Python/Django"] },
+  { name:"CCExtractor Development", cat:"other", tags:["c","linux","video","ffmpeg","subtitles","flutter","rust"], desc:"TV, Rust, Flutter, Linux, VR and C — subtitle extraction tools.", fit:["C devs","Multimedia","Flutter"] },
+  { name:"Ceph Foundation", cat:"data", tags:["python","c++","object-storage","javascript","distributed storage"], desc:"The Future of Storage — open source distributed storage system.", fit:["Storage engineers","C++/Python","Distributed systems"] },
+  { name:"Checker Framework", cat:"security", tags:["java","compiler","verification","formal methods","type systems"], desc:"Prevent programming errors via simple verification.", fit:["Java devs","PL theory","Formal methods"] },
+  { name:"Chromium", cat:"os", tags:["python","javascript","java","c++","git","browser","web platform"], desc:"Fast, seamless, safe, and reliable web for all.", fit:["C++ devs","Browser engineers","Web platform"] },
+  { name:"CircuitVerse.org", cat:"science", tags:["postgresql","javascript","bootstrap","rails","html5 canvas","logic circuits"], desc:"Build and learn logic circuits in the cloud!", fit:["Full-stack devs","Digital electronics","Ruby on Rails"] },
+  { name:"Cuneiform Digital Library Initiative (CDLI)", cat:"science", tags:["python","mariadb","rdf","php","nltk","digital humanities"], desc:"Curating humanity's earliest written history.", fit:["Digital humanities","Python devs","NLP"] },
+  { name:"D Language Foundation", cat:"programming", tags:["c++","d lang","linux","osx","windows","compiler"], desc:"Write fast, read fast, and run fast with the D language.", fit:["Systems programmers","Compiler devs","C++ devs"] },
+  { name:"DBpedia", cat:"data", tags:["python","java","scala","rdf","nosql","knowledge graph","sparql"], desc:"Global and Unified Access to Knowledge Graphs.", fit:["Semantic web","Python/Java","Data engineers"] },
+  { name:"Dart", cat:"programming", tags:["flutter","dart","programming-language","mobile","web"], desc:"Dart is a client language for apps on any platform.", fit:["Flutter/Dart devs","Mobile devs","Language designers"] },
+  { name:"Data for the Common Good", cat:"web", tags:["python","javascript","kubernetes","reactjs","terraform","civic tech"], desc:"Connect. Share. Discover — civic data platform.", fit:["Full-stack devs","Civic tech","React/Python"] },
+  { name:"Debian", cat:"os", tags:["c","python","django","ruby","c++","linux","packaging"], desc:"The Universal Operating System.", fit:["Linux devs","Packaging","Systems"] },
+  { name:"DeepChem", cat:"science", tags:["python","numpy","pytorch","huggingface","drug discovery","chemistry"], desc:"Democratize AI for drug discovery.", fit:["ML/AI devs","Chemistry","Python/PyTorch"] },
+  { name:"Department of Biomedical Informatics, Emory University", cat:"security", tags:["python","java","tensorflow","medical imaging","deep learning","nlp"], desc:"Biomedical research to advance healthcare.", fit:["ML devs","Medical imaging","Python/Java"] },
+  { name:"Django Software Foundation", cat:"web", tags:["python","django","web framework"], desc:"The web framework for perfectionists with deadlines.", fit:["Python devs","Web backend","Django contributors"] },
+  { name:"Drupal Association", cat:"web", tags:["javascript","html5","sql","php","symfony","cms"], desc:"Build Bold Digital Experiences on Best Open Source.", fit:["PHP devs","CMS/web","JavaScript"] },
+  { name:"EROFS filesystem", cat:"os", tags:["c","android","linux kernel","containerd","gvisor","filesystem"], desc:"Modern image-based kernel filesystem for everyone.", fit:["Linux kernel devs","Filesystem","C devs"] },
+  { name:"Eclipse Foundation", cat:"programming", tags:["c","c++","java","geospatial","geo","ide","tools"], desc:"The Global Open Source Foundation.", fit:["Java devs","IDE tooling","C/C++ devs"] },
+  { name:"Electron", cat:"other", tags:["javascript","node.js","c++","typescript","chromium","desktop apps"], desc:"Cross-platform desktop apps with web technologies.", fit:["JavaScript/TS devs","Desktop apps","Node.js"] },
+  { name:"FFmpeg", cat:"media", tags:["c","git","assembly","multimedia","video","audio","codecs"], desc:"Record, convert and stream audio & video.", fit:["C devs","Multimedia","Low-level systems"] },
+  { name:"FLARE", cat:"security", tags:["python","ida-pro","ghidra","sandbox","malware analysis","reverse engineering"], desc:"Industry leading malware analysis tooling.", fit:["Security researchers","Reverse engineering","Python"] },
+  { name:"FOSSASIA", cat:"other", tags:["python","javascript","android","java","json api","open hardware"], desc:"Free and Open Source Software in Asia.", fit:["General devs","Android","Full-stack"] },
+  { name:"FOSSology", cat:"web", tags:["linux","postgresql","c","c++","php","license compliance"], desc:"Open Source License Compliance by OSS.", fit:["C/PHP devs","License compliance","Linux"] },
+  { name:"Fortran-lang", cat:"programming", tags:["python","c","c++","llvm","compiler","fortran","hpc"], desc:"High-performance parallel programming language ecosystem.", fit:["HPC devs","Fortran/C devs","Scientific computing"] },
+  { name:"Free and Open Source Silicon Foundation", cat:"other", tags:["python","javascript","fpga","compiler","open hardware","verilog"], desc:"Working together for Free and Open Source Silicon.", fit:["Hardware/FPGA devs","EDA tools","Python"] },
+  { name:"FreeCAD", cat:"other", tags:["python","c++","qt","opencascade","openinventor","3d cad"], desc:"Cross-platform 3D parametric modeler.", fit:["Python devs","3D/CAD","C++/Qt"] },
+  { name:"Fedora Project", cat:"os", tags:["python","postgresql","javascript","html5","flask","linux","dnf"], desc:"Freedom, Friends, Features, and First.", fit:["Linux devs","Python/web","Packaging"] },
+  { name:"Gambit: The Package for Computation in Game Theory", cat:"science", tags:["javascript","python","c++","wxwidgets","visualization","game theory"], desc:"The package for computation in game theory.", fit:["Python/C++ devs","Economics/math","Algorithms"] },
+  { name:"Gemini CLI", cat:"dev", tags:["typescript","genai","mcp","software agent","a2a","llm"], desc:"Gemini CLI brings the power of Gemini directly into your terminal.", fit:["TypeScript devs","AI/LLM builders","CLI tools"] },
+  { name:"Genome Assembly and Annotation", cat:"science", tags:["python","mysql","javascript","rust","pytorch","bioinformatics"], desc:"Unleashing the potential of big data in biology.", fit:["Bioinformatics","Python/Rust","ML for biology"] },
+  { name:"GeomScale", cat:"science", tags:["python","c++","r","jupyter","github-actions","statistics","geometry"], desc:"Scalable geometric and statistical software.", fit:["Python/C++ devs","Statistics","Algorithms"] },
+  { name:"German Center for Open Source AI", cat:"data", tags:["python","pytorch","scikit-learn","ai","open source ai"], desc:"Democratically governed AI for society.", fit:["ML/AI devs","PyTorch","Open AI"] },
+  { name:"Git", cat:"programming", tags:["c","shell script","git","version control"], desc:"Fast, scalable, distributed revision control system.", fit:["C devs","Git power users","Systems"] },
+  { name:"GitLab", cat:"infra", tags:["ruby","golang","git","ci","devops","kubernetes"], desc:"Everyone can contribute.", fit:["Ruby/Go devs","DevOps","CI/CD"] },
+  { name:"Global Alliance for Genomics and Health", cat:"science", tags:["python","java","sql","protobuf","mongodb","genomics","health"], desc:"Developing genomics tools to benefit human health.", fit:["Bioinformatics","Python/Java","Healthcare data"] },
+  { name:"GNOME Foundation", cat:"os", tags:["c","python","javascript","gtk+","gobject","desktop","linux"], desc:"A diverse and sustainable free software desktop.", fit:["C/Python devs","Linux desktop","GTK+"] },
+  { name:"GNSS-SDR", cat:"science", tags:["c","c++","gnss","signal processing","gps","dsp"], desc:"An open source GNSS software-defined receiver.", fit:["C++ devs","Signal processing","Embedded"] },
+  { name:"GNU Compiler Collection (GCC)", cat:"programming", tags:["c","c++","openmp","gnu make","compiler","backend"], desc:"GNU compilers for multiple programming languages.", fit:["Compiler devs","C/C++ experts","Systems programming"] },
+  { name:"GNU Image Manipulation Program (GIMP)", cat:"other", tags:["c","gegl","image editing","graphics"], desc:"GIMP is a cross-platform image editor.", fit:["C devs","Image processing","Graphics"] },
+  { name:"GNU Mailman Project", cat:"other", tags:["python","django","email","rest","mailing list"], desc:"GNU Mailman manages your mailing lists.", fit:["Python/Django devs","Email systems","REST APIs"] },
+  { name:"GNU Octave", cat:"science", tags:["c++","scientific computing","numerical","matlab-compatible"], desc:"Free Your Numbers — a scientific programming language.", fit:["Scientific computing","C++ devs","Numerical methods"] },
+  { name:"GNU Project", cat:"os", tags:["c","python","posix","lisp","eiffel","os tools"], desc:"Development of the GNU Operating System.", fit:["Systems programmers","C devs","OS fundamentals"] },
+  { name:"GNU Radio", cat:"science", tags:["python","c++","dsp","software radio","rf","signal processing"], desc:"The free & open software radio ecosystem.", fit:["DSP/RF engineers","Python/C++","Signal processing"] },
+  { name:"GRAME", cat:"programming", tags:["c","python","javascript","c++","typescript","audio dsp","faust"], desc:"Domain specific language for audio programming.", fit:["Audio/DSP devs","C++/Python","Language design"] },
+  { name:"Graphite", cat:"other", tags:["machine learning","rust","vulkan","ai","webgpu","graphics","2d vector"], desc:"Multimedia art/design editor and graphics engine.", fit:["Rust devs","Graphics/GPU","Creative tools"] },
+  { name:"Haiku", cat:"os", tags:["c++","posix","ffmpeg","bsd unix","webkit","operating system"], desc:"Operating system that targets personal computing.", fit:["OS/kernel devs","C++ devs","Systems"] },
+  { name:"Haskell.org", cat:"programming", tags:["haskell","ghc","cabal","functional programming","compiler"], desc:"Purely functional programming language ecosystem.", fit:["Functional programmers","Haskell devs","PL theory"] },
+  { name:"HumanAI", cat:"media", tags:["python","machine learning","c++","data analysis","ai","humanities"], desc:"AI for the Arts and the Humanities.", fit:["ML devs","Digital humanities","Python"] },
+  { name:"INCF", cat:"science", tags:["python","javascript","java","c++","gpu","neuroscience","standardization"], desc:"An open & FAIR neuroscience standards organization.", fit:["Neuroscience devs","Python/JS","Brain data"] },
+  { name:"IOOS", cat:"science", tags:["python","big data","ocean technology","java","ocean science","geospatial"], desc:"Our eyes on the ocean, coasts, and Great Lakes.", fit:["Python devs","Ocean science","Geospatial"] },
+  { name:"International Catrobat Association", cat:"programming", tags:["javascript","android","java","html5","web","visual coding","education"], desc:"Free visual coding apps for computational thinking.", fit:["Android/Java devs","EdTech","JavaScript"] },
+  { name:"Internet Archive", cat:"science", tags:["python","javascript","php","node.js","digital preservation","web archiving"], desc:"Universal Access to All Knowledge.", fit:["Python/JS devs","Digital archiving","Web"] },
+  { name:"Invesalius", cat:"science", tags:["python","cython","numpy","dicom","vtk","3d medical","neuroimaging"], desc:"3D Medical visualization and neuronavigation tool.", fit:["Python devs","Medical imaging","3D visualization"] },
+  { name:"JBoss Community", cat:"web", tags:["android","java","idea","asciidoctor","aerogear","jakarta ee"], desc:"Community of projects around JBoss Middleware.", fit:["Java/Jakarta EE devs","Middleware","Android"] },
+  { name:"JabRef e.V.", cat:"science", tags:["java","javafx","latex","typescript","bibtex","reference management"], desc:"Stay on top of your Literature.", fit:["Java devs","Academic tools","TypeScript"] },
+  { name:"JAX and Keras", cat:"ai", tags:["python","machine learning","ai","jax","gemma","neural networks"], desc:"Python libraries for large-scale machine learning.", fit:["ML/AI researchers","Python devs","Deep learning"] },
+  { name:"JdeRobot", cat:"other", tags:["python","c++","ros","gazebo","robotics","autonomous driving"], desc:"Toolkit for developing Robotics applications.", fit:["Robotics devs","Python/C++","ROS"] },
+  { name:"Jenkins", cat:"programming", tags:["java","groovy","html","jenkins","ci/cd","plugins"], desc:"Jenkins, build great things at any scale.", fit:["Java devs","CI/CD","DevOps"] },
+  { name:"Jitsi", cat:"media", tags:["javascript","java","xmpp","webrtc","sip","video conferencing"], desc:"State-of-the-art video conferencing.", fit:["WebRTC devs","JavaScript/Java","Real-time comms"] },
+  { name:"Joomla!", cat:"other", tags:["javascript","html","php","css","jquery","cms"], desc:"The flexible platform empowering website creators.", fit:["PHP devs","CMS","Web"] },
+  { name:"Joplin", cat:"other", tags:["react","node.js","react native","electron","note taking","encryption"], desc:"The secure note taking application.", fit:["React/Node.js devs","Electron apps","Mobile"] },
+  { name:"JSON Schema", cat:"data", tags:["python","javascript","typescript",".net","json schema","validation"], desc:"We enable the reliable use of JSON data format.", fit:["Any language devs","API design","Data validation"] },
+  { name:"KDE Community", cat:"other", tags:["c++","qt","cmake","php","qt5","linux desktop"], desc:"Control your digital life — the KDE desktop ecosystem.", fit:["C++/Qt devs","Linux desktop","Cross-platform"] },
+  { name:"Keploy", cat:"programming", tags:["java","golang","node.js","mern","ebpf","api testing","ai"], desc:"Unit, API test generation agent using AI & eBPF.", fit:["Go/Node.js devs","API testing","DevTools"] },
+  { name:"Kiwix", cat:"other", tags:["python","android","java","c++","qt","offline","education"], desc:"Internet content available offline.", fit:["Python/Android devs","Offline apps","Education"] },
+  { name:"KolibriOS Project Team", cat:"os", tags:["fasm","flat assembler","x86 assembly","i386","i586","tiny os"], desc:"A tiny and fast operating system in FASM.", fit:["Assembly devs","Low-level OS","x86 enthusiasts"] },
+  { name:"Konflux", cat:"infra", tags:["python","go","docker","kubernetes","tekton","supply chain security"], desc:"Secure software pipelines, the Kubernetes way.", fit:["DevSecOps","Go/Python","Kubernetes"] },
+  { name:"Kornia", cat:"programming", tags:["cuda","rust","deep learning","data science","spatial ai","computer vision"], desc:"Advancing Computer Vision & Spatial AI, Openly.", fit:["CV/ML devs","Rust/CUDA","PyTorch"] },
+  { name:"Kotlin Foundation", cat:"programming", tags:["gradle","kotlin","jvm","parsers","multiplatform","compilers"], desc:"Advance the Kotlin programming language.", fit:["Kotlin devs","JVM enthusiasts","Compiler contributors"] },
+  { name:"KubeVirt", cat:"infra", tags:["golang","grpc","kubernetes","virtualization","vms"], desc:"Building a virtualization API for Kubernetes.", fit:["Go devs","Kubernetes","Virtualization"] },
+  { name:"Kubeflow", cat:"infra", tags:["python","tensorflow","kubernetes","jupyter","kustomize","ml ops"], desc:"The Machine Learning Toolkit for Kubernetes.", fit:["MLOps engineers","Python/K8s","Kubeflow users"] },
+  { name:"LabLua", cat:"os", tags:["lua","c","elasticsearch","luarocks","netbsd","scripting"], desc:"Programming Language Research with emphasis on Lua.", fit:["Lua devs","Scripting","Language research"] },
+  { name:"LAPPIS", cat:"security", tags:["python","machine learning","ruby on rails","jupyter hub","social tech"], desc:"Social Participation to Reach Millions.", fit:["Python/ML devs","Rails devs","Civic tech"] },
+  { name:"LLVM Compiler Infrastructure", cat:"programming", tags:["c","llvm","c++","clang","mlir","compiler","backend"], desc:"LLVM Compiler Infrastructure — industry standard compiler toolchain.", fit:["Compiler devs","C/C++","PL researchers"] },
+  { name:"Learning Equality", cat:"other", tags:["python","javascript","django","vue.js","education","offline"], desc:"Building equity in education to transform lives.", fit:["Django/Vue devs","EdTech","Python"] },
+  { name:"Learning Unlimited", cat:"other", tags:["python","javascript","django","html","css","education"], desc:"Building excitement for teaching and learning.", fit:["Python/JS devs","Education","Django"] },
+  { name:"LibreHealth", cat:"science", tags:["mysql","javascript","java","php","webcomponents","healthcare","ehr"], desc:"Healthcare for Humanity.", fit:["PHP/Java devs","Healthcare IT","Full-stack"] },
+  { name:"LibreCube Initiative", cat:"science", tags:["python","micropython","zmq","mbed","mongodb","space","satellites"], desc:"Open Source Space Exploration.", fit:["Python/Embedded devs","Space tech","IoT"] },
+  { name:"LibreOffice", cat:"other", tags:["python","android","java","opengl","c++","office suite"], desc:"LibreOffice is a free and open source office suite.", fit:["C++/Python devs","Office apps","Cross-platform"] },
+  { name:"Liquid Galaxy Project", cat:"data", tags:["javascript","ros","gis","cesium","cesiumjs","visualization","geo"], desc:"We code immersive and interactive apps with Google Earth.", fit:["JavaScript/ROS devs","GIS","Data visualization"] },
+  { name:"MLLAM", cat:"science", tags:["python","numpy","pytorch","xarray","zarr","weather forecasting","ai"], desc:"Research software for AI weather forecasting.", fit:["ML/Python devs","Climate science","PyTorch"] },
+  { name:"MIT App Inventor", cat:"dev", tags:["android","java","html","javascript","gwt","visual programming","education"], desc:"Anyone can build apps with global impact.", fit:["Java/Android devs","Visual programming","Education"] },
+  { name:"MDAnalysis", cat:"science", tags:["python","cython","c","c++","numpy","molecular dynamics","biophysics"], desc:"Analysis of molecular simulations data with Python.", fit:["Python/C++ devs","Computational biology","Scientific python"] },
+  { name:"Machine Learning for Science (ML4SCI)", cat:"science", tags:["python","c++","machine learning","data analysis","physics","biology"], desc:"Machine learning applications in science.", fit:["ML researchers","Python devs","Scientific computing"] },
+  { name:"MalariaGEN", cat:"science", tags:["python","gcs","genomics","malaria","data science"], desc:"The Malaria Genomic Epidemiology Network.", fit:["Python devs","Genomics","Public health data"] },
+  { name:"MariaDB", cat:"data", tags:["c","mysql","mariadb","perl","java","database","sql"], desc:"The fastest growing Open Source Database.", fit:["Database devs","C/Java","SQL experts"] },
+  { name:"Measurement Lab", cat:"data", tags:["python","javascript","html","sql","css","internet measurement"], desc:"Providing Internet performance data since 2009.", fit:["Python/JS devs","Networking","Data pipelines"] },
+  { name:"Meshery", cat:"infra", tags:["javascript","golang","kubernetes","visual design","ai","service mesh"], desc:"The extensible, collaborative, Kubernetes manager.", fit:["Go/JS devs","Kubernetes","Service mesh"] },
+  { name:"MetaBrainz Foundation Inc", cat:"data", tags:["python","postgresql","javascript","perl","music","metadata","open data"], desc:"Open music / book metadata, music recommendations.", fit:["Python/Perl devs","Music tech","Data pipelines"] },
+  { name:"MetaCall", cat:"programming", tags:["python","javascript","c","c++","cmake","polyglot","interop"], desc:"Simplifying the embedding of programming languages.", fit:["C/C++ devs","Language interop","Polyglot systems"] },
+  { name:"Metasploit", cat:"security", tags:["c","ruby","asm","python","postgresql","penetration testing"], desc:"World's most used penetration testing framework.", fit:["Security researchers","Ruby devs","Pen testing"] },
+  { name:"Metaflow", cat:"infra", tags:["python","javascript","kubernetes","ml pipelines","data science"], desc:"A human centric machine learning framework.", fit:["Python/ML devs","Data pipelines","MLOps"] },
+  { name:"Mixxx", cat:"other", tags:["opengl","c++","qt","audio","dj software","cross-platform"], desc:"DJ Mixing App With Powerful Features For All DJs.", fit:["C++/Qt devs","Audio devs","Cross-platform"] },
+  { name:"MoFA Org", cat:"dev", tags:["python","rust","composition ai","agent framework"], desc:"Empower extraordinary with Composition AI.", fit:["Python/Rust devs","AI agents","MLOps"] },
+  { name:"MoganLab", cat:"programming", tags:["c++","qt","scheme","academic writing","typesetting"], desc:"Make academic writing as natural as breathing.", fit:["C++/Qt devs","Academic tools","Language design"] },
+  { name:"National Resource for Network Biology (NRNB)", cat:"science", tags:["python","javascript","java","c++","php","network biology","bioinformatics"], desc:"Developing open source tools for network biology.", fit:["Bioinformatics devs","Python/Java","Network analysis"] },
+  { name:"Neovim", cat:"other", tags:["c","python","javascript","lua","vim","text editor","lsp"], desc:"Hyperextensible Vim-based text editor.", fit:["C/Lua devs","Editor power users","LSP/tooling"] },
+  { name:"Neuroinformatics Unit", cat:"science", tags:["python","numpy","pytorch","scipy","napari","neuroscience","imaging"], desc:"Open-source tools for neuroscience and ML.", fit:["Python devs","Neuroscience","PyTorch/NumPy"] },
+  { name:"Neutralinojs", cat:"web", tags:["c","javascript","node.js","c++","typescript","desktop apps","lightweight"], desc:"Lightweight cross-platform desktop app framework.", fit:["JS/TS devs","Desktop apps","Lightweight alternatives"] },
+  { name:"NixOS Foundation", cat:"programming", tags:["git","nix","package management","functional","declarative"], desc:"Declarative builds and deployments.", fit:["Nix users","Functional devops","Linux enthusiasts"] },
+  { name:"NumFOCUS", cat:"science", tags:["python","javascript","r","julia","c","scientific computing","data science"], desc:"NumFOCUS promotes open source scientific software.", fit:["Data scientists","Python/Julia","Scientific python"] },
+  { name:"OSGeo (Open Source Geospatial Foundation)", cat:"other", tags:["c","python","ogc standards","c++","sql","gis","mapping"], desc:"The Open Source Geospatial Foundation.", fit:["GIS devs","Python/C++","Mapping"] },
+  { name:"OWASP Foundation", cat:"security", tags:["python","javascript","java","html","php","web security","appsec"], desc:"No more insecure software.", fit:["Security devs","Web AppSec","Any language"] },
+  { name:"Open Food Facts", cat:"science", tags:["android","machine learning","mongodb","perl","ios","food data"], desc:"Better food choices for your health & the planet.", fit:["Mobile devs","ML devs","Data science"] },
+  { name:"Open Genome Informatics", cat:"science", tags:["python","java","node.js","gwt","html","genomics","bioinformatics"], desc:"Open access genomics and bioinformatics projects.", fit:["Bioinformatics","Python/Java","Genomics"] },
+  { name:"Open HealthCare Network", cat:"science", tags:["python","django","react","typescript","nextjs","healthcare"], desc:"Reimagining Healthcare Delivery.", fit:["Python/React devs","Healthcare IT","Full-stack"] },
+  { name:"Open Robotics", cat:"other", tags:["ros","gazebo","python","javascript","c","robotics","simulation"], desc:"Open source robotics and a whole lot more!", fit:["Robotics devs","ROS/Gazebo","Python/C++"] },
+  { name:"Open Science Initiative for Perfusion Imaging", cat:"science", tags:["python","github","medical imaging","perfusion","mri"], desc:"Open access resources for perfusion imaging.", fit:["Python devs","Medical imaging","Research software"] },
+  { name:"Open Science Labs", cat:"science", tags:["python","javascript","c++","docker","ast","open science"], desc:"The community open to science and technology.", fit:["Python devs","Open science","Tooling"] },
+  { name:"Open Technologies Alliance - GFOSS", cat:"science", tags:["python","mysql","java","php","virtuoso","open gov","semantic web"], desc:"Promote Open Standards and Open Source.", fit:["Full-stack devs","Open data","Python/Java"] },
+  { name:"Open Transit Software Foundation", cat:"other", tags:["android","java","golang","docker","ios","transit","gtfs"], desc:"Help make public transit better.", fit:["Mobile/Go devs","Transit tech","GTFS"] },
+  { name:"OpenAFS", cat:"os", tags:["c","python","git","ansible","filesystems","distributed","afs"], desc:"An open source distributed filesystem.", fit:["C devs","Filesystem/networking","Distributed systems"] },
+  { name:"OpenAstronomy", cat:"science", tags:["c","python","julia","numpy","qt","astronomy","space science"], desc:"Look at the Universe with the power of Open Source.", fit:["Python/Julia devs","Astronomy","Scientific python"] },
+  { name:"OpenCV", cat:"media", tags:["python","machine learning","c++","computer vision","deep learning","cuda"], desc:"Beneficial uses of computer vision in society.", fit:["CV/ML devs","C++/Python","Image processing"] },
+  { name:"OpenELIS Global", cat:"science", tags:["postgresql","javascript","java","react","spring","lab systems","healthcare"], desc:"Empowering labs to Ensure Quality Health Care.", fit:["Java/React devs","Healthcare IT","Lab systems"] },
+  { name:"OpenMRS", cat:"science", tags:["java","html5","groovy","xml","hibernate","health records","ehr"], desc:"Write Code, Save Lives.", fit:["Java devs","Healthcare","EHR systems"] },
+  { name:"OpenMS Inc", cat:"science", tags:["python","cython","c++","pytorch","streamlit","mass spectrometry","bioinformatics"], desc:"Advancing Algorithms & AI for Biomedical Insights.", fit:["Python/C++ devs","Bioinformatics","Mass spec"] },
+  { name:"OpenStreetMap", cat:"data", tags:["javascript","java","opengl","ruby","postgis","mapping","geo"], desc:"Create and distribute free geodata for the world.", fit:["JS/Java devs","GIS/Mapping","Open data"] },
+  { name:"OpenVINO Toolkit", cat:"dev", tags:["python","c++","x86","arm","inference","ai deployment"], desc:"Make AI inference faster and easier to deploy!", fit:["ML engineers","C++/Python","Edge AI"] },
+  { name:"OpenWISP", cat:"other", tags:["python","javascript","django","openwrt","raspberry pi","networking"], desc:"The Hackable Network Management System.", fit:["Python/Django devs","Networking","OpenWRT"] },
+  { name:"Oppia Foundation", cat:"other", tags:["python","javascript","angularjs","css","app engine","education"], desc:"Free platform for interactive, tutor-like lessons.", fit:["Angular/Python devs","EdTech","Full-stack"] },
+  { name:"Organic Maps", cat:"other", tags:["android","java","c++","ios","openstreetmap","offline maps"], desc:"Offline maps app for tourists, cyclers & hikers.", fit:["Android/iOS devs","Maps","C++"] },
+  { name:"PEcAn Project", cat:"science", tags:["c","postgresql","javascript","r","php","ecosystem modeling","climate"], desc:"Develop and promote tools for ecosystem modeling.", fit:["R devs","Ecological science","Python/JavaScript"] },
+  { name:"QEMU", cat:"infra", tags:["c","assembly","kvm","python","linux","virtualization","emulation"], desc:"Open source machine emulator and virtualizer.", fit:["C devs","Virtualization","Systems programming"] },
+  { name:"QC-Devs", cat:"science", tags:["python","github","c++","julia","jupyter","quantum chemistry","computational"], desc:"Sustainable software for quantum chemistry & more.", fit:["Python/Julia devs","Quantum chemistry","Scientific computing"] },
+  { name:"Qubes OS", cat:"os", tags:["c","python","xen","shell","linux","security os","virtualization"], desc:"A reasonably secure operating system.", fit:["Security/OS devs","Python/C","Xen/Linux"] },
+  { name:"R Project for Statistical Computing", cat:"science", tags:["c","c++","r","fortran","javascript","statistics","data analysis"], desc:"R software for statistical computing & graphics.", fit:["R devs","Statisticians","C/C++ devs"] },
+  { name:"RTEMS Project", cat:"os", tags:["c","python","embedded","waf","posix","real-time os","space"], desc:"A real-time operating system for Earth & Space.", fit:["Embedded/RTOS devs","C devs","Space systems"] },
+  { name:"Red Hen Lab", cat:"data", tags:["machine learning","opencv","hpc","audio processing","multimodal","nlp"], desc:"Research on Multimodal Communication.", fit:["ML/NLP devs","HPC","Multimodal AI"] },
+  { name:"Rizin", cat:"security", tags:["c","python","c++","qt","go","reverse engineering","binary analysis"], desc:"Rizin reverse engineering framework and toolset.", fit:["Security researchers","C devs","Reverse engineering"] },
+  { name:"Ruby", cat:"programming", tags:["ruby","c","java","ruby on rails","rubygems","scripting"], desc:"Ruby is an object-oriented programming language.", fit:["Ruby devs","Language contributors","C/Java"] },
+  { name:"SW360", cat:"web", tags:["java","react","couchdb","springboot","license management","sbom"], desc:"Software supply chain management done right!", fit:["Java/React devs","Open source compliance","Backend"] },
+  { name:"SageMath", cat:"science", tags:["python","cython","javascript","c++","c","mathematics","algebra"], desc:"Open-source mathematics software system.", fit:["Python devs","Mathematicians","Algorithm devs"] },
+  { name:"Scala Center", cat:"programming", tags:["jvm","scala","llvm","scala language","compiler","functional"], desc:"Guide and support the Scala community.", fit:["Scala devs","JVM/FP enthusiasts","Compiler contributors"] },
+  { name:"ScummVM", cat:"other", tags:["opengl","c++","assembly","sdl","c","game preservation","retro"], desc:"Adventure and RPG preservation project.", fit:["C++ devs","Game devs","Retro computing"] },
+  { name:"St. Jude Children's Research Hospital", cat:"science", tags:["rust","wdl","python","simd","genomics","bioinformatics","cancer research"], desc:"Find cures. Saving children.", fit:["Rust/Python devs","Bioinformatics","Cancer research"] },
+  { name:"Ste||ar Group", cat:"science", tags:["c++","cuda","opencl","hpc","parallel processing","distributed computing"], desc:"Shaping a Scalable Future — HPX parallel runtime.", fit:["C++/CUDA devs","HPC","Parallel computing"] },
+  { name:"Stichting SU2", cat:"science", tags:["python","c++","cfd","simulation","optimization","aerospace"], desc:"Computational Fluid Dynamics and Optimization.", fit:["C++/Python devs","CFD","Aerospace/physics"] },
+  { name:"Submitty", cat:"other", tags:["python","c++","databases","web","html","autograding","education"], desc:"Homework Autograding and Course Management Tools.", fit:["Python/C++ devs","EdTech","Web"] },
+  { name:"Sugar Labs", cat:"other", tags:["python","javascript","gtk+","android","gtk","education","children"], desc:"Learning software for children.", fit:["Python devs","EdTech","GTK+"] },
+  { name:"Swift", cat:"programming", tags:["llvm","c++","cmake","swift","ios","compiler","apple platforms"], desc:"Fast, safe, and expressive programming language.", fit:["Swift/iOS devs","Compiler contributors","LLVM"] },
+  { name:"SymPy", cat:"science", tags:["python","c++","numpy","jupyter","symbolic math","algebra"], desc:"SymPy is a Python library for symbolic mathematics.", fit:["Python devs","Mathematicians","Scientific python"] },
+  { name:"Synfig", cat:"media", tags:["c++","gtk","gtkmm","python","animation","2d","vfx"], desc:"Open-source 2D animation software.", fit:["C++/Python devs","Animation","Creative tools"] },
+  { name:"TARDIS RT Collaboration", cat:"science", tags:["python","numba","numpy","jupyter","pandas","supernovae","astrophysics"], desc:"Exploring supernovae made easy.", fit:["Python devs","Astrophysicists","Scientific python"] },
+  { name:"The Apache Software Foundation", cat:"web", tags:["python","javascript","java","ruby","couchdb","big data","distributed"], desc:"Open source software to the public free of charge.", fit:["Java/Python devs","Distributed systems","Big data"] },
+  { name:"The FreeBSD Project", cat:"os", tags:["c","c++","llvm","shell script","make","bsd","unix","kernel"], desc:"An OS for servers to embedded devices.", fit:["C devs","BSD/Unix enthusiasts","OS contributors"] },
+  { name:"The Honeynet Project", cat:"security", tags:["python","android","machine learning","html","javascript","honeypots","threat intel"], desc:"Honeypots and Threat Intelligence R&D.", fit:["Security researchers","ML/Python devs","Threat intel"] },
+  { name:"The JPF Team", cat:"programming", tags:["android","java","distributed systems","jvm","bytecode","formal verification"], desc:"JPF is a Java VM used to verify and debug software.", fit:["Java devs","Formal verification","JVM internals"] },
+  { name:"The Julia Language", cat:"science", tags:["c","javascript","c++","julia","atom","scientific computing","hpc"], desc:"A fresh approach to technical computing.", fit:["Julia devs","Scientific computing","HPC"] },
+  { name:"The Libreswan Project", cat:"security", tags:["c","python","shell script","qemu","web","ipsec","vpn"], desc:"Encrypting the Internet with IKE / IPsec VPN.", fit:["C/Python devs","VPN/networking","Security"] },
+  { name:"The Linux Foundation", cat:"os", tags:["c","python","mysql","c++","cups","linux","ecosystem"], desc:"Non-profit consortium fostering growth of Linux.", fit:["Linux devs","C/Python","Open source ecosystem"] },
+  { name:"The Mifos Initiative", cat:"other", tags:["mysql","javascript","android","java","angularjs","fintech","microfinance"], desc:"End Poverty One Line of Code at a Time.", fit:["Java/Android devs","Fintech","Full-stack"] },
+  { name:"The NetBSD Foundation", cat:"os", tags:["networking","kernel","bsd","c","security","portable os"], desc:"Of course it runs NetBSD.", fit:["C/OS devs","BSD enthusiasts","Embedded/portable"] },
+  { name:"The OpenROAD Initiative", cat:"infra", tags:["python","verilog","c++","tcl","openroad","eda","chip design"], desc:"Collaboratively building an OpenROAD ecosystem.", fit:["EDA devs","Python/C++","Chip design"] },
+  { name:"The P4 Language Consortium", cat:"programming", tags:["llvm","c++","mlir","ebpf","z3","p4","programmable networks"], desc:"Evolve the programmable data plane ecosystem!", fit:["Networking devs","Compiler devs","eBPF/LLVM"] },
+  { name:"The Palisadoes Foundation", cat:"other", tags:["javascript","mongodb","node.js","flutter","graphql","social media","nonprofits"], desc:"Social media and member management for non-profits.", fit:["JS/Flutter devs","GraphQL","Node.js"] },
+  { name:"The Rust Foundation", cat:"programming", tags:["python","rust","systems programming","memory safety","compiler"], desc:"A language empowering everyone.", fit:["Rust devs","Systems programmers","Language contributors"] },
+  { name:"Tiled", cat:"other", tags:["github","c++","qt","git","game dev","level editor","maps"], desc:"A flexible level editor for everyone!", fit:["C++/Qt devs","Game devs","Tools devs"] },
+  { name:"Typelevel", cat:"programming", tags:["linux","node.js","jvm","scala","wasm","functional programming","cats"], desc:"We do functional programming together.", fit:["Scala/FP devs","JVM/WASM","Cats ecosystem"] },
+  { name:"UC OSPO", cat:"science", tags:["python","c","c++","visualization","vlsi","research software"], desc:"Amplifying Research Impact through Open Source.", fit:["Research software devs","Python/C++","Academic OSS"] },
+  { name:"Unikraft", cat:"os", tags:["c","python","xen","kvm","assembly","unikernels","libos"], desc:"A Fast and Secure Unikernel SDK.", fit:["OS/systems devs","C devs","Virtualization"] },
+  { name:"United Nations Office of ICT", cat:"other", tags:["python","javascript","css","civic tech","un","sustainability"], desc:"Sustainable future through innovative technology.", fit:["Python/JS devs","Civic tech","Social impact"] },
+  { name:"Uramaki LAB", cat:"other", tags:["python","javascript","html","css","firebase","ux","accessibility"], desc:"The User Experience LAB based on AI.", fit:["Python/JS devs","UX/AI","Frontend"] },
+  { name:"VideoLAN", cat:"other", tags:["c","opengl","c++","qt","assembly","vlc","multimedia"], desc:"Open Source Multimedia for everyone!", fit:["C/C++ devs","Multimedia","Cross-platform"] },
+  { name:"Wagtail", cat:"web", tags:["python","javascript","django","cms","web"], desc:"The powerful Python CMS for modern websites.", fit:["Python/Django devs","CMS","Web"] },
+  { name:"Waycrate", cat:"other", tags:["c","c++","rust","wayland","zig","linux desktop","compositor"], desc:"Writing robust tools for the Wayland protocol.", fit:["Rust/C devs","Wayland/Linux","Systems"] },
+  { name:"Wellcome Sanger Tree of Life", cat:"science", tags:["python","javascript","rust","nextflow","machine learning","genomics","biodiversity"], desc:"Genome analysis for all species.", fit:["Python/Rust devs","Genomics","Bioinformatics"] },
+  { name:"Wikimedia Foundation", cat:"web", tags:["javascript","html","php","css","jquery","mediawiki","open knowledge"], desc:"Bringing free educational content to the world.", fit:["PHP/JS devs","Wikipedia/wikis","Open knowledge"] },
+  { name:"cBioPortal for Cancer Genomics", cat:"science", tags:["javascript","java","web","html","big data","cancer genomics","visualization"], desc:"Aid discovery in complex cancer genomics data.", fit:["Java/JS devs","Cancer research","Bioinformatics"] },
+  { name:"checkstyle", cat:"programming", tags:["java","antlr","xpath","artificial-intelligence","code quality"], desc:"Helps to adhere to Java coding standards.", fit:["Java devs","Code quality","AST/ANTLR"] },
+  { name:"dora-rs", cat:"other", tags:["python","ros","c++","rust","autonomous drive","robotics"], desc:"Simplify robotic apps with AI.", fit:["Rust/Python devs","Robotics","Autonomous systems"] },
+  { name:"freifunk", cat:"os", tags:["c","lua","openwrt","olsr","batman","mesh networking","wireless"], desc:"Free and open wireless networks.", fit:["Networking devs","C/Lua","Mesh/WiFi"] },
+  { name:"gprMax", cat:"science", tags:["python","cython","cuda","openmp","mpi","electromagnetics","simulation"], desc:"Simulating electromagnetic wave propagation.", fit:["Python/CUDA devs","Simulation","Computational physics"] },
+  { name:"gVisor", cat:"os", tags:["linux","c","c++","golang","posix","container sandboxing","security"], desc:"An application kernel for containers.", fit:["Go/C++ devs","Container security","Linux kernel"] },
+  { name:"kro (Kube Resource Orchestrator)", cat:"infra", tags:["prometheus","golang","kubernetes","controller-runtime","cel"], desc:"Simplify Kubernetes API and resource management.", fit:["Go devs","Kubernetes operators","Platform engineering"] },
+  { name:"libssh", cat:"programming", tags:["c","ssh","ci","git","sftp","cryptography","protocol"], desc:"The SSH library.", fit:["C devs","Cryptography","Protocol implementation"] },
+  { name:"mlpack", cat:"science", tags:["c++","python","machine learning","deep learning","templates","armadillo"], desc:"A fast, flexible machine learning library.", fit:["C++/Python devs","ML algorithms","Performance"] },
+  { name:"omegaUp", cat:"other", tags:["python","mysql","php","typescript","vue.js","competitive programming","education"], desc:"Open CS Education as a catalyst for social change.", fit:["PHP/Vue devs","Competitive programming","EdTech"] },
+  { name:"openSUSE Project", cat:"os", tags:["linux","ruby on rails","ruby","docker","angularjs","linux distro"], desc:"Makers' choice for sysadmins, developers & users.", fit:["Linux/Ruby devs","Package management","DevOps"] },
+  { name:"preCICE", cat:"science", tags:["c","python","shell","c++","multi-physics","simulation","coupling"], desc:"The coupling library for multi-physics simulations.", fit:["C++/Python devs","Simulation","Numerical computing"] },
+  { name:"rocket.chat", cat:"other", tags:["javascript","webrtc","meteor.js","mongodb","android","real-time chat"], desc:"Open source communications platform for the AI age.", fit:["JS/Node.js devs","Real-time apps","Mobile"] },
+  { name:"stdlib", cat:"science", tags:["c","javascript","node.js","typescript","webassembly","numerical","math"], desc:"The fundamental numerical library for JavaScript.", fit:["JS/TS devs","Numerical computing","WebAssembly"] },
+  { name:"webpack", cat:"web", tags:["javascript","node.js","web development","html5","webassembly","bundler","build tools"], desc:"webpack is the module bundler for web projects.", fit:["JavaScript devs","Build tooling","Web performance"] }
+];
+
+let activePills = new Set();
+
+function catClass(c) {
+  const m = {science:'cat-science',programming:'cat-programming',data:'cat-data',web:'cat-web',os:'cat-os',security:'cat-security',media:'cat-media',infra:'cat-infra',ai:'cat-ai',dev:'cat-dev',other:'cat-other'};
+  return m[c] || 'cat-other';
+}
+
+function catLabel(c) {
+  const m = {science:'Science & Medicine',programming:'Programming',data:'Data',web:'Web',os:'Operating Systems',security:'Security',media:'Media',infra:'Infrastructure',ai:'AI',dev:'Dev Tools',other:'Other'};
+  return m[c] || c;
+}
+
+function cardClass(c) {
+  return 'card-'+c;
+}
+
+function matchScore(org, searchLower, catVal, langVal) {
+  let score = 0;
+  const allText = (org.name + ' ' + org.tags.join(' ') + ' ' + org.desc).toLowerCase();
+
+  if (activePills.size > 0) {
+    let pillMatch = 0;
+    activePills.forEach(p => { if (allText.includes(p)) pillMatch++; });
+    if (pillMatch === 0) return -1;
+    score += pillMatch * 10;
+  }
+
+  if (catVal && org.cat !== catVal) return -1;
+  if (langVal && !allText.includes(langVal)) return -1;
+  if (searchLower && !allText.includes(searchLower)) return -1;
+
+  if (activePills.size > 1) {
+    let fullMatch = true;
+    activePills.forEach(p => { if (!allText.includes(p)) fullMatch = false; });
+    if (fullMatch) score += 20;
+  }
+
+  return score;
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const lang = document.getElementById('langFilter').value.toLowerCase();
+  const sort = document.getElementById('sortSelect').value;
+
+  let results = ORGS.map(org => ({ org, score: matchScore(org, search, cat, lang) }))
+    .filter(r => r.score >= 0);
+
+  if (sort === 'alpha') results.sort((a,b) => a.org.name.localeCompare(b.org.name));
+  else if (sort === 'cat') results.sort((a,b) => a.org.cat.localeCompare(b.org.cat) || a.org.name.localeCompare(b.org.name));
+
+  const hasFilters = activePills.size > 0 || cat || lang || search;
+
+  renderGrid(results.map(r => ({ ...r.org, score: r.score })), hasFilters);
+  document.getElementById('countDisplay').textContent = results.length;
+  document.getElementById('filteredStat').textContent = results.length;
+}
+
+function renderGrid(orgs, showScore) {
+  const grid = document.getElementById('orgGrid');
+  if (orgs.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="emoji">🔍</div><h3>No matches found</h3><p>Try removing some filters or broadening your search.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = orgs.map((org, i) => {
+    const cc = catClass(org.cat);
+    const cardC = cardClass(org.cat);
+    const tags = org.tags.slice(0,6).map(t => `<span class="tag">${t}</span>`).join('');
+    let matchHtml = '';
+    if (showScore && org.score >= 20) matchHtml = `<span class="match-badge match-high">Great Match</span>`;
+    else if (showScore && org.score >= 10) matchHtml = `<span class="match-badge match-med">Good Match</span>`;
+
+    return `<div class="org-card ${cardC}" style="animation-delay:${Math.min(i*0.03,0.5)}s" onclick="openModal(${ORGS.indexOf(org)})">
+      ${matchHtml}
+      <div class="card-top">
+        <div class="org-name">${org.name}</div>
+      </div>
+      <div style="margin-bottom:10px"><span class="org-cat-badge ${cc}">${catLabel(org.cat)}</span></div>
+      <div class="org-desc">${org.desc}</div>
+      <div class="org-tags">${tags}</div>
+    </div>`;
+  }).join('');
+}
+
+function togglePill(el) {
+  const lang = el.dataset.lang;
+  if (el.classList.contains('active')) {
+    el.classList.remove('active');
+    activePills.delete(lang);
+  } else {
+    el.classList.add('active');
+    activePills.add(lang);
+  }
+  applyFilters();
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('catFilter').value = '';
+  document.getElementById('langFilter').value = '';
+  document.getElementById('sortSelect').value = 'alpha';
+  activePills.clear();
+  document.querySelectorAll('.pill.active').forEach(p => p.classList.remove('active'));
+  applyFilters();
+}
+
+function openModal(idx) {
+  const org = ORGS[idx];
+  const cc = catClass(org.cat);
+  document.getElementById('mCat').innerHTML = `<span class="org-cat-badge ${cc}">${catLabel(org.cat)}</span>`;
+  document.getElementById('mName').textContent = org.name;
+  document.getElementById('mDesc').textContent = org.desc;
+  document.getElementById('mTags').innerHTML = org.tags.map(t=>`<span class="modal-tag">${t}</span>`).join('');
+  document.getElementById('mFit').innerHTML = org.fit.map(f=>`<span class="modal-tag">${f}</span>`).join('');
+  const slug = org.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('mLink').href = `https://summerofcode.withgoogle.com/programs/2026/organizations`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+// Init
+applyFilters();
+</script>
+</body>
+</html>

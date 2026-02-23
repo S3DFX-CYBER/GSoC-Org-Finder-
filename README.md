@@ -109,15 +109,6 @@ Each org entry looks like this:
 
 Found this useful? Share it with your community!
 
-WhatsApp message template:
-```
-🚀 GSoC 2026 is HERE!
-
-185 orgs selected — not sure which to apply to?
-
-This tool lets you filter by your stack and find your best match 👇
-[your-link-here]
-
 Applications open Mar 16. Share with anyone applying! 🙌
 ```
 
@@ -125,7 +116,7 @@ Applications open Mar 16. Share with anyone applying! 🙌
 
 ## 📄 License
 
-MIT — free to use, share, and modify.
+Apache 2.0
 
 ---
 

@@ -120,5 +120,4 @@ Apache 2.0
 
 ---
 
-<p align="center">Made with ❤️ for the GSoC 2026 applicant community</p>
-<p align="center">Data sourced from <a href="https://summerofcode.withgoogle.com/programs/2026/organizations">summerofcode.withgoogle.com</a></p>
+Made for GSoC Beginners like You!

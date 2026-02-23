@@ -2,7 +2,7 @@
 
 > **Find your perfect Google Summer of Code 2026 organization — filtered by your tech stack, domain, and interests.**
 
-Live site → [S3DFX-CYBER.github.io/gsoc-2026-org-finder](https://S3DFX-CYBER.github.io/gsoc-2026-org-finder)
+Live site → [https://findmygsoc.vercel.app/](https://findmygsoc.vercel.app/)
 
 ---
 
@@ -47,14 +47,8 @@ Covers all domains:
 
 ## 🛠️ How to Use
 
-### Option 1 — GitHub Pages (recommended)
 
-1. Fork or clone this repo
-2. Go to **Settings → Pages**
-3. Set source to `main` branch, `/ (root)`
-4. Your site will be live at `https://your-username.github.io/gsoc-2026-org-finder`
-
-### Option 2 — Open locally
+### Option  — Open locally
 
 ```bash
 git clone https://github.com/your-username/gsoc-2026-org-finder.git

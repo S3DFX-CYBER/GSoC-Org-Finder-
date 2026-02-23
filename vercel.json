@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "functions": {
+    "api/github.js": {
+      "runtime": "edge",
+      "maxDuration": 10
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/github",
+      "dest": "/api/github.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cache-Control", "value": "s-maxage=3600" }
+      ]
+    }
+  ]
+}

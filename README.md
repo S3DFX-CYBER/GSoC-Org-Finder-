@@ -112,12 +112,9 @@ Found this useful? Share it with your community!
 Applications open Mar 16. Share with anyone applying! 🙌
 ```
 
----
 
 ## 📄 License
 
 Apache 2.0
-
----
 
 Made for GSoC Beginners like You!

@@ -996,7 +996,7 @@ async function fetchGFI(repo){
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
     if(!r.ok)return null;
     const d=await r.json();
-    if(d.error||d.gfi===undefined)return null;
+    if(d.error||d.gfi==null)return null;
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
     localStorage.setItem('gaf_ghc',JSON.stringify(cache));
     return d.gfi;

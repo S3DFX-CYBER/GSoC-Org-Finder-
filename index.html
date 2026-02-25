@@ -168,8 +168,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .org-card.in-compare::after{opacity:1;background:linear-gradient(90deg,var(--blue),var(--purple))}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
-.org-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ink);line-height:1.3;flex:1;transition:color .3s}
-.card-actions{display:flex;gap:4px;flex-shrink:0}
+.card-header-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.card-top-line{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px}
+.org-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ink);line-height:1.3;flex:1;min-width:0;transition:color .3s}
+.card-actions{display:flex;gap:4px;flex-shrink:0;align-items:flex-start}
+.org-logo-info{flex:1;min-width:0}
 .cat-pill{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;white-space:nowrap}
 .org-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
 .badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
@@ -187,7 +190,62 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .bgfi{background:rgba(26,86,219,.07);color:var(--blue);border-color:rgba(26,86,219,.2);cursor:default}
 .tags{display:flex;flex-wrap:wrap;gap:4px}
 .tag{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border2);color:var(--muted);background:var(--tag-bg);font-family:'Fira Code',monospace;transition:background .3s,border-color .3s,color .3s}
-.gh-mini{display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)}
+.org-logo{width:48px;height:48px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border2);background:var(--border2);flex-shrink:0;transition:border-color .18s}
+.org-logo-placeholder{width:48px;height:48px;border-radius:10px;background:var(--orange-pale);color:var(--orange);font-family:'Playfair Display',serif;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--orange-border)}
+
+.card-repo-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);text-decoration:none;font-family:'Fira Code',monospace;padding:2px 6px;border-radius:4px;border:1px solid var(--border2);background:var(--tag-bg);transition:all .15s;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.card-repo-link:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.card-repo-link svg{width:10px;height:10px;flex-shrink:0}
+.gh-mini{display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);flex-wrap:wrap}
+
+/* ── ISSUES PAGE ── */
+.page{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;transition:background .3s}
+.page.open{display:block}
+.page-nav{position:sticky;top:0;z-index:10;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px}
+.page-back{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--ink3);font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s}
+.page-back:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.page-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:var(--ink);flex:1}
+.page-title em{color:var(--orange);font-style:italic}
+.page-body{max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+.issues-hero{text-align:center;margin-bottom:36px}
+.issues-hero h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:var(--ink);margin-bottom:8px}
+.issues-hero p{font-size:14px;color:var(--ink3);max-width:500px;margin:0 auto 20px}
+.issues-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:12px}
+.issues-controls select,.issues-search{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:500;outline:none;cursor:pointer;transition:border-color .18s,background .3s}
+.issues-controls select{appearance:none;padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.issues-controls select:focus,.issues-search:focus{border-color:var(--orange)}
+.issues-search{min-width:220px}
+.btn-fetch-issues{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s}
+.btn-fetch-issues:hover{background:var(--orange);color:white}
+.btn-fetch-issues:disabled{opacity:.5;cursor:not-allowed}
+.issues-stats{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.istat{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 18px;text-align:center;min-width:80px}
+.istat .iv{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--orange)}
+.istat .il{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.issues-grid{display:flex;flex-direction:column;gap:10px}
+.issue-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:border-color .18s,box-shadow .18s,background .3s;text-decoration:none}
+.issue-card:hover{border-color:var(--orange-border);box-shadow:0 3px 14px rgba(244,107,14,.09)}
+.issue-logo{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border2);object-fit:cover;flex-shrink:0;background:var(--border2)}
+.issue-body{flex:1;min-width:0}
+.issue-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.issue-org{font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
+.issue-title{font-size:13px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:6px;transition:color .3s}
+.issue-card:hover .issue-title{color:var(--orange)}
+.issue-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.issue-label{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
+.issue-label.gfi{background:rgba(0,135,90,.08);color:var(--green);border:1px solid rgba(0,135,90,.2)}
+.issue-label.lang{background:var(--tag-bg);color:var(--muted);border:1px solid var(--border2);font-family:'Fira Code',monospace}
+.issue-label.cat{background:var(--orange-pale);color:var(--orange-deep);border:1px solid var(--orange-border)}
+.issue-date{font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.issue-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.issue-empty .ei{font-size:40px;margin-bottom:12px}
+.issue-empty h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:6px}
+.load-more{display:flex;justify-content:center;margin-top:20px}
+.btn-load-more{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 24px;font-size:12px;font-weight:700;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s}
+.btn-load-more:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.fetch-progress{text-align:center;padding:40px 20px;color:var(--muted)}
+.fetch-progress .fp-bar-wrap{max-width:300px;margin:14px auto 0;background:var(--border2);border-radius:100px;height:6px;overflow:hidden}
+.fetch-progress .fp-bar{height:100%;background:linear-gradient(90deg,var(--orange),#FBBC04);border-radius:100px;transition:width .4s}
 .gh-s{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);font-family:'Fira Code',monospace}
 .gh-s b{color:var(--ink);font-weight:600;transition:color .3s}
 
@@ -325,20 +383,109 @@ footer a{color:var(--orange);text-decoration:none;font-weight:600}
 footer a:hover{text-decoration:underline}
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
 
-@media(max-width:700px){
-  .stats-inner{flex-direction:column;width:100%}
-  .sbox{border-right:none;border-bottom:1.5px solid var(--border)}
-  .sbox:last-child{border-bottom:none}
-  .filters-row{flex-direction:column}
-  .fg select,.search-input{min-width:100%}
-  .m-metrics{grid-template-columns:1fr 1fr}
-  .an-grid{grid-template-columns:1fr 1fr}
-  .gh-grid{grid-template-columns:repeat(2,1fr)}
+/* ── TABLET ── */
+@media(max-width:900px){
   .nav-title{display:none}
+  .btn-contribute{display:none}
+  .compare-slots{grid-template-columns:1fr 1fr}
+}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  /* Nav */
+  .nav-inner{padding:0 12px;gap:4px;height:52px}
+  .nav-right{gap:4px}
   .toggle-label{display:none}
-  .compare-slots{grid-template-columns:1fr}
-  .compare-table{font-size:11px}
+  .btn-analytics,.btn-compare-nav{font-size:10px;padding:5px 8px;gap:3px}
+  .btn-contribute{display:none}
+  /* Nav Issues btn text */
+  .issues-nav-txt{display:none}
+
+  /* Countdown */
+  .countdown-banner{padding:6px 12px;gap:6px;font-size:10px}
+  .countdown-label{display:none}
   .countdown-units{gap:4px}
+  .cu{min-width:30px;padding:2px 5px}
+  .cu-n{font-size:13px}
+
+  /* Hero */
+  .hero{padding:28px 16px 24px}
+  .hero h1{font-size:32px}
+  .hero-sub{font-size:13px}
+
+  /* Stats bar — scrollable row on mobile */
+  .stats-bar{margin-bottom:28px;overflow-x:auto;justify-content:flex-start;padding:0 16px}
+  .stats-inner{flex-direction:row;flex-wrap:nowrap;width:auto;min-width:max-content}
+  .sbox{border-right:1.5px solid var(--border);border-bottom:none;padding:10px 16px}
+  .sbox:last-child{border-right:none}
+  .sn{font-size:20px}
+
+  /* Filters */
+  .wrap{padding:0 12px}
+  .filter-card{padding:14px}
+  .filters-row{flex-direction:column;gap:8px}
+  .fg select,.search-input{min-width:100%;width:100%}
+  .search-input{min-width:100%}
+  .chips{gap:5px}
+  .chip{font-size:10px;padding:4px 9px}
+  .pills{gap:4px}
+  .pill{font-size:10px;padding:3px 9px}
+
+  /* Keyboard hint — hide on mobile */
+  .kbd-hint{display:none}
+
+  /* Results bar */
+  .results-bar{flex-direction:column;align-items:flex-start;gap:6px}
+
+  /* Grid — single column */
+  .grid{grid-template-columns:1fr;gap:10px}
+
+  /* Card */
+  .org-card{padding:14px}
+  .org-name{font-size:13px}
+  .org-logo{width:36px;height:36px}.org-logo-placeholder{width:36px;height:36px;font-size:15px}
+  .card-repo-link{font-size:9px}
+
+  /* Modal */
+  .modal{border-radius:16px;max-height:95vh}
+  .modal-top{padding:18px 18px 0}
+  .m-name{font-size:18px;padding-right:70px}
+  .m-desc{padding:0 18px 12px}
+  .modal-body{padding:0 18px 20px}
+  .m-metrics{grid-template-columns:1fr 1fr}
+  .gh-grid{grid-template-columns:repeat(3,1fr)}
+  .compare-slots{grid-template-columns:1fr}
+  .compare-table{font-size:10px}
+  .compare-table th,.compare-table td{padding:7px 8px}
+
+  /* Analytics */
+  .an-grid{grid-template-columns:1fr 1fr}
+  .an-panel{border-radius:16px}
+  .an-header,.an-body{padding-left:16px;padding-right:16px}
+
+  /* Trending */
+  .trending-section{padding:0 12px 14px}
+  .trend-card{min-width:150px}
+
+  /* Issues page */
+  .page-body{padding:20px 12px 40px}
+  .issues-hero h2{font-size:24px}
+  .issues-controls{flex-direction:column;align-items:stretch}
+  .issues-controls select,.issues-search,.btn-fetch-issues{width:100%}
+  .issue-card{padding:12px 14px;gap:10px}
+  .issue-logo{width:30px;height:30px}
+  .issue-title{font-size:12px}
+  .issues-stats{gap:8px}
+  .istat{padding:8px 12px;min-width:60px}
+  .istat .iv{font-size:17px}
+}
+
+/* ── VERY SMALL (360px phones) ── */
+@media(max-width:380px){
+  .nav-inner{padding:0 8px}
+  .gsoc-logo{width:28px;height:28px;font-size:14px}
+  .btn-analytics,.btn-compare-nav{padding:4px 6px;font-size:9px}
+  .hero h1{font-size:26px}
 }
 </style>
 </head>
@@ -369,6 +516,9 @@ footer a:hover{text-decoration:underline}
         <span class="sun-icon">☀️</span><span class="moon-icon">🌙</span>
         <div class="toggle-track"><div class="toggle-knob"></div></div>
         <span class="toggle-label" id="themeLabel">Light</span>
+      </button>
+      <button class="btn-analytics" onclick="openIssuesPage()" style="color:var(--green);border-color:rgba(0,135,90,.3)" title="Browse Good First Issues">
+        🟢 <span class="issues-nav-txt">Issues</span>
       </button>
       <button class="btn-compare-nav" onclick="openCompare()" title="Compare organizations">
         ⚖️ Compare
@@ -620,6 +770,68 @@ footer a:hover{text-decoration:underline}
     <div class="compare-body">
       <div class="compare-slots" id="compareSlots"></div>
       <div id="compareTableWrap"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── ISSUES PAGE ── -->
+<div class="page" id="issuesPage">
+  <div class="page-nav">
+    <button class="page-back" onclick="closeIssuesPage()">← Back</button>
+    <div class="page-title">🟢 <em>Good First Issues</em> — All 185 Orgs</div>
+    <button class="theme-toggle" onclick="toggleTheme()" style="margin-left:auto">
+      <span class="sun-icon">☀️</span><span class="moon-icon">🌙</span>
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+    </button>
+  </div>
+  <div class="page-body">
+    <div class="issues-hero">
+      <h2>Find Your First <em style="color:var(--green)">Contribution</em></h2>
+      <p>Good First Issues from all GSoC 2026 orgs — curated for students new to open source.</p>
+      <div class="issues-controls">
+        <input class="issues-search" type="text" id="issueSearch" placeholder="Search issues…" oninput="filterIssues()">
+        <select id="issueCatFilter" onchange="filterIssues()">
+          <option value="">All Categories</option>
+          <option value="science">Science</option>
+          <option value="programming">Programming</option>
+          <option value="data">Data</option>
+          <option value="web">Web</option>
+          <option value="os">OS</option>
+          <option value="security">Security</option>
+          <option value="infra">Infrastructure</option>
+          <option value="other">Other</option>
+        </select>
+        <select id="issueLangFilter" onchange="filterIssues()">
+          <option value="">All Languages</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="c++">C / C++</option>
+          <option value="java">Java</option>
+          <option value="rust">Rust</option>
+          <option value="go">Go</option>
+          <option value="ruby">Ruby</option>
+        </select>
+        <button class="btn-fetch-issues" id="fetchIssuesBtn" onclick="fetchAllIssues()">
+          <span id="fetchIssuesSpin" style="display:none" class="spin"></span>
+          <span id="fetchIssuesTxt">🟢 Load Issues</span>
+        </button>
+      </div>
+    </div>
+    <div class="issues-stats" id="issuesStats" style="display:none">
+      <div class="istat"><div class="iv" id="issTotal">0</div><div class="il">Total Issues</div></div>
+      <div class="istat"><div class="iv" id="issOrgs">0</div><div class="il">Orgs with GFI</div></div>
+      <div class="istat"><div class="iv" id="issShown">0</div><div class="il">Showing</div></div>
+    </div>
+    <div id="issuesContainer">
+      <div class="issue-empty">
+        <div class="ei">🟢</div>
+        <h3>Ready to find your first issue?</h3>
+        <p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs via the GitHub API.</p>
+      </div>
+    </div>
+    <div class="load-more" id="loadMoreWrap" style="display:none">
+      <button class="btn-load-more" onclick="showMoreIssues()">Load More Issues</button>
     </div>
   </div>
 </div>
@@ -1226,6 +1438,53 @@ function applyFilters(){
   document.getElementById('filteredStat').textContent=res.length;
 }
 
+// Umbrella orgs: link goes to org page, not a single example repo
+// Single-project orgs: link goes to that specific repo
+const UMBRELLA_ORGS=new Set([
+  'Apache Software Foundation','CNCF','Eclipse Foundation','FOSSASIA','GNOME Foundation',
+  'GNU Project','Jenkins','KDE Community','NumFOCUS','OpenMRS','openSUSE Project',
+  'OWASP Foundation','The Linux Foundation','Wikimedia Foundation','AOSSIE','CERN-HSF',
+  'CCExtractor Development','Blender Foundation','Open Robotics','JBoss Community',
+  'The Honeynet Project','MetaBrainz Foundation Inc','OSGeo (Open Source Geospatial Foundation)',
+  'SW360','DBpedia','LibreOffice','Oppia Foundation','Sugar Labs','Internet Archive',
+  'VideoLAN','JdeRobot','Kubeflow','INCF','OpenAstronomy','Machine Learning for Science (ML4SCI)',
+  'SageMath','National Resource for Network Biology (NRNB)','FOSSology','JabRef e.V.',
+  'FOSSASIA','LabLua','Liquid Galaxy project','Free and Open Source Silicon Foundation',
+]);
+
+function orgLogoOwner(o){
+  if(!o.github)return'';
+  return o.github.includes('/')?o.github.split('/')[0]:o.github;
+}
+function imgErr(img){
+  img.onerror=null;
+  const p=document.createElement('div');
+  p.className='org-logo-placeholder';
+  p.textContent=(img.alt||'?')[0].toUpperCase();
+  img.parentNode.replaceChild(p,img);
+}
+function orgLogo(o){
+  const owner=orgLogoOwner(o);
+  if(!owner)return'';
+  // Use avatars.githubusercontent.com — no redirect, works cross-origin
+  return`https://github.com/${owner}.png?size=64`;
+}
+function repoUrl(o){
+  if(!o.github)return'';
+  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
+  // Umbrella orgs → link to their org page; single-project orgs → their specific repo
+  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
+    return`https://github.com/${owner}`;
+  return`https://github.com/${o.github}`;
+}
+function repoLinkLabel(o){
+  if(!o.github)return'';
+  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
+  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
+    return owner+' (org)';
+  return o.github;
+}
+
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
   if(!orgs.length){g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>No matches found</h3><p>Try removing some filters.</p></div>`;return}
@@ -1241,16 +1500,30 @@ function renderGrid(orgs){
     const globalIdx=ORGS.indexOf(o);
     const inCompare=compareSet.has(globalIdx);
     const isFocused=focusedIdx===i;
+    const logo=orgLogo(o);
+    const repoHref=repoUrl(o);
+    // shortRepo now handled by repoLinkLabel()
     return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}" 
       style="animation-delay:${Math.min(i*.018,.3)}s" 
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">
-      <div class="card-head">
-        <div class="org-name">${o.name}</div>
-        <div class="card-actions">
-          <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
-          <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
+      <div class="card-header-row">
+        ${logo?`<img class="org-logo" src="${logo}" alt="${o.name[0]}" loading="lazy" onerror="imgErr(this)">`:``}
+        <div class="org-logo-info">
+          <div class="card-top-line">
+            <div class="org-name">${o.name}</div>
+            <div class="card-actions">
+              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
+            </div>
+          </div>
+          ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${repoHref}">
+            ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
+              '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
+              '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
+            ${repoLinkLabel(o)}
+          </a>`:''}
         </div>
       </div>
       <div class="org-desc">${o.desc}</div>
@@ -1390,6 +1663,14 @@ function openModal(idx){
     tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${cur?'⭐':'✓'} ${y}</span>`;
   }
   document.getElementById('mTimeline').innerHTML=tl;
+  // Smart link: umbrella orgs → org page, single-project → specific repo
+  const mLinkEl=document.getElementById('mLink');
+  if(mLinkEl&&o.github){
+    const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
+    const isUmbrella=UMBRELLA_ORGS.has(o.name)||!o.github.includes('/');
+    mLinkEl.href=isUmbrella?`https://github.com/${owner}`:`https://github.com/${o.github}`;
+    mLinkEl.textContent=isUmbrella?'View GitHub Org →':'View Repository →';
+  }
   updateModalCompareBtn();
   document.getElementById('modalBg').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1415,6 +1696,188 @@ function closeModal(){document.getElementById('modalBg').classList.remove('open'
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// ISSUES PAGE
+// ══════════════════════════════════════════════
+let allIssues=[];        // flat list of {title,url,org,orgCat,orgTags,logo,repo,created_at}
+let filteredIssues=[];
+let shownIssues=0;
+const ISSUES_PAGE_SIZE=40;
+let issuesFetching=false;
+
+function openIssuesPage(){
+  document.getElementById('issuesPage').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeIssuesPage(){
+  document.getElementById('issuesPage').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+async function fetchAllIssues(){
+  if(issuesFetching)return;
+  issuesFetching=true;
+  const btn=document.getElementById('fetchIssuesBtn');
+  const spin=document.getElementById('fetchIssuesSpin');
+  const txt=document.getElementById('fetchIssuesTxt');
+  btn.disabled=true; spin.style.display='inline-block';
+
+  allIssues=[];
+  const orgsWithGithub=ORGS.filter(o=>o.github);
+  let done=0;
+  let found=0;
+
+  document.getElementById('issuesContainer').innerHTML=`
+    <div class="fetch-progress">
+      <div style="font-size:14px;font-weight:600;color:var(--ink)">Fetching Good First Issues…</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px" id="fpStatus">Checking 0 / ${orgsWithGithub.length} orgs</div>
+      <div class="fp-bar-wrap"><div class="fp-bar" id="fpBar" style="width:0%"></div></div>
+      <div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600" id="fpFound">0 issues found so far</div>
+    </div>`;
+
+  // Batch in groups of 5 to avoid hammering the proxy
+  const BATCH=5;
+  for(let i=0;i<orgsWithGithub.length;i+=BATCH){
+    const batch=orgsWithGithub.slice(i,i+BATCH);
+    await Promise.all(batch.map(async o=>{
+      try{
+        const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
+        if(!r.ok)return;
+        const data=await r.json();
+        if(data.items?.length){
+          const owner=o.github.split('/')[0];
+          const logo=`https://github.com/${owner}.png?size=64`;
+          data.items.forEach(issue=>{
+            allIssues.push({
+              title:issue.title,
+              url:issue.html_url,
+              org:o.name,
+              orgCat:o.cat,
+              orgTags:o.tags,
+              logo,
+              repo:o.github,
+              created_at:issue.created_at,
+              labels:issue.labels||[],
+              comments:issue.comments||0,
+            });
+          });
+          found+=data.items.length;
+        }
+        if(data.total!=null){
+          if(!o._gh)o._gh={};
+          o._gh.gfi=data.total;
+        }
+      }catch(e){}
+      done++;
+    }));
+    // Update progress UI
+    const pct=Math.round(done/orgsWithGithub.length*100);
+    const fpStatus=document.getElementById('fpStatus');
+    const fpBar=document.getElementById('fpBar');
+    const fpFound=document.getElementById('fpFound');
+    if(fpStatus)fpStatus.textContent=`Checking ${done} / ${orgsWithGithub.length} orgs`;
+    if(fpBar)fpBar.style.width=pct+'%';
+    if(fpFound)fpFound.textContent=`${found} issues found so far`;
+    txt.textContent=`${done}/${orgsWithGithub.length}…`;
+    await new Promise(r=>setTimeout(r,60));
+  }
+
+  // Sort: newest first
+  allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  issuesFetching=false;
+  btn.disabled=false; spin.style.display='none'; txt.textContent='↻ Refresh';
+
+  filterIssues();
+  renderGrid(filteredOrgs);
+  updateStats();
+}
+
+function filterIssues(){
+  const search=(document.getElementById('issueSearch')?.value||'').toLowerCase().trim();
+  const cat=document.getElementById('issueCatFilter')?.value||'';
+  const lang=document.getElementById('issueLangFilter')?.value||'';
+  
+  filteredIssues=allIssues.filter(iss=>{
+    if(cat&&iss.orgCat!==cat)return false;
+    if(lang&&!iss.orgTags.some(t=>t.includes(lang)))return false;
+    if(search&&!iss.title.toLowerCase().includes(search)&&!iss.org.toLowerCase().includes(search))return false;
+    return true;
+  });
+  
+  shownIssues=0;
+  renderIssues();
+}
+
+function relativeTime(dateStr){
+  const diff=Date.now()-new Date(dateStr).getTime();
+  const d=Math.floor(diff/86400000);
+  if(d===0)return'Today';
+  if(d===1)return'Yesterday';
+  if(d<30)return d+'d ago';
+  if(d<365)return Math.floor(d/30)+'mo ago';
+  return Math.floor(d/365)+'y ago';
+}
+
+function renderIssues(){
+  const container=document.getElementById('issuesContainer');
+  const statsDiv=document.getElementById('issuesStats');
+  const loadMore=document.getElementById('loadMoreWrap');
+
+  if(!allIssues.length){
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
+    statsDiv.style.display='none';loadMore.style.display='none';return;
+  }
+
+  if(!filteredIssues.length){
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    statsDiv.style.display='flex';loadMore.style.display='none';
+  } else {
+    shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);
+    const visible=filteredIssues.slice(0,shownIssues);
+    container.innerHTML=`<div class="issues-grid">${visible.map(renderIssueCard).join('')}</div>`;
+    loadMore.style.display=shownIssues<filteredIssues.length?'flex':'none';
+  }
+
+  // Update stats
+  const orgsWithIssues=new Set(allIssues.map(i=>i.org)).size;
+  document.getElementById('issTotal').textContent=allIssues.length.toLocaleString();
+  document.getElementById('issOrgs').textContent=orgsWithIssues;
+  document.getElementById('issShown').textContent=Math.min(shownIssues,filteredIssues.length);
+  statsDiv.style.display='flex';
+}
+
+function renderIssueCard(iss){
+  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
+  const otherLabels=iss.labels.filter(l=>l!=='good first issue'&&l!=='good-first-issue').slice(0,2)
+    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
+  return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener">
+    <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
+    <div class="issue-body">
+      <div class="issue-top">
+        <span class="issue-org">${iss.org}</span>
+        <span class="issue-label gfi">✓ Good First Issue</span>
+        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${iss.comments}</span>`:''}
+      </div>
+      <div class="issue-title">${iss.title}</div>
+      <div class="issue-meta">
+        ${langTags}${otherLabels}
+        <span class="issue-date">${relativeTime(iss.created_at)}</span>
+      </div>
+    </div>
+  </a>`;
+}
+
+function showMoreIssues(){
+  const container=document.getElementById('issuesContainer');
+  const next=filteredIssues.slice(shownIssues,shownIssues+ISSUES_PAGE_SIZE);
+  shownIssues+=next.length;
+  container.querySelector('.issues-grid').insertAdjacentHTML('beforeend',next.map(renderIssueCard).join(''));
+  document.getElementById('loadMoreWrap').style.display=shownIssues<filteredIssues.length?'flex':'none';
+  document.getElementById('issShown').textContent=shownIssues;
+}
+
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
 updateStats();
 applyFilters();

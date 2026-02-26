@@ -19,6 +19,7 @@ export default async function handler(req) {
   const { searchParams } = new URL(req.url);
   const repo = searchParams.get('repo');
   const gfiMode = searchParams.get('gfi') === '1';
+  const issuesMode = searchParams.get('issues') === '1'; // NEW: return actual issue items
 
   if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
@@ -35,8 +36,44 @@ export default async function handler(req) {
     'User-Agent': 'gsoc-org-finder',
   };
 
-  // ── GFI-only mode ──────────────────────────────────────────────────────────
-  // Called separately per-org from the modal to avoid slowing down bulk fetches
+  // ── GFI + ISSUES mode (?gfi=1&issues=1) ───────────────────────────────────
+  // Returns { total: N, items: [{title, html_url, created_at, labels, comments}] }
+  if (gfiMode && issuesMode) {
+    const cacheKey = repo + '__issues';
+    const cached = CACHE.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+    }
+    try {
+      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const res = await fetch(
+        `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
+        { headers: ghHeaders }
+      );
+      if (!res.ok) {
+        // 403 = rate limited, return empty gracefully
+        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
+      }
+      const data = await res.json();
+      const total = data.total_count ?? 0;
+      const items = (data.items || []).map(i => ({
+        title: i.title,
+        html_url: i.html_url,
+        created_at: i.created_at,
+        comments: i.comments,
+        // labels: array of {name, color} objects — keep as-is so frontend can extract .name
+        labels: (i.labels || []).map(l => ({ name: l.name, color: l.color })),
+      }));
+      CACHE.set(cacheKey, { total, items, ts: Date.now() });
+      // Also update gfi-only cache
+      CACHE.set(repo + '__gfi', { gfi: total, ts: Date.now() });
+      return new Response(JSON.stringify({ total, items }), { status: 200, headers });
+    } catch (err) {
+      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
+    }
+  }
+
+  // ── GFI-only mode (?gfi=1) ─────────────────────────────────────────────────
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
     const cached = CACHE.get(cacheKey);
@@ -44,18 +81,17 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: cached.gfi, cached: true }), { status: 200, headers });
     }
     try {
-      // GitHub Search API: count open issues labelled "good first issue" in this repo
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetch(`https://api.github.com/search/issues?q=${q}&per_page=1`, { headers: ghHeaders });
       if (!res.ok) {
-        return new Response(JSON.stringify({ error: 'Search failed', gfi: null }), { status: res.status, headers });
+        return new Response(JSON.stringify({ error: 'Search failed', gfi: null }), { status: 200, headers });
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       CACHE.set(cacheKey, { gfi, ts: Date.now() });
       return new Response(JSON.stringify({ gfi }), { status: 200, headers });
     } catch (err) {
-      return new Response(JSON.stringify({ error: 'GFI fetch failed: ' + err.message, gfi: null }), { status: 500, headers });
+      return new Response(JSON.stringify({ error: err.message, gfi: null }), { status: 200, headers });
     }
   }
 
@@ -69,10 +105,9 @@ export default async function handler(req) {
     const [repoRes, commitsRes, gfiRes] = await Promise.all([
       fetch(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
       fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
-      // Also fetch GFI count in the same batch so bulk "Fetch All" gets it too
       fetch(
         `https://api.github.com/search/issues?q=${encodeURIComponent(`repo:${repo} label:"good first issue" state:open`)}&per_page=1`,
-        { headers: { ...ghHeaders, Accept: 'application/vnd.github.v3+json' } }
+        { headers: ghHeaders }
       ),
     ]);
 
@@ -83,7 +118,6 @@ export default async function handler(req) {
 
     const repoData = await repoRes.json();
 
-    // Parse last commit date
     let lastCommit = '—';
     let activityDays = 9999;
     if (commitsRes.ok) {
@@ -99,7 +133,6 @@ export default async function handler(req) {
       }
     }
 
-    // Parse GFI count
     let gfi = null;
     if (gfiRes.ok) {
       const gfiData = await gfiRes.json().catch(() => null);
@@ -116,12 +149,11 @@ export default async function handler(req) {
       lastCommit,
       activity,
       language: repoData.language,
-      gfi,          // ← new field: good first issue count (null if unavailable)
+      gfi,
       ts: Date.now(),
     };
 
     CACHE.set(repo, result);
-    // Also cache GFI separately so gfi-mode hits the Map cache
     if (gfi !== null) CACHE.set(repo + '__gfi', { gfi, ts: Date.now() });
 
     return new Response(JSON.stringify(result), { status: 200, headers });

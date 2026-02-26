@@ -113,7 +113,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .fg select:focus,.search-input:focus{border-color:var(--orange)}
 .search-box{position:relative;display:flex;flex-direction:column;gap:5px}
 .search-box label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
-.search-input{padding-left:34px;min-width:200px;flex:1}
+.search-input{padding-left:34px;min-width:200px}
 .search-ico{position:absolute;bottom:10px;left:12px;font-size:14px;color:var(--muted);pointer-events:none}
 .btn-reset{background:transparent;border:1.5px solid var(--border);border-radius:10px;padding:9px 15px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;align-self:flex-end}
 .btn-reset:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
@@ -182,20 +182,17 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .bn{background:rgba(107,33,168,.07);color:var(--purple);border-color:rgba(107,33,168,.2)}
 .bh{background:rgba(197,48,48,.07);color:var(--red);border-color:rgba(197,48,48,.2)}
 .bm{background:#FFFAED;color:#92600A;border-color:rgba(251,191,36,.3)}
-[data-theme="dark"] .bm{background:rgba(251,191,36,.12);color:#FBBC04;border-color:rgba(251,191,36,.35)}
 .bc{background:rgba(0,135,90,.07);color:var(--green);border-color:rgba(0,135,90,.2)}
 .bac{background:var(--orange-pale);color:var(--orange-deep);border-color:var(--orange-border)}
 .bam{background:#FFFAED;color:#92600A;border-color:rgba(251,191,36,.2)}
-[data-theme="dark"] .bam{background:rgba(251,191,36,.12);color:#FBBC04;border-color:rgba(251,191,36,.3)}
 .bal{background:var(--border2);color:var(--muted);border-color:var(--border)}
 .bna{background:var(--bg);color:var(--muted);border-color:var(--border2)}
 .bgfi{background:rgba(26,86,219,.07);color:var(--blue);border-color:rgba(26,86,219,.2);cursor:default}
 .tags{display:flex;flex-wrap:wrap;gap:4px}
 .tag{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border2);color:var(--muted);background:var(--tag-bg);font-family:'Fira Code',monospace;transition:background .3s,border-color .3s,color .3s}
 .org-logo{width:48px;height:48px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border2);background:#fff;flex-shrink:0;transition:border-color .18s}
-[data-theme="dark"] .org-logo{background:#fff;border-color:rgba(255,255,255,.15)}
-.issue-logo{background:#fff}
-[data-theme="dark"] .issue-logo{background:#fff;border-color:rgba(255,255,255,.15)}
+[data-theme="dark"] .org-logo{border-color:rgba(255,255,255,.12)}
+.issue-logo{background:#fff!important}
 .org-logo-placeholder{width:48px;height:48px;border-radius:10px;background:var(--orange-pale);color:var(--orange);font-family:'Playfair Display',serif;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--orange-border)}
 
 .card-repo-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);text-decoration:none;font-family:'Fira Code',monospace;padding:2px 6px;border-radius:4px;border:1px solid var(--border2);background:var(--tag-bg);transition:all .15s;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -430,9 +427,8 @@ footer a:hover{text-decoration:underline}
   .filter-card{padding:14px}
   .filters-row{flex-direction:column;gap:8px}
   .fg{width:100%}
-  .fg select,.search-input{min-width:0;width:100%;box-sizing:border-box}
+  .fg select,.search-input{min-width:0!important;width:100%;box-sizing:border-box}
   .search-box{width:100%}
-  .search-input{min-width:0;width:100%}
   .btn-reset{width:100%;text-align:center}
   .chips{gap:5px}
   .chip{font-size:10px;padding:4px 9px}
@@ -1201,11 +1197,8 @@ async function fetchGH(repo){
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
     if(!r.ok)return null;
-    const text=await r.text();
-    if(!text||!text.trim().startsWith('{'))return null;
-    const d=JSON.parse(text);
-    if(d.error||d.failed)return null;
-    d.ts=Date.now();
+    const d=await r.json();
+    if(d.error)return null;
     cache[repo]=d;localStorage.setItem('gaf_ghc',JSON.stringify(cache));return d;
   }catch{return null}
 }
@@ -1218,16 +1211,11 @@ async function fetchGFI(repo){
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
     if(!r.ok)return null;
-    const text=await r.text();
-    if(!text||!text.trim().startsWith('{'))return null;
-    const d=JSON.parse(text);
-    if(d.error||d.failed)return null;
-    // API may return d.gfi or d.total
-    const count=d.gfi!=null?d.gfi:(d.total!=null?d.total:null);
-    if(count==null)return null;
-    cache[cacheKey]={count,ts:Date.now()};
+    const d=await r.json();
+    if(d.error||d.gfi==null)return null;
+    cache[cacheKey]={count:d.gfi,ts:Date.now()};
     localStorage.setItem('gaf_ghc',JSON.stringify(cache));
-    return count;
+    return d.gfi;
   }catch{return null}
 }
 
@@ -1760,15 +1748,13 @@ async function fetchAllIssues(){
       try{
         const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
         if(!r.ok)return;
-        const text=await r.text();
-        if(!text||!text.trim().startsWith('{'))return;
-        const data=JSON.parse(text);
-        if(data.error||data.failed)return;
+        const data=await r.json();
+        if(data.error&&!data.items)return; // hard error, skip
         if(data.items?.length){
           const owner=o.github.split('/')[0];
           const logo=`https://github.com/${owner}.png?size=64`;
           data.items.forEach(issue=>{
-            // GitHub returns labels as objects with .name, or already as strings
+            // labels from API are {name, color} objects — extract name strings
             const labelNames=(issue.labels||[]).map(l=>typeof l==='string'?l:(l.name||''));
             allIssues.push({
               title:issue.title,
@@ -1785,9 +1771,11 @@ async function fetchAllIssues(){
           });
           found+=data.items.length;
         }
-        if(data.total!=null){
+        // API returns { total } not { gfi } in this mode
+        const gfiCount=data.total??data.gfi;
+        if(gfiCount!=null){
           if(!o._gh)o._gh={};
-          o._gh.gfi=data.total;
+          o._gh.gfi=gfiCount;
         }
       }catch(e){}
       done++;
@@ -1871,8 +1859,13 @@ function renderIssues(){
 
 function renderIssueCard(iss){
   const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
-  const otherLabels=iss.labels.filter(l=>l!=='good first issue'&&l!=='good-first-issue').slice(0,2)
-    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
+  // labels is already an array of strings after our fix in fetchAllIssues
+  const gfiNames=['good first issue','good-first-issue'];
+  const otherLabels=iss.labels
+    .filter(l=>!gfiNames.includes(l.toLowerCase()))
+    .slice(0,2)
+    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`)
+    .join('');
   return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener">
     <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
     <div class="issue-body">

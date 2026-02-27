@@ -1,5 +1,3 @@
-
-
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
@@ -484,7 +482,7 @@ function renderGrid(orgs){
     const repoHref=repoUrl(o);
     // shortRepo now handled by repoLinkLabel()
     return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}" 
-      style="animation-delay:${Math.min(i*.018,.3)}s" 
+      
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">
@@ -654,7 +652,7 @@ function openModal(idx){
   updateModalCompareBtn();
   document.getElementById('modalBg').classList.add('open');
   document.body.style.overflow='hidden';
-  // Fetch GFI lazily — stats fetch no longer includes it
+  // Fetch GFI lazily on modal open
   if(o.github&&(!o._gh||o._gh.gfi==null)){
     document.getElementById('ghGFI').textContent='…';
     fetchGFI(o.github).then(gfi=>{
@@ -666,7 +664,7 @@ function openModal(idx){
         if(cells&&cells[3])cells[3].textContent=fmt(gfi);
         renderGrid(filteredOrgs);
         renderCompareTable();
-      } else {
+      }else{
         document.getElementById('ghGFI').textContent='—';
       }
     });
@@ -835,11 +833,8 @@ function renderIssues(){
 function renderIssueCard(iss){
   const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
   const gfiNames=['good first issue','good-first-issue'];
-  const otherLabels=iss.labels
-    .filter(l=>!gfiNames.includes(l.toLowerCase()))
-    .slice(0,2)
-    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`)
-    .join('');
+  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(l.toLowerCase())).slice(0,2)
+    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
   return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener">
     <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
     <div class="issue-body">

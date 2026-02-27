@@ -55,7 +55,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .btn-analytics,.btn-compare-nav{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--ink3);font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;white-space:nowrap}
 .btn-analytics:hover,.btn-compare-nav:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
 .btn-compare-nav{position:relative}
-.compare-badge{position:absolute;top:-5px;right:-5px;background:var(--orange);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;display:none}
+.compare-badge{position:absolute;top:-5px;right:-5px;background:var(--orange);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:900;align-items:center;justify-content:center;display:none}
 .compare-badge.show{display:flex}
 .btn-contribute{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;transition:all .18s;white-space:nowrap}
 .btn-contribute:hover{background:var(--orange);color:white;transform:translateY(-1px)}

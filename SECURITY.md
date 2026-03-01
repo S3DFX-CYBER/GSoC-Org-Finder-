@@ -8,7 +8,7 @@ Currently, only the latest version of the project is actively supported with sec
 
 If you discover a security vulnerability, please report it responsibly.
 
-📧 Email: security@<your-domain>  
+📧 Email: saviodsouza8a@gmail.com 
 Or report via GitHub Private Vulnerability Reporting: https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/security/advisories/new
 
 Please DO NOT create a public GitHub issue for security vulnerabilities.
@@ -24,7 +24,7 @@ When reporting a vulnerability, include:
 
 ## Response Timeline
 
-We aim to acknowledge reports within **48–72 hours** and provide updates as the investigation progresses.
+We aim to acknowledge reports within **1–7 days** and provide updates as the investigation progresses.
 
 ## Security Best Practices
 

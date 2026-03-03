@@ -308,6 +308,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .timeline{font-size:12px;color:var(--ink3);line-height:2;margin-bottom:16px}
 .modal-cta{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s}
 .modal-cta:hover{background:var(--orange-deep)}
+.modal-ideas-link{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s;margin-right:10px}
+.modal-ideas-link{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s;margin-right:10px}
+.modal-ideas-link:hover{background:`#00654d`;opacity:.95}
+.modal-ideas-link:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+[data-theme="dark"] .modal-ideas-link{background:`#0C7A57`;color:`#F5E6D3`}
+[data-theme="dark"] .modal-ideas-link:hover{background:`#096247`;opacity:1}
+.modal-ideas-text{color:var(--muted);font-size:13px;font-style:italic;padding:10px 0;display:block}
 
 /* ── COMPARE PANEL ── */
 .compare-bg{position:fixed;inset:0;z-index:150;background:rgba(28,16,8,.55);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
@@ -474,6 +481,7 @@ footer a:hover{text-decoration:underline}
   .m-tags{gap:4px}
   .m-tag{font-size:10px;padding:3px 8px}
   .modal-cta{font-size:12px;padding:9px 16px}
+  .modal-ideas-link{font-size:12px;padding:9px 16px;margin-right:8px}
 
   /* Compare */
   .compare-panel{border-radius:14px;max-height:95vh}

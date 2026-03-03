@@ -34,6 +34,8 @@ No sign-up. No install. No build step. Just open and explore.
 - Full description, tech stack tags, "Best Fit For" profiles
 - GSoC participation timeline (every year the org has participated)
 - Key metrics: years in GSoC, competition level, first year, Good First Issues count
+- **Project Ideas Link** — direct link to organization's ideas page (with security-hardened URL validation)
+- Fallback message when no ideas link is available
 - One-click add to comparison
 
 ### ⚖️ Comparison Mode
@@ -111,13 +113,35 @@ No sign-up. No install. No build step. Just open and explore.
 
 ```
 gsoc-2026-org-finder/
-├── index.html        # The entire frontend — one self-contained file
+├── index.html                # Main frontend HTML
+├── app.js                    # Application logic & data
+├── styles.css                # Styling
+├── org.js                    # Organization data
+├── validate-ideas-urls.js    # URL validation script for org data
 ├── api/
-│   └── github.js     # Vercel Edge Function — GitHub API proxy with caching
+│   └── github.js             # Vercel Edge Function — GitHub API proxy
 └── README.md
 ```
 
 No `node_modules`. No build step. No bundler. Just deploy.
+
+---
+
+## 🔍 URL Validation
+
+The project includes a validation script to ensure all organization ideas URLs are safe and properly formatted:
+
+```bash
+node validate-ideas-urls.js
+```
+
+This script checks:
+- ✅ URL format validity
+- ✅ Protocol restrictions (http/https only)
+- ⚠️ Placeholder/generic URLs that need updating
+- 📊 Summary statistics and protocol distribution
+
+Run this before committing changes to `org.js` to catch invalid URLs early.
 
 ---
 
@@ -168,11 +192,18 @@ Each org entry looks like this:
   firstYear: 2021,          // first year they participated
   competition: "moderate",  // hot | moderate | chill
   github: "owner/repo",     // main repo (or just "owner" for umbrella orgs)
+  ideas: "https://github.com/org/repo/wiki/Ideas",  // project ideas page URL (optional)
   tags: ["python", "c++", "machine learning"],
   desc: "Short description of what the org does.",
   fit: ["Python devs", "ML researchers"]
 }
 ```
+
+**Ideas URL Requirements**:
+- Must use `http://` or `https://` protocol (or protocol will be added automatically)
+- Should link to the organization's specific project ideas page
+- Generic GSoC organization pages are acceptable as placeholders but should be updated when possible
+- Run `node validate-ideas-urls.js` to check all URLs before submitting
 
 **Competition levels** (subjective, based on org popularity + slot count):
 - `hot` — high applicant volume, very competitive (Django, LLVM, Git, KDE…)

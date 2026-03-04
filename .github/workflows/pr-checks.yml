@@ -1,0 +1,58 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  pr-title:
+    name: 📝 Validate PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title follows Conventional Commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            chore
+            revert
+            seo
+            ci
+          requireScope: false
+
+  pr-description:
+    name: 📋 Check PR Has Description
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR body is not empty
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body;
+            if (!body || body.trim().length === 0) {
+              core.setFailed('❌ PR description is empty. Please describe what this PR does.');
+            } else {
+              console.log('✅ PR description present.');
+            }
+
+  pr-size-label:
+    name: 🏷️ Auto-label PR by Size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PR size
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_max_size: 10
+          s_max_size:  50
+          m_max_size:  150
+          l_max_size:  500
+          fail_if_xl:  false

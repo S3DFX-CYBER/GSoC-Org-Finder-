@@ -453,6 +453,7 @@ function applyFilters(){
     if(chips.has('hot')&&o.competition!=='hot')return false;
     if(chips.has('chill')&&o.competition!=='chill')return false;
     if(chips.has('active')&&(!o._gh||o._gh.activity!=='active'))return false;
+    if(chips.has('bookmarked')&&!isBookmarked(o.name))return false;
     return true;
   });
 
@@ -517,6 +518,21 @@ function repoLinkLabel(o){
   return o.github;
 }
 
+function toggleBookmark(event, orgName) {
+  event.stopPropagation();
+  const saved = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  const idx = saved.indexOf(orgName);
+  if (idx === -1) saved.push(orgName);
+  else saved.splice(idx, 1);
+  localStorage.setItem('bookmarks', JSON.stringify(saved));
+  applyFilters();
+}
+
+function isBookmarked(orgName) {
+  const saved = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  return saved.includes(orgName);
+}
+
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
   if(!orgs.length){g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>No matches found</h3><p>Try removing some filters.</p></div>`;return}
@@ -548,6 +564,16 @@ function renderGrid(orgs){
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
+              <button onclick="toggleBookmark(event, '${o.name}')" class="bookmark-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
+                <path
+                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                  ${isBookmarked(o.name)
+                    ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
+                    : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
+                  }
+                />
+              </svg>
             </div>
           </div>
           ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${repoHref}">
@@ -649,7 +675,7 @@ function togglePill(el){
   if(el.classList.contains('active'))pills.add(l);else pills.delete(l);
   applyFilters();
 }
-const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca'};
+const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(chips.has(k)){chips.delete(k);el.className='chip'}

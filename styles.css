@@ -117,6 +117,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .chip.ch{border-color:var(--red);background:rgba(197,48,48,.06);color:var(--red)}
 .chip.cc{border-color:var(--green);background:rgba(0,135,90,.06);color:var(--green)}
 .chip.ca{border-color:var(--orange);background:var(--orange-pale);color:var(--orange)}
+.chip.cb{border-color:#0891B2;background:rgba(8,145,178,.06);color:#0891B2}
 .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
 .pill{padding:4px 11px;border-radius:100px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;font-weight:600}
 .pill:hover{border-color:var(--orange);color:var(--orange)}
@@ -193,6 +194,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .card-repo-link:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
 .card-repo-link svg{width:10px;height:10px;flex-shrink:0}
 .gh-mini{display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);flex-wrap:wrap}
+.bookmark-btn {background: none;border: none;cursor: pointer;padding: 0;}
 
 /* ── ISSUES PAGE ── */
 .page{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;transition:background .3s}

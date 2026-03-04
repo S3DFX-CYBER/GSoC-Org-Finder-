@@ -419,6 +419,16 @@ function showCompareToast(msg){
 // ══════════════════════════════════════════════
 // FILTER & RENDER
 // ══════════════════════════════════════════════
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const debouncedFilter = debounce(applyFilters, 280);
+
 function applyFilters(){
   const search=document.getElementById('searchInput').value.trim().toLowerCase();
   const cat=document.getElementById('catFilter').value;

@@ -163,7 +163,7 @@
       <div class="search-box">
         <label>Search</label>
         <span class="search-ico">⌕</span>
-        <input class="search-input" type="text" id="searchInput" placeholder="Name, tech, topic..." oninput="applyFilters()">
+        <input class="search-input" type="text" id="searchInput" placeholder="Name, tech, topic..." oninput="debouncedFilter()">
       </div>
       <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
     </div>

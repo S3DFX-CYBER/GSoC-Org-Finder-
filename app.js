@@ -518,9 +518,22 @@ function repoLinkLabel(o){
   return o.github;
 }
 
-function toggleBookmark(event, orgName) {
+function getBookmarks() {
+  const raw = localStorage.getItem('bookmarks');
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function toggleBookmark(event, orgIdx) {
   event.stopPropagation();
-  const saved = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  const orgName = ORGS[orgIdx]?.name;
+  if (!orgName) return;
+  const saved = getBookmarks();
   const idx = saved.indexOf(orgName);
   if (idx === -1) saved.push(orgName);
   else saved.splice(idx, 1);
@@ -529,7 +542,7 @@ function toggleBookmark(event, orgName) {
 }
 
 function isBookmarked(orgName) {
-  const saved = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+  const saved = getBookmarks();
   return saved.includes(orgName);
 }
 
@@ -564,16 +577,17 @@ function renderGrid(orgs){
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-              <button onclick="toggleBookmark(event, '${o.name}')" class="bookmark-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
-                <path
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                  ${isBookmarked(o.name)
-                    ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
-                    : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
-                  }
-                />
-              </svg>
+              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
+                  <path
+                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                    ${isBookmarked(o.name)
+                      ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
+                      : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
+                    }
+                  />
+                </svg>
+              </button>
             </div>
           </div>
           ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${repoHref}">

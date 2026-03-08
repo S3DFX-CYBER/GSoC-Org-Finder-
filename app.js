@@ -670,6 +670,9 @@ document.addEventListener('keydown',e=>{
   } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
     e.preventDefault();
     toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+  } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
   }
 });
 

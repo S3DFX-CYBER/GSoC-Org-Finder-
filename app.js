@@ -418,7 +418,22 @@ function showCompareToast(msg){
 
 function showSkeletons(count = 12) {
   const grid = document.getElementById('orgGrid');
-  grid.innerHTML = Array(count).fill('<div class="skeleton-card"></div>').join('');
+  const card = `<div class="skeleton-card">
+    <div class="skeleton-head">
+      <div class="skeleton-logo"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line skeleton-title"></div>
+        <div class="skeleton-line skeleton-subtitle"></div>
+      </div>
+    </div>
+    <div class="skeleton-body"></div>
+    <div class="skeleton-tags">
+      <div class="skeleton-pill"></div>
+      <div class="skeleton-pill"></div>
+      <div class="skeleton-pill"></div>
+    </div>
+  </div>`;
+  grid.innerHTML = Array(count).fill(card).join('');
 }
 
 // ══════════════════════════════════════════════

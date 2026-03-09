@@ -127,7 +127,7 @@
     <div class="filter-label">⚡ Filter Organizations</div>
     <div class="filters-row">
       <div class="fg"><label>Domain</label>
-        <select id="catFilter" onchange="applyFilters()">
+        <select id="catFilter" onchange="applyFilters()" aria-label="Filter by domain">
           <option value="">All Categories</option>
           <option value="science">Science & Medicine</option>
           <option value="programming">Programming Languages</option>
@@ -143,7 +143,7 @@
         </select>
       </div>
       <div class="fg"><label>Language</label>
-        <select id="langFilter" onchange="applyFilters()">
+        <select id="langFilter" onchange="applyFilters()" aria-label="Filter by programming language">
           <option value="">All Languages</option>
           <option value="python">Python</option>
           <option value="javascript">JavaScript / TS</option>
@@ -161,7 +161,7 @@
         </select>
       </div>
       <div class="fg"><label>GSoC History</label>
-        <select id="yearsFilter" onchange="applyFilters()">
+        <select id="yearsFilter" onchange="applyFilters()" aria-label="Filter by GSoC history">
           <option value="">All Experience</option>
           <option value="veteran">🏆 Veterans (8+y)</option>
           <option value="experienced">⭐ Experienced (4-7y)</option>
@@ -169,7 +169,7 @@
         </select>
       </div>
       <div class="fg"><label>Competition</label>
-        <select id="compFilter" onchange="applyFilters()">
+        <select id="compFilter" onchange="applyFilters()" aria-label="Filter by competition level">
           <option value="">All Levels</option>
           <option value="chill">😎 Low</option>
           <option value="moderate">🟡 Moderate</option>
@@ -179,7 +179,8 @@
       <div class="search-box">
         <label>Search</label>
         <span class="search-ico">⌕</span>
-        <input class="search-input" type="text" id="searchInput" placeholder="Name, tech, topic..." oninput="debouncedFilter()">
+        <input class="search-input" type="text" id="searchInput" placeholder="Name, tech, topic..." oninput="debouncedFilter()" 
+          aria-label="Search organizations by name, tech or topic">
       </div>
       <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
     </div>
@@ -240,8 +241,8 @@
   </div>
 
   <div class="results-bar">
-    <div class="result-count">Showing <strong id="countDisplay">185</strong> of 185 organizations</div>
-    <div class="sort-row">Sort: <select id="sortSelect" onchange="applyFilters()">
+    <div class="result-count" aria-live="polite">Showing <strong id="countDisplay">185</strong> of 185 organizations</div>
+    <div class="sort-row">Sort: <select id="sortSelect" onchange="applyFilters()" aria-label="Sort organizations">
       <option value="alpha">A → Z</option>
       <option value="years-desc">Most Experienced</option>
       <option value="years-asc">Newcomers First</option>
@@ -337,7 +338,7 @@
       <p>Good First Issues from all GSoC 2026 orgs — curated for students new to open source.</p>
       <div class="issues-controls">
         <input class="issues-search" type="text" id="issueSearch" placeholder="Search issues…" oninput="filterIssues()">
-        <select id="issueCatFilter" onchange="filterIssues()">
+        <select id="issueCatFilter" onchange="filterIssues()" aria-label="Filter issues by category">
           <option value="">All Categories</option>
           <option value="science">Science</option>
           <option value="programming">Programming</option>
@@ -348,7 +349,7 @@
           <option value="infra">Infrastructure</option>
           <option value="other">Other</option>
         </select>
-        <select id="issueLangFilter" onchange="filterIssues()">
+        <select id="issueLangFilter" onchange="filterIssues()" aria-label="Filter issues by programming language">
           <option value="">All Languages</option>
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>

@@ -416,6 +416,11 @@ function showCompareToast(msg){
   setTimeout(()=>t.style.opacity='0',2200);
 }
 
+function showSkeletons(count = 12) {
+  const grid = document.getElementById('orgGrid');
+  grid.innerHTML = Array(count).fill('<div class="skeleton-card"></div>').join('');
+}
+
 // ══════════════════════════════════════════════
 // FILTER & RENDER
 // ══════════════════════════════════════════════
@@ -464,6 +469,7 @@ function applyFilters(){
   else if(sort==='stars')res.sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0));
   else if(sort==='gfi')res.sort((a,b)=>(b._gh?.gfi||0)-(a._gh?.gfi||0));
 
+  showSkeletons();
   filteredOrgs=res;
   focusedIdx=-1;
   renderGrid(res);
@@ -979,6 +985,7 @@ function showMoreIssues(){
 }
 
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
+showSkeletons();
 updateStats();
 applyFilters();
 renderTrending();

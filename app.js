@@ -585,8 +585,9 @@ function renderGrid(orgs){
     const logo=orgLogo(o);
     const repoHref=repoUrl(o);
     // shortRepo now handled by repoLinkLabel()
-    return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}" 
-      
+    return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
+      role="article"
+      aria-label="Organization: ${o.name}"
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">

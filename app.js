@@ -485,7 +485,6 @@ function applyFilters(){
   else if(sort==='stars')res.sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0));
   else if(sort==='gfi')res.sort((a,b)=>(b._gh?.gfi||0)-(a._gh?.gfi||0));
 
-  showSkeletons();
   filteredOrgs=res;
   focusedIdx=-1;
   renderGrid(res);
@@ -1004,9 +1003,11 @@ function showMoreIssues(){
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
 showSkeletons();
 updateStats();
-applyFilters();
-renderTrending();
-checkAPI();
+requestAnimationFrame(()=>{
+  applyFilters();
+  renderTrending();
+  checkAPI();
+});
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 const syncScrollTopBtn = () => {

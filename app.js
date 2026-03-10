@@ -1004,9 +1004,11 @@ ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
 showSkeletons();
 updateStats();
 requestAnimationFrame(()=>{
+   setTimeout(()=>{
   applyFilters();
   renderTrending();
   checkAPI();
+   }, 3000)
 });
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');

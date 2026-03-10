@@ -400,17 +400,18 @@ footer a:hover{text-decoration:underline}
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
 
 /* ── SKELETON CARDS ── */
-.skeleton-card{background: var(--card-bg);border-radius:12px;padding:20px;height:220px;animation:shimmer 1.5s infinite linear;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;}
+.skeleton-card{background:var(--card-bg);border-radius:12px;padding:20px;height:220px;}
 .skeleton-head{display:flex;gap:12px;margin-bottom:16px;}
-.skeleton-logo{width:48px;height:48px;border-radius:10px;background:var(--skeleton-base);flex-shrink:0;}
+.skeleton-logo{width:48px;height:48px;border-radius:10px;flex-shrink:0;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
 .skeleton-lines{flex:1;display:flex;flex-direction:column;gap:8px;}
-.skeleton-line{height:12px;border-radius:4px;background:var(--skeleton-base);}
+.skeleton-line{height:12px;border-radius:4px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
 .skeleton-title{width:70%;}
 .skeleton-subtitle{width:50%;}
-.skeleton-body{height:40px;border-radius:6px;background:var(--skeleton-base);margin-bottom:12px;}
+.skeleton-body{height:40px;border-radius:6px;margin-bottom:12px;}
 .skeleton-tags{display:flex;gap:8px;}
-.skeleton-pill{width:60px;height:20px;border-radius:100px;background:var(--skeleton-base);}
+.skeleton-pill{width:60px;height:20px;border-radius:100px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+@media(prefers-reduced-motion:reduce){.skeleton-logo,.skeleton-line,.skeleton-pill{animation:none}}
 
 /* ── TABLET ── */
 @media(max-width:900px){

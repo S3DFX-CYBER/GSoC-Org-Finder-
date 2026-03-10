@@ -9,6 +9,7 @@
   --shadow-lg:0 12px 40px rgba(28,16,8,.13);
   --card-bg:#FFFFFF;--nav-bg:rgba(250,250,250,.93);--toggle-bg:#EAD8C8;--toggle-knob:#FFFFFF;
   --input-bg:#FAFAFA;--tag-bg:#FAFAFA;--modal-bg:#FFFFFF;--an-bg:#FAFAFA;
+  --skeleton-base:#e8e8e8;--skeleton-shine:#f4f4f4;
 }
 [data-theme="dark"]{
   --bg:#0F0A05;--white:#1A1108;
@@ -20,6 +21,7 @@
   --shadow-lg:0 12px 40px rgba(0,0,0,.5);
   --card-bg:#1A1108;--nav-bg:rgba(15,10,5,.93);--toggle-bg:#2E1E0A;--toggle-knob:#F97316;
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
+  --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
@@ -396,6 +398,20 @@ footer{border-top:1.5px solid var(--border);padding:24px;text-align:center;trans
 footer a{color:var(--orange);text-decoration:none;font-weight:600}
 footer a:hover{text-decoration:underline}
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
+
+/* ── SKELETON CARDS ── */
+.skeleton-card{background:var(--card-bg);border-radius:12px;padding:20px;height:220px;}
+.skeleton-head{display:flex;gap:12px;margin-bottom:16px;}
+.skeleton-logo{width:48px;height:48px;border-radius:10px;flex-shrink:0;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
+.skeleton-lines{flex:1;display:flex;flex-direction:column;gap:8px;}
+.skeleton-line{height:12px;border-radius:4px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
+.skeleton-title{width:70%;}
+.skeleton-subtitle{width:50%;}
+.skeleton-body{height:40px;border-radius:6px;margin-bottom:12px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
+.skeleton-tags{display:flex;gap:8px;}
+.skeleton-pill{width:60px;height:20px;border-radius:100px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+@media(prefers-reduced-motion:reduce){.skeleton-logo,.skeleton-line,.skeleton-body,.skeleton-pill{animation:none}}
 
 /* ── TABLET ── */
 @media(max-width:900px){

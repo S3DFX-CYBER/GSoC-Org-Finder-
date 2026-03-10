@@ -416,6 +416,28 @@ function showCompareToast(msg){
   setTimeout(()=>t.style.opacity='0',2200);
 }
 
+function showSkeletons(count = 12) {
+  const grid = document.getElementById('orgGrid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({ length: count }, () => `
+    <div class="skeleton-card" aria-hidden="true">
+      <div class="skeleton-head">
+        <div class="skeleton-logo"></div>
+        <div class="skeleton-lines">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-subtitle"></div>
+        </div>
+      </div>
+      <div class="skeleton-line skeleton-body"></div>
+      <div class="skeleton-tags">
+        <div class="skeleton-pill"></div>
+        <div class="skeleton-pill"></div>
+        <div class="skeleton-pill"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ══════════════════════════════════════════════
 // FILTER & RENDER
 // ══════════════════════════════════════════════
@@ -980,10 +1002,13 @@ function showMoreIssues(){
 }
 
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
+showSkeletons();
 updateStats();
-applyFilters();
-renderTrending();
-checkAPI();
+requestAnimationFrame(()=>{
+  applyFilters();
+  renderTrending();
+  checkAPI();
+});
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 const syncScrollTopBtn = () => {

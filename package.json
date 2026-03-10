@@ -1,0 +1,18 @@
+{
+    "name": "gsoc-org-finder",
+    "version": "1.0.0",
+    "description": "GSoC 2026 Organisation Finder",
+    "private": true,
+    "scripts": {
+        "lint:js": "eslint app.js org.js validate-ideas-urls.js api/github.js",
+        "lint:css": "stylelint styles.css",
+        "lint:html": "htmlhint index.html",
+        "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
+    },
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "stylelint": "^16.3.1",
+        "stylelint-config-standard": "^36.0.1",
+        "htmlhint": "^1.1.4"
+    }
+}

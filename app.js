@@ -418,6 +418,7 @@ function showCompareToast(msg){
 
 function showSkeletons(count = 12) {
   const grid = document.getElementById('orgGrid');
+  if (!grid) return;
   grid.innerHTML = Array.from({ length: count }, () => `
     <div class="skeleton-card" aria-hidden="true">
       <div class="skeleton-head">
@@ -1004,11 +1005,9 @@ ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
 showSkeletons();
 updateStats();
 requestAnimationFrame(()=>{
-   setTimeout(()=>{
   applyFilters();
   renderTrending();
   checkAPI();
-   }, 3000)
 });
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');

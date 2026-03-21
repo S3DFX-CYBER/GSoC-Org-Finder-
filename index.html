@@ -6,9 +6,16 @@
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied'
+  });
   gtag('js', new Date());
-
-  gtag('config', 'G-R0W4T9FS5D');
+  // Call this only after user consent is granted:
+  // gtag('consent', 'update', { analytics_storage: 'granted' });
+  // gtag('config', 'G-R0W4T9FS5D');
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">

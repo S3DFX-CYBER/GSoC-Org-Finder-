@@ -284,6 +284,11 @@
     </div>
   </div>
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid"></div>
+  <div class="mt-8 flex justify-center">
+    <button id="exploreOrgsBtn" class="px-5 py-2.5 rounded-xl bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+      Explore all organizations
+    </button>
+  </div>
 </section>
 
 <section id="watchlist" class="bg-surface-container-low py-20 px-6">
@@ -357,12 +362,27 @@
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${org.desc}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`).join('')}</div>
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
-          <button onclick="openModal('${org.name}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+          <button onclick="openModal('${org.name.replace(/'/g, "\\'")}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1">Explore Org <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
           <span class="text-xs text-zinc-500">${org.competition}</span>
         </div>
       </article>`;
     }).join('');
     document.getElementById('orgCount').textContent=filteredOrgs.length;
+    updateExploreButton();
+  }
+  function updateExploreButton(){
+    const btn=document.getElementById('exploreOrgsBtn');
+    if(!btn)return;
+    const hidden=Math.max(0, filteredOrgs.length-visibleCount);
+    if(hidden<=0){
+      btn.textContent='All organizations loaded';
+      btn.disabled=true;
+      btn.classList.add('opacity-60','cursor-not-allowed');
+      return;
+    }
+    btn.disabled=false;
+    btn.classList.remove('opacity-60','cursor-not-allowed');
+    btn.textContent=`Explore all organizations (${hidden} more)`;
   }
   function renderWatchlist(){
     const container=document.getElementById('watchlistContainer');
@@ -622,6 +642,10 @@
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('exploreOrgsBtn')?.addEventListener('click', ()=>{
+    visibleCount = filteredOrgs.length;
+    renderOrgs();
+  });
   document.getElementById('issueSearch')?.addEventListener('input', filterIssues);
   document.getElementById('issueCatFilter')?.addEventListener('change', filterIssues);
   document.getElementById('issueLangFilter')?.addEventListener('change', filterIssues);

@@ -522,6 +522,38 @@
       },1000);
     }
   }
+  function openModal(orgName){
+    const org = ORGS.find(o=>o.name===orgName);
+    if(!org)return;
+    document.getElementById('mHeader').innerHTML = `
+      <span class="category-tag">${(org.cat||'other').toUpperCase()}</span>
+      <h2>${org.name}</h2>
+      <p>${org.desc || 'No description available.'}</p>
+    `;
+    document.getElementById('mDesc').textContent = org.desc || 'No description available.';
+    document.getElementById('mMetrics').innerHTML = `
+      <div class="metric-card"><div class="metric-value">${org.years || 0}y</div><div class="metric-label">GSoC Years</div></div>
+      <div class="metric-card"><div class="metric-value">${org.firstYear || '—'}</div><div class="metric-label">First Year</div></div>
+      <div class="metric-card"><div class="metric-value">${org.competition || 'n/a'}</div><div class="metric-label">Competition</div></div>
+      <div class="metric-card"><div class="metric-value">${org.codebase || 'n/a'}</div><div class="metric-label">Complexity</div></div>
+    `;
+    document.getElementById('mTech').innerHTML = (org.tags||[]).map(tag=>`<span class="tech-tag">${tag}</span>`).join('');
+    document.getElementById('mFit').innerHTML = (org.fit||[]).map(item=>`<span class="fit-tag">${item}</span>`).join('');
+    const years = Array.from({length: org.years || 0}, (_,i)=>(org.firstYear||2026)+i);
+    document.getElementById('mTimeline').innerHTML = years.length
+      ? years.map(y=>`<span class="${y===2026?'current-year':''}">${y}</span>`).join('')
+      : '<span>Timeline unavailable</span>';
+    const ideasUrl = org.ideas?.startsWith('http') ? org.ideas : '#';
+    const repoUrl = org.github ? `https://github.com/${org.github}` : '#';
+    document.getElementById('mIdeasBtn').href = ideasUrl;
+    document.getElementById('mRepoBtn').href = repoUrl;
+    document.getElementById('mStars').textContent = '---';
+    document.getElementById('mForks').textContent = '---';
+    document.getElementById('mIssues').textContent = '---';
+    document.getElementById('mActivity').textContent = 'Moderate';
+    document.getElementById('orgModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
   function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.style.overflow = 'auto';
@@ -593,6 +625,9 @@
   document.getElementById('issueSearch')?.addEventListener('input', filterIssues);
   document.getElementById('issueCatFilter')?.addEventListener('change', filterIssues);
   document.getElementById('issueLangFilter')?.addEventListener('change', filterIssues);
+  document.getElementById('orgModal')?.addEventListener('click', (e)=>{
+    if(e.target.id==='orgModal')closeModal();
+  });
   updateCountdown();
   setInterval(updateCountdown, 60000);
   fillOrgFilters();

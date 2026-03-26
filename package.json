@@ -6,7 +6,7 @@
     "scripts": {
         "lint:js": "eslint app.js org.js validate-ideas-urls.js api/github.js",
         "lint:css": "stylelint styles.css",
-        "lint:html": "htmlhint index.html",
+        "lint:html": "htmlhint --config .htmlhintrc index.html",
         "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
     },
     "devDependencies": {

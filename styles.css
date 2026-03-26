@@ -581,3 +581,19 @@ footer a:hover{text-decoration:underline}
   align-items: center;
   justify-content: center;
 }
+
+.timeline-section { margin: 8px 0 20px; }
+.timeline-list { display: grid; gap: 10px; }
+.timeline-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+}
+.timeline-item.active { border-color: rgba(244, 107, 14, 0.45); background: rgba(244, 107, 14, 0.08); }
+.tl-date { font-weight: 700; color: var(--ink); min-width: 150px; }
+.tl-event { color: var(--muted); }

@@ -1,3 +1,5 @@
+/* global ORGS */
+
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
@@ -55,7 +57,13 @@ const cdTimer=setInterval(updateCountdown,1000);
 // ══════════════════════════════════════════════
 const AN={
   g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d}catch{return d}},
-  s(k,v){try{localStorage.setItem('gaf_'+k,JSON.stringify(v))}catch{}},
+  s(k,v){
+    try{
+      localStorage.setItem('gaf_'+k,JSON.stringify(v));
+    }catch(err){
+      console.warn('Analytics storage write failed for key:',k,err);
+    }
+  },
   inc(k){this.s(k,(this.g(k,0)+1))},
   push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max))},
   today(){return new Date().toISOString().slice(0,10)},
@@ -219,12 +227,12 @@ async function fetchGFI(repo){
   if(!repo)return null;
   const cacheKey=repo+'__gfi';
   const hit=cache[cacheKey];
-  if(hit&&Date.now()-hit.ts<3600000&&hit.count!=null)return hit.count;
+  if(hit&&Date.now()-hit.ts<3600000&&hit.count!==null&&hit.count!==undefined)return hit.count;
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
     if(!r.ok)return null;
     const d=await r.json();
-    if(d.gfi==null)return null;
+    if(d.gfi===null||d.gfi===undefined)return null;
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
     localStorage.setItem('gaf_ghc',JSON.stringify(cache));
     return d.gfi;
@@ -376,7 +384,7 @@ function renderCompareTable(){
     {label:'Forks',       vals:arr.map(o=>o._gh?fmt(o._gh.forks):'—'), scores:arr.map(o=>o._gh?.forks||0), type:'scored', best:'high'},
     {label:'Open Issues', vals:arr.map(o=>o._gh?fmt(o._gh.issues):'—'), scores:arr.map(o=>o._gh?.issues||0), type:'scored', best:'low'},
     {label:'Last Commit', vals:arr.map(o=>o._gh?o._gh.lastCommit:'—'), type:'text'},
-    {label:'Good 1st Issues', vals:arr.map(o=>o._gh?.gfi!=null?fmt(o._gh.gfi):'—'), scores:arr.map(o=>o._gh?.gfi||0), type:'scored', best:'high'},
+    {label:'Good 1st Issues', vals:arr.map(o=>o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—'), scores:arr.map(o=>o._gh?.gfi||0), type:'scored', best:'high'},
     {label:'Languages',   vals:arr.map(o=>o.tags.slice(0,3).join(', ')), type:'text'},
   ];
 
@@ -568,6 +576,11 @@ function isBookmarked(orgName) {
   return saved.includes(orgName);
 }
 
+function renderGfiBadge(gh){
+  if(gh?.gfi===null||gh?.gfi===undefined)return '';
+  return `<span class="gh-s">🟢 <b>${fmt(gh.gfi)} GFI</b></span>`;
+}
+
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
   if(!orgs.length){g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>No matches found</h3><p>Try removing some filters.</p></div>`;return}
@@ -577,7 +590,7 @@ function renderGrid(orgs){
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
-      ${o._gh.gfi!=null?`<span class="gh-s">🟢 <b>${fmt(o._gh.gfi)} GFI</b></span>`:''}
+      ${renderGfiBadge(o._gh)}
       <span class="gh-s">🕐 <b>${o._gh.lastCommit}</b></span>
     </div>`:'';
     const globalIdx=ORGS.indexOf(o);
@@ -613,7 +626,7 @@ function renderGrid(orgs){
               </button>
             </div>
           </div>
-          ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${repoHref}">
+          ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${repoHref}">
             ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
@@ -745,13 +758,13 @@ function openModal(idx){
     <div class="ml">GSoC Years</div><div class="prog"><div class="prog-fill" style="width:${Math.min(o.years/11*100,100)}%;background:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}"></div></div></div>
     <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎'}</div><div class="ml">${cLbl(o.competition)}</div></div>
     <div class="mc"><div class="mv" style="color:var(--orange)">${o.firstYear}</div><div class="ml">First Year</div></div>
-    <div class="mc"><div class="mv" style="color:var(--green)">${o._gh?.gfi!=null?fmt(o._gh.gfi):'—'}</div><div class="ml">Good 1st Issues</div></div>`;
+    <div class="mc"><div class="mv" style="color:var(--green)">${o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—'}</div><div class="ml">Good 1st Issues</div></div>`;
   const gh=o._gh;
   document.getElementById('ghStars').textContent=gh?fmt(gh.stars):'—';
   document.getElementById('ghForks').textContent=gh?fmt(gh.forks):'—';
   document.getElementById('ghIssues').textContent=gh?fmt(gh.issues):'—';
   document.getElementById('ghCommit').textContent=gh?gh.lastCommit:'—';
-  document.getElementById('ghGFI').textContent=gh?.gfi!=null?fmt(gh.gfi):'—';
+  document.getElementById('ghGFI').textContent=gh?.gfi!==null&&gh?.gfi!==undefined?fmt(gh.gfi):'—';
   document.getElementById('mFetchBtn').textContent=gh?'↻ Refresh':'Fetch Live Data';
   document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${t}</span>`).join('');
   document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${f}</span>`).join('');
@@ -793,7 +806,7 @@ function openModal(idx){
   document.getElementById('modalBg').classList.add('open');
   document.body.style.overflow='hidden';
   // Fetch GFI lazily on modal open
-  if(o.github&&(!o._gh||o._gh.gfi==null)){
+  if(o.github&&(o._gh?.gfi===null||o._gh?.gfi===undefined)){
     document.getElementById('ghGFI').textContent='…';
     fetchGFI(o.github).then(gfi=>{
       if(gfi!==null){
@@ -825,14 +838,59 @@ let filteredIssues=[];
 let shownIssues=0;
 const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
+let issuesBootstrapped=false;
 
 function openIssuesPage(){
   document.getElementById('issuesPage').classList.add('open');
   document.body.style.overflow='hidden';
+  if(!issuesBootstrapped){
+    issuesBootstrapped=true;
+    void loadPrefetchedIssues();
+  }
 }
 function closeIssuesPage(){
   document.getElementById('issuesPage').classList.remove('open');
   document.body.style.overflow='';
+}
+
+async function loadPrefetchedIssues(){
+  try{
+    const r=await fetch('data/issues.json',{cache:'no-store'});
+    if(!r.ok){
+      await fetchAllIssues();
+      return;
+    }
+    const data=await r.json();
+    if(!Array.isArray(data.issues)||!data.issues.length){
+      await fetchAllIssues();
+      return;
+    }
+    const mapped=data.issues.map((iss)=>{
+      const orgObj=ORGS.find((o)=>o.name===iss.orgName)||ORGS.find((o)=>o.github===iss.repo)||ORGS.find((o)=>o.github?.startsWith((iss.org||'')+'/'));
+      const owner=(iss.repo||'').split('/')[0]||iss.org;
+      return {
+        title:iss.title,
+        url:iss.url,
+        org:(orgObj?.name)||iss.orgName||owner,
+        orgCat:iss.orgCat||orgObj?.cat||'other',
+        orgTags:iss.orgTags||orgObj?.tags||[],
+        logo:`https://github.com/${owner}.png?size=64`,
+        repo:iss.repo||orgObj?.github||owner,
+        created_at:iss.created_at,
+        labels:iss.labels||[],
+        comments:iss.comments||0,
+        competition:iss.competition||orgObj?.competition||'moderate',
+        codebase:iss.codebase||orgObj?.codebase||'intermediate',
+        years:iss.years||orgObj?.years||0
+      };
+    });
+    allIssues=mapped;
+    allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    filterIssues();
+  }catch(err){
+    console.warn('Failed loading prefetched issues:',err);
+    await fetchAllIssues();
+  }
 }
 
 async function fetchAllIssues(){
@@ -881,16 +939,21 @@ async function fetchAllIssues(){
               created_at:issue.created_at,
               labels:labelNames,
               comments:issue.comments||0,
+              competition:o.competition,
+              codebase:o.codebase,
+              years:o.years
             });
           });
           found+=data.items.length;
         }
         const gfiCount=data.total??data.gfi;
-        if(gfiCount!=null){
+        if(gfiCount!==null&&gfiCount!==undefined){
           if(!o._gh)o._gh={};
           o._gh.gfi=gfiCount;
         }
-      }catch(e){}
+      }catch(err){
+        console.warn('Failed fetching GFI issues for org:',o.github,err);
+      }
       done++;
     }));
     // Update progress UI
@@ -972,10 +1035,13 @@ function renderIssues(){
 
 function renderIssueCard(iss){
   const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
+  const level=`<span class="issue-label" style="background:rgba(2,132,199,.08);color:#0369a1;border:1px solid rgba(2,132,199,.25)">${iss.codebase||'intermediate'}</span>`;
+  const comp=`<span class="issue-label" style="background:rgba(245,158,11,.08);color:#92400e;border:1px solid rgba(245,158,11,.25)">${cLbl(iss.competition||'moderate')}</span>`;
+  const years=`<span class="issue-label" style="background:rgba(107,114,128,.08);color:#374151;border:1px solid rgba(107,114,128,.25)">${iss.years||0}y</span>`;
   const gfiNames=['good first issue','good-first-issue'];
   const otherLabels=iss.labels.filter(l=>!gfiNames.includes(l.toLowerCase())).slice(0,2)
     .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
-  return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener">
+  return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener noreferrer">
     <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
     <div class="issue-body">
       <div class="issue-top">
@@ -985,7 +1051,7 @@ function renderIssueCard(iss){
       </div>
       <div class="issue-title">${iss.title}</div>
       <div class="issue-meta">
-        ${langTags}${otherLabels}
+        ${langTags}${level}${comp}${years}${otherLabels}
         <span class="issue-date">${relativeTime(iss.created_at)}</span>
       </div>
     </div>

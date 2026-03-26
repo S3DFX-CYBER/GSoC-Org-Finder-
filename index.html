@@ -414,18 +414,33 @@
     renderOrgs();
   }
   function renderCompare(){}
-  async function fetchLiveGoodFirstIssues(maxRepos = 24){
+  async function fetchProxyIssuesForRepo(repo){
+    const res = await fetch(`/api/github?repo=${encodeURIComponent(repo)}&gfi=1&issues=1`);
+    if(!res.ok)return [];
+    const data = await res.json();
+    return data.items || [];
+  }
+  async function fetchGithubIssuesForRepo(repo){
+    const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+    const res = await fetch(`https://api.github.com/search/issues?q=${q}&per_page=5&sort=created&order=desc`);
+    if(!res.ok)return [];
+    const data = await res.json();
+    return data.items || [];
+  }
+  async function fetchLiveGoodFirstIssues(maxRepos = 80){
     const results = [];
     const repos = ORGS.map(org=>org.github).filter(Boolean).slice(0, maxRepos);
     for(const repo of repos){
       try{
-        const res = await fetch(`/api/github?repo=${encodeURIComponent(repo)}&gfi=1&issues=1`);
-        const data = await res.json();
+        let items = await fetchProxyIssuesForRepo(repo);
+        if(!items.length){
+          items = await fetchGithubIssuesForRepo(repo);
+        }
         const org = ORGS.find(o=>o.github===repo);
-        (data.items||[]).forEach(item=>{
+        (items||[]).forEach(item=>{
           results.push({
             title: item.title,
-            url: item.html_url,
+            url: item.html_url || item.url,
             repo,
             orgName: org?.name || repo.split('/')[0],
             orgTags: org?.tags || [],
@@ -448,6 +463,12 @@
     window.__issuesData = issues;
     meta.textContent = `${issues.length} issues loaded${sourceLabel ? ` (${sourceLabel})` : ''}`;
     container.innerHTML = '';
+    if(!issues.length){
+      container.innerHTML = `<div class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-sm text-zinc-600">
+        No Good First Issues found right now. Try <strong>Refresh Issues</strong> again in a minute.
+      </div>`;
+      return;
+    }
     issues.slice(0, 24).forEach(issue => {
       const card = document.createElement('div');
       card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';

@@ -26,5 +26,27 @@
             "warn",
             "always"
         ]
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "api/*.js"
+            ],
+            "parserOptions": {
+                "sourceType": "module"
+            },
+            "env": {
+                "node": true
+            }
+        },
+        {
+            "files": [
+                "validate-ideas-urls.js"
+            ],
+            "env": {
+                "node": true,
+                "browser": false
+            }
+        }
+    ]
 }

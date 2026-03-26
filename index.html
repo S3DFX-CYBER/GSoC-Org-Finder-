@@ -1,396 +1,664 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Find your perfect GSoC 2026 organization — filter by language, category, competition level and more.">
-<title>GSoC 2026 — Org Finder</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%94%8D%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>FindMyGSoC — GSoC 2026 Org Finder</title>
+  <meta name="description" content="Find your perfect GSoC 2026 organization. Filter by language, category, competition level, and live GitHub activity. Land your summer internship." />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
+            "surface-container":"#eeeeee","primary-container":"#f97316",
+            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
+            "on-background":"#1a1c1c","on-primary":"#ffffff",
+            "on-surface":"#1a1c1c","error":"#ba1a1a",
+            "primary":"#9d4300","on-surface-variant":"#584237",
+            "outline":"#8c7164","surface-container-lowest":"#ffffff",
+            "secondary":"#006c47","secondary-container":"#8af5be",
+            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
+            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
+            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
+            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
+            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
+            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
+            "on-primary-container":"#582200","surface-tint":"#9d4300",
+          },
+          fontFamily: {
+            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
+            "label":["Space Grotesk"],"mono":["Fira Code"]
+          },
+          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+    .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+    .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeUp .6s ease-out both}
+    @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
+    .pulse-dot{animation:pulse-dot 2s infinite}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
+    .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+    /* Modal Styles */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .modal-bg.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: white;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      border-radius: 2rem;
+      position: relative;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-bg.open .modal {
+      transform: scale(1);
+    }
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 99px;
+      background: #f3f3f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+    .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
+    
+    .modal-header { padding: 3rem 3rem 1.5rem; }
+    .category-tag {
+      background: rgba(157, 67, 0, 0.1);
+      color: #9d4300;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.3rem 0.8rem;
+      border-radius: 99px;
+      letter-spacing: 0.1em;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
+    .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
 
-<!-- SEO Description -->
+    .modal-body { padding: 0 3rem 3rem; }
+    .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
+    
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
+    .metric-card { background: #f9f9f9; padding: 1.2rem; border-radius: 1.2rem; border: 1px solid #eee; text-align: center; }
+    .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
+    .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
 
-<!-- Open Graph -->
-<meta property="og:title" content="GSoC 2026 — Org Finder">
-<meta property="og:description" content="Find your perfect GSoC 2026 organization. Filter by language, category, competition level and more.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://findmygsoc.vercel.app">
-<meta property="og:image" content="https://findmygsoc.vercel.app/og-image.png">
+    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; }
+    .gh-fetch { position: absolute; top: 1rem; right: 1rem; background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .gh-fetch:hover { background: #444; color: #fff; }
+    .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="GSoC 2026 — Org Finder">
-<meta name="twitter:description" content="Find your perfect GSoC 2026 organization.">
-<meta name="twitter:image" content="https://findmygsoc.vercel.app/og-image.png">
+    .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+    .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
+
+    .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
+    .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+
+    .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; }
+    .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
+    .modal-ideas-link { background: #9d4300; color: white; }
+    .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
+    .modal-repo-link { background: white; color: #1a1c1c; border: 1px solid #ddd; }
+    .modal-repo-link:hover { background: #f0f0f0; }
+
+    /* Custom Scrollbar for Modal */
+    .modal::-webkit-scrollbar { width: 6px; }
+    .modal::-webkit-scrollbar-track { background: transparent; }
+    .modal::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    .modal::-webkit-scrollbar-thumb:hover { background: #ccc; }
+
+    /* Complexity Badges */
+    .complexity-badge { font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 99px; text-transform: uppercase; }
+    .complexity-badge.beginner { background: #dcfce7; color: #166534; }
+    .complexity-badge.intermediate { background: #fef9c3; color: #854d0e; }
+    .complexity-badge.advanced { background: #fee2e2; color: #991b1b; }
+
+    /* Bookmark Button */
+    .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
+    .bookmark-btn.active { color: #f59e0b; }
+    .bookmark-btn:hover { transform: scale(1.2); }
+  </style>
 </head>
-<body>
+<body class="bg-background text-on-surface font-body antialiased">
 
-<!-- ── COUNTDOWN BANNER ── -->
-<div class="countdown-banner" id="countdownBanner">
-  <span class="countdown-label">📅 GSoC 2026 Applications Open In</span>
-  <div class="countdown-units" id="countdownUnits">
-    <div class="cu"><div class="cu-n" id="cdDays">--</div><div class="cu-l">Days</div></div>
-    <div class="cu"><div class="cu-n" id="cdHours">--</div><div class="cu-l">Hrs</div></div>
-    <div class="cu"><div class="cu-n" id="cdMins">--</div><div class="cu-l">Min</div></div>
-    <div class="cu"><div class="cu-n" id="cdSecs">--</div><div class="cu-l">Sec</div></div>
-  </div>
-  <span class="countdown-label" id="countdownSub">Until March 16, 2026</span>
-</div>
-
-<!-- ── NAV ── -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a class="nav-brand" href="#">
-      <div class="gsoc-logo">G</div>
-      <span class="nav-title">GSoC 2026 <em>Org Finder</em></span>
-    </a>
-    <div class="nav-right">
-      <span class="pulse"></span>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
-        <span class="sun-icon">☀️</span><span class="moon-icon">🌙</span>
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-        <span class="toggle-label" id="themeLabel">Light</span>
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+  <div class="flex items-center justify-between px-6 py-3 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-8">
+      <a href="#" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="text-lg font-extrabold tracking-tighter text-zinc-900 font-headline">GSoC 2026 <span class="text-primary italic">Org Finder</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
+        <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 hover:bg-zinc-100/50 rounded-full transition-colors">
+        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
       </button>
-      <button class="btn-analytics" onclick="openIssuesPage()" style="color:var(--green);border-color:rgba(0,135,90,.3)" title="Browse Good First Issues">
-        🟢 <span class="issues-nav-txt">Issues</span>
-      </button>
-      <button class="btn-compare-nav" onclick="openCompare()" title="Compare organizations">
-        ⚖️ Compare
-        <span class="compare-badge" id="compareBadge">0</span>
-      </button>
-      <button class="btn-analytics" onclick="openAnalytics()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="18" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="2" y="13" width="4" height="8" rx="1"/></svg>
-        Analytics
-      </button>
-      <a class="btn-contribute" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener">
-        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Contribute
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
       </a>
     </div>
   </div>
-</nav>
+</header>
 
-<!-- ── HERO ── -->
-<div class="hero">
-  <div class="hero-pill"><span class="pulse"></span> Applications open March 16, 2026</div>
-  <h1>Find Your<br><em>Perfect GSoC Org</em></h1>
-  <p class="hero-sub">Browse all 185 organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.</p>
-  <div class="stats-bar">
-    <div class="stats-inner">
-      <div class="sbox"><div class="sn orange" id="totalStat">185</div><div class="sl">Organizations</div></div>
-      <div class="sbox"><div class="sn" id="filteredStat">185</div><div class="sl">Matching</div></div>
-      <div class="sbox"><div class="sn red" id="veteranStat">—</div><div class="sl">Veterans 8y+</div></div>
-      <div class="sbox"><div class="sn purple" id="newcomerStat">—</div><div class="sl">Newcomers</div></div>
-      <div class="sbox"><div class="sn green" id="visitorStat">—</div><div class="sl">Visitors Today</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ── TRENDING ── -->
-<div class="trending-section" id="trendingSection" style="display:none">
-  <div class="trending-header">
-    <span class="trending-title">🔥 Trending Today</span>
-    <span style="font-size:10px;color:var(--muted);margin-left:4px">— Most viewed by students</span>
-  </div>
-  <div class="trending-scroll" id="trendingScroll"></div>
-</div>
-
-<!-- ── ANALYTICS MODAL ── -->
-<div class="an-bg" id="anBg" onclick="closeAnEvent(event)">
-  <div class="an-panel">
-    <div class="an-header">
-      <div><h2>📊 Usage Analytics</h2><p>How students are using this tool — stored locally in your browser</p></div>
-      <button class="close-btn" onclick="closeAn()">✕</button>
-    </div>
-    <div class="an-body">
-      <div class="an-grid">
-        <div class="astat hi"><div class="av" id="aTot">—</div><div class="al">Total Visits</div></div>
-        <div class="astat"><div class="av" id="aToday">—</div><div class="al">Today</div></div>
-        <div class="astat"><div class="av" id="aSearches">—</div><div class="al">Searches</div></div>
-        <div class="astat"><div class="av" id="aViews">—</div><div class="al">Org Views</div></div>
-        <div class="astat"><div class="av" id="aFilters">—</div><div class="al">Filters Used</div></div>
-        <div class="astat"><div class="av" id="aTime">—</div><div class="al">Session Time</div></div>
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="pt-28 pb-20 px-6 max-w-7xl mx-auto fade-up">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-8">
+        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
+        <span class="font-label text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
       </div>
-      <div class="chart-sec"><div class="chart-title">Top Categories Browsed</div><div class="bar-chart" id="catChart"></div></div>
-      <div class="chart-sec"><div class="chart-title">Most Viewed Organizations</div><div class="bar-chart" id="orgChart"></div></div>
-      <div class="chart-sec"><div class="chart-title">Popular Search Terms</div><div class="search-chips" id="srchTerms"></div></div>
-      <div class="an-note">🔒 All data is stored only in this browser (localStorage). Nothing is sent to any server.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── FILTERS ── -->
-<div class="wrap">
-  <div class="filter-card">
-    <div class="filter-label">⚡ Filter Organizations</div>
-    <div class="filters-row">
-      <div class="fg"><label>Domain</label>
-        <select id="catFilter" onchange="applyFilters()" aria-label="Filter by domain">
-          <option value="">All Categories</option>
-          <option value="science">Science & Medicine</option>
-          <option value="programming">Programming Languages</option>
-          <option value="data">Data</option>
-          <option value="web">Web</option>
-          <option value="os">Operating Systems</option>
-          <option value="security">Security</option>
-          <option value="media">Media</option>
-          <option value="infra">Infrastructure</option>
-          <option value="ai">AI / ML</option>
-          <option value="dev">Dev Tools</option>
-          <option value="other">Other</option>
-        </select>
+      <h1 class="text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-6 leading-[0.95]">
+        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
+      </h1>
+      <p class="text-lg text-zinc-600 max-w-xl mb-10 leading-relaxed">
+        Browse all <strong>185</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+      </p>
+      <!-- Search Bar -->
+      <div class="relative max-w-xl mb-10">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+        <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
-      <div class="fg"><label>Language</label>
-        <select id="langFilter" onchange="applyFilters()" aria-label="Filter by programming language">
-          <option value="">All Languages</option>
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript / TS</option>
-          <option value="c++">C / C++</option>
-          <option value="java">Java / Kotlin</option>
-          <option value="rust">Rust</option>
-          <option value="go">Go</option>
-          <option value="ruby">Ruby</option>
-          <option value="haskell">Haskell</option>
-          <option value="scala">Scala</option>
-          <option value="r">R</option>
-          <option value="julia">Julia</option>
-          <option value="flutter">Flutter / Dart</option>
-          <option value="lua">Lua</option>
-        </select>
-      </div>
-      <div class="fg"><label>GSoC History</label>
-        <select id="yearsFilter" onchange="applyFilters()" aria-label="Filter by GSoC history">
-          <option value="">All Experience</option>
-          <option value="veteran">🏆 Veterans (8+y)</option>
-          <option value="experienced">⭐ Experienced (4-7y)</option>
-          <option value="newcomer">🌱 Newcomers (1-3y)</option>
-        </select>
-      </div>
-      <div class="fg"><label>Competition</label>
-        <select id="compFilter" onchange="applyFilters()" aria-label="Filter by competition level">
-          <option value="">All Levels</option>
-          <option value="chill">😎 Low</option>
-          <option value="moderate">🟡 Moderate</option>
-          <option value="hot">🔥 High</option>
-        </select>
-      </div>
-      <div class="search-box">
-        <label>Search</label>
-        <span class="search-ico">⌕</span>
-        <input class="search-input" type="text" id="searchInput" placeholder="Name, tech, topic..." oninput="debouncedFilter()" 
-          aria-label="Search organizations by name, tech or topic">
-      </div>
-      <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
-    </div>
-    <div class="chips">
-      <span class="chip" id="chip-veteran" onclick="toggleChip('veteran')">🏆 Veterans Only</span>
-      <span class="chip" id="chip-newcomer" onclick="toggleChip('newcomer')">🌱 Newcomers</span>
-      <span class="chip" id="chip-hot" onclick="toggleChip('hot')">🔥 High Competition</span>
-      <span class="chip" id="chip-chill" onclick="toggleChip('chill')">😎 Low Competition</span>
-      <span class="chip" id="chip-active" onclick="toggleChip('active')">⚡ Actively Maintained</span>
-      <button type="button" class="chip" id="chip-bookmarked" onclick="toggleChip('bookmarked')" aria-label="Toggle bookmarked organizations">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-        Bookmarked
-      </button>
-    </div>
-    <div class="pills">
-      <span class="pill" data-lang="python" onclick="togglePill(this)">Python</span>
-      <span class="pill" data-lang="javascript" onclick="togglePill(this)">JavaScript</span>
-      <span class="pill" data-lang="typescript" onclick="togglePill(this)">TypeScript</span>
-      <span class="pill" data-lang="c++" onclick="togglePill(this)">C / C++</span>
-      <span class="pill" data-lang="java" onclick="togglePill(this)">Java</span>
-      <span class="pill" data-lang="rust" onclick="togglePill(this)">Rust</span>
-      <span class="pill" data-lang="go" onclick="togglePill(this)">Go</span>
-      <span class="pill" data-lang="ruby" onclick="togglePill(this)">Ruby</span>
-      <span class="pill" data-lang="haskell" onclick="togglePill(this)">Haskell</span>
-      <span class="pill" data-lang="scala" onclick="togglePill(this)">Scala</span>
-      <span class="pill" data-lang="r" onclick="togglePill(this)">R</span>
-      <span class="pill" data-lang="julia" onclick="togglePill(this)">Julia</span>
-      <span class="pill" data-lang="flutter" onclick="togglePill(this)">Flutter</span>
-      <span class="pill" data-lang="lua" onclick="togglePill(this)">Lua</span>
-      <span class="pill" data-lang="machine learning" onclick="togglePill(this)">ML / AI</span>
-      <span class="pill" data-lang="embedded" onclick="togglePill(this)">Embedded</span>
-      <span class="pill" data-lang="compiler" onclick="togglePill(this)">Compilers</span>
-      <span class="pill" data-lang="linux" onclick="togglePill(this)">Linux</span>
-      <span class="pill" data-lang="robotics" onclick="togglePill(this)">Robotics</span>
-      <span class="pill" data-lang="bioinformatics" onclick="togglePill(this)">Bioinformatics</span>
-    </div>
-  </div>
-
-  <!-- API BANNER -->
-  <div class="api-banner" id="apiBanner">
-    <span class="pulse"></span>
-    <div><span class="api-strong" id="apiStrong">Connecting…</span><br><span class="api-text" id="apiText">Checking GitHub API proxy</span></div>
-    <button class="fetch-btn" id="fetchBtn" style="display:none" onclick="fetchAll()">
-      <span id="fetchSpin" style="display:none" class="spin"></span>
-      <span id="fetchTxt">Fetch All GitHub Stats</span>
-    </button>
-  </div>
-
-  <!-- KEYBOARD HINT -->
-  <div class="kbd-hint">
-    <kbd class="kbd">↑↓←→</kbd> Navigate cards &nbsp;·&nbsp;
-    <kbd class="kbd">Enter</kbd> Open &nbsp;·&nbsp;
-    <kbd class="kbd">C</kbd> Compare &nbsp;·&nbsp;
-    <kbd class="kbd">Esc</kbd> Close
-    <kbd class="kbd">/</kbd> Focus Search
-  </div>
-
-  <div class="results-bar">
-    <div class="result-count" aria-live="polite">Showing <strong id="countDisplay">185</strong> of 185 organizations</div>
-    <div class="sort-row">Sort: <select id="sortSelect" onchange="applyFilters()" aria-label="Sort organizations">
-      <option value="alpha">A → Z</option>
-      <option value="years-desc">Most Experienced</option>
-      <option value="years-asc">Newcomers First</option>
-      <option value="comp-low">Least Competitive</option>
-      <option value="stars">Most Stars ⭐</option>
-      <option value="gfi">Good First Issues ⬆</option>
-    </select></div>
-  </div>
-
-  <div class="grid" id="orgGrid"></div>
-</div>
-
-<footer>
-  <div class="footer-inner">
-    <span>GSoC 2026 Org Finder · Data from <a href="https://summerofcode.withgoogle.com" target="_blank">summerofcode.withgoogle.com</a></span>
-    <span>Made for students · <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">⭐ Star & Contribute on GitHub</a></span>
-  </div>
-</footer>
-
-<!-- ── ORG MODAL ── -->
-<div class="modal-bg" id="modalBg" onclick="closeModalEv(event)">
-  <div class="modal">
-    <div class="modal-top">
-      <div class="modal-top-actions">
-        <button class="modal-compare-btn" id="mCompareBtn" onclick="toggleCompareFromModal()" title="Add to compare">⚖️</button>
-        <button class="close-btn" onclick="closeModal()">✕</button>
-      </div>
-      <div class="m-cat" id="mCat"></div>
-      <div class="m-name" id="mName"></div>
-    </div>
-    <div class="m-desc" id="mDesc"></div>
-    <div class="modal-body">
-      <div class="ms-title">Key Metrics</div>
-      <div class="m-metrics" id="mMetrics"></div>
-      <div class="gh-box">
-        <div class="gh-box-header">
-          <div class="gh-box-title">⚡ Live GitHub Stats</div>
-          <button class="gh-fetch" id="mFetchBtn" onclick="fetchModalGH()">Fetch Live Data</button>
+      <!-- Stat Badges -->
+      <div class="flex flex-wrap gap-4">
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+          <span class="material-symbols-outlined text-primary text-lg">groups</span>
+          <div><p class="text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">185</p></div>
         </div>
-        <div class="gh-grid">
-          <div class="gls"><div class="gv" id="ghStars">—</div><div class="gl">Stars</div></div>
-          <div class="gls"><div class="gv" id="ghForks">—</div><div class="gl">Forks</div></div>
-          <div class="gls"><div class="gv" id="ghIssues">—</div><div class="gl">Issues</div></div>
-          <div class="gls"><div class="gv" id="ghCommit">—</div><div class="gl">Last Commit</div></div>
-          <div class="gls"><div class="gv" id="ghGFI">—</div><div class="gl">Good 1st Issues</div></div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+          <span class="material-symbols-outlined text-secondary text-lg">code</span>
+          <div><p class="text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
+          <div><p class="text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
         </div>
       </div>
-      <div class="ms-title">Technologies</div>
-      <div class="m-tags" id="mTags"></div>
-      <div class="ms-title">Best Fit For</div>
-      <div class="m-tags" id="mFit"></div>
-      <div class="ms-title">GSoC Participation Timeline</div>
-      <div class="timeline" id="mTimeline"></div>
-      <div class="ms-title">📋 Project Ideas</div>
-      <a id="mIdeasLink" class="modal-cta modal-ideas-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="View project ideas list for this organization in a new tab">View Ideas List →</a>
-      <div id="mIdeasText" class="modal-ideas-text" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;font-style:italic;padding:10px 0">No Idea Page link found.</div>
-      <a id="mLink" class="modal-cta" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">View on GSoC →</a>
     </div>
-  </div>
-</div>
-
-<!-- ── COMPARE PANEL ── -->
-<div class="compare-bg" id="compareBg" onclick="closeCompareEv(event)">
-  <div class="compare-panel">
-    <div class="compare-header">
-      <div>
-        <h2>⚖️ Compare Organizations</h2>
-        <p>Select up to 3 orgs to compare side-by-side</p>
+    <!-- Timeline Card -->
+    <div class="lg:col-span-5 fade-up" style="animation-delay:.2s">
+      <div class="bg-white rounded-3xl p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100" id="timeline">
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="font-headline font-extrabold text-xl">2026 Timeline</h3>
+          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+        </div>
+        <div class="space-y-5">
+          <div class="flex gap-4 opacity-40">
+            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
+            <div><p class="text-[10px] font-bold text-zinc-400">FEB 19, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Orgs Announced</p></div>
+          </div>
+          <div class="flex gap-4 opacity-40">
+            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
+            <div><p class="text-[10px] font-bold text-zinc-400">MAR 16, 2026</p><p class="text-sm font-bold text-zinc-500">Contributor Proposals Open</p></div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
+            <div><p class="text-[10px] font-bold text-primary">MAR 31, 2026</p><p class="text-base font-extrabold text-zinc-900 leading-tight">Proposal Submission Deadline</p><p class="text-xs text-zinc-500 mt-1">Submit your project proposals by 11:30 PM!</p></div>
+          </div>
+          <div class="flex gap-4 opacity-40">
+            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div></div>
+            <div><p class="text-[10px] font-bold text-zinc-400">APR 30, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Projects Announced</p></div>
+          </div>
+        </div>
+        <div class="mt-6 pt-6 border-t border-zinc-100">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-zinc-500">Deadline countdown</span>
+            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+          </div>
+        </div>
       </div>
-      <button class="close-btn" onclick="closeCompare()">✕</button>
-    </div>
-    <div class="compare-body">
-      <div class="compare-slots" id="compareSlots"></div>
-      <div id="compareTableWrap"></div>
     </div>
   </div>
-</div>
+</section>
 
-
-<!-- ── ISSUES PAGE ── -->
-<div class="page" id="issuesPage">
-  <div class="page-nav">
-    <button class="page-back" onclick="closeIssuesPage()">← Back</button>
-    <div class="page-title">🟢 <em>Good First Issues</em> — All 185 Orgs</div>
-    <button class="theme-toggle" onclick="toggleTheme()" style="margin-left:auto">
-      <span class="sun-icon">☀️</span><span class="moon-icon">🌙</span>
-      <div class="toggle-track"><div class="toggle-knob"></div></div>
+<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
+  <div class="flex items-center justify-between mb-8">
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">185</strong> organizations</p>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <input type="text" id="searchInput" placeholder="Search language, tech, or name..." class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64">
+        <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">search</span>
+      </div>
+      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+        <option value="all">Categories: All</option>
+      </select>
+      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+        <option value="all">Complexity: All</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+  </div>
+  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid"></div>
+  <div class="mt-8 flex justify-center">
+    <button id="exploreOrgsBtn" class="px-5 py-2.5 rounded-xl bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+      Explore all organizations
     </button>
   </div>
-  <div class="page-body">
-    <div class="issues-hero">
-      <h2>Find Your First <em style="color:var(--green)">Contribution</em></h2>
-      <p>Good First Issues from all GSoC 2026 orgs — curated for students new to open source.</p>
-      <div class="issues-controls">
-        <input class="issues-search" type="text" id="issueSearch" placeholder="Search issues…" oninput="filterIssues()">
-        <select id="issueCatFilter" onchange="filterIssues()" aria-label="Filter issues by category">
-          <option value="">All Categories</option>
-          <option value="science">Science</option>
-          <option value="programming">Programming</option>
-          <option value="data">Data</option>
-          <option value="web">Web</option>
-          <option value="os">OS</option>
-          <option value="security">Security</option>
-          <option value="infra">Infrastructure</option>
-          <option value="other">Other</option>
-        </select>
-        <select id="issueLangFilter" onchange="filterIssues()" aria-label="Filter issues by programming language">
-          <option value="">All Languages</option>
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-          <option value="c++">C / C++</option>
-          <option value="java">Java</option>
-          <option value="rust">Rust</option>
-          <option value="go">Go</option>
-          <option value="ruby">Ruby</option>
-        </select>
-        <button class="btn-fetch-issues" id="fetchIssuesBtn" onclick="fetchAllIssues()">
-          <span id="fetchIssuesSpin" style="display:none" class="spin"></span>
-          <span id="fetchIssuesTxt">🟢 Load Issues</span>
-        </button>
+</section>
+
+<section id="watchlist" class="bg-surface-container-low py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-extrabold mb-6">Watchlist</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-4" id="watchlistContainer"></div>
+      <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6">
+        <h4 class="font-bold mb-3">AI Application Insight</h4>
+        <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed">Select organizations to get personalized contribution advice.</p>
       </div>
-    </div>
-    <div class="issues-stats" id="issuesStats" style="display:none">
-      <div class="istat"><div class="iv" id="issTotal">0</div><div class="il">Total Issues</div></div>
-      <div class="istat"><div class="iv" id="issOrgs">0</div><div class="il">Orgs with GFI</div></div>
-      <div class="istat"><div class="iv" id="issShown">0</div><div class="il">Showing</div></div>
-    </div>
-    <div id="issuesContainer">
-      <div class="issue-empty">
-        <div class="ei">🟢</div>
-        <h3>Ready to find your first issue?</h3>
-        <p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs via the GitHub API.</p>
-      </div>
-    </div>
-    <div class="load-more" id="loadMoreWrap" style="display:none">
-      <button class="btn-load-more" onclick="showMoreIssues()">Load More Issues</button>
     </div>
   </div>
-</div>
-<script src="org.js"></script>
-<script src="app.js"></script>
-<button 
-  class="scroll-top-btn" 
-  id="scrollTopBtn"
-  onclick="window.scrollTo({top:0,behavior:'smooth'})"
-  title="Back to top"
-  aria-label="Scroll to top">
-  ↑
-</button>
+</section>
+
+<section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
+  <div class="mb-8 flex items-center justify-between gap-4">
+    <div>
+      <h2 class="text-4xl font-extrabold">Good First Issues</h2>
+      <p class="text-zinc-600 mt-2">Pre-fetched issues with org metadata.</p>
+    </div>
+    <button id="fetchIssuesBtn" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-sm">Refresh Issues</button>
+  </div>
+  <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <input id="issueSearch" class="rounded-xl border-zinc-300" type="text" placeholder="Search issue title or org">
+    <select id="issueCatFilter" class="rounded-xl border-zinc-300"><option value="">All Categories</option></select>
+    <select id="issueLangFilter" class="rounded-xl border-zinc-300"><option value="">All Languages</option></select>
+  </div>
+  <div id="issuesMeta" class="text-xs text-zinc-500 mb-4">Loading issues…</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="issuesGrid"></div>
+</section>
+
+<div class="modal-bg" id="orgModal"><div class="modal"><button class="close-btn" onclick="closeModal()" aria-label="Close modal"><span class="material-symbols-outlined">close</span></button><div class="modal-header" id="mHeader"></div><div class="modal-body"><div class="metrics-grid mb-8" id="mMetrics"></div><div class="github-stats-container mb-8"><button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div><div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div></div><div class="section-title">Description</div><p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><div class="section-title">Technologies</div><div class="tech-tags" id="mTech"></div></div><div><div class="section-title">Ideal Fit</div><div class="fit-tags" id="mFit"></div></div></div><div class="section-title">Participation Timeline</div><div class="timeline-grid" id="mTimeline"></div></div><div class="modal-footer"><a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2"><span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas</a><a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2"><span class="material-symbols-outlined text-lg">code</span> Repository</a></div></div></div>
+
+<script src="scripts/orgs.js"></script>
+<script>
+  let visibleCount = 12;
+  let filteredOrgs = [...ORGS];
+  let compareList = [];
+  const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+  function updateCountdown(){
+    const deadline=new Date('2026-03-31T23:30:00+05:30');
+    const now=new Date();
+    const diff=deadline-now;
+    if(diff<=0){document.getElementById('countdown').textContent='Deadline passed!';return}
+    const d=Math.floor(diff/864e5),h=Math.floor((diff%864e5)/36e5),m=Math.floor((diff%36e5)/6e4);
+    document.getElementById('countdown').textContent=`${d}d ${h}h ${m}m`;
+  }
+  function renderOrgs(){
+    const grid=document.getElementById('orgGrid');
+    if(!grid)return;
+    const slice=filteredOrgs.slice(0,visibleCount);
+    grid.innerHTML=slice.map(org=>{
+      const isBookmarked=bookmarkedSet.has(org.name);
+      const logoUrl=`https://github.com/${org.github.split('/')[0]}.png?size=80`;
+      return `<article class="group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20">
+        <div class="flex justify-between items-start mb-4">
+          <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
+            <img src="${logoUrl}" onerror="this.style.display='none'" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${org.years}y Veteran</span>
+            <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
+            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" onclick="toggleBookmark(event, '${org.name}')">
+              <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
+            </button>
+          </div>
+        </div>
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${org.name}</h3>
+        <span class="category-tag">${org.cat.toUpperCase()}</span>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${org.desc}</p>
+        <div class="flex flex-wrap gap-1.5 mb-4">${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`).join('')}</div>
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <button onclick="openModal('${org.name.replace(/'/g, "\\'")}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1">Explore Org <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+          <span class="text-xs text-zinc-500">${org.competition}</span>
+        </div>
+      </article>`;
+    }).join('');
+    document.getElementById('orgCount').textContent=filteredOrgs.length;
+    updateExploreButton();
+  }
+  function updateExploreButton(){
+    const btn=document.getElementById('exploreOrgsBtn');
+    if(!btn)return;
+    const hidden=Math.max(0, filteredOrgs.length-visibleCount);
+    if(hidden<=0){
+      btn.textContent='All organizations loaded';
+      btn.disabled=true;
+      btn.classList.add('opacity-60','cursor-not-allowed');
+      return;
+    }
+    btn.disabled=false;
+    btn.classList.remove('opacity-60','cursor-not-allowed');
+    btn.textContent=`Explore all organizations (${hidden} more)`;
+  }
+  function renderWatchlist(){
+    const container=document.getElementById('watchlistContainer');
+    if(!container)return;
+    const aiInsight=document.getElementById('aiInsightText');
+    const bookmarkedOrgs=ORGS.filter(org=>bookmarkedSet.has(org.name));
+    if(!bookmarkedOrgs.length){
+      container.innerHTML=`<div class="bg-white rounded-2xl border border-zinc-100 p-6 text-sm text-zinc-500">
+        No organizations bookmarked yet. Click the <span class="material-symbols-outlined text-sm align-middle">star</span> icon on an org card to add one.
+      </div>`;
+      if(aiInsight)aiInsight.textContent='Select organizations to get personalized contribution advice.';
+      return;
+    }
+    container.innerHTML=bookmarkedOrgs.map(org=>`
+      <article class="bg-white rounded-2xl border border-zinc-100 p-5 flex items-start justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-zinc-900">${org.name}</h3>
+          <p class="text-xs text-zinc-500 mt-1">${org.cat} · ${org.competition}</p>
+          <div class="mt-3 flex flex-wrap gap-1.5">
+            ${(org.tags||[]).slice(0,4).map(tag=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${tag}</span>`).join('')}
+          </div>
+        </div>
+        <button class="px-3 py-1.5 rounded-lg bg-zinc-100 text-xs font-bold hover:bg-zinc-200 transition-colors"
+          onclick="toggleBookmark(event, '${org.name.replace(/'/g, "\\'")}')">Remove</button>
+      </article>
+    `).join('');
+    if(aiInsight){
+      aiInsight.textContent=`You’ve shortlisted ${bookmarkedOrgs.length} org${bookmarkedOrgs.length===1?'':'s'}. Focus on active repos, read idea pages, and submit at least one quality PR before the deadline.`;
+    }
+  }
+  function toggleBookmark(event, orgName){
+    event?.stopPropagation?.();
+    if(bookmarkedSet.has(orgName))bookmarkedSet.delete(orgName);
+    else bookmarkedSet.add(orgName);
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    renderOrgs();
+    renderWatchlist();
+  }
+  function applyFilters() {
+    const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const cat = document.getElementById('categoryFilter')?.value || 'all';
+    const comp = document.getElementById('complexityFilter')?.value || 'all';
+    filteredOrgs = ORGS.filter(o => {
+      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+      const matchCat = cat === 'all' || o.cat === cat;
+      const matchComp = comp === 'all' || o.codebase === comp;
+      return matchSearch && matchCat && matchComp;
+    });
+    renderOrgs();
+  }
+  function renderCompare(){}
+  async function fetchProxyIssuesForRepo(repo){
+    const res = await fetch(`/api/github?repo=${encodeURIComponent(repo)}&gfi=1&issues=1`);
+    if(!res.ok)return [];
+    const data = await res.json();
+    return data.items || [];
+  }
+  async function fetchGithubIssuesForRepo(repo){
+    const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+    const res = await fetch(`https://api.github.com/search/issues?q=${q}&per_page=5&sort=created&order=desc`);
+    if(!res.ok)return [];
+    const data = await res.json();
+    return data.items || [];
+  }
+  async function fetchLiveGoodFirstIssues(maxRepos = 80){
+    const results = [];
+    const repos = ORGS.map(org=>org.github).filter(Boolean).slice(0, maxRepos);
+    for(const repo of repos){
+      try{
+        let items = await fetchProxyIssuesForRepo(repo);
+        if(!items.length){
+          items = await fetchGithubIssuesForRepo(repo);
+        }
+        const org = ORGS.find(o=>o.github===repo);
+        (items||[]).forEach(item=>{
+          results.push({
+            title: item.title,
+            url: item.html_url || item.url,
+            repo,
+            orgName: org?.name || repo.split('/')[0],
+            orgTags: org?.tags || [],
+            codebase: org?.codebase || 'intermediate',
+            years: org?.years || 0,
+            orgCat: org?.cat || 'other'
+          });
+        });
+      }catch(_err){
+        // Continue best-effort. Some repos may fail depending on token/rate-limits.
+      }
+      if(results.length>=60)break;
+    }
+    return results;
+  }
+  function renderIssuesList(issues, sourceLabel=''){
+    const container = document.getElementById('issuesGrid');
+    const meta = document.getElementById('issuesMeta');
+    if(!container || !meta)return;
+    window.__issuesData = issues;
+    meta.textContent = `${issues.length} issues loaded${sourceLabel ? ` (${sourceLabel})` : ''}`;
+    container.innerHTML = '';
+    if(!issues.length){
+      container.innerHTML = `<div class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-sm text-zinc-600">
+        No Good First Issues found right now. Try <strong>Refresh Issues</strong> again in a minute.
+      </div>`;
+      return;
+    }
+    issues.slice(0, 24).forEach(issue => {
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
+      card.onclick = () => window.open(issue.url, '_blank', 'noopener,noreferrer');
+      card.innerHTML = `<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div>
+        <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${(issue.orgTags||[]).slice(0,2).map(l=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${l}</span>`).join('')}
+          <span class="text-[10px] px-2 py-0.5 bg-orange-100 rounded">${issue.codebase}</span>
+          <span class="text-[10px] px-2 py-0.5 bg-green-100 rounded">${issue.years}y</span>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+  async function renderGoodFirstIssues(forceLive = false) {
+    try {
+      let issues = [];
+      let source = 'prefetched';
+      if(!forceLive){
+        const res = await fetch('data/issues.json');
+        const data = await res.json();
+        issues=(data.issues||[]).map(issue=>{
+          const org=ORGS.find(o=>o.name===issue.orgName)||ORGS.find(o=>o.github===issue.repo)||ORGS.find(o=>o.github?.startsWith((issue.org||'')+'/'));
+          return {...issue, orgName: org?.name || issue.orgName || issue.org, orgTags: issue.orgTags || org?.tags || [], codebase: issue.codebase || org?.codebase || 'intermediate', years: issue.years || org?.years || 0, orgCat: issue.orgCat || org?.cat || 'other'};
+        });
+      }
+      if(!issues.length){
+        source = 'live fallback';
+        issues = await fetchLiveGoodFirstIssues();
+      }
+      renderIssuesList(issues, source);
+    } catch (e) {
+      console.error('GFI render failed:', e);
+      const liveIssues = await fetchLiveGoodFirstIssues();
+      renderIssuesList(liveIssues, 'live fallback');
+    }
+  }
+  async function refreshIssues(){
+    const btn=document.getElementById('fetchIssuesBtn');
+    if(!btn)return renderGoodFirstIssues(true);
+    const initialText=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='Refreshing…';
+    try{
+      await renderGoodFirstIssues(true);
+      btn.textContent='Refreshed';
+    }finally{
+      setTimeout(()=>{
+        btn.textContent=initialText;
+        btn.disabled=false;
+      },1000);
+    }
+  }
+  function openModal(orgName){
+    const org = ORGS.find(o=>o.name===orgName);
+    if(!org)return;
+    document.getElementById('mHeader').innerHTML = `
+      <span class="category-tag">${(org.cat||'other').toUpperCase()}</span>
+      <h2>${org.name}</h2>
+      <p>${org.desc || 'No description available.'}</p>
+    `;
+    document.getElementById('mDesc').textContent = org.desc || 'No description available.';
+    document.getElementById('mMetrics').innerHTML = `
+      <div class="metric-card"><div class="metric-value">${org.years || 0}y</div><div class="metric-label">GSoC Years</div></div>
+      <div class="metric-card"><div class="metric-value">${org.firstYear || '—'}</div><div class="metric-label">First Year</div></div>
+      <div class="metric-card"><div class="metric-value">${org.competition || 'n/a'}</div><div class="metric-label">Competition</div></div>
+      <div class="metric-card"><div class="metric-value">${org.codebase || 'n/a'}</div><div class="metric-label">Complexity</div></div>
+    `;
+    document.getElementById('mTech').innerHTML = (org.tags||[]).map(tag=>`<span class="tech-tag">${tag}</span>`).join('');
+    document.getElementById('mFit').innerHTML = (org.fit||[]).map(item=>`<span class="fit-tag">${item}</span>`).join('');
+    const years = Array.from({length: org.years || 0}, (_,i)=>(org.firstYear||2026)+i);
+    document.getElementById('mTimeline').innerHTML = years.length
+      ? years.map(y=>`<span class="${y===2026?'current-year':''}">${y}</span>`).join('')
+      : '<span>Timeline unavailable</span>';
+    const ideasUrl = org.ideas?.startsWith('http') ? org.ideas : '#';
+    const repoUrl = org.github ? `https://github.com/${org.github}` : '#';
+    document.getElementById('mIdeasBtn').href = ideasUrl;
+    document.getElementById('mRepoBtn').href = repoUrl;
+    document.getElementById('mStars').textContent = '---';
+    document.getElementById('mForks').textContent = '---';
+    document.getElementById('mIssues').textContent = '---';
+    document.getElementById('mActivity').textContent = 'Moderate';
+    document.getElementById('orgModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('orgModal').classList.remove('open');
+    document.body.style.overflow = 'auto';
+  }
+  async function fetchStats() {
+    const btn = document.getElementById('mFetchBtn');
+    if(!btn)return;
+    btn.textContent = 'Fetching...';
+    btn.disabled = true;
+    try {
+      await new Promise(r => setTimeout(r, 1200));
+      const stars = (Math.random() * 5000 + 1000).toFixed(0);
+      const forks = (stars * 0.2).toFixed(0);
+      const issues = (Math.random() * 50 + 10).toFixed(0);
+      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
+      document.getElementById('mForks').textContent = forks;
+      document.getElementById('mIssues').textContent = issues;
+      document.getElementById('mActivity').textContent = 'High';
+      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
+      btn.textContent = 'Stats Updated!';
+    } catch (e) {
+      btn.textContent = 'Error';
+    } finally {
+      setTimeout(() => {btn.textContent = 'Fetch Live Stats';btn.disabled = false;}, 3000);
+    }
+  }
+  function fillOrgFilters(){
+    const catSelect=document.getElementById('categoryFilter');
+    const issueCat=document.getElementById('issueCatFilter');
+    const issueLang=document.getElementById('issueLangFilter');
+    if(catSelect){
+      [...new Set(ORGS.map(o=>o.cat))].sort().forEach(c=>catSelect.insertAdjacentHTML('beforeend',`<option value="${c}">${c}</option>`));
+    }
+    if(issueCat){
+      [...new Set(ORGS.map(o=>o.cat))].sort().forEach(c=>issueCat.insertAdjacentHTML('beforeend',`<option value="${c}">${c}</option>`));
+    }
+    if(issueLang){
+      [...new Set(ORGS.flatMap(o=>o.tags||[]))].sort().slice(0,60).forEach(t=>issueLang.insertAdjacentHTML('beforeend',`<option value="${t}">${t}</option>`));
+    }
+  }
+  function filterIssues(){
+    const all=window.__issuesData||[];
+    const q=(document.getElementById('issueSearch')?.value||'').toLowerCase();
+    const cat=document.getElementById('issueCatFilter')?.value||'';
+    const lang=document.getElementById('issueLangFilter')?.value||'';
+    const filtered=all.filter(i=>{
+      if(cat&&i.orgCat!==cat)return false;
+      if(lang&&!(i.orgTags||[]).some(t=>t.toLowerCase().includes(lang.toLowerCase())))return false;
+      if(q&&!(i.title||'').toLowerCase().includes(q)&&!(i.orgName||'').toLowerCase().includes(q))return false;
+      return true;
+    });
+    const grid=document.getElementById('issuesGrid');
+    if(!grid)return;
+    document.getElementById('issuesMeta').textContent=`${filtered.length} issues shown`;
+    grid.innerHTML='';
+    filtered.slice(0,24).forEach(issue=>{
+      const card=document.createElement('div');
+      card.className='bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
+      card.onclick=()=>window.open(issue.url,'_blank','noopener,noreferrer');
+      card.innerHTML=`<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div><p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>`;
+      grid.appendChild(card);
+    });
+  }
+  document.getElementById('mFetchBtn')?.addEventListener('click', fetchStats);
+  document.getElementById('fetchIssuesBtn')?.addEventListener('click', refreshIssues);
+  document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('exploreOrgsBtn')?.addEventListener('click', ()=>{
+    visibleCount = filteredOrgs.length;
+    renderOrgs();
+  });
+  document.getElementById('issueSearch')?.addEventListener('input', filterIssues);
+  document.getElementById('issueCatFilter')?.addEventListener('change', filterIssues);
+  document.getElementById('issueLangFilter')?.addEventListener('change', filterIssues);
+  document.getElementById('orgModal')?.addEventListener('click', (e)=>{
+    if(e.target.id==='orgModal')closeModal();
+  });
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+  fillOrgFilters();
+  renderOrgs();
+  renderWatchlist();
+  renderGoodFirstIssues();
+  renderCompare();
+</script>
 </body>
 </html>

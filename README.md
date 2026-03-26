@@ -16,6 +16,13 @@ No sign-up. No install. No build step. Just open and explore.
 
 ## 🎯 Features
 
+### 🆕 Recent PR Updates (March 2026)
+- **New Tailwind-based UI shell** with updated hero, timeline, org cards, watchlist, and issues experience in `index.html`.
+- **Prefetched Good First Issues pipeline** with scheduled refresh via GitHub Actions (`.github/workflows/refresh-good-first-issues.yml`).
+- **Robust Good First Issues fallback logic** in the frontend: use prefetched data first, then fallback to live fetch paths when needed.
+- **Explore Org full-screen feature view**: clicking **Explore Org** now opens a dedicated org profile view with org metadata + per-org issue cards.
+- **Org detail UX polish**: preserves page scroll position when opening/closing org feature view.
+
 ### 🔍 Discovery & Filtering
 - **Full-text search** by org name, technology, or topic
 - **Domain filter** — Science, Web, Security, AI, OS, Media, Infrastructure, and more

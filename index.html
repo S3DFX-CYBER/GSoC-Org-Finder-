@@ -366,7 +366,40 @@
   }
   function renderWatchlist(){
     const container=document.getElementById('watchlistContainer');
-    if(container)container.innerHTML='';
+    if(!container)return;
+    const aiInsight=document.getElementById('aiInsightText');
+    const bookmarkedOrgs=ORGS.filter(org=>bookmarkedSet.has(org.name));
+    if(!bookmarkedOrgs.length){
+      container.innerHTML=`<div class="bg-white rounded-2xl border border-zinc-100 p-6 text-sm text-zinc-500">
+        No organizations bookmarked yet. Click the <span class="material-symbols-outlined text-sm align-middle">star</span> icon on an org card to add one.
+      </div>`;
+      if(aiInsight)aiInsight.textContent='Select organizations to get personalized contribution advice.';
+      return;
+    }
+    container.innerHTML=bookmarkedOrgs.map(org=>`
+      <article class="bg-white rounded-2xl border border-zinc-100 p-5 flex items-start justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-zinc-900">${org.name}</h3>
+          <p class="text-xs text-zinc-500 mt-1">${org.cat} · ${org.competition}</p>
+          <div class="mt-3 flex flex-wrap gap-1.5">
+            ${(org.tags||[]).slice(0,4).map(tag=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${tag}</span>`).join('')}
+          </div>
+        </div>
+        <button class="px-3 py-1.5 rounded-lg bg-zinc-100 text-xs font-bold hover:bg-zinc-200 transition-colors"
+          onclick="toggleBookmark(event, '${org.name.replace(/'/g, "\\'")}')">Remove</button>
+      </article>
+    `).join('');
+    if(aiInsight){
+      aiInsight.textContent=`You’ve shortlisted ${bookmarkedOrgs.length} org${bookmarkedOrgs.length===1?'':'s'}. Focus on active repos, read idea pages, and submit at least one quality PR before the deadline.`;
+    }
+  }
+  function toggleBookmark(event, orgName){
+    event?.stopPropagation?.();
+    if(bookmarkedSet.has(orgName))bookmarkedSet.delete(orgName);
+    else bookmarkedSet.add(orgName);
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    renderOrgs();
+    renderWatchlist();
   }
   function applyFilters() {
     const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -381,34 +414,91 @@
     renderOrgs();
   }
   function renderCompare(){}
-  async function renderGoodFirstIssues() {
+  async function fetchLiveGoodFirstIssues(maxRepos = 24){
+    const results = [];
+    const repos = ORGS.map(org=>org.github).filter(Boolean).slice(0, maxRepos);
+    for(const repo of repos){
+      try{
+        const res = await fetch(`/api/github?repo=${encodeURIComponent(repo)}&gfi=1&issues=1`);
+        const data = await res.json();
+        const org = ORGS.find(o=>o.github===repo);
+        (data.items||[]).forEach(item=>{
+          results.push({
+            title: item.title,
+            url: item.html_url,
+            repo,
+            orgName: org?.name || repo.split('/')[0],
+            orgTags: org?.tags || [],
+            codebase: org?.codebase || 'intermediate',
+            years: org?.years || 0,
+            orgCat: org?.cat || 'other'
+          });
+        });
+      }catch(_err){
+        // Continue best-effort. Some repos may fail depending on token/rate-limits.
+      }
+      if(results.length>=60)break;
+    }
+    return results;
+  }
+  function renderIssuesList(issues, sourceLabel=''){
+    const container = document.getElementById('issuesGrid');
+    const meta = document.getElementById('issuesMeta');
+    if(!container || !meta)return;
+    window.__issuesData = issues;
+    meta.textContent = `${issues.length} issues loaded${sourceLabel ? ` (${sourceLabel})` : ''}`;
+    container.innerHTML = '';
+    issues.slice(0, 24).forEach(issue => {
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
+      card.onclick = () => window.open(issue.url, '_blank', 'noopener,noreferrer');
+      card.innerHTML = `<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div>
+        <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${(issue.orgTags||[]).slice(0,2).map(l=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${l}</span>`).join('')}
+          <span class="text-[10px] px-2 py-0.5 bg-orange-100 rounded">${issue.codebase}</span>
+          <span class="text-[10px] px-2 py-0.5 bg-green-100 rounded">${issue.years}y</span>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+  async function renderGoodFirstIssues(forceLive = false) {
     try {
-      const res = await fetch('data/issues.json');
-      const data = await res.json();
-      const container = document.getElementById('issuesGrid');
-      if (!container) return;
-      const issues=(data.issues||[]).map(issue=>{
-        const org=ORGS.find(o=>o.name===issue.orgName)||ORGS.find(o=>o.github===issue.repo)||ORGS.find(o=>o.github?.startsWith((issue.org||'')+'/'));
-        return {...issue, orgName: org?.name || issue.orgName || issue.org, orgTags: issue.orgTags || org?.tags || [], codebase: issue.codebase || org?.codebase || 'intermediate', years: issue.years || org?.years || 0, orgCat: issue.orgCat || org?.cat || 'other'};
-      });
-      window.__issuesData=issues;
-      document.getElementById('issuesMeta').textContent=`${issues.length} issues loaded`;
-      container.innerHTML = '';
-      issues.slice(0, 24).forEach(issue => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
-        card.onclick = () => window.open(issue.url, '_blank', 'noopener,noreferrer');
-        card.innerHTML = `<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div>
-          <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
-          <div class="flex flex-wrap gap-1.5">
-            ${(issue.orgTags||[]).slice(0,2).map(l=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${l}</span>`).join('')}
-            <span class="text-[10px] px-2 py-0.5 bg-orange-100 rounded">${issue.codebase}</span>
-            <span class="text-[10px] px-2 py-0.5 bg-green-100 rounded">${issue.years}y</span>
-          </div>`;
-        container.appendChild(card);
-      });
+      let issues = [];
+      let source = 'prefetched';
+      if(!forceLive){
+        const res = await fetch('data/issues.json');
+        const data = await res.json();
+        issues=(data.issues||[]).map(issue=>{
+          const org=ORGS.find(o=>o.name===issue.orgName)||ORGS.find(o=>o.github===issue.repo)||ORGS.find(o=>o.github?.startsWith((issue.org||'')+'/'));
+          return {...issue, orgName: org?.name || issue.orgName || issue.org, orgTags: issue.orgTags || org?.tags || [], codebase: issue.codebase || org?.codebase || 'intermediate', years: issue.years || org?.years || 0, orgCat: issue.orgCat || org?.cat || 'other'};
+        });
+      }
+      if(!issues.length){
+        source = 'live fallback';
+        issues = await fetchLiveGoodFirstIssues();
+      }
+      renderIssuesList(issues, source);
     } catch (e) {
       console.error('GFI render failed:', e);
+      const liveIssues = await fetchLiveGoodFirstIssues();
+      renderIssuesList(liveIssues, 'live fallback');
+    }
+  }
+  async function refreshIssues(){
+    const btn=document.getElementById('fetchIssuesBtn');
+    if(!btn)return renderGoodFirstIssues(true);
+    const initialText=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='Refreshing…';
+    try{
+      await renderGoodFirstIssues(true);
+      btn.textContent='Refreshed';
+    }finally{
+      setTimeout(()=>{
+        btn.textContent=initialText;
+        btn.disabled=false;
+      },1000);
     }
   }
   function closeModal() {
@@ -475,7 +565,7 @@
     });
   }
   document.getElementById('mFetchBtn')?.addEventListener('click', fetchStats);
-  document.getElementById('fetchIssuesBtn')?.addEventListener('click', renderGoodFirstIssues);
+  document.getElementById('fetchIssuesBtn')?.addEventListener('click', refreshIssues);
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);

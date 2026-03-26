@@ -1,4 +1,4 @@
-/* global module */
+
 
 const ORGS = [
   { name:"52°North Spatial Information Research GmbH", cat:"science", years:11, firstYear:2016, competition:"moderate", codebase:"intermediate", github:"52North/SOS", tags:["python","javascript","java","gis","geospatial"], desc:"Innovative ideas & technologies in geoinformatics.", fit:["GIS enthusiasts","Python/Java devs"], ideas:"https://52north.org/outreach-dissemination/google-summer-of-code/project-ideas/" },

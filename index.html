@@ -264,9 +264,57 @@
   </div>
 </section>
 
-<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20"><div id="orgGrid"></div></section>
-<section id="watchlist" class="px-6 max-w-7xl mx-auto pb-20"><div id="watchlistContainer"></div><p id="aiInsightText"></p></section>
-<section id="issues" class="px-6 max-w-7xl mx-auto pb-20"><div class="grid"></div></section>
+<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
+  <div class="flex items-center justify-between mb-8">
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">185</strong> organizations</p>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <input type="text" id="searchInput" placeholder="Search language, tech, or name..." class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64">
+        <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">search</span>
+      </div>
+      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+        <option value="all">Categories: All</option>
+      </select>
+      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+        <option value="all">Complexity: All</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+  </div>
+  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid"></div>
+</section>
+
+<section id="watchlist" class="bg-surface-container-low py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-extrabold mb-6">Watchlist</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-4" id="watchlistContainer"></div>
+      <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6">
+        <h4 class="font-bold mb-3">AI Application Insight</h4>
+        <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed">Select organizations to get personalized contribution advice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
+  <div class="mb-8 flex items-center justify-between gap-4">
+    <div>
+      <h2 class="text-4xl font-extrabold">Good First Issues</h2>
+      <p class="text-zinc-600 mt-2">Pre-fetched issues with org metadata.</p>
+    </div>
+    <button id="fetchIssuesBtn" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-sm">Refresh Issues</button>
+  </div>
+  <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <input id="issueSearch" class="rounded-xl border-zinc-300" type="text" placeholder="Search issue title or org">
+    <select id="issueCatFilter" class="rounded-xl border-zinc-300"><option value="">All Categories</option></select>
+    <select id="issueLangFilter" class="rounded-xl border-zinc-300"><option value="">All Languages</option></select>
+  </div>
+  <div id="issuesMeta" class="text-xs text-zinc-500 mb-4">Loading issues…</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="issuesGrid"></div>
+</section>
 
 <div class="modal-bg" id="orgModal"><div class="modal"><button class="close-btn" onclick="closeModal()" aria-label="Close modal"><span class="material-symbols-outlined">close</span></button><div class="modal-header" id="mHeader"></div><div class="modal-body"><div class="metrics-grid mb-8" id="mMetrics"></div><div class="github-stats-container mb-8"><button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div><div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div><div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div></div><div class="section-title">Description</div><p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><div class="section-title">Technologies</div><div class="tech-tags" id="mTech"></div></div><div><div class="section-title">Ideal Fit</div><div class="fit-tags" id="mFit"></div></div></div><div class="section-title">Participation Timeline</div><div class="timeline-grid" id="mTimeline"></div></div><div class="modal-footer"><a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2"><span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas</a><a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2"><span class="material-symbols-outlined text-lg">code</span> Repository</a></div></div></div>
 
@@ -287,25 +335,76 @@
   function renderOrgs(){
     const grid=document.getElementById('orgGrid');
     if(!grid)return;
-    grid.innerHTML=filteredOrgs.slice(0,visibleCount).map(org=>`<article class="bg-white rounded-xl p-4 border mb-2"><h3>${org.name}</h3><p>${org.desc}</p></article>`).join('');
+    const slice=filteredOrgs.slice(0,visibleCount);
+    grid.innerHTML=slice.map(org=>{
+      const isBookmarked=bookmarkedSet.has(org.name);
+      const logoUrl=`https://github.com/${org.github.split('/')[0]}.png?size=80`;
+      return `<article class="group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20">
+        <div class="flex justify-between items-start mb-4">
+          <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
+            <img src="${logoUrl}" onerror="this.style.display='none'" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${org.years}y Veteran</span>
+            <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
+            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" onclick="toggleBookmark(event, '${org.name}')">
+              <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
+            </button>
+          </div>
+        </div>
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${org.name}</h3>
+        <span class="category-tag">${org.cat.toUpperCase()}</span>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${org.desc}</p>
+        <div class="flex flex-wrap gap-1.5 mb-4">${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`).join('')}</div>
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <button onclick="openModal('${org.name}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+          <span class="text-xs text-zinc-500">${org.competition}</span>
+        </div>
+      </article>`;
+    }).join('');
+    document.getElementById('orgCount').textContent=filteredOrgs.length;
   }
   function renderWatchlist(){
     const container=document.getElementById('watchlistContainer');
     if(container)container.innerHTML='';
+  }
+  function applyFilters() {
+    const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const cat = document.getElementById('categoryFilter')?.value || 'all';
+    const comp = document.getElementById('complexityFilter')?.value || 'all';
+    filteredOrgs = ORGS.filter(o => {
+      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+      const matchCat = cat === 'all' || o.cat === cat;
+      const matchComp = comp === 'all' || o.codebase === comp;
+      return matchSearch && matchCat && matchComp;
+    });
+    renderOrgs();
   }
   function renderCompare(){}
   async function renderGoodFirstIssues() {
     try {
       const res = await fetch('data/issues.json');
       const data = await res.json();
-      const container = document.querySelector('#issues .grid');
+      const container = document.getElementById('issuesGrid');
       if (!container) return;
+      const issues=(data.issues||[]).map(issue=>{
+        const org=ORGS.find(o=>o.name===issue.orgName)||ORGS.find(o=>o.github===issue.repo)||ORGS.find(o=>o.github?.startsWith((issue.org||'')+'/'));
+        return {...issue, orgName: org?.name || issue.orgName || issue.org, orgTags: issue.orgTags || org?.tags || [], codebase: issue.codebase || org?.codebase || 'intermediate', years: issue.years || org?.years || 0, orgCat: issue.orgCat || org?.cat || 'other'};
+      });
+      window.__issuesData=issues;
+      document.getElementById('issuesMeta').textContent=`${issues.length} issues loaded`;
       container.innerHTML = '';
-      data.issues.slice(0, 6).forEach(issue => {
+      issues.slice(0, 24).forEach(issue => {
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
+        card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
         card.onclick = () => window.open(issue.url, '_blank', 'noopener,noreferrer');
-        card.innerHTML = `<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div><p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>`;
+        card.innerHTML = `<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
+          <div class="flex flex-wrap gap-1.5">
+            ${(issue.orgTags||[]).slice(0,2).map(l=>`<span class="text-[10px] px-2 py-0.5 bg-zinc-100 rounded">${l}</span>`).join('')}
+            <span class="text-[10px] px-2 py-0.5 bg-orange-100 rounded">${issue.codebase}</span>
+            <span class="text-[10px] px-2 py-0.5 bg-green-100 rounded">${issue.years}y</span>
+          </div>`;
         container.appendChild(card);
       });
     } catch (e) {
@@ -338,9 +437,54 @@
       setTimeout(() => {btn.textContent = 'Fetch Live Stats';btn.disabled = false;}, 3000);
     }
   }
+  function fillOrgFilters(){
+    const catSelect=document.getElementById('categoryFilter');
+    const issueCat=document.getElementById('issueCatFilter');
+    const issueLang=document.getElementById('issueLangFilter');
+    if(catSelect){
+      [...new Set(ORGS.map(o=>o.cat))].sort().forEach(c=>catSelect.insertAdjacentHTML('beforeend',`<option value="${c}">${c}</option>`));
+    }
+    if(issueCat){
+      [...new Set(ORGS.map(o=>o.cat))].sort().forEach(c=>issueCat.insertAdjacentHTML('beforeend',`<option value="${c}">${c}</option>`));
+    }
+    if(issueLang){
+      [...new Set(ORGS.flatMap(o=>o.tags||[]))].sort().slice(0,60).forEach(t=>issueLang.insertAdjacentHTML('beforeend',`<option value="${t}">${t}</option>`));
+    }
+  }
+  function filterIssues(){
+    const all=window.__issuesData||[];
+    const q=(document.getElementById('issueSearch')?.value||'').toLowerCase();
+    const cat=document.getElementById('issueCatFilter')?.value||'';
+    const lang=document.getElementById('issueLangFilter')?.value||'';
+    const filtered=all.filter(i=>{
+      if(cat&&i.orgCat!==cat)return false;
+      if(lang&&!(i.orgTags||[]).some(t=>t.toLowerCase().includes(lang.toLowerCase())))return false;
+      if(q&&!(i.title||'').toLowerCase().includes(q)&&!(i.orgName||'').toLowerCase().includes(q))return false;
+      return true;
+    });
+    const grid=document.getElementById('issuesGrid');
+    if(!grid)return;
+    document.getElementById('issuesMeta').textContent=`${filtered.length} issues shown`;
+    grid.innerHTML='';
+    filtered.slice(0,24).forEach(issue=>{
+      const card=document.createElement('div');
+      card.className='bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group';
+      card.onclick=()=>window.open(issue.url,'_blank','noopener,noreferrer');
+      card.innerHTML=`<div class="flex items-start justify-between mb-3"><h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4></div><p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>`;
+      grid.appendChild(card);
+    });
+  }
   document.getElementById('mFetchBtn')?.addEventListener('click', fetchStats);
+  document.getElementById('fetchIssuesBtn')?.addEventListener('click', renderGoodFirstIssues);
+  document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('issueSearch')?.addEventListener('input', filterIssues);
+  document.getElementById('issueCatFilter')?.addEventListener('change', filterIssues);
+  document.getElementById('issueLangFilter')?.addEventListener('change', filterIssues);
   updateCountdown();
   setInterval(updateCountdown, 60000);
+  fillOrgFilters();
   renderOrgs();
   renderWatchlist();
   renderGoodFirstIssues();

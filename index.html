@@ -178,6 +178,7 @@
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
         <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
@@ -431,6 +432,83 @@
         <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
+<section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
+  <div class="mb-12">
+    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
+    <p class="text-zinc-600 mt-4 max-w-3xl">New to open source or this project? Follow this quick path: learn the basics, set up locally, find a good first issue, and open your first PR.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+      <h3 class="text-xl font-bold mb-3">1) Open Source Basics</h3>
+      <p class="text-sm text-zinc-600 mb-4 leading-relaxed">Open source projects publish source code publicly so anyone can inspect, improve, and share it. Contribution usually starts with reading contribution guidelines and making small, focused changes.</p>
+      <ul class="space-y-2 text-sm text-zinc-700 list-disc pl-5">
+        <li>Understand how licensing and collaboration work.</li>
+        <li>Start with documentation or beginner-friendly issues.</li>
+        <li>Communicate early through issues and PR comments.</li>
+      </ul>
+    </article>
+
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+      <h3 class="text-xl font-bold mb-3">2) Contribute to a GSoC Organization</h3>
+      <ol class="space-y-2 text-sm text-zinc-700 list-decimal pl-5">
+        <li>Pick 2–3 organizations that match your skills and interests.</li>
+        <li>Read their ideas page, contribution guide, and communication channels.</li>
+        <li>Set up the project locally and start with a small issue or documentation task.</li>
+        <li>Open a focused pull request and respond to mentor feedback quickly.</li>
+        <li>Document your contributions and turn them into a stronger GSoC proposal.</li>
+      </ol>
+      <p class="text-xs text-zinc-500 mt-4">Tip: quality communication and small, consistent contributions usually matter more than a single large PR.</p>
+    </article>
+
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+      <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+          <p class="font-bold mb-1">Open Source Guide</p>
+          <p class="text-zinc-600">Practical guide for first-time and returning contributors.</p>
+        </a>
+        <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+          <p class="font-bold mb-1">GitHub Contribution Flow</p>
+          <p class="text-zinc-600">Official docs for forking, cloning, and opening pull requests.</p>
+        </a>
+        <a href="https://developers.google.com/open-source/gsoc/resources/guide" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+          <p class="font-bold mb-1">GSoC Contributor/Student Guide</p>
+          <p class="text-zinc-600">Official program timeline and best practices for applicants.</p>
+        </a>
+        <a href="https://developers.google.com/open-source/gsoc/help/student-advice" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+          <p class="font-bold mb-1">Student Advice</p>
+          <p class="text-zinc-600">Official guidance for choosing orgs, communicating well, and writing proposals.</p>
+        </a>
+        <a href="https://firstcontributions.github.io/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+          <p class="font-bold mb-1">First Contributions</p>
+          <p class="text-zinc-600">Hands-on tutorial to practice your first fork, commit, and pull request.</p>
+        </a>
+      </div>
+    </article>
+
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+      <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
+      <div class="space-y-3 text-sm">
+        <details class="group border border-zinc-200 rounded-xl p-4">
+          <summary class="font-semibold cursor-pointer">Do I need prior GSoC experience to contribute?</summary>
+          <p class="text-zinc-600 mt-2">No. Start with small docs or UI fixes, then move to larger tasks as you learn the codebase.</p>
+        </details>
+        <details class="group border border-zinc-200 rounded-xl p-4">
+          <summary class="font-semibold cursor-pointer">What should my first pull request look like?</summary>
+          <p class="text-zinc-600 mt-2">Keep it focused on one change, reference the issue number, and include a short explanation of what you tested.</p>
+        </details>
+        <details class="group border border-zinc-200 rounded-xl p-4">
+          <summary class="font-semibold cursor-pointer">How do I find tasks I can start quickly?</summary>
+          <p class="text-zinc-600 mt-2">Look for issues labeled <span class="font-mono text-xs bg-zinc-100 px-1 py-0.5 rounded">good first issue</span> and comment before starting work.</p>
+        </details>
+      </div>
+    </article>
   </div>
 </section>
 

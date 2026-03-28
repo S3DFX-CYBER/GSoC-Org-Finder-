@@ -383,7 +383,7 @@
         <p class="text-xs text-green-600">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
       </div>
     </div>
-    <span class="text-xs font-mono text-green-600 ml-auto">Last updated: 2 hours ago</span>
+    <span id="issuesLastUpdated" class="text-xs font-mono text-green-600 ml-auto">Last updated: pending refresh</span>
   </div>
   <!-- Issue Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -879,9 +879,29 @@
       const data = await res.json();
       const container = document.querySelector('#issues .grid');
       if (!container) return;
+      const issues = Array.isArray(data.issues) ? data.issues : [];
+      const lastUpdatedEl = document.getElementById('issuesLastUpdated');
+      if (lastUpdatedEl) {
+        if (data.updated_at) {
+          const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
+          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+          lastUpdatedEl.textContent = `Last updated: ${relative}`;
+        } else {
+          lastUpdatedEl.textContent = 'Last updated: unavailable';
+        }
+      }
+
+      // Keep static fallback cards if pre-fetched data is empty.
+      if (!issues.length) {
+        const fallback = document.createElement('p');
+        fallback.className = 'col-span-full text-sm text-zinc-500';
+        fallback.textContent = 'Live pre-fetched issues are still syncing. Showing fallback examples below.';
+        container.prepend(fallback);
+        return;
+      }
+
       container.innerHTML = '';
-      
-      data.issues.slice(0, 6).forEach(issue => {
+      issues.slice(0, 6).forEach(issue => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
         card.onclick = () => window.open(issue.url, '_blank');

@@ -162,6 +162,15 @@
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
     .bookmark-btn.active { color: #f59e0b; }
     .bookmark-btn:hover { transform: scale(1.2); }
+
+    /* Minimal dark-mode support */
+    .dark body { background: #0f0f10; color: #e5e7eb; }
+    .dark .glass { background: rgba(24, 24, 27, 0.85); }
+    .dark .bg-white { background: #18181b !important; }
+    .dark .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
+    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
+    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
   </style>
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
@@ -185,7 +194,7 @@
       </nav>
     </div>
     <div class="flex items-center gap-3">
-      <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 hover:bg-zinc-100/50 rounded-full transition-colors">
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors">
         <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
       </button>
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
@@ -639,6 +648,32 @@
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="scripts/orgs.js"></script>
 <script>
+  // ══════════════════════════════════════════════
+  // THEME
+  // ══════════════════════════════════════════════
+  (function(){
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.classList.toggle('dark', saved === 'dark');
+    updateThemeIcon();
+  })();
+
+  window.toggleTheme = function(){
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+  };
+
+  function updateThemeIcon(){
+    const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
+    if(icon){
+      const isDark = document.documentElement.classList.contains('dark');
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }
+  }
+
+  // ══════════════════════════════════════════════
+  // MAIN APP LOGIC
+  // ══════════════════════════════════════════════
   let visibleCount = 12;
   let filteredOrgs = [...ORGS];
   let compareList = [];

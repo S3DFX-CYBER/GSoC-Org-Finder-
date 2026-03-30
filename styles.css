@@ -323,10 +323,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .modal-cta{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s}
 .modal-cta:hover{background:var(--orange-deep)}
 .modal-ideas-link{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s;margin-right:10px}
-.modal-ideas-link:hover{background:`#00654d`;opacity:.95}
+.modal-ideas-link:hover{background:#00654d;opacity:.95}
 .modal-ideas-link:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-[data-theme="dark"] .modal-ideas-link{background:`#0C7A57`;color:`#F5E6D3`}
-[data-theme="dark"] .modal-ideas-link:hover{background:`#096247`;opacity:1}
+[data-theme="dark"] .modal-ideas-link{background:#0C7A57;color:#F5E6D3}
+[data-theme="dark"] .modal-ideas-link:hover{background:#096247;opacity:1}
 .modal-ideas-text{color:var(--muted);font-size:13px;font-style:italic;padding:10px 0;display:block}
 
 /* ── COMPARE PANEL ── */
@@ -486,7 +486,7 @@ footer a:hover{text-decoration:underline}
   .card-header-row{gap:10px}
   .org-logo{width:40px;height:40px}
   .org-name{font-size:13px}
-  .org-desc{font-size:12px;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .org-desc{font-size:12px;-webkit-line-clamp:2;line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
   .tags{gap:4px}
   .tag{font-size:10px;padding:2px 7px}
   .badges{gap:4px}

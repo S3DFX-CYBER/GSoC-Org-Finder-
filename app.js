@@ -4,15 +4,24 @@
 // THEME
 // ══════════════════════════════════════════════
 (function(){
-  const saved=localStorage.getItem('gaf_theme')||'light';
-  document.documentElement.setAttribute('data-theme',saved);
-  updateThemeLabel(saved);
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.classList.toggle('dark', saved === 'dark');
+  updateThemeIcon();
 })();
-function toggleTheme(){
-  const h=document.documentElement,cur=h.getAttribute('data-theme'),next=cur==='light'?'dark':'light';
-  h.setAttribute('data-theme',next);localStorage.setItem('gaf_theme',next);updateThemeLabel(next);
+
+window.toggleTheme = function(){
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  updateThemeIcon();
+};
+
+function updateThemeIcon(){
+  const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
+  if(icon){
+    const isDark = document.documentElement.classList.contains('dark');
+    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  }
 }
-function updateThemeLabel(t){const l=document.getElementById('themeLabel');if(l)l.textContent=t==='dark'?'Dark':'Light';}
 
 // ══════════════════════════════════════════════
 // COUNTDOWN

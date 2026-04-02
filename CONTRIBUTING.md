@@ -137,3 +137,18 @@ If unsure:
 
 - Open an issue
 - Ask in the discussion thread
+
+- #  Contributing Guide
+
+Thank you for your interest in contributing! 🎉  
+This guide will help you get started quickly.
+
+---
+
+##  Setup Instructions
+
+### 1. Fork & Clone
+
+```bash
+git clone https://github.com/your-username/repo-name.git
+cd repo-name

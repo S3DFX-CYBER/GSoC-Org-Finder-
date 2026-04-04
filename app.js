@@ -9,7 +9,7 @@
   updateThemeIcon();
 })();
 
-window.toggleTheme = function(){
+globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateThemeIcon();
@@ -1036,8 +1036,8 @@ requestAnimationFrame(()=>{
 
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 const syncScrollTopBtn = () => {
-  scrollTopBtn?.classList.toggle('visible', window.scrollY > 400);
+  scrollTopBtn?.classList.toggle('visible', globalThis.scrollY > 400);
 };
 
-window.addEventListener('scroll', syncScrollTopBtn, { passive: true });
+globalThis.addEventListener('scroll', syncScrollTopBtn, { passive: true });
 syncScrollTopBtn();

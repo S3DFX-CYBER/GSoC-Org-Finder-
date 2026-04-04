@@ -16,7 +16,10 @@
         if (localStorage.getItem('theme') === 'dark') {
           document.documentElement.classList.add('dark');
         }
-      } catch(e) {}
+      } catch(e) {
+        // localStorage might be unavailable in some browsers/modes
+        console.warn('Theme restoration failed:', e);
+      }
     })();
   </script>
   <script>
@@ -207,7 +210,7 @@
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
-    .dark .filter-chip:not(.bg-orange-600):hover { background: #f97316 !important; color: #ffffff !important; border-color: #f97316 !important; }
+    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
     
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
@@ -220,9 +223,9 @@
       color: #f97316 !important; 
     }
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
-      background: rgba(249, 115, 22, 0.15) !important;
-      border-color: #f97316 !important;
-      color: #f97316 !important;
+      background: rgba(251, 146, 60, 0.2) !important;
+      border-color: #fb923c !important;
+      color: #fb923c !important;
     }
     
     /* Dark mode - Issue card badges */
@@ -323,10 +326,10 @@
 <!-- Mobile Menu Overlay -->
 <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"></div>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
   <!-- Menu Panel -->
-  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel">
+  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
     <div class="flex items-center justify-between p-6 border-b border-zinc-100">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">

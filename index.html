@@ -10,10 +10,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
+    // Theme restoration - runs early to prevent FOUC
+    (function(){
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {
+        // localStorage might be unavailable in some browsers/modes
+        console.warn('Theme restoration failed:', e);
+      }
+    })();
+  </script>
+  <script>
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
+          screens: {
+            'xs': '480px',
+            'sm': '640px',
+            'md': '768px',
+            'lg': '1024px',
+            'xl': '1280px',
+            '2xl': '1536px',
+          },
           colors: {
             "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
             "surface-container":"#eeeeee","primary-container":"#f97316",
@@ -162,19 +183,124 @@
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
     .bookmark-btn.active { color: #f59e0b; }
     .bookmark-btn:hover { transform: scale(1.2); }
+
+    /* Base mobile-first styles */
+    html, body { width: 100%; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+    
+    /* Scroll offset for fixed header */
+    #timeline, #orgs, #guide, #watchlist, #issues {
+      scroll-margin-top: 80px;
+    }
+
+    /* Minimal dark-mode support */
+    .dark body { background: #0f0f10; color: #e5e7eb; }
+    .dark .glass { background: rgba(24, 24, 27, 0.85); }
+    .dark .bg-white { background: #18181b !important; }
+    .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
+    .dark .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
+    .dark .text-zinc-300 { color: #71717a !important; }
+    .dark .text-on-surface { color: #f4f4f5 !important; }
+    .dark .text-on-surface-variant { color: #a1a1aa !important; }
+    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
+    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+
+    /* Dark mode - Filter chips & language pills */
+    .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
+    .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
+    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
+    
+    /* Dark mode - Language tag pills */
+    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
+      background: #27272a !important; 
+      color: #d4d4d8 !important; 
+      border-color: #3f3f46 !important; 
+    }
+    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip):hover { 
+      border-color: #f97316 !important; 
+      color: #f97316 !important; 
+    }
+    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
+      background: rgba(251, 146, 60, 0.2) !important;
+      border-color: #fb923c !important;
+      color: #fb923c !important;
+    }
+    
+    /* Dark mode - Issue card badges */
+    .dark .bg-green-100 { background: #14532d !important; }
+    .dark .bg-zinc-100 { background: #27272a !important; }
+    .dark .text-green-700 { color: #4ade80 !important; }
+    .dark .text-green-800 { color: #86efac !important; }
+    .dark .text-green-600 { color: #4ade80 !important; }
+    .dark .text-zinc-600 { color: #a1a1aa !important; }
+    
+    /* Dark mode - Card hover effects */
+    .dark .group:hover { background: #1f1f23 !important; border-color: rgba(249, 115, 22, 0.3) !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important; }
+    .dark .group:hover .text-on-surface { color: #f97316 !important; }
+    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #f97316 !important; }
+    
+    /* Dark mode - Tech tags */
+    .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
+    .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
+    
+    /* Dark mode - Modal */
+    .dark .modal { background: #18181b; }
+    .dark .modal-header h2 { color: #f4f4f5; }
+    .dark .modal-header p { color: #a1a1aa; }
+    .dark .section-title { color: #71717a; border-color: #27272a; }
+    .dark .metric-card { background: #27272a; border-color: #3f3f46; }
+    .dark .metric-value { color: #f4f4f5; }
+    .dark .metric-label { color: #a1a1aa; }
+    .dark .close-btn { background: #27272a; color: #a1a1aa; }
+    .dark .close-btn:hover { background: #3f3f46; color: #f4f4f5; }
+    .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
+    .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
+    .dark .modal-repo-link:hover { background: #3f3f46; }
+
+    /* Dark mode - Guide section cards */
+    .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
+    .dark #guide article h3 { color: #f4f4f5 !important; }
+    .dark #guide article p, .dark #guide article li { color: #a1a1aa !important; }
+    .dark #guide details { border-color: #3f3f46 !important; }
+    .dark #guide details summary { color: #f4f4f5 !important; }
+    .dark #guide a.block { border-color: #3f3f46 !important; }
+    .dark #guide a.block:hover { background: rgba(249, 115, 22, 0.1) !important; }
+    .dark #guide .font-mono { background: #27272a !important; color: #d4d4d8 !important; }
+
+    /* Dark mode - Mobile menu */
+    .dark #mobileMenu #menuPanel { background: #18181b !important; border-right: 1px solid #3f3f46; }
+    .dark #mobileMenu .border-zinc-100 { border-color: #3f3f46 !important; }
+    .dark #mobileMenu .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark #mobileMenu .text-zinc-700 { color: #e5e7eb !important; }
+    .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
+    .dark #mobileMenu .bg-orange-50 { background: rgba(249, 115, 22, 0.15) !important; }
+
+    /* Header dark mode */
+    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
+    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark header .text-zinc-600 { color: #a1a1aa !important; }
+    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
+    .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
   </style>
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-8">
+  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+      <!-- Hamburger menu button (mobile only) -->
+      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="material-symbols-outlined text-zinc-600">menu</span>
+      </button>
+      
       <a href="#" class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
-        <span class="text-lg font-extrabold tracking-tighter text-zinc-900 font-headline">GSoC 2026 <span class="text-primary italic">Org Finder</span></span>
+        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
         <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
@@ -184,8 +310,10 @@
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
       </nav>
     </div>
-    <div class="flex items-center gap-3">
-      <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 hover:bg-zinc-100/50 rounded-full transition-colors">
+    
+    <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
         <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
       </button>
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
@@ -195,67 +323,117 @@
   </div>
 </header>
 
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-28 pb-20 px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-8">
-        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
-        <span class="font-label text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
+<!-- Mobile Menu Overlay -->
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
+  
+  <!-- Menu Panel -->
+  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
+    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
       </div>
-      <h1 class="text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-6 leading-[0.95]">
+      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-zinc-600">close</span>
+      </button>
+    </div>
+    
+    <div class="p-4 space-y-1">
+      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+        <span class="material-symbols-outlined text-lg">business</span>
+        Organizations
+      </a>
+      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+        <span class="material-symbols-outlined text-lg">menu_book</span>
+        Guide
+      </a>
+      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+        <span class="material-symbols-outlined text-lg">bookmark</span>
+        Watchlist
+      </a>
+      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+        <span class="material-symbols-outlined text-lg">bug_report</span>
+        Issues
+      </a>
+      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Timeline
+      </a>
+    </div>
+    
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+      </a>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+    <div class="lg:col-span-7">
+      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
+        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
+        <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
-      <p class="text-lg text-zinc-600 max-w-xl mb-10 leading-relaxed">
+      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
         Browse all <strong>185</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-10">
+      <div class="relative max-w-xl mb-8 sm:mb-10">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-4">
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+      <div class="flex flex-wrap gap-3 sm:gap-4">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">185</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">185</p></div>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
         </div>
       </div>
     </div>
     <!-- Timeline Card -->
-    <div class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-3xl p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-8">
-          <h3 class="font-headline font-extrabold text-xl">2026 Timeline</h3>
+    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
+      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
+        <div class="flex items-center justify-between mb-6 sm:mb-8">
+          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
           <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
         </div>
-        <div class="space-y-5">
-          <div class="flex gap-4 opacity-40">
+        <div class="space-y-4 sm:space-y-5">
+          <div class="flex gap-3 sm:gap-4 opacity-40">
             <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
             <div><p class="text-[10px] font-bold text-zinc-400">FEB 19, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Orgs Announced</p></div>
           </div>
-          <div class="flex gap-4 opacity-40">
+          <div class="flex gap-3 sm:gap-4 opacity-40">
             <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
             <div><p class="text-[10px] font-bold text-zinc-400">MAR 16, 2026</p><p class="text-sm font-bold text-zinc-500">Contributor Proposals Open</p></div>
           </div>
-          <div class="flex gap-4">
+          <div class="flex gap-3 sm:gap-4">
             <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-primary">MAR 31, 2026</p><p class="text-base font-extrabold text-zinc-900 leading-tight">Proposal Submission Deadline</p><p class="text-xs text-zinc-500 mt-1">Submit your project proposals by 11:30 PM!</p></div>
+            <div><p class="text-[10px] font-bold text-primary">MAR 31, 2026</p><p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">Proposal Submission Deadline</p><p class="text-xs text-zinc-500 mt-1">Submit your project proposals by 11:30 PM!</p></div>
           </div>
-          <div class="flex gap-4 opacity-40">
+          <div class="flex gap-3 sm:gap-4 opacity-40">
             <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div></div>
             <div><p class="text-[10px] font-bold text-zinc-400">APR 30, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Projects Announced</p></div>
           </div>
         </div>
-        <div class="mt-6 pt-6 border-t border-zinc-100">
+        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
           <div class="flex items-center justify-between">
             <span class="text-xs text-zinc-500">Deadline countdown</span>
             <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
@@ -639,6 +817,132 @@
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="scripts/orgs.js"></script>
 <script>
+  // ══════════════════════════════════════════════
+  // THEME
+  // ══════════════════════════════════════════════
+  (function(){
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.classList.toggle('dark', saved === 'dark');
+    updateThemeIcon();
+  })();
+
+  window.toggleTheme = function(){
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+  };
+
+  function updateThemeIcon(){
+    const btn = document.getElementById('themeToggleBtn');
+    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+    if(icon){
+      const isDark = document.documentElement.classList.contains('dark');
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+
+  // ══════════════════════════════════════════════
+  // MOBILE MENU
+  // ══════════════════════════════════════════════
+  window.toggleMenu = function(){
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+    
+    if(menu.classList.contains('hidden')){
+      // Open menu
+      menu.classList.remove('hidden');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      menuBtn.setAttribute('aria-label', 'Close menu');
+      setTimeout(() => {
+        panel.style.transform = 'translateX(0)';
+      }, 10);
+      document.addEventListener('keydown', handleMenuEscape);
+    } else {
+      // Close menu
+      panel.style.transform = 'translateX(-100%)';
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Open menu');
+      document.removeEventListener('keydown', handleMenuEscape);
+      setTimeout(() => {
+        menu.classList.add('hidden');
+      }, 300);
+    }
+  };
+  
+  function handleMenuEscape(e){
+    if(e.key === 'Escape'){
+      const menu = document.getElementById('mobileMenu');
+      if(!menu.classList.contains('hidden')){
+        toggleMenu();
+      }
+    }
+  }
+
+  // Set active menu item and update UI
+  window.setActiveMenu = function(clickedLink){
+    // Remove active class from all menu links
+    const allLinks = document.querySelectorAll('.mobile-menu-link');
+    allLinks.forEach(link => {
+      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+    });
+    
+    // Add active class to clicked link
+    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+    
+    // Close menu after a short delay
+    setTimeout(() => {
+      toggleMenu();
+    }, 300);
+  };
+
+  // Update active state based on scroll position
+  function updateActiveSection() {
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'timeline'];
+    const scrollPosition = window.scrollY + 100; // Offset for fixed header
+    
+    let currentSection = 'orgs'; // Default
+    
+    sections.forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          currentSection = sectionId;
+        }
+      }
+    });
+    
+    // Update menu items
+    const allLinks = document.querySelectorAll('.mobile-menu-link');
+    allLinks.forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if (linkSection === currentSection) {
+        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+      } else {
+        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+      }
+    });
+  }
+
+  // Listen for scroll events
+  window.addEventListener('scroll', updateActiveSection);
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', updateActiveSection);
+
+  // ══════════════════════════════════════════════
+  // MAIN APP LOGIC
+  // ══════════════════════════════════════════════
   let visibleCount = 12;
   let filteredOrgs = [...ORGS];
   let compareList = [];

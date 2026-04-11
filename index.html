@@ -1174,6 +1174,29 @@
 
     document.getElementById('mIdeasBtn').href = org.ideas;
     document.getElementById('mRepoBtn').href = `https://github.com/${org.github}`;
+
+// Copy link button
+const oldCopy = document.getElementById('mIdeasCopyBtn');
+if(oldCopy) oldCopy.remove();
+if(org.ideas){
+  const copyBtn = document.createElement('button');
+  copyBtn.id = 'mIdeasCopyBtn';
+  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+  copyBtn.onclick = function(){
+    navigator.clipboard.writeText(org.ideas).then(()=>{
+      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+      copyBtn.style.background = '#dcfce7';
+      copyBtn.style.color = '#166534';
+      setTimeout(()=>{
+        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+        copyBtn.style.background = '';
+        copyBtn.style.color = '';
+      }, 2000);
+    });
+  };
+  document.getElementById('mIdeasBtn').after(copyBtn);
+}
     
     document.getElementById('orgModal').classList.add('open');
     document.body.style.overflow = 'hidden';

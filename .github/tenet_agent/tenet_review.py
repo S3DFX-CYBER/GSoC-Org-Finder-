@@ -37,7 +37,15 @@ def main():
         print("❌ REPO environment variable is not set.")
         sys.exit(1)
 
-    pr_number = int(os.environ["PR_NUMBER"])
+    pr_number_str = os.environ.get("PR_NUMBER")
+    if not pr_number_str:
+        print("❌ PR_NUMBER environment variable is not set.")
+        sys.exit(1)
+    try:
+        pr_number = int(pr_number_str)
+    except ValueError:
+        print(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}")
+        sys.exit(1)
     pr_title = os.environ.get("PR_TITLE", "")
     pr_body = os.environ.get("PR_BODY", "") or "*No description provided.*"
     pr_author = os.environ.get("PR_AUTHOR", "unknown")

@@ -218,9 +218,9 @@ Each org entry looks like this:
 |---|---|
 | February 2026 | Organizations announced |
 | **March 16, 2026** | **Student applications open** |
-| **April 8, 2026** | **Application deadline** |
-| May 2026 | Accepted students announced |
-| June – September 2026 | Coding period |
+| **March 31, 2026** | **Application deadline** |
+| April 30 2026 | Accepted students announced |
+| May – November 2026 | Coding period |
 
 ---
 

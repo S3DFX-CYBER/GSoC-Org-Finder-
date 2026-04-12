@@ -1,9 +1,9 @@
 # 🚀 GSoC 2026 Org Finder
 
 > **Find your perfect Google Summer of Code 2026 organization — filtered by tech stack, domain, competition level, and live GitHub activity.**
+<img width="1896" height="800" alt="image" src="https://github.com/user-attachments/assets/414e4b55-ec50-4290-97a6-678f23e7c96e" />
 
 **Live site → [https://findmygsoc.vercel.app/](https://findmygsoc.vercel.app/)**
-
 ---
 
 ## ✨ What is this?

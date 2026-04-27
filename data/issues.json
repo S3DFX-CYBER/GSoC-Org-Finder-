@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-27T08:09:24.669Z",
+  "updated_at": "2026-04-27T13:21:38.981Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -692,6 +692,20 @@
     {
       "org": "Graphite",
       "github": "GraphiteEditor/Graphite",
+      "title": "Dragging handle back into its anchor makes its opposite handle move around randomly",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/2451",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 7,
+      "created_at": "2025-03-17T11:39:14Z",
+      "updated_at": "2026-04-27T10:12:39Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
       "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
       "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
       "repo": "GraphiteEditor/Graphite",
@@ -720,20 +734,6 @@
       "language": null
     },
     {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "Text alignment should work without an explicit max-width",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/4011",
-      "repo": "GraphiteEditor/Graphite",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 5,
-      "created_at": "2026-04-06T10:42:10Z",
-      "updated_at": "2026-04-11T16:47:20Z",
-      "language": null
-    },
-    {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
       "title": "List languages in correct alphabetical order",
@@ -749,7 +749,7 @@
       ],
       "comments": 17,
       "created_at": "2026-02-28T16:54:36Z",
-      "updated_at": "2026-04-26T12:30:40Z",
+      "updated_at": "2026-04-27T09:15:36Z",
       "language": null
     },
     {
@@ -796,6 +796,23 @@
     {
       "org": "JabRef e.V.",
       "github": "JabRef/jabref",
+      "title": "Selecting previous/next entry using keyboard shortcut should not focus the search field",
+      "url": "https://github.com/JabRef/jabref/issues/14943",
+      "repo": "JabRef/jabref",
+      "labels": [
+        "platform: windows",
+        "component: entry-editor",
+        "component: keybinding",
+        "good first issue"
+      ],
+      "comments": 17,
+      "created_at": "2026-01-27T22:38:13Z",
+      "updated_at": "2026-04-27T12:48:33Z",
+      "language": null
+    },
+    {
+      "org": "JabRef e.V.",
+      "github": "JabRef/jabref",
       "title": "Menu View: Alt+ keyboard shortcuts do not work.",
       "url": "https://github.com/JabRef/jabref/issues/6994",
       "repo": "JabRef/jabref",
@@ -825,23 +842,6 @@
       "comments": 12,
       "created_at": "2026-03-23T09:09:44Z",
       "updated_at": "2026-04-26T20:55:33Z",
-      "language": null
-    },
-    {
-      "org": "JabRef e.V.",
-      "github": "JabRef/jabref",
-      "title": "Scope \"Chat with groups\" to library",
-      "url": "https://github.com/JabRef/jabref/issues/14641",
-      "repo": "JabRef/jabref",
-      "labels": [
-        "good first issue",
-        "component: ai",
-        "📍 Assigned",
-        "🔔 reminder-sent"
-      ],
-      "comments": 38,
-      "created_at": "2025-12-17T19:12:35Z",
-      "updated_at": "2026-04-25T12:26:03Z",
       "language": null
     },
     {
@@ -1205,6 +1205,36 @@
     {
       "org": "LLVM Compiler Infrastructure",
       "github": "llvm/llvm-project",
+      "title": "[CIR] Upstream handling of AArch64 (Arm) Neon builtins",
+      "url": "https://github.com/llvm/llvm-project/issues/185382",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "good first issue",
+        "ClangIR"
+      ],
+      "comments": 75,
+      "created_at": "2026-03-09T09:44:11Z",
+      "updated_at": "2026-04-27T13:11:25Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
+      "title": "processing .incbin with offset/count uses excessive memory",
+      "url": "https://github.com/llvm/llvm-project/issues/62339",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "good first issue",
+        "llvm:mc"
+      ],
+      "comments": 10,
+      "created_at": "2023-04-25T02:43:41Z",
+      "updated_at": "2026-04-27T09:04:15Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
       "title": "Missing FP optimization opportunities for fcmp ord operations",
       "url": "https://github.com/llvm/llvm-project/issues/49175",
       "repo": "llvm/llvm-project",
@@ -1221,34 +1251,22 @@
       "language": null
     },
     {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "[libc][math] Tracking Issue - Refactor Higher Math Functions to Header Only",
-      "url": "https://github.com/llvm/llvm-project/issues/147386",
-      "repo": "llvm/llvm-project",
+      "org": "Meshery",
+      "github": "meshery/meshery",
+      "title": "[Docs] Fix outdated code references in Contributing to Meshery UI - Notification Center",
+      "url": "https://github.com/meshery/meshery/issues/18941",
+      "repo": "meshery/meshery",
       "labels": [
-        "metaissue",
+        "help wanted",
         "good first issue",
-        "libc"
+        "area/docs",
+        "first-timers-only",
+        "language/markdown",
+        "framework/hugo"
       ],
-      "comments": 29,
-      "created_at": "2025-07-07T20:20:30Z",
-      "updated_at": "2026-04-26T18:25:26Z",
-      "language": null
-    },
-    {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "Wrong types checked at DAGCombiner::visitSRA(SDNode *N)",
-      "url": "https://github.com/llvm/llvm-project/issues/153543",
-      "repo": "llvm/llvm-project",
-      "labels": [
-        "good first issue",
-        "llvm:SelectionDAG"
-      ],
-      "comments": 4,
-      "created_at": "2025-08-14T07:11:10Z",
-      "updated_at": "2026-04-26T17:39:14Z",
+      "comments": 0,
+      "created_at": "2026-04-27T13:05:59Z",
+      "updated_at": "2026-04-27T13:05:59Z",
       "language": null
     },
     {
@@ -1285,24 +1303,6 @@
       "comments": 6,
       "created_at": "2026-04-21T14:24:38Z",
       "updated_at": "2026-04-24T05:30:41Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "[Docs] Active state is not applied to the current breadcrumb",
-      "url": "https://github.com/meshery/meshery/issues/17610",
-      "repo": "meshery/meshery",
-      "labels": [
-        "help wanted",
-        "good first issue",
-        "area/docs",
-        "language/markdown",
-        "framework/jekyll"
-      ],
-      "comments": 7,
-      "created_at": "2026-02-24T08:41:44Z",
-      "updated_at": "2026-04-23T11:28:44Z",
       "language": null
     },
     {
@@ -1703,6 +1703,23 @@
     {
       "org": "Oppia Foundation",
       "github": "oppia/oppia",
+      "title": "[Feature Request]: Enforce the strict type checks",
+      "url": "https://github.com/oppia/oppia/issues/23496",
+      "repo": "oppia/oppia",
+      "labels": [
+        "frontend",
+        "good first issue",
+        "enhancement",
+        "Hacktoberfest"
+      ],
+      "comments": 215,
+      "created_at": "2025-09-30T13:46:56Z",
+      "updated_at": "2026-04-27T12:56:35Z",
+      "language": null
+    },
+    {
+      "org": "Oppia Foundation",
+      "github": "oppia/oppia",
       "title": "Use image-uploader and image-uploader-modal to handle image uploads",
       "url": "https://github.com/oppia/oppia/issues/20564",
       "repo": "oppia/oppia",
@@ -1717,23 +1734,6 @@
       "comments": 56,
       "created_at": "2024-06-24T16:27:38Z",
       "updated_at": "2026-04-27T04:59:06Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[Feature Request]: Enforce the strict type checks",
-      "url": "https://github.com/oppia/oppia/issues/23496",
-      "repo": "oppia/oppia",
-      "labels": [
-        "frontend",
-        "good first issue",
-        "enhancement",
-        "Hacktoberfest"
-      ],
-      "comments": 215,
-      "created_at": "2025-09-30T13:46:56Z",
-      "updated_at": "2026-04-26T09:07:06Z",
       "language": null
     },
     {
@@ -1846,52 +1846,353 @@
       "language": null
     },
     {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Multiple SolverInterfaces using the C and Fortran bindings",
-      "url": "https://github.com/precice/precice/issues/1200",
-      "repo": "precice/precice",
+      "org": "Stichting SU2",
+      "github": "su2code/SU2",
+      "title": "Issues with compiling SU2 on Windows 10",
+      "url": "https://github.com/su2code/SU2/issues/1468",
+      "repo": "su2code/SU2",
       "labels": [
-        "bug",
-        "good first issue",
-        "breaking change",
-        "low priority"
+        "enhancement",
+        "documentation",
+        "good first issue"
       ],
-      "comments": 5,
-      "created_at": "2022-03-10T11:06:04Z",
-      "updated_at": "2026-04-14T17:14:51Z",
+      "comments": 3,
+      "created_at": "2021-12-08T17:39:03Z",
+      "updated_at": "2026-01-02T10:36:25Z",
       "language": null
     },
     {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Thread-safe Participant",
-      "url": "https://github.com/precice/precice/issues/2407",
-      "repo": "precice/precice",
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "TA grading panel view of PDF cannot view top of first page",
+      "url": "https://github.com/Submitty/Submitty/issues/12763",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "bug",
+        "TA Grading / TA UI",
+        "good first issue",
+        "URGENT / PRIORITY"
+      ],
+      "comments": 0,
+      "created_at": "2026-04-08T02:21:48Z",
+      "updated_at": "2026-04-16T20:27:11Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Add link from Rainbow Grades to each Gradeable (w/ autograding or TA grading)",
+      "url": "https://github.com/Submitty/Submitty/issues/10433",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "Rainbow Grades",
+        "good first issue"
+      ],
+      "comments": 2,
+      "created_at": "2024-05-13T21:01:21Z",
+      "updated_at": "2026-04-11T14:11:14Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Enhance Forum Search Feature",
+      "url": "https://github.com/Submitty/Submitty/issues/12619",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "good first issue",
+        "Discussion Forum / Live Chat",
+        "Awaiting Triage"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-21T19:36:38Z",
+      "updated_at": "2026-04-05T02:46:32Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "License moderation request cannot be opened",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/149",
+      "repo": "eclipse-sw360/sw360",
+      "labels": [
+        "bug",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2018-04-26T15:13:27Z",
+      "updated_at": "2026-03-07T09:12:35Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "SSOAutoLogin: Update Differing Liferay User's External Id",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/358",
+      "repo": "eclipse-sw360/sw360",
+      "labels": [
+        "bug",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2018-09-10T12:10:40Z",
+      "updated_at": "2026-02-04T14:05:11Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "Automation of clearing details of components",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/119",
+      "repo": "eclipse-sw360/sw360",
       "labels": [
         "enhancement",
-        "thesis",
+        "good first issue"
+      ],
+      "comments": 3,
+      "created_at": "2018-04-26T15:08:24Z",
+      "updated_at": "2026-02-01T14:52:36Z",
+      "language": null
+    },
+    {
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "Separate `-dump-clang-diagnostics` into two features.",
+      "url": "https://github.com/swiftlang/swift/issues/87757",
+      "repo": "swiftlang/swift",
+      "labels": [
+        "clang importer",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2026-03-09T22:50:40Z",
+      "updated_at": "2026-04-15T10:36:14Z",
+      "language": null
+    },
+    {
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "[SR-14443] [C++] Don't crash on invalid dependent values.",
+      "url": "https://github.com/swiftlang/swift/issues/56799",
+      "repo": "swiftlang/swift",
+      "labels": [
+        "bug",
+        "c++ interop",
+        "compiler",
         "good first issue"
       ],
       "comments": 13,
-      "created_at": "2025-12-02T12:35:36Z",
-      "updated_at": "2026-03-20T07:22:55Z",
+      "created_at": "2021-04-03T00:53:31Z",
+      "updated_at": "2026-04-10T20:23:39Z",
       "language": null
     },
     {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Configurable RBF cut-off threshold",
-      "url": "https://github.com/precice/precice/issues/1265",
-      "repo": "precice/precice",
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "Error says `@preconcurrency` only applies in inheritance clauses",
+      "url": "https://github.com/swiftlang/swift/issues/88338",
+      "repo": "swiftlang/swift",
       "labels": [
-        "enhancement",
+        "compiler",
         "good first issue",
-        "configuration"
+        "type checker",
+        "TypeResolver",
+        "attributes",
+        "@preconcurrency",
+        "swift 6.3"
       ],
       "comments": 1,
-      "created_at": "2022-04-25T12:07:28Z",
-      "updated_at": "2026-03-16T10:58:55Z",
+      "created_at": "2026-04-07T11:45:33Z",
+      "updated_at": "2026-04-08T06:51:48Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "Refine is not able to make many simplifications",
+      "url": "https://github.com/sympy/sympy/issues/27888",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "assumptions",
+        "good first issue",
+        "assumptions.refine"
+      ],
+      "comments": 29,
+      "created_at": "2025-04-03T23:15:01Z",
+      "updated_at": "2026-04-21T23:37:09Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "Adding more type annotations to the codebase",
+      "url": "https://github.com/sympy/sympy/issues/28806",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "good first issue",
+        "typing"
+      ],
+      "comments": 101,
+      "created_at": "2025-12-21T13:17:04Z",
+      "updated_at": "2026-04-15T21:14:37Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "To see issues good to start with, click \"Easy to Fix\" 🡪",
+      "url": "https://github.com/sympy/sympy/issues/13520",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2017-10-23T07:07:35Z",
+      "updated_at": "2018-01-20T16:07:46Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "\"Add Layer\" button to toolbar?",
+      "url": "https://github.com/synfig/synfig/issues/1139",
+      "repo": "synfig/synfig",
+      "labels": [
+        "Feature request",
+        "help wanted",
+        "good first issue"
+      ],
+      "comments": 22,
+      "created_at": "2020-02-01T13:11:00Z",
+      "updated_at": "2026-02-28T14:43:35Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "Feature request: Add support of Angle type to Log converter",
+      "url": "https://github.com/synfig/synfig/issues/3582",
+      "repo": "synfig/synfig",
+      "labels": [
+        "Easy",
+        "good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2025-05-15T03:15:53Z",
+      "updated_at": "2025-07-02T10:27:52Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "User-friendly rendering dialogue",
+      "url": "https://github.com/synfig/synfig/issues/721",
+      "repo": "synfig/synfig",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "UI/UX"
+      ],
+      "comments": 12,
+      "created_at": "2019-02-05T15:21:52Z",
+      "updated_at": "2025-06-12T04:15:13Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Move CSVY writer from custom abundance widget to io",
+      "url": "https://github.com/tardis-sn/tardis/issues/1927",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "good first issue",
+        "io"
+      ],
+      "comments": 6,
+      "created_at": "2022-03-14T17:40:34Z",
+      "updated_at": "2026-02-02T17:59:08Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Cannot disable convergence plots",
+      "url": "https://github.com/tardis-sn/tardis/issues/2917",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "easy",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2024-12-30T06:04:51Z",
+      "updated_at": "2026-01-29T18:21:36Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Using `tardis.__path__` to determine the TARDIS module location can break in edge cases",
+      "url": "https://github.com/tardis-sn/tardis/issues/3021",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "good first issue",
+        "bug :lady_beetle:"
+      ],
+      "comments": 4,
+      "created_at": "2025-03-20T14:07:15Z",
+      "updated_at": "2026-01-28T14:40:54Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "implement String(::Base.Generator)",
+      "url": "https://github.com/JuliaLang/julia/issues/57072",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "strings"
+      ],
+      "comments": 10,
+      "created_at": "2025-01-16T19:04:36Z",
+      "updated_at": "2026-04-01T23:00:40Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "Bug in heapsnapshot generation for arrays of inlined objects",
+      "url": "https://github.com/JuliaLang/julia/issues/61396",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "GC",
+        "good first issue",
+        "observability"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-23T17:42:57Z",
+      "updated_at": "2026-03-27T06:22:32Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "Unexpected behavior due to implicit `convert` with `Char` and `Integer`",
+      "url": "https://github.com/JuliaLang/julia/issues/44410",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "good first issue",
+        "strings"
+      ],
+      "comments": 10,
+      "created_at": "2022-03-02T14:35:44Z",
+      "updated_at": "2026-02-25T10:29:48Z",
       "language": null
     },
     {

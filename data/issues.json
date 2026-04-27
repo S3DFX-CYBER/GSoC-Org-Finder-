@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-26T13:34:04.976Z",
+  "updated_at": "2026-04-27T01:49:52.079Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -44,9 +44,9 @@
         "Good First Issue",
         "Dev"
       ],
-      "comments": 1,
+      "comments": 2,
       "created_at": "2026-04-25T10:30:33Z",
-      "updated_at": "2026-04-25T19:15:22Z",
+      "updated_at": "2026-04-26T19:57:59Z",
       "language": null
     },
     {
@@ -691,6 +691,22 @@
     {
       "org": "Graphite",
       "github": "GraphiteEditor/Graphite",
+      "title": "Tracking Issue: New nodes",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/912",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Help Wanted",
+        "Good First Issue",
+        "Graphene"
+      ],
+      "comments": 3,
+      "created_at": "2022-12-25T21:43:07Z",
+      "updated_at": "2026-04-26T19:13:41Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
       "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
       "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
       "repo": "GraphiteEditor/Graphite",
@@ -714,20 +730,6 @@
       "comments": 5,
       "created_at": "2026-04-06T10:42:10Z",
       "updated_at": "2026-04-11T16:47:20Z",
-      "language": null
-    },
-    {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "Text alignment, justification, and hyphenation",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/2351",
-      "repo": "GraphiteEditor/Graphite",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 0,
-      "created_at": "2025-03-02T12:00:59Z",
-      "updated_at": "2026-04-06T10:42:24Z",
       "language": null
     },
     {
@@ -793,18 +795,19 @@
     {
       "org": "JabRef e.V.",
       "github": "JabRef/jabref",
-      "title": "Scope \"Chat with groups\" to library",
-      "url": "https://github.com/JabRef/jabref/issues/14641",
+      "title": "Menu View: Alt+ keyboard shortcuts do not work.",
+      "url": "https://github.com/JabRef/jabref/issues/6994",
       "repo": "JabRef/jabref",
       "labels": [
+        "component: ui",
+        "component: keybinding",
         "good first issue",
-        "component: ai",
         "📍 Assigned",
         "🔔 reminder-sent"
       ],
-      "comments": 38,
-      "created_at": "2025-12-17T19:12:35Z",
-      "updated_at": "2026-04-25T12:26:03Z",
+      "comments": 20,
+      "created_at": "2020-10-09T09:37:36Z",
+      "updated_at": "2026-04-26T22:32:39Z",
       "language": null
     },
     {
@@ -820,22 +823,24 @@
       ],
       "comments": 12,
       "created_at": "2026-03-23T09:09:44Z",
-      "updated_at": "2026-04-24T23:58:03Z",
+      "updated_at": "2026-04-26T20:55:33Z",
       "language": null
     },
     {
       "org": "JabRef e.V.",
       "github": "JabRef/jabref",
-      "title": "Allow relative paths in Recent Libraries",
-      "url": "https://github.com/JabRef/jabref/issues/3590",
+      "title": "Scope \"Chat with groups\" to library",
+      "url": "https://github.com/JabRef/jabref/issues/14641",
       "repo": "JabRef/jabref",
       "labels": [
         "good first issue",
-        "📌 Pinned"
+        "component: ai",
+        "📍 Assigned",
+        "🔔 reminder-sent"
       ],
       "comments": 38,
-      "created_at": "2017-12-30T10:21:33Z",
-      "updated_at": "2026-04-24T19:43:02Z",
+      "created_at": "2025-12-17T19:12:35Z",
+      "updated_at": "2026-04-25T12:26:03Z",
       "language": null
     },
     {
@@ -1199,31 +1204,19 @@
     {
       "org": "LLVM Compiler Infrastructure",
       "github": "llvm/llvm-project",
-      "title": "[CIR] Upstream handling of AArch64 (Arm) Neon builtins",
-      "url": "https://github.com/llvm/llvm-project/issues/185382",
+      "title": "Missing FP optimization opportunities for fcmp ord operations",
+      "url": "https://github.com/llvm/llvm-project/issues/49175",
       "repo": "llvm/llvm-project",
       "labels": [
         "good first issue",
-        "ClangIR"
+        "bugzilla",
+        "llvm:optimizations",
+        "missed-optimization",
+        "floating-point"
       ],
-      "comments": 75,
-      "created_at": "2026-03-09T09:44:11Z",
-      "updated_at": "2026-04-26T11:40:46Z",
-      "language": null
-    },
-    {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "Wrong types checked at DAGCombiner::visitSRA(SDNode *N)",
-      "url": "https://github.com/llvm/llvm-project/issues/153543",
-      "repo": "llvm/llvm-project",
-      "labels": [
-        "good first issue",
-        "llvm:SelectionDAG"
-      ],
-      "comments": 4,
-      "created_at": "2025-08-14T07:11:10Z",
-      "updated_at": "2026-04-26T10:25:22Z",
+      "comments": 3,
+      "created_at": "2021-04-04T05:33:36Z",
+      "updated_at": "2026-04-26T19:05:33Z",
       "language": null
     },
     {
@@ -1239,7 +1232,40 @@
       ],
       "comments": 29,
       "created_at": "2025-07-07T20:20:30Z",
-      "updated_at": "2026-04-26T03:43:59Z",
+      "updated_at": "2026-04-26T18:25:26Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
+      "title": "Wrong types checked at DAGCombiner::visitSRA(SDNode *N)",
+      "url": "https://github.com/llvm/llvm-project/issues/153543",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "good first issue",
+        "llvm:SelectionDAG"
+      ],
+      "comments": 4,
+      "created_at": "2025-08-14T07:11:10Z",
+      "updated_at": "2026-04-26T17:39:14Z",
+      "language": null
+    },
+    {
+      "org": "Meshery",
+      "github": "meshery/meshery",
+      "title": "[Docs] Use Qanelas Soft font for Rest API Reference",
+      "url": "https://github.com/meshery/meshery/issues/18835",
+      "repo": "meshery/meshery",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "area/docs",
+        "language/markdown",
+        "framework/hugo"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-20T23:53:16Z",
+      "updated_at": "2026-04-26T23:45:18Z",
       "language": null
     },
     {
@@ -1276,24 +1302,6 @@
       "comments": 7,
       "created_at": "2026-02-24T08:41:44Z",
       "updated_at": "2026-04-23T11:28:44Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "[Docs] Use Qanelas Soft font for Rest API Reference",
-      "url": "https://github.com/meshery/meshery/issues/18835",
-      "repo": "meshery/meshery",
-      "labels": [
-        "help wanted",
-        "good first issue",
-        "area/docs",
-        "language/markdown",
-        "framework/hugo"
-      ],
-      "comments": 1,
-      "created_at": "2026-04-20T23:53:16Z",
-      "updated_at": "2026-04-22T22:27:56Z",
       "language": null
     },
     {
@@ -1389,6 +1397,22 @@
     {
       "org": "omegaUp",
       "github": "omegaup/omegaup",
+      "title": "[FEATURE] Create English version of `Runs-API.md`",
+      "url": "https://github.com/omegaup/omegaup/issues/8195",
+      "repo": "omegaup/omegaup",
+      "labels": [
+        "feature-request",
+        "Good first issue",
+        "Stale"
+      ],
+      "comments": 14,
+      "created_at": "2025-04-11T16:56:16Z",
+      "updated_at": "2026-04-26T20:26:55Z",
+      "language": null
+    },
+    {
+      "org": "omegaUp",
+      "github": "omegaup/omegaup",
       "title": "[FEATURE] Improve empty course content state by centering the “Add content” button",
       "url": "https://github.com/omegaup/omegaup/issues/9443",
       "repo": "omegaup/omegaup",
@@ -1416,21 +1440,6 @@
       "comments": 14,
       "created_at": "2020-08-12T06:09:03Z",
       "updated_at": "2026-04-11T12:46:33Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "title": "[Bug] Lone question mark wraps to next line on mobile view in User Preferences",
-      "url": "https://github.com/omegaup/omegaup/issues/9746",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "bug",
-        "Good first issue"
-      ],
-      "comments": 7,
-      "created_at": "2026-04-07T09:07:00Z",
-      "updated_at": "2026-04-08T12:40:42Z",
       "language": null
     },
     {
@@ -1693,6 +1702,25 @@
     {
       "org": "Oppia Foundation",
       "github": "oppia/oppia",
+      "title": "Use image-uploader and image-uploader-modal to handle image uploads",
+      "url": "https://github.com/oppia/oppia/issues/20564",
+      "repo": "oppia/oppia",
+      "labels": [
+        "frontend",
+        "good first issue",
+        "bug",
+        "Impact: Medium",
+        "Work: Medium",
+        "Hacktoberfest"
+      ],
+      "comments": 55,
+      "created_at": "2024-06-24T16:27:38Z",
+      "updated_at": "2026-04-27T01:03:27Z",
+      "language": null
+    },
+    {
+      "org": "Oppia Foundation",
+      "github": "oppia/oppia",
       "title": "[Feature Request]: Enforce the strict type checks",
       "url": "https://github.com/oppia/oppia/issues/23496",
       "repo": "oppia/oppia",
@@ -1724,21 +1752,6 @@
       "comments": 47,
       "created_at": "2026-01-25T17:17:04Z",
       "updated_at": "2026-04-26T04:46:34Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[BUG]: Acceptance test re-run steps do not work due to server not being shut down",
-      "url": "https://github.com/oppia/oppia/issues/23830",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug"
-      ],
-      "comments": 59,
-      "created_at": "2025-11-10T13:24:25Z",
-      "updated_at": "2026-04-25T18:09:39Z",
       "language": null
     },
     {

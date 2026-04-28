@@ -1340,7 +1340,7 @@ if(org.ideas){
   // Dynamic GFIs
   async function renderGoodFirstIssues() {
     try {
-      const res = await fetch('data/issues.json');
+      const res = await fetch('data/issues.json?v=' + Date.now());
       const data = await res.json();
       const container = document.querySelector('#issues .grid');
       if (!container) return;

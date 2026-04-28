@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-28T13:30:58.960Z",
+  "updated_at": "2026-04-28T19:22:36.481Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -496,6 +496,24 @@
     {
       "org": "FreeCAD",
       "github": "FreeCAD/FreeCAD",
+      "title": "Assembly: Insert Component command name mismatched between toolbar and task panel",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/29674",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Type: Bug",
+        "Topic: User Interface",
+        "Good first issue",
+        "Status: Confirmed",
+        "Mod: Assembly"
+      ],
+      "comments": 0,
+      "created_at": "2026-04-28T10:37:01Z",
+      "updated_at": "2026-04-28T13:38:20Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
       "title": "Navigation: 6dof / spacemouse center of rotation is unintuitive",
       "url": "https://github.com/FreeCAD/FreeCAD/issues/9543",
       "repo": "FreeCAD/FreeCAD",
@@ -528,24 +546,6 @@
       "comments": 2,
       "created_at": "2026-03-24T02:49:27Z",
       "updated_at": "2026-04-26T12:51:36Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "Link: No UI indication of different kinds of LinkGroup",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/15077",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Mod: Core",
-        "Topic: User Interface",
-        "Type: Feature",
-        "Good first issue",
-        "Topic: Link"
-      ],
-      "comments": 1,
-      "created_at": "2024-07-01T00:05:59Z",
-      "updated_at": "2026-04-25T22:47:48Z",
       "language": null
     },
     {
@@ -746,9 +746,9 @@
         "Needs: Triage",
         "Needs: Lead"
       ],
-      "comments": 2,
+      "comments": 4,
       "created_at": "2026-04-28T11:08:38Z",
-      "updated_at": "2026-04-28T11:13:27Z",
+      "updated_at": "2026-04-28T18:53:14Z",
       "language": null
     },
     {
@@ -1200,6 +1200,24 @@
     {
       "org": "LLVM Compiler Infrastructure",
       "github": "llvm/llvm-project",
+      "title": "Missing FP optimization opportunities for fcmp ord operations",
+      "url": "https://github.com/llvm/llvm-project/issues/49175",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "good first issue",
+        "bugzilla",
+        "llvm:optimizations",
+        "missed-optimization",
+        "floating-point"
+      ],
+      "comments": 4,
+      "created_at": "2021-04-04T05:33:36Z",
+      "updated_at": "2026-04-28T19:07:13Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
       "title": "[CIR] Upstream handling of AArch64 (Arm) Neon builtins",
       "url": "https://github.com/llvm/llvm-project/issues/185382",
       "repo": "llvm/llvm-project",
@@ -1229,21 +1247,6 @@
       "language": null
     },
     {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "processing .incbin with offset/count uses excessive memory",
-      "url": "https://github.com/llvm/llvm-project/issues/62339",
-      "repo": "llvm/llvm-project",
-      "labels": [
-        "good first issue",
-        "llvm:mc"
-      ],
-      "comments": 10,
-      "created_at": "2023-04-25T02:43:41Z",
-      "updated_at": "2026-04-27T09:04:15Z",
-      "language": null
-    },
-    {
       "org": "Meshery",
       "github": "meshery/meshery",
       "title": "[Docs] Display Designs That Use Each Model on Model Pages",
@@ -1256,9 +1259,9 @@
         "language/markdown",
         "framework/hugo"
       ],
-      "comments": 2,
+      "comments": 6,
       "created_at": "2026-04-27T23:09:05Z",
-      "updated_at": "2026-04-28T13:14:38Z",
+      "updated_at": "2026-04-28T16:58:46Z",
       "language": null
     },
     {
@@ -1274,9 +1277,9 @@
         "language/markdown",
         "framework/hugo"
       ],
-      "comments": 1,
+      "comments": 3,
       "created_at": "2026-04-27T22:18:04Z",
-      "updated_at": "2026-04-28T02:34:14Z",
+      "updated_at": "2026-04-28T16:54:26Z",
       "language": null
     },
     {

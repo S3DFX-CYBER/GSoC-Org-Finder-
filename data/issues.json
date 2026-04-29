@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-28T19:22:36.481Z",
+  "updated_at": "2026-04-29T02:00:49.880Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -80,6 +80,20 @@
     {
       "org": "ArduPilot",
       "github": "ArduPilot/ardupilot",
+      "title": "copter-circle-speed.lua script appears to not work",
+      "url": "https://github.com/ArduPilot/ardupilot/issues/32799",
+      "repo": "ArduPilot/ardupilot",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 1,
+      "created_at": "2026-04-16T22:35:31Z",
+      "updated_at": "2026-04-28T19:19:35Z",
+      "language": null
+    },
+    {
+      "org": "ArduPilot",
+      "github": "ArduPilot/ardupilot",
       "title": "AP_DAL_Standalone is broken",
       "url": "https://github.com/ArduPilot/ardupilot/issues/32792",
       "repo": "ArduPilot/ardupilot",
@@ -89,20 +103,6 @@
       "comments": 1,
       "created_at": "2026-04-15T22:22:51Z",
       "updated_at": "2026-04-20T20:26:45Z",
-      "language": null
-    },
-    {
-      "org": "ArduPilot",
-      "github": "ArduPilot/ardupilot",
-      "title": "copter-circle-speed.lua script appears to not work",
-      "url": "https://github.com/ArduPilot/ardupilot/issues/32799",
-      "repo": "ArduPilot/ardupilot",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2026-04-16T22:35:31Z",
-      "updated_at": "2026-04-16T22:46:18Z",
       "language": null
     },
     {
@@ -737,6 +737,23 @@
     {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
+      "title": "Reorder `.pre-commit-config.yaml` for faster feedback - slower hooks at the end",
+      "url": "https://github.com/internetarchive/openlibrary/issues/12471",
+      "repo": "internetarchive/openlibrary",
+      "labels": [
+        "Type: Feature Request",
+        "Good First Issue",
+        "Theme: Development",
+        "Lead: @RayBB"
+      ],
+      "comments": 1,
+      "created_at": "2026-04-28T23:58:24Z",
+      "updated_at": "2026-04-29T00:01:18Z",
+      "language": null
+    },
+    {
+      "org": "Internet Archive",
+      "github": "internetarchive/openlibrary",
       "title": "[i18n] Book availability buttons not translated in Arabic locale",
       "url": "https://github.com/internetarchive/openlibrary/issues/12455",
       "repo": "internetarchive/openlibrary",
@@ -746,9 +763,9 @@
         "Needs: Triage",
         "Needs: Lead"
       ],
-      "comments": 4,
+      "comments": 5,
       "created_at": "2026-04-28T11:08:38Z",
-      "updated_at": "2026-04-28T18:53:14Z",
+      "updated_at": "2026-04-28T23:25:41Z",
       "language": null
     },
     {
@@ -768,27 +785,6 @@
       "comments": 17,
       "created_at": "2026-02-28T16:54:36Z",
       "updated_at": "2026-04-27T09:15:36Z",
-      "language": null
-    },
-    {
-      "org": "Internet Archive",
-      "github": "internetarchive/openlibrary",
-      "title": "Update \"Trending Now\" cards to display patron Follow Card (if reading log public)",
-      "url": "https://github.com/internetarchive/openlibrary/issues/10241",
-      "repo": "internetarchive/openlibrary",
-      "labels": [
-        "Type: Feature Request",
-        "Priority: 3",
-        "Good First Issue",
-        "Lead: @jimchamp",
-        "Needs: Response",
-        "Needs: Design Feedback",
-        "Fellowship Opportunity",
-        "Module: Following"
-      ],
-      "comments": 24,
-      "created_at": "2024-12-31T17:07:57Z",
-      "updated_at": "2026-04-21T09:06:04Z",
       "language": null
     },
     {
@@ -1249,6 +1245,39 @@
     {
       "org": "Meshery",
       "github": "meshery/meshery",
+      "title": "Alignment of Share Btn in Comparison Modal.",
+      "url": "https://github.com/meshery/meshery/issues/15173",
+      "repo": "meshery/meshery",
+      "labels": [
+        "kind/bug",
+        "good first issue"
+      ],
+      "comments": 13,
+      "created_at": "2025-06-24T18:22:33Z",
+      "updated_at": "2026-04-28T22:59:19Z",
+      "language": null
+    },
+    {
+      "org": "Meshery",
+      "github": "meshery/meshery",
+      "title": "[Docs] Use Qanelas Soft font for Rest API Reference",
+      "url": "https://github.com/meshery/meshery/issues/18835",
+      "repo": "meshery/meshery",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "area/docs",
+        "language/markdown",
+        "framework/hugo"
+      ],
+      "comments": 3,
+      "created_at": "2026-04-20T23:53:16Z",
+      "updated_at": "2026-04-28T22:42:47Z",
+      "language": null
+    },
+    {
+      "org": "Meshery",
+      "github": "meshery/meshery",
       "title": "[Docs] Display Designs That Use Each Model on Model Pages",
       "url": "https://github.com/meshery/meshery/issues/18959",
       "repo": "meshery/meshery",
@@ -1262,43 +1291,6 @@
       "comments": 6,
       "created_at": "2026-04-27T23:09:05Z",
       "updated_at": "2026-04-28T16:58:46Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "[Docs] Inconsistent Visual and Interaction Between Resource and HTTP Method",
-      "url": "https://github.com/meshery/meshery/issues/18956",
-      "repo": "meshery/meshery",
-      "labels": [
-        "help wanted",
-        "good first issue",
-        "area/docs",
-        "language/markdown",
-        "framework/hugo"
-      ],
-      "comments": 3,
-      "created_at": "2026-04-27T22:18:04Z",
-      "updated_at": "2026-04-28T16:54:26Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "[Docs] Fix outdated code references in Contributing to Meshery UI - Notification Center",
-      "url": "https://github.com/meshery/meshery/issues/18941",
-      "repo": "meshery/meshery",
-      "labels": [
-        "help wanted",
-        "good first issue",
-        "area/docs",
-        "first-timers-only",
-        "language/markdown",
-        "framework/hugo"
-      ],
-      "comments": 3,
-      "created_at": "2026-04-27T13:05:59Z",
-      "updated_at": "2026-04-27T14:39:50Z",
       "language": null
     },
     {
@@ -1389,167 +1381,6 @@
       "comments": 0,
       "created_at": "2026-02-27T10:25:00Z",
       "updated_at": "2026-02-27T10:25:00Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "title": "INFORMACION ABREVIATURAS EN  ENVIO DE PROBLEMAS ",
-      "url": "https://github.com/omegaup/omegaup/issues/6157",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "UX Task",
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 18,
-      "created_at": "2021-12-16T04:28:04Z",
-      "updated_at": "2026-04-27T21:50:08Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "title": "[FEATURE] Create English version of `Runs-API.md`",
-      "url": "https://github.com/omegaup/omegaup/issues/8195",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 14,
-      "created_at": "2025-04-11T16:56:16Z",
-      "updated_at": "2026-04-26T20:26:55Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "title": "[FEATURE] Improve empty course content state by centering the “Add content” button",
-      "url": "https://github.com/omegaup/omegaup/issues/9443",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 8,
-      "created_at": "2026-03-06T19:26:45Z",
-      "updated_at": "2026-04-25T02:23:13Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "title": "Log key events of the web version of Open Food Facts in Matomo",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/8191",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "🎯 P1",
-        "good first issue",
-        "JavaScript",
-        "⏰ Stale",
-        "monitoring",
-        "matomo",
-        "image deletion"
-      ],
-      "comments": 5,
-      "created_at": "2023-03-13T15:50:36Z",
-      "updated_at": "2026-03-27T10:41:29Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "title": "Folksonomy Engine loads CSS and a font from CDNs",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/9012",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "🎯 P1",
-        "good first issue",
-        "JavaScript",
-        "CSS",
-        "🏷️ Folksonomy Project",
-        ":star: top issue",
-        ":star: :bug: top bug"
-      ],
-      "comments": 6,
-      "created_at": "2023-09-17T13:20:18Z",
-      "updated_at": "2026-03-25T18:28:26Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "title": "Turn product changes history into a knowledge panel table",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/7362",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "🎯 P1",
-        "good first issue",
-        "🤳🥫 blocking mobile apps",
-        "product history",
-        "📖 Knowledge Panels",
-        "🎨 Mockup available",
-        "Template::Toolkit",
-        "blocking off explorer"
-      ],
-      "comments": 9,
-      "created_at": "2022-09-18T15:21:10Z",
-      "updated_at": "2026-03-16T02:50:41Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Better explanation of the different clients supported by sunpy",
-      "url": "https://github.com/sunpy/sunpy/issues/3800",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Good First Issue"
-      ],
-      "comments": 8,
-      "created_at": "2020-02-13T19:16:11Z",
-      "updated_at": "2026-03-26T21:21:48Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Standardise our docstring convention on Time inputs",
-      "url": "https://github.com/sunpy/sunpy/issues/2784",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Documentation",
-        "Good First Issue"
-      ],
-      "comments": 15,
-      "created_at": "2018-10-10T17:26:54Z",
-      "updated_at": "2026-03-26T09:54:13Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Highlight new contributors better in release notes",
-      "url": "https://github.com/sunpy/sunpy/issues/7675",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Infrastructure",
-        "Good First Issue"
-      ],
-      "comments": 3,
-      "created_at": "2024-06-14T12:38:03Z",
-      "updated_at": "2026-02-03T16:56:34Z",
       "language": null
     },
     {
@@ -1711,7 +1542,7 @@
       ],
       "comments": 217,
       "created_at": "2025-09-30T13:46:56Z",
-      "updated_at": "2026-04-28T12:15:58Z",
+      "updated_at": "2026-04-29T01:09:50Z",
       "language": null
     },
     {
@@ -1885,6 +1716,746 @@
       "comments": 1,
       "created_at": "2022-04-25T12:07:28Z",
       "updated_at": "2026-03-16T10:58:55Z",
+      "language": null
+    },
+    {
+      "org": "QC-Devs",
+      "github": "theochem/gbasis",
+      "title": "[REQUEST] Direct Support for Basis-Set-Exchange",
+      "url": "https://github.com/theochem/gbasis/issues/209",
+      "repo": "theochem/gbasis",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2025-04-04T21:13:08Z",
+      "updated_at": "2026-03-26T12:59:48Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "rz-find truncates strings during the `-Z` mode",
+      "url": "https://github.com/rizinorg/rizin/issues/6289",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "rz-find",
+        "test-required"
+      ],
+      "comments": 1,
+      "created_at": "2026-04-26T10:17:20Z",
+      "updated_at": "2026-04-27T10:10:11Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "Mutual information content for rizin and rz-diff",
+      "url": "https://github.com/rizinorg/rizin/issues/5176",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "enhancement",
+        "good first issue",
+        "rz-diff",
+        "test-required",
+        "RzDiff"
+      ],
+      "comments": 3,
+      "created_at": "2025-05-29T16:04:37Z",
+      "updated_at": "2026-04-26T11:45:05Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "Horizontal histogram ruler - legend should be context-dependent",
+      "url": "https://github.com/rizinorg/rizin/issues/5290",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "RzCons",
+        "UX/UI"
+      ],
+      "comments": 2,
+      "created_at": "2025-08-04T13:13:29Z",
+      "updated_at": "2026-04-26T11:05:11Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Suggestion: Allow screen sharing, even when camera/mic not available",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/1745",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "type: improvement",
+        "triaged",
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2015-12-23T17:16:59Z",
+      "updated_at": "2026-04-14T12:35:54Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Omnichannel transfer comment is not wrapped to multiple lines",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/26723",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "area: ui/ux",
+        "hacktoberfest",
+        "good first issue"
+      ],
+      "comments": 62,
+      "created_at": "2022-08-29T10:24:21Z",
+      "updated_at": "2026-04-01T17:30:42Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Settings for confirmation for using @all notification on messages",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/909",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "area: ui/ux",
+        "type: improvement",
+        "gsoc-project",
+        "triaged",
+        "good first issue"
+      ],
+      "comments": 21,
+      "created_at": "2015-09-26T17:31:38Z",
+      "updated_at": "2026-03-29T19:53:07Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "[Meta] Add typing info",
+      "url": "https://github.com/sagemath/sage/issues/41722",
+      "repo": "sagemath/sage",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2026-02-27T15:47:13Z",
+      "updated_at": "2026-04-13T17:14:20Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "_repr_short_ methods for rings and modules",
+      "url": "https://github.com/sagemath/sage/issues/33006",
+      "repo": "sagemath/sage",
+      "labels": [
+        "p: major / 3",
+        "t: enhancement",
+        "good first issue",
+        "t: refactoring"
+      ],
+      "comments": 3,
+      "created_at": "2021-12-09T21:37:50Z",
+      "updated_at": "2026-03-26T22:47:31Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "Replace ad-hoc package installation instructions by links to SPKG page",
+      "url": "https://github.com/sagemath/sage/issues/37532",
+      "repo": "sagemath/sage",
+      "labels": [
+        "c: documentation",
+        "good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2024-03-03T18:36:21Z",
+      "updated_at": "2026-02-24T18:14:07Z",
+      "language": null
+    },
+    {
+      "org": "St. Jude Children's Research Hospital",
+      "github": "stjudecloud/workflows",
+      "title": "tool wishlist",
+      "url": "https://github.com/stjudecloud/workflows/issues/228",
+      "repo": "stjudecloud/workflows",
+      "labels": [
+        "enhancement",
+        "help wanted",
+        "good first issue"
+      ],
+      "comments": 0,
+      "created_at": "2025-05-12T20:30:17Z",
+      "updated_at": "2025-07-28T14:56:22Z",
+      "language": null
+    },
+    {
+      "org": "St. Jude Children's Research Hospital",
+      "github": "stjudecloud/workflows",
+      "title": "Expose more parameters of tools",
+      "url": "https://github.com/stjudecloud/workflows/issues/168",
+      "repo": "stjudecloud/workflows",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 2,
+      "created_at": "2024-07-15T20:41:17Z",
+      "updated_at": "2025-04-25T05:18:39Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "Fix JavaScript lint errors",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11784",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-26T00:23:05Z",
+      "updated_at": "2026-04-26T07:46:20Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "[RFC]: Migrate `math/base/special` packages from relative tolerance testing to ULP difference testing (tracking issue)",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11352",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "difficulty: 1",
+        "Math",
+        "Tests",
+        "Accepted",
+        "Good First Issue",
+        "priority: Normal",
+        "JavaScript",
+        "Modernization"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-10T12:15:24Z",
+      "updated_at": "2026-04-14T17:55:19Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "Fix broken Markdown link: https://bugzilla.mozilla.org/show_bug.cgi?id=897634",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11249",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-01T00:42:13Z",
+      "updated_at": "2026-04-02T10:06:19Z",
+      "language": null
+    },
+    {
+      "org": "Stichting SU2",
+      "github": "su2code/SU2",
+      "title": "Issues with compiling SU2 on Windows 10",
+      "url": "https://github.com/su2code/SU2/issues/1468",
+      "repo": "su2code/SU2",
+      "labels": [
+        "enhancement",
+        "documentation",
+        "good first issue"
+      ],
+      "comments": 3,
+      "created_at": "2021-12-08T17:39:03Z",
+      "updated_at": "2026-01-02T10:36:25Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "TA grading panel view of PDF cannot view top of first page",
+      "url": "https://github.com/Submitty/Submitty/issues/12763",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "bug",
+        "TA Grading / TA UI",
+        "good first issue",
+        "URGENT / PRIORITY"
+      ],
+      "comments": 0,
+      "created_at": "2026-04-08T02:21:48Z",
+      "updated_at": "2026-04-16T20:27:11Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Add link from Rainbow Grades to each Gradeable (w/ autograding or TA grading)",
+      "url": "https://github.com/Submitty/Submitty/issues/10433",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "Rainbow Grades",
+        "good first issue"
+      ],
+      "comments": 2,
+      "created_at": "2024-05-13T21:01:21Z",
+      "updated_at": "2026-04-11T14:11:14Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Enhance Forum Search Feature",
+      "url": "https://github.com/Submitty/Submitty/issues/12619",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "good first issue",
+        "Discussion Forum / Live Chat",
+        "Awaiting Triage"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-21T19:36:38Z",
+      "updated_at": "2026-04-05T02:46:32Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "License moderation request cannot be opened",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/149",
+      "repo": "eclipse-sw360/sw360",
+      "labels": [
+        "bug",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2018-04-26T15:13:27Z",
+      "updated_at": "2026-03-07T09:12:35Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "Automation of clearing details of components",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/119",
+      "repo": "eclipse-sw360/sw360",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 3,
+      "created_at": "2018-04-26T15:08:24Z",
+      "updated_at": "2026-02-01T14:52:36Z",
+      "language": null
+    },
+    {
+      "org": "SW360",
+      "github": "eclipse-sw360/sw360",
+      "title": "Spreadsheet export as XML or CSV",
+      "url": "https://github.com/eclipse-sw360/sw360/issues/309",
+      "repo": "eclipse-sw360/sw360",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2018-06-28T11:25:38Z",
+      "updated_at": "2025-10-08T08:51:43Z",
+      "language": null
+    },
+    {
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "Misleading error about `nonisolated` not being applicable to mutable stored properties",
+      "url": "https://github.com/swiftlang/swift/issues/88709",
+      "repo": "swiftlang/swift",
+      "labels": [
+        "concurrency",
+        "compiler",
+        "good first issue",
+        "diagnostics quality",
+        "type checker",
+        "actor isolation",
+        "swift 6.3"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-28T16:08:41Z",
+      "updated_at": "2026-04-28T20:18:19Z",
+      "language": null
+    },
+    {
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "Separate `-dump-clang-diagnostics` into two features.",
+      "url": "https://github.com/swiftlang/swift/issues/87757",
+      "repo": "swiftlang/swift",
+      "labels": [
+        "clang importer",
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2026-03-09T22:50:40Z",
+      "updated_at": "2026-04-15T10:36:14Z",
+      "language": null
+    },
+    {
+      "org": "Swift",
+      "github": "swiftlang/swift",
+      "title": "[SR-14443] [C++] Don't crash on invalid dependent values.",
+      "url": "https://github.com/swiftlang/swift/issues/56799",
+      "repo": "swiftlang/swift",
+      "labels": [
+        "bug",
+        "c++ interop",
+        "compiler",
+        "good first issue"
+      ],
+      "comments": 13,
+      "created_at": "2021-04-03T00:53:31Z",
+      "updated_at": "2026-04-10T20:23:39Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "Refine is not able to make many simplifications",
+      "url": "https://github.com/sympy/sympy/issues/27888",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "assumptions",
+        "good first issue",
+        "assumptions.refine"
+      ],
+      "comments": 29,
+      "created_at": "2025-04-03T23:15:01Z",
+      "updated_at": "2026-04-21T23:37:09Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "Adding more type annotations to the codebase",
+      "url": "https://github.com/sympy/sympy/issues/28806",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "good first issue",
+        "typing"
+      ],
+      "comments": 101,
+      "created_at": "2025-12-21T13:17:04Z",
+      "updated_at": "2026-04-15T21:14:37Z",
+      "language": null
+    },
+    {
+      "org": "SymPy",
+      "github": "sympy/sympy",
+      "title": "To see issues good to start with, click \"Easy to Fix\" 🡪",
+      "url": "https://github.com/sympy/sympy/issues/13520",
+      "repo": "sympy/sympy",
+      "labels": [
+        "Easy to Fix",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2017-10-23T07:07:35Z",
+      "updated_at": "2018-01-20T16:07:46Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "\"Add Layer\" button to toolbar?",
+      "url": "https://github.com/synfig/synfig/issues/1139",
+      "repo": "synfig/synfig",
+      "labels": [
+        "Feature request",
+        "help wanted",
+        "good first issue"
+      ],
+      "comments": 22,
+      "created_at": "2020-02-01T13:11:00Z",
+      "updated_at": "2026-02-28T14:43:35Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "Feature request: Add support of Angle type to Log converter",
+      "url": "https://github.com/synfig/synfig/issues/3582",
+      "repo": "synfig/synfig",
+      "labels": [
+        "Easy",
+        "good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2025-05-15T03:15:53Z",
+      "updated_at": "2025-07-02T10:27:52Z",
+      "language": null
+    },
+    {
+      "org": "Synfig",
+      "github": "synfig/synfig",
+      "title": "User-friendly rendering dialogue",
+      "url": "https://github.com/synfig/synfig/issues/721",
+      "repo": "synfig/synfig",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "UI/UX"
+      ],
+      "comments": 12,
+      "created_at": "2019-02-05T15:21:52Z",
+      "updated_at": "2025-06-12T04:15:13Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Move CSVY writer from custom abundance widget to io",
+      "url": "https://github.com/tardis-sn/tardis/issues/1927",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "good first issue",
+        "io"
+      ],
+      "comments": 6,
+      "created_at": "2022-03-14T17:40:34Z",
+      "updated_at": "2026-02-02T17:59:08Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Cannot disable convergence plots",
+      "url": "https://github.com/tardis-sn/tardis/issues/2917",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "easy",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2024-12-30T06:04:51Z",
+      "updated_at": "2026-01-29T18:21:36Z",
+      "language": null
+    },
+    {
+      "org": "TARDIS RT Collaboration",
+      "github": "tardis-sn/tardis",
+      "title": "Using `tardis.__path__` to determine the TARDIS module location can break in edge cases",
+      "url": "https://github.com/tardis-sn/tardis/issues/3021",
+      "repo": "tardis-sn/tardis",
+      "labels": [
+        "good first issue",
+        "bug :lady_beetle:"
+      ],
+      "comments": 4,
+      "created_at": "2025-03-20T14:07:15Z",
+      "updated_at": "2026-01-28T14:40:54Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "implement String(::Base.Generator)",
+      "url": "https://github.com/JuliaLang/julia/issues/57072",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "strings"
+      ],
+      "comments": 10,
+      "created_at": "2025-01-16T19:04:36Z",
+      "updated_at": "2026-04-01T23:00:40Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "Bug in heapsnapshot generation for arrays of inlined objects",
+      "url": "https://github.com/JuliaLang/julia/issues/61396",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "GC",
+        "good first issue",
+        "observability"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-23T17:42:57Z",
+      "updated_at": "2026-03-27T06:22:32Z",
+      "language": null
+    },
+    {
+      "org": "The Julia Language",
+      "github": "JuliaLang/julia",
+      "title": "Unexpected behavior due to implicit `convert` with `Char` and `Integer`",
+      "url": "https://github.com/JuliaLang/julia/issues/44410",
+      "repo": "JuliaLang/julia",
+      "labels": [
+        "good first issue",
+        "strings"
+      ],
+      "comments": 10,
+      "created_at": "2022-03-02T14:35:44Z",
+      "updated_at": "2026-02-25T10:29:48Z",
+      "language": null
+    },
+    {
+      "org": "The OpenROAD Initiative",
+      "github": "The-OpenROAD-Project/OpenROAD",
+      "title": "Create an IP Checker Utility",
+      "url": "https://github.com/The-OpenROAD-Project/OpenROAD/issues/4872",
+      "repo": "The-OpenROAD-Project/OpenROAD",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 26,
+      "created_at": "2024-03-29T23:08:40Z",
+      "updated_at": "2026-04-12T20:55:35Z",
+      "language": null
+    },
+    {
+      "org": "The OpenROAD Initiative",
+      "github": "The-OpenROAD-Project/OpenROAD",
+      "title": "Add some good examples from antonblanchard/vlsiffra as a regression test / benchmark",
+      "url": "https://github.com/The-OpenROAD-Project/OpenROAD/issues/2361",
+      "repo": "The-OpenROAD-Project/OpenROAD",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 7,
+      "created_at": "2022-10-12T20:20:27Z",
+      "updated_at": "2026-03-18T10:08:33Z",
+      "language": null
+    },
+    {
+      "org": "The OpenROAD Initiative",
+      "github": "The-OpenROAD-Project/OpenROAD",
+      "title": "Add library of useful functions for doing manual placement of cells",
+      "url": "https://github.com/The-OpenROAD-Project/OpenROAD/issues/4041",
+      "repo": "The-OpenROAD-Project/OpenROAD",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 22,
+      "created_at": "2023-09-25T18:17:36Z",
+      "updated_at": "2026-03-17T20:37:50Z",
+      "language": null
+    },
+    {
+      "org": "Tiled",
+      "github": "mapeditor/tiled",
+      "title": "Double-click to add custom property",
+      "url": "https://github.com/mapeditor/tiled/issues/845",
+      "repo": "mapeditor/tiled",
+      "labels": [
+        "usability",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2014-12-21T03:04:38Z",
+      "updated_at": "2026-03-18T10:18:21Z",
+      "language": null
+    },
+    {
+      "org": "Tiled",
+      "github": "mapeditor/tiled",
+      "title": "Doubleclick to edit custom property key",
+      "url": "https://github.com/mapeditor/tiled/issues/1662",
+      "repo": "mapeditor/tiled",
+      "labels": [
+        "usability",
+        "good first issue"
+      ],
+      "comments": 10,
+      "created_at": "2017-07-25T12:40:53Z",
+      "updated_at": "2026-03-18T06:30:58Z",
+      "language": null
+    },
+    {
+      "org": "Tiled",
+      "github": "mapeditor/tiled",
+      "title": "Expand/collapse layers API",
+      "url": "https://github.com/mapeditor/tiled/issues/3997",
+      "repo": "mapeditor/tiled",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 9,
+      "created_at": "2024-07-05T00:46:01Z",
+      "updated_at": "2026-03-06T15:44:02Z",
+      "language": null
+    },
+    {
+      "org": "Typelevel",
+      "github": "typelevel/cats",
+      "title": "Make `Hash.fromUniversalHashCode` null safe",
+      "url": "https://github.com/typelevel/cats/issues/4831",
+      "repo": "typelevel/cats",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 4,
+      "created_at": "2026-02-22T22:45:13Z",
+      "updated_at": "2026-04-13T21:42:36Z",
+      "language": null
+    },
+    {
+      "org": "Typelevel",
+      "github": "typelevel/cats",
+      "title": "Add doctests (excellent first-time issue)",
+      "url": "https://github.com/typelevel/cats/issues/2479",
+      "repo": "typelevel/cats",
+      "labels": [
+        "help wanted",
+        "documentation",
+        "good first issue"
+      ],
+      "comments": 14,
+      "created_at": "2018-09-07T16:40:38Z",
+      "updated_at": "2025-12-25T21:33:53Z",
+      "language": null
+    },
+    {
+      "org": "Typelevel",
+      "github": "typelevel/cats",
+      "title": "Clean out warnings from Dotty",
+      "url": "https://github.com/typelevel/cats/issues/3751",
+      "repo": "typelevel/cats",
+      "labels": [
+        "good first issue",
+        "lsug"
+      ],
+      "comments": 2,
+      "created_at": "2021-01-30T10:09:29Z",
+      "updated_at": "2023-10-29T00:15:48Z",
+      "language": null
+    },
+    {
+      "org": "Wagtail",
+      "github": "wagtail/wagtail",
+      "title": "Wagtail userbar should label its complementary landmark",
+      "url": "https://github.com/wagtail/wagtail/issues/14184",
+      "repo": "wagtail/wagtail",
+      "labels": [
+        "type:Bug",
+        "good first issue",
+        "Accessibility",
+        "component:Userbar",
+        "UX"
+      ],
+      "comments": 3,
+      "created_at": "2026-04-28T15:24:14Z",
+      "updated_at": "2026-04-28T17:24:30Z",
       "language": null
     }
   ]

@@ -57,18 +57,22 @@ async function fetchIssues() {
         const mapped = data.items
           .filter((issue) => issue.state === 'open' && !seenIssueUrls.has(issue.html_url))
           .slice(0, MAX_ISSUES_PER_ORG)
-          .map((issue) => ({
-            org: target.name,
-            github: target.github,
-            title: issue.title,
-            url: issue.html_url,
-            repo: issue.repository_url.split('/').slice(-2).join('/'),
-            labels: issue.labels.map((label) => label.name),
-            comments: issue.comments,
-            created_at: issue.created_at,
-            updated_at: issue.updated_at,
-            language: null
-          }));
+          .map((issue) => {
+            const orgName = target.github.split('/')[0];
+            return {
+              org: target.name,
+              github: target.github,
+              logo: `https://avatars.githubusercontent.com/${orgName}`,
+              title: issue.title,
+              url: issue.html_url,
+              repo: issue.repository_url.split('/').slice(-2).join('/'),
+              labels: issue.labels.map((label) => label.name),
+              comments: issue.comments,
+              created_at: issue.created_at,
+              updated_at: issue.updated_at,
+              language: null
+            };
+          });
 
         mapped.forEach((issue) => seenIssueUrls.add(issue.url));
         results.push(...mapped);

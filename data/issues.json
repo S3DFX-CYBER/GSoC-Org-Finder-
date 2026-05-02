@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T08:06:03.893Z",
+  "updated_at": "2026-05-02T07:23:09.402Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -518,6 +518,23 @@
     {
       "org": "FreeCAD",
       "github": "FreeCAD/FreeCAD",
+      "title": "BIM: Project Setup dialog window width is too small",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/20287",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Mod: BIM",
+        "Topic: User Interface",
+        "Type: Feature",
+        "Good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2025-03-19T05:33:33Z",
+      "updated_at": "2026-05-02T06:33:31Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
       "title": "Assembly: Insert Component command name mismatched between toolbar and task panel",
       "url": "https://github.com/FreeCAD/FreeCAD/issues/29674",
       "repo": "FreeCAD/FreeCAD",
@@ -548,23 +565,6 @@
       "comments": 2,
       "created_at": "2025-09-11T01:21:44Z",
       "updated_at": "2026-05-01T05:50:30Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "Core: Selection filters should try picking the nearby entities instead of blocking selection",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/28979",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Mod: Core",
-        "Topic: User Interface",
-        "Type: Feature",
-        "Good first issue"
-      ],
-      "comments": 2,
-      "created_at": "2026-04-01T17:59:47Z",
-      "updated_at": "2026-04-30T10:22:20Z",
       "language": null
     },
     {
@@ -712,6 +712,35 @@
     {
       "org": "Graphite",
       "github": "GraphiteEditor/Graphite",
+      "title": "Show selection bounding box width/height in the X/Y rulers",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/1969",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Good First Issue",
+        "Web"
+      ],
+      "comments": 3,
+      "created_at": "2024-09-10T04:24:14Z",
+      "updated_at": "2026-05-02T00:59:39Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
+      "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 16,
+      "created_at": "2026-04-13T10:53:40Z",
+      "updated_at": "2026-05-01T20:04:26Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
       "title": "Dragging handle back into its anchor makes its opposite handle move around randomly",
       "url": "https://github.com/GraphiteEditor/Graphite/issues/2451",
       "repo": "GraphiteEditor/Graphite",
@@ -724,84 +753,56 @@
       "language": null
     },
     {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
-      "repo": "GraphiteEditor/Graphite",
+      "org": "Internet Archive",
+      "github": "internetarchive/openlibrary",
+      "title": "Images broken on German version of openlibrary.org/tour",
+      "url": "https://github.com/internetarchive/openlibrary/issues/12540",
+      "repo": "internetarchive/openlibrary",
       "labels": [
-        "Good First Issue"
-      ],
-      "comments": 14,
-      "created_at": "2026-04-13T10:53:40Z",
-      "updated_at": "2026-04-27T06:26:22Z",
-      "language": null
-    },
-    {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "Tracking Issue: New nodes",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/912",
-      "repo": "GraphiteEditor/Graphite",
-      "labels": [
-        "Help Wanted",
+        "Type: Bug",
+        "Priority: 3",
         "Good First Issue",
-        "Graphene"
+        "Affects: Documentation",
+        "Needs: Investigation",
+        "Lead: @RayBB"
       ],
       "comments": 3,
-      "created_at": "2022-12-25T21:43:07Z",
-      "updated_at": "2026-04-26T19:13:41Z",
+      "created_at": "2026-05-01T15:29:01Z",
+      "updated_at": "2026-05-02T07:18:18Z",
       "language": null
     },
     {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
-      "title": "Refactor search/subjects.html and search/authors.html to Remove Template-Side Network Requests",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12527",
+      "title": "Test Edit Profile Page Interactive Elements for Accessibility",
+      "url": "https://github.com/internetarchive/openlibrary/issues/4914",
       "repo": "internetarchive/openlibrary",
       "labels": [
+        "Priority: 3",
         "Good First Issue",
-        "Type: Refactor/Clean-up",
-        "Lead: @RayBB",
-        "Module: FastAPI"
+        "Theme: Accessibility",
+        "Lead: @jimchamp"
       ],
       "comments": 1,
-      "created_at": "2026-05-01T07:41:53Z",
-      "updated_at": "2026-05-01T07:51:21Z",
+      "created_at": "2021-03-26T23:08:31Z",
+      "updated_at": "2026-05-01T10:04:50Z",
       "language": null
     },
     {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
-      "title": "Replace web.re_compile with modern Python re.compile",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12514",
+      "title": "Test Recent Changes Page Interactive Elements for Accessibility",
+      "url": "https://github.com/internetarchive/openlibrary/issues/4916",
       "repo": "internetarchive/openlibrary",
       "labels": [
+        "Priority: 3",
         "Good First Issue",
-        "Type: Refactor/Clean-up",
-        "Theme: Development",
-        "Lead: @RayBB"
+        "Theme: Accessibility",
+        "Lead: @jimchamp"
       ],
-      "comments": 1,
-      "created_at": "2026-04-30T22:30:11Z",
-      "updated_at": "2026-04-30T22:33:54Z",
-      "language": null
-    },
-    {
-      "org": "Internet Archive",
-      "github": "internetarchive/openlibrary",
-      "title": "Replace web.safeunicode with modern Python alternatives",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12513",
-      "repo": "internetarchive/openlibrary",
-      "labels": [
-        "Good First Issue",
-        "Type: Refactor/Clean-up",
-        "Theme: Development",
-        "Lead: @RayBB"
-      ],
-      "comments": 1,
-      "created_at": "2026-04-30T22:25:52Z",
-      "updated_at": "2026-04-30T22:29:40Z",
+      "comments": 2,
+      "created_at": "2021-03-26T23:09:33Z",
+      "updated_at": "2026-05-01T10:03:41Z",
       "language": null
     },
     {
@@ -1213,6 +1214,22 @@
     {
       "org": "LLVM Compiler Infrastructure",
       "github": "llvm/llvm-project",
+      "title": "[libc][math] Tracking Issue - Refactor Higher Math Functions to Header Only",
+      "url": "https://github.com/llvm/llvm-project/issues/147386",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "metaissue",
+        "good first issue",
+        "libc"
+      ],
+      "comments": 29,
+      "created_at": "2025-07-07T20:20:30Z",
+      "updated_at": "2026-05-02T07:07:35Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
       "title": "Wrong types checked at DAGCombiner::visitSRA(SDNode *N)",
       "url": "https://github.com/llvm/llvm-project/issues/153543",
       "repo": "llvm/llvm-project",
@@ -1241,18 +1258,18 @@
       "language": null
     },
     {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "[CIR] Implement missing X86 builtins",
-      "url": "https://github.com/llvm/llvm-project/issues/167765",
-      "repo": "llvm/llvm-project",
+      "org": "Meshery",
+      "github": "meshery/meshery",
+      "title": "Alignment of Share Btn in Comparison Modal.",
+      "url": "https://github.com/meshery/meshery/issues/15173",
+      "repo": "meshery/meshery",
       "labels": [
-        "good first issue",
-        "ClangIR"
+        "kind/bug",
+        "good first issue"
       ],
-      "comments": 91,
-      "created_at": "2025-11-12T21:45:53Z",
-      "updated_at": "2026-04-30T15:41:26Z",
+      "comments": 14,
+      "created_at": "2025-06-24T18:22:33Z",
+      "updated_at": "2026-05-01T17:14:22Z",
       "language": null
     },
     {
@@ -1271,21 +1288,6 @@
       "comments": 8,
       "created_at": "2025-03-28T12:32:57Z",
       "updated_at": "2026-04-29T15:00:08Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "Alignment of Share Btn in Comparison Modal.",
-      "url": "https://github.com/meshery/meshery/issues/15173",
-      "repo": "meshery/meshery",
-      "labels": [
-        "kind/bug",
-        "good first issue"
-      ],
-      "comments": 13,
-      "created_at": "2025-06-24T18:22:33Z",
-      "updated_at": "2026-04-28T22:59:19Z",
       "language": null
     },
     {
@@ -1379,640 +1381,6 @@
       "comments": 4,
       "created_at": "2026-02-11T18:12:28Z",
       "updated_at": "2026-03-22T08:33:34Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Better explanation of the different clients supported by sunpy",
-      "url": "https://github.com/sunpy/sunpy/issues/3800",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Good First Issue"
-      ],
-      "comments": 8,
-      "created_at": "2020-02-13T19:16:11Z",
-      "updated_at": "2026-03-26T21:21:48Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Standardise our docstring convention on Time inputs",
-      "url": "https://github.com/sunpy/sunpy/issues/2784",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Documentation",
-        "Good First Issue"
-      ],
-      "comments": 15,
-      "created_at": "2018-10-10T17:26:54Z",
-      "updated_at": "2026-03-26T09:54:13Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Highlight new contributors better in release notes",
-      "url": "https://github.com/sunpy/sunpy/issues/7675",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Infrastructure",
-        "Good First Issue"
-      ],
-      "comments": 3,
-      "created_at": "2024-06-14T12:38:03Z",
-      "updated_at": "2026-02-03T16:56:34Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Create GitHub action to update param changelog on every push",
-      "url": "https://github.com/OpenMS/OpenMS/issues/5833",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "CI",
-        "community",
-        "good first issue",
-        "first-timers-only"
-      ],
-      "comments": 3,
-      "created_at": "2022-02-21T11:45:33Z",
-      "updated_at": "2026-03-25T05:20:44Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Wrap QC classes in python ",
-      "url": "https://github.com/OpenMS/OpenMS/issues/6102",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "major",
-        "pyOpenMS",
-        "good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2022-05-05T21:51:55Z",
-      "updated_at": "2026-03-09T09:23:16Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Benchmark replacing maps with unordered_maps",
-      "url": "https://github.com/OpenMS/OpenMS/issues/6295",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "Performance",
-        "hacktoberfest-accepted",
-        "beginner tasks",
-        "good first issue"
-      ],
-      "comments": 15,
-      "created_at": "2022-08-12T14:42:43Z",
-      "updated_at": "2026-03-04T16:47:54Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Make OBS user documentation more visible",
-      "url": "https://github.com/openSUSE/open-build-service/issues/1363",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Feature",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2015-11-11T09:08:55Z",
-      "updated_at": "2026-02-13T21:10:03Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Expose mergeservice command in web UI",
-      "url": "https://github.com/openSUSE/open-build-service/issues/9704",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Feature",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2020-06-09T09:29:35Z",
-      "updated_at": "2026-02-13T17:01:29Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Overlapping html label element prevents from selecting adjacent image template",
-      "url": "https://github.com/openSUSE/open-build-service/issues/16428",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Bug",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 9,
-      "created_at": "2024-06-28T19:32:56Z",
-      "updated_at": "2025-12-29T16:29:48Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue]: Support prim::CallMethod",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/29720",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "no_stale"
-      ],
-      "comments": 17,
-      "created_at": "2025-03-25T12:14:07Z",
-      "updated_at": "2026-04-25T18:41:20Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue]: Support aten::Delete aten::str aten::take",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/28707",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "category: PyTorch FE",
-        "no_stale"
-      ],
-      "comments": 14,
-      "created_at": "2025-01-27T23:12:04Z",
-      "updated_at": "2026-04-11T16:42:24Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue][JAX FE]: Support jax.lax.scatter operation for JAX",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/26573",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "no_stale",
-        "category: JAX FE"
-      ],
-      "comments": 16,
-      "created_at": "2024-09-12T20:00:04Z",
-      "updated_at": "2026-04-10T17:19:37Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[BUG]: Acceptance test re-run steps do not work due to server not being shut down",
-      "url": "https://github.com/oppia/oppia/issues/23830",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug"
-      ],
-      "comments": 60,
-      "created_at": "2025-11-10T13:24:25Z",
-      "updated_at": "2026-05-01T07:00:53Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "Implement missing domain objects with full `validate()` function.",
-      "url": "https://github.com/oppia/oppia/issues/21970",
-      "repo": "oppia/oppia",
-      "labels": [
-        "backend",
-        "good first issue",
-        "enhancement",
-        "Impact: Medium",
-        "Work: Low"
-      ],
-      "comments": 192,
-      "created_at": "2025-02-21T13:47:28Z",
-      "updated_at": "2026-04-30T19:53:33Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[BUG]: Display of empty texts in voiceover section of the exploration editor translation tab is confusing.",
-      "url": "https://github.com/oppia/oppia/issues/20088",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug",
-        "Impact: Medium",
-        "Work: Low"
-      ],
-      "comments": 30,
-      "created_at": "2024-03-29T16:45:04Z",
-      "updated_at": "2026-04-29T14:01:56Z",
-      "language": null
-    },
-    {
-      "org": "PEcAn Project",
-      "github": "PecanProject/pecan",
-      "title": "Clean up and consolidate issue/PR labels (and update labeler workflow)",
-      "url": "https://github.com/PecanProject/pecan/issues/3696",
-      "repo": "PecanProject/pecan",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 8,
-      "created_at": "2025-12-04T03:22:32Z",
-      "updated_at": "2026-03-05T17:48:08Z",
-      "language": null
-    },
-    {
-      "org": "PEcAn Project",
-      "github": "PecanProject/pecan",
-      "title": "Fix hack in trait.lookup function",
-      "url": "https://github.com/PecanProject/pecan/issues/729",
-      "repo": "PecanProject/pecan",
-      "labels": [
-        "Priority: 02 - Normal",
-        "good first issue",
-        "Status: Not started",
-        "Status: Stale"
-      ],
-      "comments": 4,
-      "created_at": "2016-02-22T20:49:45Z",
-      "updated_at": "2026-01-22T18:26:46Z",
-      "language": null
-    },
-    {
-      "org": "PEcAn Project",
-      "github": "PecanProject/pecan",
-      "title": "Make `BADM_IC_process()` use PEcAn Settings / MultiSettings consistently",
-      "url": "https://github.com/PecanProject/pecan/issues/3699",
-      "repo": "PecanProject/pecan",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 7,
-      "created_at": "2025-12-05T00:09:53Z",
-      "updated_at": "2025-12-27T09:45:30Z",
-      "language": null
-    },
-    {
-      "org": "Pharo Consortium",
-      "github": "pharo-project/pharo",
-      "title": "inspectionRichText is broken with the inspector API changes.",
-      "url": "https://github.com/pharo-project/pharo/issues/19348",
-      "repo": "pharo-project/pharo",
-      "labels": [
-        "Type: Bug",
-        "Good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2026-02-14T11:14:25Z",
-      "updated_at": "2026-04-08T06:59:27Z",
-      "language": null
-    },
-    {
-      "org": "Pharo Consortium",
-      "github": "pharo-project/pharo",
-      "title": "String>>asTime should be deprecated",
-      "url": "https://github.com/pharo-project/pharo/issues/19455",
-      "repo": "pharo-project/pharo",
-      "labels": [
-        "Type: Cleanup",
-        "Good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2026-03-23T09:34:03Z",
-      "updated_at": "2026-03-25T14:42:36Z",
-      "language": null
-    },
-    {
-      "org": "Pharo Consortium",
-      "github": "pharo-project/pharo",
-      "title": "[ Deprecate ] selectorsWithArgs:",
-      "url": "https://github.com/pharo-project/pharo/issues/19467",
-      "repo": "pharo-project/pharo",
-      "labels": [
-        "Type: Bug",
-        "Good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2026-03-25T13:16:49Z",
-      "updated_at": "2026-03-25T14:42:12Z",
-      "language": null
-    },
-    {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Multiple SolverInterfaces using the C and Fortran bindings",
-      "url": "https://github.com/precice/precice/issues/1200",
-      "repo": "precice/precice",
-      "labels": [
-        "bug",
-        "good first issue",
-        "breaking change",
-        "low priority"
-      ],
-      "comments": 5,
-      "created_at": "2022-03-10T11:06:04Z",
-      "updated_at": "2026-04-27T09:01:20Z",
-      "language": null
-    },
-    {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Thread-safe Participant",
-      "url": "https://github.com/precice/precice/issues/2407",
-      "repo": "precice/precice",
-      "labels": [
-        "enhancement",
-        "thesis",
-        "good first issue"
-      ],
-      "comments": 13,
-      "created_at": "2025-12-02T12:35:36Z",
-      "updated_at": "2026-03-20T07:22:55Z",
-      "language": null
-    },
-    {
-      "org": "preCICE",
-      "github": "precice/precice",
-      "title": "Configurable RBF cut-off threshold",
-      "url": "https://github.com/precice/precice/issues/1265",
-      "repo": "precice/precice",
-      "labels": [
-        "enhancement",
-        "good first issue",
-        "configuration"
-      ],
-      "comments": 1,
-      "created_at": "2022-04-25T12:07:28Z",
-      "updated_at": "2026-03-16T10:58:55Z",
-      "language": null
-    },
-    {
-      "org": "QC-Devs",
-      "github": "theochem/gbasis",
-      "title": "[REQUEST] Direct Support for Basis-Set-Exchange",
-      "url": "https://github.com/theochem/gbasis/issues/209",
-      "repo": "theochem/gbasis",
-      "labels": [
-        "enhancement",
-        "good first issue"
-      ],
-      "comments": 11,
-      "created_at": "2025-04-04T21:13:08Z",
-      "updated_at": "2026-03-26T12:59:48Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "title": "rz-find truncates strings during the `-Z` mode",
-      "url": "https://github.com/rizinorg/rizin/issues/6289",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "good first issue",
-        "rz-find",
-        "test-required"
-      ],
-      "comments": 1,
-      "created_at": "2026-04-26T10:17:20Z",
-      "updated_at": "2026-04-27T10:10:11Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "title": "Mutual information content for rizin and rz-diff",
-      "url": "https://github.com/rizinorg/rizin/issues/5176",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "enhancement",
-        "good first issue",
-        "rz-diff",
-        "test-required",
-        "RzDiff"
-      ],
-      "comments": 3,
-      "created_at": "2025-05-29T16:04:37Z",
-      "updated_at": "2026-04-26T11:45:05Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "title": "Horizontal histogram ruler - legend should be context-dependent",
-      "url": "https://github.com/rizinorg/rizin/issues/5290",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "good first issue",
-        "RzCons",
-        "UX/UI"
-      ],
-      "comments": 2,
-      "created_at": "2025-08-04T13:13:29Z",
-      "updated_at": "2026-04-26T11:05:11Z",
-      "language": null
-    },
-    {
-      "org": "rocket.chat",
-      "github": "RocketChat/Rocket.Chat",
-      "title": "Suggestion: Allow screen sharing, even when camera/mic not available",
-      "url": "https://github.com/RocketChat/Rocket.Chat/issues/1745",
-      "repo": "RocketChat/Rocket.Chat",
-      "labels": [
-        "type: improvement",
-        "triaged",
-        "good first issue"
-      ],
-      "comments": 11,
-      "created_at": "2015-12-23T17:16:59Z",
-      "updated_at": "2026-04-14T12:35:54Z",
-      "language": null
-    },
-    {
-      "org": "rocket.chat",
-      "github": "RocketChat/Rocket.Chat",
-      "title": "Omnichannel transfer comment is not wrapped to multiple lines",
-      "url": "https://github.com/RocketChat/Rocket.Chat/issues/26723",
-      "repo": "RocketChat/Rocket.Chat",
-      "labels": [
-        "area: ui/ux",
-        "hacktoberfest",
-        "good first issue"
-      ],
-      "comments": 62,
-      "created_at": "2022-08-29T10:24:21Z",
-      "updated_at": "2026-04-01T17:30:42Z",
-      "language": null
-    },
-    {
-      "org": "rocket.chat",
-      "github": "RocketChat/Rocket.Chat",
-      "title": "Settings for confirmation for using @all notification on messages",
-      "url": "https://github.com/RocketChat/Rocket.Chat/issues/909",
-      "repo": "RocketChat/Rocket.Chat",
-      "labels": [
-        "area: ui/ux",
-        "type: improvement",
-        "gsoc-project",
-        "triaged",
-        "good first issue"
-      ],
-      "comments": 21,
-      "created_at": "2015-09-26T17:31:38Z",
-      "updated_at": "2026-03-29T19:53:07Z",
-      "language": null
-    },
-    {
-      "org": "SageMath",
-      "github": "sagemath/sage",
-      "title": "[Meta] Add typing info",
-      "url": "https://github.com/sagemath/sage/issues/41722",
-      "repo": "sagemath/sage",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 11,
-      "created_at": "2026-02-27T15:47:13Z",
-      "updated_at": "2026-04-13T17:14:20Z",
-      "language": null
-    },
-    {
-      "org": "SageMath",
-      "github": "sagemath/sage",
-      "title": "_repr_short_ methods for rings and modules",
-      "url": "https://github.com/sagemath/sage/issues/33006",
-      "repo": "sagemath/sage",
-      "labels": [
-        "p: major / 3",
-        "t: enhancement",
-        "good first issue",
-        "t: refactoring"
-      ],
-      "comments": 3,
-      "created_at": "2021-12-09T21:37:50Z",
-      "updated_at": "2026-03-26T22:47:31Z",
-      "language": null
-    },
-    {
-      "org": "SageMath",
-      "github": "sagemath/sage",
-      "title": "Replace ad-hoc package installation instructions by links to SPKG page",
-      "url": "https://github.com/sagemath/sage/issues/37532",
-      "repo": "sagemath/sage",
-      "labels": [
-        "c: documentation",
-        "good first issue"
-      ],
-      "comments": 8,
-      "created_at": "2024-03-03T18:36:21Z",
-      "updated_at": "2026-02-24T18:14:07Z",
-      "language": null
-    },
-    {
-      "org": "St. Jude Children's Research Hospital",
-      "github": "stjudecloud/workflows",
-      "title": "tool wishlist",
-      "url": "https://github.com/stjudecloud/workflows/issues/228",
-      "repo": "stjudecloud/workflows",
-      "labels": [
-        "enhancement",
-        "help wanted",
-        "good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2025-05-12T20:30:17Z",
-      "updated_at": "2025-07-28T14:56:22Z",
-      "language": null
-    },
-    {
-      "org": "St. Jude Children's Research Hospital",
-      "github": "stjudecloud/workflows",
-      "title": "Expose more parameters of tools",
-      "url": "https://github.com/stjudecloud/workflows/issues/168",
-      "repo": "stjudecloud/workflows",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 2,
-      "created_at": "2024-07-15T20:41:17Z",
-      "updated_at": "2025-04-25T05:18:39Z",
-      "language": null
-    },
-    {
-      "org": "stdlib",
-      "github": "stdlib-js/stdlib",
-      "title": "Fix broken Markdown link: http://www.speech.cs.cmu.edu/cgi-bin/cmudict#about",
-      "url": "https://github.com/stdlib-js/stdlib/issues/11868",
-      "repo": "stdlib-js/stdlib",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 1,
-      "created_at": "2026-05-01T00:45:09Z",
-      "updated_at": "2026-05-01T00:45:18Z",
-      "language": null
-    },
-    {
-      "org": "stdlib",
-      "github": "stdlib-js/stdlib",
-      "title": "Fix JavaScript lint errors",
-      "url": "https://github.com/stdlib-js/stdlib/issues/11867",
-      "repo": "stdlib-js/stdlib",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 1,
-      "created_at": "2026-05-01T00:31:26Z",
-      "updated_at": "2026-05-01T00:31:39Z",
-      "language": null
-    },
-    {
-      "org": "stdlib",
-      "github": "stdlib-js/stdlib",
-      "title": "Fix JavaScript lint errors",
-      "url": "https://github.com/stdlib-js/stdlib/issues/11852",
-      "repo": "stdlib-js/stdlib",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 1,
-      "created_at": "2026-04-30T00:29:00Z",
-      "updated_at": "2026-04-30T00:29:14Z",
-      "language": null
-    },
-    {
-      "org": "Stichting SU2",
-      "github": "su2code/SU2",
-      "title": "Issues with compiling SU2 on Windows 10",
-      "url": "https://github.com/su2code/SU2/issues/1468",
-      "repo": "su2code/SU2",
-      "labels": [
-        "enhancement",
-        "documentation",
-        "good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2021-12-08T17:39:03Z",
-      "updated_at": "2026-01-02T10:36:25Z",
       "language": null
     },
     {

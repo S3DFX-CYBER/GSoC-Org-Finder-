@@ -963,31 +963,25 @@
     { date: new Date('2026-03-16T00:00:00'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: new Date('2026-04-30T00:00:00'), label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); // Edge case: drop any malformed dates silently
+  ].filter(m => !isNaN(m.date.getTime())); 
 
   function renderTimeline() {
-    // Edge case: container missing from DOM (e.g. partial page load)
     const container = document.getElementById('timeline-milestones');
     if (!container || MILESTONES.length === 0) return;
 
     try {
       const now = new Date();
-      // Edge case: system clock returns invalid date
       if (isNaN(now.getTime())) return;
 
       let activeIdx = MILESTONES.findIndex(m => m.date > now);
-      // All milestones passed — highlight the last one as completed
       if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
 
-      // Compute once outside the loop, not on every iteration
       const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
 
       container.innerHTML = MILESTONES.map((m, i) => {
         const isActive = i === activeIdx;
         const isLast = i === MILESTONES.length - 1;
         const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
-
-        // Edge case: toLocaleDateString may not support 'en-US' on all envs — fallback to ISO
         let dateStr;
         try {
           dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -996,7 +990,6 @@
         }
 
         if (isActive && !allPast) {
-          // Next upcoming milestone — pulsing orange dot
           return `<div class="flex gap-3 sm:gap-4">
             <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
@@ -1004,7 +997,6 @@
             ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
           </div>`;
         } else if (isActive && allPast) {
-          // All milestones passed — last one shown as completed
           return `<div class="flex gap-3 sm:gap-4">
             <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
@@ -1012,7 +1004,6 @@
             <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
           </div>`;
         } else {
-          // Past or future dim milestone
           return `<div class="flex gap-3 sm:gap-4 opacity-40">
             <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
@@ -1027,7 +1018,6 @@
 
   // Countdown to the next upcoming milestone
   function updateCountdown() {
-    // Edge case: DOM elements missing
     const countdownEl = document.getElementById('countdown');
     const labelEl = document.getElementById('countdown-label');
     if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
@@ -1048,7 +1038,6 @@
 
       labelEl.textContent = `Until: ${next.label}`;
       const diff = next.date - now;
-      // Edge case: diff somehow negative after the find (race condition within same ms)
       if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
       const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
       countdownEl.textContent = `${d}d ${h}h ${m}m`;

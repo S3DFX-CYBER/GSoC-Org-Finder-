@@ -233,11 +233,19 @@
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
 
+    /* Light mode - Language pills active state */
+    .pill.active {
+      background: rgba(157, 67, 0, 0.1) !important;
+      border-color: #9d4300 !important;
+      color: #9d4300 !important;
+      font-weight: 600;
+    }
+
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
     .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
-    
+
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
       background: #27272a !important; 
@@ -248,7 +256,7 @@
       border-color: #f97316 !important; 
       color: #f97316 !important; 
     }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
+    .dark .pill.active {
       background: rgba(251, 146, 60, 0.2) !important;
       border-color: #fb923c !important;
       color: #fb923c !important;
@@ -481,18 +489,18 @@
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
   <div class="flex flex-wrap gap-2">
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Python</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">JavaScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">TypeScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">C/C++</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Java</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Rust</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Go</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Ruby</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Haskell</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" onclick="togglePill(this)">Python</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" onclick="togglePill(this)">JavaScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" onclick="togglePill(this)">TypeScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" onclick="togglePill(this)">C/C++</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" onclick="togglePill(this)">Java</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" onclick="togglePill(this)">Rust</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" onclick="togglePill(this)">Go</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" onclick="togglePill(this)">Ruby</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" onclick="togglePill(this)">Haskell</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" onclick="togglePill(this)">Scala</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" onclick="togglePill(this)">ML/AI</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" onclick="togglePill(this)">Robotics</button>
   </div>
 </section>
 

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-02T07:23:09.402Z",
+  "updated_at": "2026-05-02T12:49:38.486Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -518,6 +518,42 @@
     {
       "org": "FreeCAD",
       "github": "FreeCAD/FreeCAD",
+      "title": "Expressions: Broken references and Fx icon on sketcher dimensions should show with \"broken reference\" color (orange like with projected geometry)",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/23715",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Mod: Core",
+        "Topic: User Interface",
+        "Type: Feature",
+        "Topic: Expressions",
+        "Good first issue",
+        "Topic: VarSet"
+      ],
+      "comments": 0,
+      "created_at": "2025-09-07T08:42:57Z",
+      "updated_at": "2026-05-02T09:40:55Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
+      "title": "VarSet: removes the prefix of a variable name if it is the same as the Group Name",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/29496",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Type: Bug",
+        "Good first issue",
+        "Status: Confirmed",
+        "Topic: VarSet"
+      ],
+      "comments": 13,
+      "created_at": "2026-04-19T02:11:43Z",
+      "updated_at": "2026-05-02T09:38:23Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
       "title": "BIM: Project Setup dialog window width is too small",
       "url": "https://github.com/FreeCAD/FreeCAD/issues/20287",
       "repo": "FreeCAD/FreeCAD",
@@ -530,41 +566,6 @@
       "comments": 8,
       "created_at": "2025-03-19T05:33:33Z",
       "updated_at": "2026-05-02T06:33:31Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "Assembly: Insert Component command name mismatched between toolbar and task panel",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/29674",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Type: Bug",
-        "Topic: User Interface",
-        "Good first issue",
-        "Status: Confirmed",
-        "Mod: Assembly"
-      ],
-      "comments": 2,
-      "created_at": "2026-04-28T10:37:01Z",
-      "updated_at": "2026-05-01T06:09:15Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "PartDesign: Copy/Paste Sketches when Body is active should place them inside the Body",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/23832",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Mod: Part Design",
-        "Topic: User Interface",
-        "Type: Feature",
-        "Good first issue"
-      ],
-      "comments": 2,
-      "created_at": "2025-09-11T01:21:44Z",
-      "updated_at": "2026-05-01T05:50:30Z",
       "language": null
     },
     {
@@ -764,11 +765,12 @@
         "Good First Issue",
         "Affects: Documentation",
         "Needs: Investigation",
-        "Lead: @RayBB"
+        "Lead: @RayBB",
+        "Needs: Response"
       ],
-      "comments": 3,
+      "comments": 4,
       "created_at": "2026-05-01T15:29:01Z",
-      "updated_at": "2026-05-02T07:18:18Z",
+      "updated_at": "2026-05-02T08:53:21Z",
       "language": null
     },
     {
@@ -785,7 +787,7 @@
       ],
       "comments": 1,
       "created_at": "2021-03-26T23:08:31Z",
-      "updated_at": "2026-05-01T10:04:50Z",
+      "updated_at": "2026-05-02T08:07:07Z",
       "language": null
     },
     {
@@ -1224,7 +1226,7 @@
       ],
       "comments": 29,
       "created_at": "2025-07-07T20:20:30Z",
-      "updated_at": "2026-05-02T07:07:35Z",
+      "updated_at": "2026-05-02T11:22:59Z",
       "language": null
     },
     {
@@ -1384,19 +1386,391 @@
       "language": null
     },
     {
-      "org": "Submitty",
-      "github": "Submitty/Submitty",
-      "title": "Bulk Late Days page is not available on production machines",
-      "url": "https://github.com/Submitty/Submitty/issues/12825",
-      "repo": "Submitty/Submitty",
+      "org": "PEcAn Project",
+      "github": "PecanProject/pecan",
+      "title": "Clean up and consolidate issue/PR labels (and update labeler workflow)",
+      "url": "https://github.com/PecanProject/pecan/issues/3696",
+      "repo": "PecanProject/pecan",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2025-12-04T03:22:32Z",
+      "updated_at": "2026-03-05T17:48:08Z",
+      "language": null
+    },
+    {
+      "org": "PEcAn Project",
+      "github": "PecanProject/pecan",
+      "title": "Fix hack in trait.lookup function",
+      "url": "https://github.com/PecanProject/pecan/issues/729",
+      "repo": "PecanProject/pecan",
+      "labels": [
+        "Priority: 02 - Normal",
+        "good first issue",
+        "Status: Not started",
+        "Status: Stale"
+      ],
+      "comments": 4,
+      "created_at": "2016-02-22T20:49:45Z",
+      "updated_at": "2026-01-22T18:26:46Z",
+      "language": null
+    },
+    {
+      "org": "PEcAn Project",
+      "github": "PecanProject/pecan",
+      "title": "Make `BADM_IC_process()` use PEcAn Settings / MultiSettings consistently",
+      "url": "https://github.com/PecanProject/pecan/issues/3699",
+      "repo": "PecanProject/pecan",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 7,
+      "created_at": "2025-12-05T00:09:53Z",
+      "updated_at": "2025-12-27T09:45:30Z",
+      "language": null
+    },
+    {
+      "org": "Pharo Consortium",
+      "github": "pharo-project/pharo",
+      "title": "inspectionRichText is broken with the inspector API changes.",
+      "url": "https://github.com/pharo-project/pharo/issues/19348",
+      "repo": "pharo-project/pharo",
+      "labels": [
+        "Type: Bug",
+        "Good first issue"
+      ],
+      "comments": 3,
+      "created_at": "2026-02-14T11:14:25Z",
+      "updated_at": "2026-04-08T06:59:27Z",
+      "language": null
+    },
+    {
+      "org": "Pharo Consortium",
+      "github": "pharo-project/pharo",
+      "title": "String>>asTime should be deprecated",
+      "url": "https://github.com/pharo-project/pharo/issues/19455",
+      "repo": "pharo-project/pharo",
+      "labels": [
+        "Type: Cleanup",
+        "Good first issue"
+      ],
+      "comments": 0,
+      "created_at": "2026-03-23T09:34:03Z",
+      "updated_at": "2026-03-25T14:42:36Z",
+      "language": null
+    },
+    {
+      "org": "Pharo Consortium",
+      "github": "pharo-project/pharo",
+      "title": "[ Deprecate ] selectorsWithArgs:",
+      "url": "https://github.com/pharo-project/pharo/issues/19467",
+      "repo": "pharo-project/pharo",
+      "labels": [
+        "Type: Bug",
+        "Good first issue"
+      ],
+      "comments": 0,
+      "created_at": "2026-03-25T13:16:49Z",
+      "updated_at": "2026-03-25T14:42:12Z",
+      "language": null
+    },
+    {
+      "org": "preCICE",
+      "github": "precice/precice",
+      "title": "Multiple SolverInterfaces using the C and Fortran bindings",
+      "url": "https://github.com/precice/precice/issues/1200",
+      "repo": "precice/precice",
       "labels": [
         "bug",
         "good first issue",
-        "Instructor UI"
+        "breaking change",
+        "low priority"
+      ],
+      "comments": 5,
+      "created_at": "2022-03-10T11:06:04Z",
+      "updated_at": "2026-04-27T09:01:20Z",
+      "language": null
+    },
+    {
+      "org": "preCICE",
+      "github": "precice/precice",
+      "title": "Thread-safe Participant",
+      "url": "https://github.com/precice/precice/issues/2407",
+      "repo": "precice/precice",
+      "labels": [
+        "enhancement",
+        "thesis",
+        "good first issue"
+      ],
+      "comments": 13,
+      "created_at": "2025-12-02T12:35:36Z",
+      "updated_at": "2026-03-20T07:22:55Z",
+      "language": null
+    },
+    {
+      "org": "preCICE",
+      "github": "precice/precice",
+      "title": "Configurable RBF cut-off threshold",
+      "url": "https://github.com/precice/precice/issues/1265",
+      "repo": "precice/precice",
+      "labels": [
+        "enhancement",
+        "good first issue",
+        "configuration"
+      ],
+      "comments": 1,
+      "created_at": "2022-04-25T12:07:28Z",
+      "updated_at": "2026-03-16T10:58:55Z",
+      "language": null
+    },
+    {
+      "org": "QC-Devs",
+      "github": "theochem/gbasis",
+      "title": "[REQUEST] Direct Support for Basis-Set-Exchange",
+      "url": "https://github.com/theochem/gbasis/issues/209",
+      "repo": "theochem/gbasis",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2025-04-04T21:13:08Z",
+      "updated_at": "2026-03-26T12:59:48Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "rz-find truncates strings during the `-Z` mode",
+      "url": "https://github.com/rizinorg/rizin/issues/6289",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "rz-find",
+        "test-required"
+      ],
+      "comments": 1,
+      "created_at": "2026-04-26T10:17:20Z",
+      "updated_at": "2026-04-27T10:10:11Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "Mutual information content for rizin and rz-diff",
+      "url": "https://github.com/rizinorg/rizin/issues/5176",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "enhancement",
+        "good first issue",
+        "rz-diff",
+        "test-required",
+        "RzDiff"
+      ],
+      "comments": 3,
+      "created_at": "2025-05-29T16:04:37Z",
+      "updated_at": "2026-04-26T11:45:05Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "title": "Horizontal histogram ruler - legend should be context-dependent",
+      "url": "https://github.com/rizinorg/rizin/issues/5290",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "RzCons",
+        "UX/UI"
+      ],
+      "comments": 2,
+      "created_at": "2025-08-04T13:13:29Z",
+      "updated_at": "2026-04-26T11:05:11Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Suggestion: Allow screen sharing, even when camera/mic not available",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/1745",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "type: improvement",
+        "triaged",
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2015-12-23T17:16:59Z",
+      "updated_at": "2026-04-14T12:35:54Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Omnichannel transfer comment is not wrapped to multiple lines",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/26723",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "area: ui/ux",
+        "hacktoberfest",
+        "good first issue"
+      ],
+      "comments": 62,
+      "created_at": "2022-08-29T10:24:21Z",
+      "updated_at": "2026-04-01T17:30:42Z",
+      "language": null
+    },
+    {
+      "org": "rocket.chat",
+      "github": "RocketChat/Rocket.Chat",
+      "title": "Settings for confirmation for using @all notification on messages",
+      "url": "https://github.com/RocketChat/Rocket.Chat/issues/909",
+      "repo": "RocketChat/Rocket.Chat",
+      "labels": [
+        "area: ui/ux",
+        "type: improvement",
+        "gsoc-project",
+        "triaged",
+        "good first issue"
+      ],
+      "comments": 21,
+      "created_at": "2015-09-26T17:31:38Z",
+      "updated_at": "2026-03-29T19:53:07Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "[Meta] Add typing info",
+      "url": "https://github.com/sagemath/sage/issues/41722",
+      "repo": "sagemath/sage",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2026-02-27T15:47:13Z",
+      "updated_at": "2026-04-13T17:14:20Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "_repr_short_ methods for rings and modules",
+      "url": "https://github.com/sagemath/sage/issues/33006",
+      "repo": "sagemath/sage",
+      "labels": [
+        "p: major / 3",
+        "t: enhancement",
+        "good first issue",
+        "t: refactoring"
+      ],
+      "comments": 3,
+      "created_at": "2021-12-09T21:37:50Z",
+      "updated_at": "2026-03-26T22:47:31Z",
+      "language": null
+    },
+    {
+      "org": "SageMath",
+      "github": "sagemath/sage",
+      "title": "Replace ad-hoc package installation instructions by links to SPKG page",
+      "url": "https://github.com/sagemath/sage/issues/37532",
+      "repo": "sagemath/sage",
+      "labels": [
+        "c: documentation",
+        "good first issue"
+      ],
+      "comments": 8,
+      "created_at": "2024-03-03T18:36:21Z",
+      "updated_at": "2026-02-24T18:14:07Z",
+      "language": null
+    },
+    {
+      "org": "St. Jude Children's Research Hospital",
+      "github": "stjudecloud/workflows",
+      "title": "tool wishlist",
+      "url": "https://github.com/stjudecloud/workflows/issues/228",
+      "repo": "stjudecloud/workflows",
+      "labels": [
+        "enhancement",
+        "help wanted",
+        "good first issue"
       ],
       "comments": 0,
-      "created_at": "2026-05-01T05:06:21Z",
-      "updated_at": "2026-05-01T05:06:48Z",
+      "created_at": "2025-05-12T20:30:17Z",
+      "updated_at": "2025-07-28T14:56:22Z",
+      "language": null
+    },
+    {
+      "org": "St. Jude Children's Research Hospital",
+      "github": "stjudecloud/workflows",
+      "title": "Expose more parameters of tools",
+      "url": "https://github.com/stjudecloud/workflows/issues/168",
+      "repo": "stjudecloud/workflows",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 2,
+      "created_at": "2024-07-15T20:41:17Z",
+      "updated_at": "2025-04-25T05:18:39Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "Fix broken Markdown link: http://www.speech.cs.cmu.edu/cgi-bin/cmudict#about",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11868",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 1,
+      "created_at": "2026-05-01T00:45:09Z",
+      "updated_at": "2026-05-01T00:45:18Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "Fix JavaScript lint errors",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11867",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 1,
+      "created_at": "2026-05-01T00:31:26Z",
+      "updated_at": "2026-05-01T00:31:39Z",
+      "language": null
+    },
+    {
+      "org": "stdlib",
+      "github": "stdlib-js/stdlib",
+      "title": "Fix JavaScript lint errors",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11784",
+      "repo": "stdlib-js/stdlib",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 2,
+      "created_at": "2026-04-26T00:23:05Z",
+      "updated_at": "2026-04-26T07:46:20Z",
+      "language": null
+    },
+    {
+      "org": "Stichting SU2",
+      "github": "su2code/SU2",
+      "title": "Issues with compiling SU2 on Windows 10",
+      "url": "https://github.com/su2code/SU2/issues/1468",
+      "repo": "su2code/SU2",
+      "labels": [
+        "enhancement",
+        "documentation",
+        "good first issue"
+      ],
+      "comments": 3,
+      "created_at": "2021-12-08T17:39:03Z",
+      "updated_at": "2026-01-02T10:36:25Z",
       "language": null
     },
     {
@@ -1430,6 +1804,23 @@
       "comments": 2,
       "created_at": "2024-05-13T21:01:21Z",
       "updated_at": "2026-04-11T14:11:14Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Enhance Forum Search Feature",
+      "url": "https://github.com/Submitty/Submitty/issues/12619",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "good first issue",
+        "Discussion Forum / Live Chat",
+        "Awaiting Triage"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-21T19:36:38Z",
+      "updated_at": "2026-04-05T02:46:32Z",
       "language": null
     },
     {
@@ -1846,6 +2237,54 @@
       "comments": 2,
       "created_at": "2021-01-30T10:09:29Z",
       "updated_at": "2023-10-29T00:15:48Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "Separate `command` and `text` field for slack-compatible outgoing webhook",
+      "url": "https://github.com/zulip/zulip/issues/19589",
+      "repo": "zulip/zulip",
+      "labels": [
+        "help wanted",
+        "area: integrations",
+        "good first issue"
+      ],
+      "comments": 72,
+      "created_at": "2021-08-18T03:26:49Z",
+      "updated_at": "2026-05-01T20:40:43Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "buddy_list: Use `::before` for status circle",
+      "url": "https://github.com/zulip/zulip/issues/37031",
+      "repo": "zulip/zulip",
+      "labels": [
+        "good first issue",
+        "area: right sidebar"
+      ],
+      "comments": 88,
+      "created_at": "2025-12-12T00:31:47Z",
+      "updated_at": "2026-04-24T00:47:46Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "email integration: Include subject line as first line of message if longer than 60 characters.",
+      "url": "https://github.com/zulip/zulip/issues/10539",
+      "repo": "zulip/zulip",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "in progress",
+        "area: integrations (email and mirroring)"
+      ],
+      "comments": 204,
+      "created_at": "2018-09-21T04:37:02Z",
+      "updated_at": "2026-02-02T15:16:44Z",
       "language": null
     }
   ]

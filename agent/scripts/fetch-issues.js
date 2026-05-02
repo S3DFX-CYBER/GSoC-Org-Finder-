@@ -30,6 +30,9 @@ async function fetchIssues() {
   const seenIssueUrls = new Set();
   const targets = normalizeTargets(ORGS);
 
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
   const headers = {
     Accept: 'application/vnd.github+json',
     'User-Agent': 'gsoc-org-finder-actions'
@@ -55,7 +58,7 @@ async function fetchIssues() {
       const data = await res.json();
       if (Array.isArray(data.items)) {
         const mapped = data.items
-          .filter((issue) => issue.state === 'open' && !seenIssueUrls.has(issue.html_url))
+          .filter((issue) => issue.state === 'open' && !seenIssueUrls.has(issue.html_url) && new Date(issue.updated_at) >= oneYearAgo)
           .slice(0, MAX_ISSUES_PER_ORG)
           .map((issue) => ({
             org: target.name,

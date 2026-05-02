@@ -231,6 +231,7 @@
     .dark .text-on-surface-variant { color: #a1a1aa !important; }
     .dark .border-zinc-100 { border-color: #3f3f46 !important; }
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
 
     /* Dark mode - Filter chips & language pills */
@@ -959,10 +960,10 @@
 
   // Dynamic timeline milestones
   const MILESTONES = [
-    { date: new Date('2026-02-19T00:00:00'), label: 'Accepted Orgs Announced', note: null },
-    { date: new Date('2026-03-16T00:00:00'), label: 'Contributor Proposals Open', note: null },
+    { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
+    { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
-    { date: new Date('2026-04-30T00:00:00'), label: 'Accepted Projects Announced', note: null },
+    { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
   ].filter(m => !isNaN(m.date.getTime())); 
 
   function renderTimeline() {

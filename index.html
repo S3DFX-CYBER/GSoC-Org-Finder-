@@ -35,6 +35,9 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <!-- Dependencies for Proposal Builder Workspace -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
@@ -199,6 +202,83 @@
     .modal::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
     .modal::-webkit-scrollbar-thumb:hover { background: #ccc; }
 
+    /* Proposal Workspace Styles */
+    .proposal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .proposal-bg.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .proposal-workspace {
+      background: white;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .proposal-bg.open .proposal-workspace {
+      transform: translateY(0);
+    }
+    .proposal-header {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9f9f9;
+    }
+    .proposal-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .proposal-editor, .proposal-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+    .proposal-editor {
+      border-right: 1px solid #eee;
+      background: #fff;
+    }
+    .proposal-textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      resize: none;
+      outline: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #333;
+    }
+    .proposal-preview {
+      background: #fafafa;
+      color: #333;
+    }
+    .proposal-preview h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .proposal-preview h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .proposal-preview h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .proposal-preview p { margin-bottom: 1rem; line-height: 1.6; }
+    .proposal-preview ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+    .proposal-preview ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
+    .proposal-preview code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; }
+    .proposal-preview pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+    .proposal-preview blockquote { border-left: 4px solid #ddd; padding-left: 1rem; color: #666; margin-bottom: 1rem; }
+    .proposal-preview a { color: #f97316; text-decoration: underline; }
+
+
     /* Complexity Badges */
     .complexity-badge { font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 99px; text-transform: uppercase; }
     .complexity-badge.beginner { background: #dcfce7; color: #166534; }
@@ -285,6 +365,16 @@
     .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
     .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
     .dark .modal-repo-link:hover { background: #3f3f46; }
+
+    /* Dark mode - Proposal Workspace */
+    .dark .proposal-workspace { background: #18181b; }
+    .dark .proposal-header { background: #0f0f10; border-color: #27272a; }
+    .dark .proposal-editor { background: #18181b; border-color: #27272a; }
+    .dark .proposal-preview { background: #1f1f23; color: #d4d4d8; }
+    .dark .proposal-textarea { background: #18181b; color: #d4d4d8; }
+    .dark .proposal-preview code { background: #3f3f46; color: #f4f4f5; }
+    .dark .proposal-preview pre { background: #27272a; }
+    .dark .proposal-preview blockquote { border-color: #3f3f46; color: #a1a1aa; }
 
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
@@ -813,13 +903,49 @@
       <div class="section-title">Participation Timeline</div>
       <div class="timeline-grid" id="mTimeline"></div>
     </div>
-    <div class="modal-footer">
-      <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
+    <div class="modal-footer flex-col sm:flex-row gap-3">
+      <button id="mDraftBtn" class="modal-cta flex items-center justify-center gap-2 bg-zinc-900 text-white hover:bg-zinc-700 w-full sm:w-auto">
+        <span class="material-symbols-outlined text-lg">edit_document</span> Draft Proposal
+      </button>
+      <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2 w-full sm:w-auto">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
-      <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2 w-full sm:w-auto">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PROPOSAL WORKSPACE ═══════════════════ -->
+<div class="proposal-bg" id="proposalModal">
+  <div class="proposal-workspace">
+    <div class="proposal-header">
+      <div class="flex items-center gap-4">
+        <button onclick="closeProposalBuilder()" class="w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-300">arrow_back</span>
+        </button>
+        <div>
+          <h2 class="font-bold text-lg dark:text-white" id="pwOrgName">Organization Name</h2>
+          <p class="text-xs text-zinc-500 font-mono">Auto-saving locally...</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="exportProposalMD()" class="px-4 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors flex items-center gap-2 dark:text-white">
+          <span class="material-symbols-outlined text-sm">download</span> Markdown
+        </button>
+        <button onclick="exportProposalPDF()" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-orange-700 transition-colors flex items-center gap-2 shadow-lg shadow-primary/20">
+          <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
+        </button>
+      </div>
+    </div>
+    <div class="proposal-body flex-col lg:flex-row">
+      <div class="proposal-editor">
+        <textarea id="pwEditor" class="proposal-textarea" placeholder="Start typing your GSoC proposal here..."></textarea>
+      </div>
+      <div class="proposal-preview" id="pwPreview">
+        <!-- Rendered Markdown will appear here -->
+      </div>
     </div>
   </div>
 </div>
@@ -1266,6 +1392,11 @@
     document.getElementById('mIdeasBtn').href = org.ideas;
     document.getElementById('mRepoBtn').href = `https://github.com/${org.github}`;
 
+    const draftBtn = document.getElementById('mDraftBtn');
+    if (draftBtn) {
+      draftBtn.onclick = () => openProposalBuilder(org.name);
+    }
+
 // Copy link button
 const oldCopy = document.getElementById('mIdeasCopyBtn');
 if(oldCopy) oldCopy.remove();
@@ -1487,6 +1618,140 @@ if(org.ideas){
   }
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
+
+  // ══════════════════════════════════════════════
+  // PROPOSAL BUILDER LOGIC
+  // ══════════════════════════════════════════════
+  let currentProposalOrg = '';
+
+  const GSOC_TEMPLATE = `# GSoC 2026 Proposal: [Project Title]
+**Organization:** [Organization Name]
+**Applicant:** [Your Name]
+
+## 1. Contact Information
+* **Email:** [Your Email]
+* **GitHub:** [Your GitHub Profile URL]
+* **Timezone:** [Your Timezone]
+
+## 2. Abstract
+[Provide a short summary of what you intend to do, why it's useful, and the expected outcome. Keep it concise.]
+
+## 3. Architecture & Implementation
+[Detail your technical approach. Include any libraries, design patterns, or API changes you plan to use. Diagrams can be helpful if applicable.]
+
+## 4. Timeline
+[Break down your project into 1-2 week milestones. Be realistic about what you can achieve.]
+* **Community Bonding:** [What you'll do before coding starts]
+* **Week 1-2:** [Tasks]
+* **Week 3-4:** [Tasks]
+* **Midterm Evaluation:** [Deliverables at this stage]
+* **Week 5-6:** [Tasks]
+* **Week 7-8:** [Tasks]
+* **Final Evaluation:** [Final deliverables, documentation, wrapping up]
+
+## 5. Deliverables
+[List explicitly what will be completed and merged by the end of the program.]
+
+## 6. About Me
+[Briefly describe your background, relevant skills, and past contributions (if any) to the organization.]
+`;
+
+  function openProposalBuilder(orgName) {
+    currentProposalOrg = orgName;
+    document.getElementById('pwOrgName').textContent = orgName + ' Proposal';
+    
+    const savedDraft = localStorage.getItem('proposal_' + orgName);
+    const editor = document.getElementById('pwEditor');
+    
+    if (savedDraft) {
+      editor.value = savedDraft;
+    } else {
+      editor.value = GSOC_TEMPLATE.replace('[Organization Name]', orgName);
+    }
+    
+    renderPreview();
+    
+    document.getElementById('proposalModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProposalBuilder() {
+    document.getElementById('proposalModal').classList.remove('open');
+    // If the main org modal is still open, keep overflow hidden
+    if (!document.getElementById('orgModal').classList.contains('open')) {
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  function renderPreview() {
+    const editor = document.getElementById('pwEditor');
+    const preview = document.getElementById('pwPreview');
+    if (typeof marked !== 'undefined') {
+      preview.innerHTML = marked.parse(editor.value);
+    } else {
+      preview.innerHTML = '<p>Error: Markdown parser not loaded. Check your internet connection.</p>';
+    }
+  }
+
+  document.getElementById('pwEditor').addEventListener('input', (e) => {
+    localStorage.setItem('proposal_' + currentProposalOrg, e.target.value);
+    renderPreview();
+  });
+
+  function exportProposalMD() {
+    if (!currentProposalOrg) return;
+    const content = document.getElementById('pwEditor').value;
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GSoC_Proposal_${currentProposalOrg.replace(/\\s+/g, '_')}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportProposalPDF() {
+    if (!currentProposalOrg) return;
+    const element = document.getElementById('pwPreview');
+    
+    // Create a temporary clone for printing to fix dark mode issues and formatting
+    const printElement = element.cloneNode(true);
+    printElement.style.padding = '40px';
+    printElement.style.background = 'white';
+    printElement.style.color = 'black';
+    printElement.style.width = '800px';
+    
+    // Override dark mode styles on clone
+    const codes = printElement.querySelectorAll('code, pre');
+    codes.forEach(c => {
+      c.style.background = '#f4f4f4';
+      c.style.color = '#333';
+    });
+    
+    document.body.appendChild(printElement);
+    
+    const opt = {
+      margin:       15,
+      filename:     `GSoC_Proposal_${currentProposalOrg.replace(/\\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    if (typeof html2pdf !== 'undefined') {
+      html2pdf().set(opt).from(printElement).save().then(() => {
+        document.body.removeChild(printElement);
+      }).catch(err => {
+        console.error('PDF export failed:', err);
+        document.body.removeChild(printElement);
+      });
+    } else {
+      alert("Error: PDF generator not loaded.");
+      document.body.removeChild(printElement);
+    }
+  }
 
   // Initialize
   renderTimeline();

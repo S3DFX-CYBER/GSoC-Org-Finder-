@@ -486,7 +486,7 @@ function applyFilters(){
     if(search&&!txt.includes(search))return false;
     if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false}
     if(compF&&o.competition!==compF)return false;
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true});if(!m)return false}
+    if(pills.size>0){let m=false;const tagTokens=new Set(o.tags.flatMap(tag=>tag.toLowerCase().split(/\s+/)));pills.forEach(p=>{if(tagTokens.has(p))m=true});if(!m)return false}
     if(chips.has('veteran')&&yCls(o.years)!=='veteran')return false;
     if(chips.has('newcomer')&&yCls(o.years)!=='newcomer')return false;
     if(chips.has('hot')&&o.competition!=='hot')return false;

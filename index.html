@@ -243,6 +243,13 @@
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
     .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
     
+    /* Light mode - Language tag pills active state */
+    section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
+      background: rgba(249, 115, 22, 0.1) !important;
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
       background: #27272a !important; 
@@ -475,25 +482,28 @@
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
   <div class="flex flex-wrap gap-2">
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Python</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">JavaScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">TypeScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">C/C++</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Java</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Rust</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Go</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Ruby</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Haskell</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Python</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">JavaScript</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">TypeScript</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">C/C++</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Java</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Rust</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Go</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Ruby</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Haskell</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
+    <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
   </div>
 </section>
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="flex items-center justify-between mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <div class="flex items-center gap-4">
+      <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+      <button id="resetFiltersBtn" onclick="resetAllFilters()" style="display: none;" class="text-[10px] uppercase tracking-widest font-bold text-zinc-500 hover:text-primary transition-colors underline-offset-2 hover:underline">Reset All Filters</button>
+    </div>
     <div class="flex items-center gap-4">
       <div class="relative">
         <input type="text" id="searchInput" placeholder="Search language, tech, or name..." class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64">
@@ -1396,20 +1406,76 @@ if(org.ideas){
   }
 
   // Filters
+  let activeLangPills = new Set();
+  
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const cat = document.getElementById('categoryFilter').value;
     const comp = document.getElementById('complexityFilter').value;
+    const activeChip = document.querySelector('.filter-chip.bg-orange-600');
+    const chipText = activeChip ? activeChip.textContent.trim().toLowerCase() : null;
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+      const txt = (o.name + ' ' + o.tags.join(' ')).toLowerCase();
+      const matchSearch = txt.includes(query);
       const matchCat = cat === 'all' || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
-      return matchSearch && matchCat && matchComp;
+      
+      let matchLang = true;
+      if (activeLangPills.size > 0) {
+        matchLang = false;
+        const tagTokens = new Set(o.tags.flatMap(tag => tag.toLowerCase().split(/\s+/)));
+        activeLangPills.forEach(p => {
+          if (tagTokens.has(p)) matchLang = true;
+        });
+      }
+      
+      let matchChip = true;
+      if (chipText) {
+        if (chipText.includes("bookmarked")) matchChip = bookmarkedSet.has(o.name);
+        else if (chipText.includes("veterans")) matchChip = o.years >= 10;
+        else if (chipText.includes("newcomers")) matchChip = o.years <= 3;
+        else if (chipText.includes("low competition")) matchChip = o.competition === "chill";
+        else if (chipText.includes("high competition")) matchChip = o.competition === "high";
+      }
+
+      return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
 
     renderOrgs(true);
+    updateResetButtonVisibility();
   }
+  
+  function updateResetButtonVisibility() {
+    const query = document.getElementById('searchInput').value.trim();
+    const heroQuery = document.getElementById('hero-search').value.trim();
+    const cat = document.getElementById('categoryFilter').value;
+    const comp = document.getElementById('complexityFilter').value;
+    const hasActiveChips = document.querySelector('.filter-chip.bg-orange-600') !== null;
+    
+    if (query || heroQuery || cat !== 'all' || comp !== 'all' || activeLangPills.size > 0 || hasActiveChips) {
+      document.getElementById('resetFiltersBtn').style.display = 'inline-block';
+    } else {
+      document.getElementById('resetFiltersBtn').style.display = 'none';
+    }
+  }
+
+  globalThis.resetAllFilters = function() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('hero-search').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('complexityFilter').value = 'all';
+    
+    activeLangPills.clear();
+    document.querySelectorAll('.lang-chip.active').forEach(c => c.classList.remove('active'));
+    
+    document.querySelectorAll('.filter-chip').forEach(c => {
+      c.classList.remove('bg-orange-600', 'text-white');
+      c.classList.add('bg-surface-container-highest');
+    });
+    
+    applyFilters();
+  };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
@@ -1426,10 +1492,22 @@ if(org.ideas){
     applyFilters();
   });
 
+  // Language Pills Filter
+  document.querySelectorAll('.lang-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const lang = chip.textContent.trim().toLowerCase();
+      const isActive = chip.classList.toggle('active');
+      if (isActive) activeLangPills.add(lang);
+      else activeLangPills.delete(lang);
+      applyFilters();
+    });
+  });
+
   // Category Chips Filter
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
+      const chipText = chip.textContent.trim().toLowerCase();
+      if (chipText.includes("actively maintained")) return; // Prevent activation until implemented
       
       // Reset others
       document.querySelectorAll('.filter-chip').forEach(c => {
@@ -1439,26 +1517,11 @@ if(org.ideas){
         }
       });
 
-      const isActive = chip.classList.toggle('bg-orange-600');
+      chip.classList.toggle('bg-orange-600');
       chip.classList.toggle('text-white');
       chip.classList.toggle('bg-surface-container-highest');
 
-      if (!isActive) {
-        filteredOrgs = [...ORGS];
-      } else {
-        if (text.includes("bookmarked")) {
-          filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
-        } else if (text.includes("veterans")) {
-          filteredOrgs = ORGS.filter(o => o.years >= 10);
-        } else if (text.includes("newcomers")) {
-          filteredOrgs = ORGS.filter(o => o.years <= 3);
-        } else if (text.includes("low competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "chill");
-        } else if (text.includes("high competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "high");
-        }
-      }
-      renderOrgs(true);
+      applyFilters();
     });
   });
 

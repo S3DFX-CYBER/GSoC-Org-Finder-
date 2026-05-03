@@ -197,6 +197,11 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 const API='/api/github';
 let cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
 let modalIdx=-1,pills=new Set(),chips=new Set(),fetching=false,lastSearch='';
+let matchAllLanguages=false; // false = OR (any), true = AND (all)
+
+// Expose to global scope for HTML onclick handlers and debugging
+globalThis.pills = pills;
+globalThis.matchAllLanguages = matchAllLanguages;
 let filteredOrgs=[]; // for keyboard nav
 let focusedIdx=-1;
 
@@ -458,6 +463,47 @@ function showSkeletons(count = 12) {
 // ══════════════════════════════════════════════
 // FILTER & RENDER
 // ══════════════════════════════════════════════
+
+// Language mapping: display label → array of possible org tag matches
+const LANGUAGE_MAP = {
+  'Python': ['python'],
+  'JavaScript': ['javascript', 'js'],
+  'TypeScript': ['typescript', 'ts'],
+  'C/C++': ['c', 'c++'],
+  'Java': ['java'],
+  'Rust': ['rust'],
+  'Go': ['go', 'golang'],
+  'Ruby': ['ruby'],
+  'Haskell': ['haskell'],
+  'Scala': ['scala'],
+  'ML/AI': ['machine learning', 'ml', 'ai', 'artificial intelligence'],
+  'Robotics': ['robotics', 'robot', 'ros']
+};
+
+function normalizeTag(value) {
+  return value.trim().toLowerCase();
+}
+
+function orgMatchesLanguages(org, selectedLanguages) {
+  if (!selectedLanguages.size) return true;
+
+  const orgTags = new Set((org.tags || []).map(normalizeTag));
+
+  if (matchAllLanguages) {
+    // AND logic: org must have ALL selected languages
+    return [...selectedLanguages].every(label => {
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(normalizeTag);
+      return aliases.some(alias => orgTags.has(alias));
+    });
+  } else {
+    // OR logic: org must have ANY selected language
+    return [...selectedLanguages].some(label => {
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(normalizeTag);
+      return aliases.some(alias => orgTags.has(alias));
+    });
+  }
+}
+
 function debounce(fn, delay) {
   let timer;
   return (...args) => {
@@ -486,7 +532,8 @@ function applyFilters(){
     if(search&&!txt.includes(search))return false;
     if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false}
     if(compF&&o.competition!==compF)return false;
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true});if(!m)return false}
+    // Use proper language matching with LANGUAGE_MAP
+    if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
     if(chips.has('veteran')&&yCls(o.years)!=='veteran')return false;
     if(chips.has('newcomer')&&yCls(o.years)!=='newcomer')return false;
     if(chips.has('hot')&&o.competition!=='hot')return false;
@@ -733,10 +780,69 @@ function scrollToFocused(){
 // PILLS & CHIPS
 // ══════════════════════════════════════════════
 function togglePill(el){
-  const l=el.dataset.lang;el.classList.toggle('active');
-  if(el.classList.contains('active'))pills.add(l);else pills.delete(l);
+  const l=el.dataset.lang;
+  const isActive = el.classList.toggle('active');
+  el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  if(isActive)pills.add(l);else pills.delete(l);
+  renderSelectedLanguages();
   applyFilters();
 }
+
+// ══════════════════════════════════════════════
+// SELECTED LANGUAGES STRIP
+// ══════════════════════════════════════════════
+// Expose to global scope for HTML onclick handlers
+globalThis.togglePill = togglePill;
+
+globalThis.renderSelectedLanguages = renderSelectedLanguages;
+function renderSelectedLanguages(){
+  const container=document.getElementById('selectedLangsStrip');
+  if(!container)return;
+
+  if(pills.size===0){
+    container.innerHTML='<span class="empty-state">No languages selected</span>';
+    return;
+  }
+
+  const badges=[...pills].map(lang=>{
+    return`<span class="selected-lang-badge" data-lang="${lang}">
+      ${lang}
+      <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
+    </span>`;
+  }).join('');
+
+  const clearAll=`<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+
+  container.innerHTML=badges+clearAll;
+}
+
+function unselectLanguage(lang){
+  pills.delete(lang);
+
+  const pillBtn=document.querySelector(`.pill[data-lang="${lang}"]`);
+  if(pillBtn){
+    pillBtn.classList.remove('active');
+    pillBtn.setAttribute('aria-pressed','false');
+  }
+
+  renderSelectedLanguages();
+  applyFilters();
+}
+globalThis.unselectLanguage = unselectLanguage;
+
+function clearAllLanguages(){
+  pills.clear();
+
+  document.querySelectorAll('.pill.active').forEach(p=>{
+    p.classList.remove('active');
+    p.setAttribute('aria-pressed','false');
+  });
+
+  renderSelectedLanguages();
+  applyFilters();
+}
+globalThis.clearAllLanguages = clearAllLanguages;
+
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
@@ -748,8 +854,9 @@ function resetFilters(){
   ['searchInput','catFilter','langFilter','yearsFilter','compFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   document.getElementById('sortSelect').value='alpha';
   pills.clear();chips.clear();
-  document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
   Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip'});
+  renderSelectedLanguages();
   applyFilters();
 }
 
@@ -1028,6 +1135,14 @@ function showMoreIssues(){
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
 showSkeletons();
 updateStats();
+renderSelectedLanguages();
+
+// Initialize match mode toggle listener
+document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
+  matchAllLanguages = e.target.checked;
+  applyFilters();
+});
+
 requestAnimationFrame(()=>{
   applyFilters();
   renderTrending();

@@ -238,11 +238,19 @@
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
 
+    /* Light mode - Language pills active state */
+    .pill.active {
+      background: rgba(157, 67, 0, 0.1) !important;
+      border-color: #9d4300 !important;
+      color: #9d4300 !important;
+      font-weight: 600;
+    }
+
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
     .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
-    
+
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
       background: #27272a !important; 
@@ -253,7 +261,7 @@
       border-color: #f97316 !important; 
       color: #f97316 !important; 
     }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
+    .dark .pill.active {
       background: rgba(251, 146, 60, 0.2) !important;
       border-color: #fb923c !important;
       color: #fb923c !important;
@@ -314,6 +322,93 @@
     .dark header .text-zinc-600 { color: #a1a1aa !important; }
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
+
+    /* Selected Languages Strip */
+    #selectedLangsStrip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+    }
+    #selectedLangsStrip .empty-state {
+      color: #888;
+      font-style: italic;
+      font-size: 12px;
+    }
+    .selected-lang-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 12px;
+      background: #fff4ec;
+      border: 1.5px solid #ffe0c8;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #d45800;
+    }
+    .unselect-lang-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      background: #ffe0c8;
+      color: #d45800;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 2px;
+    }
+    .unselect-lang-btn:hover {
+      background: #f46b0e;
+      color: white;
+    }
+    .clear-all-langs-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      background: transparent;
+      border: 1.5px dashed #ddd;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+    }
+    .clear-all-langs-btn:hover {
+      border-color: #f46b0e;
+      color: #f46b0e;
+      background: #fff4ec;
+    }
+    /* Dark mode */
+    .dark #selectedLangsStrip .empty-state { color: #8a6a45; }
+    .dark .selected-lang-badge {
+      background: #1c0f05;
+      border-color: #2a1508;
+      color: #f97316;
+    }
+    .dark .unselect-lang-btn {
+      background: #2a1508;
+      color: #f97316;
+    }
+    .dark .unselect-lang-btn:hover {
+      background: #fb923c;
+      color: white;
+    }
+    .dark .clear-all-langs-btn {
+      border-color: #2e1e0a;
+      color: #8a6a45;
+    }
+    .dark .clear-all-langs-btn:hover {
+      border-color: #f97316;
+      color: #fb923c;
+      background: #1c0f05;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -475,18 +570,27 @@
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
   <div class="flex flex-wrap gap-2">
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Python</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">JavaScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">TypeScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">C/C++</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Java</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Rust</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Go</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Ruby</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Haskell</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
+  </div>
+  <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
+    <span class="empty-state">No languages selected</span>
+  </div>
+  <div class="mt-2 flex items-center gap-2">
+    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+      <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
+    </label>
   </div>
 </section>
 
@@ -967,6 +1071,105 @@
   let filteredOrgs = [...ORGS];
   let compareList = [];
   const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+  const selectedLanguages = new Set();
+  let matchAllLanguages = false;
+  const LANGUAGE_ALIASES = {
+    'python': ['python'],
+    'javascript': ['javascript', 'js'],
+    'typescript': ['typescript', 'ts'],
+    'c/c++': ['c', 'c++', 'cpp'],
+    'java': ['java'],
+    'rust': ['rust'],
+    'go': ['go', 'golang'],
+    'ruby': ['ruby'],
+    'haskell': ['haskell'],
+    'scala': ['scala'],
+    'ml/ai': ['ml', 'ai', 'machine learning', 'artificial intelligence'],
+    'robotics': ['robotics', 'robot', 'ros']
+  };
+
+  function updateLanguageModeHint() {
+    const hint = document.getElementById('languageLogicHint');
+    if (!hint) return;
+    hint.textContent = matchAllLanguages
+      ? 'Multiple language chips use AND (must match all selected).'
+      : 'Multiple language chips use OR (any selected).';
+  }
+
+  function languageMatchesSelection(tags, lang) {
+    const langKey = lang.toLowerCase();
+    const aliases = LANGUAGE_ALIASES[langKey] || [langKey];
+    return aliases.some(alias => tags.some(tag => tag.toLowerCase().includes(alias.toLowerCase())));
+  }
+
+  function clearSelectedLanguagePills() {
+    selectedLanguages.clear();
+    document.querySelectorAll('.pill.active').forEach(pill => {
+      pill.classList.remove('active');
+      pill.setAttribute('aria-pressed', 'false');
+    });
+    renderSelectedLanguages();
+  }
+
+  function renderSelectedLanguages() {
+    const container = document.getElementById('selectedLangsStrip');
+    if (!container) return;
+
+    if (selectedLanguages.size === 0) {
+      container.innerHTML = '<span class="empty-state">No languages selected</span>';
+      return;
+    }
+
+    const badges = [...selectedLanguages].map(lang => {
+      return `<span class="selected-lang-badge" data-lang="${lang}">
+        ${lang}
+        <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
+      </span>`;
+    }).join('');
+
+    const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+    container.innerHTML = badges + clearAll;
+  }
+
+  window.unselectLanguage = function(lang) {
+    selectedLanguages.delete(lang);
+    const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
+    if (pillBtn) {
+      pillBtn.classList.remove('active');
+      pillBtn.setAttribute('aria-pressed', 'false');
+    }
+    renderSelectedLanguages();
+    applyFilters();
+  }
+
+  window.clearAllLanguages = function() {
+    selectedLanguages.clear();
+    document.querySelectorAll('.pill.active').forEach(p => {
+      p.classList.remove('active');
+      p.setAttribute('aria-pressed', 'false');
+    });
+    renderSelectedLanguages();
+    applyFilters();
+  }
+
+  window.toggleLanguageMode = function(el) {
+    matchAllLanguages = Boolean(el?.checked);
+    clearSelectedLanguagePills();
+    updateLanguageModeHint();
+    applyFilters();
+  };
+
+  window.togglePill = function(el) {
+    const langDisplay = el.dataset.lang || '';
+    const langKey = langDisplay.trim().toLowerCase();
+    if (!langKey) return;
+    const isActive = el.classList.toggle('active');
+    el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
+    else selectedLanguages.add(langDisplay);
+    renderSelectedLanguages();
+    applyFilters();
+  };
 
   // Dynamic timeline milestones
   const MILESTONES = [
@@ -1318,7 +1521,12 @@ if(org.ideas){
       const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
       const matchCat = cat === 'all' || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
-      return matchSearch && matchCat && matchComp;
+      const tags = (o.tags || []).map(t => String(t).toLowerCase());
+      const matchLang = selectedLanguages.size === 0
+        || (matchAllLanguages
+          ? [...selectedLanguages].every(lang => languageMatchesSelection(tags, lang))
+          : [...selectedLanguages].some(lang => languageMatchesSelection(tags, lang)));
+      return matchSearch && matchCat && matchComp && matchLang;
     });
 
     renderOrgs(true);
@@ -1327,6 +1535,10 @@ if(org.ideas){
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
+    matchAllLanguages = e.target.checked;
+    applyFilters();
+  });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
@@ -1499,11 +1711,10 @@ if(org.ideas){
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
   // Initialize
-  renderTimeline();
+  updateLanguageModeHint();
   updateCountdown();
-  const _timelineInterval = setInterval(() => { renderTimeline(); updateCountdown(); }, 60000);
-  // Edge case: clear interval when page is hidden/unloaded to avoid errors on stale DOM
-  window.addEventListener('beforeunload', () => clearInterval(_timelineInterval));
+  setInterval(updateCountdown, 60000);
+  renderSelectedLanguages();
   renderOrgs();
   renderWatchlist();
   renderGoodFirstIssues();

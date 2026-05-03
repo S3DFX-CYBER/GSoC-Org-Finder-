@@ -243,10 +243,18 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 ---
 ## We thank all our Contributors for improving this project
 ## Contributors ✨
-<a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=S3DFX-CYBER/GSoC-Org-Finder-" />
-</a>
 
+<p align="center">
+  <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/graphs/contributors">
+    <!-- AUTO-GENERATED:START -->
+    <img src="https://avatars.githubusercontent.com/u/583231?v=4" width="60px" style="border-radius:50%; margin:4px;" />
+    <!-- AUTO-GENERATED:END -->
+  </a>
+</p>
+
+<p align="center">
+  <sub>Last updated: <!-- LAST_UPDATED --> </sub>
+</p>
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

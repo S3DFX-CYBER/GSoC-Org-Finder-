@@ -587,54 +587,17 @@ footer a:hover{text-decoration:underline}
 ═══════════════════════════════════════════ */
 
 /* Empty state text */
-#selectedLangsStrip .empty-state {
+.selected-langs-strip .empty-state {
   color: var(--muted);
   font-style: italic;
   font-size: 12px;
 }
 
-[data-theme="dark"] #selectedLangsStrip .empty-state {
+[data-theme="dark"] .selected-langs-strip .empty-state {
   color: var(--muted);
 }
 
-/* Match mode toggle row */
-#matchModeRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-#matchModeRow label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-#matchModeRow input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid var(--border);
-  background: var(--input-bg);
-  cursor: pointer;
-  accent-color: var(--orange);
-}
-
-#matchModeRow span {
-  font-size: 12px;
-  color: var(--ink3);
-  font-weight: 500;
-}
-
-[data-theme="dark"] #matchModeRow span {
-  color: var(--ink3);
-}
-
-#selectedLangsStrip {
+.selected-langs-strip {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

@@ -1335,7 +1335,8 @@ if(org.ideas){
           <th class="p-4 border-b-2 border-zinc-200 text-xs font-bold text-zinc-400 uppercase tracking-wider w-1/4">Feature</th>
           ${compareList.map(name => {
             const org = ORGS.find(o => o.name === name);
-            const githubOwner = org.github.split('/')[0];
+            if (!org) return '';
+            const githubOwner = org.github?.split('/')[0] || '';
             const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
             return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
               <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
@@ -1348,16 +1349,23 @@ if(org.ideas){
       </thead>
       <tbody class="text-sm">`;
 
-    const orgs = compareList.map(name => ORGS.find(o => o.name === name));
+    const orgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
     
     const rows = [
-      { label: "Category", get: o => `<span class="category-tag !mb-0">${o.cat.toUpperCase()}</span>` },
-      { label: "Years in GSoC", get: o => `<span class="font-bold text-primary text-base">${o.years}</span>` },
-      { label: "First Year", get: o => `<span class="font-mono text-zinc-600">${o.firstYear}</span>` },
-      { label: "Competition", get: o => `<span class="complexity-badge ${o.codebase}">${o.competition.toUpperCase()}</span>` },
-      { label: "Codebase Complexity", get: o => `<span class="complexity-badge ${o.codebase}">${o.codebase.toUpperCase()}</span>` },
-      { label: "Technologies", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${o.tags.map(t => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>` },
-      { label: "Ideal Fit", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${o.fit.map(f => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>` },
+      { label: "Category", get: o => `<span class="category-tag !mb-0">${(o.cat || '').toUpperCase()}</span>` },
+      { label: "Years in GSoC", get: o => `<span class="font-bold text-primary text-base">${o.years || ''}</span>` },
+      { label: "First Year", get: o => `<span class="font-mono text-zinc-600">${o.firstYear || ''}</span>` },
+      { label: "Competition", get: o => {
+        const competitionClass = {
+          chill: 'beginner',
+          moderate: 'intermediate',
+          high: 'advanced'
+        }[o.competition] || 'beginner';
+        return `<span class="complexity-badge ${competitionClass}">${(o.competition || '').toUpperCase()}</span>`;
+      }},
+      { label: "Codebase Complexity", get: o => `<span class="complexity-badge ${o.codebase || ''}">${(o.codebase || '').toUpperCase()}</span>` },
+      { label: "Technologies", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.tags || []).map(t => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>` },
+      { label: "Ideal Fit", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.fit || []).map(f => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>` },
     ];
 
     rows.forEach((row, i) => {

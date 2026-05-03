@@ -1262,8 +1262,9 @@ if(org.ideas){
       let matchLang = true;
       if (activeLangPills.size > 0) {
         matchLang = false;
+        const tagTokens = o.tags.flatMap(tag => tag.toLowerCase().split(/\s+/));
         activeLangPills.forEach(p => {
-          if (txt.includes(p)) matchLang = true;
+          if (tagTokens.includes(p)) matchLang = true;
         });
       }
       
@@ -1343,6 +1344,9 @@ if(org.ideas){
   // Category Chips Filter
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
+      const chipText = chip.textContent.trim().toLowerCase();
+      if (chipText.includes("actively maintained")) return; // Prevent activation until implemented
+      
       // Reset others
       document.querySelectorAll('.filter-chip').forEach(c => {
         if (c !== chip) {

@@ -1369,10 +1369,10 @@ if(org.ideas){
     ];
 
     rows.forEach((row, i) => {
-      const bgClass = i % 2 === 0 ? 'bg-zinc-50/50' : 'bg-white';
-      html += `<tr class="${bgClass} hover:bg-orange-50/30 transition-colors">
-        <td class="p-4 border-b border-zinc-100 font-bold text-zinc-700 align-middle">${row.label}</td>
-        ${orgs.map(o => `<td class="p-4 border-b border-zinc-100 text-center align-middle">${row.get(o)}</td>`).join('')}
+      const bgClass = i % 2 === 0 ? 'bg-zinc-50/50 dark:bg-zinc-800/30' : 'bg-white dark:bg-transparent';
+      html += `<tr class="${bgClass} hover:bg-orange-50/30 dark:hover:bg-orange-500/10 transition-colors">
+        <td class="p-4 border-b border-zinc-100 font-bold text-zinc-700 dark:text-zinc-300 align-middle">${row.label}</td>
+        ${orgs.map(o => `<td class="p-4 border-b border-zinc-100 text-center align-middle dark:text-zinc-300">${row.get(o)}</td>`).join('')}
       </tr>`;
     });
 

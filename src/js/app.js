@@ -849,9 +849,26 @@ const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
 
 function openIssuesPage(){
+  loadCachedIssues();
   document.getElementById('issuesPage').classList.add('open');
   document.body.style.overflow='hidden';
 }
+
+async function loadCachedIssues() {
+  if (allIssues.length > 0 || issuesFetching) return;
+  try {
+    const res = await fetch('/data/issues.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && Array.isArray(data.issues)) {
+      allIssues = data.issues;
+      filterIssues();
+    }
+  } catch (err) {
+    console.warn('Failed to load cached issues:', err);
+  }
+}
+
 function closeIssuesPage(){
   document.getElementById('issuesPage').classList.remove('open');
   document.body.style.overflow='';

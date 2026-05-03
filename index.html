@@ -1160,7 +1160,7 @@
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" class="w-full h-full object-contain" />
+          <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" alt="${org.name} logo" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${org.name}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${org.years}y · ${org.competition}</p>

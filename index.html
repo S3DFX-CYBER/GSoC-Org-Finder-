@@ -1340,7 +1340,7 @@ if(org.ideas){
             const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
             return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
               <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
-                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/'/g, "\\'")}')" class="w-full h-full object-contain rounded-lg" />
+                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/['\\]/g, "\\$&")}')" class="w-full h-full object-contain rounded-lg" />
               </div>
               <p class="font-headline font-bold text-lg text-zinc-900">${name}</p>
             </th>`;

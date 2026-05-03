@@ -589,10 +589,18 @@ function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
   return `<span class="gh-s">🟢 <b>${fmt(gh.gfi)} GFI</b></span>`;
 }
-
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
-  if(!orgs.length){g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>No matches found</h3><p>Try removing some filters.</p></div>`;return}
+  if(!orgs.length){
+    g.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <h3>No organizations match your current filters.</h3>
+        <p>Try adjusting your search or clearing some filters.</p>
+        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
+      </div>`;
+    return;
+  }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
     const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${t}</span>`).join('');

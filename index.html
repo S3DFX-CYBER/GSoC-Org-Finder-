@@ -775,11 +775,11 @@
       <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Decision Tool</span>
       <h2 class="text-4xl font-extrabold font-headline tracking-tighter mt-2 mb-6">Compare Organizations</h2>
       <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
-      <a href="https://findmygsoc.vercel.app" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
+      <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
         <span class="material-symbols-outlined">compare</span> Open Comparison Tool
-      </a>
+      </button>
     </div>
-    <div class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
+    <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
       <div class="grid grid-cols-3 gap-4 text-center">
         <div class="bg-white rounded-xl p-4 border border-zinc-100">
           <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-orange-600">psychology</span></div>
@@ -861,6 +861,20 @@
       <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
+<div class="modal-bg compare-bg" id="compareModal">
+  <div class="modal w-full max-w-5xl">
+    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header pb-4 border-b border-zinc-100">
+      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
+      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+    </div>
+    <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
+      <!-- Injected table -->
     </div>
   </div>
 </div>
@@ -1339,55 +1353,80 @@ if(org.ideas){
     document.body.style.overflow = 'auto';
   }
 
-  // Filters State Management
-  const filterState = {
-    search: '',
-    cat: 'all',
-    comp: 'all',
-    chip: null
-  };
+  function openCompareModal() {
+    if (compareList.length === 0) {
+      alert("Please select at least one organization to compare.");
+      return;
+    }
+    
+    const body = document.getElementById('compareModalBody');
+    let html = `<table class="w-full text-left border-collapse min-w-[600px]">
+      <thead>
+        <tr>
+          <th class="p-4 border-b-2 border-zinc-200 text-xs font-bold text-zinc-400 uppercase tracking-wider w-1/4">Feature</th>
+          ${compareList.map(name => {
+            const org = ORGS.find(o => o.name === name);
+            if (!org) return '';
+            const githubOwner = org.github?.split('/')[0] || '';
+            const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+            return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
+              <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
+                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/['\\]/g, "\\$&")}')" class="w-full h-full object-contain rounded-lg" />
+              </div>
+              <p class="font-headline font-bold text-lg text-zinc-900">${name}</p>
+            </th>`;
+          }).join('')}
+        </tr>
+      </thead>
+      <tbody class="text-sm">`;
 
-  function syncFiltersFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('search')) filterState.search = params.get('search');
-    if (params.has('cat')) filterState.cat = params.get('cat');
-    if (params.has('comp')) filterState.comp = params.get('comp');
-    if (params.has('chip')) filterState.chip = params.get('chip');
+    const orgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
+    
+    const rows = [
+      { label: "Category", get: o => `<span class="category-tag !mb-0">${(o.cat || '').toUpperCase()}</span>` },
+      { label: "Years in GSoC", get: o => `<span class="font-bold text-primary text-base">${o.years || ''}</span>` },
+      { label: "First Year", get: o => `<span class="font-mono text-zinc-600">${o.firstYear || ''}</span>` },
+      { label: "Competition", get: o => {
+        const competitionClass = {
+          chill: 'beginner',
+          moderate: 'intermediate',
+          high: 'advanced'
+        }[o.competition] || 'beginner';
+        return `<span class="complexity-badge ${competitionClass}">${(o.competition || '').toUpperCase()}</span>`;
+      }},
+      { label: "Codebase Complexity", get: o => `<span class="complexity-badge ${o.codebase || ''}">${(o.codebase || '').toUpperCase()}</span>` },
+      { label: "Technologies", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.tags || []).map(t => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>` },
+      { label: "Ideal Fit", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.fit || []).map(f => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>` },
+    ];
 
-    document.getElementById('searchInput').value = filterState.search;
-    document.getElementById('categoryFilter').value = filterState.cat;
-    document.getElementById('complexityFilter').value = filterState.comp;
-
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      if (filterState.chip && chip.textContent.trim().toLowerCase() === filterState.chip) {
-        chip.classList.add('bg-orange-600', 'text-white');
-        chip.classList.remove('bg-surface-container-highest');
-      } else {
-        chip.classList.remove('bg-orange-600', 'text-white');
-        chip.classList.add('bg-surface-container-highest');
-      }
+    rows.forEach((row, i) => {
+      const bgClass = i % 2 === 0 ? 'bg-zinc-50/50 dark:bg-zinc-800/30' : 'bg-white dark:bg-transparent';
+      html += `<tr class="${bgClass} hover:bg-orange-50/30 dark:hover:bg-orange-500/10 transition-colors">
+        <td class="p-4 border-b border-zinc-100 font-bold text-zinc-700 dark:text-zinc-300 align-middle">${row.label}</td>
+        ${orgs.map(o => `<td class="p-4 border-b border-zinc-100 text-center align-middle dark:text-zinc-300">${row.get(o)}</td>`).join('')}
+      </tr>`;
     });
+
+    html += `</tbody></table>`;
+    
+    if (compareList.length < 3) {
+      html += `<p class="text-center text-xs text-zinc-400 mt-8 font-mono border-t border-dashed border-zinc-200 pt-6">
+        <span class="material-symbols-outlined text-sm align-middle mr-1">info</span> 
+        You can add up to ${3 - compareList.length} more organization${3 - compareList.length > 1 ? 's' : ''} to this comparison.
+      </p>`;
+    }
+    
+    body.innerHTML = html;
+    document.getElementById('compareModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  function syncFiltersToUrl() {
-    const params = new URLSearchParams();
-    if (filterState.search) params.set('search', filterState.search);
-    if (filterState.cat !== 'all') params.set('cat', filterState.cat);
-    if (filterState.comp !== 'all') params.set('comp', filterState.comp);
-    if (filterState.chip) params.set('chip', filterState.chip);
-
-    const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-    window.history.replaceState({}, '', newUrl);
+  function closeCompareModal() {
+    document.getElementById('compareModal').classList.remove('open');
+    document.body.style.overflow = 'auto';
   }
 
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
-
+  // Filters
   function applyFilters() {
     filterState.search = document.getElementById('searchInput').value.toLowerCase();
     filterState.cat = document.getElementById('categoryFilter').value;

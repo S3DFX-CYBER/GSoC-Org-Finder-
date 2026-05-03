@@ -522,8 +522,39 @@
   
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+    <div class="col-span-full text-center" id="orgsLoadingState">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full text-left">
+        <!-- Skeleton Card 1 -->
+        <div class="bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col justify-between h-[280px] animate-pulse">
+           <div class="flex justify-between w-full">
+             <div class="w-14 h-14 rounded-xl bg-zinc-200 dark:bg-zinc-800"></div>
+             <div class="w-24 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800"></div>
+           </div>
+           <div class="w-3/4 h-6 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+           <div class="w-1/4 h-5 rounded bg-zinc-200 dark:bg-zinc-800 mt-2"></div>
+           <div class="w-full h-12 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+        </div>
+        <!-- Skeleton Card 2 -->
+        <div class="bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col justify-between h-[280px] hidden md:flex animate-pulse">
+           <div class="flex justify-between w-full">
+             <div class="w-14 h-14 rounded-xl bg-zinc-200 dark:bg-zinc-800"></div>
+             <div class="w-24 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800"></div>
+           </div>
+           <div class="w-3/4 h-6 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+           <div class="w-1/4 h-5 rounded bg-zinc-200 dark:bg-zinc-800 mt-2"></div>
+           <div class="w-full h-12 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+        </div>
+        <!-- Skeleton Card 3 -->
+        <div class="bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col justify-between h-[280px] hidden xl:flex animate-pulse">
+           <div class="flex justify-between w-full">
+             <div class="w-14 h-14 rounded-xl bg-zinc-200 dark:bg-zinc-800"></div>
+             <div class="w-24 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800"></div>
+           </div>
+           <div class="w-3/4 h-6 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+           <div class="w-1/4 h-5 rounded bg-zinc-200 dark:bg-zinc-800 mt-2"></div>
+           <div class="w-full h-12 rounded bg-zinc-200 dark:bg-zinc-800 mt-6"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1397,23 +1428,39 @@ if(org.ideas){
 
   // Filters
   function applyFilters() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const cat = document.getElementById('categoryFilter').value;
-    const comp = document.getElementById('complexityFilter').value;
+    filterState.search = document.getElementById('searchInput').value.toLowerCase();
+    filterState.cat = document.getElementById('categoryFilter').value;
+    filterState.comp = document.getElementById('complexityFilter').value;
+    
+    syncFiltersToUrl();
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
-      const matchCat = cat === 'all' || o.cat === cat;
-      const matchComp = comp === 'all' || o.codebase === comp;
-      return matchSearch && matchCat && matchComp;
+      const query = filterState.search;
+      const matchSearch = !query || o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+      const matchCat = filterState.cat === 'all' || o.cat === filterState.cat;
+      const matchComp = filterState.comp === 'all' || o.codebase === filterState.comp;
+      
+      let matchChip = true;
+      if (filterState.chip) {
+        const text = filterState.chip;
+        if (text.includes("bookmarked")) matchChip = bookmarkedSet.has(o.name);
+        else if (text.includes("veterans")) matchChip = o.years >= 10;
+        else if (text.includes("newcomers")) matchChip = o.years <= 3;
+        else if (text.includes("low competition")) matchChip = o.competition === "chill";
+        else if (text.includes("high competition")) matchChip = o.competition === "high";
+      }
+
+      return matchSearch && matchCat && matchComp && matchChip;
     });
 
     renderOrgs(true);
   }
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  const debouncedSearch = debounce(applyFilters, 300);
+  document.getElementById('searchInput').addEventListener('input', debouncedSearch);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
@@ -1423,42 +1470,28 @@ if(org.ideas){
   document.getElementById('hero-search').addEventListener('input', (e) => {
     document.getElementById('searchInput').value = e.target.value;
     document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-    applyFilters();
+    debouncedSearch();
   });
 
   // Category Chips Filter
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const text = chip.textContent.trim().toLowerCase();
+      const isActive = chip.classList.contains('bg-orange-600');
       
-      // Reset others
+      filterState.chip = isActive ? null : text;
+
       document.querySelectorAll('.filter-chip').forEach(c => {
-        if (c !== chip) {
+        if (filterState.chip && c.textContent.trim().toLowerCase() === filterState.chip) {
+          c.classList.add('bg-orange-600', 'text-white');
+          c.classList.remove('bg-surface-container-highest');
+        } else {
           c.classList.remove('bg-orange-600', 'text-white');
           c.classList.add('bg-surface-container-highest');
         }
       });
 
-      const isActive = chip.classList.toggle('bg-orange-600');
-      chip.classList.toggle('text-white');
-      chip.classList.toggle('bg-surface-container-highest');
-
-      if (!isActive) {
-        filteredOrgs = [...ORGS];
-      } else {
-        if (text.includes("bookmarked")) {
-          filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
-        } else if (text.includes("veterans")) {
-          filteredOrgs = ORGS.filter(o => o.years >= 10);
-        } else if (text.includes("newcomers")) {
-          filteredOrgs = ORGS.filter(o => o.years <= 3);
-        } else if (text.includes("low competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "chill");
-        } else if (text.includes("high competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "high");
-        }
-      }
-      renderOrgs(true);
+      applyFilters();
     });
   });
 
@@ -1591,10 +1624,16 @@ if(org.ideas){
   const _timelineInterval = setInterval(() => { renderTimeline(); updateCountdown(); }, 60000);
   // Edge case: clear interval when page is hidden/unloaded to avoid errors on stale DOM
   window.addEventListener('beforeunload', () => clearInterval(_timelineInterval));
-  renderOrgs();
-  renderWatchlist();
-  renderGoodFirstIssues();
-  renderCompare();
+  
+  syncFiltersFromUrl();
+  
+  // Render with a small delay to allow loading skeletons to be briefly visible
+  setTimeout(() => {
+    applyFilters();
+    renderWatchlist();
+    renderGoodFirstIssues();
+    renderCompare();
+  }, 400);
 </script>
 
 <!-- Vercel Speed Insights -->

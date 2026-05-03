@@ -527,6 +527,16 @@
     </div>
   </div>
 
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
+    <div class="text-6xl mb-4">🔍</div>
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
+    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
+    <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
+      Clear All Filters
+    </button>
+  </div>
+
   <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
     <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
       View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
@@ -1091,9 +1101,21 @@
 
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
+    const emptyState = document.getElementById('emptyState');
     if (reset) {
       grid.innerHTML = '';
       visibleCount = 12;
+    }
+
+    if (filteredOrgs.length === 0) {
+      grid.classList.add('hidden');
+      if (emptyState) emptyState.classList.remove('hidden');
+      document.getElementById('orgCount').textContent = '0';
+      document.getElementById('loadMoreContainer').style.display = 'none';
+      return;
+    } else {
+      grid.classList.remove('hidden');
+      if (emptyState) emptyState.classList.add('hidden');
     }
     
     const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
@@ -1410,6 +1432,23 @@ if(org.ideas){
 
     renderOrgs(true);
   }
+
+  window.clearAllFilters = function() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('complexityFilter').value = 'all';
+    const heroSearch = document.getElementById('hero-search');
+    if (heroSearch) heroSearch.value = '';
+    
+    // Reset chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.classList.remove('bg-orange-600', 'text-white');
+      chip.classList.add('bg-surface-container-highest');
+    });
+
+    filteredOrgs = [...ORGS];
+    renderOrgs(true);
+  };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);

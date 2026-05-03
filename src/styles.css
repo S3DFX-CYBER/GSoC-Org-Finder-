@@ -283,6 +283,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}
 .empty h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--ink);margin-bottom:8px}
+.empty p{font-size:14px;margin-bottom:24px}
+.btn-clear-filters{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-clear-filters:hover{background:var(--orange);color:white;transform:translateY(-1px);box-shadow:0 4px 12px rgb(244 107 14 / 0.2)}
 
 /* ── MODAL ── */
 .modal-bg{position:fixed;inset:0;z-index:100;background:rgba(28,16,8,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}

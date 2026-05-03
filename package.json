@@ -7,11 +7,14 @@
         "lint:js": "eslint src/js/app.js src/js/org.js agent/scripts/validate-ideas-urls.js api/github.js",
         "lint:css": "stylelint src/styles.css",
         "lint:html": "htmlhint --config .htmlhintrc index.html",
-        "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
+        "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+        "format": "prettier --write \"**/*.{js,css,html}\"",
+        "format:check": "prettier --check \"**/*.{js,css,html}\""
     },
     "devDependencies": {
         "eslint": "^8.57.0",
         "htmlhint": "^1.1.4",
+        "prettier": "^3.8.3",
         "stylelint": "^16.3.1",
         "stylelint-config-standard": "^36.0.1"
     },

@@ -13,14 +13,14 @@ function normalizeTargets(orgs) {
         return {
           name: org.name,
           github,
-          query: `repo:${github} is:issue label:"good first issue" state:open archived:false`
+          query: `repo:${github} is:issue label:"good first issue" state:open archived:false`,
         };
       }
 
       return {
         name: org.name,
         github,
-        query: `user:${github} is:issue label:"good first issue" state:open archived:false`
+        query: `user:${github} is:issue label:"good first issue" state:open archived:false`,
       };
     });
 }
@@ -35,7 +35,7 @@ async function fetchIssues() {
 
   const headers = {
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'gsoc-org-finder-actions'
+    'User-Agent': 'gsoc-org-finder-actions',
   };
 
   if (process.env.GITHUB_TOKEN) {
@@ -58,7 +58,12 @@ async function fetchIssues() {
       const data = await res.json();
       if (Array.isArray(data.items)) {
         const mapped = data.items
-          .filter((issue) => issue.state === 'open' && !seenIssueUrls.has(issue.html_url) && new Date(issue.updated_at) >= oneYearAgo)
+          .filter(
+            (issue) =>
+              issue.state === 'open' &&
+              !seenIssueUrls.has(issue.html_url) &&
+              new Date(issue.updated_at) >= oneYearAgo
+          )
           .slice(0, MAX_ISSUES_PER_ORG)
           .map((issue) => {
             const orgName = target.github.split('/')[0];
@@ -73,7 +78,7 @@ async function fetchIssues() {
               comments: issue.comments,
               created_at: issue.created_at,
               updated_at: issue.updated_at,
-              language: null
+              language: null,
             };
           });
 
@@ -95,7 +100,7 @@ async function fetchIssues() {
       {
         updated_at: new Date().toISOString(),
         source_org_count: targets.length,
-        issues: results
+        issues: results,
       },
       null,
       2

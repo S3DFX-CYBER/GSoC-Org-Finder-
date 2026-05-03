@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * URL Validation Script for GSoC Org Finder
- * 
+ *
  * Validates all organization ideas URLs in src/js/org.js to ensure:
  * - URLs are properly formatted
  * - URLs use http or https protocols only
  * - No malicious or suspicious URLs are present
- * 
+ *
  * Usage: node agent/scripts/validate-ideas-urls.js
  */
 
@@ -28,43 +28,43 @@ const PLACEHOLDER_PATTERNS = [
   /ideas\.md$/i,
   /TODO/i,
   /TBA/i,
-  /pending/i
+  /pending/i,
 ];
 
 function isPlaceholderUrl(url) {
-  return PLACEHOLDER_PATTERNS.some(pattern => pattern.test(url));
+  return PLACEHOLDER_PATTERNS.some((pattern) => pattern.test(url));
 }
 
 function validateUrl(url) {
   try {
     let testUrl = url.trim();
-    
+
     // Add https:// only if no protocol scheme is present
     // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
     if (!testUrl.includes('://')) {
       testUrl = 'https://' + testUrl;
     }
-    
+
     const urlObj = new URL(testUrl);
-    
+
     // Check protocol
     if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
       return { valid: false, reason: `Invalid protocol: ${urlObj.protocol}` };
     }
-    
+
     // Track protocol usage
     if (urlObj.protocol === 'http:') {
       httpCount++;
     } else {
       httpsCount++;
     }
-    
+
     // Check for placeholder URLs
     if (isPlaceholderUrl(url)) {
       placeholderCount++;
       return { valid: true, warning: 'Placeholder/Generic URL' };
     }
-    
+
     return { valid: true };
   } catch (e) {
     return { valid: false, reason: e.message };
@@ -79,9 +79,9 @@ ORGS.forEach((org, index) => {
     console.log(`    Missing ideas URL\n`);
     return;
   }
-  
+
   const result = validateUrl(org.ideas);
-  
+
   if (result.valid) {
     validCount++;
     if (result.warning) {

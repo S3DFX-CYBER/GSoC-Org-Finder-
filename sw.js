@@ -3,11 +3,7 @@ const CACHE_NAME = 'findmygsoc-v1';
 // Basic caching for offline resilience
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([
-      './',
-      'index.html',
-      'manifest.json'
-    ]))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(['./', 'index.html', 'manifest.json']))
   );
 });
 

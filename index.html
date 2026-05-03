@@ -1,1113 +1,2037 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
-  <meta name="description" content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time." />
-  <link rel="canonical" href="https://findmygsoc.vercel.app/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="FindMyGSoC" />
-  <meta property="og:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
-  <meta property="og:description" content="Discover Google Summer of Code 2026 organizations and track live good first issues across GitHub." />
-  <meta property="og:url" content="https://findmygsoc.vercel.app/" />
-  <meta property="og:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
-  <meta name="twitter:description" content="Find your best-fit GSoC 2026 org and track beginner-friendly GitHub issues." />
-  <meta name="twitter:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "FindMyGSoC — GSoC 2026 Org Finder",
-      "url": "https://findmygsoc.vercel.app/",
-      "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "S3DFX-CYBER"
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <script>
-    // Theme restoration - runs early to prevent FOUC
-    (function(){
-      try {
-        if (localStorage.getItem('theme') === 'dark') {
-          document.documentElement.classList.add('dark');
-        }
-      } catch(e) {
-        // localStorage might be unavailable in some browsers/modes
-        console.warn('Theme restoration failed:', e);
-      }
-    })();
-  </script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          screens: {
-            'xs': '480px',
-            'sm': '640px',
-            'md': '768px',
-            'lg': '1024px',
-            'xl': '1280px',
-            '2xl': '1536px',
-          },
-          colors: {
-            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
-            "surface-container":"#eeeeee","primary-container":"#f97316",
-            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
-            "on-background":"#1a1c1c","on-primary":"#ffffff",
-            "on-surface":"#1a1c1c","error":"#ba1a1a",
-            "primary":"#9d4300","on-surface-variant":"#584237",
-            "outline":"#8c7164","surface-container-lowest":"#ffffff",
-            "secondary":"#006c47","secondary-container":"#8af5be",
-            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
-            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
-            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
-            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
-            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
-            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
-            "on-primary-container":"#582200","surface-tint":"#9d4300",
-          },
-          fontFamily: {
-            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
-            "label":["Space Grotesk"],"mono":["Fira Code"]
-          },
-          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
+    <meta
+      name="description"
+      content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time."
+    />
+    <link rel="canonical" href="https://findmygsoc.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FindMyGSoC" />
+    <meta property="og:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
+    <meta
+      property="og:description"
+      content="Discover Google Summer of Code 2026 organizations and track live good first issues across GitHub."
+    />
+    <meta property="og:url" content="https://findmygsoc.vercel.app/" />
+    <meta property="og:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
+    <meta
+      name="twitter:description"
+      content="Find your best-fit GSoC 2026 org and track beginner-friendly GitHub issues."
+    />
+    <meta name="twitter:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "FindMyGSoC — GSoC 2026 Org Finder",
+        "url": "https://findmygsoc.vercel.app/",
+        "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
         },
-      },
-    }
-  </script>
-  <style>
-    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-    .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
-    .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-    .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    .fade-up{animation:fadeUp .6s ease-out both}
-    @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
-    .pulse-dot{animation:pulse-dot 2s infinite}
-    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
-    .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
+        "author": {
+          "@type": "Person",
+          "name": "S3DFX-CYBER"
+        }
+      }
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Theme restoration - runs early to prevent FOUC
+      (function () {
+        try {
+          if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          // localStorage might be unavailable in some browsers/modes
+          console.warn('Theme restoration failed:', e);
+        }
+      })();
+    </script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            screens: {
+              xs: '480px',
+              sm: '640px',
+              md: '768px',
+              lg: '1024px',
+              xl: '1280px',
+              '2xl': '1536px',
+            },
+            colors: {
+              'surface-container-highest': '#e2e2e2',
+              background: '#f9f9f9',
+              'surface-container': '#eeeeee',
+              'primary-container': '#f97316',
+              surface: '#f9f9f9',
+              'surface-variant': '#e2e2e2',
+              'on-background': '#1a1c1c',
+              'on-primary': '#ffffff',
+              'on-surface': '#1a1c1c',
+              error: '#ba1a1a',
+              primary: '#9d4300',
+              'on-surface-variant': '#584237',
+              outline: '#8c7164',
+              'surface-container-lowest': '#ffffff',
+              secondary: '#006c47',
+              'secondary-container': '#8af5be',
+              'on-secondary-container': '#00714b',
+              'on-secondary': '#ffffff',
+              'surface-container-low': '#f3f3f3',
+              'surface-container-high': '#e8e8e8',
+              'surface-dim': '#dadada',
+              'primary-fixed': '#ffdbca',
+              'primary-fixed-dim': '#ffb690',
+              'error-container': '#ffdad6',
+              'on-error-container': '#93000a',
+              'on-secondary-fixed': '#002113',
+              'secondary-fixed-dim': '#71dba6',
+              tertiary: '#5f5e5e',
+              'on-primary-container': '#582200',
+              'surface-tint': '#9d4300',
+            },
+            fontFamily: {
+              headline: ['Plus Jakarta Sans'],
+              body: ['Plus Jakarta Sans'],
+              label: ['Space Grotesk'],
+              mono: ['Fira Code'],
+            },
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+        vertical-align: middle;
+      }
+      .icon-fill {
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .glass {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.6s ease-out both;
+      }
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .pulse-dot {
+        animation: pulse-dot 2s infinite;
+      }
+      @keyframes gradient-shift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .gradient-animate {
+        background-size: 200% 200%;
+        animation: gradient-shift 8s ease infinite;
+      }
+      .hero-gradient {
+        background: linear-gradient(135deg, #9d4300 0%, #f97316 50%, #f59e0b 100%);
+      }
 
-    /* Modal Styles */
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s ease;
-    }
-    .modal-bg.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal {
-      background: white;
-      width: 90%;
-      max-width: 700px;
-      max-height: 90vh;
-      border-radius: 2rem;
-      position: relative;
-      overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      transform: scale(0.9);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .modal-bg.open .modal {
-      transform: scale(1);
-    }
-    .close-btn {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 99px;
-      background: #f3f3f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555;
-      font-size: 1.2rem;
-      transition: all 0.2s;
-    }
-    .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
-    
-    .modal-header { padding: 3rem 3rem 1.5rem; }
-    .category-tag {
-      background: rgba(157, 67, 0, 0.1);
-      color: #9d4300;
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 0.3rem 0.8rem;
-      border-radius: 99px;
-      letter-spacing: 0.1em;
-      display: inline-block;
-      margin-bottom: 1rem;
-    }
-    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
-    .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
+      /* Modal Styles */
+      .modal-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+      }
+      .modal-bg.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal {
+        background: white;
+        width: 90%;
+        max-width: 700px;
+        max-height: 90vh;
+        border-radius: 2rem;
+        position: relative;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        transform: scale(0.9);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .modal-bg.open .modal {
+        transform: scale(1);
+      }
+      .close-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 99px;
+        background: #f3f3f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        font-size: 1.2rem;
+        transition: all 0.2s;
+      }
+      .close-btn:hover {
+        background: #e8e8e8;
+        color: #1a1c1c;
+      }
 
-    .modal-body { padding: 0 3rem 3rem; }
-    .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
-    
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
-    .metric-card { background: #f9f9f9; padding: 1.2rem; border-radius: 1.2rem; border: 1px solid #eee; text-align: center; }
-    .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
-    .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
+      .modal-header {
+        padding: 3rem 3rem 1.5rem;
+      }
+      .category-tag {
+        background: rgba(157, 67, 0, 0.1);
+        color: #9d4300;
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 0.3rem 0.8rem;
+        border-radius: 99px;
+        letter-spacing: 0.1em;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+      .modal-header h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
+      }
+      .modal-header p {
+        color: #584237;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
 
-    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; }
-    .gh-fetch { position: absolute; top: 1rem; right: 1rem; background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .gh-fetch:hover { background: #444; color: #fff; }
-    .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
+      .modal-body {
+        padding: 0 3rem 3rem;
+      }
+      .section-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #aaa;
+        margin-bottom: 1rem;
+        margin-top: 2rem;
+        border-bottom: 1px solid #f3f3f3;
+        padding-bottom: 0.5rem;
+      }
 
-    .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
-    .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+      }
+      .metric-card {
+        background: #f9f9f9;
+        padding: 1.2rem;
+        border-radius: 1.2rem;
+        border: 1px solid #eee;
+        text-align: center;
+      }
+      .metric-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #1a1c1c;
+        margin-bottom: 0.2rem;
+      }
+      .metric-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #888;
+      }
 
-    .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
-    .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+      .github-stats-container {
+        background: #1a1a1a;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        color: #fff;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .gh-fetch {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #333;
+        color: #aaa;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 99px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .gh-fetch:hover {
+        background: #444;
+        color: #fff;
+      }
+      .gh-stat-item {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.75rem;
+        color: #4ade80;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-    .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; }
-    .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
-    .modal-ideas-link { background: #9d4300; color: white; }
-    .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
-    .modal-repo-link { background: white; color: #1a1c1c; border: 1px solid #ddd; }
-    .modal-repo-link:hover { background: #f0f0f0; }
+      .tech-tags,
+      .fit-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .tech-tag {
+        background: #f3f4f6;
+        color: #4b5563;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+      }
+      .fit-tag {
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dbeafe;
+      }
 
-    /* Custom Scrollbar for Modal */
-    .modal::-webkit-scrollbar { width: 6px; }
-    .modal::-webkit-scrollbar-track { background: transparent; }
-    .modal::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
-    .modal::-webkit-scrollbar-thumb:hover { background: #ccc; }
+      .timeline-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .timeline-grid span {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #666;
+        background: #fff;
+        border: 1px solid #eee;
+        padding: 0.3rem 0.7rem;
+        border-radius: 0.5rem;
+      }
+      .timeline-grid span.current-year {
+        background: #fffbeb;
+        color: #d97706;
+        border-color: #fef3c7;
+        font-weight: 700;
+      }
 
-    /* Complexity Badges */
-    .complexity-badge { font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 99px; text-transform: uppercase; }
-    .complexity-badge.beginner { background: #dcfce7; color: #166534; }
-    .complexity-badge.intermediate { background: #fef9c3; color: #854d0e; }
-    .complexity-badge.advanced { background: #fee2e2; color: #991b1b; }
+      .modal-footer {
+        padding: 2rem 3rem 3rem;
+        background: #f9f9f9;
+        display: flex;
+        gap: 1rem;
+        border-top: 1px solid #eee;
+      }
+      .modal-cta {
+        flex: 1;
+        padding: 1rem;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.2s;
+      }
+      .modal-ideas-link {
+        background: #9d4300;
+        color: white;
+      }
+      .modal-ideas-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3);
+      }
+      .modal-repo-link {
+        background: white;
+        color: #1a1c1c;
+        border: 1px solid #ddd;
+      }
+      .modal-repo-link:hover {
+        background: #f0f0f0;
+      }
 
-    /* Bookmark Button */
-    .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
-    .bookmark-btn.active { color: #f59e0b; }
-    .bookmark-btn:hover { transform: scale(1.2); }
+      /* Custom Scrollbar for Modal */
+      .modal::-webkit-scrollbar {
+        width: 6px;
+      }
+      .modal::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .modal::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 3px;
+      }
+      .modal::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+      }
 
-    /* Base mobile-first styles */
-    html, body { width: 100%; overflow-x: hidden; }
-    html { scroll-behavior: smooth; }
-    
-    /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues {
-      scroll-margin-top: 80px;
-    }
+      /* Complexity Badges */
+      .complexity-badge {
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 0.2rem 0.6rem;
+        border-radius: 99px;
+        text-transform: uppercase;
+      }
+      .complexity-badge.beginner {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .complexity-badge.intermediate {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+      .complexity-badge.advanced {
+        background: #fee2e2;
+        color: #991b1b;
+      }
 
-    /* Minimal dark-mode support */
-    .dark body { background: #0f0f10; color: #e5e7eb; }
-    .dark .glass { background: rgba(24, 24, 27, 0.85); }
-    .dark .bg-white { background: #18181b !important; }
-    .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
-    .dark .text-zinc-300 { color: #71717a !important; }
-    .dark .text-on-surface { color: #f4f4f5 !important; }
-    .dark .text-on-surface-variant { color: #a1a1aa !important; }
-    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
-    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
-    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+      /* Bookmark Button */
+      .bookmark-btn {
+        transition: all 0.2s;
+        font-size: 1.25rem;
+      }
+      .bookmark-btn.active {
+        color: #f59e0b;
+      }
+      .bookmark-btn:hover {
+        transform: scale(1.2);
+      }
 
-    /* Dark mode - Filter chips & language pills */
-    .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
-    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
-    
-    /* Dark mode - Language tag pills */
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
-      background: #27272a !important; 
-      color: #d4d4d8 !important; 
-      border-color: #3f3f46 !important; 
-    }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip):hover { 
-      border-color: #f97316 !important; 
-      color: #f97316 !important; 
-    }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
-      background: rgba(251, 146, 60, 0.2) !important;
-      border-color: #fb923c !important;
-      color: #fb923c !important;
-    }
-    
-    /* Dark mode - Issue card badges */
-    .dark .bg-green-100 { background: #14532d !important; }
-    .dark .bg-zinc-100 { background: #27272a !important; }
-    .dark .text-green-700 { color: #4ade80 !important; }
-    .dark .text-green-800 { color: #86efac !important; }
-    .dark .text-green-600 { color: #4ade80 !important; }
-    .dark .text-zinc-600 { color: #a1a1aa !important; }
-    
-    /* Dark mode - Card hover effects */
-    .dark .group:hover { background: #1f1f23 !important; border-color: rgba(249, 115, 22, 0.3) !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important; }
-    .dark .group:hover .text-on-surface { color: #f97316 !important; }
-    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #f97316 !important; }
-    
-    /* Dark mode - Tech tags */
-    .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
-    .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
-    
-    /* Dark mode - Modal */
-    .dark .modal { background: #18181b; }
-    .dark .modal-header h2 { color: #f4f4f5; }
-    .dark .modal-header p { color: #a1a1aa; }
-    .dark .section-title { color: #71717a; border-color: #27272a; }
-    .dark .metric-card { background: #27272a; border-color: #3f3f46; }
-    .dark .metric-value { color: #f4f4f5; }
-    .dark .metric-label { color: #a1a1aa; }
-    .dark .close-btn { background: #27272a; color: #a1a1aa; }
-    .dark .close-btn:hover { background: #3f3f46; color: #f4f4f5; }
-    .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
-    .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
-    .dark .modal-repo-link:hover { background: #3f3f46; }
+      /* Base mobile-first styles */
+      html,
+      body {
+        width: 100%;
+        overflow-x: hidden;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    /* Dark mode - Guide section cards */
-    .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
-    .dark #guide article h3 { color: #f4f4f5 !important; }
-    .dark #guide article p, .dark #guide article li { color: #a1a1aa !important; }
-    .dark #guide details { border-color: #3f3f46 !important; }
-    .dark #guide details summary { color: #f4f4f5 !important; }
-    .dark #guide a.block { border-color: #3f3f46 !important; }
-    .dark #guide a.block:hover { background: rgba(249, 115, 22, 0.1) !important; }
-    .dark #guide .font-mono { background: #27272a !important; color: #d4d4d8 !important; }
+      /* Scroll offset for fixed header */
+      #timeline,
+      #orgs,
+      #guide,
+      #watchlist,
+      #issues {
+        scroll-margin-top: 80px;
+      }
 
-    /* Dark mode - Mobile menu */
-    .dark #mobileMenu #menuPanel { background: #18181b !important; border-right: 1px solid #3f3f46; }
-    .dark #mobileMenu .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark #mobileMenu .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark #mobileMenu .text-zinc-700 { color: #e5e7eb !important; }
-    .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
-    .dark #mobileMenu .bg-orange-50 { background: rgba(249, 115, 22, 0.15) !important; }
+      /* Minimal dark-mode support */
+      .dark body {
+        background: #0f0f10;
+        color: #e5e7eb;
+      }
+      .dark .glass {
+        background: rgba(24, 24, 27, 0.85);
+      }
+      .dark .bg-white {
+        background: #18181b !important;
+      }
+      .dark .bg-surface-container-low {
+        background: #27272a !important;
+        color: #d4d4d8 !important;
+      }
+      .dark .text-zinc-900 {
+        color: #f4f4f5 !important;
+      }
+      .dark .text-zinc-600,
+      .dark .text-zinc-500,
+      .dark .text-zinc-400 {
+        color: #a1a1aa !important;
+      }
+      .dark .text-zinc-300 {
+        color: #71717a !important;
+      }
+      .dark .text-on-surface {
+        color: #f4f4f5 !important;
+      }
+      .dark .text-on-surface-variant {
+        color: #a1a1aa !important;
+      }
+      .dark .border-zinc-100 {
+        border-color: #3f3f46 !important;
+      }
+      .dark .border-zinc-200 {
+        border-color: #3f3f46 !important;
+      }
+      .dark #timeline-milestones .bg-zinc-200 {
+        background-color: #3f3f46 !important;
+      }
+      .dark .hover\:bg-zinc-100\/50:hover {
+        background: rgba(63, 63, 70, 0.45) !important;
+      }
 
-    /* Header dark mode */
-    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
-    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark header .text-zinc-600 { color: #a1a1aa !important; }
-    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
-    .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
-  </style>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F46B0E" />
-  <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
-</head>
-<body class="bg-background text-on-surface font-body antialiased">
+      /* Dark mode - Filter chips & language pills */
+      .dark .bg-surface-container-highest {
+        background: #27272a !important;
+        color: #d4d4d8 !important;
+      }
+      .dark .filter-chip:not(.bg-orange-600) {
+        background: #27272a !important;
+        color: #d4d4d8 !important;
+        border: 1px solid #3f3f46 !important;
+      }
+      .dark .filter-chip:not(.bg-orange-600):hover {
+        background: #fb923c !important;
+        color: #ffffff !important;
+        border-color: #fb923c !important;
+      }
 
-<!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
-      <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span class="material-symbols-outlined text-zinc-600">menu</span>
-      </button>
-      
-      <a href="#" class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
-          <span class="text-white font-bold text-sm">G</span>
+      /* Dark mode - Language tag pills */
+      .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) {
+        background: #27272a !important;
+        color: #d4d4d8 !important;
+        border-color: #3f3f46 !important;
+      }
+      .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip):hover {
+        border-color: #f97316 !important;
+        color: #f97316 !important;
+      }
+      .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active {
+        background: rgba(251, 146, 60, 0.2) !important;
+        border-color: #fb923c !important;
+        color: #fb923c !important;
+      }
+
+      /* Dark mode - Issue card badges */
+      .dark .bg-green-100 {
+        background: #14532d !important;
+      }
+      .dark .bg-zinc-100 {
+        background: #27272a !important;
+      }
+      .dark .text-green-700 {
+        color: #4ade80 !important;
+      }
+      .dark .text-green-800 {
+        color: #86efac !important;
+      }
+      .dark .text-green-600 {
+        color: #4ade80 !important;
+      }
+      .dark .text-zinc-600 {
+        color: #a1a1aa !important;
+      }
+
+      /* Dark mode - Card hover effects */
+      .dark .group:hover {
+        background: #1f1f23 !important;
+        border-color: rgba(249, 115, 22, 0.3) !important;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.4),
+          0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+      }
+      .dark .group:hover .text-on-surface {
+        color: #f97316 !important;
+      }
+      .dark .group-hover\:text-primary:hover,
+      .dark .group:hover .group-hover\:text-primary {
+        color: #f97316 !important;
+      }
+
+      /* Dark mode - Tech tags */
+      .dark .tech-tag {
+        background: #27272a;
+        color: #d4d4d8;
+        border-color: #3f3f46;
+      }
+      .dark .fit-tag {
+        background: #1e293b;
+        color: #93c5fd;
+        border-color: #334155;
+      }
+
+      /* Dark mode - Modal */
+      .dark .modal {
+        background: #18181b;
+      }
+      .dark .modal-header h2 {
+        color: #f4f4f5;
+      }
+      .dark .modal-header p {
+        color: #a1a1aa;
+      }
+      .dark .section-title {
+        color: #71717a;
+        border-color: #27272a;
+      }
+      .dark .metric-card {
+        background: #27272a;
+        border-color: #3f3f46;
+      }
+      .dark .metric-value {
+        color: #f4f4f5;
+      }
+      .dark .metric-label {
+        color: #a1a1aa;
+      }
+      .dark .close-btn {
+        background: #27272a;
+        color: #a1a1aa;
+      }
+      .dark .close-btn:hover {
+        background: #3f3f46;
+        color: #f4f4f5;
+      }
+      .dark .modal-footer {
+        background: #0f0f10;
+        border-color: #27272a;
+      }
+      .dark .modal-repo-link {
+        background: #27272a;
+        color: #e5e7eb;
+        border-color: #3f3f46;
+      }
+      .dark .modal-repo-link:hover {
+        background: #3f3f46;
+      }
+
+      /* Dark mode - Guide section cards */
+      .dark #guide article {
+        background: #18181b !important;
+        border-color: #3f3f46 !important;
+      }
+      .dark #guide article h3 {
+        color: #f4f4f5 !important;
+      }
+      .dark #guide article p,
+      .dark #guide article li {
+        color: #a1a1aa !important;
+      }
+      .dark #guide details {
+        border-color: #3f3f46 !important;
+      }
+      .dark #guide details summary {
+        color: #f4f4f5 !important;
+      }
+      .dark #guide a.block {
+        border-color: #3f3f46 !important;
+      }
+      .dark #guide a.block:hover {
+        background: rgba(249, 115, 22, 0.1) !important;
+      }
+      .dark #guide .font-mono {
+        background: #27272a !important;
+        color: #d4d4d8 !important;
+      }
+
+      /* Dark mode - Mobile menu */
+      .dark #mobileMenu #menuPanel {
+        background: #18181b !important;
+        border-right: 1px solid #3f3f46;
+      }
+      .dark #mobileMenu .border-zinc-100 {
+        border-color: #3f3f46 !important;
+      }
+      .dark #mobileMenu .text-zinc-900 {
+        color: #f4f4f5 !important;
+      }
+      .dark #mobileMenu .text-zinc-700 {
+        color: #e5e7eb !important;
+      }
+      .dark #mobileMenu .hover\:bg-zinc-100:hover {
+        background: #27272a !important;
+      }
+      .dark #mobileMenu .bg-orange-50 {
+        background: rgba(249, 115, 22, 0.15) !important;
+      }
+
+      /* Header dark mode */
+      .dark header {
+        background: rgba(24, 24, 27, 0.85) !important;
+        border-bottom: 1px solid #3f3f46;
+      }
+      .dark header .text-zinc-900 {
+        color: #f4f4f5 !important;
+      }
+      .dark header .text-zinc-600 {
+        color: #a1a1aa !important;
+      }
+      .dark header .hover\:text-zinc-900:hover {
+        color: #f4f4f5 !important;
+      }
+      .dark header .hover\:bg-zinc-100\/50:hover {
+        background: rgba(39, 39, 42, 0.5) !important;
+      }
+    </style>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#F46B0E" />
+    <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
+  </head>
+  <body class="bg-background text-on-surface font-body antialiased">
+    <!-- ═══════════════════ NAVBAR ═══════════════════ -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+        <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+          <!-- Hamburger menu button (mobile only) -->
+          <button
+            id="menuBtn"
+            onclick="toggleMenu()"
+            class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobileMenu"
+          >
+            <span class="material-symbols-outlined text-zinc-600">menu</span>
+          </button>
+
+          <a href="#" class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0"
+            >
+              <span class="text-white font-bold text-sm">G</span>
+            </div>
+            <span
+              class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"
+              ><span class="hidden xs:inline">GSoC 2026 </span
+              ><span class="text-primary italic">Org Finder</span></span
+            >
+          </a>
+          <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
+            <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs"
+              >Organizations</a
+            >
+            <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
+            <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist"
+              >Watchlist</a
+            >
+            <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
+            <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline"
+              >Timeline</a
+            >
+          </nav>
         </div>
-        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
-        <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
+
+        <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button
+            id="themeToggleBtn"
+            onclick="toggleTheme()"
+            class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+            aria-label="Switch to dark theme"
+            aria-pressed="false"
+            title="Switch to dark theme"
+          >
+            <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
+          </button>
+          <a
+            href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+            target="_blank"
+            class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors"
+          >
+            <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      id="mobileMenu"
+      class="fixed inset-0 z-40 hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation menu"
+    >
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onclick="toggleMenu()"
+        onkeydown="if (event.key === 'Enter' || event.key === ' ') toggleMenu();"
+        tabindex="0"
+        role="button"
+        aria-label="Close menu"
+      ></div>
+
+      <!-- Menu Panel -->
+      <nav
+        class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full"
+        id="menuPanel"
+        aria-label="Main navigation"
+      >
+        <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"
+            >
+              <span class="text-white font-bold text-sm">G</span>
+            </div>
+            <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
+          </div>
+          <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-zinc-600">close</span>
+          </button>
+        </div>
+
+        <div class="p-4 space-y-1">
+          <a
+            href="#orgs"
+            onclick="setActiveMenu(this)"
+            class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+            data-section="orgs"
+          >
+            <span class="material-symbols-outlined text-lg">business</span>
+            Organizations
+          </a>
+          <a
+            href="#guide"
+            onclick="setActiveMenu(this)"
+            class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+            data-section="guide"
+          >
+            <span class="material-symbols-outlined text-lg">menu_book</span>
+            Guide
+          </a>
+          <a
+            href="#watchlist"
+            onclick="setActiveMenu(this)"
+            class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+            data-section="watchlist"
+          >
+            <span class="material-symbols-outlined text-lg">bookmark</span>
+            Watchlist
+          </a>
+          <a
+            href="#issues"
+            onclick="setActiveMenu(this)"
+            class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+            data-section="issues"
+          >
+            <span class="material-symbols-outlined text-lg">bug_report</span>
+            Issues
+          </a>
+          <a
+            href="#timeline"
+            onclick="setActiveMenu(this)"
+            class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+            data-section="timeline"
+          >
+            <span class="material-symbols-outlined text-lg">schedule</span>
+            Timeline
+          </a>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+          <a
+            href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+            target="_blank"
+            class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors"
+          >
+            <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+          </a>
+        </div>
       </nav>
     </div>
-    
-    <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <button id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
-      </button>
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
-      </a>
-    </div>
-  </div>
-</header>
 
-<!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-  <!-- Backdrop -->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
-  
-  <!-- Menu Panel -->
-  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
-    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
-          <span class="text-white font-bold text-sm">G</span>
+    <!-- ═══════════════════ HERO ═══════════════════ -->
+    <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+        <div class="lg:col-span-7">
+          <div
+            class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8"
+          >
+            <span class="material-symbols-outlined text-sm icon-fill" style="color: #f97316"
+              >verified</span
+            >
+            <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest"
+              >Google Summer of Code 2026</span
+            >
+          </div>
+          <h1
+            class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]"
+          >
+            Find Your<br /><span class="text-primary italic">Perfect GSoC Org</span>
+          </h1>
+          <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
+            Browse all <strong>184</strong> organizations. Filter by language, domain, competition,
+            and live GitHub activity. Land your summer internship.
+          </p>
+          <!-- Search Bar -->
+          <div class="relative max-w-xl mb-8 sm:mb-10">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+              >search</span
+            >
+            <input
+              id="hero-search"
+              type="text"
+              placeholder="Search organizations, languages, or domains..."
+              class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50"
+            />
+          </div>
+          <!-- Stat Badges -->
+          <div class="flex flex-wrap gap-3 sm:gap-4">
+            <div
+              class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"
+            >
+              <span class="material-symbols-outlined text-primary text-lg">groups</span>
+              <div>
+                <p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p>
+                <p class="font-bold text-sm">184</p>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"
+            >
+              <span class="material-symbols-outlined text-secondary text-lg">code</span>
+              <div>
+                <p class="text-[10px] sm:text-xs text-zinc-500">Languages</p>
+                <p class="font-bold text-sm">30+</p>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"
+            >
+              <span class="material-symbols-outlined text-primary-container text-lg">category</span>
+              <div>
+                <p class="text-[10px] sm:text-xs text-zinc-500">Domains</p>
+                <p class="font-bold text-sm">15+</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
-      </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
-        <span class="material-symbols-outlined text-zinc-600">close</span>
-      </button>
-    </div>
-    
-    <div class="p-4 space-y-1">
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
-        <span class="material-symbols-outlined text-lg">business</span>
-        Organizations
-      </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
-      </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
-        <span class="material-symbols-outlined text-lg">bookmark</span>
-        Watchlist
-      </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
-        <span class="material-symbols-outlined text-lg">bug_report</span>
-        Issues
-      </a>
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-    </div>
-    
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
-      </a>
-    </div>
-  </nav>
-</div>
-
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
-        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
-        <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
-      </div>
-      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
-        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
-      </h1>
-      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
-      </p>
-      <!-- Search Bar -->
-      <div class="relative max-w-xl mb-8 sm:mb-10">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
-      </div>
-      <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
-        </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
-        </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+        <!-- Timeline Card -->
+        <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay: 0.2s">
+          <div
+            class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100"
+          >
+            <div class="flex items-center justify-between mb-6 sm:mb-8">
+              <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
+              <span
+                class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                >Live</span
+              >
+            </div>
+            <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+            <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
+                <span id="countdown" class="font-mono text-sm font-bold text-primary"
+                  >--d --h --m</span
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-<section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
-  <div class="flex flex-wrap gap-2 mb-4">
-    <button class="filter-chip px-4 py-2 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center gap-1 transition-all"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-    <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-    <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-    <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-    <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-    <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
-  </div>
-  <div class="flex flex-wrap gap-2">
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Python</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">JavaScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">TypeScript</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">C/C++</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Java</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Rust</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Go</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Ruby</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Haskell</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
-    <button class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
-  </div>
-</section>
-
-<!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
-<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
-  <div class="flex items-center justify-between mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
-    <div class="flex items-center gap-4">
-      <div class="relative">
-        <input type="text" id="searchInput" placeholder="Search language, tech, or name..." class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64">
-        <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">search</span>
+    <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
+    <section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay: 0.3s">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center gap-1 transition-all"
+        >
+          <span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only
+        </button>
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers
+        </button>
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-sm">local_fire_department</span> High
+          Competition
+        </button>
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition
+        </button>
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained
+        </button>
+        <button
+          class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"
+        >
+          <span class="material-symbols-outlined text-sm icon-fill" style="color: #f59e0b"
+            >star</span
+          >
+          Bookmarked
+        </button>
       </div>
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Categories: All</option>
-        <option value="web">Web</option>
-        <option value="programming">Programming</option>
-        <option value="science">Science</option>
-        <option value="os">OS</option>
-        <option value="infra">Infra</option>
-        <option value="security">Security</option>
-        <option value="data">Data</option>
-        <option value="media">Media</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Complexity: All</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
-    </div>
-  </div>
-  
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
-    </div>
-  </div>
-
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
-  </div>
-</section>
-
-<!-- ═══════════════════ WATCHLIST ═══════════════════ -->
-<section id="watchlist" class="bg-surface-container-low py-20 px-6">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-12">
-      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
-      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
-      <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
-        <!-- Watchlist items will be rendered here -->
+      <div class="flex flex-wrap gap-2">
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Python
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          JavaScript
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          TypeScript
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          C/C++
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Java
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Rust
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Go
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Ruby
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Haskell
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Scala
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          ML/AI
+        </button>
+        <button
+          class="px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors"
+        >
+          Robotics
+        </button>
       </div>
-      <!-- Sidebar -->
-      <div class="space-y-6">
-        <div class="bg-white rounded-2xl p-6 border border-zinc-100">
-          <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
+    </section>
+
+    <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
+    <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
+      <div class="flex items-center justify-between mb-8">
+        <p class="font-label text-xs uppercase tracking-widest text-zinc-500">
+          Showing <strong id="orgCount">184</strong> of 184 organizations
+        </p>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search language, tech, or name..."
+              class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64"
+            />
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm"
+              >search</span
+            >
+          </div>
+          <select
+            id="categoryFilter"
+            class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600"
+          >
+            <option value="all">Categories: All</option>
+            <option value="web">Web</option>
+            <option value="programming">Programming</option>
+            <option value="science">Science</option>
+            <option value="os">OS</option>
+            <option value="infra">Infra</option>
+            <option value="security">Security</option>
+            <option value="data">Data</option>
+            <option value="media">Media</option>
+            <option value="other">Other</option>
+          </select>
+          <select
+            id="complexityFilter"
+            class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600"
+          >
+            <option value="all">Complexity: All</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
+        <!-- Organizations will be rendered here dynamically -->
+        <div class="col-span-full py-20 text-center animate-pulse">
+          <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+        </div>
+      </div>
+
+      <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display: none">
+        <button
+          id="loadMoreBtn"
+          class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
+        >
+          View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ WATCHLIST ═══════════════════ -->
+    <section id="watchlist" class="bg-surface-container-low py-20 px-6">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-12">
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary"
+            >Scholarly Sandbox</span
+          >
+          <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">
+            Watchlist.
+          </h2>
+          <p class="text-zinc-600 mt-4 max-w-2xl">
+            Curate your open-source journey. Track organizations, monitor deadlines, and prepare
+            your proposals for GSoC 2026.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
+            <!-- Watchlist items will be rendered here -->
+          </div>
+          <!-- Sidebar -->
+          <div class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-zinc-100">
+              <h4 class="font-bold mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming
+                Deadlines
+              </h4>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">
+                    MAR 31, 2026
+                  </p>
+                  <p class="text-sm font-bold">Proposal Submission Deadline</p>
+                  <p class="text-xs text-zinc-500">
+                    Ensure your final proposals are submitted by 18:00 UTC.
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">
+                    APR 21, 2026
+                  </p>
+                  <p class="text-sm font-bold">Review Period Starts</p>
+                  <p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden"
+            >
+              <div class="absolute top-0 right-0 p-4 opacity-20">
+                <span class="material-symbols-outlined text-5xl">auto_awesome</span>
+              </div>
+              <h4 class="font-bold mb-3">AI Application Insight</h4>
+              <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">
+                Select organizations to get personalized contribution advice.
+              </p>
+              <span class="text-[10px] font-label uppercase tracking-widest text-orange-200"
+                >Automated System Advice</span
+              >
+            </div>
           </div>
         </div>
-        <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
-          <h4 class="font-bold mb-3">AI Application Insight</h4>
-          <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">Select organizations to get personalized contribution advice.</p>
-          <span class="text-[10px] font-label uppercase tracking-widest text-orange-200">Automated System Advice</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
+    <section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="mb-12">
+        <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary"
+          >First Contributions</span
+        >
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">
+          Good First Issues
+        </h2>
+        <p class="text-zinc-600 mt-4 max-w-2xl">
+          Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required,
+          instant results.
+        </p>
+      </div>
+      <!-- Status Banner -->
+      <div
+        class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot"></div>
+          <div>
+            <p class="font-bold text-green-800 text-sm">Pre-fetched Issues Ready</p>
+            <p class="text-xs text-green-600">
+              Updated every 6 hours via GitHub Actions — no API rate limits for visitors.
+            </p>
+          </div>
+        </div>
+        <span id="issuesLastUpdated" class="text-xs font-mono text-green-600 ml-auto"
+          >Last updated: pending refresh</span
+        >
+      </div>
+      <!-- Issue Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card"
+          data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <h4 class="font-bold text-sm group-hover:text-primary transition-colors">
+              Browse open Good First Issues
+            </h4>
+            <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg"
+              >open_in_new</span
+            >
+          </div>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">rust-lang/rust</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold"
+              >GitHub search</span
+            >
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded"
+              >Label: good first issue</span
+            >
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card"
+          data-url="https://github.com/django/django/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <h4 class="font-bold text-sm group-hover:text-primary transition-colors">
+              Browse open Good First Issues
+            </h4>
+            <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg"
+              >open_in_new</span
+            >
+          </div>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">django/django</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold"
+              >GitHub search</span
+            >
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded"
+              >Label: good first issue</span
+            >
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card"
+          data-url="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <h4 class="font-bold text-sm group-hover:text-primary transition-colors">
+              Browse open Good First Issues
+            </h4>
+            <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg"
+              >open_in_new</span
+            >
+          </div>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">tensorflow/tensorflow</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold"
+              >GitHub search</span
+            >
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded"
+              >Label: good first issue</span
+            >
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card"
+          data-url="https://github.com/kubernetes/kubernetes/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <h4 class="font-bold text-sm group-hover:text-primary transition-colors">
+              Browse open Good First Issues
+            </h4>
+            <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg"
+              >open_in_new</span
+            >
+          </div>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">kubernetes/kubernetes</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold"
+              >GitHub search</span
+            >
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded"
+              >Label: good first issue</span
+            >
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
-<section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
-    <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
-  </div>
-  <!-- Status Banner -->
-  <div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot"></div>
-      <div>
-        <p class="font-bold text-green-800 text-sm">Pre-fetched Issues Ready</p>
-        <p class="text-xs text-green-600">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
+    <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
+    <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="mb-12">
+        <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary"
+          >Contributor Guide</span
+        >
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">
+          Start Contributing with Confidence
+        </h2>
+        <p class="text-zinc-600 mt-4 max-w-3xl">
+          New to open source or this project? Follow this quick path: learn the basics, set up
+          locally, find a good first issue, and open your first PR.
+        </p>
       </div>
-    </div>
-    <span id="issuesLastUpdated" class="text-xs font-mono text-green-600 ml-auto">Last updated: pending refresh</span>
-  </div>
-  <!-- Issue Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">rust-lang/rust</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/django/django/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">django/django</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">tensorflow/tensorflow</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/kubernetes/kubernetes/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">kubernetes/kubernetes</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
-<section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
-    <p class="text-zinc-600 mt-4 max-w-3xl">New to open source or this project? Follow this quick path: learn the basics, set up locally, find a good first issue, and open your first PR.</p>
-  </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+          <h3 class="text-xl font-bold mb-3">1) Open Source Basics</h3>
+          <p class="text-sm text-zinc-600 mb-4 leading-relaxed">
+            Open source projects publish source code publicly so anyone can inspect, improve, and
+            share it. Contribution usually starts with reading contribution guidelines and making
+            small, focused changes.
+          </p>
+          <ul class="space-y-2 text-sm text-zinc-700 list-disc pl-5">
+            <li>Understand how licensing and collaboration work.</li>
+            <li>Start with documentation or beginner-friendly issues.</li>
+            <li>Communicate early through issues and PR comments.</li>
+          </ul>
+        </article>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
-      <h3 class="text-xl font-bold mb-3">1) Open Source Basics</h3>
-      <p class="text-sm text-zinc-600 mb-4 leading-relaxed">Open source projects publish source code publicly so anyone can inspect, improve, and share it. Contribution usually starts with reading contribution guidelines and making small, focused changes.</p>
-      <ul class="space-y-2 text-sm text-zinc-700 list-disc pl-5">
-        <li>Understand how licensing and collaboration work.</li>
-        <li>Start with documentation or beginner-friendly issues.</li>
-        <li>Communicate early through issues and PR comments.</li>
-      </ul>
-    </article>
+        <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+          <h3 class="text-xl font-bold mb-3">2) Contribute to a GSoC Organization</h3>
+          <ol class="space-y-2 text-sm text-zinc-700 list-decimal pl-5">
+            <li>Pick 2–3 organizations that match your skills and interests.</li>
+            <li>Read their ideas page, contribution guide, and communication channels.</li>
+            <li>Set up the project locally and start with a small issue or documentation task.</li>
+            <li>Open a focused pull request and respond to mentor feedback quickly.</li>
+            <li>Document your contributions and turn them into a stronger GSoC proposal.</li>
+          </ol>
+          <p class="text-xs text-zinc-500 mt-4">
+            Tip: quality communication and small, consistent contributions usually matter more than
+            a single large PR.
+          </p>
+        </article>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
-      <h3 class="text-xl font-bold mb-3">2) Contribute to a GSoC Organization</h3>
-      <ol class="space-y-2 text-sm text-zinc-700 list-decimal pl-5">
-        <li>Pick 2–3 organizations that match your skills and interests.</li>
-        <li>Read their ideas page, contribution guide, and communication channels.</li>
-        <li>Set up the project locally and start with a small issue or documentation task.</li>
-        <li>Open a focused pull request and respond to mentor feedback quickly.</li>
-        <li>Document your contributions and turn them into a stronger GSoC proposal.</li>
-      </ol>
-      <p class="text-xs text-zinc-500 mt-4">Tip: quality communication and small, consistent contributions usually matter more than a single large PR.</p>
-    </article>
+        <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+          <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+            <a
+              href="https://opensource.guide/how-to-contribute/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors"
+            >
+              <p class="font-bold mb-1">Open Source Guide</p>
+              <p class="text-zinc-600">
+                Practical guide for first-time and returning contributors.
+              </p>
+            </a>
+            <a
+              href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors"
+            >
+              <p class="font-bold mb-1">GitHub Contribution Flow</p>
+              <p class="text-zinc-600">
+                Official docs for forking, cloning, and opening pull requests.
+              </p>
+            </a>
+            <a
+              href="https://developers.google.com/open-source/gsoc/resources/guide"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors"
+            >
+              <p class="font-bold mb-1">GSoC Contributor/Student Guide</p>
+              <p class="text-zinc-600">
+                Official program timeline and best practices for applicants.
+              </p>
+            </a>
+            <a
+              href="https://developers.google.com/open-source/gsoc/help/student-advice"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors"
+            >
+              <p class="font-bold mb-1">Student Advice</p>
+              <p class="text-zinc-600">
+                Official guidance for choosing orgs, communicating well, and writing proposals.
+              </p>
+            </a>
+            <a
+              href="https://firstcontributions.github.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors"
+            >
+              <p class="font-bold mb-1">First Contributions</p>
+              <p class="text-zinc-600">
+                Hands-on tutorial to practice your first fork, commit, and pull request.
+              </p>
+            </a>
+          </div>
+        </article>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
-      <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">Open Source Guide</p>
-          <p class="text-zinc-600">Practical guide for first-time and returning contributors.</p>
-        </a>
-        <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">GitHub Contribution Flow</p>
-          <p class="text-zinc-600">Official docs for forking, cloning, and opening pull requests.</p>
-        </a>
-        <a href="https://developers.google.com/open-source/gsoc/resources/guide" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">GSoC Contributor/Student Guide</p>
-          <p class="text-zinc-600">Official program timeline and best practices for applicants.</p>
-        </a>
-        <a href="https://developers.google.com/open-source/gsoc/help/student-advice" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">Student Advice</p>
-          <p class="text-zinc-600">Official guidance for choosing orgs, communicating well, and writing proposals.</p>
-        </a>
-        <a href="https://firstcontributions.github.io/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">First Contributions</p>
-          <p class="text-zinc-600">Hands-on tutorial to practice your first fork, commit, and pull request.</p>
-        </a>
+        <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+          <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
+          <div class="space-y-3 text-sm">
+            <details class="group border border-zinc-200 rounded-xl p-4">
+              <summary class="font-semibold cursor-pointer">
+                Do I need prior GSoC experience to contribute?
+              </summary>
+              <p class="text-zinc-600 mt-2">
+                No. Start with small docs or UI fixes, then move to larger tasks as you learn the
+                codebase.
+              </p>
+            </details>
+            <details class="group border border-zinc-200 rounded-xl p-4">
+              <summary class="font-semibold cursor-pointer">
+                What should my first pull request look like?
+              </summary>
+              <p class="text-zinc-600 mt-2">
+                Keep it focused on one change, reference the issue number, and include a short
+                explanation of what you tested.
+              </p>
+            </details>
+            <details class="group border border-zinc-200 rounded-xl p-4">
+              <summary class="font-semibold cursor-pointer">
+                How do I find tasks I can start quickly?
+              </summary>
+              <p class="text-zinc-600 mt-2">
+                Look for issues labeled
+                <span class="font-mono text-xs bg-zinc-100 px-1 py-0.5 rounded"
+                  >good first issue</span
+                >
+                and comment before starting work.
+              </p>
+            </details>
+          </div>
+        </article>
       </div>
-    </article>
+    </section>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
-      <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
-      <div class="space-y-3 text-sm">
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">Do I need prior GSoC experience to contribute?</summary>
-          <p class="text-zinc-600 mt-2">No. Start with small docs or UI fixes, then move to larger tasks as you learn the codebase.</p>
-        </details>
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">What should my first pull request look like?</summary>
-          <p class="text-zinc-600 mt-2">Keep it focused on one change, reference the issue number, and include a short explanation of what you tested.</p>
-        </details>
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">How do I find tasks I can start quickly?</summary>
-          <p class="text-zinc-600 mt-2">Look for issues labeled <span class="font-mono text-xs bg-zinc-100 px-1 py-0.5 rounded">good first issue</span> and comment before starting work.</p>
-        </details>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
-  <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
-      </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
-      </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ COMPARE ═══════════════════ -->
-<section class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-    <div>
-      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Decision Tool</span>
-      <h2 class="text-4xl font-extrabold font-headline tracking-tighter mt-2 mb-6">Compare Organizations</h2>
-      <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
-      <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
-        <span class="material-symbols-outlined">compare</span> Open Comparison Tool
-      </button>
-    </div>
-    <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
-      <div class="grid grid-cols-3 gap-4 text-center">
-        <div class="bg-white rounded-xl p-4 border border-zinc-100">
-          <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-orange-600">psychology</span></div>
-          <p class="font-bold text-sm">TensorFlow</p><p class="text-[10px] text-zinc-500 font-label uppercase mt-1">15y · 42 mentors</p>
+    <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+    <section class="bg-zinc-900 py-20 px-6">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">
+            New to GSoC? Start here.
+          </h2>
+          <p class="text-zinc-400 max-w-2xl mx-auto">
+            Google Summer of Code is a global, online program focused on bringing new contributors
+            into open source software development.
+          </p>
         </div>
-        <div class="bg-white rounded-xl p-4 border border-zinc-100">
-          <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-amber-600">developer_board</span></div>
-          <p class="font-bold text-sm">Apache</p><p class="text-[10px] text-zinc-500 font-label uppercase mt-1">19y · 64 mentors</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform"
+            >
+              1
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed">
+              Browse 185+ open source organizations. Filter by language, domain, and competition
+              level to find your match.
+            </p>
+          </div>
+          <div
+            class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform"
+            >
+              2
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed">
+              Reach out to mentors and write a detailed proposal outlining how you'll contribute to
+              your chosen project.
+            </p>
+          </div>
+          <div
+            class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform"
+            >
+              3
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed">
+              If accepted, spend your summer coding under the guidance of experienced mentors and
+              earn a stipend of $1,500–$6,600.
+            </p>
+          </div>
         </div>
-        <div class="bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300">
-          <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-          <p class="font-bold text-sm text-zinc-400">Add org</p><p class="text-[10px] text-zinc-400 font-label uppercase mt-1">slot 3</p>
-        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
-      </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
-    </div>
-    <nav class="flex flex-wrap gap-6">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Contact</a>
-    </nav>
-  </div>
-</footer>
-
-<!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="modal-header" id="mHeader">
-      <!-- Injected: Category, Name, Tagline -->
-    </div>
-    <div class="modal-body">
-      <div class="metrics-grid mb-8" id="mMetrics">
-        <!-- Injected: Years, Competition, First Year, etc. -->
-      </div>
-      
-      <div class="github-stats-container mb-8">
-        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
-        <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
-      </div>
-
-      <div class="section-title">Description</div>
-      <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- ═══════════════════ COMPARE ═══════════════════ -->
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div>
-          <div class="section-title">Technologies</div>
-          <div class="tech-tags" id="mTech"></div>
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary"
+            >Decision Tool</span
+          >
+          <h2 class="text-4xl font-extrabold font-headline tracking-tighter mt-2 mb-6">
+            Compare Organizations
+          </h2>
+          <p class="text-zinc-600 leading-relaxed mb-8">
+            Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack,
+            competition level, and active GFIs at a glance.
+          </p>
+          <button
+            onclick="openCompareModal()"
+            class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg"
+          >
+            <span class="material-symbols-outlined">compare</span> Open Comparison Tool
+          </button>
         </div>
-        <div>
-          <div class="section-title">Ideal Fit</div>
-          <div class="fit-tags" id="mFit"></div>
+        <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-white rounded-xl p-4 border border-zinc-100">
+              <div
+                class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3"
+              >
+                <span class="material-symbols-outlined text-orange-600">psychology</span>
+              </div>
+              <p class="font-bold text-sm">TensorFlow</p>
+              <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">15y · 42 mentors</p>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-zinc-100">
+              <div
+                class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mx-auto mb-3"
+              >
+                <span class="material-symbols-outlined text-amber-600">developer_board</span>
+              </div>
+              <p class="font-bold text-sm">Apache</p>
+              <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">19y · 64 mentors</p>
+            </div>
+            <div
+              class="bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300"
+            >
+              <div
+                class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mx-auto mb-3"
+              >
+                <span class="material-symbols-outlined text-zinc-400">add</span>
+              </div>
+              <p class="font-bold text-sm text-zinc-400">Add org</p>
+              <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">slot 3</p>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="section-title">Participation Timeline</div>
-      <div class="timeline-grid" id="mTimeline"></div>
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="w-full border-t border-zinc-200 bg-zinc-100">
+      <div
+        class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto"
+      >
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"
+            >
+              <span class="text-white font-bold text-[10px]">G</span>
+            </div>
+            <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
+          </div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            © 2026 S3DFX-CYBER · Built for the Open Source Community
+          </p>
+        </div>
+        <nav class="flex flex-wrap gap-6">
+          <a
+            class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+            href="https://summerofcode.withgoogle.com/programs/2026/organizations"
+            target="_blank"
+            >GSoC 2026</a
+          >
+          <a
+            class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+            href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+            target="_blank"
+            >GitHub</a
+          >
+          <a
+            class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+            href="#"
+            >Privacy</a
+          >
+          <a
+            class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+            href="#"
+            >Contact</a
+          >
+        </nav>
+      </div>
+    </footer>
+
+    <!-- ═══════════════════ MODAL ═══════════════════ -->
+    <div class="modal-bg" id="orgModal">
+      <div class="modal">
+        <button class="close-btn" onclick="closeModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="modal-header" id="mHeader">
+          <!-- Injected: Category, Name, Tagline -->
+        </div>
+        <div class="modal-body">
+          <div class="metrics-grid mb-8" id="mMetrics">
+            <!-- Injected: Years, Competition, First Year, etc. -->
+          </div>
+
+          <div class="github-stats-container mb-8">
+            <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
+            <div class="gh-stat-item">
+              <span class="material-symbols-outlined text-sm">star</span>
+              <span id="mStars">---</span>
+            </div>
+            <div class="gh-stat-item">
+              <span class="material-symbols-outlined text-sm">fork_right</span>
+              <span id="mForks">---</span>
+            </div>
+            <div class="gh-stat-item">
+              <span class="material-symbols-outlined text-sm">bug_report</span>
+              <span id="mIssues">---</span>
+            </div>
+            <div class="gh-stat-item text-blue-400">
+              <span class="material-symbols-outlined text-sm">history</span>
+              <span id="mActivity">Moderate</span>
+            </div>
+          </div>
+
+          <div class="section-title">Description</div>
+          <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <div class="section-title">Technologies</div>
+              <div class="tech-tags" id="mTech"></div>
+            </div>
+            <div>
+              <div class="section-title">Ideal Fit</div>
+              <div class="fit-tags" id="mFit"></div>
+            </div>
+          </div>
+
+          <div class="section-title">Participation Timeline</div>
+          <div class="timeline-grid" id="mTimeline"></div>
+        </div>
+        <div class="modal-footer">
+          <a
+            href="#"
+            target="_blank"
+            id="mIdeasBtn"
+            class="modal-cta modal-ideas-link flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
+          </a>
+          <a
+            href="#"
+            target="_blank"
+            id="mRepoBtn"
+            class="modal-cta modal-repo-link flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-lg">code</span> Repository
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
-      </a>
-      <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">code</span> Repository
-      </a>
+
+    <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
+    <div class="modal-bg compare-bg" id="compareModal">
+      <div class="modal w-full max-w-5xl">
+        <button class="close-btn" onclick="closeCompareModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="modal-header pb-4 border-b border-zinc-100">
+          <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
+          <p class="text-zinc-500 text-sm mt-1">
+            Side-by-side comparison of your selected projects
+          </p>
+        </div>
+        <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
+          <!-- Injected table -->
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
-<div class="modal-bg compare-bg" id="compareModal">
-  <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="modal-header pb-4 border-b border-zinc-100">
-      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
-      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
-    </div>
-    <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
-      <!-- Injected table -->
-    </div>
-  </div>
-</div>
+    <!-- ═══════════════════ JS ═══════════════════ -->
+    <script src="agent/scripts/orgs.js"></script>
+    <script>
+      // ══════════════════════════════════════════════
+      // THEME
+      // ══════════════════════════════════════════════
+      (function () {
+        const saved = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', saved === 'dark');
+        updateThemeIcon();
+      })();
 
-<!-- ═══════════════════ JS ═══════════════════ -->
-<script src="agent/scripts/orgs.js"></script>
-<script>
-  // ══════════════════════════════════════════════
-  // THEME
-  // ══════════════════════════════════════════════
-  (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
+      window.toggleTheme = function () {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeIcon();
+      };
 
-  window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
-
-  function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
-  }
-
-  // ══════════════════════════════════════════════
-  // MOBILE MENU
-  // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
-    const menu = document.getElementById('mobileMenu');
-    const panel = document.getElementById('menuPanel');
-    const menuBtn = document.getElementById('menuBtn');
-    
-    if(menu.classList.contains('hidden')){
-      // Open menu
-      menu.classList.remove('hidden');
-      menuBtn.setAttribute('aria-expanded', 'true');
-      menuBtn.setAttribute('aria-label', 'Close menu');
-      setTimeout(() => {
-        panel.style.transform = 'translateX(0)';
-      }, 10);
-      document.addEventListener('keydown', handleMenuEscape);
-    } else {
-      // Close menu
-      panel.style.transform = 'translateX(-100%)';
-      menuBtn.setAttribute('aria-expanded', 'false');
-      menuBtn.setAttribute('aria-label', 'Open menu');
-      document.removeEventListener('keydown', handleMenuEscape);
-      setTimeout(() => {
-        menu.classList.add('hidden');
-      }, 300);
-    }
-  };
-  
-  function handleMenuEscape(e){
-    if(e.key === 'Escape'){
-      const menu = document.getElementById('mobileMenu');
-      if(!menu.classList.contains('hidden')){
-        toggleMenu();
-      }
-    }
-  }
-
-  // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    // Remove active class from all menu links
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    });
-    
-    // Add active class to clicked link
-    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    
-    // Close menu after a short delay
-    setTimeout(() => {
-      toggleMenu();
-    }, 300);
-  };
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'timeline'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
-    
-    let currentSection = 'orgs'; // Default
-    
-    sections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = sectionId;
+      function updateThemeIcon() {
+        const btn = document.getElementById('themeToggleBtn');
+        const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+        if (icon) {
+          const isDark = document.documentElement.classList.contains('dark');
+          icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+          btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+          btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+          btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
         }
       }
-    });
-    
-    // Update menu items
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+
+      // ══════════════════════════════════════════════
+      // MOBILE MENU
+      // ══════════════════════════════════════════════
+      window.toggleMenu = function () {
+        const menu = document.getElementById('mobileMenu');
+        const panel = document.getElementById('menuPanel');
+        const menuBtn = document.getElementById('menuBtn');
+
+        if (menu.classList.contains('hidden')) {
+          // Open menu
+          menu.classList.remove('hidden');
+          menuBtn.setAttribute('aria-expanded', 'true');
+          menuBtn.setAttribute('aria-label', 'Close menu');
+          setTimeout(() => {
+            panel.style.transform = 'translateX(0)';
+          }, 10);
+          document.addEventListener('keydown', handleMenuEscape);
+        } else {
+          // Close menu
+          panel.style.transform = 'translateX(-100%)';
+          menuBtn.setAttribute('aria-expanded', 'false');
+          menuBtn.setAttribute('aria-label', 'Open menu');
+          document.removeEventListener('keydown', handleMenuEscape);
+          setTimeout(() => {
+            menu.classList.add('hidden');
+          }, 300);
+        }
+      };
+
+      function handleMenuEscape(e) {
+        if (e.key === 'Escape') {
+          const menu = document.getElementById('mobileMenu');
+          if (!menu.classList.contains('hidden')) {
+            toggleMenu();
+          }
+        }
       }
-    });
-  }
 
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
+      // Set active menu item and update UI
+      window.setActiveMenu = function (clickedLink) {
+        // Remove active class from all menu links
+        const allLinks = document.querySelectorAll('.mobile-menu-link');
+        allLinks.forEach((link) => {
+          link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+          link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+        });
 
-  // ══════════════════════════════════════════════
-  // MAIN APP LOGIC
-  // ══════════════════════════════════════════════
-  let visibleCount = 12;
-  let filteredOrgs = [...ORGS];
-  let compareList = [];
-  const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+        // Add active class to clicked link
+        clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+        clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
 
-  // Dynamic timeline milestones
-  const MILESTONES = [
-    { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
-    { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
-    { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
-    { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); 
+        // Close menu after a short delay
+        setTimeout(() => {
+          toggleMenu();
+        }, 300);
+      };
 
-  function renderTimeline() {
-    const container = document.getElementById('timeline-milestones');
-    if (!container || MILESTONES.length === 0) return;
+      // Update active state based on scroll position
+      function updateActiveSection() {
+        const sections = ['orgs', 'guide', 'watchlist', 'issues', 'timeline'];
+        const scrollPosition = window.scrollY + 100; // Offset for fixed header
 
-    try {
-      const now = new Date();
-      if (isNaN(now.getTime())) return;
+        let currentSection = 'orgs'; // Default
 
-      let activeIdx = MILESTONES.findIndex(m => m.date > now);
-      if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
+        sections.forEach((sectionId) => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
 
-      const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+              currentSection = sectionId;
+            }
+          }
+        });
 
-      container.innerHTML = MILESTONES.map((m, i) => {
-        const isActive = i === activeIdx;
-        const isLast = i === MILESTONES.length - 1;
-        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
-        let dateStr;
+        // Update menu items
+        const allLinks = document.querySelectorAll('.mobile-menu-link');
+        allLinks.forEach((link) => {
+          const linkSection = link.getAttribute('data-section');
+          if (linkSection === currentSection) {
+            link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+            link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+          } else {
+            link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+            link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+          }
+        });
+      }
+
+      // Listen for scroll events
+      window.addEventListener('scroll', updateActiveSection);
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', updateActiveSection);
+
+      // ══════════════════════════════════════════════
+      // MAIN APP LOGIC
+      // ══════════════════════════════════════════════
+      let visibleCount = 12;
+      let filteredOrgs = [...ORGS];
+      let compareList = [];
+      const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+
+      // Dynamic timeline milestones
+      const MILESTONES = [
+        { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
+        { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
+        {
+          date: new Date('2026-03-31T23:30:00+05:30'),
+          label: 'Proposal Submission Deadline',
+          note: 'Submit your project proposals by 11:30 PM!',
+        },
+        {
+          date: new Date('2026-04-30T00:00:00Z'),
+          label: 'Accepted Projects Announced',
+          note: null,
+        },
+      ].filter((m) => !isNaN(m.date.getTime()));
+
+      function renderTimeline() {
+        const container = document.getElementById('timeline-milestones');
+        if (!container || MILESTONES.length === 0) return;
+
         try {
-          dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-        } catch (_) {
-          dateStr = m.date.toISOString().slice(0, 10);
-        }
+          const now = new Date();
+          if (isNaN(now.getTime())) return;
 
-        if (isActive && !allPast) {
-          return `<div class="flex gap-3 sm:gap-4">
+          let activeIdx = MILESTONES.findIndex((m) => m.date > now);
+          if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
+
+          const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+
+          container.innerHTML = MILESTONES.map((m, i) => {
+            const isActive = i === activeIdx;
+            const isLast = i === MILESTONES.length - 1;
+            const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+            let dateStr;
+            try {
+              dateStr = m.date
+                .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                .toUpperCase();
+            } catch (_) {
+              dateStr = m.date.toISOString().slice(0, 10);
+            }
+
+            if (isActive && !allPast) {
+              return `<div class="flex gap-3 sm:gap-4">
             <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
             <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
             ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
           </div>`;
-        } else if (isActive && allPast) {
-          return `<div class="flex gap-3 sm:gap-4">
+            } else if (isActive && allPast) {
+              return `<div class="flex gap-3 sm:gap-4">
             <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
             <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
             <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
           </div>`;
-        } else {
-          return `<div class="flex gap-3 sm:gap-4 opacity-40">
+            } else {
+              return `<div class="flex gap-3 sm:gap-4 opacity-40">
             <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
             <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
             <p class="text-sm font-bold text-zinc-500">${m.label}</p></div>
           </div>`;
+            }
+          }).join('');
+        } catch (err) {
+          console.warn('[Timeline] renderTimeline failed:', err);
         }
-      }).join('');
-    } catch (err) {
-      console.warn('[Timeline] renderTimeline failed:', err);
-    }
-  }
-
-  // Countdown to the next upcoming milestone
-  function updateCountdown() {
-    const countdownEl = document.getElementById('countdown');
-    const labelEl = document.getElementById('countdown-label');
-    if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
-
-    try {
-      const now = new Date();
-      if (isNaN(now.getTime())) return;
-
-      const next = MILESTONES.find(m => m.date > now);
-
-      if (!next) {
-        labelEl.textContent = 'GSoC 2026 selection complete';
-        countdownEl.textContent = '🎉 All done!';
-        countdownEl.classList.remove('text-primary');
-        countdownEl.classList.add('text-green-600');
-        return;
       }
 
-      labelEl.textContent = `Until: ${next.label}`;
-      countdownEl.classList.remove('text-green-600');
-      countdownEl.classList.add('text-primary');
-      const diff = next.date - now;
-      if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
-      const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
-      countdownEl.textContent = `${d}d ${h}h ${m}m`;
-    } catch (err) {
-      console.warn('[Timeline] updateCountdown failed:', err);
-    }
-  }
+      // Countdown to the next upcoming milestone
+      function updateCountdown() {
+        const countdownEl = document.getElementById('countdown');
+        const labelEl = document.getElementById('countdown-label');
+        if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
 
-  // Organizational Logo Fallbacks
-  window.handleImgError = function(img, orgName) {
-    if (!img.dataset.triedClearbit) {
-      img.dataset.triedClearbit = 'true';
-      const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
-      img.src = `https://logo.clearbit.com/${domain}`;
-    } else {
-      img.style.display = 'none';
-      const placeholder = img.parentElement.querySelector('.logo-placeholder');
-      if (placeholder) {
-        placeholder.style.display = 'flex';
-        placeholder.textContent = orgName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+        try {
+          const now = new Date();
+          if (isNaN(now.getTime())) return;
+
+          const next = MILESTONES.find((m) => m.date > now);
+
+          if (!next) {
+            labelEl.textContent = 'GSoC 2026 selection complete';
+            countdownEl.textContent = '🎉 All done!';
+            countdownEl.classList.remove('text-primary');
+            countdownEl.classList.add('text-green-600');
+            return;
+          }
+
+          labelEl.textContent = `Until: ${next.label}`;
+          countdownEl.classList.remove('text-green-600');
+          countdownEl.classList.add('text-primary');
+          const diff = next.date - now;
+          if (diff <= 0) {
+            renderTimeline();
+            updateCountdown();
+            return;
+          }
+          const d = Math.floor(diff / 864e5),
+            h = Math.floor((diff % 864e5) / 36e5),
+            m = Math.floor((diff % 36e5) / 6e4);
+          countdownEl.textContent = `${d}d ${h}h ${m}m`;
+        } catch (err) {
+          console.warn('[Timeline] updateCountdown failed:', err);
+        }
       }
-    }
-  };
 
-  function renderOrgs(reset = true) {
-    const grid = document.getElementById('orgGrid');
-    if (reset) {
-      grid.innerHTML = '';
-      visibleCount = 12;
-    }
-    
-    const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
-    slice.forEach(org => {
-      const isBookmarked = bookmarkedSet.has(org.name);
-      const isComparing = compareList.includes(org.name);
-      const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
-      card.dataset.org = org.name;
-      
-      const githubOwner = org.github.split('/')[0];
-      const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
-      
-      card.innerHTML = `
+      // Organizational Logo Fallbacks
+      window.handleImgError = function (img, orgName) {
+        if (!img.dataset.triedClearbit) {
+          img.dataset.triedClearbit = 'true';
+          const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
+          img.src = `https://logo.clearbit.com/${domain}`;
+        } else {
+          img.style.display = 'none';
+          const placeholder = img.parentElement.querySelector('.logo-placeholder');
+          if (placeholder) {
+            placeholder.style.display = 'flex';
+            placeholder.textContent = orgName
+              .split(' ')
+              .map((n) => n[0])
+              .join('')
+              .substring(0, 2)
+              .toUpperCase();
+          }
+        }
+      };
+
+      function renderOrgs(reset = true) {
+        const grid = document.getElementById('orgGrid');
+        if (reset) {
+          grid.innerHTML = '';
+          visibleCount = 12;
+        }
+
+        const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
+        slice.forEach((org) => {
+          const isBookmarked = bookmarkedSet.has(org.name);
+          const isComparing = compareList.includes(org.name);
+          const card = document.createElement('article');
+          card.className =
+            'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+          card.dataset.org = org.name;
+
+          const githubOwner = org.github.split('/')[0];
+          const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+
+          card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
             <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
@@ -1125,7 +2049,13 @@
         <span class="category-tag">${org.cat.toUpperCase()}</span>
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${org.desc}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
-          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`).join('')}
+          ${org.tags
+            .slice(0, 3)
+            .map(
+              (t) =>
+                `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`
+            )
+            .join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${org.tags.length - 3}</span>` : ''}
         </div>
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
@@ -1137,42 +2067,43 @@
           <button onclick="openModal('${org.name}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
       `;
-      grid.appendChild(card);
-    });
+          grid.appendChild(card);
+        });
 
-    document.getElementById('orgCount').textContent = filteredOrgs.length;
-    document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
-  }
-
-  function toggleCompare(e, name) {
-    if (e) e.stopPropagation();
-    const idx = compareList.indexOf(name);
-    if (idx > -1) {
-      compareList.splice(idx, 1);
-    } else {
-      if (compareList.length >= 3) {
-        alert("You can only compare up to 3 organizations at a time.");
-        return;
+        document.getElementById('orgCount').textContent = filteredOrgs.length;
+        document.getElementById('loadMoreContainer').style.display =
+          visibleCount < filteredOrgs.length ? 'flex' : 'none';
       }
-      compareList.push(name);
-    }
-    renderOrgs(true);
-    renderCompare();
-  }
 
-  function renderCompare() {
-    const container = document.querySelector('#compare .grid');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    compareList.forEach(name => {
-      const org = ORGS.find(o => o.name === name);
-      const githubOwner = org.github.split('/')[0];
-      const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
-      
-      const item = document.createElement('div');
-      item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
-      item.innerHTML = `
+      function toggleCompare(e, name) {
+        if (e) e.stopPropagation();
+        const idx = compareList.indexOf(name);
+        if (idx > -1) {
+          compareList.splice(idx, 1);
+        } else {
+          if (compareList.length >= 3) {
+            alert('You can only compare up to 3 organizations at a time.');
+            return;
+          }
+          compareList.push(name);
+        }
+        renderOrgs(true);
+        renderCompare();
+      }
+
+      function renderCompare() {
+        const container = document.querySelector('#compare .grid');
+        if (!container) return;
+        container.innerHTML = '';
+
+        compareList.forEach((name) => {
+          const org = ORGS.find((o) => o.name === name);
+          const githubOwner = org.github.split('/')[0];
+          const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+
+          const item = document.createElement('div');
+          item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
+          item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
           <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" class="w-full h-full object-contain" />
         </div>
@@ -1180,52 +2111,57 @@
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${org.years}y · ${org.competition}</p>
         <button onclick="toggleCompare(null, '${org.name}')" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
-      container.appendChild(item);
-    });
+          container.appendChild(item);
+        });
 
-    // Add empty slots
-    for (let i = compareList.length; i < 3; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.innerHTML = `
+        // Add empty slots
+        for (let i = compareList.length; i < 3; i++) {
+          const empty = document.createElement('div');
+          empty.className =
+            'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
+          empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
-        <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i+1}</p>
+        <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i + 1}</p>
       `;
-      container.appendChild(empty);
-    }
-  }
+          container.appendChild(empty);
+        }
+      }
 
-  function toggleBookmark(e, name) {
-    if (e) e.stopPropagation();
-    if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
-    else bookmarkedSet.add(name);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-    renderOrgs(false); // Refresh current view
-    renderWatchlist();
-  }
+      function toggleBookmark(e, name) {
+        if (e) e.stopPropagation();
+        if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
+        else bookmarkedSet.add(name);
+        localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+        renderOrgs(false); // Refresh current view
+        renderWatchlist();
+      }
 
-  function renderWatchlist() {
-    const container = document.getElementById('watchlistContainer');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    const bookmarks = Array.from(bookmarkedSet).map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-    
-    if (bookmarks.length === 0) {
-      container.innerHTML = `
+      function renderWatchlist() {
+        const container = document.getElementById('watchlistContainer');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const bookmarks = Array.from(bookmarkedSet)
+          .map((name) => ORGS.find((o) => o.name === name))
+          .filter(Boolean);
+
+        if (bookmarks.length === 0) {
+          container.innerHTML = `
         <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
           <p class="text-zinc-400 italic">Your watchlist is empty. Star organizations to track them here.</p>
         </div>
       `;
-      document.getElementById('aiInsightText').textContent = 'Star organizations to get personalized contribution advice.';
-      return;
-    }
+          document.getElementById('aiInsightText').textContent =
+            'Star organizations to get personalized contribution advice.';
+          return;
+        }
 
-    bookmarks.forEach(org => {
-      const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
-      item.innerHTML = `
+        bookmarks.forEach((org) => {
+          const item = document.createElement('div');
+          item.className =
+            'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
+          item.innerHTML = `
         <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
           <span class="material-symbols-outlined text-orange-600">psychology</span>
         </div>
@@ -1242,249 +2178,291 @@
           </div>
         </div>
       `;
-      container.appendChild(item);
-    });
+          container.appendChild(item);
+        });
 
-    // Data-driven AI Insight
-    const allTags = bookmarks.flatMap(o => o.tags);
-    const topTag = [...new Set(allTags)].sort((a,b) => allTags.filter(t => t===b).length - allTags.filter(t => t===a).length)[0];
-    const skillFocus = topTag ? `Focus on mastering **${topTag}**` : "Start contributing to Good First Issues";
-    
-    document.getElementById('aiInsightText').innerHTML = `
+        // Data-driven AI Insight
+        const allTags = bookmarks.flatMap((o) => o.tags);
+        const topTag = [...new Set(allTags)].sort(
+          (a, b) => allTags.filter((t) => t === b).length - allTags.filter((t) => t === a).length
+        )[0];
+        const skillFocus = topTag
+          ? `Focus on mastering **${topTag}**`
+          : 'Start contributing to Good First Issues';
+
+        document.getElementById('aiInsightText').innerHTML = `
       <span class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary text-sm">sparkles</span>
         <span>Insight: Your watchlist highlights a strong interest in <strong>${topTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
       </span>
     `;
-  }
+      }
 
-  function openModal(name) {
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
+      function openModal(name) {
+        const org = ORGS.find((o) => o.name === name);
+        if (!org) return;
 
-    document.getElementById('mHeader').innerHTML = `
+        document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${org.cat.toUpperCase()}</span>
       <h2>${org.name}</h2>
       <p class="text-zinc-500">GSoC Partner for ${org.years} Years</p>
     `;
 
-    document.getElementById('mMetrics').innerHTML = `
+        document.getElementById('mMetrics').innerHTML = `
       <div class="metric-card"><p class="metric-value">${org.years}</p><p class="metric-label">Years In</p></div>
       <div class="metric-card"><p class="metric-value">${org.firstYear}</p><p class="metric-label">First Year</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${org.competition.toUpperCase()}</p><p class="metric-label">Competition</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${org.codebase.toUpperCase()}</p><p class="metric-label">Codebase</p></div>
     `;
 
-    document.getElementById('mDesc').textContent = org.desc;
-    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${t}</span>`).join('');
-    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${f}</span>`).join('');
-    
-    // Timeline
-    let timelineHtml = '';
-    for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
-    }
-    document.getElementById('mTimeline').innerHTML = timelineHtml;
+        document.getElementById('mDesc').textContent = org.desc;
+        document.getElementById('mTech').innerHTML = org.tags
+          .map((t) => `<span class="tech-tag">${t}</span>`)
+          .join('');
+        document.getElementById('mFit').innerHTML = org.fit
+          .map((f) => `<span class="fit-tag">${f}</span>`)
+          .join('');
 
-    document.getElementById('mIdeasBtn').href = org.ideas;
-    document.getElementById('mRepoBtn').href = `https://github.com/${org.github}`;
+        // Timeline
+        let timelineHtml = '';
+        for (let y = 2020; y <= 2026; y++) {
+          const active = y >= org.firstYear;
+          timelineHtml += `<span class="${y === 2026 ? 'current-year' : ''} ${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
+        }
+        document.getElementById('mTimeline').innerHTML = timelineHtml;
 
-// Copy link button
-const oldCopy = document.getElementById('mIdeasCopyBtn');
-if(oldCopy) oldCopy.remove();
-if(org.ideas){
-  const copyBtn = document.createElement('button');
-  copyBtn.id = 'mIdeasCopyBtn';
-  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-  copyBtn.onclick = function(){
-    navigator.clipboard.writeText(org.ideas).then(()=>{
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-      copyBtn.style.background = '#dcfce7';
-      copyBtn.style.color = '#166534';
-      setTimeout(()=>{
-        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-        copyBtn.style.background = '';
-        copyBtn.style.color = '';
-      }, 2000);
-    });
-  };
-  document.getElementById('mIdeasBtn').after(copyBtn);
-}
-    
-    document.getElementById('orgModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+        document.getElementById('mIdeasBtn').href = org.ideas;
+        document.getElementById('mRepoBtn').href = `https://github.com/${org.github}`;
 
-  function closeModal() {
-    document.getElementById('orgModal').classList.remove('open');
-    document.body.style.overflow = 'auto';
-  }
+        // Copy link button
+        const oldCopy = document.getElementById('mIdeasCopyBtn');
+        if (oldCopy) oldCopy.remove();
+        if (org.ideas) {
+          const copyBtn = document.createElement('button');
+          copyBtn.id = 'mIdeasCopyBtn';
+          copyBtn.innerHTML =
+            '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+          copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+          copyBtn.onclick = function () {
+            navigator.clipboard.writeText(org.ideas).then(() => {
+              copyBtn.innerHTML =
+                '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+              copyBtn.style.background = '#dcfce7';
+              copyBtn.style.color = '#166534';
+              setTimeout(() => {
+                copyBtn.innerHTML =
+                  '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+                copyBtn.style.background = '';
+                copyBtn.style.color = '';
+              }, 2000);
+            });
+          };
+          document.getElementById('mIdeasBtn').after(copyBtn);
+        }
 
-  function openCompareModal() {
-    if (compareList.length === 0) {
-      alert("Please select at least one organization to compare.");
-      return;
-    }
-    
-    const body = document.getElementById('compareModalBody');
-    let html = `<table class="w-full text-left border-collapse min-w-[600px]">
+        document.getElementById('orgModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        document.getElementById('orgModal').classList.remove('open');
+        document.body.style.overflow = 'auto';
+      }
+
+      function openCompareModal() {
+        if (compareList.length === 0) {
+          alert('Please select at least one organization to compare.');
+          return;
+        }
+
+        const body = document.getElementById('compareModalBody');
+        let html = `<table class="w-full text-left border-collapse min-w-[600px]">
       <thead>
         <tr>
           <th class="p-4 border-b-2 border-zinc-200 text-xs font-bold text-zinc-400 uppercase tracking-wider w-1/4">Feature</th>
-          ${compareList.map(name => {
-            const org = ORGS.find(o => o.name === name);
-            if (!org) return '';
-            const githubOwner = org.github?.split('/')[0] || '';
-            const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
-            return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
+          ${compareList
+            .map((name) => {
+              const org = ORGS.find((o) => o.name === name);
+              if (!org) return '';
+              const githubOwner = org.github?.split('/')[0] || '';
+              const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+              return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
               <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
-                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/['\\]/g, "\\$&")}')" class="w-full h-full object-contain rounded-lg" />
+                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/['\\]/g, '\\$&')}')" class="w-full h-full object-contain rounded-lg" />
               </div>
               <p class="font-headline font-bold text-lg text-zinc-900">${name}</p>
             </th>`;
-          }).join('')}
+            })
+            .join('')}
         </tr>
       </thead>
       <tbody class="text-sm">`;
 
-    const orgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-    
-    const rows = [
-      { label: "Category", get: o => `<span class="category-tag !mb-0">${(o.cat || '').toUpperCase()}</span>` },
-      { label: "Years in GSoC", get: o => `<span class="font-bold text-primary text-base">${o.years || ''}</span>` },
-      { label: "First Year", get: o => `<span class="font-mono text-zinc-600">${o.firstYear || ''}</span>` },
-      { label: "Competition", get: o => {
-        const competitionClass = {
-          chill: 'beginner',
-          moderate: 'intermediate',
-          high: 'advanced'
-        }[o.competition] || 'beginner';
-        return `<span class="complexity-badge ${competitionClass}">${(o.competition || '').toUpperCase()}</span>`;
-      }},
-      { label: "Codebase Complexity", get: o => `<span class="complexity-badge ${o.codebase || ''}">${(o.codebase || '').toUpperCase()}</span>` },
-      { label: "Technologies", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.tags || []).map(t => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>` },
-      { label: "Ideal Fit", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.fit || []).map(f => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>` },
-    ];
+        const orgs = compareList.map((name) => ORGS.find((o) => o.name === name)).filter(Boolean);
 
-    rows.forEach((row, i) => {
-      const bgClass = i % 2 === 0 ? 'bg-zinc-50/50 dark:bg-zinc-800/30' : 'bg-white dark:bg-transparent';
-      html += `<tr class="${bgClass} hover:bg-orange-50/30 dark:hover:bg-orange-500/10 transition-colors">
+        const rows = [
+          {
+            label: 'Category',
+            get: (o) => `<span class="category-tag !mb-0">${(o.cat || '').toUpperCase()}</span>`,
+          },
+          {
+            label: 'Years in GSoC',
+            get: (o) => `<span class="font-bold text-primary text-base">${o.years || ''}</span>`,
+          },
+          {
+            label: 'First Year',
+            get: (o) => `<span class="font-mono text-zinc-600">${o.firstYear || ''}</span>`,
+          },
+          {
+            label: 'Competition',
+            get: (o) => {
+              const competitionClass =
+                {
+                  chill: 'beginner',
+                  moderate: 'intermediate',
+                  high: 'advanced',
+                }[o.competition] || 'beginner';
+              return `<span class="complexity-badge ${competitionClass}">${(o.competition || '').toUpperCase()}</span>`;
+            },
+          },
+          {
+            label: 'Codebase Complexity',
+            get: (o) =>
+              `<span class="complexity-badge ${o.codebase || ''}">${(o.codebase || '').toUpperCase()}</span>`,
+          },
+          {
+            label: 'Technologies',
+            get: (o) =>
+              `<div class="flex flex-wrap justify-center gap-1.5">${(o.tags || []).map((t) => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>`,
+          },
+          {
+            label: 'Ideal Fit',
+            get: (o) =>
+              `<div class="flex flex-wrap justify-center gap-1.5">${(o.fit || []).map((f) => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>`,
+          },
+        ];
+
+        rows.forEach((row, i) => {
+          const bgClass =
+            i % 2 === 0 ? 'bg-zinc-50/50 dark:bg-zinc-800/30' : 'bg-white dark:bg-transparent';
+          html += `<tr class="${bgClass} hover:bg-orange-50/30 dark:hover:bg-orange-500/10 transition-colors">
         <td class="p-4 border-b border-zinc-100 font-bold text-zinc-700 dark:text-zinc-300 align-middle">${row.label}</td>
-        ${orgs.map(o => `<td class="p-4 border-b border-zinc-100 text-center align-middle dark:text-zinc-300">${row.get(o)}</td>`).join('')}
+        ${orgs.map((o) => `<td class="p-4 border-b border-zinc-100 text-center align-middle dark:text-zinc-300">${row.get(o)}</td>`).join('')}
       </tr>`;
-    });
+        });
 
-    html += `</tbody></table>`;
-    
-    if (compareList.length < 3) {
-      html += `<p class="text-center text-xs text-zinc-400 mt-8 font-mono border-t border-dashed border-zinc-200 pt-6">
+        html += `</tbody></table>`;
+
+        if (compareList.length < 3) {
+          html += `<p class="text-center text-xs text-zinc-400 mt-8 font-mono border-t border-dashed border-zinc-200 pt-6">
         <span class="material-symbols-outlined text-sm align-middle mr-1">info</span> 
         You can add up to ${3 - compareList.length} more organization${3 - compareList.length > 1 ? 's' : ''} to this comparison.
       </p>`;
-    }
-    
-    body.innerHTML = html;
-    document.getElementById('compareModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeCompareModal() {
-    document.getElementById('compareModal').classList.remove('open');
-    document.body.style.overflow = 'auto';
-  }
-
-  // Filters
-  function applyFilters() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const cat = document.getElementById('categoryFilter').value;
-    const comp = document.getElementById('complexityFilter').value;
-
-    filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
-      const matchCat = cat === 'all' || o.cat === cat;
-      const matchComp = comp === 'all' || o.codebase === comp;
-      return matchSearch && matchCat && matchComp;
-    });
-
-    renderOrgs(true);
-  }
-
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-  document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-  document.getElementById('complexityFilter').addEventListener('change', applyFilters);
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    visibleCount += 12;
-    renderOrgs(false);
-  });
-
-  // Hero Search Link
-  document.getElementById('hero-search').addEventListener('input', (e) => {
-    document.getElementById('searchInput').value = e.target.value;
-    document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-    applyFilters();
-  });
-
-  // Category Chips Filter
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      
-      // Reset others
-      document.querySelectorAll('.filter-chip').forEach(c => {
-        if (c !== chip) {
-          c.classList.remove('bg-orange-600', 'text-white');
-          c.classList.add('bg-surface-container-highest');
         }
+
+        body.innerHTML = html;
+        document.getElementById('compareModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeCompareModal() {
+        document.getElementById('compareModal').classList.remove('open');
+        document.body.style.overflow = 'auto';
+      }
+
+      // Filters
+      function applyFilters() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const cat = document.getElementById('categoryFilter').value;
+        const comp = document.getElementById('complexityFilter').value;
+
+        filteredOrgs = ORGS.filter((o) => {
+          const matchSearch =
+            o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+          const matchCat = cat === 'all' || o.cat === cat;
+          const matchComp = comp === 'all' || o.codebase === comp;
+          return matchSearch && matchCat && matchComp;
+        });
+
+        renderOrgs(true);
+      }
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+      document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+      document.getElementById('loadMoreBtn').addEventListener('click', () => {
+        visibleCount += 12;
+        renderOrgs(false);
       });
 
-      const isActive = chip.classList.toggle('bg-orange-600');
-      chip.classList.toggle('text-white');
-      chip.classList.toggle('bg-surface-container-highest');
+      // Hero Search Link
+      document.getElementById('hero-search').addEventListener('input', (e) => {
+        document.getElementById('searchInput').value = e.target.value;
+        document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
+        applyFilters();
+      });
 
-      if (!isActive) {
-        filteredOrgs = [...ORGS];
-      } else {
-        if (text.includes("bookmarked")) {
-          filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
-        } else if (text.includes("veterans")) {
-          filteredOrgs = ORGS.filter(o => o.years >= 10);
-        } else if (text.includes("newcomers")) {
-          filteredOrgs = ORGS.filter(o => o.years <= 3);
-        } else if (text.includes("low competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "chill");
-        } else if (text.includes("high competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "high");
-        }
+      // Category Chips Filter
+      document.querySelectorAll('.filter-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const text = chip.textContent.trim().toLowerCase();
+
+          // Reset others
+          document.querySelectorAll('.filter-chip').forEach((c) => {
+            if (c !== chip) {
+              c.classList.remove('bg-orange-600', 'text-white');
+              c.classList.add('bg-surface-container-highest');
+            }
+          });
+
+          const isActive = chip.classList.toggle('bg-orange-600');
+          chip.classList.toggle('text-white');
+          chip.classList.toggle('bg-surface-container-highest');
+
+          if (!isActive) {
+            filteredOrgs = [...ORGS];
+          } else {
+            if (text.includes('bookmarked')) {
+              filteredOrgs = ORGS.filter((o) => bookmarkedSet.has(o.name));
+            } else if (text.includes('veterans')) {
+              filteredOrgs = ORGS.filter((o) => o.years >= 10);
+            } else if (text.includes('newcomers')) {
+              filteredOrgs = ORGS.filter((o) => o.years <= 3);
+            } else if (text.includes('low competition')) {
+              filteredOrgs = ORGS.filter((o) => o.competition === 'chill');
+            } else if (text.includes('high competition')) {
+              filteredOrgs = ORGS.filter((o) => o.competition === 'high');
+            }
+          }
+          renderOrgs(true);
+        });
+      });
+
+      function buildGfiSearchUrl(github) {
+        const query = github.includes('/')
+          ? `repo:${github} is:issue is:open label:\"good first issue\"`
+          : `user:${github} is:issue is:open label:\"good first issue\"`;
+        return `https://github.com/issues?q=${encodeURIComponent(query)}`;
       }
-      renderOrgs(true);
-    });
-  });
 
-  function buildGfiSearchUrl(github) {
-    const query = github.includes('/')
-      ? `repo:${github} is:issue is:open label:\"good first issue\"`
-      : `user:${github} is:issue is:open label:\"good first issue\"`;
-    return `https://github.com/issues?q=${encodeURIComponent(query)}`;
-  }
+      function renderFallbackOrgSearchCards(container) {
+        const orgsWithGithub = ORGS.filter((o) => typeof o.github === 'string' && o.github.trim());
+        container.innerHTML = '';
 
-  function renderFallbackOrgSearchCards(container) {
-    const orgsWithGithub = ORGS.filter(o => typeof o.github === 'string' && o.github.trim());
-    container.innerHTML = '';
+        const notice = document.createElement('p');
+        notice.className = 'col-span-full text-sm text-zinc-500';
+        notice.textContent =
+          'Live pre-fetched issues are still syncing. Browse open Good First Issues for all organizations below.';
+        container.appendChild(notice);
 
-    const notice = document.createElement('p');
-    notice.className = 'col-span-full text-sm text-zinc-500';
-    notice.textContent = 'Live pre-fetched issues are still syncing. Browse open Good First Issues for all organizations below.';
-    container.appendChild(notice);
-
-    orgsWithGithub.forEach(org => {
-      const card = document.createElement('a');
-      card.href = buildGfiSearchUrl(org.github.trim());
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-      card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer block';
-      card.innerHTML = `
+        orgsWithGithub.forEach((org) => {
+          const card = document.createElement('a');
+          card.href = buildGfiSearchUrl(org.github.trim());
+          card.target = '_blank';
+          card.rel = 'noopener noreferrer';
+          card.className =
+            'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer block';
+          card.innerHTML = `
         <div class="flex items-start justify-between mb-3">
           <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Browse open Good First Issues</h4>
           <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
@@ -1495,116 +2473,129 @@ if(org.ideas){
           <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
         </div>
       `;
-      container.appendChild(card);
-    });
-  }
-
-  // Dynamic GFIs
-  async function renderGoodFirstIssues() {
-    try {
-      const res = await fetch('/data/issues.json?v=' + Date.now());
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const container = document.querySelector('#issues .grid');
-      if (!container) return;
-      const issues = Array.isArray(data.issues) ? data.issues : [];
-      const lastUpdatedEl = document.getElementById('issuesLastUpdated');
-      if (lastUpdatedEl) {
-        if (data.updated_at) {
-          const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
-          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
-          lastUpdatedEl.textContent = `Last updated: ${relative}`;
-        } else {
-          lastUpdatedEl.textContent = 'Last updated: unavailable';
-        }
+          container.appendChild(card);
+        });
       }
 
-      if (!issues.length) {
-        renderFallbackOrgSearchCards(container);
-        return;
-      }
+      // Dynamic GFIs
+      async function renderGoodFirstIssues() {
+        try {
+          const res = await fetch('/data/issues.json?v=' + Date.now());
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          const container = document.querySelector('#issues .grid');
+          if (!container) return;
+          const issues = Array.isArray(data.issues) ? data.issues : [];
+          const lastUpdatedEl = document.getElementById('issuesLastUpdated');
+          if (lastUpdatedEl) {
+            if (data.updated_at) {
+              const mins = Math.max(
+                1,
+                Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000)
+              );
+              const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+              lastUpdatedEl.textContent = `Last updated: ${relative}`;
+            } else {
+              lastUpdatedEl.textContent = 'Last updated: unavailable';
+            }
+          }
 
-      container.innerHTML = '';
-      issues.slice(0, 6).forEach(issue => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
-        card.onclick = () => window.open(issue.url, '_blank');
-        card.innerHTML = `
+          if (!issues.length) {
+            renderFallbackOrgSearchCards(container);
+            return;
+          }
+
+          container.innerHTML = '';
+          issues.slice(0, 6).forEach((issue) => {
+            const card = document.createElement('div');
+            card.className =
+              'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
+            card.onclick = () => window.open(issue.url, '_blank');
+            card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
             <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4>
             <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
           </div>
           <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
           <div class="flex flex-wrap gap-1.5">
-            ${issue.labels.slice(0, 2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`).join('')}
+            ${issue.labels
+              .slice(0, 2)
+              .map(
+                (l) =>
+                  `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`
+              )
+              .join('')}
             <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${issue.comments} comments</span>
           </div>
         `;
-        container.appendChild(card);
-      });
-    } catch (e) {
-      console.error("GFI render failed:", e);
-    }
-  }
+            container.appendChild(card);
+          });
+        } catch (e) {
+          console.error('GFI render failed:', e);
+        }
+      }
 
-  // Live GitHub Stats Mock/Fetch
-  async function fetchStats() {
-    const btn = document.getElementById('mFetchBtn');
-    const orgName = document.querySelector('#mHeader h2').textContent;
-    const org = ORGS.find(o => o.name === orgName);
-    if (!org) return;
+      // Live GitHub Stats Mock/Fetch
+      async function fetchStats() {
+        const btn = document.getElementById('mFetchBtn');
+        const orgName = document.querySelector('#mHeader h2').textContent;
+        const org = ORGS.find((o) => o.name === orgName);
+        if (!org) return;
 
-    btn.textContent = 'Fetching...';
-    btn.disabled = true;
+        btn.textContent = 'Fetching...';
+        btn.disabled = true;
 
-    try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
-      document.getElementById('mForks').textContent = forks;
-      document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
-      btn.textContent = 'Stats Updated!';
-    } catch (e) {
-      btn.textContent = 'Error';
-    } finally {
-      setTimeout(() => {
-        btn.textContent = 'Fetch Live Stats';
-        btn.disabled = false;
-      }, 3000);
-    }
-  }
+        try {
+          // Simulate real fetch delay
+          await new Promise((r) => setTimeout(r, 1200));
 
-  document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
+          // Since no token, we simulate random but realistic growth
+          const stars = (Math.random() * 5000 + 1000).toFixed(0);
+          const forks = (stars * 0.2).toFixed(0);
+          const issues = (Math.random() * 50 + 10).toFixed(0);
 
-  // Initialize
-  renderTimeline();
-  updateCountdown();
-  const _timelineInterval = setInterval(() => { renderTimeline(); updateCountdown(); }, 60000);
-  // Edge case: clear interval when page is hidden/unloaded to avoid errors on stale DOM
-  window.addEventListener('beforeunload', () => clearInterval(_timelineInterval));
-  renderOrgs();
-  renderWatchlist();
-  renderGoodFirstIssues();
-  renderCompare();
-</script>
+          document.getElementById('mStars').textContent = `${(stars / 1000).toFixed(1)}k`;
+          document.getElementById('mForks').textContent = forks;
+          document.getElementById('mIssues').textContent = issues;
+          document.getElementById('mActivity').textContent = 'High';
+          document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
 
-<!-- Vercel Speed Insights -->
-<script type="module" src="agent/scripts/speed-insights.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
-    });
-  }
-</script>
-</body>
+          btn.textContent = 'Stats Updated!';
+        } catch (e) {
+          btn.textContent = 'Error';
+        } finally {
+          setTimeout(() => {
+            btn.textContent = 'Fetch Live Stats';
+            btn.disabled = false;
+          }, 3000);
+        }
+      }
+
+      document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
+
+      // Initialize
+      renderTimeline();
+      updateCountdown();
+      const _timelineInterval = setInterval(() => {
+        renderTimeline();
+        updateCountdown();
+      }, 60000);
+      // Edge case: clear interval when page is hidden/unloaded to avoid errors on stale DOM
+      window.addEventListener('beforeunload', () => clearInterval(_timelineInterval));
+      renderOrgs();
+      renderWatchlist();
+      renderGoodFirstIssues();
+      renderCompare();
+    </script>
+
+    <!-- Vercel Speed Insights -->
+    <script type="module" src="agent/scripts/speed-insights.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch((err) => console.log('SW error:', err));
+        });
+      }
+    </script>
+  </body>
 </html>

@@ -40,7 +40,10 @@ export default async function handler(req) {
     const cacheKey = repo + '__issues';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+      return new Response(
+        JSON.stringify({ total: cached.total, items: cached.items, cached: true }),
+        { status: 200, headers }
+      );
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
@@ -49,22 +52,28 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
+        return new Response(
+          JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }),
+          { status: 200, headers }
+        );
       }
       const data = await res.json();
       const total = data.total_count ?? 0;
-      const items = (data.items || []).map(i => ({
+      const items = (data.items || []).map((i) => ({
         title: i.title,
         html_url: i.html_url,
         created_at: i.created_at,
         comments: i.comments,
-        labels: (i.labels || []).map(l => ({ name: l.name, color: l.color })),
+        labels: (i.labels || []).map((l) => ({ name: l.name, color: l.color })),
       }));
       CACHE.set(cacheKey, { total, items, ts: Date.now() });
       CACHE.set(repo + '__gfi', { gfi: total, ts: Date.now() });
       return new Response(JSON.stringify({ total, items }), { status: 200, headers });
     } catch (err) {
-      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
+      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), {
+        status: 200,
+        headers,
+      });
     }
   }
 
@@ -77,19 +86,24 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
-        `https://api.github.com/search/issues?q=${q}&per_page=1`,
-        { headers: ghHeaders }
-      );
+      const res = await fetch(`https://api.github.com/search/issues?q=${q}&per_page=1`, {
+        headers: ghHeaders,
+      });
       if (!res.ok) {
-        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
+        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), {
+          status: 200,
+          headers,
+        });
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       if (gfi !== null) CACHE.set(cacheKey, { gfi, ts: Date.now() });
       return new Response(JSON.stringify({ gfi }), { status: 200, headers });
     } catch (err) {
-      return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi: null, error: err.message }), {
+        status: 200,
+        headers,
+      });
     }
   }
 
@@ -107,7 +121,10 @@ export default async function handler(req) {
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
+      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), {
+        status: repoRes.status,
+        headers,
+      });
     }
 
     const repoData = await repoRes.json();
@@ -137,14 +154,16 @@ export default async function handler(req) {
       lastCommit,
       activity,
       language: repoData.language,
-      gfi: null,  // fetched separately via ?gfi=1 to avoid rate limiting
+      gfi: null, // fetched separately via ?gfi=1 to avoid rate limiting
       ts: Date.now(),
     };
 
     CACHE.set(repo, result);
     return new Response(JSON.stringify(result), { status: 200, headers });
-
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), {
+      status: 500,
+      headers,
+    });
   }
 }

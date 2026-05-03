@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T08:06:03.893Z",
+  "updated_at": "2026-05-02T12:49:38.486Z",
   "source_org_count": 184,
   "issues": [
     {
@@ -518,53 +518,54 @@
     {
       "org": "FreeCAD",
       "github": "FreeCAD/FreeCAD",
-      "title": "Assembly: Insert Component command name mismatched between toolbar and task panel",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/29674",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Type: Bug",
-        "Topic: User Interface",
-        "Good first issue",
-        "Status: Confirmed",
-        "Mod: Assembly"
-      ],
-      "comments": 2,
-      "created_at": "2026-04-28T10:37:01Z",
-      "updated_at": "2026-05-01T06:09:15Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "PartDesign: Copy/Paste Sketches when Body is active should place them inside the Body",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/23832",
-      "repo": "FreeCAD/FreeCAD",
-      "labels": [
-        "Mod: Part Design",
-        "Topic: User Interface",
-        "Type: Feature",
-        "Good first issue"
-      ],
-      "comments": 2,
-      "created_at": "2025-09-11T01:21:44Z",
-      "updated_at": "2026-05-01T05:50:30Z",
-      "language": null
-    },
-    {
-      "org": "FreeCAD",
-      "github": "FreeCAD/FreeCAD",
-      "title": "Core: Selection filters should try picking the nearby entities instead of blocking selection",
-      "url": "https://github.com/FreeCAD/FreeCAD/issues/28979",
+      "title": "Expressions: Broken references and Fx icon on sketcher dimensions should show with \"broken reference\" color (orange like with projected geometry)",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/23715",
       "repo": "FreeCAD/FreeCAD",
       "labels": [
         "Mod: Core",
         "Topic: User Interface",
         "Type: Feature",
+        "Topic: Expressions",
+        "Good first issue",
+        "Topic: VarSet"
+      ],
+      "comments": 0,
+      "created_at": "2025-09-07T08:42:57Z",
+      "updated_at": "2026-05-02T09:40:55Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
+      "title": "VarSet: removes the prefix of a variable name if it is the same as the Group Name",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/29496",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Type: Bug",
+        "Good first issue",
+        "Status: Confirmed",
+        "Topic: VarSet"
+      ],
+      "comments": 13,
+      "created_at": "2026-04-19T02:11:43Z",
+      "updated_at": "2026-05-02T09:38:23Z",
+      "language": null
+    },
+    {
+      "org": "FreeCAD",
+      "github": "FreeCAD/FreeCAD",
+      "title": "BIM: Project Setup dialog window width is too small",
+      "url": "https://github.com/FreeCAD/FreeCAD/issues/20287",
+      "repo": "FreeCAD/FreeCAD",
+      "labels": [
+        "Mod: BIM",
+        "Topic: User Interface",
+        "Type: Feature",
         "Good first issue"
       ],
-      "comments": 2,
-      "created_at": "2026-04-01T17:59:47Z",
-      "updated_at": "2026-04-30T10:22:20Z",
+      "comments": 8,
+      "created_at": "2025-03-19T05:33:33Z",
+      "updated_at": "2026-05-02T06:33:31Z",
       "language": null
     },
     {
@@ -712,6 +713,35 @@
     {
       "org": "Graphite",
       "github": "GraphiteEditor/Graphite",
+      "title": "Show selection bounding box width/height in the X/Y rulers",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/1969",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Good First Issue",
+        "Web"
+      ],
+      "comments": 3,
+      "created_at": "2024-09-10T04:24:14Z",
+      "updated_at": "2026-05-02T00:59:39Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
+      "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
+      "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
+      "repo": "GraphiteEditor/Graphite",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 16,
+      "created_at": "2026-04-13T10:53:40Z",
+      "updated_at": "2026-05-01T20:04:26Z",
+      "language": null
+    },
+    {
+      "org": "Graphite",
+      "github": "GraphiteEditor/Graphite",
       "title": "Dragging handle back into its anchor makes its opposite handle move around randomly",
       "url": "https://github.com/GraphiteEditor/Graphite/issues/2451",
       "repo": "GraphiteEditor/Graphite",
@@ -724,84 +754,57 @@
       "language": null
     },
     {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "The Artboard tool needs to support G/S (grab and scale) transformation",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/4026",
-      "repo": "GraphiteEditor/Graphite",
-      "labels": [
-        "Good First Issue"
-      ],
-      "comments": 14,
-      "created_at": "2026-04-13T10:53:40Z",
-      "updated_at": "2026-04-27T06:26:22Z",
-      "language": null
-    },
-    {
-      "org": "Graphite",
-      "github": "GraphiteEditor/Graphite",
-      "title": "Tracking Issue: New nodes",
-      "url": "https://github.com/GraphiteEditor/Graphite/issues/912",
-      "repo": "GraphiteEditor/Graphite",
-      "labels": [
-        "Help Wanted",
-        "Good First Issue",
-        "Graphene"
-      ],
-      "comments": 3,
-      "created_at": "2022-12-25T21:43:07Z",
-      "updated_at": "2026-04-26T19:13:41Z",
-      "language": null
-    },
-    {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
-      "title": "Refactor search/subjects.html and search/authors.html to Remove Template-Side Network Requests",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12527",
+      "title": "Images broken on German version of openlibrary.org/tour",
+      "url": "https://github.com/internetarchive/openlibrary/issues/12540",
       "repo": "internetarchive/openlibrary",
       "labels": [
+        "Type: Bug",
+        "Priority: 3",
         "Good First Issue",
-        "Type: Refactor/Clean-up",
+        "Affects: Documentation",
+        "Needs: Investigation",
         "Lead: @RayBB",
-        "Module: FastAPI"
+        "Needs: Response"
       ],
-      "comments": 1,
-      "created_at": "2026-05-01T07:41:53Z",
-      "updated_at": "2026-05-01T07:51:21Z",
+      "comments": 4,
+      "created_at": "2026-05-01T15:29:01Z",
+      "updated_at": "2026-05-02T08:53:21Z",
       "language": null
     },
     {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
-      "title": "Replace web.re_compile with modern Python re.compile",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12514",
+      "title": "Test Edit Profile Page Interactive Elements for Accessibility",
+      "url": "https://github.com/internetarchive/openlibrary/issues/4914",
       "repo": "internetarchive/openlibrary",
       "labels": [
+        "Priority: 3",
         "Good First Issue",
-        "Type: Refactor/Clean-up",
-        "Theme: Development",
-        "Lead: @RayBB"
+        "Theme: Accessibility",
+        "Lead: @jimchamp"
       ],
       "comments": 1,
-      "created_at": "2026-04-30T22:30:11Z",
-      "updated_at": "2026-04-30T22:33:54Z",
+      "created_at": "2021-03-26T23:08:31Z",
+      "updated_at": "2026-05-02T08:07:07Z",
       "language": null
     },
     {
       "org": "Internet Archive",
       "github": "internetarchive/openlibrary",
-      "title": "Replace web.safeunicode with modern Python alternatives",
-      "url": "https://github.com/internetarchive/openlibrary/issues/12513",
+      "title": "Test Recent Changes Page Interactive Elements for Accessibility",
+      "url": "https://github.com/internetarchive/openlibrary/issues/4916",
       "repo": "internetarchive/openlibrary",
       "labels": [
+        "Priority: 3",
         "Good First Issue",
-        "Type: Refactor/Clean-up",
-        "Theme: Development",
-        "Lead: @RayBB"
+        "Theme: Accessibility",
+        "Lead: @jimchamp"
       ],
-      "comments": 1,
-      "created_at": "2026-04-30T22:25:52Z",
-      "updated_at": "2026-04-30T22:29:40Z",
+      "comments": 2,
+      "created_at": "2021-03-26T23:09:33Z",
+      "updated_at": "2026-05-01T10:03:41Z",
       "language": null
     },
     {
@@ -1213,6 +1216,22 @@
     {
       "org": "LLVM Compiler Infrastructure",
       "github": "llvm/llvm-project",
+      "title": "[libc][math] Tracking Issue - Refactor Higher Math Functions to Header Only",
+      "url": "https://github.com/llvm/llvm-project/issues/147386",
+      "repo": "llvm/llvm-project",
+      "labels": [
+        "metaissue",
+        "good first issue",
+        "libc"
+      ],
+      "comments": 29,
+      "created_at": "2025-07-07T20:20:30Z",
+      "updated_at": "2026-05-02T11:22:59Z",
+      "language": null
+    },
+    {
+      "org": "LLVM Compiler Infrastructure",
+      "github": "llvm/llvm-project",
       "title": "Wrong types checked at DAGCombiner::visitSRA(SDNode *N)",
       "url": "https://github.com/llvm/llvm-project/issues/153543",
       "repo": "llvm/llvm-project",
@@ -1241,18 +1260,18 @@
       "language": null
     },
     {
-      "org": "LLVM Compiler Infrastructure",
-      "github": "llvm/llvm-project",
-      "title": "[CIR] Implement missing X86 builtins",
-      "url": "https://github.com/llvm/llvm-project/issues/167765",
-      "repo": "llvm/llvm-project",
+      "org": "Meshery",
+      "github": "meshery/meshery",
+      "title": "Alignment of Share Btn in Comparison Modal.",
+      "url": "https://github.com/meshery/meshery/issues/15173",
+      "repo": "meshery/meshery",
       "labels": [
-        "good first issue",
-        "ClangIR"
+        "kind/bug",
+        "good first issue"
       ],
-      "comments": 91,
-      "created_at": "2025-11-12T21:45:53Z",
-      "updated_at": "2026-04-30T15:41:26Z",
+      "comments": 14,
+      "created_at": "2025-06-24T18:22:33Z",
+      "updated_at": "2026-05-01T17:14:22Z",
       "language": null
     },
     {
@@ -1271,21 +1290,6 @@
       "comments": 8,
       "created_at": "2025-03-28T12:32:57Z",
       "updated_at": "2026-04-29T15:00:08Z",
-      "language": null
-    },
-    {
-      "org": "Meshery",
-      "github": "meshery/meshery",
-      "title": "Alignment of Share Btn in Comparison Modal.",
-      "url": "https://github.com/meshery/meshery/issues/15173",
-      "repo": "meshery/meshery",
-      "labels": [
-        "kind/bug",
-        "good first issue"
-      ],
-      "comments": 13,
-      "created_at": "2025-06-24T18:22:33Z",
-      "updated_at": "2026-04-28T22:59:19Z",
       "language": null
     },
     {
@@ -1379,252 +1383,6 @@
       "comments": 4,
       "created_at": "2026-02-11T18:12:28Z",
       "updated_at": "2026-03-22T08:33:34Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Better explanation of the different clients supported by sunpy",
-      "url": "https://github.com/sunpy/sunpy/issues/3800",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Good First Issue"
-      ],
-      "comments": 8,
-      "created_at": "2020-02-13T19:16:11Z",
-      "updated_at": "2026-03-26T21:21:48Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Standardise our docstring convention on Time inputs",
-      "url": "https://github.com/sunpy/sunpy/issues/2784",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Priority Low",
-        "Effort Medium",
-        "Documentation",
-        "Good First Issue"
-      ],
-      "comments": 15,
-      "created_at": "2018-10-10T17:26:54Z",
-      "updated_at": "2026-03-26T09:54:13Z",
-      "language": null
-    },
-    {
-      "org": "OpenAstronomy",
-      "github": "sunpy/sunpy",
-      "title": "Highlight new contributors better in release notes",
-      "url": "https://github.com/sunpy/sunpy/issues/7675",
-      "repo": "sunpy/sunpy",
-      "labels": [
-        "Package Novice",
-        "Infrastructure",
-        "Good First Issue"
-      ],
-      "comments": 3,
-      "created_at": "2024-06-14T12:38:03Z",
-      "updated_at": "2026-02-03T16:56:34Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Create GitHub action to update param changelog on every push",
-      "url": "https://github.com/OpenMS/OpenMS/issues/5833",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "CI",
-        "community",
-        "good first issue",
-        "first-timers-only"
-      ],
-      "comments": 3,
-      "created_at": "2022-02-21T11:45:33Z",
-      "updated_at": "2026-03-25T05:20:44Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Wrap QC classes in python ",
-      "url": "https://github.com/OpenMS/OpenMS/issues/6102",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "major",
-        "pyOpenMS",
-        "good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2022-05-05T21:51:55Z",
-      "updated_at": "2026-03-09T09:23:16Z",
-      "language": null
-    },
-    {
-      "org": "OpenMS Inc",
-      "github": "OpenMS/OpenMS",
-      "title": "Benchmark replacing maps with unordered_maps",
-      "url": "https://github.com/OpenMS/OpenMS/issues/6295",
-      "repo": "OpenMS/OpenMS",
-      "labels": [
-        "Performance",
-        "hacktoberfest-accepted",
-        "beginner tasks",
-        "good first issue"
-      ],
-      "comments": 15,
-      "created_at": "2022-08-12T14:42:43Z",
-      "updated_at": "2026-03-04T16:47:54Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Make OBS user documentation more visible",
-      "url": "https://github.com/openSUSE/open-build-service/issues/1363",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Feature",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 3,
-      "created_at": "2015-11-11T09:08:55Z",
-      "updated_at": "2026-02-13T21:10:03Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Expose mergeservice command in web UI",
-      "url": "https://github.com/openSUSE/open-build-service/issues/9704",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Feature",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 0,
-      "created_at": "2020-06-09T09:29:35Z",
-      "updated_at": "2026-02-13T17:01:29Z",
-      "language": null
-    },
-    {
-      "org": "openSUSE Project",
-      "github": "openSUSE/open-build-service",
-      "title": "Overlapping html label element prevents from selecting adjacent image template",
-      "url": "https://github.com/openSUSE/open-build-service/issues/16428",
-      "repo": "openSUSE/open-build-service",
-      "labels": [
-        "Bug",
-        "Frontend",
-        "good first issue"
-      ],
-      "comments": 9,
-      "created_at": "2024-06-28T19:32:56Z",
-      "updated_at": "2025-12-29T16:29:48Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue]: Support prim::CallMethod",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/29720",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "no_stale"
-      ],
-      "comments": 17,
-      "created_at": "2025-03-25T12:14:07Z",
-      "updated_at": "2026-04-25T18:41:20Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue]: Support aten::Delete aten::str aten::take",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/28707",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "category: PyTorch FE",
-        "no_stale"
-      ],
-      "comments": 14,
-      "created_at": "2025-01-27T23:12:04Z",
-      "updated_at": "2026-04-11T16:42:24Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "title": "[Good First Issue][JAX FE]: Support jax.lax.scatter operation for JAX",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/26573",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "no_stale",
-        "category: JAX FE"
-      ],
-      "comments": 16,
-      "created_at": "2024-09-12T20:00:04Z",
-      "updated_at": "2026-04-10T17:19:37Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[BUG]: Acceptance test re-run steps do not work due to server not being shut down",
-      "url": "https://github.com/oppia/oppia/issues/23830",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug"
-      ],
-      "comments": 60,
-      "created_at": "2025-11-10T13:24:25Z",
-      "updated_at": "2026-05-01T07:00:53Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "Implement missing domain objects with full `validate()` function.",
-      "url": "https://github.com/oppia/oppia/issues/21970",
-      "repo": "oppia/oppia",
-      "labels": [
-        "backend",
-        "good first issue",
-        "enhancement",
-        "Impact: Medium",
-        "Work: Low"
-      ],
-      "comments": 192,
-      "created_at": "2025-02-21T13:47:28Z",
-      "updated_at": "2026-04-30T19:53:33Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "title": "[BUG]: Display of empty texts in voiceover section of the exploration editor translation tab is confusing.",
-      "url": "https://github.com/oppia/oppia/issues/20088",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug",
-        "Impact: Medium",
-        "Work: Low"
-      ],
-      "comments": 30,
-      "created_at": "2024-03-29T16:45:04Z",
-      "updated_at": "2026-04-29T14:01:56Z",
       "language": null
     },
     {
@@ -1989,14 +1747,14 @@
       "org": "stdlib",
       "github": "stdlib-js/stdlib",
       "title": "Fix JavaScript lint errors",
-      "url": "https://github.com/stdlib-js/stdlib/issues/11852",
+      "url": "https://github.com/stdlib-js/stdlib/issues/11784",
       "repo": "stdlib-js/stdlib",
       "labels": [
         "Good First Issue"
       ],
-      "comments": 1,
-      "created_at": "2026-04-30T00:29:00Z",
-      "updated_at": "2026-04-30T00:29:14Z",
+      "comments": 2,
+      "created_at": "2026-04-26T00:23:05Z",
+      "updated_at": "2026-04-26T07:46:20Z",
       "language": null
     },
     {
@@ -2013,22 +1771,6 @@
       "comments": 3,
       "created_at": "2021-12-08T17:39:03Z",
       "updated_at": "2026-01-02T10:36:25Z",
-      "language": null
-    },
-    {
-      "org": "Submitty",
-      "github": "Submitty/Submitty",
-      "title": "Bulk Late Days page is not available on production machines",
-      "url": "https://github.com/Submitty/Submitty/issues/12825",
-      "repo": "Submitty/Submitty",
-      "labels": [
-        "bug",
-        "good first issue",
-        "Instructor UI"
-      ],
-      "comments": 0,
-      "created_at": "2026-05-01T05:06:21Z",
-      "updated_at": "2026-05-01T05:06:48Z",
       "language": null
     },
     {
@@ -2062,6 +1804,23 @@
       "comments": 2,
       "created_at": "2024-05-13T21:01:21Z",
       "updated_at": "2026-04-11T14:11:14Z",
+      "language": null
+    },
+    {
+      "org": "Submitty",
+      "github": "Submitty/Submitty",
+      "title": "Enhance Forum Search Feature",
+      "url": "https://github.com/Submitty/Submitty/issues/12619",
+      "repo": "Submitty/Submitty",
+      "labels": [
+        "enhancement / feature request",
+        "good first issue",
+        "Discussion Forum / Live Chat",
+        "Awaiting Triage"
+      ],
+      "comments": 5,
+      "created_at": "2026-03-21T19:36:38Z",
+      "updated_at": "2026-04-05T02:46:32Z",
       "language": null
     },
     {
@@ -2478,6 +2237,54 @@
       "comments": 2,
       "created_at": "2021-01-30T10:09:29Z",
       "updated_at": "2023-10-29T00:15:48Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "Separate `command` and `text` field for slack-compatible outgoing webhook",
+      "url": "https://github.com/zulip/zulip/issues/19589",
+      "repo": "zulip/zulip",
+      "labels": [
+        "help wanted",
+        "area: integrations",
+        "good first issue"
+      ],
+      "comments": 72,
+      "created_at": "2021-08-18T03:26:49Z",
+      "updated_at": "2026-05-01T20:40:43Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "buddy_list: Use `::before` for status circle",
+      "url": "https://github.com/zulip/zulip/issues/37031",
+      "repo": "zulip/zulip",
+      "labels": [
+        "good first issue",
+        "area: right sidebar"
+      ],
+      "comments": 88,
+      "created_at": "2025-12-12T00:31:47Z",
+      "updated_at": "2026-04-24T00:47:46Z",
+      "language": null
+    },
+    {
+      "org": "Zulip",
+      "github": "zulip/zulip",
+      "title": "email integration: Include subject line as first line of message if longer than 60 characters.",
+      "url": "https://github.com/zulip/zulip/issues/10539",
+      "repo": "zulip/zulip",
+      "labels": [
+        "help wanted",
+        "good first issue",
+        "in progress",
+        "area: integrations (email and mirroring)"
+      ],
+      "comments": 204,
+      "created_at": "2018-09-21T04:37:02Z",
+      "updated_at": "2026-02-02T15:16:44Z",
       "language": null
     }
   ]

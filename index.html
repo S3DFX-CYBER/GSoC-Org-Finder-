@@ -19,16 +19,20 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "FindMyGSoC",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Web",
+      "@type": "WebApplication",
+      "name": "FindMyGSoC — GSoC 2026 Org Finder",
       "url": "https://findmygsoc.vercel.app/",
-      "description": "Live GSoC 2026 organization finder and good first issue tracker for student contributors.",
+      "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "S3DFX-CYBER"
       }
     }
   </script>
@@ -231,6 +235,7 @@
     .dark .text-on-surface-variant { color: #a1a1aa !important; }
     .dark .border-zinc-100 { border-color: #3f3f46 !important; }
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
 
     /* Light mode - Language pills active state */
@@ -405,6 +410,12 @@
       background: #1c0f05;
     }
   </style>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F46B0E" />
+  <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
 
@@ -536,27 +547,10 @@
           <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
           <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
         </div>
-        <div class="space-y-4 sm:space-y-5">
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">FEB 19, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Orgs Announced</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">MAR 16, 2026</p><p class="text-sm font-bold text-zinc-500">Contributor Proposals Open</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4">
-            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-primary">MAR 31, 2026</p><p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">Proposal Submission Deadline</p><p class="text-xs text-zinc-500 mt-1">Submit your project proposals by 11:30 PM!</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">APR 30, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Projects Announced</p></div>
-          </div>
-        </div>
+        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
         <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500">Deadline countdown</span>
+            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
             <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
           </div>
         </div>
@@ -1177,14 +1171,95 @@
     applyFilters();
   };
 
-  // Countdown to March 31 2026 (Proposal Deadline)
-  function updateCountdown(){
-    const deadline=new Date('2026-03-31T23:30:00+05:30');
-    const now=new Date();
-    const diff=deadline-now;
-    if(diff<=0){document.getElementById('countdown').textContent='Deadline passed!';return}
-    const d=Math.floor(diff/864e5),h=Math.floor((diff%864e5)/36e5),m=Math.floor((diff%36e5)/6e4);
-    document.getElementById('countdown').textContent=`${d}d ${h}h ${m}m`;
+  // Dynamic timeline milestones
+  const MILESTONES = [
+    { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
+    { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
+    { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
+    { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
+  ].filter(m => !isNaN(m.date.getTime())); 
+
+  function renderTimeline() {
+    const container = document.getElementById('timeline-milestones');
+    if (!container || MILESTONES.length === 0) return;
+
+    try {
+      const now = new Date();
+      if (isNaN(now.getTime())) return;
+
+      let activeIdx = MILESTONES.findIndex(m => m.date > now);
+      if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
+
+      const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+
+      container.innerHTML = MILESTONES.map((m, i) => {
+        const isActive = i === activeIdx;
+        const isLast = i === MILESTONES.length - 1;
+        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        let dateStr;
+        try {
+          dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+        } catch (_) {
+          dateStr = m.date.toISOString().slice(0, 10);
+        }
+
+        if (isActive && !allPast) {
+          return `<div class="flex gap-3 sm:gap-4">
+            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
+            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
+            ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
+          </div>`;
+        } else if (isActive && allPast) {
+          return `<div class="flex gap-3 sm:gap-4">
+            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
+            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
+            <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
+          </div>`;
+        } else {
+          return `<div class="flex gap-3 sm:gap-4 opacity-40">
+            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
+            <p class="text-sm font-bold text-zinc-500">${m.label}</p></div>
+          </div>`;
+        }
+      }).join('');
+    } catch (err) {
+      console.warn('[Timeline] renderTimeline failed:', err);
+    }
+  }
+
+  // Countdown to the next upcoming milestone
+  function updateCountdown() {
+    const countdownEl = document.getElementById('countdown');
+    const labelEl = document.getElementById('countdown-label');
+    if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
+
+    try {
+      const now = new Date();
+      if (isNaN(now.getTime())) return;
+
+      const next = MILESTONES.find(m => m.date > now);
+
+      if (!next) {
+        labelEl.textContent = 'GSoC 2026 selection complete';
+        countdownEl.textContent = '🎉 All done!';
+        countdownEl.classList.remove('text-primary');
+        countdownEl.classList.add('text-green-600');
+        return;
+      }
+
+      labelEl.textContent = `Until: ${next.label}`;
+      countdownEl.classList.remove('text-green-600');
+      countdownEl.classList.add('text-primary');
+      const diff = next.date - now;
+      if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
+      const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
+      countdownEl.textContent = `${d}d ${h}h ${m}m`;
+    } catch (err) {
+      console.warn('[Timeline] updateCountdown failed:', err);
+    }
   }
 
   // Organizational Logo Fallbacks
@@ -1648,5 +1723,12 @@ if(org.ideas){
 
 <!-- Vercel Speed Insights -->
 <script type="module" src="agent/scripts/speed-insights.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
 </body>
 </html>

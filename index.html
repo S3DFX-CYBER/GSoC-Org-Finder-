@@ -1262,9 +1262,9 @@ if(org.ideas){
       let matchLang = true;
       if (activeLangPills.size > 0) {
         matchLang = false;
-        const tagTokens = o.tags.flatMap(tag => tag.toLowerCase().split(/\s+/));
+        const tagTokens = new Set(o.tags.flatMap(tag => tag.toLowerCase().split(/\s+/)));
         activeLangPills.forEach(p => {
-          if (tagTokens.includes(p)) matchLang = true;
+          if (tagTokens.has(p)) matchLang = true;
         });
       }
       

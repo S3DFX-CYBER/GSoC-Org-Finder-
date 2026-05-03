@@ -241,6 +241,11 @@ The Edge Function proxies GitHub API calls so your token never hits the client.
 All responses are cached in-memory for **1 hour** on the Edge runtime.
 
 ---
+# We thank all our Contributors in improving this project
+## Contributors ✨
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## 📄 License
 

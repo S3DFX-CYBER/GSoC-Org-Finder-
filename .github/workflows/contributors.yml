@@ -1,0 +1,72 @@
+name: Update Contributors in README
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate Contributors
+        run: |
+          node << 'EOF'
+          const fs = require("fs");
+          const https = require("https");
+
+          const OWNER = "S3DFX-CYBER";
+          const REPO = "GSoC-Org-Finder-";
+
+          function fetch() {
+            return new Promise((resolve) => {
+              https.get(
+                `https://api.github.com/repos/${OWNER}/${REPO}/contributors`,
+                { headers: { "User-Agent": "gh-script" } },
+                (res) => {
+                  let d = "";
+                  res.on("data", (c) => (d += c));
+                  res.on("end", () => resolve(JSON.parse(d)));
+                }
+              );
+            });
+          }
+
+          (async () => {
+            const data = await fetch();
+
+            const avatars = data
+              .map(
+                (c) =>
+                  `<a href="${c.html_url}"><img src="${c.avatar_url}" width="60px" style="border-radius:50%; margin:4px;" /></a>`
+              )
+              .join("");
+
+            const now = new Date().toISOString().replace("T", " ").slice(0, 16);
+
+            let readme = fs.readFileSync("README.md", "utf8");
+
+            readme = readme.replace(
+              /<!-- AUTO-GENERATED:START -->([\s\S]*?)<!-- AUTO-GENERATED:END -->/,
+              `<!-- AUTO-GENERATED:START -->${avatars}<!-- AUTO-GENERATED:END -->`
+            );
+
+            readme = readme.replace(
+              /<!-- LAST_UPDATED -->/,
+              now + " UTC"
+            );
+
+            fs.writeFileSync("README.md", readme);
+          })();
+          EOF
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add README.md
+          git commit -m "update contributors" || echo "no changes"
+          git push

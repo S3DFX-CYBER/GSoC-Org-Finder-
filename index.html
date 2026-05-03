@@ -36,8 +36,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <!-- Dependencies for Proposal Builder Workspace -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" integrity="sha384-vdScihEZCfbPnBQf+lc7LgXUdJVYyhC3yWHUW5C5P5GpHRqVnaM6HJELJxT6IqwM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha384-Yv5O+t3uE3hunW8uyrbpPW3iw6/5/Y7HitWJBLgqfMoA36NogMmy+8wWZMpn3HWc" crossorigin="anonymous"></script>
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
@@ -927,10 +928,13 @@
         </button>
         <div>
           <h2 class="font-bold text-lg dark:text-white" id="pwOrgName">Organization Name</h2>
-          <p class="text-xs text-zinc-500 font-mono">Auto-saving locally...</p>
+          <p class="text-xs text-zinc-500 font-mono">Draft is auto-saved locally to your device.</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <button onclick="clearProposalDraft()" class="px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg text-sm font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors flex items-center gap-2" title="Delete draft and clear local storage">
+          <span class="material-symbols-outlined text-sm">delete</span> Clear
+        </button>
         <button onclick="exportProposalMD()" class="px-4 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors flex items-center gap-2 dark:text-white">
           <span class="material-symbols-outlined text-sm">download</span> Markdown
         </button>
@@ -1656,11 +1660,40 @@ if(org.ideas){
 [Briefly describe your background, relevant skills, and past contributions (if any) to the organization.]
 `;
 
+  const inMemoryDrafts = {};
+
+  function getDraft(orgName) {
+    try {
+      return localStorage.getItem('proposal_' + orgName) || inMemoryDrafts[orgName] || null;
+    } catch (e) {
+      console.warn("localStorage read failed, using in-memory draft.");
+      return inMemoryDrafts[orgName] || null;
+    }
+  }
+
+  function saveDraft(orgName, content) {
+    try {
+      localStorage.setItem('proposal_' + orgName, content);
+    } catch (e) {
+      console.warn("localStorage write failed, saving to memory.");
+      inMemoryDrafts[orgName] = content;
+    }
+  }
+
+  function clearDraft(orgName) {
+    try {
+      localStorage.removeItem('proposal_' + orgName);
+    } catch (e) {
+      console.warn("localStorage remove failed.");
+    }
+    delete inMemoryDrafts[orgName];
+  }
+
   function openProposalBuilder(orgName) {
     currentProposalOrg = orgName;
     document.getElementById('pwOrgName').textContent = orgName + ' Proposal';
     
-    const savedDraft = localStorage.getItem('proposal_' + orgName);
+    const savedDraft = getDraft(orgName);
     const editor = document.getElementById('pwEditor');
     
     if (savedDraft) {
@@ -1683,18 +1716,28 @@ if(org.ideas){
     }
   }
 
+  function clearProposalDraft() {
+    if (!currentProposalOrg) return;
+    if (confirm("Are you sure you want to clear your draft? This cannot be undone and will permanently remove it from your device.")) {
+      clearDraft(currentProposalOrg);
+      const editor = document.getElementById('pwEditor');
+      editor.value = GSOC_TEMPLATE.replace('[Organization Name]', currentProposalOrg);
+      renderPreview();
+    }
+  }
+
   function renderPreview() {
     const editor = document.getElementById('pwEditor');
     const preview = document.getElementById('pwPreview');
-    if (typeof marked !== 'undefined') {
-      preview.innerHTML = marked.parse(editor.value);
+    if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+      preview.innerHTML = DOMPurify.sanitize(marked.parse(editor.value));
     } else {
-      preview.innerHTML = '<p>Error: Markdown parser not loaded. Check your internet connection.</p>';
+      preview.innerHTML = '<p>Error: Markdown parser or sanitizer not loaded. Check your internet connection.</p>';
     }
   }
 
   document.getElementById('pwEditor').addEventListener('input', (e) => {
-    localStorage.setItem('proposal_' + currentProposalOrg, e.target.value);
+    saveDraft(currentProposalOrg, e.target.value);
     renderPreview();
   });
 

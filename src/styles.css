@@ -60,7 +60,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .compare-badge{position:absolute;top:-5px;right:-5px;background:var(--orange);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:900;align-items:center;justify-content:center;display:none}
 .compare-badge.show{display:flex}
 .btn-contribute{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;transition:all .18s;white-space:nowrap}
-.btn-contribute:hover{background:var(--orange);color:white;transform:translateY(-1px)}
+.btn-contribute:hover{background:var(--orange);color:black;transform:translateY(-1px)}
 .btn-contribute svg{width:13px;height:13px;flex-shrink:0}
 .pulse{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
@@ -138,7 +138,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .api-strong{font-weight:700;color:var(--ink)}
 .api-text{color:var(--muted)}
 .fetch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s;white-space:nowrap;margin-left:auto}
-.fetch-btn:hover{background:var(--orange);color:white}
+.fetch-btn:hover{background:var(--orange);color:black}
 .fetch-btn:disabled{opacity:.5;cursor:not-allowed}
 .spin{width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .issues-controls select:focus,.issues-search:focus{border-color:var(--orange)}
 .issues-search{min-width:220px}
 .btn-fetch-issues{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s}
-.btn-fetch-issues:hover{background:var(--orange);color:white}
+.btn-fetch-issues:hover{background:var(--orange);color:black}
 .btn-fetch-issues:disabled{opacity:.5;cursor:not-allowed}
 .issues-stats{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
 .istat{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 18px;text-align:center;min-width:80px}
@@ -316,7 +316,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .gls .gv{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:var(--ink);transition:color .3s}
 .gls .gl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
 .gh-fetch{display:inline-flex;align-items:center;gap:4px;background:var(--ink);color:var(--bg);border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s,color .18s}
-.gh-fetch:hover{background:var(--orange);color:white}
+.gh-fetch:hover{background:var(--orange);color:black}
 .m-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
 .m-tag{font-size:11px;padding:4px 10px;border-radius:6px;border:1.5px solid var(--border);color:var(--ink3);background:var(--bg);font-weight:500;transition:background .3s,border-color .3s,color .3s}
 .timeline{font-size:12px;color:var(--ink3);line-height:2;margin-bottom:16px}
@@ -566,7 +566,7 @@ footer a:hover{text-decoration:underline}
   height: 40px;
   border-radius: 50%;
   background: var(--orange);
-  color: white;
+  color: black;
   border: none;
   font-size: 18px;
   cursor: pointer;

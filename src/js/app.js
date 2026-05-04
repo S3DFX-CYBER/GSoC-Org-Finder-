@@ -847,6 +847,7 @@ let filteredIssues=[];
 let shownIssues=0;
 const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
+let cacheLoading=false;
 
 function openIssuesPage(){
   document.getElementById('issuesPage').classList.add('open');
@@ -858,12 +859,14 @@ function closeIssuesPage(){
 }
 
 async function fetchAllIssues(){
-  if(issuesFetching)return;
+  if(issuesFetching || cacheLoading) return;
   issuesFetching=true;
+  cacheLoading=true;
   const btn=document.getElementById('fetchIssuesBtn');
   const spin=document.getElementById('fetchIssuesSpin');
   const txt=document.getElementById('fetchIssuesTxt');
-  btn.disabled=true; spin.style.display='inline-block';
+  if(btn) btn.disabled=true;
+  if(spin) spin.style.display='inline-block';
 
   allIssues=[];
   const orgsWithGithub=ORGS.filter(o=>o.github);
@@ -878,62 +881,69 @@ async function fetchAllIssues(){
       <div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600" id="fpFound">0 issues found so far</div>
     </div>`;
 
-  // Batch in groups of 5 to avoid hammering the proxy
-  const BATCH=5;
-  for(let i=0;i<orgsWithGithub.length;i+=BATCH){
-    const batch=orgsWithGithub.slice(i,i+BATCH);
-    await Promise.all(batch.map(async o=>{
-      try{
-        const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
-        if(!r.ok)return;
-        const data=await r.json();
-        if(data.items?.length){
-          const owner=o.github.split('/')[0];
-          const logo=`https://github.com/${owner}.png?size=64`;
-          data.items.forEach(issue=>{
-            const labelNames=(issue.labels||[]).map(l=>typeof l==='string'?l:(l.name||''));
-            allIssues.push({
-              title:issue.title,
-              url:issue.html_url,
-              org:o.name,
-              orgCat:o.cat,
-              orgTags:o.tags,
-              logo,
-              repo:o.github,
-              created_at:issue.created_at,
-              labels:labelNames,
-              comments:issue.comments||0,
+  try {
+    // Batch in groups of 5 to avoid hammering the proxy
+    const BATCH=5;
+    for(let i=0;i<orgsWithGithub.length;i+=BATCH){
+      const batch=orgsWithGithub.slice(i,i+BATCH);
+      await Promise.all(batch.map(async o=>{
+        try{
+          const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
+          if(!r.ok)return;
+          const data=await r.json();
+          if(data.items?.length){
+            const owner=o.github.split('/')[0];
+            const logo=`https://github.com/${owner}.png?size=64`;
+            data.items.forEach(issue=>{
+              const labelNames=(issue.labels||[]).map(l=>typeof l==='string'?l:(l.name||''));
+              allIssues.push({
+                title:issue.title,
+                url:issue.html_url,
+                org:o.name,
+                orgCat:o.cat,
+                orgTags:o.tags,
+                logo,
+                repo:o.github,
+                created_at:issue.created_at,
+                labels:labelNames,
+                comments:issue.comments||0,
+              });
             });
-          });
-          found+=data.items.length;
+            found+=data.items.length;
+          }
+          const gfiCount=data.total??data.gfi;
+          if(gfiCount!==null&&gfiCount!==undefined){
+            if(!o._gh)o._gh={};
+            o._gh.gfi=gfiCount;
+          }
+        }catch(err){
+          console.warn('Failed fetching GFI issues for org:',o.github,err);
         }
-        const gfiCount=data.total??data.gfi;
-        if(gfiCount!==null&&gfiCount!==undefined){
-          if(!o._gh)o._gh={};
-          o._gh.gfi=gfiCount;
-        }
-      }catch(err){
-        console.warn('Failed fetching GFI issues for org:',o.github,err);
-      }
-      done++;
-    }));
-    // Update progress UI
-    const pct=Math.round(done/orgsWithGithub.length*100);
-    const fpStatus=document.getElementById('fpStatus');
-    const fpBar=document.getElementById('fpBar');
-    const fpFound=document.getElementById('fpFound');
-    if(fpStatus)fpStatus.textContent=`Checking ${done} / ${orgsWithGithub.length} orgs`;
-    if(fpBar)fpBar.style.width=pct+'%';
-    if(fpFound)fpFound.textContent=`${found} issues found so far`;
-    txt.textContent=`${done}/${orgsWithGithub.length}…`;
-    await new Promise(r=>setTimeout(r,60));
+        done++;
+      }));
+      // Update progress UI
+      const pct=Math.round(done/orgsWithGithub.length*100);
+      const fpStatus=document.getElementById('fpStatus');
+      const fpBar=document.getElementById('fpBar');
+      const fpFound=document.getElementById('fpFound');
+      if(fpStatus)fpStatus.textContent=`Checking ${done} / ${orgsWithGithub.length} orgs`;
+      if(fpBar)fpBar.style.width=pct+'%';
+      if(fpFound)fpFound.textContent=`${found} issues found so far`;
+      if(txt) txt.textContent=`${done}/${orgsWithGithub.length}…`;
+      await new Promise(r=>setTimeout(r,60));
+    }
+
+    // Sort: newest first
+    allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  }catch(err){
+    console.error('Failed to load issues',err);
+  }finally{
+    issuesFetching=false;
+    cacheLoading=false;
+    if(btn) btn.disabled=false;
+    if(spin) spin.style.display='none';
+    if(txt) txt.textContent='↻ Refresh';
   }
-
-  // Sort: newest first
-  allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-
-  issuesFetching=false;
-  btn.disabled=false; spin.style.display='none'; txt.textContent='↻ Refresh';
 
   filterIssues();
   renderGrid(filteredOrgs);

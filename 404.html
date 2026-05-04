@@ -5,12 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>404 - Page Not Found | FindMyGSoC</title>
   <meta name="description" content="404 - Page Not Found. Return to FindMyGSoC homepage." />
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
+
   <style>
     :root { background: #fafafa; }
-    html, body { min-height: 100%; height: 100%; }
+
+    html, body {
+      min-height: 100%;
+      height: 100%;
+    }
+
     body {
       margin: 0;
       display: flex;
@@ -21,6 +28,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       padding: 24px;
     }
+
     .notfound-card {
       max-width: 720px;
       width: 100%;
@@ -31,6 +39,7 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
+
     .notfound-pill {
       display: inline-flex;
       align-items: center;
@@ -46,6 +55,7 @@
       letter-spacing: .08em;
       margin-bottom: 18px;
     }
+
     .notfound-title {
       margin: 0;
       font-family: 'Playfair Display', serif;
@@ -54,6 +64,7 @@
       letter-spacing: -.03em;
       color: var(--ink);
     }
+
     .notfound-copy {
       margin: 22px auto 30px;
       max-width: 520px;
@@ -61,6 +72,7 @@
       line-height: 1.8;
       color: var(--ink3);
     }
+
     .notfound-link {
       display: inline-flex;
       align-items: center;
@@ -69,23 +81,36 @@
       padding: 13px 20px;
       border-radius: 12px;
       background: var(--orange);
-      color: #fff;
+      color: #1a1c1c; /* FIXED: accessible contrast */
       text-decoration: none;
       font-weight: 700;
       transition: transform .18s ease, background .18s ease;
     }
+
     .notfound-link:hover {
       transform: translateY(-1px);
       background: #d45800;
+      color: #1a1c1c; /* FIXED */
     }
   </style>
 </head>
+
 <body>
   <main class="notfound-card">
     <span class="notfound-pill">404 error</span>
-    <h1 class="notfound-title">404 — Page Not Found</h1>
-    <p class="notfound-copy">The page you requested doesn’t exist or has been moved. Use the button below to return to the FindMyGSoC homepage and continue browsing live organization listings.</p>
-    <a class="notfound-link" href="/">Return home</a>
+
+    <h1 class="notfound-title">
+      404 — Page Not Found
+    </h1>
+
+    <p class="notfound-copy">
+      The page you requested doesn’t exist or has been moved.
+      Use the button below to return to the FindMyGSoC homepage and continue browsing.
+    </p>
+
+    <a class="notfound-link" href="/">
+      Return home
+    </a>
   </main>
 </body>
 </html>

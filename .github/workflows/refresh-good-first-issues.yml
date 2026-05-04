@@ -2,7 +2,7 @@ name: Refresh Good First Issues
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Fetch issues
         run: node agent/scripts/fetch-issues.js
@@ -26,12 +26,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         #v8.1.1
         with:
-          commit-message: 'chore: refresh good first issues [skip actions]'
-          title: 'chore: refresh good first issues'
-          body: 'Automated refresh of good first issues'
+          commit-message: "chore: refresh good first issues [skip actions]"
+          title: "chore: refresh good first issues"
+          body: "Automated refresh of good first issues"
           branch: refresh-issues
           delete-branch: true
           add-paths: |

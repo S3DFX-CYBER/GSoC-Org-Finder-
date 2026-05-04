@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/api/github", "destination": "/api/github.js" }
-  ],
+  "rewrites": [{ "source": "/api/github", "destination": "/api/github.js" }],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -14,7 +12,10 @@
     {
       "source": "/data/(.*)\\.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     }
   ]

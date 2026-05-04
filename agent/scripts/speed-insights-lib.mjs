@@ -21,8 +21,7 @@ function detectEnvironment() {
     if (env === "development" || env === "test") {
       return "development";
     }
-  } catch {
-  }
+  } catch {}
   return "production";
 }
 function isDevelopment() {
@@ -83,15 +82,14 @@ function loadProps(explicitProps, confString) {
   if (confString) {
     try {
       props = {
-        ...(_a = JSON.parse(confString)) == null ? void 0 : _a.speedInsights,
-        ...explicitProps
+        ...((_a = JSON.parse(confString)) == null ? void 0 : _a.speedInsights),
+        ...explicitProps,
       };
-    } catch {
-    }
+    } catch {}
   }
   const dataset = {
     sdkn: name + (props.framework ? `/${props.framework}` : ""),
-    sdkv: version
+    sdkv: version,
   };
   if (props.sampleRate) {
     dataset.sampleRate = props.sampleRate.toString();
@@ -113,11 +111,15 @@ function loadProps(explicitProps, confString) {
   return {
     src: getScriptSrc(props),
     beforeSend: props.beforeSend,
-    dataset
+    dataset,
   };
 }
 function makeAbsolute(url) {
-  return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/") ? url : `/${url}`;
+  return url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("/")
+    ? url
+    : `/${url}`;
 }
 
 // src/generic.ts
@@ -128,7 +130,9 @@ function injectSpeedInsights(props = {}, confString) {
   const { beforeSend, src, dataset } = loadProps(props, confString);
   if (document.head.querySelector(`script[src*="${src}"]`)) return null;
   if (beforeSend) {
-    (_a = window.si) == null ? void 0 : _a.call(window, "beforeSend", beforeSend);
+    (_a = window.si) == null
+      ? void 0
+      : _a.call(window, "beforeSend", beforeSend);
   }
   const script = document.createElement("script");
   script.src = src;
@@ -138,23 +142,19 @@ function injectSpeedInsights(props = {}, confString) {
   }
   script.onerror = () => {
     console.log(
-      `[Vercel Speed Insights] Failed to load script from ${src}. Please check if any content blockers are enabled and try again.`
+      `[Vercel Speed Insights] Failed to load script from ${src}. Please check if any content blockers are enabled and try again.`,
     );
   };
   document.head.appendChild(script);
   return {
     setRoute: (route) => {
       script.dataset.route = route ?? void 0;
-    }
+    },
   };
 }
 var generic_default = {
   injectSpeedInsights,
-  computeRoute
-};
-export {
   computeRoute,
-  generic_default as default,
-  injectSpeedInsights
 };
+export { computeRoute, generic_default as default, injectSpeedInsights };
 //# sourceMappingURL=index.mjs.map

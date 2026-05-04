@@ -33,17 +33,20 @@ Changes should remain compatible with the **Edge Function architecture**.
 ## Local Development
 
 ### Install Vercel CLI
+
 ```bash
 npm install -g vercel
 ```
 
 ### Clone Repository
+
 ```bash
 git clone https://github.com/S3DFX-CYBER/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
 ```
 
 ### Run Locally
+
 ```bash
 vercel dev
 ```
@@ -72,6 +75,7 @@ This command simulates the Vercel environment locally.
 6. Open a Pull Request
 
 ### Create Branch
+
 ```bash
 git checkout -b feature/short-description
 ```
@@ -79,11 +83,13 @@ git checkout -b feature/short-description
 ### Commit Message Convention
 
 **Format**
+
 ```
 type: short description
 ```
 
 **Examples**
+
 ```
 docs: add contributing guide
 fix: correct edge function handler
@@ -92,11 +98,11 @@ feat: improve request validation
 
 **Common Types**
 
-| Type | Description |
-|---|---|
-| `docs` | Documentation updates |
-| `fix` | Bug fixes |
-| `feat` | New features |
+| Type       | Description           |
+| ---------- | --------------------- |
+| `docs`     | Documentation updates |
+| `fix`      | Bug fixes             |
+| `feat`     | New features          |
 | `refactor` | Internal improvements |
 
 ---
@@ -116,25 +122,31 @@ If no progress is made within 2–3 days, the issue may be unassigned and other 
 ## Contribution Levels
 
 ### Level 1 — Beginner Friendly
+
 Open to all contributors. Ideal for first-time contributors.
 
 Includes:
+
 - UI fixes
 - Minor bugs
 - Documentation updates (with meaningful new content)
 
 ### Level 2 — Intermediate
+
 Requires understanding of the codebase.
 
 Includes:
+
 - Logic improvements
 - Feature enhancements
 - Performance tweaks
 
-### Level 3 — Advanced *(Restricted)*
+### Level 3 — Advanced _(Restricted)_
+
 Only for experienced contributors. Requires **at least 1–2 merged PRs** in this repository.
 
 Includes:
+
 - Core features
 - Architecture changes
 - Complex optimizations
@@ -161,9 +173,10 @@ The following will result in PR rejection, label corrections, or point deduction
 
 ### What Makes a Valid Contribution
 
-Before opening a PR, ask: *"Does this make the project meaningfully better for users or maintainers?"*
+Before opening a PR, ask: _"Does this make the project meaningfully better for users or maintainers?"_
 
 **Valid contributions include:**
+
 - Fixing a bug with a clear reproduction case
 - Implementing a scoped feature from the issue tracker
 - Improving performance with an explainable impact
@@ -204,7 +217,7 @@ Failure to comply may result in:
 - Follow project style and philosophy
 - Do not introduce new dependencies
 
-### PR Checklist *(Required)*
+### PR Checklist _(Required)_
 
 Before submitting:
 

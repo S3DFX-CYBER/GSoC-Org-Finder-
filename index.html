@@ -17,25 +17,32 @@
   <meta name="twitter:description" content="Find your best-fit GSoC 2026 org and track beginner-friendly GitHub issues." />
   <meta name="twitter:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "FindMyGSoC — GSoC 2026 Org Finder",
-      "url": "https://findmygsoc.vercel.app/",
-      "description": "Find your perfect GSoC 2026 organizatgit status
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "S3DFX-CYBER"
-      }
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FindMyGSoC — GSoC 2026 Org Finder",
+  "url": "https://findmygsoc.vercel.app/",
+  "description": "Find your perfect GSoC 2026 organization.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "S3DFX-CYBER"
+  }
+}
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {}
     }
-  </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries">
-    <!-- help modal added -->
-  </script>
+  }
+</script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -313,7 +320,12 @@
     .dark header .text-zinc-600 { color: #a1a1aa !important; }
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
-  </style>
+  .modal-body table td {
+  color: #444;
+}
+.modal-body table thead {
+  border-bottom: 1px solid #eee;
+}</style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -755,6 +767,8 @@
       <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
       <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
         <span class="material-symbols-outlined">compare</span> Open Comparison Tool
+
+
       </button>
     </div>
     <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
@@ -1415,7 +1429,26 @@ if(org.ideas){
     document.getElementById('compareModal').classList.remove('open');
     document.body.style.overflow = 'auto';
   }
+<div class="modal-bg" id="helpModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeHelpModal()">✕</button>
 
+    <div class="modal-header">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Quick navigation for power users</p>
+    </div>
+
+    <div class="modal-body">
+      <table style="width:100%; font-size:14px;">
+        <tr><td>← →</td><td>Move focus between cards</td></tr>
+        <tr><td>Enter</td><td>Open focused card</td></tr>
+        <tr><td>C</td><td>Toggle compare</td></tr>
+        <tr><td>Esc</td><td>Close modal</td></tr>
+        <tr><td>?</td><td>Toggle help</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
   // Filters
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
@@ -1633,6 +1666,14 @@ if(org.ideas){
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+document.addEventListener('keydown', function(e) {
+  if (e.key === '?') {
+    document.getElementById('helpModal').classList.toggle('open');
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('helpModal').classList.remove('open');
+  }
+});
 </script>
 
 <!-- Vercel Speed Insights -->
@@ -1643,6 +1684,114 @@ if(org.ideas){
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
     });
   }
+  document.addEventListener('keydown', function(e) {
+  // ignore if typing in input
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+  if (e.key === '?') {
+    document.getElementById('helpModal').classList.toggle('open');
+  }
+
+  if (e.key === 'Escape') {
+    document.getElementById('helpModal').classList.remove('open');
+  }
+});
+// HELP MODAL
+function openHelpModal() {
+  document.getElementById('helpModal').classList.add('open');
+}
+
+function closeHelpModal() {
+  document.getElementById('helpModal').classList.remove('open');
+}
+
+// Button click
+document.addEventListener('DOMContentLoaded', function () {
+
+  function openHelpModal() {
+    document.getElementById('helpModal').classList.add('open');
+  }
+
+  function closeHelpModal() {
+    document.getElementById('helpModal').classList.remove('open');
+  }
+
+  const btn = document.getElementById('helpBtn');
+
+  if (btn) {
+    btn.addEventListener('click', openHelpModal);
+  }
+
+  // keyboard shortcut
+  document.addEventListener('keydown', function(e) {
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+    if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+      openHelpModal();
+    }
+
+    if (e.key === 'Escape') {
+      closeHelpModal();
+    }
+  });
+
+  // expose close for button
+  window.closeHelpModal = closeHelpModal;
+
+});
+
+// Keyboard shortcut
+document.addEventListener('keydown', function(e) {
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+  if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+    openHelpModal();
+  }
+
+  if (e.key === 'Escape') {
+    closeHelpModal();
+  }
+});
 </script>
+<div class="modal-bg" id="helpModal">
+  <div class="modal">
+    <button class="close-btn"
+      onclick="document.getElementById('helpModal').classList.remove('open')">
+      ✕
+    </button>
+
+    <div class="modal-header">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Quick navigation for power users</p>
+    </div>
+
+    <div class="modal-body">
+      <table style="width:100%; font-size:14px;">
+        <tr><td>← →</td><td>Move focus between cards</td></tr>
+        <tr><td>Enter</td><td>Open focused card</td></tr>
+        <tr><td>C</td><td>Toggle compare</td></tr>
+        <tr><td>Esc</td><td>Close modal</td></tr>
+        <tr><td>?</td><td>Toggle help</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<button id="helpBtn"
+  style="
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    width: 44px;
+    height: 44px;
+    background: #f97316;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;">
+  ?
+</button>
 </body>
 </html>

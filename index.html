@@ -34,7 +34,8 @@
   }
 }
 </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CDN (official, no integrity needed) -->
+<script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -1096,7 +1097,7 @@ try {
   window.handleImgError = function(img, orgName) {
     if (!img.dataset.triedClearbit) {
       img.dataset.triedClearbit = 'true';
-      const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
+      const domain = orgName.toLowerCase().replaceAll(/[^a-z0-9]/g, '') + '.org';
       img.src = `https://logo.clearbit.com/${domain}`;
     } else {
       img.style.display = 'none';
@@ -1187,7 +1188,7 @@ try {
       }
       compareList.push(name);
     }
-    renderOrgs(true);
+    renderOrgs();
     renderCompare();
   }
 
@@ -1371,7 +1372,7 @@ if(org.ideas){
             const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
             return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
               <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
-                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replace(/['\\]/g, "\\$&")}')" class="w-full h-full object-contain rounded-lg" />
+                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replaceAll(/['\\]/g,  String.raw`\$&`)}')" class="w-full h-full object-contain rounded-lg" />
               </div>
               <p class="font-headline font-bold text-lg text-zinc-900">${name}</p>
             </th>`;
@@ -1396,7 +1397,7 @@ if(org.ideas){
       }},
       { label: "Codebase Complexity", get: o => `<span class="complexity-badge ${o.codebase || ''}">${(o.codebase || '').toUpperCase()}</span>` },
       { label: "Technologies", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.tags || []).map(t => `<span class="tech-tag !text-[10px]">${t}</span>`).join('')}</div>` },
-      { label: "Ideal Fit", get: o => `<div class="flex flex-wrap justify-center gap-1.5">${(o.fit || []).map(f => `<span class="fit-tag !text-[10px]">${f}</span>`).join('')}</div>` },
+      
     ];
 
     rows.forEach((row, i) => {
@@ -1438,7 +1439,7 @@ if(org.ideas){
       return matchSearch && matchCat && matchComp;
     });
 
-    renderOrgs(true);
+    renderOrgs();
   }
 
   window.clearAllFilters = function() {
@@ -1455,7 +1456,7 @@ if(org.ideas){
     });
 
     filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    renderOrgs();
   };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);

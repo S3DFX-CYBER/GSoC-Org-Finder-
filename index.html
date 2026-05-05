@@ -35,9 +35,6 @@
 }
 </script>
   <script src="https://cdn.tailwindcss.com"></script>
-
-
-</script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -47,9 +44,9 @@
         if (localStorage.getItem('theme') === 'dark') {
           document.documentElement.classList.add('dark');
         }
-      } catch(e) {
+      } catch(error) {
         // localStorage might be unavailable in some browsers/modes
-        console.warn('Theme restoration failed:', e);
+        console.warn('Theme restoration failed:', error);
       }
     })();
   </script>
@@ -1057,8 +1054,8 @@ try {
           </div>`;
         }
       }).join('');
-    } catch (err) {
-      console.warn('[Timeline] renderTimeline failed:', err);
+    } catch (error) {
+      console.warn('[Timeline] renderTimeline failed:', error);
     }
   }
 
@@ -1089,8 +1086,9 @@ try {
       if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
       const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
       countdownEl.textContent = `${d}d ${h}h ${m}m`;
-    } catch (err) {
-      console.warn('[Timeline] updateCountdown failed:', err);
+    } catch (error)
+     {
+      console.warn('[Timeline] updateCountdown failed:', error);
     }
   }
 
@@ -1475,41 +1473,49 @@ if(org.ideas){
     applyFilters();
   });
 
-  // Category Chips Filter
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      
-      // Reset others
-      document.querySelectorAll('.filter-chip').forEach(c => {
-        if (c !== chip) {
-          c.classList.remove('bg-orange-600', 'text-white');
-          c.classList.add('bg-surface-container-highest');
-        }
-      });
+// Category Chips Filter
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
 
-      const isActive = chip.classList.toggle('bg-orange-600');
-      chip.classList.toggle('text-white');
-      chip.classList.toggle('bg-surface-container-highest');
+    const text = chip.textContent.trim().toLowerCase();
 
-      if (!isActive) {
-        filteredOrgs = [...ORGS];
-      } else if (text.includes("bookmarked")) {
-        
-          filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
-        } else if (text.includes("veterans")) {
-          filteredOrgs = ORGS.filter(o => o.years >= 10);
-        } else if (text.includes("newcomers")) {
-          filteredOrgs = ORGS.filter(o => o.years <= 3);
-        } else if (text.includes("low competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "chill");
-        } else if (text.includes("high competition")) {
-          filteredOrgs = ORGS.filter(o => o.competition === "high");
-        }
+    // Reset others
+    document.querySelectorAll('.filter-chip').forEach(c => {
+      if (c !== chip) {
+        c.classList.remove('bg-orange-600', 'text-white');
+        c.classList.add('bg-surface-container-highest');
       }
-      renderOrgs(true);
     });
+
+    const isActive = chip.classList.toggle('bg-orange-600');
+    chip.classList.toggle('text-white');
+    chip.classList.toggle('bg-surface-container-highest');
+
+    // ✅ IMPORTANT: ensure variable exists
+    let filteredOrgs = [];
+
+    if (isActive === false) {
+      filteredOrgs = [...ORGS];
+
+    } else if (text.includes("bookmarked")) {
+      filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
+
+    } else if (text.includes("veterans")) {
+      filteredOrgs = ORGS.filter(o => o.years >= 10);
+
+    } else if (text.includes("newcomers")) {
+      filteredOrgs = ORGS.filter(o => o.years <= 3);
+
+    } else if (text.includes("low competition")) {
+      filteredOrgs = ORGS.filter(o => o.competition === "chill");
+
+    } else if (text.includes("high competition")) {
+      filteredOrgs = ORGS.filter(o => o.competition === "high");
+    }
+
+    renderOrgs(true, filteredOrgs); 
   });
+});
 
   function buildGfiSearchUrl(github) {
     const query = github.includes('/')
@@ -1591,8 +1597,8 @@ if(org.ideas){
         `;
         container.appendChild(card);
       });
-    } catch (e) {
-      console.error("GFI render failed:", e);
+    } catch (error) {
+      console.error("GFI render failed:", error);
     }
   }
 
@@ -1608,7 +1614,7 @@ if(org.ideas){
 
     try {
       // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(resolve => setTimeout(resolve , 1200));
       
       // Since no token, we simulate random but realistic growth
       const stars = (Math.random() * 5000 + 1000).toFixed(0);
@@ -1622,9 +1628,10 @@ if(org.ideas){
       document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
       
       btn.textContent = 'Stats Updated!';
-    } catch (e) {
-      btn.textContent = 'Error';
-    } finally {
+    } catch (error) {
+  console.error('Fetch stats failed:', error);
+  btn.textContent = 'Error';
+} finally {
       setTimeout(() => {
         btn.textContent = 'Fetch Live Stats';
         btn.disabled = false;
@@ -1694,14 +1701,22 @@ if(org.ideas){
     </div>
 
     <div class="modal-body">
-      <table style="width:100%; font-size:14px;">
-        <tr><td>← →</td><td>Move focus between cards</td></tr>
-        <tr><td>Enter</td><td>Open focused card</td></tr>
-        <tr><td>C</td><td>Toggle compare</td></tr>
-        <tr><td>Esc</td><td>Close modal</td></tr>
-        <tr><td>?</td><td>Toggle help</td></tr>
-      </table>
-    </div>
+<table style="width:100%; font-size:14px;">
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>← →</td><td>Move focus between cards</td></tr>
+    <tr><td>Enter</td><td>Open focused card</td></tr>
+    <tr><td>C</td><td>Toggle compare</td></tr>
+    <tr><td>Esc</td><td>Close modal</td></tr>
+    <tr><td>?</td><td>Toggle help</td></tr>
+  </tbody>
+</table>
+</div>
   </div>
 </div>
 <button id="helpBtn"

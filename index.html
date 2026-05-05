@@ -1654,30 +1654,6 @@ if(org.ideas){
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
     });
   }
-  document.addEventListener('keydown', function(e) {
-  // ignore if typing in input
-  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
-  if (e.key === '?') {
-    document.getElementById('helpModal').classList.toggle('open');
-  }
-
-  if (e.key === 'Escape') {
-    document.getElementById('helpModal').classList.remove('open');
-  }
-});
-// HELP MODAL
-function openHelpModal() {
-  document.getElementById('helpModal').classList.add('open');
-}
-
-function closeHelpModal() {
-  document.getElementById('helpModal').classList.remove('open');
-}
-
-// Button click
-document.addEventListener('DOMContentLoaded', function () {
-
   function openHelpModal() {
     document.getElementById('helpModal').classList.add('open');
   }
@@ -1686,42 +1662,24 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('helpModal').classList.remove('open');
   }
 
-  const btn = document.getElementById('helpBtn');
+  document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('helpBtn');
+    if (btn) btn.addEventListener('click', openHelpModal);
+  });
 
-  if (btn) {
-    btn.addEventListener('click', openHelpModal);
-  }
-
-  // keyboard shortcut
   document.addEventListener('keydown', function(e) {
-    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
 
-    if (e.key === '?' || (e.shiftKey && e.key === '/')) {
-      openHelpModal();
+    if (e.key === '?') {
+      e.preventDefault();
+      const isOpen = document.getElementById('helpModal').classList.contains('open');
+      isOpen ? closeHelpModal() : openHelpModal();
     }
-
     if (e.key === 'Escape') {
       closeHelpModal();
     }
   });
-
-  // expose close for button
-  window.closeHelpModal = closeHelpModal;
-
-});
-
-// Keyboard shortcut
-document.addEventListener('keydown', function(e) {
-  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
-  if (e.key === '?' || (e.shiftKey && e.key === '/')) {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-});
 </script>
 <div class="modal-bg" id="helpModal">
   <div class="modal">

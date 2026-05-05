@@ -1,0 +1,84 @@
+name: 🧭 Issue Context Assignment
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  assign-by-context:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Auto-assign issue based on title and description context
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = '.github/issue-routing.json';
+
+            if (!fs.existsSync(path)) {
+              core.setFailed(`Missing routing config at ${path}`);
+              return;
+            }
+
+            const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const issue = context.payload.issue;
+            const text = `${issue.title || ''}\n${issue.body || ''}`.toLowerCase();
+
+            const selected = new Set();
+            const matchedRoutes = [];
+
+            for (const route of (config.routes || [])) {
+              const keywords = (route.keywords || []).map(k => String(k).toLowerCase());
+              const hit = keywords.some(k => new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text));
+              if (hit) {
+                matchedRoutes.push(route.name || 'unnamed-route');
+                for (const a of (route.assignees || [])) {
+                  if (a) selected.add(a);
+                }
+              }
+            }
+
+            if (selected.size === 0) {
+              for (const a of (config.default_assignees || [])) {
+                if (a) selected.add(a);
+              }
+            }
+
+            const assignees = Array.from(selected);
+            if (assignees.length === 0) {
+              core.info('No assignees resolved. Skipping assignment.');
+              return;
+            }
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = issue.number;
+
+            const currentlyAssigned = new Set((issue.assignees || []).map(a => a.login));
+            const toAdd = assignees.filter(a => !currentlyAssigned.has(a));
+
+            if (toAdd.length === 0) {
+              core.info('Issue already has all resolved assignees.');
+              return;
+            }
+
+            try {
+            await github.rest.issues.addAssignees({ owner, repo, issue_number, assignees: toAdd });
+            core.info(`Matched routes: ${matchedRoutes.length ? matchedRoutes.join(', ') : 'none (used default)'}`);
+            core.info(`Assigned: ${toAdd.join(', ')}`);
+            } catch (err) {
+            core.warning('Failed to assign ${toAdd.join(', ')}: ${err.message}`);
+            }
+            
+
+            

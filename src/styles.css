@@ -584,3 +584,126 @@ footer a:hover{text-decoration:underline}
   align-items: center;
   justify-content: center;
 }
+
+/* ═══════════════════════════════════════════
+   SELECTED LANGUAGES STRIP
+═══════════════════════════════════════════ */
+
+/* Empty state text */
+.selected-langs-strip .empty-state {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 12px;
+}
+
+[data-theme="dark"] .selected-langs-strip .empty-state {
+  color: var(--muted);
+}
+
+.selected-langs-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+/* Individual selected language badge */
+.selected-lang-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 12px;
+  background: var(--orange-pale);
+  border: 1.5px solid var(--orange-border);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--orange-deep);
+  transition: all 0.15s ease;
+}
+
+.selected-lang-badge:hover {
+  border-color: var(--orange);
+  background: var(--orange-mid);
+}
+
+/* Unselect × button */
+.unselect-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: var(--orange-border);
+  color: var(--orange-deep);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  margin-left: 2px;
+}
+
+.unselect-lang-btn:hover {
+  background: var(--orange);
+  color: white;
+}
+
+/* Clear all button */
+.clear-all-langs-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+}
+
+.clear-all-langs-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: var(--orange-pale);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .selected-lang-badge {
+  background: var(--orange-pale);
+  border-color: var(--orange-border);
+  color: var(--orange);
+}
+
+[data-theme="dark"] .selected-lang-badge:hover {
+  border-color: var(--orange-deep);
+  background: var(--orange-mid);
+}
+
+[data-theme="dark"] .unselect-lang-btn {
+  background: var(--orange-border);
+  color: var(--orange);
+}
+
+[data-theme="dark"] .unselect-lang-btn:hover {
+  background: var(--orange-deep);
+  color: white;
+}
+
+[data-theme="dark"] .clear-all-langs-btn {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+[data-theme="dark"] .clear-all-langs-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange-deep);
+  background: var(--orange-pale);
+}

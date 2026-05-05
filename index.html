@@ -104,6 +104,29 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+    /* Toast Styles */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #f97316;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+      max-width: 300px;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* Modal Styles */
     .modal-bg {
       position: fixed;
@@ -424,6 +447,7 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+<div id="toast" class="toast"></div>
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -529,6 +553,9 @@
       <div class="relative max-w-xl mb-8 sm:mb-10">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
         <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <button id="surprise-btn" class="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1" tabindex="0" aria-label="Surprise me">
+          <span class="text-sm">🎲</span> Surprise Me!
+        </button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
@@ -1572,8 +1599,8 @@
     `;
   }
 
-  function openModal(name) {
-    const org = ORGS.find(o => o.name === name);
+  function openModal(idx) {
+    const org = ORGS[idx];
     if (!org) return;
 
     document.getElementById('mHeader').innerHTML = `
@@ -1861,6 +1888,33 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
+  function getFilteredOrgs() {
+    return filteredOrgs;
+  }
+
+  function openRandomOrg() {
+    const visible = getFilteredOrgs();
+
+    if (!visible.length) {
+      showToast("No orgs match your filters — try clearing some!");
+      return;
+    }
+
+    const idx = Math.floor(Math.random() * visible.length);
+    const originalIndex = ORGS.indexOf(visible[idx]);
+
+    openModal(originalIndex);
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -1871,6 +1925,16 @@ if(org.ideas){
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+
+  // Bind surprise button events
+  document.getElementById('surprise-btn').addEventListener('click', openRandomOrg);
+  // Add keyboard support for surprise button
+  document.getElementById('surprise-btn').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openRandomOrg();
+    }
+  });
 </script>
 
 <!-- Vercel Speed Insights -->

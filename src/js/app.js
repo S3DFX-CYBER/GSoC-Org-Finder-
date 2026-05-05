@@ -1101,7 +1101,7 @@ function renderIssues(){
     loadMore.style.display=shownIssues<filteredIssues.length?'flex':'none';
   }
 
-  // Update stats
+  // Update stats data
   const orgsWithIssues=new Set(allIssues.map(i=>i.org)).size;
   document.getElementById('issTotal').textContent=allIssues.length.toLocaleString();
   document.getElementById('issOrgs').textContent=orgsWithIssues;

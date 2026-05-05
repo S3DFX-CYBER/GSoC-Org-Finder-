@@ -36,12 +36,7 @@
 </script>
   <script src="https://cdn.tailwindcss.com"></script>
 
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {}
-    }
-  }
+
 </script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -878,12 +873,15 @@
   // THEME
   // ══════════════════════════════════════════════
   (function(){
-    const saved = localStorage.getItem('theme') || 'light';
+    let saved = 'light';
+try {
+  saved = globalThis.localStorage?.getItem('theme') || 'light';
+} catch {}
     document.documentElement.classList.toggle('dark', saved === 'dark');
     updateThemeIcon();
   })();
 
-  window.toggleTheme = function(){
+  globalThis.toggleTheme = function(){
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     updateThemeIcon();
@@ -904,7 +902,7 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
+  globalThis.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
@@ -1429,26 +1427,6 @@ if(org.ideas){
     document.getElementById('compareModal').classList.remove('open');
     document.body.style.overflow = 'auto';
   }
-<div class="modal-bg" id="helpModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeHelpModal()">✕</button>
-
-    <div class="modal-header">
-      <h2>Keyboard Shortcuts</h2>
-      <p>Quick navigation for power users</p>
-    </div>
-
-    <div class="modal-body">
-      <table style="width:100%; font-size:14px;">
-        <tr><td>← →</td><td>Move focus between cards</td></tr>
-        <tr><td>Enter</td><td>Open focused card</td></tr>
-        <tr><td>C</td><td>Toggle compare</td></tr>
-        <tr><td>Esc</td><td>Close modal</td></tr>
-        <tr><td>?</td><td>Toggle help</td></tr>
-      </table>
-    </div>
-  </div>
-</div>
   // Filters
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
@@ -1516,8 +1494,8 @@ if(org.ideas){
 
       if (!isActive) {
         filteredOrgs = [...ORGS];
-      } else {
-        if (text.includes("bookmarked")) {
+      } else if (text.includes("bookmarked")) {
+        
           filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
         } else if (text.includes("veterans")) {
           filteredOrgs = ORGS.filter(o => o.years >= 10);

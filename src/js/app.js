@@ -4,7 +4,10 @@
 // THEME
 // ══════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('theme') || 'light';
+  let saved = 'light';
+try {
+  saved = globalThis.localStorage?.getItem('theme') || 'light';
+} catch {}
   document.documentElement.classList.toggle('dark', saved === 'dark');
   updateThemeIcon();
 })();

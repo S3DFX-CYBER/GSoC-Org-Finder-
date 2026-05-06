@@ -303,7 +303,13 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=S3DFX-CYBER/GSoC-Org-Finder-" alt="Contributors to GSoC Org Finder" />
 </a>
-
+<a href="https://github.com/Atif-Azmi" target="_blank">
+  <img src="https://avatars.githubusercontent.com/u/255070603?v=4" 
+       alt="Atif-Azmi" 
+       width="60" 
+       height="60" 
+       style="border-radius: 50%; border: 2px solid #00ff00;" />
+</a>
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

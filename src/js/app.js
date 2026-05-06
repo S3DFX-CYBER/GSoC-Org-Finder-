@@ -1,5 +1,7 @@
 /* global ORGS */
-
+function fmt(n) {
+  return !n && n !== 0 ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+}
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
@@ -370,10 +372,16 @@ async function fetchAll() {
 async function fetchModalGH() {
   const o = ORGS[modalIdx];
   if (!o?.github) return;
+  const requestedIdx = modalIdx;
+  const requestedRepo = o.github;
   document.getElementById('mFetchBtn').textContent = 'Loading…';
-  delete cache[o.github];
-  delete cache[o.github + '__gfi'];
-  const d = await fetchGH(o.github);
+  delete cache[requestedRepo];
+  delete cache[requestedRepo + '__gfi'];
+  const d = await fetchGH(requestedRepo);
+  if (
+    modalIdx !== requestedIdx ||
+    ORGS[requestedIdx]?.github !== requestedRepo
+  ) return;
   if (d) {
     o._gh = d;
     document.getElementById('ghStars').textContent = fmt(d.stars);
@@ -382,7 +390,12 @@ async function fetchModalGH() {
     document.getElementById('ghCommit').textContent = d.lastCommit;
     document.getElementById('mFetchBtn').textContent = '↻ Refresh';
     document.getElementById('ghGFI').textContent = '…';
-    const gfi = await fetchGFI(o.github);
+    const gfi = await fetchGFI(requestedRepo);
+    if (
+      modalIdx !== requestedIdx ||
+      ORGS[requestedIdx]?.github !== requestedRepo
+    ) return;
+
     const gfiTxt = gfi !== null ? fmt(gfi) : '—';
     document.getElementById('ghGFI').textContent = gfiTxt;
     if (gfi !== null) {
@@ -392,11 +405,9 @@ async function fetchModalGH() {
     }
     applyFilters();
     renderCompareTable();
-  } else document.getElementById('mFetchBtn').textContent = '✗ Failed';
-}
-
-function fmt(n) {
-  return !n && n !== 0 ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+  } else {
+    document.getElementById('mFetchBtn').textContent = '✗ Failed';
+  }
 }
 
 // ══════════════════════════════════════════════

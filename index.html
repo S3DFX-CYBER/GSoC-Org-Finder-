@@ -16,27 +16,27 @@
   <meta name="twitter:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
   <meta name="twitter:description" content="Find your best-fit GSoC 2026 org and track beginner-friendly GitHub issues." />
   <meta name="twitter:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
- <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "FindMyGSoC — GSoC 2026 Org Finder",
-  "url": "https://findmygsoc.vercel.app/",
-  "description": "Find your perfect GSoC 2026 organization.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "S3DFX-CYBER"
-  }
-}
-</script>
-
-<!-- NOSONAR: Tailwind CDN used intentionally -->
-<script src="https://cdn.tailwindcss.com"></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "FindMyGSoC — GSoC 2026 Org Finder",
+      "url": "https://findmygsoc.vercel.app/",
+      "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "S3DFX-CYBER"
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -46,9 +46,9 @@
         if (localStorage.getItem('theme') === 'dark') {
           document.documentElement.classList.add('dark');
         }
-      } catch(error) {
+      } catch(e) {
         // localStorage might be unavailable in some browsers/modes
-        console.warn('Theme restoration failed:', error);
+        console.warn('Theme restoration failed:', e);
       }
     })();
   </script>
@@ -328,13 +328,6 @@
     .dark header .text-zinc-600 { color: #a1a1aa !important; }
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
-  .modal-body table td {
-  color: #444;
-}
-.modal-body table thead {
-  border-bottom: 1px solid #eee;}
-
-
 
     /* Selected Languages Strip */
     #selectedLangsStrip {
@@ -422,11 +415,7 @@
       color: #fb923c;
       background: #1c0f05;
     }
-  
-
-
-</style>
- 
+  </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -877,8 +866,6 @@
       <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
       <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
         <span class="material-symbols-outlined">compare</span> Open Comparison Tool
-
-
       </button>
     </div>
     <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
@@ -988,15 +975,12 @@
   // THEME
   // ══════════════════════════════════════════════
   (function(){
-    let saved = 'light';
-try {
-  saved = globalThis.localStorage?.getItem('theme') || 'light';
-} catch {}
+    const saved = localStorage.getItem('theme') || 'light';
     document.documentElement.classList.toggle('dark', saved === 'dark');
     updateThemeIcon();
   })();
 
-  globalThis.toggleTheme = function(){
+  window.toggleTheme = function(){
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     updateThemeIcon();
@@ -1017,7 +1001,7 @@ try {
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  globalThis.toggleMenu = function(){
+  window.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
@@ -1276,8 +1260,8 @@ try {
           </div>`;
         }
       }).join('');
-    } catch (error) {
-      console.warn('[Timeline] renderTimeline failed:', error);
+    } catch (err) {
+      console.warn('[Timeline] renderTimeline failed:', err);
     }
   }
 
@@ -1308,9 +1292,8 @@ try {
       if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
       const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
       countdownEl.textContent = `${d}d ${h}h ${m}m`;
-    } catch (error)
-     {
-      console.warn('[Timeline] updateCountdown failed:', error);
+    } catch (err) {
+      console.warn('[Timeline] updateCountdown failed:', err);
     }
   }
 
@@ -1318,7 +1301,7 @@ try {
   window.handleImgError = function(img, orgName) {
     if (!img.dataset.triedClearbit) {
       img.dataset.triedClearbit = 'true';
-      const domain = orgName.toLowerCase().replaceAll(/[^a-z0-9]/g, '') + '.org';
+      const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
       img.src = `https://logo.clearbit.com/${domain}`;
     } else {
       img.style.display = 'none';
@@ -1330,7 +1313,7 @@ try {
     }
   };
 
-  function renderOrgs() {
+  function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
     const emptyState = document.getElementById('emptyState');
     if (reset) {
@@ -1409,7 +1392,7 @@ try {
       }
       compareList.push(name);
     }
-    renderOrgs();
+    renderOrgs(true);
     renderCompare();
   }
 
@@ -1532,7 +1515,7 @@ try {
     if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
     else bookmarkedSet.add(name);
     localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-    renderOrgs(); // Refresh current view
+    renderOrgs(false); // Refresh current view
     renderWatchlist();
   }
 
@@ -1653,100 +1636,7 @@ if(org.ideas){
     document.body.style.overflow = 'auto';
   }
 
- help-modal
-  function openCompareModal() {
-    if (compareList.length === 0) {
-      alert("Please select at least one organization to compare.");
-      return;
-    }
-    
-    const body = document.getElementById('compareModalBody');
-    let html = `<table class="w-full text-left border-collapse min-w-[600px]">
-      <thead>
-        <tr>
-          <th class="p-4 border-b-2 border-zinc-200 text-xs font-bold text-zinc-400 uppercase tracking-wider w-1/4">Feature</th>
-          ${compareList.map(name => {
-            const org = ORGS.find(o => o.name === name);
-            if (!org) return '';
-            const githubOwner = org.github?.split('/')[0] || '';
-            const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
-            return `<th class="p-4 border-b-2 border-zinc-200 text-center w-1/4">
-              <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center p-2 mx-auto mb-3 overflow-hidden">
-                <img src="${logoUrl}" onerror="handleImgError(this, '${org.name.replaceAll(/['\\]/g,  String.raw`\$&`)}')" class="w-full h-full object-contain rounded-lg" />
-              </div>
-              <p class="font-headline font-bold text-lg text-zinc-900">${name}</p>
-            </th>`;
-          }).join('')}
-        </tr>
-      </thead>
-      <tbody class="text-sm">`;
-
-    const orgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-    
-    const rows = [
-      { label: "Category", get: o => `<span class="category-tag !mb-0">${(o.cat || '').toUpperCase()}</span>` },
-      { label: "Years in GSoC", get: o => `<span class="font-bold text-primary text-base">${o.years || ''}</span>` },
-      { label: "First Year", get: o => `<span class="font-mono text-zinc-600">${o.firstYear || ''}</span>` },
-      { label: "Competition", get: o => {
-        const competitionClass = {
-          chill: 'beginner',
-          moderate: 'intermediate',
-          high: 'advanced'
-        }[o.competition] || 'beginner';
-        return `<span class="complexity-badge ${competitionClass}">${(o.competition || '').toUpperCase()}</span>`;
-      }},
-      { label: "Codebase Complexity", get: o => {
-  const codebase = o.codebase || '';
-  const label = codebase.toUpperCase();
-
-  return `<span class="complexity-badge ${codebase}">
-    ${label}
-  </span>`;
-} },
-      { label: "Technologies", get: o => {
-  const tags = o.tags || [];
-
-  const tagsHTML = tags
-    .map(t => `<span class="tech-tag text-[10px]">${t}</span>`)
-    .join('');
-
-  return `<div class="flex flex-wrap justify-center gap-1.5">
-    ${tagsHTML}
-  </div>`;
-} },
-      
-    ];
-
-    rows.forEach((row, i) => {
-      const bgClass = i % 2 === 0 ? 'bg-zinc-50/50 dark:bg-zinc-800/30' : 'bg-white dark:bg-transparent';
-      html += `<tr class="${bgClass} hover:bg-orange-50/30 dark:hover:bg-orange-500/10 transition-colors">
-        <td class="p-4 border-b border-zinc-100 font-bold text-zinc-700 dark:text-zinc-300 align-middle">${row.label}</td>
-        ${orgs.map(o => `<td class="p-4 border-b border-zinc-100 text-center align-middle dark:text-zinc-300">${row.get(o)}</td>`).join('')}
-      </tr>`;
-    });
-
-    html += `</tbody></table>`;
-    
-    if (compareList.length < 3) {
-      html += `<p class="text-center text-xs text-zinc-400 mt-8 font-mono border-t border-dashed border-zinc-200 pt-6">
-        <span class="material-symbols-outlined text-sm align-middle mr-1">info</span> 
-        You can add up to ${3 - compareList.length} more organization${3 - compareList.length > 1 ? 's' : ''} to this comparison.
-      </p>`;
-    }
-    
-    body.innerHTML = html;
-    document.getElementById('compareModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeCompareModal() {
-    document.getElementById('compareModal').classList.remove('open');
-    document.body.style.overflow = 'auto';
-  }
-  // Filters
-
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
- main
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const cat = document.getElementById('categoryFilter').value;
@@ -1774,7 +1664,7 @@ if(org.ideas){
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
 
-    renderOrgs();
+    renderOrgs(true);
   }
 
   window.clearAllFilters = function() {
@@ -1791,7 +1681,7 @@ if(org.ideas){
     });
 
     filteredOrgs = [...ORGS];
-    renderOrgs();
+    renderOrgs(true);
   };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
@@ -1803,7 +1693,7 @@ if(org.ideas){
   });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
-    renderOrgs();
+    renderOrgs(false);
   });
 
   // Hero Search Link
@@ -1812,20 +1702,6 @@ if(org.ideas){
     document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
     applyFilters();
   });
-
- help-modal
-// Category Chips Filter
-document.querySelectorAll('.filter-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-
-    const text = chip.textContent.trim().toLowerCase();
-
-    // Reset others
-    document.querySelectorAll('.filter-chip').forEach(c => {
-      if (c !== chip) {
-        c.classList.remove('bg-orange-600', 'text-white');
-        c.classList.add('bg-surface-container-highest');
-      }
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
   // language pills, search, and dropdown filters. applyFilters() reads activeChip.
@@ -1859,33 +1735,8 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
       }
 
       applyFilters();
-      main
     });
-
-    const isActive = chip.classList.toggle('bg-orange-600');
-    chip.classList.toggle('text-white');
-    chip.classList.toggle('bg-surface-container-highest');
-
-    // ✅ IMPORTANT: ensure variable exists
-    let filteredOrgs;
-
-  if (!isActive) {
-  filteredOrgs = [...ORGS];
-  } else if (text.includes("bookmarked")) {
-  filteredOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
-  } else if (text.includes("veterans")) {
-  filteredOrgs = ORGS.filter(o => o.years >= 10);
-  } else if (text.includes("newcomers")) {
-  filteredOrgs = ORGS.filter(o => o.years <= 3);
-  } else if (text.includes("low competition")) {
-  filteredOrgs = ORGS.filter(o => o.competition === "chill");
-  } else if (text.includes("high competition")) {
-  filteredOrgs = ORGS.filter(o => o.competition === "high");
-  }
-
-  renderOrgs();
   });
-});
 
   function buildGfiSearchUrl(github) {
     const query = github.includes('/')
@@ -1967,8 +1818,8 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
         `;
         container.appendChild(card);
       });
-    } catch (error) {
-      console.error("GFI render failed:", error);
+    } catch (e) {
+      console.error("GFI render failed:", e);
     }
   }
 
@@ -1984,7 +1835,7 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
 
     try {
       // Simulate real fetch delay
-      await new Promise(resolve => setTimeout(resolve , 1200));
+      await new Promise(r => setTimeout(r, 1200));
       
       // Since no token, we simulate random but realistic growth
       const stars = (Math.random() * 5000 + 1000).toFixed(0);
@@ -1998,10 +1849,9 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
       document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
       
       btn.textContent = 'Stats Updated!';
-    } catch (error) {
-  console.error('Fetch stats failed:', error);
-  btn.textContent = 'Error';
-} finally {
+    } catch (e) {
+      btn.textContent = 'Error';
+    } finally {
       setTimeout(() => {
         btn.textContent = 'Fetch Live Stats';
         btn.disabled = false;
@@ -2031,80 +1881,6 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
     });
   }
-  function openHelpModal() {
-    document.getElementById('helpModal').classList.add('open');
-  }
-
-  function closeHelpModal() {
-    document.getElementById('helpModal').classList.remove('open');
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const btn = document.getElementById('helpBtn');
-    if (btn) btn.addEventListener('click', openHelpModal);
-  });
-
-  document.addEventListener('keydown', function(e) {
-    const tag = (document.activeElement && document.activeElement.tagName) || '';
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
-
-    if (e.key === '?') {
-      e.preventDefault();
-      const isOpen = document.getElementById('helpModal').classList.contains('open');
-      isOpen ? closeHelpModal() : openHelpModal();
-    }
-    if (e.key === 'Escape') {
-      closeHelpModal();
-    }
-  });
 </script>
-<div class="modal-bg" id="helpModal">
-  <div class="modal">
-    <button class="close-btn"
-      onclick="document.getElementById('helpModal').classList.remove('open')">
-      ✕
-    </button>
-
-    <div class="modal-header">
-      <h2>Keyboard Shortcuts</h2>
-      <p>Quick navigation for power users</p>
-    </div>
-
-    <div class="modal-body">
-<table style="width:100%; font-size:14px;">
-  <thead>
-    <tr>
-      <th>Key</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>← →</td><td>Move focus between cards</td></tr>
-    <tr><td>Enter</td><td>Open focused card</td></tr>
-    <tr><td>C</td><td>Toggle compare</td></tr>
-    <tr><td>Esc</td><td>Close modal</td></tr>
-    <tr><td>?</td><td>Toggle help</td></tr>
-  </tbody>
-</table>
-</div>
-  </div>
-</div>
-<button id="helpBtn"
-  style="
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 9999;
-    width: 44px;
-    height: 44px;
-    background: #f97316;
-    color: white;
-    border-radius: 50%;
-    border: none;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;">
-  ?
-</button>
 </body>
 </html>

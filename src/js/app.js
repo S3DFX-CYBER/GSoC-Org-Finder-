@@ -1,6 +1,18 @@
 /* global ORGS */
 
 // ══════════════════════════════════════════════
+// HTML ESCAPING UTILITY
+// ══════════════════════════════════════════════
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+// ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
 (function(){
@@ -101,7 +113,7 @@ const AN = {
   trackSearch(t) {
     if (t.length > 1) {
       this.inc('searches');
-      this.push('sterms', t.toLowerCase().trim());
+      this.push('sterms', escapeHtml(t.toLowerCase().trim()));
     }
   },
   trackCat(c) {

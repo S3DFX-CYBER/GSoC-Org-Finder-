@@ -1381,13 +1381,13 @@
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${logoUrl}" onerror="handleImgError(this, '${escapeHtml(org.name)}')" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain rounded-lg" />
+            <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${org.years}y Veteran</span>
             <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
-            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" onclick="toggleBookmark(event, '${escapeHtml(org.name)}')">
+            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-org-name="${escapeHtml(org.name)}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
           </div>
@@ -1401,14 +1401,36 @@
         </div>
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
           <div class="flex items-center gap-3">
-             <button onclick="toggleCompare(event, '${escapeHtml(org.name)}')" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+             <button data-org-name="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-          <button onclick="openModal(${ORGS.indexOf(org)})" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+          <button data-org-index="${ORGS.indexOf(org)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
       `;
       grid.appendChild(card);
+      
+      // Bind event listeners after inserting into DOM
+      const img = card.querySelector('img');
+      const bookmarkBtn = card.querySelector('.bookmark-btn');
+      const compareBtn = card.querySelector('button[data-org-name]');
+      const viewBtn = card.querySelector('button[data-org-index]');
+      
+      img.addEventListener('error', function() {
+        handleImgError(this, this.dataset.orgName);
+      });
+      
+      bookmarkBtn.addEventListener('click', function(e) {
+        toggleBookmark(e, this.dataset.orgName);
+      });
+      
+      compareBtn.addEventListener('click', function(e) {
+        toggleCompare(e, this.dataset.orgName);
+      });
+      
+      viewBtn.addEventListener('click', function() {
+        openModal(parseInt(this.dataset.orgIndex));
+      });
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
@@ -1453,13 +1475,25 @@
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${logoUrl}" onerror="handleImgError(this, '${escapeHtml(org.name)}')" class="w-full h-full object-contain" />
+          <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${org.years}y · ${org.competition}</p>
-        <button onclick="toggleCompare(null, '${escapeHtml(org.name)}')" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
+        <button data-org-name="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
       container.appendChild(item);
+      
+      // Bind event listeners after inserting into DOM
+      const img = item.querySelector('img');
+      const removeBtn = item.querySelector('button[data-org-name]');
+      
+      img.addEventListener('error', function() {
+        handleImgError(this, this.dataset.orgName);
+      });
+      
+      removeBtn.addEventListener('click', function() {
+        toggleCompare(null, this.dataset.orgName);
+      });
     });
 
     // Add empty slots
@@ -1676,10 +1710,20 @@
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 
     const safeIdeasUrl = validateUrl(org.ideas);
-    const safeRepoUrl = `https://github.com/${encodeURIComponent(org.github)}`;
+    const [owner, repo] = org.github.split('/');
+    const safeRepoUrl = `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
 
-    document.getElementById('mIdeasBtn').href = safeIdeasUrl;
-    document.getElementById('mRepoBtn').href = safeRepoUrl;
+    const mIdeasBtn = document.getElementById('mIdeasBtn');
+    const mRepoBtn = document.getElementById('mRepoBtn');
+    
+    if (safeIdeasUrl) {
+      mIdeasBtn.href = safeIdeasUrl;
+      mIdeasBtn.style.display = '';
+    } else {
+      mIdeasBtn.style.display = 'none';
+    }
+    
+    mRepoBtn.href = safeRepoUrl;
 
 // Copy link button
 const oldCopy = document.getElementById('mIdeasCopyBtn');

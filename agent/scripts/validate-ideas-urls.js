@@ -10,10 +10,10 @@
  * Usage: node agent/scripts/validate-ideas-urls.js
  */
 
-const ORGS = require("../../src/js/org.js");
+const ORGS = require('../../src/js/org.js');
 
-console.log("Validating Ideas URLs for GSoC Organizations\n");
-console.log("═".repeat(60));
+console.log('Validating Ideas URLs for GSoC Organizations\n');
+console.log('═'.repeat(60));
 
 let validCount = 0;
 let invalidCount = 0;
@@ -41,19 +41,19 @@ function validateUrl(url) {
 
     // Add https:// only if no protocol scheme is present
     // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
-    if (!testUrl.includes("://")) {
-      testUrl = "https://" + testUrl;
+    if (!testUrl.includes('://')) {
+      testUrl = 'https://' + testUrl;
     }
 
     const urlObj = new URL(testUrl);
 
     // Check protocol
-    if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
+    if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
       return { valid: false, reason: `Invalid protocol: ${urlObj.protocol}` };
     }
 
     // Track protocol usage
-    if (urlObj.protocol === "http:") {
+    if (urlObj.protocol === 'http:') {
       httpCount++;
     } else {
       httpsCount++;
@@ -62,7 +62,7 @@ function validateUrl(url) {
     // Check for placeholder URLs
     if (isPlaceholderUrl(url)) {
       placeholderCount++;
-      return { valid: true, warning: "Placeholder/Generic URL" };
+      return { valid: true, warning: 'Placeholder/Generic URL' };
     }
 
     return { valid: true };
@@ -101,8 +101,8 @@ ORGS.forEach((org, index) => {
 });
 
 // Print summary
-console.log("═".repeat(60));
-console.log("\n📊 Validation Summary\n");
+console.log('═'.repeat(60));
+console.log('\n📊 Validation Summary\n');
 console.log(`Total Organizations: ${ORGS.length}`);
 console.log(`✅ Valid URLs:        ${validCount}`);
 console.log(`❌ Invalid URLs:      ${invalidCount}`);
@@ -114,15 +114,13 @@ console.log(`  🔓 HTTP:  ${httpCount}`);
 
 // Exit with error code if there are invalid URLs
 if (invalidCount > 0) {
-  console.log("\n⚠️  Some URLs failed validation. Please review and fix them.");
+  console.log('\n⚠️  Some URLs failed validation. Please review and fix them.');
   process.exit(1);
 } else {
-  console.log("\n🎉 All URLs passed validation!");
+  console.log('\n🎉 All URLs passed validation!');
   if (placeholderCount > 0) {
-    console.log(
-      `\nℹ️  Note: ${placeholderCount} placeholder/generic URLs detected.`,
-    );
-    console.log("   Consider updating these with actual project ideas pages.");
+    console.log(`\nℹ️  Note: ${placeholderCount} placeholder/generic URLs detected.`);
+    console.log('   Consider updating these with actual project ideas pages.');
   }
   process.exit(0);
 }

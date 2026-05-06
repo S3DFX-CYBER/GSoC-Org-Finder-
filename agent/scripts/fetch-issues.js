@@ -1,15 +1,15 @@
-const fs = require("fs");
-const ORGS = require("../../src/js/org.js");
+const fs = require('fs');
+const ORGS = require('../../src/js/org.js');
 
 const SEARCH_DELAY_MS = 2200; // Stay under search API secondary limits.
 const MAX_ISSUES_PER_ORG = 3;
 
 function normalizeTargets(orgs) {
   return orgs
-    .filter((org) => typeof org.github === "string" && org.github.trim())
+    .filter((org) => typeof org.github === 'string' && org.github.trim())
     .map((org) => {
       const github = org.github.trim();
-      if (github.includes("/")) {
+      if (github.includes('/')) {
         return {
           name: org.name,
           github,
@@ -34,8 +34,8 @@ async function fetchIssues() {
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
   const headers = {
-    Accept: "application/vnd.github+json",
-    "User-Agent": "gsoc-org-finder-actions",
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'gsoc-org-finder-actions',
   };
 
   if (process.env.GITHUB_TOKEN) {
@@ -47,7 +47,7 @@ async function fetchIssues() {
       const q = encodeURIComponent(target.query);
       const res = await fetch(
         `https://api.github.com/search/issues?q=${q}&per_page=5&sort=updated&order=desc`,
-        { headers },
+        { headers }
       );
 
       if (!res.ok) {
@@ -60,20 +60,20 @@ async function fetchIssues() {
         const mapped = data.items
           .filter(
             (issue) =>
-              issue.state === "open" &&
+              issue.state === 'open' &&
               !seenIssueUrls.has(issue.html_url) &&
-              new Date(issue.updated_at) >= oneYearAgo,
+              new Date(issue.updated_at) >= oneYearAgo
           )
           .slice(0, MAX_ISSUES_PER_ORG)
           .map((issue) => {
-            const orgName = target.github.split("/")[0];
+            const orgName = target.github.split('/')[0];
             return {
               org: target.name,
               github: target.github,
               logo: `https://avatars.githubusercontent.com/${orgName}`,
               title: issue.title,
               url: issue.html_url,
-              repo: issue.repository_url.split("/").slice(-2).join("/"),
+              repo: issue.repository_url.split('/').slice(-2).join('/'),
               labels: issue.labels.map((label) => label.name),
               comments: issue.comments,
               created_at: issue.created_at,
@@ -92,10 +92,10 @@ async function fetchIssues() {
     }
   }
 
-  if (!fs.existsSync("./data")) fs.mkdirSync("./data", { recursive: true });
+  if (!fs.existsSync('./data')) fs.mkdirSync('./data', { recursive: true });
 
   fs.writeFileSync(
-    "./data/issues.json",
+    './data/issues.json',
     JSON.stringify(
       {
         updated_at: new Date().toISOString(),
@@ -103,13 +103,11 @@ async function fetchIssues() {
         issues: results,
       },
       null,
-      2,
-    ),
+      2
+    )
   );
 
-  console.log(
-    `✅ Saved ${results.length} issues from ${targets.length} org targets`,
-  );
+  console.log(`✅ Saved ${results.length} issues from ${targets.length} org targets`);
 }
 
 fetchIssues();

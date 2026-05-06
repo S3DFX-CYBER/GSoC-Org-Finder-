@@ -301,7 +301,6 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 4. **Mobile browsing?** Try portrait mode — everything scrolls smoothly
    
 ## ✨ Contributors
-<<<<<<< HEAD
 <!-- CONTRIBUTORS_START -->
 <a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>

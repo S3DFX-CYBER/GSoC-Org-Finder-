@@ -1519,6 +1519,37 @@
     renderWatchlist();
   }
 
+  const insights = {
+    'apache software foundation': "Focus on Kafka, distributed logs, and system design. Start with beginner issues tagged 'good-first-issue'.",
+    'google': "Strengthen DSA + system design. Contribute to TensorFlow or Chromium.",
+    'cncf': "Prioritize Go and Kubernetes. Focus on cloud-native patterns and microservices.",
+    'django software foundation': "Master Python and Django internals. Check their 'easy pickings' issues.",
+    'wikimedia foundation': "Strong focus on PHP and MediaWiki. Great for those interested in open knowledge systems.",
+    'mozilla': "Contribute to Firefox or Rust projects. Deep dive into browser engine architecture.",
+    'linux foundation': "Focus on C and kernel development. Deep systems programming knowledge is key.",
+    'python software foundation': "Master CPython internals and core library modules. High competition but very rewarding.",
+    'tensorflow': "Deep knowledge of ML/DL required. Focus on C++ or Python API contributions.",
+    'kde community': "Excellent for C++ and Qt developers. Great community for first-time contributors.",
+  };
+
+  function updateInsight(orgName) {
+    const aiText = document.getElementById("aiInsightText");
+    if (!aiText) return;
+    
+    const orgKey = orgName.toLowerCase();
+    const insight = insights[orgKey] || `Focus on mastering the core tech stack of ${orgName}. Start with beginner issues tagged 'good-first-issue' to increase your acceptance odds for GSoC 2026.`;
+    
+    aiText.innerHTML = `
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-white opacity-80 mt-1">auto_awesome</span>
+        <div>
+          <p class="font-bold text-white text-xs mb-1">${orgName}</p>
+          <p class="text-orange-100 leading-relaxed">${insight}</p>
+        </div>
+      </div>
+    `;
+  }
+
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
     if (!container) return;
@@ -1528,53 +1559,61 @@
     
     if (bookmarks.length === 0) {
       container.innerHTML = `
-        <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
-          <p class="text-zinc-400 italic">Your watchlist is empty. Star organizations to track them here.</p>
+        <div class="text-center py-12 border border-dashed border-zinc-200 rounded-2xl animate-fade-up">
+          <span class="material-symbols-outlined text-4xl text-zinc-400">bookmark</span>
+          <p class="mt-4 text-zinc-600 font-medium">No organizations in your watchlist</p>
+          <p class="text-sm text-zinc-400">Start adding orgs to track deadlines and contributions</p>
         </div>
       `;
-      document.getElementById('aiInsightText').textContent = 'Star organizations to get personalized contribution advice.';
+      document.getElementById('aiInsightText').innerHTML = `
+        <p class="text-orange-100 leading-relaxed">Select organizations to get personalized contribution advice.</p>
+      `;
       return;
     }
 
     bookmarks.forEach(org => {
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
+      item.className = 'bg-white p-5 rounded-2xl border border-zinc-100 hover:shadow-md transition-all cursor-pointer group animate-fade-up';
+      item.onclick = () => updateInsight(org.name);
+      
+      const difficulty = org.codebase === 'beginner' ? 'Easy' : (org.codebase === 'advanced' ? 'Hard' : 'Medium');
+      const difficultyClass = org.codebase === 'beginner' ? 'text-green-600' : (org.codebase === 'advanced' ? 'text-red-600' : 'text-amber-600');
+      
       item.innerHTML = `
-        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-orange-600">psychology</span>
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-bold text-lg group-hover:text-primary transition-colors">${org.name}</h3>
+            <p class="text-sm text-zinc-500">${org.tags.slice(0, 3).join(', ')}${org.tags.length > 3 ? '...' : ''}</p>
+          </div>
+          <button onclick="toggleBookmark(event, '${org.name}')" class="text-zinc-400 hover:text-red-500 hover:scale-110 transition-all p-1">
+            <span class="material-symbols-outlined text-xl">delete</span>
+          </button>
         </div>
-        <div class="flex-1 w-full">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${org.name}</h4>
-            <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
-          </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${org.desc}</p>
-          <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${org.github}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${org.competition}</span>
-            <button onclick="toggleBookmark(event, '${org.name}')" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
-          </div>
+
+        <div class="mt-4 flex items-center gap-4 text-xs text-zinc-500">
+          <span class="flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-xs">signal_cellular_alt</span> Difficulty: <span class="${difficultyClass}">${difficulty}</span></span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> Last Active: ${org.years}y Veteran</span>
+        </div>
+
+        <div class="mt-4 flex gap-3">
+          <button onclick="event.stopPropagation(); window.open('https://github.com/${org.github}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22', '_blank')" class="px-4 py-2 text-xs bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-sm">View Issues</button>
+          <button onclick="event.stopPropagation(); openModal('${org.name}')" class="px-4 py-2 text-xs border border-zinc-200 rounded-xl font-bold hover:bg-zinc-50 transition-colors">Prepare Proposal</button>
         </div>
       `;
       container.appendChild(item);
     });
-
-    // Data-driven AI Insight
-    const allTags = bookmarks.flatMap(o => o.tags);
-    const topTag = [...new Set(allTags)].sort((a,b) => allTags.filter(t => t===b).length - allTags.filter(t => t===a).length)[0];
-    const skillFocus = topTag ? `Focus on mastering **${topTag}**` : "Start contributing to Good First Issues";
     
-    document.getElementById('aiInsightText').innerHTML = `
-      <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-sm">sparkles</span>
-        <span>Insight: Your watchlist highlights a strong interest in <strong>${topTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
-      </span>
-    `;
+    // Initial insight for the first bookmarked org
+    if (bookmarks.length > 0) {
+      updateInsight(bookmarks[0].name);
+    }
   }
 
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
+    updateInsight(name);
+
 
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${org.cat.toUpperCase()}</span>

@@ -301,6 +301,7 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 4. **Mobile browsing?** Try portrait mode — everything scrolls smoothly
    
 ## ✨ Contributors
+<<<<<<< HEAD
 <!-- CONTRIBUTORS_START -->
 <a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
@@ -328,6 +329,14 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
+
+<a href="https://github.com/Atif-Azmi" target="_blank">
+  <img src="https://avatars.githubusercontent.com/u/255070603?v=4" 
+       alt="Atif-Azmi" 
+       width="60" 
+       height="60" 
+       style="border-radius: 50%; border: 2px solid #00ff00;" />
+</a>
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

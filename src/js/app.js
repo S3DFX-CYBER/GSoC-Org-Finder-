@@ -537,7 +537,7 @@ function applyFilters(){
     if(search&&!txt.includes(search))return false;
     if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false;}
     if(compF&&o.competition!==compF)return false;
-HEAD
+
     // Use proper language matching with LANGUAGE_MAP
     if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
 
@@ -871,9 +871,9 @@ function _resetFilters(){
   ['searchInput','catFilter','langFilter','yearsFilter','compFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('sortSelect').value='alpha';
   pills.clear();chips.clear();
-HEAD
+
   document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip'});
+  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
   renderSelectedLanguages();
 
   document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));

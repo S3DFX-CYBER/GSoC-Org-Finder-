@@ -64,36 +64,82 @@ const cdTimer=setInterval(updateCountdown,1000);
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
-const AN={
-  g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d}catch{return d}},
-  s(k,v){
-    try{
-      localStorage.setItem('gaf_'+k,JSON.stringify(v));
-    }catch(err){
-      console.warn('Analytics storage write failed for key:',k,err);
+const AN = {
+  g(k, d) {
+    try {
+      return JSON.parse(localStorage.getItem('gaf_' + k)) ?? d;
+    } catch {
+      return d;
     }
   },
-  inc(k){this.s(k,(this.g(k,0)+1))},
-  push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max))},
-  today(){return new Date().toISOString().slice(0,10)},
-  trackVisit(){
+  s(k, v) {
+    try {
+      localStorage.setItem('gaf_' + k, JSON.stringify(v));
+    } catch (err) {
+      console.warn('Analytics storage write failed for key:', k, err);
+    }
+  },
+  inc(k) {
+    this.s(k, this.g(k, 0) + 1);
+  },
+  push(k, v, max = 20) {
+    const a = this.g(k, []);
+    a.unshift(v);
+    this.s(k, a.slice(0, max));
+  },
+  today() {
+    return new Date().toISOString().slice(0, 10);
+  },
+  trackVisit() {
     this.inc('total');
-    const td=this.today(),daily=this.g('daily',{});
-    daily[td]=(daily[td]||0)+1;this.s('daily',daily);
-    if(!sessionStorage.getItem('gaf_s'))sessionStorage.setItem('gaf_s',Date.now());
+    const td = this.today();
+    const daily = this.g('daily', {});
+    daily[td] = (daily[td] || 0) + 1;
+    this.s('daily', daily);
+    if (!sessionStorage.getItem('gaf_s')) sessionStorage.setItem('gaf_s', Date.now());
   },
-  trackSearch(t){if(t.length>1){this.inc('searches');this.push('sterms',t.toLowerCase().trim())}},
-  trackCat(c){if(c){this.inc('filters');const cf=this.g('cats',{});cf[c]=(cf[c]||0)+1;this.s('cats',cf)}},
-  trackOrg(n){this.inc('views');const oc=this.g('orgs',{});oc[n]=(oc[n]||0)+1;this.s('orgs',oc)},
-  todayVisits(){return this.g('daily',{})[this.today()]||0},
-  sessionTime(){
-    const s=sessionStorage.getItem('gaf_s');if(!s)return'—';
-    const sec=Math.floor((Date.now()-parseInt(s))/1000);
-    return sec<60?sec+'s':Math.floor(sec/60)+'m'+(sec%60)+'s';
+  trackSearch(t) {
+    if (t.length > 1) {
+      this.inc('searches');
+      this.push('sterms', t.toLowerCase().trim());
+    }
   },
-  topCats(){return Object.entries(this.g('cats',{})).sort((a,b)=>b[1]-a[1]).slice(0,6)},
-  topOrgs(){return Object.entries(this.g('orgs',{})).sort((a,b)=>b[1]-a[1]).slice(0,5)},
-  topTerms(){const f={};this.g('sterms',[]).forEach(t=>{f[t]=(f[t]||0)+1});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,12)}
+  trackCat(c) {
+    if (c) {
+      this.inc('filters');
+      const cf = this.g('cats', {});
+      cf[c] = (cf[c] || 0) + 1;
+      this.s('cats', cf);
+    }
+  },
+  trackOrg(n) {
+    this.inc('views');
+    const oc = this.g('orgs', {});
+    oc[n] = (oc[n] || 0) + 1;
+    this.s('orgs', oc);
+  },
+  todayVisits() {
+    return this.g('daily', {})[this.today()] || 0;
+  },
+  sessionTime() {
+    const s = sessionStorage.getItem('gaf_s');
+    if (!s) return '—';
+    const sec = Math.floor((Date.now() - parseInt(s)) / 1000);
+    return sec < 60 ? sec + 's' : Math.floor(sec / 60) + 'm' + (sec % 60) + 's';
+  },
+  topCats() {
+    return Object.entries(this.g('cats', {})).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  },
+  topOrgs() {
+    return Object.entries(this.g('orgs', {})).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  },
+  topTerms() {
+    const f = {};
+    this.g('sterms', []).forEach((t) => {
+      f[t] = (f[t] || 0) + 1;
+    });
+    return Object.entries(f).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  },
 };
 AN.trackVisit();
 
@@ -150,17 +196,37 @@ function renderTrending(){
   const scroll=document.getElementById('trendingScroll');
   if(!top.length){sec.style.display='none';return;}
   sec.style.display='block';
-  scroll.innerHTML=top.map(([name,views],i)=>{
+  scroll.innerHTML='';
+
+  top.forEach(([name,views],i)=>{
     const o=ORGS.find(x=>x.name===name);
-    if(!o)return'';
-    return`<div class="trend-card" onclick="openModal(${ORGS.indexOf(o)})">
-      <div class="trend-rank">${i+1}</div>
-      <div class="trend-info">
-        <div class="trend-name">${name}</div>
-        <div class="trend-views">${views} view${views!==1?'s':''} · ${catLabel(o.cat)}</div>
-      </div>
-    </div>`;
-  }).join('');
+    if(!o)return;
+
+    const card=document.createElement('div');
+    card.className='trend-card';
+    card.onclick=()=>openModal(ORGS.indexOf(o));
+
+    const rank=document.createElement('div');
+    rank.className='trend-rank';
+    rank.textContent=i+1;
+
+    const info=document.createElement('div');
+    info.className='trend-info';
+
+    const nameEl=document.createElement('div');
+    nameEl.className='trend-name';
+    nameEl.textContent=name;
+
+    const viewsEl=document.createElement('div');
+    viewsEl.className='trend-views';
+    viewsEl.textContent=`${views} view${views!==1?'s':''} · ${catLabel(o.cat)}`;
+
+    info.appendChild(nameEl);
+    info.appendChild(viewsEl);
+    card.appendChild(rank);
+    card.appendChild(info);
+    scroll.appendChild(card);
+  });
 }
 
 // ══════════════════════════════════════════════

@@ -1,0 +1,51 @@
+name: 🔄 Update NSoC Leaderboard
+
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - reopened
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-nsoc-leaderboard
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Update leaderboard data
+        env:
+          USERNAME: ${{ github.event.pull_request.user.login }}
+          ACTION: ${{ github.event.action }}
+          MERGED: ${{ github.event.pull_request.merged }}
+        run: |
+          node .github/scripts/update-leaderboard.js
+
+      - name: Commit leaderboard changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/nsoc-leaderboard.json
+
+          if git diff --cached --quiet; then
+            echo "No leaderboard changes detected"
+            exit 0
+          fi
+
+          git commit -m "chore: update NSoC leaderboard [skip actions]"
+          git push

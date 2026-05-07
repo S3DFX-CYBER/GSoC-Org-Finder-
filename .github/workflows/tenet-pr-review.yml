@@ -35,16 +35,20 @@ jobs:
         run: pip install -r agent/tenet_agent/requirements.txt
 
       - name: Check TENET_AI_KEY is configured
+        id: key_check
         run: |
           if [ -z "$TENET_AI_KEY" ]; then
             echo "⚠️  TENET_AI_KEY is not set — skipping review."
             echo "Add it under Settings → Secrets and variables → Actions."
-            exit 0
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
           fi
         env:
           TENET_AI_KEY: ${{ secrets.TENET_AI_KEY }}
 
       - name: Run TENET PR Review
+        if: steps.key_check.outputs.has_key == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TENET_AI_KEY: ${{ secrets.TENET_AI_KEY }}

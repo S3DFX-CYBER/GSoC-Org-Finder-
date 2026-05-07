@@ -39,7 +39,7 @@ function computeRoute(pathname, pathParams) {
       if (!Array.isArray(value)) {
         const matcher = turnValueToRegExp(value);
         if (matcher.test(result)) {
-          result = result.replace(matcher, `/[${key}]`);
+          result = result.replaceAll(matcher, `/[${key}]`);
         }
       }
     }
@@ -47,7 +47,7 @@ function computeRoute(pathname, pathParams) {
       if (Array.isArray(value)) {
         const matcher = turnValueToRegExp(value.join("/"));
         if (matcher.test(result)) {
-          result = result.replace(matcher, `/[...${key}]`);
+          result = result.replaceAll(matcher, `/[...${key}]`);
         }
       }
     }
@@ -60,7 +60,7 @@ function turnValueToRegExp(value) {
   return new RegExp(`/${escapeRegExp(value)}(?=[/?#]|$)`);
 }
 function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 function getScriptSrc(props) {
   if (props.scriptSrc) {

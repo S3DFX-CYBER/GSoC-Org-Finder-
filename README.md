@@ -4,6 +4,10 @@
 <img width="1896" height="800" alt="image" src="https://github.com/user-attachments/assets/414e4b55-ec50-4290-97a6-678f23e7c96e" />
 
 **Live site → [https://findmygsoc.vercel.app/](https://findmygsoc.vercel.app/)**
+
+Join our Channel for community-related questions and feedback
+**Discord → [https://discord.gg/mgWV3xSV7](https://discord.gg/mgWV3xSV7)**
+
 ---
 
 ## ✨ What is this?
@@ -14,49 +18,82 @@ No sign-up. No install. No build step. Just open and explore.
 
 ---
 
+## 📖 Table of Contents
+- [What is this?](#-what-is-this)
+- [Features](#-features)
+- [Flowchart](#-flowchart)
+- [Project Structure](#-project-structure)
+- [URL Validation](#-url-validation)
+- [Deploy Your Own](#-deploy-your-own)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [Key Dates](#-gsoc-2026-key-dates)
+- [Tips for Users](#-tips-for-users)
+- [License](#-license)
+
+---
+
+## 📈 Flowchart
+
+<img width="8192" height="1328" alt="User Action Flow for Org-2026-05-05-154517" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" />
+
+---
+
 ## 🎯 Features
 
+### Features at a glance
+
+| Feature | Details |
+|---------|---------|
+| 🔍 Search | Full-text across 185 orgs |
+| 🏷️ Filters | 15+ domains, 30+ languages |
+| ⚖️ Compare | Up to 3 organizations side-by-side |
+| 🟢 Good Issues | Browse beginner-friendly issues |
+| ⌨️ Keyboard Nav | Full accessibility support |
+| 🌙 Dark Mode | Fully themed |
+| 📱 Responsive | Mobile to desktop |
+
 ### 🔍 Discovery & Filtering
-- **Full-text search** by org name, technology, or topic
-- **Domain filter** — Science, Web, Security, AI, OS, Media, Infrastructure, and more
-- **Language filter** — Python, Rust, Go, C++, Java, JavaScript, Haskell, Julia, and more
-- **Multi-select language pills** — stack multiple languages for combined matching
-- **Quick chips** — one-tap filters for Veterans only, Newcomers, High/Low competition, Actively Maintained
-- **Sort by** — Alphabetical, Most Experienced, Newcomers First, Least Competitive, Most Stars, Good First Issues
+- 🔎 **Full-text search** by org name, technology, or topic
+- 🏷️ **Domain filter** — Science, Web, Security, AI, OS, Media, Infrastructure, and more
+- 💻 **Language filter** — Python, Rust, Go, C++, Java, JavaScript, Haskell, Julia, and more
+- 🎯 **Multi-select language pills** — stack multiple languages for combined matching
+- ⚡ **Quick chips** — one-tap filters for Veterans only, Newcomers, High/Low competition, Actively Maintained
+- 📊 **Sort by** — Alphabetical, Most Experienced, Newcomers First, Least Competitive, Most Stars, Good First Issues
 
 ### 📊 Live GitHub Data
-- **Live GitHub stats** — Stars, Forks, Open Issues, Last Commit — fetched via a serverless proxy
-- **Good First Issues count** — shown on every card and sortable, perfect for finding beginner-friendly orgs
-- **Activity badge** — Active / Moderate / Low based on last commit date
-- **Smart repo links** — single-project orgs link directly to their repo; umbrella orgs (Apache, OWASP, KDE…) link to their GitHub org page
+- 🌟 **Live GitHub stats** — Stars , Forks , Open Issues , Last Commit  — fetched via a serverless proxy 
+- 🟢 **Good First Issues count** — shown on every card and sortable, perfect for finding beginner-friendly orgs 
+- 🎖️ **Activity badge** — Active  / Moderate  / Low  based on last commit date
+- 🔗 **Smart repo links** — single-project orgs link directly to their repo ; umbrella orgs (Apache, OWASP, KDE…) link to their GitHub org page 
 
 ### 📋 Organization Detail Modal
-- Full description, tech stack tags, "Best Fit For" profiles
-- GSoC participation timeline (every year the org has participated)
-- Key metrics: years in GSoC, competition level, first year, Good First Issues count
-- **Project Ideas Link** — direct link to organization's ideas page (with security-hardened URL validation)
-- Fallback message when no ideas link is available
-- One-click add to comparison
+- 📖 Full description, tech stack tags,  "Best Fit For" profiles
+- 📅 GSoC participation timeline (every year the org has participated)
+- 📈 Key metrics: years in GSoC, competition level, first year, Good First Issues count
+- 💡 **Project Ideas Link** — direct link to organization's ideas page (with security-hardened 🔒 URL validation)
+- ⚠️ Fallback message when no ideas link is available
+- ➕ One-click add to comparison
 
 ### ⚖️ Comparison Mode
-- Select up to **3 organizations** side-by-side
-- Compares: category, GSoC years, competition, stars, forks, open issues, last commit, Good First Issues, languages
-- Green/red highlighting for best and worst values across each metric
+- 🏆 Select up to **3 organizations** side-by-side
+- 📊 Compares: category, GSoC years, competition, stars, forks, open issues, last commit, 🟢 Good First Issues, languages
+- 🟢 Green/🔴 red highlighting for best and worst values across each metric
 
 ### 🟢 Good First Issues Page
-- Dedicated full-screen page listing **Good First Issues from all 185 orgs**
-- Fetched live via the GitHub API proxy (uses your token, respects rate limits)
-- Filter by category, language, or free-text search
-- Each issue links directly to GitHub — sorted newest first
-- Shows org logo, issue title, labels, comment count, and relative date
+- 📄 Dedicated full-screen page listing **Good First Issues from all 185 orgs** 
+- ⚡ Fetched live via the GitHub API proxy (uses your token , respects rate limits )
+- 🔎 Filter by category , language , or free-text search 
+- 🔗 Each issue links directly to GitHub — sorted newest first 
+- 🖼️ Shows org logo, issue title, labels , comment count , and relative date 
 
 ### ⏱ Deadline Countdown
-- Live countdown banner to application open date (March 16, 2026)
-- Automatically switches to "Applications Closing In" during the open window (Mar 16 – Apr 8)
+- ⏰ Live countdown banner to application open date (March 16, 2026)
+- 🔄 Automatically switches to "Applications Closing In" during the open window (Mar 16 – Apr 8)
 
 ### 🔥 Trending Section
-- Shows the most-viewed organizations based on your own browsing history
-- Powered by localStorage analytics — zero data sent to any server
+- 📈 Shows the most-viewed organizations based on your own browsing history 👀
+- 💾 Powered by localStorage analytics — zero data sent to any server (100% private)
 
 ### ⌨️ Keyboard Navigation
 - `↑ ↓ ← →` — move focus between cards
@@ -80,7 +117,7 @@ No sign-up. No install. No build step. Just open and explore.
 
 ---
 
-## 🗂️ All 185 GSoC 2026 Organizations
+## 🗂️ All 184 GSoC 2026 Organizations
 
 | Domain | Examples |
 |---|---|
@@ -147,8 +184,6 @@ This script checks:
 
 Run this before committing changes to `src/js/org.js` to catch invalid URLs early.
 
----
-
 ## 🚀 Deploy Your Own
 
 ### 1. Fork & Clone
@@ -178,8 +213,22 @@ For full functionality locally, run `vercel dev` to start the Edge Function.
 
 ---
 
-## 🤝 Contributing
+## 🐛 Troubleshooting
 
+**GitHub stats not loading?**
+- Set `GITHUB_TOKEN` environment variable
+- Check rate limits: `curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/rate_limit`
+
+**Ideas link not working?**
+- Run `node agent/scripts/validate-ideas-urls.js` to check all URLs
+
+**Issues page empty?**
+- GitHub API might be rate-limited; wait 1 hour and refresh
+
+---
+
+## 🤝 Contributing
+Kindly read the Contributor Guide before contributing!!!
 Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
 
 1. Fork the repo
@@ -239,11 +288,50 @@ The Edge Function proxies GitHub API calls so your token never hits the client.
 | `GET /api/github?repo=owner/repo&gfi=1&issues=1` | Full list of up to 30 open Good First Issues |
 
 All responses are cached in-memory for **1 hour** on the Edge runtime.
+## We are officially a Project for Nexus Spring of Code 2026
+<img width="180" height="180" alt="image" src="https://github.com/user-attachments/assets/328b59f6-5a19-42bf-ad40-4ade9d86b4d4" />
 
----
+## We thank all our Contributors for improving this project
 
+## 💡 Tips for Users
+
+1. **New to GSoC?** Start with "Newcomers First" filter + sort by Good First Issues
+2. **Experienced?** Check "Veterans" filter + sort by Competition for challenges
+3. **Building a comparison?** Use keyboard shortcut `C` to quickly add orgs
+4. **Mobile browsing?** Try portrait mode — everything scrolls smoothly
+   
+## ✨ Contributors
+<!-- CONTRIBUTORS_START -->
+<a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
+<a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
+<a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
+<a href="https://github.com/Chizaram-Igolo"><img src="https://github.com/Chizaram-Igolo.png" width="50px" alt="Chizaram-Igolo" /></a>
+<a href="https://github.com/Dj-Shortcut"><img src="https://github.com/Dj-Shortcut.png" width="50px" alt="Dj-Shortcut" /></a>
+<a href="https://github.com/Harshith1702"><img src="https://github.com/Harshith1702.png" width="50px" alt="Harshith1702" /></a>
+<a href="https://github.com/Itheshjs"><img src="https://github.com/Itheshjs.png" width="50px" alt="Itheshjs" /></a>
+<a href="https://github.com/Kuldeeps1505"><img src="https://github.com/Kuldeeps1505.png" width="50px" alt="Kuldeeps1505" /></a>
+<a href="https://github.com/Manasa-2303"><img src="https://github.com/Manasa-2303.png" width="50px" alt="Manasa-2303" /></a>
+<a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="50px" alt="S3DFX-CYBER" /></a>
+<a href="https://github.com/SHUBHAM2775"><img src="https://github.com/SHUBHAM2775.png" width="50px" alt="SHUBHAM2775" /></a>
+<a href="https://github.com/ShailiBoddula"><img src="https://github.com/ShailiBoddula.png" width="50px" alt="ShailiBoddula" /></a>
+<a href="https://github.com/VaibhavMP"><img src="https://github.com/VaibhavMP.png" width="50px" alt="VaibhavMP" /></a>
+<a href="https://github.com/a638011"><img src="https://github.com/a638011.png" width="50px" alt="a638011" /></a>
+<a href="https://github.com/abdussamad567"><img src="https://github.com/abdussamad567.png" width="50px" alt="abdussamad567" /></a>
+<a href="https://github.com/anirudh645"><img src="https://github.com/anirudh645.png" width="50px" alt="anirudh645" /></a>
+<a href="https://github.com/bhaktiyadav08"><img src="https://github.com/bhaktiyadav08.png" width="50px" alt="bhaktiyadav08" /></a>
+<a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
+<a href="https://github.com/kiranShamsHere"><img src="https://github.com/kiranShamsHere.png" width="50px" alt="kiranShamsHere" /></a>
+<a href="https://github.com/pranav-pachn"><img src="https://github.com/pranav-pachn.png" width="50px" alt="pranav-pachn" /></a>
+<a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
+<a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>
+<a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
+<!-- CONTRIBUTORS_END -->
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.
-
 Share it with anyone applying! Applications open **March 16, 2026**. 🙌
+<center>
+  
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
+
+</center>

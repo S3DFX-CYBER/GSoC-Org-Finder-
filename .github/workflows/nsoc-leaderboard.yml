@@ -1,0 +1,50 @@
+name: 📊 NSoC Contributor Leaderboard
+
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - reopened
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  leaderboard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate leaderboard comment
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+          PR_STATE: ${{ github.event.pull_request.state }}
+          PR_ACTION: ${{ github.event.action }}
+        run: |
+          node .github/scripts/generate-leaderboard-comment.js > comment.md
+
+      - name: Post PR comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            const body = fs.readFileSync('comment.md', 'utf8');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });

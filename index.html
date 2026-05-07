@@ -19,16 +19,20 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "FindMyGSoC",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Web",
+      "@type": "WebApplication",
+      "name": "FindMyGSoC — GSoC 2026 Org Finder",
       "url": "https://findmygsoc.vercel.app/",
-      "description": "Live GSoC 2026 organization finder and good first issue tracker for student contributors.",
+      "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "S3DFX-CYBER"
       }
     }
   </script>
@@ -231,7 +235,16 @@
     .dark .text-on-surface-variant { color: #a1a1aa !important; }
     .dark .border-zinc-100 { border-color: #3f3f46 !important; }
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+
+    /* Light mode - Language pills active state */
+    .pill.active {
+      background: rgba(157, 67, 0, 0.1) !important;
+      border-color: #9d4300 !important;
+      color: #9d4300 !important;
+      font-weight: 600;
+    }
 
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
@@ -255,7 +268,9 @@
       border-color: #f97316 !important; 
       color: #f97316 !important; 
     }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip).active { 
+    /* Higher-specificity rule beats .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) (0,5,2) */
+    .dark .pill.active,
+    .dark section .flex.flex-wrap.gap-2 > button.pill.active {
       background: rgba(251, 146, 60, 0.2) !important;
       border-color: #fb923c !important;
       color: #fb923c !important;
@@ -291,6 +306,10 @@
     .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
     .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
     .dark .modal-repo-link:hover { background: #3f3f46; }
+    .dark #compareModalBody { color: #e5e7eb; }
+    .dark #compareModalBody .text-zinc-700 { color: #e5e7eb !important; }
+    .dark #compareModalBody .text-zinc-500 { color: #a1a1aa !important; }
+    .dark #compareModalBody .text-zinc-400 { color: #d4d4d8 !important; }
 
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
@@ -316,7 +335,100 @@
     .dark header .text-zinc-600 { color: #a1a1aa !important; }
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
+
+    /* Selected Languages Strip */
+    #selectedLangsStrip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+    }
+    #selectedLangsStrip .empty-state {
+      color: #888;
+      font-style: italic;
+      font-size: 12px;
+    }
+    .selected-lang-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 12px;
+      background: #fff4ec;
+      border: 1.5px solid #ffe0c8;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #d45800;
+    }
+    .unselect-lang-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      background: #ffe0c8;
+      color: #d45800;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 2px;
+    }
+    .unselect-lang-btn:hover {
+      background: #f46b0e;
+      color: white;
+    }
+    .clear-all-langs-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      background: transparent;
+      border: 1.5px dashed #ddd;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+    }
+    .clear-all-langs-btn:hover {
+      border-color: #f46b0e;
+      color: #f46b0e;
+      background: #fff4ec;
+    }
+    /* Dark mode */
+    .dark #selectedLangsStrip .empty-state { color: #8a6a45; }
+    .dark .selected-lang-badge {
+      background: #1c0f05;
+      border-color: #2a1508;
+      color: #f97316;
+    }
+    .dark .unselect-lang-btn {
+      background: #2a1508;
+      color: #f97316;
+    }
+    .dark .unselect-lang-btn:hover {
+      background: #fb923c;
+      color: white;
+    }
+    .dark .clear-all-langs-btn {
+      border-color: #2e1e0a;
+      color: #8a6a45;
+    }
+    .dark .clear-all-langs-btn:hover {
+      border-color: #f97316;
+      color: #fb923c;
+      background: #1c0f05;
+    }
   </style>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F46B0E" />
+  <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
 
@@ -335,7 +447,7 @@
         </div>
         <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
@@ -346,12 +458,36 @@
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <button id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
+    
+      <button id="themeToggleBtn" onclick="toggleTheme()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          dark_mode
+        </span>
       </button>
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+    
+      <!-- HELP BUTTON -->
+      <button id="helpBtn"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="Keyboard shortcuts (?)">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          help
+        </span>
+      </button>
+    
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+    
+        <span class="material-symbols-outlined text-sm">
+          star
+        </span>
+    
+        Star & Contribute
       </a>
+    
     </div>
   </div>
 </header>
@@ -448,27 +584,10 @@
           <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
           <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
         </div>
-        <div class="space-y-4 sm:space-y-5">
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">FEB 19, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Orgs Announced</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">MAR 16, 2026</p><p class="text-sm font-bold text-zinc-500">Contributor Proposals Open</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4">
-            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div><div class="w-0.5 h-10 bg-zinc-200"></div></div>
-            <div><p class="text-[10px] font-bold text-primary">MAR 31, 2026</p><p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">Proposal Submission Deadline</p><p class="text-xs text-zinc-500 mt-1">Submit your project proposals by 11:30 PM!</p></div>
-          </div>
-          <div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div></div>
-            <div><p class="text-[10px] font-bold text-zinc-400">APR 30, 2026</p><p class="text-sm font-bold text-zinc-500">Accepted Projects Announced</p></div>
-          </div>
-        </div>
+        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
         <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500">Deadline countdown</span>
+            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
             <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
           </div>
         </div>
@@ -500,6 +619,27 @@
     <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Scala</button>
     <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">ML/AI</button>
     <button class="lang-chip px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors">Robotics</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
+  </div>
+  <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
+    <span class="empty-state">No languages selected</span>
+  </div>
+  <div class="mt-2 flex items-center gap-2">
+    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+      <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
+    </label>
   </div>
 </section>
 
@@ -541,6 +681,16 @@
     <div class="col-span-full py-20 text-center animate-pulse">
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
+    <div class="text-6xl mb-4">🔍</div>
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
+    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
+    <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
+      Clear All Filters
+    </button>
   </div>
 
   <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
@@ -760,11 +910,11 @@
       <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Decision Tool</span>
       <h2 class="text-4xl font-extrabold font-headline tracking-tighter mt-2 mb-6">Compare Organizations</h2>
       <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
-      <a href="https://findmygsoc.vercel.app" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
+      <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
         <span class="material-symbols-outlined">compare</span> Open Comparison Tool
-      </a>
+      </button>
     </div>
-    <div class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
+    <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
       <div class="grid grid-cols-3 gap-4 text-center">
         <div class="bg-white rounded-xl p-4 border border-zinc-100">
           <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-orange-600">psychology</span></div>
@@ -846,6 +996,20 @@
       <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
+<div class="modal-bg compare-bg" id="compareModal">
+  <div class="modal w-full max-w-5xl">
+    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header pb-4 border-b border-zinc-100">
+      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
+      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+    </div>
+    <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
+      <!-- Injected table -->
     </div>
   </div>
 </div>
@@ -983,15 +1147,200 @@
   let filteredOrgs = [...ORGS];
   let compareList = [];
   const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+  const selectedLanguages = new Set();
+  let matchAllLanguages = false;
+  let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
+  const LANGUAGE_ALIASES = {
+    'python': ['python'],
+    'javascript': ['javascript', 'js'],
+    'typescript': ['typescript', 'ts'],
+    'c/c++': ['c', 'c++', 'cpp'],
+    'java': ['java'],
+    'rust': ['rust'],
+    'go': ['go', 'golang'],
+    'ruby': ['ruby'],
+    'haskell': ['haskell'],
+    'scala': ['scala'],
+    'ml/ai': ['ml', 'ai', 'machine learning', 'artificial intelligence'],
+    'robotics': ['robotics', 'robot', 'ros']
+  };
 
-  // Countdown to March 31 2026 (Proposal Deadline)
-  function updateCountdown(){
-    const deadline=new Date('2026-03-31T23:30:00+05:30');
-    const now=new Date();
-    const diff=deadline-now;
-    if(diff<=0){document.getElementById('countdown').textContent='Deadline passed!';return}
-    const d=Math.floor(diff/864e5),h=Math.floor((diff%864e5)/36e5),m=Math.floor((diff%36e5)/6e4);
-    document.getElementById('countdown').textContent=`${d}d ${h}h ${m}m`;
+  function updateLanguageModeHint() {
+    const hint = document.getElementById('languageLogicHint');
+    if (!hint) return;
+    hint.textContent = matchAllLanguages
+      ? 'Multiple language chips use AND (must match all selected).'
+      : 'Multiple language chips use OR (any selected).';
+  }
+
+  function languageMatchesSelection(tags, lang) {
+    const langKey = lang.toLowerCase();
+    const aliases = LANGUAGE_ALIASES[langKey] || [langKey];
+    // Use exact token matching to prevent false positives like "Go" matching "django"
+    // Tags are split on whitespace, commas, slashes, and plus signs before comparing
+    return aliases.some(alias => {
+      const a = alias.toLowerCase();
+      return tags.some(tag => {
+        const tokens = tag.toLowerCase().split(/[\s,/+]+/);
+        return tokens.includes(a);
+      });
+    });
+  }
+
+  function clearSelectedLanguagePills() {
+    selectedLanguages.clear();
+    document.querySelectorAll('.pill.active').forEach(pill => {
+      pill.classList.remove('active');
+      pill.setAttribute('aria-pressed', 'false');
+    });
+    renderSelectedLanguages();
+  }
+
+  function renderSelectedLanguages() {
+    const container = document.getElementById('selectedLangsStrip');
+    if (!container) return;
+
+    if (selectedLanguages.size === 0) {
+      container.innerHTML = '<span class="empty-state">No languages selected</span>';
+      return;
+    }
+
+    const badges = [...selectedLanguages].map(lang => {
+      return `<span class="selected-lang-badge" data-lang="${lang}">
+        ${lang}
+        <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
+      </span>`;
+    }).join('');
+
+    const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+    container.innerHTML = badges + clearAll;
+  }
+
+  window.unselectLanguage = function(lang) {
+    selectedLanguages.delete(lang);
+    const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
+    if (pillBtn) {
+      pillBtn.classList.remove('active');
+      pillBtn.setAttribute('aria-pressed', 'false');
+    }
+    renderSelectedLanguages();
+    applyFilters();
+  }
+
+  window.clearAllLanguages = function() {
+    selectedLanguages.clear();
+    document.querySelectorAll('.pill.active').forEach(p => {
+      p.classList.remove('active');
+      p.setAttribute('aria-pressed', 'false');
+    });
+    renderSelectedLanguages();
+    applyFilters();
+  }
+
+  // NOTE: toggleLanguageMode removed — the matchAllLanguagesToggle checkbox
+  // uses a direct event listener (line ~1538) and does not use onclick=.
+
+  window.togglePill = function(el) {
+    const langDisplay = el.dataset.lang || '';
+    const langKey = langDisplay.trim().toLowerCase();
+    if (!langKey) return;
+    const isActive = el.classList.toggle('active');
+    el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
+    else selectedLanguages.add(langDisplay);
+    renderSelectedLanguages();
+    applyFilters();
+  };
+
+  // Dynamic timeline milestones
+  const MILESTONES = [
+    { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
+    { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
+    { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
+    { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
+  ].filter(m => !isNaN(m.date.getTime())); 
+
+  function renderTimeline() {
+    const container = document.getElementById('timeline-milestones');
+    if (!container || MILESTONES.length === 0) return;
+
+    try {
+      const now = new Date();
+      if (isNaN(now.getTime())) return;
+
+      let activeIdx = MILESTONES.findIndex(m => m.date > now);
+      if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
+
+      const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+
+      container.innerHTML = MILESTONES.map((m, i) => {
+        const isActive = i === activeIdx;
+        const isLast = i === MILESTONES.length - 1;
+        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        let dateStr;
+        try {
+          dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+        } catch (_) {
+          dateStr = m.date.toISOString().slice(0, 10);
+        }
+
+        if (isActive && !allPast) {
+          return `<div class="flex gap-3 sm:gap-4">
+            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
+            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
+            ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
+          </div>`;
+        } else if (isActive && allPast) {
+          return `<div class="flex gap-3 sm:gap-4">
+            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
+            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
+            <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
+          </div>`;
+        } else {
+          return `<div class="flex gap-3 sm:gap-4 opacity-40">
+            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
+            <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
+            <p class="text-sm font-bold text-zinc-500">${m.label}</p></div>
+          </div>`;
+        }
+      }).join('');
+    } catch (err) {
+      console.warn('[Timeline] renderTimeline failed:', err);
+    }
+  }
+
+  // Countdown to the next upcoming milestone
+  function updateCountdown() {
+    const countdownEl = document.getElementById('countdown');
+    const labelEl = document.getElementById('countdown-label');
+    if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
+
+    try {
+      const now = new Date();
+      if (isNaN(now.getTime())) return;
+
+      const next = MILESTONES.find(m => m.date > now);
+
+      if (!next) {
+        labelEl.textContent = 'GSoC 2026 selection complete';
+        countdownEl.textContent = '🎉 All done!';
+        countdownEl.classList.remove('text-primary');
+        countdownEl.classList.add('text-green-600');
+        return;
+      }
+
+      labelEl.textContent = `Until: ${next.label}`;
+      countdownEl.classList.remove('text-green-600');
+      countdownEl.classList.add('text-primary');
+      const diff = next.date - now;
+      if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
+      const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
+      countdownEl.textContent = `${d}d ${h}h ${m}m`;
+    } catch (err) {
+      console.warn('[Timeline] updateCountdown failed:', err);
+    }
   }
 
   // Organizational Logo Fallbacks
@@ -1012,9 +1361,21 @@
 
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
+    const emptyState = document.getElementById('emptyState');
     if (reset) {
       grid.innerHTML = '';
       visibleCount = 12;
+    }
+
+    if (filteredOrgs.length === 0) {
+      grid.classList.add('hidden');
+      if (emptyState) emptyState.classList.remove('hidden');
+      document.getElementById('orgCount').textContent = '0';
+      document.getElementById('loadMoreContainer').style.display = 'none';
+      return;
+    } else {
+      grid.classList.remove('hidden');
+      if (emptyState) emptyState.classList.add('hidden');
     }
     
     const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
@@ -1116,6 +1477,84 @@
       container.appendChild(empty);
     }
   }
+
+  function renderCompareModal() {
+    const body = document.getElementById('compareModalBody');
+    if (!body) return;
+    const escapeHtml = (value) => String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+    const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
+    if (selectedOrgs.length < 2) {
+      body.innerHTML = `
+        <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
+          <span class="material-symbols-outlined text-4xl text-zinc-300 mb-3">compare_arrows</span>
+          <p class="font-bold text-zinc-700">Select at least 2 organizations to compare.</p>
+          <p class="text-sm text-zinc-500 mt-2">Use the Compare button on organization cards, then open this tool again.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const rows = [
+      ['Category', org => org.cat],
+      ['GSoC Years', org => org.years],
+      ['First Year', org => org.firstYear],
+      ['Competition', org => org.competition],
+      ['Codebase', org => org.codebase],
+      ['Tech Stack', org => org.tags.join(', ')],
+      ['Best Fit', org => org.fit.join(', ')],
+      ['Repository', org => org.github],
+    ];
+
+    body.innerHTML = `
+      <table class="w-full min-w-[720px] text-sm">
+        <thead>
+          <tr class="border-b border-zinc-200">
+            <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400">Metric</th>
+            ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold">${escapeHtml(org.name)}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(([label, getValue]) => `
+            <tr class="border-b border-zinc-100 last:border-0">
+              <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
+              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700">${escapeHtml(getValue(org))}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function openCompareModal() {
+    renderCompare();
+    renderCompareModal();
+    document.getElementById('compareModal')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCompareModal() {
+    document.getElementById('compareModal')?.classList.remove('open');
+    document.body.style.overflow = 'auto';
+  }
+
+  document.getElementById('compareModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'compareModal') closeCompareModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('compareModal')?.classList.contains('open')) {
+      closeCompareModal();
+    } else if (document.getElementById('orgModal')?.classList.contains('open')) {
+      closeModal();
+    }
+  });
 
   function toggleBookmark(e, name) {
     if (e) e.stopPropagation();
@@ -1246,6 +1685,7 @@ if(org.ideas){
   // Filters
   let activeLangPills = new Set();
   
+  // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const cat = document.getElementById('categoryFilter').value;
@@ -1276,6 +1716,20 @@ if(org.ideas){
         else if (chipText.includes("low competition")) matchChip = o.competition === "chill";
         else if (chipText.includes("high competition")) matchChip = o.competition === "high";
       }
+      const tags = (o.tags || []).map(t => String(t).toLowerCase());
+      const matchLang = selectedLanguages.size === 0
+        || (matchAllLanguages
+          ? [...selectedLanguages].every(lang => languageMatchesSelection(tags, lang))
+          : [...selectedLanguages].some(lang => languageMatchesSelection(tags, lang)));
+
+      // Quick-filter chip — composes additively with all other filters
+      let matchChip = true;
+      if (activeChip === 'veterans')         matchChip = o.years >= 10;
+      else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
+      else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
+      else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
+      else if (activeChip === 'bookmarked')  matchChip = bookmarkedSet.has(o.name);
+      // 'active' chip requires live GitHub data not available in this version — pass through
 
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
@@ -1315,9 +1769,30 @@ if(org.ideas){
     applyFilters();
   };
 
+  window.clearAllFilters = function() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('complexityFilter').value = 'all';
+    const heroSearch = document.getElementById('hero-search');
+    if (heroSearch) heroSearch.value = '';
+    
+    // Reset chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.classList.remove('bg-orange-600', 'text-white');
+      chip.classList.add('bg-surface-container-highest');
+    });
+
+    filteredOrgs = [...ORGS];
+    renderOrgs(true);
+  };
+
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
+    matchAllLanguages = e.target.checked;
+    applyFilters();
+  });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
@@ -1348,16 +1823,39 @@ if(org.ideas){
       if (chipText.includes("actively maintained")) return; // Prevent activation until implemented
       
       // Reset others
+  // Quick-filter chips — mutually exclusive with each other, but additive with
+  // language pills, search, and dropdown filters. applyFilters() reads activeChip.
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const text = chip.textContent.trim().toLowerCase();
+      const isCurrentlyActive = chip.classList.contains('bg-orange-600');
+
+      // Reset all chips to inactive state
       document.querySelectorAll('.filter-chip').forEach(c => {
-        if (c !== chip) {
-          c.classList.remove('bg-orange-600', 'text-white');
-          c.classList.add('bg-surface-container-highest');
-        }
+        c.classList.remove('bg-orange-600', 'text-white');
+        c.classList.add('bg-surface-container-highest');
       });
 
       chip.classList.toggle('bg-orange-600');
       chip.classList.toggle('text-white');
       chip.classList.toggle('bg-surface-container-highest');
+      if (!isCurrentlyActive) {
+        // Activate the clicked chip
+        chip.classList.add('bg-orange-600', 'text-white');
+        chip.classList.remove('bg-surface-container-highest');
+
+        // Map chip text → activeChip key used by applyFilters()
+        if (text.includes('bookmarked'))         activeChip = 'bookmarked';
+        else if (text.includes('veteran'))       activeChip = 'veterans';
+        else if (text.includes('newcomer'))      activeChip = 'newcomers';
+        else if (text.includes('low competition'))  activeChip = 'low-competition';
+        else if (text.includes('high competition')) activeChip = 'high-competition';
+        else if (text.includes('actively'))      activeChip = 'active';
+        else                                     activeChip = null;
+      } else {
+        // Chip was active — clicking again deactivates it
+        activeChip = null;
+      }
 
       applyFilters();
     });
@@ -1445,6 +1943,18 @@ if(org.ideas){
       });
     } catch (e) {
       console.error("GFI render failed:", e);
+      const container = document.querySelector('#issues .grid');
+      if (container) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
+            <p class="text-sm font-bold text-zinc-900 mb-2">Unable to load pre-fetched issues</p>
+            <p class="text-sm text-zinc-600 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
+          </div>`;
+      }
+      const lastUpdatedEl = document.getElementById('issuesLastUpdated');
+      if (lastUpdatedEl) {
+        lastUpdatedEl.textContent = 'Last updated: unavailable';
+      }
     }
   }
 
@@ -1487,15 +1997,147 @@ if(org.ideas){
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
   // Initialize
+  updateLanguageModeHint();
+  renderTimeline();        // populate #timeline-milestones on first load
   updateCountdown();
   setInterval(updateCountdown, 60000);
+  renderSelectedLanguages();
   renderOrgs();
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+  const helpModal = document.getElementById('helpModal');
+const helpBtn = document.getElementById('helpBtn');
+
+function openHelpModal() {
+  helpModal.classList.add('open');
+}
+
+function closeHelpModal() {
+  helpModal.classList.remove('open');
+}
+
+helpBtn.addEventListener('click', openHelpModal);
+
+document.addEventListener('keydown', (e) => {
+
+  if (e.key === '?') {
+    openHelpModal();
+  }
+
+  if (e.key === 'Escape') {
+    closeHelpModal();
+  }
+
+});
 </script>
 
 <!-- Vercel Speed Insights -->
 <script type="module" src="agent/scripts/speed-insights.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
+
+<div class="modal-bg" id="helpModal">
+  <div class="modal">
+    
+    <button class="close-btn" onclick="closeHelpModal()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+
+    <div class="modal-header">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Quick shortcuts for navigation</p>
+    </div>
+
+    <div class="modal-body">
+      <div class="section-title">Keyboard Shortcuts</div>
+
+<table class="w-full text-sm">
+  <thead>
+    <tr class="border-b text-left">
+      <th class="py-2">Key</th>
+      <th class="py-2">Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td class="py-2">↑ ↓ ← →</td>
+      <td class="py-2">Move focus between cards</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">Enter</td>
+      <td class="py-2">Open focused card</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">C</td>
+      <td class="py-2">Toggle compare</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">Esc</td>
+      <td class="py-2">Close panel</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">?</td>
+      <td class="py-2">Toggle help dialog</td>
+    </tr>
+  </tbody>
+</table>
+
+       
+
+      </div>
+    </div>
+
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const helpModal = document.getElementById('helpModal');
+  const helpBtn = document.getElementById('helpBtn');
+
+  function openHelpModal() {
+    if (helpModal) {
+      helpModal.classList.add('open');
+    }
+  }
+
+  function closeHelpModal() {
+    if (helpModal) {
+      helpModal.classList.remove('open');
+    }
+  }
+
+  if (helpBtn) {
+    helpBtn.addEventListener('click', openHelpModal);
+  }
+
+  document.addEventListener('keydown', (e) => {
+
+    if (e.key === '?') {
+      openHelpModal();
+    }
+
+    if (e.key === 'Escape') {
+      closeHelpModal();
+    }
+
+  });
+
+  window.closeHelpModal = closeHelpModal;
+
+});
+</script>
 </body>
+
 </html>

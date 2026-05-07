@@ -1,38 +1,146 @@
-name: Refresh Good First Issues
+name: 🔄 Refresh Good First Issues + UI Data
 
 on:
   schedule:
     - cron: '0 */6 * * *'
+
   workflow_dispatch:
 
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: read
-    steps:
-      - uses: actions/checkout@v4
+concurrency:
+  group: refresh-good-first-issues
+  cancel-in-progress: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ─────────────────────────────────────────────
+      # Checkout repository
+      # ─────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────────
+      # Setup Node.js
+      # ─────────────────────────────────────────────
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Fetch issues
+      # ─────────────────────────────────────────────
+      # Install dependencies only if package.json exists
+      # ─────────────────────────────────────────────
+      - name: Install dependencies
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      # ─────────────────────────────────────────────
+      # Ensure required directories/files exist
+      # Prevent create-pull-request failures
+      # ─────────────────────────────────────────────
+      - name: Prepare data directory
+        run: |
+          mkdir -p data
+
+          [ -f data/issues.json ] || echo "{}" > data/issues.json
+          [ -f data/last-updated.json ] || echo "{}" > data/last-updated.json
+
+      # ─────────────────────────────────────────────
+      # Refresh issue dataset
+      # ─────────────────────────────────────────────
+      - name: Fetch good first issues
         run: node agent/scripts/fetch-issues.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ─────────────────────────────────────────────
+      # Optional UI cache generation
+      # ─────────────────────────────────────────────
+      - name: Generate derived UI data
+        run: |
+          if [ -f agent/scripts/generate-ui-cache.js ]; then
+            node agent/scripts/generate-ui-cache.js
+          else
+            echo "No UI cache generator found. Skipping."
+          fi
+
+      # ─────────────────────────────────────────────
+      # Optional organization stats refresh
+      # ─────────────────────────────────────────────
+      - name: Refresh organization metadata
+        run: |
+          if [ -f agent/scripts/refresh-org-stats.js ]; then
+            node agent/scripts/refresh-org-stats.js
+          else
+            echo "No org stats refresh script found. Skipping."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────
+      # Update refresh timestamp
+      # ─────────────────────────────────────────────
+      - name: Update refresh timestamp
+        run: |
+          cat > data/last-updated.json <<EOF
+          {
+            "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+
+      # ─────────────────────────────────────────────
+      # Check if files actually changed
+      # ─────────────────────────────────────────────
+      - name: Check for changes
+        id: changes
+        run: |
+          git status --short
+
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected."
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected."
+          fi
+
+      # ─────────────────────────────────────────────
+      # Create Pull Request only if changes exist
+      # ─────────────────────────────────────────────
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 
-        #v8.1.1
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         with:
-          commit-message: 'chore: refresh good first issues [skip ci]'
-          title: 'chore: refresh good first issues'
-          body: 'Automated refresh of good first issues'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+          commit-message: |
+            chore: refresh issue dataset [skip actions]
+
+          title: |
+            chore: refresh good first issues
+
+          body: |
+            ## Automated Refresh
+
+            This PR updates:
+
+            - good first issue dataset
+            - refresh timestamps
+
+            Generated automatically by GitHub Actions.
+
           branch: refresh-issues
           delete-branch: true
+
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
           add-paths: |
             data/issues.json
+            data/last-updated.json

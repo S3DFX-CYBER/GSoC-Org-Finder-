@@ -188,8 +188,8 @@ function openAnalytics(){
   document.getElementById('anBg').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn()}
-function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow=''}
+function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn();}
+function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow='';}
 
 // ══════════════════════════════════════════════
 // GITHUB API
@@ -993,14 +993,14 @@ function renderIssues(){
     statsDiv.style.display='none';loadMore.style.display='none';return;
   }
 
-  if(!filteredIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
-    statsDiv.style.display='flex';loadMore.style.display='none';
-  } else {
+  if(filteredIssues.length){
     shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);
     const visible=filteredIssues.slice(0,shownIssues);
     container.innerHTML=`<div class="issues-grid">${visible.map(renderIssueCard).join('')}</div>`;
     loadMore.style.display=shownIssues<filteredIssues.length?'flex':'none';
+  } else {
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    statsDiv.style.display='flex';loadMore.style.display='none';
   }
 
   // Update stats

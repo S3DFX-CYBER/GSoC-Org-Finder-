@@ -847,6 +847,7 @@ let filteredIssues=[];
 let shownIssues=0;
 const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
+let cacheLoading=false;
 
 function openIssuesPage(){
   loadCachedIssues();
@@ -855,17 +856,21 @@ function openIssuesPage(){
 }
 
 async function loadCachedIssues() {
-  if (allIssues.length > 0 || issuesFetching) return;
+  if (allIssues.length > 0 || issuesFetching || cacheLoading) return;
+  cacheLoading = true;
   try {
     const res = await fetch('/data/issues.json');
     if (!res.ok) return;
     const data = await res.json();
     if (data && Array.isArray(data.issues)) {
+      if (issuesFetching) return;
       allIssues = data.issues;
       filterIssues();
     }
   } catch (err) {
     console.warn('Failed to load cached issues:', err);
+  } finally {
+    cacheLoading = false;
   }
 }
 

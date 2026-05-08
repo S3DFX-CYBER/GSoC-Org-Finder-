@@ -277,7 +277,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .cb-dev{background:rgba(245,158,11,.08);color:#78350F}
 .cb-other{background:var(--border2);color:#374151}
 [data-theme="dark"] .cb-os{background:rgba(100,116,139,.15);color:#9CA3AF}
-[data-theme="dark"] .cb-other{background:rgba(255,255,255,.05);color:#D1D5DB}
+[data-theme="dark"] .cb-other{background:rgb(255 255 255 / .05);color:`#D1D5DB`}
 
 /* ── EMPTY ── */
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}

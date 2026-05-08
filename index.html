@@ -1447,7 +1447,9 @@ if(org.ideas){
         else if (text.includes("veterans")) matchChip = o.years >= 10;
         else if (text.includes("newcomers")) matchChip = o.years <= 3;
         else if (text.includes("low competition")) matchChip = o.competition === "chill";
-        else if (text.includes("high competition")) matchChip = o.competition === "high";
+        else if (text.includes("high competition")) matchChip = o.competition === "hot";
+        else if (text.includes("actively maintained")) matchChip = o._gh?.activity === "active";
+      }
       }
 
       return matchSearch && matchCat && matchComp && matchChip;

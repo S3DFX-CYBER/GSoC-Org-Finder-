@@ -303,6 +303,7 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 ## ✨ Contributors
 <!-- CONTRIBUTORS_START -->
 <a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
+<a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
 <a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
 <a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
 <a href="https://github.com/Chizaram-Igolo"><img src="https://github.com/Chizaram-Igolo.png" width="50px" alt="Chizaram-Igolo" /></a>

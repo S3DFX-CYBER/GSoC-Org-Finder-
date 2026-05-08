@@ -983,13 +983,10 @@ const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
 
 function openIssuesPage(){
-  loadCachedIssues();
   document.getElementById('issuesPage').classList.add('open');
   document.body.style.overflow='hidden';
   loadCachedIssues();
 }
-
-/* (Removed duplicate simple loadCachedIssues — consolidated implementation exists later) */
 
 function closeIssuesPage(){
   document.getElementById('issuesPage').classList.remove('open');

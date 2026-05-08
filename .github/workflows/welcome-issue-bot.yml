@@ -1,0 +1,76 @@
+name: 👋 Issue Welcome Bot
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Welcome contributor
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+
+            const username = issue.user.login;
+
+            const body = `
+            ## 👋 Thanks for opening an issue, @${username}!
+
+            Our maintainers will review this issue shortly 🚀
+
+            ### Before contributing
+
+            Please read the contribution guidelines carefully:
+
+            👉 https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/blob/main/CONTRIBUTING.md
+
+            ### Assignment System
+
+            To work on this issue, comment:
+
+            \`\`\`
+            /assign
+            \`\`\`
+
+            or:
+
+            \`\`\`
+            assign me
+            \`\`\`
+
+            The assignment bot will automatically validate:
+            - issue quality
+            - contribution level
+            - contributor eligibility
+            - repository contribution rules
+
+            ### Important Guidelines
+
+            - Do not start working before assignment
+            - Level 3 issues require previous merged PRs
+            - PRs without assignment may be closed
+            - Low-quality/spam PRs may be rejected
+            - Follow the zero-build, zero-dependency philosophy
+
+            ### Repository
+
+            🔗 https://github.com/S3DFX-CYBER/GSoC-Org-Finder-
+
+            Happy contributing 🎉
+            `;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body
+            });

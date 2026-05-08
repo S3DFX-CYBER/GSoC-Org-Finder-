@@ -186,6 +186,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .bna{background:var(--bg);color:var(--muted);border-color:var(--border2)}
 .bgfi{background:rgba(26,86,219,.07);color:var(--blue);border-color:rgba(26,86,219,.2);cursor:default}
 .tags{display:flex;flex-wrap:wrap;gap:4px}
+.bwinner{background:rgba(251,191,36,.12);color:#FBBC04;border-color:rgba(251,191,36,.3);cursor:pointer;transition:all .18s;text-decoration:none}
+.bwinner:hover{background:rgba(251,191,36,.2);color:#FCD34D;border-color:rgba(251,191,36,.5);transform:scale(1.05)}
 .tag{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border2);color:var(--muted);background:var(--tag-bg);font-family:'Fira Code',monospace;transition:background .3s,border-color .3s,color .3s}
 .org-logo{width:48px;height:48px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border2);background:#fff;flex-shrink:0;transition:border-color .18s}
 [data-theme="dark"] .org-logo{border-color:rgba(255,255,255,.12)}

@@ -717,6 +717,7 @@ function renderGrid(orgs){
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
         <span class="b ${aBdg(act)}">${aLbl(act)}</span>
         ${o._gh?.gfi>0?`<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>`:''}
+        ${getWinnerCountBadge(o.name)}
       </div>
       <div class="tags">${tags}</div>
       ${ghm}
@@ -988,20 +989,7 @@ function openIssuesPage(){
   loadCachedIssues();
 }
 
-async function loadCachedIssues() {
-  if (allIssues.length > 0 || issuesFetching) return;
-  try {
-    const res = await fetch('/data/issues.json');
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data && Array.isArray(data.issues)) {
-      allIssues = data.issues;
-      filterIssues();
-    }
-  } catch (err) {
-    console.warn('Failed to load cached issues:', err);
-  }
-}
+/* (Removed duplicate simple loadCachedIssues — consolidated implementation exists later) */
 
 function closeIssuesPage(){
   document.getElementById('issuesPage').classList.remove('open');
@@ -1257,3 +1245,250 @@ const syncScrollTopBtn = () => {
 
 globalThis.addEventListener('scroll', syncScrollTopBtn, { passive: true });
 syncScrollTopBtn();
+
+// ══════════════════════════════════════════════
+// WINNERS SECTION
+// ══════════════════════════════════════════════
+let allWinners = [];           // All winners loaded from data/winners.json
+let filteredWinners = [];      // Filtered winners based on search/org filter
+let winnersOrgFilter = new Set(); // Currently selected org filters
+let winnersSearchTerm = '';     // Current search term
+
+/**
+ * Loads winners data from cache
+ */
+async function loadWinnersData() {
+  const loadingState = document.getElementById('winnersLoadingState');
+  const errorState = document.getElementById('winnersErrorState');
+  
+  try {
+    loadingState?.style.display ? (loadingState.style.display = 'block') : null;
+    errorState?.style.display ? (errorState.style.display = 'none') : null;
+    
+    const res = await fetch('/data/winners.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Invalid winners format');
+    
+    allWinners = data;
+    
+    // Initialize org filters with all unique orgs
+    const uniqueOrgs = [...new Set(allWinners.map(w => w.orgName))].sort();
+    renderWinnersOrgChips(uniqueOrgs);
+    
+    // Apply any URL params (deep-linking)
+    const params = new URLSearchParams(window.location.search);
+    const urlOrg = params.get('org');
+    if (urlOrg) {
+      winnersOrgFilter.add(urlOrg);
+    }
+    
+    // Initial render
+    filterAndRenderWinners();
+    
+    loadingState?.style.display ? (loadingState.style.display = 'none') : null;
+  } catch (err) {
+    console.error('Failed to load winners:', err);
+    loadingState?.style.display ? (loadingState.style.display = 'none') : null;
+    errorState?.style.display ? (errorState.style.display = 'block') : null;
+  }
+}
+
+/**
+ * Renders org filter chips
+ */
+function renderWinnersOrgChips(orgs) {
+  const container = document.getElementById('winnersOrgChips');
+  if (!container) return;
+  
+  container.innerHTML = orgs.map(org => `
+    <button 
+      class="winners-org-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors"
+      data-org="${org}"
+      onclick="toggleWinnersOrgFilter('${org}')"
+    >${org}</button>
+  `).join('');
+}
+
+/**
+ * Toggles organization filter
+ */
+globalThis.toggleWinnersOrgFilter = function(orgName) {
+  if (winnersOrgFilter.has(orgName)) {
+    winnersOrgFilter.delete(orgName);
+  } else {
+    winnersOrgFilter.add(orgName);
+  }
+  filterAndRenderWinners();
+  updateWinnersOrgChips();
+};
+
+/**
+ * Updates visual state of org chips
+ */
+function updateWinnersOrgChips() {
+  document.querySelectorAll('.winners-org-chip').forEach(chip => {
+    const org = chip.dataset.org;
+    if (winnersOrgFilter.has(org)) {
+      chip.classList.add('active');
+      chip.classList.remove('bg-surface-container-highest', 'text-zinc-600');
+      chip.classList.add('bg-primary', 'text-white');
+    } else {
+      chip.classList.remove('active');
+      chip.classList.add('bg-surface-container-highest', 'text-zinc-600');
+      chip.classList.remove('bg-primary', 'text-white');
+    }
+  });
+}
+
+/**
+ * Filters winners based on search term and org filters
+ */
+function filterAndRenderWinners() {
+  winnersSearchTerm = (document.getElementById('winnersSearchInput')?.value || '').toLowerCase().trim();
+  
+  filteredWinners = allWinners.filter(winner => {
+    // Filter by organization
+    if (winnersOrgFilter.size > 0 && !winnersOrgFilter.has(winner.orgName)) {
+      return false;
+    }
+    
+    // Filter by search term (username or project title)
+    if (winnersSearchTerm) {
+      const matchesUsername = winner.username.toLowerCase().includes(winnersSearchTerm);
+      const matchesTitle = winner.projectTitle.toLowerCase().includes(winnersSearchTerm);
+      return matchesUsername || matchesTitle;
+    }
+    
+    return true;
+  });
+  
+  renderWinnersCards();
+}
+
+/**
+ * Renders winner cards
+ */
+function renderWinnersCards() {
+  const grid = document.getElementById('winnersGrid');
+  const emptyState = document.getElementById('winnersEmptyState');
+  
+  if (!grid) return;
+  
+  if (filteredWinners.length === 0) {
+    grid.innerHTML = '';
+    emptyState?.style.display ? (emptyState.style.display = 'block') : null;
+    return;
+  }
+  
+  emptyState?.style.display ? (emptyState.style.display = 'none') : null;
+  
+  grid.innerHTML = filteredWinners.map(winner => `
+    <div class="winner-card group bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-200">
+      <div class="p-6">
+        <!-- Contributor Avatar & Info -->
+        <div class="flex items-start gap-4 mb-6">
+          <img 
+            src="https://github.com/${winner.username}.png?size=64" 
+            alt="${winner.username}"
+            class="w-16 h-16 rounded-full border-2 border-primary/20 object-cover"
+            onerror="this.src='https://api.github.com/users/${winner.username}/avatar_url?s=64'"
+          />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white truncate">${escapeHtml(winner.username)}</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2">@${escapeHtml(winner.username)}</p>
+          </div>
+        </div>
+        
+        <!-- Project Title -->
+        <div class="mb-4">
+          <p class="text-sm font-semibold text-zinc-900 dark:text-white leading-tight line-clamp-3">${escapeHtml(winner.projectTitle)}</p>
+        </div>
+        
+        <!-- Organization Badge -->
+        <div class="mb-4 inline-block">
+          <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">${escapeHtml(winner.orgName)}</span>
+        </div>
+        
+        <!-- Action Links -->
+        <div class="flex gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <a 
+            href="https://github.com/${winner.username}" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex-1 px-3 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs font-semibold rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 text-center transition-colors"
+          >Profile</a>
+          <a 
+            href="https://raw.githubusercontent.com/satwiksps/GSoC_archive_2026/main/${encodeURIComponent(winner.path)}" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex-1 px-3 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-orange-600 text-center transition-colors"
+          >Proposal</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/**
+ * Escapes HTML to prevent XSS
+ */
+function escapeHtml(text) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+/**
+ * Adds event listeners for winners section
+ */
+function setupWinnersEventListeners() {
+  const searchInput = document.getElementById('winnersSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => filterAndRenderWinners());
+  }
+}
+
+/**
+ * Updates org winner counts (for org cards)
+ */
+function updateOrgWinnerCounts() {
+  const winnersByOrg = {};
+  allWinners.forEach(w => {
+    winnersByOrg[w.orgName] = (winnersByOrg[w.orgName] || 0) + 1;
+  });
+  return winnersByOrg;
+
+}
+
+/**
+ * Returns HTML for winner count badge on org cards
+ * Includes deep-linking to winners filtered by org
+ */
+function getWinnerCountBadge(orgName) {
+  const winnerCount = allWinners.filter(w => w.orgName === orgName).length;
+  if (winnerCount === 0) return '';
+  
+  return `<a href="#winners?org=${encodeURIComponent(orgName)}" onclick="setWinnersOrgFilter('${orgName}'); return false;" class="b bwinner" title="View ${winnerCount} winner${winnerCount !== 1 ? 's' : ''} from ${orgName}">🏆 ${winnerCount} Winner${winnerCount !== 1 ? 's' : ''}</a>`;
+}
+
+/**
+ * Sets winners org filter and scrolls to winners section (for deep-linking)
+ */
+globalThis.setWinnersOrgFilter = function(orgName) {
+  winnersOrgFilter.clear();
+  winnersOrgFilter.add(orgName);
+  filterAndRenderWinners();
+  updateWinnersOrgChips();
+  
+  const winnersSection = document.getElementById('winners');
+  if (winnersSection) {
+    winnersSection.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+// Load winners on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadWinnersData();
+  setupWinnersEventListeners();
+});

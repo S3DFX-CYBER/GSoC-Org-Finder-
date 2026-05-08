@@ -85,6 +85,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ─────────────────────────────────────────────
+      # Fetch GSoC winners from archive
+      # ─────────────────────────────────────────────
+      - name: Fetch GSoC winners
+        run: |
+          if [ -f agent/scripts/fetch-winners.js ]; then
+            node agent/scripts/fetch-winners.js
+          else
+            echo "No winners fetch script found. Skipping."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────────────────────────────
       # Update refresh timestamp
       # ─────────────────────────────────────────────
       - name: Update refresh timestamp
@@ -132,6 +145,7 @@ jobs:
             This PR updates:
 
             - good first issue dataset
+            - winners dataset
             - refresh timestamps
 
             Generated automatically by GitHub Actions.
@@ -143,4 +157,6 @@ jobs:
 
           add-paths: |
             data/issues.json
+            data/winners.json
             data/last-updated.json
+            data/winners-last-updated.json

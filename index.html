@@ -39,6 +39,8 @@
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js" integrity="sha384-vdScihEZCfbPnBQf+lc7LgXUdJVYyhC3yWHUW5C5P5GpHRqVnaM6HJELJxT6IqwM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha384-Yv5O+t3uE3hunW8uyrbpPW3iw6/5/Y7HitWJBLgqfMoA36NogMmy+8wWZMpn3HWc" crossorigin="anonymous"></script>
+  <!-- Vis-Network for Knowledge Graph -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
@@ -598,6 +600,15 @@
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
+      <!-- View Toggle -->
+      <div class="flex items-center bg-surface-container-low rounded-xl p-1">
+        <button id="gridViewBtn" onclick="setGraphView(false)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-zinc-900 shadow-sm transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">grid_view</span> Grid
+        </button>
+        <button id="graphViewBtn" onclick="setGraphView(true)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-600 hover:text-zinc-900 transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">hub</span> Graph
+        </button>
+      </div>
     </div>
   </div>
   
@@ -605,6 +616,16 @@
     <!-- Organizations will be rendered here dynamically -->
     <div class="col-span-full py-20 text-center animate-pulse">
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+    </div>
+  </div>
+
+  <!-- Interactive Knowledge Graph Container -->
+  <div id="graphContainer" class="hidden w-full h-[600px] bg-white border border-zinc-100 rounded-2xl shadow-sm overflow-hidden dark:bg-zinc-900 dark:border-zinc-800 relative">
+    <div id="graphNetwork" class="w-full h-full"></div>
+    <div class="absolute bottom-4 left-4 flex gap-2">
+      <span class="text-[10px] px-2 py-1 bg-white/80 dark:bg-zinc-800/80 backdrop-blur rounded font-bold border border-zinc-200 dark:border-zinc-700">⚫ Organizations</span>
+      <span class="text-[10px] px-2 py-1 bg-white/80 dark:bg-zinc-800/80 backdrop-blur rounded font-bold border border-zinc-200 dark:border-zinc-700">🔶 Categories</span>
+      <span class="text-[10px] px-2 py-1 bg-white/80 dark:bg-zinc-800/80 backdrop-blur rounded font-bold border border-zinc-200 dark:border-zinc-700">🟦 Technologies</span>
     </div>
   </div>
 
@@ -1810,5 +1831,8 @@ if(org.ideas){
 
 <!-- Vercel Speed Insights -->
 <script type="module" src="agent/scripts/speed-insights.js"></script>
+
+<!-- Interactive Knowledge Graph Logic -->
+<script src="src/js/graph.js"></script>
 </body>
 </html>

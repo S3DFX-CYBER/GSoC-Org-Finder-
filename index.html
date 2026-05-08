@@ -415,6 +415,163 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    /* GSoC Guide chat widget */
+    .gsoc-guide-toggle {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 65;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #f46b0e;
+      border-radius: 999px;
+      background: #f46b0e;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(157, 67, 0, 0.28);
+    }
+    .dark .gsoc-guide-toggle {
+      background: #fb923c;
+      border-color: #fb923c;
+      color: #1c1008;
+    }
+    .gsoc-guide-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 74px;
+      width: min(380px, calc(100vw - 24px));
+      height: min(540px, calc(100vh - 120px));
+      z-index: 66;
+      display: none;
+      flex-direction: column;
+      border: 1px solid #e9d7c8;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fffdf9;
+      box-shadow: 0 16px 38px rgba(28, 16, 8, 0.2);
+    }
+    .dark .gsoc-guide-panel {
+      background: #1a120a;
+      border-color: #3a2614;
+    }
+    .gsoc-guide-panel.open {
+      display: flex;
+    }
+    .gsoc-guide-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #efe3d8;
+      background: #fff3e9;
+    }
+    .dark .gsoc-guide-head {
+      background: #2a1a0f;
+      border-bottom-color: #3a2614;
+    }
+    .gsoc-guide-body {
+      flex: 1;
+      overflow: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .gsoc-guide-msg {
+      max-width: 92%;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .gsoc-guide-msg.user {
+      margin-left: auto;
+      background: #f46b0e;
+      color: #fff;
+    }
+    .gsoc-guide-msg.bot {
+      border: 1px solid #efe3d8;
+      background: #fff;
+      color: #2b1709;
+    }
+    .dark .gsoc-guide-msg.bot {
+      background: #1d140d;
+      color: #f3e2cf;
+      border-color: #3a2614;
+    }
+    .gsoc-guide-foot {
+      border-top: 1px solid #efe3d8;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      background: #fffaf5;
+    }
+    .dark .gsoc-guide-foot {
+      border-top-color: #3a2614;
+      background: #1a120a;
+    }
+    .gsoc-guide-input {
+      border: 1px solid #e0c8b2;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 12px;
+      background: #fff;
+      color: #1c1008;
+    }
+    .dark .gsoc-guide-input {
+      border-color: #4a311d;
+      background: #24170e;
+      color: #f2e0cb;
+    }
+    .gsoc-guide-send {
+      border-radius: 10px;
+      border: 1px solid #f46b0e;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: #f46b0e;
+    }
+    .dark .gsoc-guide-send {
+      color: #1c1008;
+      background: #fb923c;
+      border-color: #fb923c;
+    }
+    @media (max-width: 900px) {
+      .gsoc-guide-toggle {
+        right: 16px;
+        bottom: 16px;
+      }
+      .gsoc-guide-panel {
+        right: 16px;
+        bottom: 68px;
+        width: min(360px, calc(100vw - 20px));
+      }
+    }
+    @media (max-width: 640px) {
+      .gsoc-guide-panel {
+        right: 10px;
+        bottom: 64px;
+        width: calc(100vw - 20px);
+        height: min(500px, calc(100vh - 90px));
+      }
+      .gsoc-guide-toggle span:last-child {
+        display: none;
+      }
+    }
+    @media (max-width: 380px) {
+      .gsoc-guide-panel {
+        right: 8px;
+        bottom: 58px;
+        width: calc(100vw - 16px);
+      }
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -993,6 +1150,23 @@
 </div>
 
 <!-- ═══════════════════ JS ═══════════════════ -->
+<button id="gsocGuideToggle" class="gsoc-guide-toggle" type="button" aria-expanded="false" aria-controls="gsocGuidePanel" aria-label="Open GSoC Guide assistant">
+  <span class="material-symbols-outlined">chat</span><span>GSoC Guide</span>
+</button>
+<section id="gsocGuidePanel" class="gsoc-guide-panel" role="dialog" aria-modal="false" aria-labelledby="gsocGuideTitle">
+  <div class="gsoc-guide-head">
+    <div>
+      <div id="gsocGuideTitle" style="font-weight:800;font-size:12px;">AI GSoC Guide</div>
+      <div style="font-size:11px;opacity:.75;">Grounded in selected 2026 orgs only</div>
+    </div>
+    <button id="gsocGuideClose" type="button" class="close-btn" aria-label="Close GSoC Guide"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div id="gsocGuideMessages" class="gsoc-guide-body" tabindex="0"></div>
+  <form id="gsocGuideForm" class="gsoc-guide-foot">
+    <input id="gsocGuideInput" class="gsoc-guide-input" type="text" maxlength="300" placeholder="Ask: healthcare AI, web dev, robotics..." aria-label="Message GSoC Guide">
+    <button id="gsocGuideSend" class="gsoc-guide-send" type="submit">Send</button>
+  </form>
+</section>
 <script src="agent/scripts/orgs.js"></script>
 <script>
   // ══════════════════════════════════════════════
@@ -1897,6 +2071,145 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
+  // AI GSoC Guide chat widget
+  const GSOC_GUIDE_KEY = 'gaf_gsoc_guide_chat_v1';
+  const guideToggle = document.getElementById('gsocGuideToggle');
+  const guidePanel = document.getElementById('gsocGuidePanel');
+  const guideClose = document.getElementById('gsocGuideClose');
+  const guideForm = document.getElementById('gsocGuideForm');
+  const guideInput = document.getElementById('gsocGuideInput');
+  const guideMessages = document.getElementById('gsocGuideMessages');
+  const guideHistory = (() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(GSOC_GUIDE_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  })();
+
+  function saveGuideHistory() {
+    localStorage.setItem(GSOC_GUIDE_KEY, JSON.stringify(guideHistory.slice(-24)));
+  }
+
+  function renderGuideMsg(role, text) {
+    const el = document.createElement('div');
+    el.className = `gsoc-guide-msg ${role === 'user' ? 'user' : 'bot'}`;
+    el.textContent = text;
+    guideMessages.appendChild(el);
+    guideMessages.scrollTop = guideMessages.scrollHeight;
+  }
+
+  function openGuidePanel() {
+    guidePanel.classList.add('open');
+    guideToggle.setAttribute('aria-expanded', 'true');
+    setTimeout(() => guideInput.focus(), 0);
+  }
+
+  function closeGuidePanel() {
+    guidePanel.classList.remove('open');
+    guideToggle.setAttribute('aria-expanded', 'false');
+    guideToggle.focus();
+  }
+
+  function normalize(value) {
+    return String(value || '').toLowerCase().trim();
+  }
+
+  function scoredCandidates(query) {
+    const q = normalize(query);
+    const tokens = q.split(/[\s,/.-]+/).filter(Boolean);
+    return ORGS.map(org => {
+      const tags = (org.tags || []).map(normalize);
+      const fit = (org.fit || []).map(normalize);
+      const blob = normalize(`${org.name} ${org.desc} ${tags.join(' ')} ${fit.join(' ')}`);
+      let score = 0;
+      tokens.forEach(t => {
+        if (blob.includes(t)) score += 2;
+        if (tags.some(tag => tag.includes(t))) score += 2;
+        if (fit.some(f => f.includes(t))) score += 1;
+      });
+      if (q.includes('health') && blob.includes('health')) score += 4;
+      if ((q.includes('ai') || q.includes('ml')) && (blob.includes('machine learning') || blob.includes('ai'))) score += 4;
+      return { org, score };
+    }).sort((a, b) => b.score - a.score).slice(0, 8).map(item => item.org);
+  }
+
+  async function askGuide(question) {
+    const shortlist = scoredCandidates(question).map(org => ({
+      name: org.name,
+      tags: org.tags || [],
+      fit: org.fit || [],
+      category: org.cat,
+      desc: org.desc,
+      ideas: org.ideas || '',
+      github: org.github || ''
+    }));
+    const payload = {
+      question,
+      shortlistedOrgs: shortlist,
+      recentMessages: guideHistory.slice(-6)
+    };
+    const res = await fetch('/api/gsoc-guide', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      return 'I could not reach the guide service right now. Try again in a moment.';
+    }
+    const data = await res.json();
+    return data.reply || 'I could not generate a response yet.';
+  }
+
+  function hydrateGuide() {
+    guideMessages.innerHTML = '';
+    if (!guideHistory.length) {
+      const hello = 'Hi! I can map your interests to 2026 GSoC orgs. Ask me about your skills, domain, or stack.';
+      guideHistory.push({ role: 'assistant', content: hello });
+      saveGuideHistory();
+    }
+    guideHistory.forEach(m => renderGuideMsg(m.role === 'user' ? 'user' : 'bot', m.content));
+  }
+
+  guideToggle.addEventListener('click', () => {
+    if (guidePanel.classList.contains('open')) closeGuidePanel();
+    else openGuidePanel();
+  });
+  guideClose.addEventListener('click', closeGuidePanel);
+
+  guideForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const question = guideInput.value.trim();
+    if (!question) return;
+    guideInput.value = '';
+    renderGuideMsg('user', question);
+    guideHistory.push({ role: 'user', content: question });
+    saveGuideHistory();
+
+    renderGuideMsg('assistant', 'Thinking...');
+    const loading = guideMessages.lastElementChild;
+    try {
+      const answer = await askGuide(question);
+      if (loading) loading.remove();
+      renderGuideMsg('assistant', answer);
+      guideHistory.push({ role: 'assistant', content: answer });
+      saveGuideHistory();
+    } catch (_) {
+      if (loading) loading.remove();
+      const fallback = 'I hit a temporary error while generating suggestions. Please try again.';
+      renderGuideMsg('assistant', fallback);
+      guideHistory.push({ role: 'assistant', content: fallback });
+      saveGuideHistory();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && guidePanel.classList.contains('open')) {
+      closeGuidePanel();
+    }
+  });
+
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -1907,6 +2220,7 @@ if(org.ideas){
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+  hydrateGuide();
   const helpModal = document.getElementById('helpModal');
 const helpBtn = document.getElementById('helpBtn');
 

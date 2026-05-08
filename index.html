@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/styles/graph.css" />
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
@@ -36,10 +38,20 @@
       }
     }
   </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <script>
+ <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+  rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
+  />
+  </noscript>
+<script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
       try {
@@ -1873,6 +1885,23 @@ if(org.ideas){
   renderCompare();
 </script>
 
+<section class="knowledge-graph">
+  <div class="graph-head">
+    <h2>GSoC Knowledge Graph</h2>
+    <p>Explore organizations by technology connections.</p>
+  </div>
+
+  <div class="graph-container">
+    <div class="graph-node center">GSoC</div>
+
+    <div class="graph-node">AI/ML</div>
+    <div class="graph-node">Web</div>
+    <div class="graph-node">Cloud</div>
+    <div class="graph-node">Security</div>
+    <div class="graph-node">Java</div>
+  </div>
+</section>
+
 <!-- Vercel Speed Insights -->
 <script type="module" src="agent/scripts/speed-insights.js"></script>
 <script>
@@ -1882,5 +1911,8 @@ if(org.ideas){
     });
   }
 </script>
+<script src="src/js/app.js"></script>
+<script src="src/js/graph.js"></script>
 </body>
 </html>
+

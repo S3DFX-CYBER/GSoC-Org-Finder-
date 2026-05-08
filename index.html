@@ -92,6 +92,20 @@
     }
   </script>
   <style>
+    .nav-link {
+  color: #52525b;
+  transition: color 0.2s ease;
+  }
+
+    .nav-link:hover {
+  color: #18181b;
+  }
+
+    .active-nav {
+  color: #ea580c;
+  font-weight: 700;
+  border-bottom: 2px solid #ea580c;
+  }
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
     .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
     .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
@@ -441,11 +455,11 @@
         <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
-        <a class="text-orange-600 font-bold border-b-2 border-orange-600" href="#orgs">Organizations</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
-        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
+       <a class="nav-link active-nav" href="#orgs">Organizations</a>
+       <a class="nav-link" href="#guide">Guide</a>
+       <a class="nav-link" href="#watchlist">Watchlist</a>
+       <a class="nav-link" href="#issues">Issues</a>
+       <a class="nav-link" href="#timeline">Timeline</a>
       </nav>
     </div>
     
@@ -1871,6 +1885,16 @@ if(org.ideas){
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+</script>
+<script>
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.forEach(item => item.classList.remove('active-nav'));
+      link.classList.add('active-nav');
+    });
+  });
 </script>
 
 <!-- Vercel Speed Insights -->

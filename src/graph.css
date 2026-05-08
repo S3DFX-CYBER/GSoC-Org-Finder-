@@ -1,0 +1,48 @@
+.knowledge-graph {
+  margin: 4rem auto;
+  padding: 2rem;
+  max-width: 1000px;
+  text-align: center;
+}
+
+.graph-head h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.graph-head p {
+  opacity: 0.7;
+  margin-bottom: 2rem;
+}
+
+.graph-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.graph-node {
+  padding: 1rem 1.5rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.graph-node:hover {
+  transform: scale(1.08);
+}
+
+.center {
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+}
+.graph-node.active {
+  background: #22c55e;
+  color: white;
+}

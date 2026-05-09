@@ -2,9 +2,12 @@
   "version": 2,
   "framework": null,
   "devCommand": "npx serve . -l $PORT",
+
   "rewrites": [
-    { "source": "/api/github", "destination": "/api/github.js" }
+    { "source": "/api/github", "destination": "/api/github.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
+
   "headers": [
     {
       "source": "/api/(.*)",

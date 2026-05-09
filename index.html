@@ -481,12 +481,36 @@
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <button id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
+    
+      <button id="themeToggleBtn" onclick="toggleTheme()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          dark_mode
+        </span>
       </button>
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+    
+      <!-- HELP BUTTON -->
+      <button id="helpBtn"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="Keyboard shortcuts (?)">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          help
+        </span>
+      </button>
+    
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+    
+        <span class="material-symbols-outlined text-sm">
+          star
+        </span>
+    
+        Star & Contribute
       </a>
+    
     </div>
   </div>
 </header>
@@ -556,9 +580,16 @@
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-8 sm:mb-10">
+      <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
         <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+      </div>
+      <!-- Surprise Button -->
+      <div class="mb-8 sm:mb-10">
+        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+          <span class="material-symbols-outlined text-sm">casino</span>
+          🎲 Surprise Me!
+        </button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
@@ -1125,9 +1156,25 @@
   document.addEventListener('DOMContentLoaded', updateActiveSection);
 
   // ══════════════════════════════════════════════
+  // Shared escaping helper (for all dynamic text used in HTML strings)
+  // Prevents HTML injection via <, >, &, quotes.
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  // NOTE: For JS-string contexts inside inline event handlers,
+  // we must also escape quotes. Prefer removing inline handlers.
+
+  // ══════════════════════════════════════════════
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
+
   let filteredOrgs = [...ORGS];
   let compareList = [];
   const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
@@ -1148,6 +1195,29 @@
     'ml/ai': ['ml', 'ai', 'machine learning', 'artificial intelligence'],
     'robotics': ['robotics', 'robot', 'ros']
   };
+
+  // Compatibility layer: expose a single LANGUAGE_MAP and shared `pills` set
+  // so the embedded script and any external `src/js/app.js` logic agree.
+  (function buildCompatibilityLayer(){
+    // Expose the selectedLanguages set as `pills` for compatibility
+    globalThis.pills = selectedLanguages;
+    // Expose matchAllLanguages as a global variable reference (kept in sync below)
+    globalThis.matchAllLanguages = matchAllLanguages;
+
+    // Build a LANGUAGE_MAP with display-label keys matching src/js/app.js expectations
+    const toDisplayKey = (k) => {
+      if (k === 'ml/ai') return 'ML/AI';
+      if (k === 'c/c++') return 'C/C++';
+      return k.split(/[\s\/]+/).map(p => p.charAt(0).toUpperCase()+p.slice(1)).join(' ');
+    };
+    const LANG_MAP = {};
+    Object.keys(LANGUAGE_ALIASES).forEach(k => {
+      LANG_MAP[toDisplayKey(k)] = LANGUAGE_ALIASES[k];
+    });
+    // Also expose the lowercase-keyed aliases for any consumers that expect that
+    Object.keys(LANGUAGE_ALIASES).forEach(k => { LANG_MAP[k] = LANGUAGE_ALIASES[k]; });
+    globalThis.LANGUAGE_MAP = globalThis.LANGUAGE_MAP || LANG_MAP;
+  })();
 
   function updateLanguageModeHint() {
     const hint = document.getElementById('languageLogicHint');
@@ -1345,6 +1415,7 @@
 
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
+
     const emptyState = document.getElementById('emptyState');
     if (reset) {
       grid.innerHTML = '';
@@ -1376,38 +1447,78 @@
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
+            <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${org.years}y Veteran</span>
             <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
-            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" onclick="toggleBookmark(event, '${org.name}')">
+            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
           </div>
         </div>
-        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${org.name}</h3>
-        <span class="category-tag">${org.cat.toUpperCase()}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${org.desc}</p>
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
+        <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
-          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${t}</span>`).join('')}
+          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${org.tags.length - 3}</span>` : ''}
         </div>
+
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
           <div class="flex items-center gap-3">
-             <button onclick="toggleCompare(event, '${org.name}')" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+             <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-          <button onclick="openModal('${org.name}')" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
       `;
       grid.appendChild(card);
+        // Attach per-card listeners for non-bubbling events and data-driven actions
+        attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
     document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
+  }
+
+  // Attach listeners to elements created from org templates.
+  // Uses data-* attributes to avoid injecting user data into inline JS handlers.
+  function attachOrgCardListeners(root = document) {
+    // image error fallback (error doesn't bubble reliably)
+    (root.querySelectorAll ? root.querySelectorAll('img[data-org-name]') : []).forEach(img => {
+      if (img.__orgListenerAttached) return;
+      img.addEventListener('error', (e) => {
+        handleImgError(e.target, e.target.dataset.orgName);
+      });
+      img.__orgListenerAttached = true;
+    });
+
+    // bookmark buttons
+    (root.querySelectorAll ? root.querySelectorAll('.bookmark-btn[data-bookmark-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => toggleBookmark(e, btn.dataset.bookmarkOrg));
+      btn.__orgListenerAttached = true;
+    });
+
+    // compare buttons
+    (root.querySelectorAll ? root.querySelectorAll('[data-compare-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => toggleCompare(e, btn.dataset.compareOrg));
+      btn.__orgListenerAttached = true;
+    });
+
+    // open modal buttons
+    (root.querySelectorAll ? root.querySelectorAll('[data-open-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(btn.dataset.openOrg);
+      });
+      btn.__orgListenerAttached = true;
+    });
   }
 
   function toggleCompare(e, name) {
@@ -1440,13 +1551,14 @@
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${logoUrl}" onerror="handleImgError(this, '${org.name}')" class="w-full h-full object-contain" />
+          <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
         </div>
-        <p class="font-bold text-sm truncate">${org.name}</p>
+        <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${org.years}y · ${org.competition}</p>
-        <button onclick="toggleCompare(null, '${org.name}')" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
+        <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
       container.appendChild(item);
+      attachOrgCardListeners(item);
     });
 
     // Add empty slots
@@ -1575,18 +1687,19 @@
         </div>
         <div class="flex-1 w-full">
           <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${org.name}</h4>
+            <h4 class="font-bold">${escapeHtml(org.name)}</h4>
             <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
           </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${org.desc}</p>
+          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
           <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${org.github}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${org.competition}</span>
-            <button onclick="toggleBookmark(event, '${org.name}')" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
+            <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
           </div>
         </div>
       `;
       container.appendChild(item);
+      attachOrgCardListeners(item);
     });
 
     // Data-driven AI Insight
@@ -1607,9 +1720,9 @@
     if (!org) return;
 
     document.getElementById('mHeader').innerHTML = `
-      <span class="category-tag">${org.cat.toUpperCase()}</span>
-      <h2>${org.name}</h2>
-      <p class="text-zinc-500">GSoC Partner for ${org.years} Years</p>
+      <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
+      <h2>${escapeHtml(org.name)}</h2>
+      <p class="text-zinc-500">GSoC Partner for ${escapeHtml(org.years.toString())} Years</p>
     `;
 
     document.getElementById('mMetrics').innerHTML = `
@@ -1666,6 +1779,20 @@ if(org.ideas){
     document.body.style.overflow = 'auto';
   }
 
+  function openRandomOrg() {
+    const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+    
+    if (!orgsToUse.length) {
+      alert('No organizations match your filters — try clearing some!');
+      return;
+    }
+
+    const randomIdx = Math.floor(Math.random() * orgsToUse.length);
+    const randomOrg = orgsToUse[randomIdx];
+    
+    openModal(randomOrg.name);
+  }
+
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
   function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
@@ -1719,12 +1846,17 @@ if(org.ideas){
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
     matchAllLanguages = e.target.checked;
+    // keep global in sync for any external code expecting `matchAllLanguages`
+    globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
   });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
   });
+
+  // Surprise button event listener
+  document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
   // Hero Search Link
   document.getElementById('hero-search').addEventListener('input', (e) => {
@@ -1795,9 +1927,9 @@ if(org.ideas){
           <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Browse open Good First Issues</h4>
           <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
         </div>
-        <p class="text-xs text-zinc-500 mb-3 font-mono">${org.github}</p>
+        <p class="text-xs text-zinc-500 mb-3 font-mono">${escapeHtml(org.github)}</p>
         <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${org.name}</span>
+          <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(org.name)}</span>
           <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
         </div>
       `;
@@ -1850,6 +1982,18 @@ if(org.ideas){
       });
     } catch (e) {
       console.error("GFI render failed:", e);
+      const container = document.querySelector('#issues .grid');
+      if (container) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
+            <p class="text-sm font-bold text-zinc-900 mb-2">Unable to load pre-fetched issues</p>
+            <p class="text-sm text-zinc-600 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
+          </div>`;
+      }
+      const lastUpdatedEl = document.getElementById('issuesLastUpdated');
+      if (lastUpdatedEl) {
+        lastUpdatedEl.textContent = 'Last updated: unavailable';
+      }
     }
   }
 
@@ -1901,6 +2045,30 @@ if(org.ideas){
   renderWatchlist();
   renderGoodFirstIssues();
   renderCompare();
+  const helpModal = document.getElementById('helpModal');
+const helpBtn = document.getElementById('helpBtn');
+
+function openHelpModal() {
+  helpModal.classList.add('open');
+}
+
+function closeHelpModal() {
+  helpModal.classList.remove('open');
+}
+
+helpBtn.addEventListener('click', openHelpModal);
+
+document.addEventListener('keydown', (e) => {
+
+  if (e.key === '?') {
+    openHelpModal();
+  }
+
+  if (e.key === 'Escape') {
+    closeHelpModal();
+  }
+
+});
 </script>
 <script>
   const navLinks = document.querySelectorAll('.nav-link');
@@ -1922,5 +2090,103 @@ if(org.ideas){
     });
   }
 </script>
+
+<div class="modal-bg" id="helpModal">
+  <div class="modal">
+    
+    <button class="close-btn" onclick="closeHelpModal()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+
+    <div class="modal-header">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Quick shortcuts for navigation</p>
+    </div>
+
+    <div class="modal-body">
+      <div class="section-title">Keyboard Shortcuts</div>
+
+<table class="w-full text-sm">
+  <thead>
+    <tr class="border-b text-left">
+      <th class="py-2">Key</th>
+      <th class="py-2">Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td class="py-2">↑ ↓ ← →</td>
+      <td class="py-2">Move focus between cards</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">Enter</td>
+      <td class="py-2">Open focused card</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">C</td>
+      <td class="py-2">Toggle compare</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">Esc</td>
+      <td class="py-2">Close panel</td>
+    </tr>
+
+    <tr>
+      <td class="py-2">?</td>
+      <td class="py-2">Toggle help dialog</td>
+    </tr>
+  </tbody>
+</table>
+
+       
+
+      </div>
+    </div>
+
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const helpModal = document.getElementById('helpModal');
+  const helpBtn = document.getElementById('helpBtn');
+
+  function openHelpModal() {
+    if (helpModal) {
+      helpModal.classList.add('open');
+    }
+  }
+
+  function closeHelpModal() {
+    if (helpModal) {
+      helpModal.classList.remove('open');
+    }
+  }
+
+  if (helpBtn) {
+    helpBtn.addEventListener('click', openHelpModal);
+  }
+
+  document.addEventListener('keydown', (e) => {
+
+    if (e.key === '?') {
+      openHelpModal();
+    }
+
+    if (e.key === 'Escape') {
+      closeHelpModal();
+    }
+
+  });
+
+  window.closeHelpModal = closeHelpModal;
+
+});
+</script>
 </body>
+
 </html>

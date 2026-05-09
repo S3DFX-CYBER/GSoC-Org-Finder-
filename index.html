@@ -442,26 +442,42 @@
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+    
     <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+
       <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <button id="menuBtn"
+        onclick="toggleMenu()"
+        class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu">
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
-      
+
+      <!-- Logo -->
       <a href="#" class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
-        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
+        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline">
+          <span class="hidden xs:inline">GSoC 2026 </span>
+          <span class="text-primary italic">Org Finder</span>
+        </span>
       </a>
+
+      <!-- NAVIGATION -->
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-tight">
-       <a class="nav-link active-nav" href="#orgs">Organizations</a>
-       <a class="nav-link" href="#guide">Guide</a>
-       <a class="nav-link" href="#watchlist">Watchlist</a>
-       <a class="nav-link" href="#issues">Issues</a>
-       <a class="nav-link" href="#timeline">Timeline</a>
+        <a class="nav-link active-nav" href="#orgs">Organizations</a>
+        <a class="nav-link" href="#guide">Guide</a>
+        <a class="nav-link" href="#watchlist">Watchlist</a>
+        <a class="nav-link" href="#issues">Issues</a>
+        <a class="nav-link" href="#timeline">Timeline</a>
       </nav>
+
     </div>
+  </div>
+</header>
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">

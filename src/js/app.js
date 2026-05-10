@@ -1265,8 +1265,8 @@ async function loadWinnersData() {
     loadingState?.style.display ? (loadingState.style.display = 'block') : null;
     errorState?.style.display ? (errorState.style.display = 'none') : null;
     
-    const res = await fetch('/data/winners.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (loadingState) loadingState.style.display = 'block';
+    if (errorState) errorState.style.display = 'none';
     
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error('Invalid winners format');
@@ -1306,7 +1306,7 @@ function renderWinnersOrgChips(orgs) {
     <button 
       class="winners-org-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors"
       data-org="${org}"
-      onclick="toggleWinnersOrgFilter('${org}')"
+      onclick="toggleWinnersOrgFilter(this.dataset.org)"
     >${org}</button>
   `).join('');
 }

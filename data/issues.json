@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-05-07T20:13:00.300Z",
+  "updated_at": "2026-05-09T13:08:02.450Z",
   "source_org_count": 184,
-  "total_issues": 52,
+  "total_issues": 50,
   "issues": [
     {
       "org": "AFLplusplus",
@@ -40,22 +40,6 @@
       "org": "AnkiDroid",
       "github": "ankidroid/Anki-Android",
       "logo": "https://avatars.githubusercontent.com/ankidroid",
-      "title": "Docs: Add README.md to `:lint-rules`",
-      "url": "https://github.com/ankidroid/Anki-Android/issues/20978",
-      "repo": "ankidroid/Anki-Android",
-      "labels": [
-        "Good First Issue",
-        "Lint"
-      ],
-      "comments": 2,
-      "created_at": "2026-05-07T14:49:38Z",
-      "updated_at": "2026-05-07T15:47:47Z",
-      "language": null
-    },
-    {
-      "org": "AnkiDroid",
-      "github": "ankidroid/Anki-Android",
-      "logo": "https://avatars.githubusercontent.com/ankidroid",
       "title": "Performance: Investigate startUpWebView",
       "url": "https://github.com/ankidroid/Anki-Android/issues/20973",
       "repo": "ankidroid/Anki-Android",
@@ -86,33 +70,22 @@
       "language": null
     },
     {
-      "org": "ArduPilot",
-      "github": "ArduPilot/ardupilot",
-      "logo": "https://avatars.githubusercontent.com/ArduPilot",
-      "title": "Explain strange canonical vehicle altitude",
-      "url": "https://github.com/ArduPilot/ardupilot/issues/32720",
-      "repo": "ArduPilot/ardupilot",
+      "org": "AnkiDroid",
+      "github": "ankidroid/Anki-Android",
+      "logo": "https://avatars.githubusercontent.com/ankidroid",
+      "title": "Update to net.mikehardy:google-analytics-java:2.0.11 (needs minSdkVersion >= 24)",
+      "url": "https://github.com/ankidroid/Anki-Android/issues/7056",
+      "repo": "ankidroid/Anki-Android",
       "labels": [
-        "good first issue"
+        "Priority-Low",
+        "Good First Issue",
+        "Keep Open",
+        "Dev",
+        "Analytics"
       ],
-      "comments": 2,
-      "created_at": "2026-04-09T00:10:33Z",
-      "updated_at": "2026-05-05T12:58:42Z",
-      "language": null
-    },
-    {
-      "org": "ArduPilot",
-      "github": "ArduPilot/ardupilot",
-      "logo": "https://avatars.githubusercontent.com/ArduPilot",
-      "title": "copter-circle-speed.lua script appears to not work",
-      "url": "https://github.com/ArduPilot/ardupilot/issues/32799",
-      "repo": "ArduPilot/ardupilot",
-      "labels": [
-        "good first issue"
-      ],
-      "comments": 1,
-      "created_at": "2026-04-16T22:35:31Z",
-      "updated_at": "2026-04-28T19:19:35Z",
+      "comments": 10,
+      "created_at": "2020-09-10T15:26:28Z",
+      "updated_at": "2026-04-30T14:58:24Z",
       "language": null
     },
     {
@@ -128,6 +101,37 @@
       "comments": 1,
       "created_at": "2026-04-15T22:22:51Z",
       "updated_at": "2026-04-20T20:26:45Z",
+      "language": null
+    },
+    {
+      "org": "ArduPilot",
+      "github": "ArduPilot/ardupilot",
+      "logo": "https://avatars.githubusercontent.com/ArduPilot",
+      "title": "Modify autotest to notify Discord when run is complete",
+      "url": "https://github.com/ArduPilot/ardupilot/issues/14438",
+      "repo": "ArduPilot/ardupilot",
+      "labels": [
+        "good first issue"
+      ],
+      "comments": 2,
+      "created_at": "2020-05-24T02:28:05Z",
+      "updated_at": "2026-04-01T15:45:17Z",
+      "language": null
+    },
+    {
+      "org": "ArduPilot",
+      "github": "ArduPilot/ardupilot",
+      "logo": "https://avatars.githubusercontent.com/ArduPilot",
+      "title": "Remove mavlink enum dependencies on non related library",
+      "url": "https://github.com/ArduPilot/ardupilot/issues/23320",
+      "repo": "ArduPilot/ardupilot",
+      "labels": [
+        "Enhancement",
+        "good first issue"
+      ],
+      "comments": 14,
+      "created_at": "2023-03-24T10:48:12Z",
+      "updated_at": "2026-03-29T12:50:07Z",
       "language": null
     },
     {
@@ -285,6 +289,22 @@
       "org": "CircuitVerse.org",
       "github": "CircuitVerse/CircuitVerse",
       "logo": "https://avatars.githubusercontent.com/CircuitVerse",
+      "title": "Text is not completely highlighted on hover",
+      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/2919",
+      "repo": "CircuitVerse/CircuitVerse",
+      "labels": [
+        "good first issue",
+        "🐞 bug"
+      ],
+      "comments": 41,
+      "created_at": "2022-02-10T17:03:50Z",
+      "updated_at": "2026-05-09T05:00:54Z",
+      "language": null
+    },
+    {
+      "org": "CircuitVerse.org",
+      "github": "CircuitVerse/CircuitVerse",
+      "logo": "https://avatars.githubusercontent.com/CircuitVerse",
       "title": "Missing translation for \"Member since\" for arabic language on User dashboard",
       "url": "https://github.com/CircuitVerse/CircuitVerse/issues/6002",
       "repo": "CircuitVerse/CircuitVerse",
@@ -312,23 +332,6 @@
       "comments": 18,
       "created_at": "2023-02-10T04:46:03Z",
       "updated_at": "2026-04-15T06:23:53Z",
-      "language": null
-    },
-    {
-      "org": "CircuitVerse.org",
-      "github": "CircuitVerse/CircuitVerse",
-      "logo": "https://avatars.githubusercontent.com/CircuitVerse",
-      "title": "UI Improvements for Group Page Layout & Styling",
-      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/5369",
-      "repo": "CircuitVerse/CircuitVerse",
-      "labels": [
-        "good first issue",
-        "ui",
-        "ux"
-      ],
-      "comments": 18,
-      "created_at": "2025-02-02T01:41:17Z",
-      "updated_at": "2026-04-08T13:37:10Z",
       "language": null
     },
     {
@@ -364,120 +367,6 @@
       "comments": 9,
       "created_at": "2023-12-11T10:07:22Z",
       "updated_at": "2025-12-15T16:22:55Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "logo": "https://avatars.githubusercontent.com/omegaup",
-      "title": "INFORMACION ABREVIATURAS EN  ENVIO DE PROBLEMAS ",
-      "url": "https://github.com/omegaup/omegaup/issues/6157",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "UX Task",
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 18,
-      "created_at": "2021-12-16T04:28:04Z",
-      "updated_at": "2026-04-27T21:50:08Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "logo": "https://avatars.githubusercontent.com/omegaup",
-      "title": "[FEATURE] Create English version of `Runs-API.md`",
-      "url": "https://github.com/omegaup/omegaup/issues/8195",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 14,
-      "created_at": "2025-04-11T16:56:16Z",
-      "updated_at": "2026-04-26T20:26:55Z",
-      "language": null
-    },
-    {
-      "org": "omegaUp",
-      "github": "omegaup/omegaup",
-      "logo": "https://avatars.githubusercontent.com/omegaup",
-      "title": "[FEATURE] Improve empty course content state by centering the “Add content” button",
-      "url": "https://github.com/omegaup/omegaup/issues/9443",
-      "repo": "omegaup/omegaup",
-      "labels": [
-        "feature-request",
-        "Good first issue",
-        "Stale"
-      ],
-      "comments": 8,
-      "created_at": "2026-03-06T19:26:45Z",
-      "updated_at": "2026-04-25T02:23:13Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
-      "title": "\"Comparison to average values of products in the same category\" is unclear",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/2497",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "⏲️ 5 minute fix",
-        "averages by categories",
-        "📚 Documentation",
-        "good first issue",
-        "Fixed ?",
-        "🎨 Design"
-      ],
-      "comments": 8,
-      "created_at": "2019-10-28T19:10:56Z",
-      "updated_at": "2026-05-03T17:00:36Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
-      "title": "Log key events of the web version of Open Food Facts in Matomo",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/8191",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "🎯 P1",
-        "good first issue",
-        "JavaScript",
-        "⏰ Stale",
-        "monitoring",
-        "matomo",
-        "image deletion"
-      ],
-      "comments": 5,
-      "created_at": "2023-03-13T15:50:36Z",
-      "updated_at": "2026-03-27T10:41:29Z",
-      "language": null
-    },
-    {
-      "org": "Open Food Facts",
-      "github": "openfoodfacts/openfoodfacts-server",
-      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
-      "title": "Folksonomy Engine loads CSS and a font from CDNs",
-      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/9012",
-      "repo": "openfoodfacts/openfoodfacts-server",
-      "labels": [
-        "🎯 P1",
-        "good first issue",
-        "JavaScript",
-        "CSS",
-        "🏷️ Folksonomy Project",
-        ":star: top issue",
-        ":star: :bug: top bug"
-      ],
-      "comments": 6,
-      "created_at": "2023-09-17T13:20:18Z",
-      "updated_at": "2026-03-25T18:28:26Z",
       "language": null
     },
     {
@@ -693,6 +582,40 @@
       "org": "Oppia Foundation",
       "github": "oppia/oppia",
       "logo": "https://avatars.githubusercontent.com/oppia",
+      "title": "[BUG]: Blog page is not accessible via sidebar in mobile view",
+      "url": "https://github.com/oppia/oppia/issues/25094",
+      "repo": "oppia/oppia",
+      "labels": [
+        "good first issue",
+        "bug"
+      ],
+      "comments": 4,
+      "created_at": "2026-02-26T14:50:07Z",
+      "updated_at": "2026-05-09T10:28:44Z",
+      "language": null
+    },
+    {
+      "org": "Oppia Foundation",
+      "github": "oppia/oppia",
+      "logo": "https://avatars.githubusercontent.com/oppia",
+      "title": "[Feature Request]: Enforce the strict type checks",
+      "url": "https://github.com/oppia/oppia/issues/23496",
+      "repo": "oppia/oppia",
+      "labels": [
+        "frontend",
+        "good first issue",
+        "enhancement",
+        "Hacktoberfest"
+      ],
+      "comments": 221,
+      "created_at": "2025-09-30T13:46:56Z",
+      "updated_at": "2026-05-08T18:20:56Z",
+      "language": null
+    },
+    {
+      "org": "Oppia Foundation",
+      "github": "oppia/oppia",
+      "logo": "https://avatars.githubusercontent.com/oppia",
       "title": "[BUG]: Acceptance test re-run steps do not work due to server not being shut down",
       "url": "https://github.com/oppia/oppia/issues/23830",
       "repo": "oppia/oppia",
@@ -700,45 +623,9 @@
         "good first issue",
         "bug"
       ],
-      "comments": 68,
+      "comments": 69,
       "created_at": "2025-11-10T13:24:25Z",
-      "updated_at": "2026-05-07T16:39:56Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "logo": "https://avatars.githubusercontent.com/oppia",
-      "title": "[Feature Request]: Allow to unpublish the stories on temporary basis",
-      "url": "https://github.com/oppia/oppia/issues/21166",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "enhancement",
-        "Impact: Medium",
-        "Work: Medium"
-      ],
-      "comments": 19,
-      "created_at": "2024-10-19T14:04:08Z",
-      "updated_at": "2026-05-05T21:29:49Z",
-      "language": null
-    },
-    {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "logo": "https://avatars.githubusercontent.com/oppia",
-      "title": "[BUG]: Display of empty texts in voiceover section of the exploration editor translation tab is confusing.",
-      "url": "https://github.com/oppia/oppia/issues/20088",
-      "repo": "oppia/oppia",
-      "labels": [
-        "good first issue",
-        "bug",
-        "Impact: Medium",
-        "Work: Low"
-      ],
-      "comments": 32,
-      "created_at": "2024-03-29T16:45:04Z",
-      "updated_at": "2026-05-05T07:25:17Z",
+      "updated_at": "2026-05-08T00:17:04Z",
       "language": null
     },
     {
@@ -887,6 +774,77 @@
       "comments": 1,
       "created_at": "2022-04-25T12:07:28Z",
       "updated_at": "2026-03-16T10:58:55Z",
+      "language": null
+    },
+    {
+      "org": "QC-Devs",
+      "github": "theochem/gbasis",
+      "logo": "https://avatars.githubusercontent.com/theochem",
+      "title": "[REQUEST] Direct Support for Basis-Set-Exchange",
+      "url": "https://github.com/theochem/gbasis/issues/209",
+      "repo": "theochem/gbasis",
+      "labels": [
+        "enhancement",
+        "good first issue"
+      ],
+      "comments": 11,
+      "created_at": "2025-04-04T21:13:08Z",
+      "updated_at": "2026-03-26T12:59:48Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "logo": "https://avatars.githubusercontent.com/rizinorg",
+      "title": "Horizontal histogram ruler - legend should be context-dependent",
+      "url": "https://github.com/rizinorg/rizin/issues/5290",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "RzCons",
+        "UX/UI"
+      ],
+      "comments": 3,
+      "created_at": "2025-08-04T13:13:29Z",
+      "updated_at": "2026-05-07T17:08:36Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "logo": "https://avatars.githubusercontent.com/rizinorg",
+      "title": "Refactor use of `core->block` to the transparent IO access",
+      "url": "https://github.com/rizinorg/rizin/issues/2695",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "good first issue",
+        "RzIO",
+        "API",
+        "RzCore",
+        "refactor",
+        "Tracking"
+      ],
+      "comments": 3,
+      "created_at": "2022-06-14T12:55:00Z",
+      "updated_at": "2026-05-06T18:41:06Z",
+      "language": null
+    },
+    {
+      "org": "Rizin",
+      "github": "rizinorg/rizin",
+      "logo": "https://avatars.githubusercontent.com/rizinorg",
+      "title": "Add missing header (`iH`) information to some bin formats",
+      "url": "https://github.com/rizinorg/rizin/issues/5728",
+      "repo": "rizinorg/rizin",
+      "labels": [
+        "enhancement",
+        "good first issue",
+        "RzBin",
+        "test-required"
+      ],
+      "comments": 5,
+      "created_at": "2026-01-04T12:15:54Z",
+      "updated_at": "2026-05-06T09:05:03Z",
       "language": null
     }
   ]

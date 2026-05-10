@@ -6,10 +6,10 @@ This repository follows a **zero-build, zero-dependency philosophy**.
 
 ### Principles
 
-- No build tools
-- No unnecessary dependencies
-- Minimal runtime overhead
-- Simple and readable code
+* No build tools
+* No unnecessary dependencies
+* Minimal runtime overhead
+* Simple and readable code
 
 When contributing, avoid adding libraries, bundlers, or complex tooling **unless clearly justified**.
 
@@ -21,10 +21,10 @@ The project is built using **Vercel Edge Functions**.
 
 ### Key Characteristics
 
-- Serverless execution at the edge
-- Fast global responses
-- Minimal backend infrastructure
-- Lightweight runtime environment
+* Serverless execution at the edge
+* Fast global responses
+* Minimal backend infrastructure
+* Lightweight runtime environment
 
 Changes should remain compatible with the **Edge Function architecture**.
 
@@ -33,17 +33,20 @@ Changes should remain compatible with the **Edge Function architecture**.
 ## Local Development
 
 ### Install Vercel CLI
+
 ```bash
 npm install -g vercel
 ```
 
 ### Clone Repository
+
 ```bash
 git clone https://github.com/S3DFX-CYBER/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
 ```
 
 ### Run Locally
+
 ```bash
 vercel dev
 ```
@@ -56,9 +59,61 @@ This command simulates the Vercel environment locally.
 
 1. Go to the **Issues** tab
 2. Filter by issue labels (`level-1`, `level-2`, `level-3`)
-3. Comment `"assign me"` on the issue
-4. Wait for maintainer assignment
-5. Start working **only after assignment**
+3. Comment one of the following on the issue:
+
+   * `/assign`
+   * `assign me`
+4. Wait for the assignment bot response
+5. Start working **only after the issue is assigned to you**
+
+---
+
+## 🤖 Automated Assignment System
+
+This repository uses an automated assignment workflow.
+
+### Supported Commands
+
+| Command       | Action                     |
+| ------------- | -------------------------- |
+| `/assign`     | Request assignment         |
+| `assign me`   | Request assignment         |
+| `/unassign`   | Remove yourself from issue |
+| `unassign me` | Remove yourself from issue |
+
+### Assignment Rules
+
+Before assigning an issue, the bot automatically checks:
+
+* Issue title quality
+* Issue description quality
+* Existing assignees
+* Contribution level requirements
+* Contributor PR history for advanced issues
+
+### Level Restrictions
+
+* `level-1` → Open to everyone
+* `level-2` → Requires intermediate understanding
+* `level-3` → Requires at least **1 merged PR** in this repository
+
+If requirements are not met, the bot will explain why assignment was rejected.
+
+### Inactive Policy
+
+To keep issues active and fair for contributors:
+
+* Assigned issues with **no progress for 2–3 days** may be automatically unassigned
+* Other contributors may then claim the issue
+* Maintainers may manually override assignments when necessary
+
+### Important Notes
+
+* Do **not** ping maintainers for assignment
+* Do **not** self-assign issues through GitHub UI
+* Assignment is handled only through the bot workflow
+
+PRs opened without assignment may be closed without review.
 
 ---
 
@@ -72,153 +127,170 @@ This command simulates the Vercel environment locally.
 6. Open a Pull Request
 
 ### Create Branch
+
 ```bash
 git checkout -b feature/short-description
 ```
 
-### Commit Message Convention
+---
 
-**Format**
-```
+## Commit Message Convention
+
+### Format
+
+```text
 type: short description
 ```
 
-**Examples**
-```
+### Examples
+
+```text
 docs: add contributing guide
 fix: correct edge function handler
 feat: improve request validation
 ```
 
-**Common Types**
+### Common Types
 
-| Type | Description |
-|---|---|
-| `docs` | Documentation updates |
-| `fix` | Bug fixes |
-| `feat` | New features |
+| Type       | Description           |
+| ---------- | --------------------- |
+| `docs`     | Documentation updates |
+| `fix`      | Bug fixes             |
+| `feat`     | New features          |
 | `refactor` | Internal improvements |
-
----
-
-## Issue Assignment (Mandatory)
-
-- You **must** comment `"assign me"` before starting work
-- Wait for assignment from a maintainer
-- PRs without assignment may be closed without review
-
-### Inactive Policy
-
-If no progress is made within 2–3 days, the issue may be unassigned and other contributors can claim it.
 
 ---
 
 ## Contribution Levels
 
 ### Level 1 — Beginner Friendly
+
 Open to all contributors. Ideal for first-time contributors.
 
 Includes:
-- UI fixes
-- Minor bugs
-- Documentation updates (with meaningful new content)
+
+* UI fixes
+* Minor bugs
+* Documentation updates (with meaningful new content)
 
 ### Level 2 — Intermediate
+
 Requires understanding of the codebase.
 
 Includes:
-- Logic improvements
-- Feature enhancements
-- Performance tweaks
+
+* Logic improvements
+* Feature enhancements
+* Performance tweaks
 
 ### Level 3 — Advanced *(Restricted)*
-Only for experienced contributors. Requires **at least 1–2 merged PRs** in this repository.
+
+Only for experienced contributors.
+
+Requirements:
+
+* At least **1 merged PR** in this repository
+* Understanding of repository architecture
+* Ability to work with Edge Functions and internal logic
 
 Includes:
-- Core features
-- Architecture changes
-- Complex optimizations
 
-> Maintainers will not assign Level 3 issues to new contributors.
+* Core features
+* Architecture changes
+* Complex optimizations
+* Security-sensitive logic
 
-**Labels are assigned by maintainers, not contributors.** If you believe a label is incorrect on your PR, leave a comment explaining why — do not change it yourself.
+> The assignment bot automatically validates Level 3 eligibility.
 
 ---
 
-## ⚠️ NSoC'26 Contribution Quality Standards
+## ⚠️ NSoC'26 & GSSoC'26 Contribution Quality Standards
 
-This project participates in **NSoC'26**. All contributors are required to maintain fairness, integrity, and quality in every submission. These standards are actively enforced.
+This project participates in **NSoC'26** and **GSSoC'26**. All contributors are required to maintain fairness, integrity, and quality in every submission.
+
+These standards are actively enforced.
 
 ### Strictly Prohibited
 
-The following will result in PR rejection, label corrections, or point deductions per NSoC'26 policy:
+The following may result in PR rejection, label correction, or contribution disqualification:
 
-- Assigning **high-level labels** (e.g. Level 3) to trivial tasks
-- PRs with **2–3 line changes** submitted as major work
-- Multiple **README-only or documentation-only** PRs without meaningful new content
-- PRs with **0 code changes** counted as development contributions
-- **Merging PRs without proper review** or quality checks
+* Assigning high-level labels to trivial work
+* PRs with tiny changes presented as major contributions
+* Multiple low-effort documentation-only PRs
+* PRs with no meaningful impact
+* Merging without proper review/testing
 
 ### What Makes a Valid Contribution
 
-Before opening a PR, ask: *"Does this make the project meaningfully better for users or maintainers?"*
+Before opening a PR, ask:
 
-**Valid contributions include:**
-- Fixing a bug with a clear reproduction case
-- Implementing a scoped feature from the issue tracker
-- Improving performance with an explainable impact
-- Refactoring for readability with a clear before/after rationale
-- Documentation that fills a genuine gap with substantial new content
+> "Does this meaningfully improve the project for users or maintainers?"
+
+Valid contributions include:
+
+* Bug fixes with reproducible cases
+* Scoped feature implementations
+* Performance improvements
+* Readability refactors with clear rationale
+* Meaningful documentation improvements
 
 ### Disallowed Contributions
 
-- AI-generated or agentic PRs submitted without understanding the code
-- Copy-paste or low-effort submissions
-- Spam PRs or repeated low-quality contributions
+* AI-generated PRs submitted without understanding the code
+* Spam submissions
+* Copy-paste contributions
+* Low-effort repeated PRs
 
 Such PRs may be closed without detailed review.
 
-### Compliance Enforcement
+---
+
+## Compliance Enforcement
 
 Failure to comply may result in:
 
-- PR closure or reversal of previously merged work
-- Label corrections affecting NSoC'26 point totals
-- Rejection of low-quality work
-- Escalation to the NSoC'26 team for repeated violations
+* PR closure
+* Label corrections
+* Reverted merges
+* Escalation to NSoC'26 moderators for repeated abuse
 
 ### For Project Admins
 
-- Re-review recently merged PRs for incorrect labels or insufficient review
-- Correct labels where difficulty was overstated
-- Do not merge PRs without a review comment confirming the change was tested
-- Reject low-quality submissions with a brief explanation so contributors can improve
+* Re-review merged PRs if labels appear incorrect
+* Ensure changes were tested before merging
+* Reject low-quality work with concise feedback
+* Maintain fairness across contributors
 
 ---
 
 ## Pull Request Guidelines
 
-- Issue must be **assigned to you** before opening a PR
-- Reference the issue with `Closes #issue-number`
-- Keep changes **minimal and focused** — one logical change per PR
-- Follow project style and philosophy
-- Do not introduce new dependencies
+* Issue must be assigned to you before opening a PR
+* Reference the issue using:
+
+```text
+Closes #issue-number
+```
+
+* Keep changes minimal and focused
+* Follow repository philosophy
+* Do not introduce unnecessary dependencies
 
 ### PR Checklist *(Required)*
 
 Before submitting:
 
-- [ ] Issue is assigned to me
-- [ ] PR is linked to an issue (`Closes #N`)
-- [ ] No dependencies added
-- [ ] Code follows zero-build, zero-dependency philosophy
-- [ ] Changes are minimal and focused
-- [ ] Clear explanation provided in the PR description
-- [ ] Code is written and understood by me (no unreviewed AI-generated submissions)
+* [ ] Issue is assigned to me
+* [ ] PR is linked to an issue (`Closes #N`)
+* [ ] No unnecessary dependencies added
+* [ ] Code follows zero-build philosophy
+* [ ] Changes are minimal and focused
+* [ ] PR description clearly explains the change
+* [ ] I understand the code I submitted
 
 For UI changes:
 
-- [ ] Screenshots attached
+* [ ] Screenshots attached
 
 ---
 
@@ -232,19 +304,25 @@ vercel dev
 
 Verify:
 
-- Edge functions run correctly
-- No build step is introduced
-- No new dependencies added
-- Existing behavior remains unchanged
+* Edge functions run correctly
+* No build step is introduced
+* No unnecessary dependencies added
+* Existing functionality still works
 
 ---
 
 ## Review Process
 
-- PRs are reviewed within **24–48 hours**
-- Changes may be requested before approval
-- Approval depends on: code quality, simplicity, and adherence to project philosophy
-- Not all PRs are guaranteed to be merged
+* PRs are usually reviewed within **24–48 hours**
+* Changes may be requested before approval
+* Approval depends on:
+
+  * code quality
+  * simplicity
+  * maintainability
+  * adherence to repository philosophy
+
+Not all PRs are guaranteed to be merged.
 
 ---
 
@@ -252,9 +330,9 @@ Verify:
 
 If unsure about anything:
 
-- Open an issue
-- Ask in Discussions
-
+* Open an issue
+* Use GitHub Discussions
+* Or use our discord channel 
 ---
 
 Thank you for contributing to FindMyGSoC! 🎉

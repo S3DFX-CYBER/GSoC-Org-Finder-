@@ -1,4 +1,5 @@
 /* global ORGS */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // THEME
@@ -8,6 +9,16 @@
   document.documentElement.classList.toggle('dark', saved === 'dark');
   updateThemeIcon();
 })();
+
+// Shared escaping helper for this script (prevents HTML injection)
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
 
 globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
@@ -154,10 +165,10 @@ function renderTrending(){
     const o=ORGS.find(x=>x.name===name);
     if(!o)return'';
     return`<div class="trend-card" onclick="openModal(${ORGS.indexOf(o)})">
-      <div class="trend-rank">${i+1}</div>
+      <div class="trend-rank">${escapeHtml(String(i+1))}</div>
       <div class="trend-info">
-        <div class="trend-name">${name}</div>
-        <div class="trend-views">${views} view${views!==1?'s':''} · ${catLabel(o.cat)}</div>
+        <div class="trend-name">${escapeHtml(name)}</div>
+        <div class="trend-views">${escapeHtml(String(views))} view${views!==1?'s':''} · ${escapeHtml(catLabel(o.cat))}</div>
       </div>
     </div>`;
   }).join('');
@@ -175,15 +186,15 @@ function openAnalytics(){
   document.getElementById('aTime').textContent=AN.sessionTime();
   const tc=AN.topCats(),mx=tc[0]?.[1]||1;
   document.getElementById('catChart').innerHTML=tc.length
-    ?tc.map(([c,n])=>`<div class="bar-row"><span class="bar-lbl">${catLabel(c)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mx*100)}%"></div></div><span class="bar-val">${n}</span></div>`).join('')
+    ?tc.map(([c,n])=>`<div class="bar-row"><span class="bar-lbl">${escapeHtml(catLabel(c))}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mx*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
     :'<span style="color:var(--muted);font-size:12px">Use category filters to track data</span>';
   const to=AN.topOrgs(),mo=to[0]?.[1]||1;
   document.getElementById('orgChart').innerHTML=to.length
-    ?to.map(([o,n])=>`<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${o.length>16?o.slice(0,16)+'…':o}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mo*100)}%"></div></div><span class="bar-val">${n}</span></div>`).join('')
+    ?to.map(([o,n])=>`<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${escapeHtml(o.length>16?o.slice(0,16)+'…':o)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mo*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
     :'<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
   const tt=AN.topTerms();
   document.getElementById('srchTerms').innerHTML=tt.length
-    ?tt.map(([t,c],i)=>`<span class="sch ${i<3?'hot':''}">${t} (${c})</span>`).join('')
+    ?tt.map(([t,c],i)=>`<span class="sch ${i<3?'hot':''}">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
     :'<span style="color:var(--muted);font-size:12px">No searches yet</span>';
   document.getElementById('anBg').classList.add('open');
   document.body.style.overflow='hidden';
@@ -196,7 +207,9 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // ══════════════════════════════════════════════
 const API='/api/github';
 const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
-let modalIdx=-1,pills=new Set(),chips=new Set(),fetching=false,lastSearch='';
+let modalIdx=-1,fetching=false,lastSearch='';
+const pills=new Set();
+const chips=new Set();
 let matchAllLanguages=false; // false = OR (any), true = AND (all)
 
 // Expose to global scope for HTML onclick handlers and debugging
@@ -368,8 +381,8 @@ function renderCompareSlots(){
     if(o){
       const idx=ORGS.indexOf(o);
       html+=`<div class="compare-slot filled">
-        <span class="slot-cat ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-        <span class="slot-name">${o.name}</span>
+        <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
+        <span class="slot-name">${escapeHtml(o.name)}</span>
         <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">✕ Remove</button>
       </div>`;
     } else {
@@ -402,15 +415,15 @@ function renderCompareTable(){
     {label:'Languages',   vals:arr.map(o=>o.tags.slice(0,3).join(', ')), type:'text'},
   ];
 
-  const thead=`<tr><th>Metric</th>${arr.map(o=>`<th>${o.name.length>22?o.name.slice(0,22)+'…':o.name}</th>`).join('')}</tr>`;
+  const thead=`<tr><th>Metric</th>${arr.map(o=>`<th>${escapeHtml(o.name.length>22?o.name.slice(0,22)+'…':o.name)}</th>`).join('')}</tr>`;
   let tbody='';
   for(const row of rows){
     let cells='';
     if(row.type==='bar'){
       const mx=Math.max(...row.vals);
-      cells=row.vals.map((v,i)=>{
+      cells=row.vals.map((v)=>{
         const pct=mx>0?Math.round(v/mx*100):0;
-        return`<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${v}y</span></div></td>`;
+        return`<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${escapeHtml(String(v))}y</span></div></td>`;
       }).join('');
     } else if(row.type==='scored'&&row.scores&&row.scores.some(s=>s>0)){
       const mx=Math.max(...row.scores),mn=Math.min(...row.scores.filter(s=>s>0)||[0]);
@@ -420,12 +433,12 @@ function renderCompareTable(){
         if(s>0){
           cls=row.best==='high'?(s===mx?'cmp-best':s===mn?'cmp-worst':'cmp-val'):(s===mn?'cmp-best':s===mx?'cmp-worst':'cmp-val');
         }
-        return`<td class="${cls}">${v}</td>`;
+        return`<td class="${cls}">${escapeHtml(String(v))}</td>`;
       }).join('');
     } else {
-      cells=row.vals.map(v=>`<td class="cmp-val">${v}</td>`).join('');
+      cells=row.vals.map(v=>`<td class="cmp-val">${escapeHtml(String(v))}</td>`).join('');
     }
-    tbody+=`<tr><td class="row-label">${row.label}</td>${cells}</tr>`;
+    tbody+=`<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
   }
   wrap.innerHTML=`<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
     <p style="font-size:10px;color:var(--muted);margin-top:10px;text-align:right">🟢 Best value &nbsp; 🔴 Lowest value &nbsp; (requires GitHub stats to be fetched)</p>`;
@@ -503,16 +516,6 @@ function orgMatchesLanguages(org, selectedLanguages) {
     });
   }
 }
-
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-
-const debouncedFilter = debounce(applyFilters, 280);
 
 function applyFilters(){
   const search=document.getElementById('searchInput').value.trim().toLowerCase();
@@ -647,7 +650,7 @@ function isBookmarked(orgName) {
 
 function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
-  return `<span class="gh-s">🟢 <b>${fmt(gh.gfi)} GFI</b></span>`;
+  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
@@ -663,12 +666,12 @@ function renderGrid(orgs){
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${t}</span>`).join('');
+    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
       ${renderGfiBadge(o._gh)}
-      <span class="gh-s">🕐 <b>${o._gh.lastCommit}</b></span>
+      <span class="gh-s">🕐 <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
     </div>`:'';
     const globalIdx=ORGS.indexOf(o);
     const inCompare=compareSet.has(globalIdx);
@@ -678,19 +681,19 @@ function renderGrid(orgs){
     // shortRepo now handled by repoLinkLabel()
     return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
       role="article"
-      aria-label="Organization: ${o.name}"
+      aria-label="Organization: ${escapeHtml(o.name)}"
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">
       <div class="card-header-row">
-        ${logo?`<img class="org-logo" src="${logo}" alt="${o.name[0]}" loading="lazy" onerror="imgErr(this)">`:``}
+        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name||'')[0]||'') }" loading="lazy" onerror="imgErr(this)">`:``}
         <div class="org-logo-info">
           <div class="card-top-line">
-            <div class="org-name">${o.name}</div>
+            <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${o.name}">
+              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
                   <path
                     d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
@@ -703,7 +706,7 @@ function renderGrid(orgs){
               </button>
             </div>
           </div>
-          ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${repoHref}">
+          ${repoHref?`<a class="card-repo-link" href="${escapeHtml(repoHref)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(repoHref)}">
             ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
@@ -881,7 +884,7 @@ function resetFilters(){
   Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
 
   document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip'});
+  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
   renderSelectedLanguages();
  
   applyFilters();
@@ -892,16 +895,16 @@ function resetFilters(){
 // ══════════════════════════════════════════════
 function openModal(idx){
   const o=ORGS[idx];modalIdx=idx;AN.trackOrg(o.name);
-  document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>`;
+  document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
   document.getElementById('mName').textContent=o.name;
   document.getElementById('mDesc').textContent=o.desc;
   const cc={hot:'var(--red)',moderate:'#92600A',chill:'var(--green)'};
   document.getElementById('mMetrics').innerHTML=`
-    <div class="mc"><div class="mv" style="color:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}">${o.years}</div>
+    <div class="mc"><div class="mv" style="color:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}">${escapeHtml(String(o.years))}</div>
     <div class="ml">GSoC Years</div><div class="prog"><div class="prog-fill" style="width:${Math.min(o.years/11*100,100)}%;background:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}"></div></div></div>
-    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎'}</div><div class="ml">${cLbl(o.competition)}</div></div>
-    <div class="mc"><div class="mv" style="color:var(--orange)">${o.firstYear}</div><div class="ml">First Year</div></div>
-    <div class="mc"><div class="mv" style="color:var(--green)">${o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—'}</div><div class="ml">Good 1st Issues</div></div>`;
+    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${escapeHtml(o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎')}</div><div class="ml">${escapeHtml(String(cLbl(o.competition)))}</div></div>
+    <div class="mc"><div class="mv" style="color:var(--orange)">${escapeHtml(String(o.firstYear))}</div><div class="ml">First Year</div></div>
+    <div class="mc"><div class="mv" style="color:var(--green)">${escapeHtml(o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—')}</div><div class="ml">Good 1st Issues</div></div>`;
   const gh=o._gh;
   document.getElementById('ghStars').textContent=gh?fmt(gh.stars):'—';
   document.getElementById('ghForks').textContent=gh?fmt(gh.forks):'—';
@@ -909,13 +912,12 @@ function openModal(idx){
   document.getElementById('ghCommit').textContent=gh?gh.lastCommit:'—';
   document.getElementById('ghGFI').textContent=gh?.gfi!==null&&gh?.gfi!==undefined?fmt(gh.gfi):'—';
   document.getElementById('mFetchBtn').textContent=gh?'↻ Refresh':'Fetch Live Data';
-  document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${t}</span>`).join('');
-  document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${f}</span>`).join('');
+  document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${escapeHtml(t)}</span>`).join('');
+  document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${escapeHtml(f)}</span>`).join('');
   let tl='';
   for(let y=o.firstYear;y<=2026;y++){
     const cur=y===2026;
-    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${cur?'⭐':'✓'} ${y}</span>`;
-  }
+    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${escapeHtml(cur?'⭐':'✓')} ${escapeHtml(String(y))}</span>`;}
   document.getElementById('mTimeline').innerHTML=tl;
   // Smart link: umbrella orgs → org page, single-project → specific repo
   const mLinkEl=document.getElementById('mLink');
@@ -983,13 +985,10 @@ const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
 
 function openIssuesPage(){
-  loadCachedIssues();
   document.getElementById('issuesPage').classList.add('open');
   document.body.style.overflow='hidden';
   loadCachedIssues();
 }
-
-/* (Removed duplicate simple loadCachedIssues — consolidated implementation exists later) */
 
 function closeIssuesPage(){
   document.getElementById('issuesPage').classList.remove('open');
@@ -1170,25 +1169,29 @@ function renderIssues(){
 }
 
 function renderIssueCard(iss){
-  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
+  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${escapeHtml(t)}</span>`).join('');
   const gfiNames=['good first issue','good-first-issue'];
-  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(l.toLowerCase())).slice(0,2)
-    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
-  return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener noreferrer">
-    <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
+  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
+    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
+  const safeHref = validateIdeasUrl(iss.url);
+  const imgSrc = validateIdeasUrl(iss.logo);
+  const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
+  const hrefEnd = safeHref ? '</a>' : '</div>';
+  return `${hrefStart}
+    ${imgSrc?`<img class="issue-logo" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(iss.org)}" loading="lazy" onerror="this.style.display='none'">`:``}
     <div class="issue-body">
       <div class="issue-top">
-        <span class="issue-org">${iss.org}</span>
+        <span class="issue-org">${escapeHtml(iss.org)}</span>
         <span class="issue-label gfi">✓ Good First Issue</span>
-        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${iss.comments}</span>`:''}
+        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${escapeHtml(String(iss.comments))}</span>`:''}
       </div>
-      <div class="issue-title">${iss.title}</div>
+      <div class="issue-title">${escapeHtml(iss.title)}</div>
       <div class="issue-meta">
         ${langTags}${otherLabels}
-        <span class="issue-date">${relativeTime(iss.created_at)}</span>
+        <span class="issue-date">${escapeHtml(relativeTime(iss.created_at))}</span>
       </div>
     </div>
-  </a>`;
+  ${hrefEnd}`;
 }
 
 function showMoreIssues(){

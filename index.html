@@ -185,6 +185,10 @@
     .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
+    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
+    .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
+    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
@@ -219,7 +223,7 @@
     html { scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues {
+    #timeline, #orgs, #guide, #watchlist, #issues, #mentors {
       scroll-margin-top: 80px;
     }
 
@@ -230,7 +234,7 @@
     .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .text-zinc-900 { color: #f4f4f5 !important; }
     .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
-    .dark .text-zinc-300 { color: #71717a !important; }
+    .dark .text-zinc-300 { color: #a1a1aa !important; }
     .dark .text-on-surface { color: #f4f4f5 !important; }
     .dark .text-on-surface-variant { color: #a1a1aa !important; }
     .dark .border-zinc-100 { border-color: #3f3f46 !important; }
@@ -285,12 +289,22 @@
     /* Dark mode - Tech tags */
     .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
+    .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
+    .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
+    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
+
+    @media (max-width: 640px) {
+      .modal-header { padding: 2rem 1.5rem 1rem; }
+      .modal-body { padding: 0 1.5rem 2rem; }
+      .modal-footer { padding: 1.5rem; flex-direction: column; }
+      .modal-cta { width: 100%; }
+    }
     
     /* Dark mode - Modal */
     .dark .modal { background: #18181b; }
     .dark .modal-header h2 { color: #f4f4f5; }
     .dark .modal-header p { color: #a1a1aa; }
-    .dark .section-title { color: #71717a; border-color: #27272a; }
+    .dark .section-title { color: #a1a1aa; border-color: #27272a; }
     .dark .metric-card { background: #27272a; border-color: #3f3f46; }
     .dark .metric-value { color: #f4f4f5; }
     .dark .metric-label { color: #a1a1aa; }
@@ -446,6 +460,7 @@
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide">Guide</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist">Watchlist</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues">Issues</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors">Mentors</a>
         <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline">Timeline</a>
       </nav>
     </div>
@@ -526,6 +541,10 @@
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
+      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+        <span class="material-symbols-outlined text-lg">group</span>
+        Mentors
+      </a>
       <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
@@ -555,9 +574,16 @@
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-8 sm:mb-10">
+      <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
         <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+      </div>
+      <!-- Surprise Button -->
+      <div class="mb-8 sm:mb-10">
+        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+          <span class="material-symbols-outlined text-sm">casino</span>
+          🎲 Surprise Me!
+        </button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
@@ -836,6 +862,52 @@
   </div>
 </section>
 
+<!-- ═══════════════════ MENTOR FINDER ═══════════════════ -->
+<section id="mentors" class="py-20 px-6 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-12">
+      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Mentor Outreach</span>
+      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Mentor Finder</h2>
+      <p class="text-zinc-600 mt-4 max-w-3xl">Pre-fetched contact channels and conservative mentor handles from org ideas pages, so you can find where to introduce yourself before proposal season gets busy.</p>
+    </div>
+
+    <div class="bg-white border border-zinc-100 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full bg-orange-500 pulse-dot"></div>
+        <div>
+          <p class="font-bold text-zinc-900 text-sm">Cached mentor contact data</p>
+          <p class="text-xs text-zinc-600">Generated offline by the project workflow to keep scraping out of the browser.</p>
+        </div>
+      </div>
+      <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500 ml-auto">Last updated: pending refresh</span>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-zinc-100 p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
+        <label class="relative block">
+          <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
+          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
+        </label>
+        <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
+          <option value="all">All channels</option>
+          <option value="Slack">Slack</option>
+          <option value="Zulip">Zulip</option>
+          <option value="Discord">Discord</option>
+          <option value="Matrix">Matrix</option>
+          <option value="IRC">IRC</option>
+          <option value="Mailing list">Mailing list</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
+        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+      </div>
+    </div>
+  </div>
+</section>
+ 
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
@@ -1025,6 +1097,11 @@
 
       <div class="section-title">Participation Timeline</div>
       <div class="timeline-grid" id="mTimeline"></div>
+
+      <div class="section-title">Mentors &amp; Contact</div>
+      <div id="mMentorSection" class="space-y-4">
+        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+      </div>
     </div>
     <div class="modal-footer">
       <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
@@ -1140,7 +1217,7 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'timeline'];
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline'];
     const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
     let currentSection = 'orgs'; // Default
@@ -1189,6 +1266,19 @@
       .replaceAll("'", '&#39;');
   }
 
+  // Sanitize hrefs: only allow http(s) absolute URLs.
+  // Returns the original URL string when allowed, otherwise null.
+  function sanitizeHrefUrl(url) {
+    if (!url || !String(url).trim()) return null;
+    try {
+      const u = new URL(String(url).trim());
+      if (u.protocol === 'http:' || u.protocol === 'https:') return u.toString();
+    } catch (e) {
+      // invalid URL
+    }
+    return null;
+  }
+
   // NOTE: For JS-string contexts inside inline event handlers,
   // we must also escape quotes. Prefer removing inline handlers.
 
@@ -1198,11 +1288,29 @@
   let visibleCount = 12;
 
   let filteredOrgs = [...ORGS];
+  let MENTOR_DATA = {};
+  let mentorDataState = 'idle';
   let compareList = [];
   const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
   const selectedLanguages = new Set();
   let matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
+  const CHANNEL_ICONS = {
+    Slack: '💬',
+    Zulip: '💬',
+    Discord: '🎮',
+    Matrix: '🔗',
+    IRC: '🖥️',
+    'Mailing list': '📧'
+  };
+  const CONTACT_TIPS = {
+    Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
+    Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
+    Zulip: 'Post a new topic in the GSoC stream with your background and interest.',
+    Matrix: "Say hello in the public room and mention the project area you're exploring.",
+    IRC: 'Stay in the channel for a while; replies are often asynchronous.',
+    'Mailing list': "Send a short intro email with your background and the idea you're interested in."
+  };
   const LANGUAGE_ALIASES = {
     'python': ['python'],
     'javascript': ['javascript', 'js'],
@@ -1328,6 +1436,343 @@
     applyFilters();
   };
 
+  function createDefaultMentorEntry(org) {
+    return {
+      org: org.name,
+      ideasUrl: org.ideas || '',
+      channels: [],
+      mentors: [],
+      mailingLists: [],
+      tip: '',
+      status: 'fetch-failed',
+      lastFetched: ''
+    };
+  }
+
+  function getMentorEntry(name) {
+    const org = ORGS.find(item => item.name === name);
+    if (!org) return null;
+    return MENTOR_DATA[name] || createDefaultMentorEntry(org);
+  }
+
+  function formatRelativeRefresh(isoString) {
+    if (!isoString) return 'Last updated: unavailable';
+    const timestamp = new Date(isoString).getTime();
+    if (Number.isNaN(timestamp)) return 'Last updated: unavailable';
+    const minutes = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
+    if (minutes < 60) return `Last updated: ${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 48) return `Last updated: ${hours} hour${hours === 1 ? '' : 's'} ago`;
+    const days = Math.floor(hours / 24);
+    return `Last updated: ${days} day${days === 1 ? '' : 's'} ago`;
+  }
+
+  function getPrimaryMentorContact(entry) {
+    if (entry.channels.length > 0) return entry.channels[0];
+    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
+    return null;
+  }
+
+  function buildChannelChips(records) {
+    return records
+      .map((record) => {
+        const safe = sanitizeHrefUrl(record.url);
+        if (!safe) return '';
+        return `
+          <a class="mentor-link-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
+            <span>${CHANNEL_ICONS[record.type] || '💬'}</span>
+            <span>${escapeHtml(record.label || record.type)}</span>
+          </a>
+        `;
+      })
+      .filter(Boolean)
+      .join('');
+  }
+
+  function buildMentorChips(mentors) {
+    return mentors
+      .map((mentor) => {
+        if (mentor.githubUrl) {
+          const safe = sanitizeHrefUrl(mentor.githubUrl);
+          const label = mentor.github ? `@${mentor.github}` : (mentor.name || mentor.githubUrl);
+          if (safe) {
+            return `
+              <a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
+                <span>🐙</span>
+                <span>${escapeHtml(label)}</span>
+              </a>
+            `;
+          }
+        }
+
+        return `
+          <span class="mentor-handle-chip">
+            <span>👤</span>
+            <span>${escapeHtml(mentor.name || 'Mentor')}</span>
+          </span>
+        `;
+      })
+      .join('');
+  }
+
+  function buildMentorPreviewChips(mentorPreview) {
+    if (mentorPreview.length === 0) {
+      return '<p class="text-sm text-zinc-600">No mentor handles parsed yet.</p>';
+    }
+
+    const chips = mentorPreview.map((mentor) => {
+      if (mentor.githubUrl) {
+        const safe = sanitizeHrefUrl(mentor.githubUrl);
+        if (safe) return `<a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer"><span>🐙</span><span>${escapeHtml(mentor.displayLabel)}</span></a>`;
+      }
+
+      return `<span class="mentor-handle-chip"><span>👤</span><span>${escapeHtml(mentor.displayLabel)}</span></span>`;
+    }).join('');
+
+    return `<div class="flex flex-wrap gap-2">${chips}</div>`;
+  }
+
+  function renderMentorContactSection(org) {
+    const container = document.getElementById('mMentorSection');
+    if (!container) return;
+
+    if (mentorDataState === 'idle' || mentorDataState === 'loading') {
+      container.innerHTML = '<p class="text-sm text-zinc-500">Loading mentor contact data...</p>';
+      return;
+    }
+
+    const entry = getMentorEntry(org.name);
+    if (!entry) {
+      container.innerHTML = '<p class="text-sm text-zinc-500">Mentor data unavailable right now.</p>';
+      return;
+    }
+
+    const fallbackIdeasLink = (function(){
+      const u = sanitizeHrefUrl(org.ideas);
+      return u ? `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>` : '';
+    })();
+
+    const sections = [];
+    if (entry.status === 'ok' && entry.channels.length > 0) {
+      sections.push(`
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
+          <div class="flex flex-wrap gap-2">${buildChannelChips(entry.channels)}</div>
+        </div>
+      `);
+    }
+
+    if (entry.status === 'ok' && entry.mentors.length > 0) {
+      sections.push(`
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
+          <div class="flex flex-wrap gap-2">${buildMentorChips(entry.mentors)}</div>
+        </div>
+      `);
+    }
+
+    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
+      sections.push(`
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
+          <div class="flex flex-wrap gap-2">${buildChannelChips(entry.mailingLists.map((list) => ({ ...list, type: 'Mailing list' })))}</div>
+        </div>
+      `);
+    }
+
+    if (entry.tip) {
+      sections.push(`
+        <div class="rounded-2xl bg-orange-50 border border-orange-100 p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-primary mb-1">Contact Tip</p>
+          <p class="text-sm text-zinc-700">${escapeHtml(entry.tip)}</p>
+        </div>
+      `);
+    }
+
+    if (sections.length === 0) {
+      let message = 'No contact info parsed yet.';
+      if (entry.status === 'fetch-failed') {
+        message = 'Mentor data unavailable right now.';
+      }
+      container.innerHTML = `
+        <div class="rounded-2xl border border-dashed border-zinc-200 p-5">
+          <p class="text-sm text-zinc-600 mb-3">${message}</p>
+          <div class="flex flex-wrap gap-2">${fallbackIdeasLink || '<span class="text-xs text-zinc-400">No ideas page listed.</span>'}</div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${sections.join('')}
+        ${fallbackIdeasLink ? `<div class="flex flex-wrap gap-2">${fallbackIdeasLink}</div>` : ''}
+      </div>
+    `;
+  }
+
+  function getMentorFinderRecords() {
+    return ORGS.map((org) => ({
+      org,
+      entry: getMentorEntry(org.name)
+    }));
+  }
+
+  function renderMentorFinder() {
+    const grid = document.getElementById('mentorGrid');
+    const lastUpdatedEl = document.getElementById('mentorLastUpdated');
+    if (!grid) return;
+
+    if (mentorDataState === 'loading' || mentorDataState === 'idle') {
+      grid.innerHTML = `
+        <div class="col-span-full mentor-empty">
+          <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (mentorDataState === 'error') {
+      grid.innerHTML = `
+        <div class="col-span-full mentor-empty">
+          <p class="font-bold text-zinc-900 mb-2">Mentor data unavailable right now.</p>
+          <p class="text-sm text-zinc-600">The cached mentor snapshot could not be loaded. Please try again later.</p>
+        </div>
+      `;
+      if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
+      return;
+    }
+
+    const search = (document.getElementById('mentorSearchInput')?.value || '').trim().toLowerCase();
+    const channelFilter = document.getElementById('mentorChannelFilter')?.value || 'all';
+    const records = getMentorFinderRecords();
+    const lastFetched = records.map((record) => record.entry.lastFetched).find(Boolean);
+    if (lastUpdatedEl?.textContent !== undefined) {
+      lastUpdatedEl.textContent = formatRelativeRefresh(lastFetched);
+    }
+
+    const filteredRecords = records.filter(({ org, entry }) => {
+      const searchHaystack = [
+        org.name,
+        ...(entry.mentors || []).flatMap((mentor) => [mentor.name || '', mentor.github || ''])
+      ].join(' ').toLowerCase();
+
+      const matchesSearch = !search || searchHaystack.includes(search);
+      const allContacts = [...(entry.channels || []), ...(entry.mailingLists || []).map((list) => ({ ...list, type: 'Mailing list' }))];
+      const matchesChannel = channelFilter === 'all' || allContacts.some((contact) => contact.type === channelFilter);
+
+      return matchesSearch && matchesChannel;
+    });
+
+    if (filteredRecords.length === 0) {
+      grid.innerHTML = `
+        <div class="col-span-full mentor-empty">
+          <p class="font-bold text-zinc-900 mb-2">No mentor matches found.</p>
+          <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+      const primary = getPrimaryMentorContact(entry);
+      const mentorPreview = entry.mentors
+        .slice(0, 3)
+        .filter((mentor) => mentor.github || mentor.name)
+        .map((mentor) => ({
+          ...mentor,
+          displayLabel: mentor.github ? `@${mentor.github}` : mentor.name
+        }));
+      const mentorPreviewHtml = buildMentorPreviewChips(mentorPreview);
+      const primaryType = primary?.type || 'Not specified';
+      let statusClass = 'bg-red-100 text-red-700';
+      if (entry.status === 'ok') {
+        statusClass = 'bg-green-100 text-green-700';
+      } else if (entry.status === 'no-contact-found') {
+        statusClass = 'bg-zinc-100 text-zinc-600';
+      }
+
+      const contactLabel = entry.status === 'ok' ? 'Contact' : 'Ideas page';
+      const helperText = entry.status === 'ok'
+        ? 'Ideas page remains available from the org modal.'
+        : 'Use the ideas page to find the latest contact guidance.';
+
+      let bodyHtml = '';
+      if (entry.status === 'ok') {
+        const channelLinks = [
+          ...(entry.channels || []),
+          ...(entry.mailingLists || []).map((list) => ({ ...list, type: 'Mailing list' }))
+        ];
+        bodyHtml = `
+          <div class="space-y-3">
+            <div class="flex flex-wrap gap-2">${buildChannelChips(channelLinks.slice(0, 2))}</div>
+            ${mentorPreviewHtml}
+            <div class="text-sm text-zinc-600">
+              <p><strong class="text-zinc-900">Primary channel:</strong> ${escapeHtml(primaryType)}</p>
+            </div>
+            ${entry.tip ? `<p class="text-sm text-zinc-600 line-clamp-3">${escapeHtml(entry.tip)}</p>` : ''}
+          </div>
+        `;
+      } else if (entry.status === 'no-contact-found') {
+        bodyHtml = '<p class="text-sm text-zinc-600">No mentor contact info parsed yet for this org.</p>';
+      } else {
+        bodyHtml = '<p class="text-sm text-zinc-600">Mentor data unavailable right now.</p>';
+      }
+
+      const contactHref = primary?.url || org.ideas || `https://github.com/${org.github}`;
+      const safeContactHref = sanitizeHrefUrl(contactHref);
+
+      return `
+        <article class="mentor-card">
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
+              <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+          </div>
+          ${bodyHtml}
+          <div class="mt-5 pt-4 border-t border-zinc-100">
+            ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
+            <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    attachOrgCardListeners(grid);
+  }
+
+  async function loadMentorData() {
+    mentorDataState = 'loading';
+    renderMentorFinder();
+
+    try {
+      const res = await fetch(`/data/mentors.json?v=${Date.now()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('Invalid mentors.json payload');
+      }
+      MENTOR_DATA = data;
+      mentorDataState = 'loaded';
+    } catch (error) {
+      console.error('Mentor data load failed:', error);
+      MENTOR_DATA = {};
+      mentorDataState = 'error';
+    }
+
+    renderMentorFinder();
+    const openModalEl = document.getElementById('orgModal');
+    if (openModalEl?.classList.contains('open')) {
+      const orgName = document.querySelector('#mHeader h2')?.textContent;
+      if (orgName) {
+        const org = ORGS.find((item) => item.name === orgName);
+        if (org) renderMentorContactSection(org);
+      }
+    }
+  }
+
   // Dynamic timeline milestones
   const MILESTONES = [
     { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
@@ -1360,28 +1805,27 @@
           dateStr = m.date.toISOString().slice(0, 10);
         }
 
-        if (isActive && !allPast) {
-          return `<div class="flex gap-3 sm:gap-4">
-            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
-            <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
-            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
-            ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
-          </div>`;
-        } else if (isActive && allPast) {
-          const winnerLink = m.label === 'Accepted Projects Announced' ? `<a href="#winners" class="text-xs text-green-600 mt-1 font-semibold hover:text-green-700 inline-flex items-center gap-1">✓ Completed - <span class="underline">View Winners 🏆</span></a>` : `<p class="text-xs text-green-600 mt-1">✓ Completed</p>`;
-          return `<div class="flex gap-3 sm:gap-4">
-            <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
-            <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
-            <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${m.label}</p>
-            ${winnerLink}</div>
-          </div>`;
-        } else {
-          return `<div class="flex gap-3 sm:gap-4 opacity-40">
-            <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
-            <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
-            <p class="text-sm font-bold text-zinc-500">${m.label}</p></div>
-          </div>`;
-        }
+          if (isActive && !allPast) {
+            return `<div class="flex gap-3 sm:gap-4">
+              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
+              <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
+              <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
+              ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
+            </div>`;
+          } else if (isActive && allPast) {
+            return `<div class="flex gap-3 sm:gap-4">
+              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
+              <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
+              <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
+              <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
+            </div>`;
+          } else {
+            return `<div class="flex gap-3 sm:gap-4 opacity-40">
+              <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
+              <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-bold text-zinc-500">${escapeHtml(m.label)}</p></div>
+            </div>`;
+          }
       }).join('');
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
@@ -1470,12 +1914,12 @@
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />
+            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${org.years}y Veteran</span>
-            <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
+            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
+            <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
@@ -1486,7 +1930,7 @@
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${org.tags.length - 3}</span>` : ''}
+          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
         </div>
 
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
@@ -1574,10 +2018,10 @@
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
-        <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${org.years}y · ${org.competition}</p>
+        <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
         <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
       container.appendChild(item);
@@ -1728,12 +2172,13 @@
     // Data-driven AI Insight
     const allTags = bookmarks.flatMap(o => o.tags);
     const topTag = [...new Set(allTags)].sort((a,b) => allTags.filter(t => t===b).length - allTags.filter(t => t===a).length)[0];
-    const skillFocus = topTag ? `Focus on mastering **${topTag}**` : "Start contributing to Good First Issues";
-    
+    const skillFocus = topTag ? `Focus on mastering **${escapeHtml(topTag)}**` : "Start contributing to Good First Issues";
+    const safeTopTag = topTag ? escapeHtml(topTag) : null;
+
     document.getElementById('aiInsightText').innerHTML = `
       <span class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary text-sm">sparkles</span>
-        <span>Insight: Your watchlist highlights a strong interest in <strong>${topTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
+        <span>Insight: Your watchlist highlights a strong interest in <strong>${safeTopTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
       </span>
     `;
   }
@@ -1743,22 +2188,22 @@
     if (!org) return;
 
     document.getElementById('mHeader').innerHTML = `
-      <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
+      <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <h2>${escapeHtml(org.name)}</h2>
-      <p class="text-zinc-500">GSoC Partner for ${escapeHtml(org.years.toString())} Years</p>
+      <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
     `;
 
     document.getElementById('mMetrics').innerHTML = `
-      <div class="metric-card"><p class="metric-value">${org.years}</p><p class="metric-label">Years In</p></div>
-      <div class="metric-card"><p class="metric-value">${org.firstYear}</p><p class="metric-label">First Year</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${org.competition.toUpperCase()}</p><p class="metric-label">Competition</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${org.codebase.toUpperCase()}</p><p class="metric-label">Codebase</p></div>
+      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
+      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
     `;
 
     document.getElementById('mDesc').textContent = org.desc;
-    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${t}</span>`).join('');
-    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${f}</span>`).join('');
-    
+    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
+    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+
     // Timeline
     let timelineHtml = '';
     for(let y=2020; y<=2026; y++) {
@@ -1767,8 +2212,17 @@
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 
-    document.getElementById('mIdeasBtn').href = org.ideas;
-    document.getElementById('mRepoBtn').href = `https://github.com/${org.github}`;
+    // Sanitize and set idea/repo links
+    const ideasUrl = sanitizeHrefUrl(org.ideas);
+    const repoUrl = sanitizeHrefUrl(`https://github.com/${org.github}`);
+    const ideasBtn = document.getElementById('mIdeasBtn');
+    const repoBtn = document.getElementById('mRepoBtn');
+    if (ideasBtn) {
+      if (ideasUrl) ideasBtn.href = ideasUrl; else ideasBtn.removeAttribute('href');
+    }
+    if (repoBtn) {
+      if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href');
+    }
 
 // Copy link button
 const oldCopy = document.getElementById('mIdeasCopyBtn');
@@ -1792,7 +2246,8 @@ if(org.ideas){
   };
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
-    
+    renderMentorContactSection(org);
+     
     document.getElementById('orgModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -1800,6 +2255,20 @@ if(org.ideas){
   function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.style.overflow = 'auto';
+  }
+
+  function openRandomOrg() {
+    const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+    
+    if (!orgsToUse.length) {
+      alert('No organizations match your filters — try clearing some!');
+      return;
+    }
+
+    const randomIdx = Math.floor(Math.random() * orgsToUse.length);
+    const randomOrg = orgsToUse[randomIdx];
+    
+    openModal(randomOrg.name);
   }
 
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
@@ -1853,6 +2322,8 @@ if(org.ideas){
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
+  document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
     matchAllLanguages = e.target.checked;
     // keep global in sync for any external code expecting `matchAllLanguages`
@@ -1863,6 +2334,9 @@ if(org.ideas){
     visibleCount += 12;
     renderOrgs(false);
   });
+
+  // Surprise button event listener
+  document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
   // Hero Search Link
   document.getElementById('hero-search').addEventListener('input', (e) => {
@@ -1972,16 +2446,20 @@ if(org.ideas){
       issues.slice(0, 6).forEach(issue => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
-        card.onclick = () => window.open(issue.url, '_blank');
+        const safeUrl = sanitizeHrefUrl(issue.url);
+        if (safeUrl) card.onclick = () => window.open(safeUrl, '_blank');
+        const safeRepo = escapeHtml(issue.repo || '');
+        const safeTitle = escapeHtml(issue.title || '');
+        const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
         card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
-            <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${issue.title}</h4>
+            <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
             <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
           </div>
-          <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo}</p>
+          <p class="text-xs text-zinc-500 mb-3 font-mono">${safeRepo}</p>
           <div class="flex flex-wrap gap-1.5">
-            ${issue.labels.slice(0, 2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`).join('')}
-            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${issue.comments} comments</span>
+            ${labelsHtml}
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${escapeHtml(String(issue.comments || 0))} comments</span>
           </div>
         `;
         container.appendChild(card);
@@ -2049,6 +2527,7 @@ if(org.ideas){
   renderSelectedLanguages();
   renderOrgs();
   renderWatchlist();
+  loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
   const helpModal = document.getElementById('helpModal');

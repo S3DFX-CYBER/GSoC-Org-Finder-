@@ -72,7 +72,7 @@ function validateUrl(url) {
 }
 
 // Process each organization
-ORGS.forEach((org, index) => {
+ORGS.forEach((org) => {
   if (!org.ideas) {
     missingCount++;
     console.log(`⚠️  ${org.name}`);

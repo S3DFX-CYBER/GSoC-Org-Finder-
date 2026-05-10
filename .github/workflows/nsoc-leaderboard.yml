@@ -35,6 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+          PR_AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
           PR_ACTION: ${{ github.event.action }}
           PR_MERGED: ${{ github.event.pull_request.merged }}
           REPO_OWNER: ${{ github.repository_owner }}
@@ -50,6 +52,11 @@ jobs:
             const fs = require('fs');
 
             const body = fs.readFileSync('comment.md', 'utf8');
+
+            if (!body.trim()) {
+              core.info('Leaderboard comment is empty, skipping.');
+              return;
+            }
 
             const comments = await github.paginate(
               github.rest.issues.listComments,

@@ -1271,6 +1271,8 @@ async function loadWinnersData() {
     if (loadingState) loadingState.style.display = 'block';
     if (errorState) errorState.style.display = 'none';
     
+    const res = await fetch('/data/winners.json');
+    if (!res.ok) throw new Error(`Failed to load winners: ${res.status}`);
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error('Invalid winners format');
     

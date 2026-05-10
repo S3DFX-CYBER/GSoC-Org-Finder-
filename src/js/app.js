@@ -1254,7 +1254,7 @@ syncScrollTopBtn();
 // ══════════════════════════════════════════════
 let allWinners = [];           // All winners loaded from data/winners.json
 let filteredWinners = [];      // Filtered winners based on search/org filter
-let winnersOrgFilter = new Set(); // Currently selected org filters
+const winnersOrgFilter = new Set(); // Currently selected org filters
 let winnersSearchTerm = '';     // Current search term
 
 /**
@@ -1271,6 +1271,7 @@ async function loadWinnersData() {
     if (loadingState) loadingState.style.display = 'block';
     if (errorState) errorState.style.display = 'none';
     
+    const res = await fetch('/data/winners.json');
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error('Invalid winners format');
     
@@ -1434,13 +1435,7 @@ function renderWinnersCards() {
   `).join('');
 }
 
-/**
- * Escapes HTML to prevent XSS
- */
-function escapeHtml(text) {
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
+
 
 /**
  * Adds event listeners for winners section
@@ -1452,17 +1447,7 @@ function setupWinnersEventListeners() {
   }
 }
 
-/**
- * Updates org winner counts (for org cards)
- */
-function updateOrgWinnerCounts() {
-  const winnersByOrg = {};
-  allWinners.forEach(w => {
-    winnersByOrg[w.orgName] = (winnersByOrg[w.orgName] || 0) + 1;
-  });
-  return winnersByOrg;
 
-}
 
 /**
  * Returns HTML for winner count badge on org cards

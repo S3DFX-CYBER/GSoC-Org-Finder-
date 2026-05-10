@@ -130,26 +130,33 @@ function parseWinnerPath(path) {
   const nameWithoutExt = filename.slice(0, -4);
 
   // Split by underscore to extract components
-  // Expected format: username_Project_Title_With_Underscores
-  // But we can also handle: contributor_username_Project_Title or variations
-  const parts = nameWithoutExt.split('_');
+  // Expected format: contributor_username_Project_Title_Year
+  // Example: contributor_John_Doe_Project_Title_2026
+  let parts = nameWithoutExt.split('_');
 
   if (parts.length < 2) {
     return null;
   }
 
-  // The last part is typically the username
-  const username = parts[parts.length - 1];
+  // Remove "contributor" prefix if it's the first part
+  if (parts[0].toLowerCase() === 'contributor') {
+    parts = parts.slice(1);
+  }
 
-  // Join remaining parts as project title (remove the last part which is username)
-  const projectTitleParts = parts.slice(0, -1);
+  if (parts.length < 1) {
+    return null;
+  }
+
+  // The first part is the username
+  const username = parts[0];
+
+  // Remove year suffix (4-digit number at the end) if present
+  let projectTitleParts = parts.slice(1);
+  if (projectTitleParts.length > 0 && /^\d{4}$/.test(projectTitleParts[projectTitleParts.length - 1])) {
+    projectTitleParts = projectTitleParts.slice(0, -1);
+  }
+
   let projectTitle = projectTitleParts.join(' ');
-
-  // Clean up the project title - remove common prefixes
-  projectTitle = projectTitle
-    .replace(/^contributor\s+/i, '')
-    .replace(/^contributor_/i, '')
-    .trim();
 
   // Validate we have meaningful data
   if (!username || !projectTitle) {
@@ -173,8 +180,7 @@ async function fetchWinners() {
   // Get repository default branch
   const branch = await getRepositoryDefaultBranch();
   if (!branch) {
-    console.error('Failed to fetch repository default branch');
-    return [];
+    throw new Error('Failed to fetch repository default branch');
   }
 
   console.log(`Using branch: ${branch}`);
@@ -182,8 +188,7 @@ async function fetchWinners() {
   // Get branch SHA
   const sha = await getDefaultBranchSha(branch);
   if (!sha) {
-    console.error('Failed to fetch branch SHA');
-    return [];
+    throw new Error('Failed to fetch branch SHA');
   }
 
   console.log(`Fetching tree with SHA: ${sha.slice(0, 7)}...`);
@@ -256,16 +261,19 @@ function writeWinnersData(winners) {
 async function main() {
   try {
     const winners = await fetchWinners();
-    writeWinnersData(winners);
 
-    if (winners.length > 0) {
-      console.log('\n✓ Winners data updated successfully');
-      console.log(`Sample winner:`, winners[0]);
-    } else {
-      console.warn('\n⚠ No winners found. Check archive repo structure.');
+    if (winners.length === 0) {
+      console.warn('⚠ No winners found. Check archive repo structure.');
+      console.warn('Skipping file write to preserve existing data.');
+      return;
     }
+
+    writeWinnersData(winners);
+    console.log('\n✓ Winners data updated successfully');
+    console.log(`Sample winner:`, winners[0]);
   } catch (error) {
     console.error('Fatal error:', error.message);
+    console.error('Skipping file write to preserve existing data.');
     process.exit(1);
   }
 }

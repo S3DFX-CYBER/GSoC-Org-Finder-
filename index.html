@@ -797,8 +797,8 @@
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
           <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
+            <div><p class="text-[10px] font-label uppercase tracking-widest text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
+            <div><p class="text-[10px] font-label uppercase tracking-widest text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
           </div>
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
@@ -2048,6 +2048,24 @@
         openModal(btn.dataset.openOrg);
       });
       btn.__orgListenerAttached = true;
+    });
+
+    // watchlist checklist items
+    (root.querySelectorAll ? root.querySelectorAll('input[data-key][data-org-name].watchlist-checkbox') : []).forEach(checkbox => {
+      if (checkbox.__orgListenerAttached) return;
+      checkbox.addEventListener('change', (e) => {
+        updateChecklistItem(checkbox.dataset.orgName, checkbox.dataset.key, e.target.checked);
+      });
+      checkbox.__orgListenerAttached = true;
+    });
+
+    // watchlist notes textarea
+    (root.querySelectorAll ? root.querySelectorAll('textarea[data-org-name].watchlist-notes') : []).forEach(textarea => {
+      if (textarea.__orgListenerAttached) return;
+      textarea.addEventListener('input', (e) => {
+        updateOrgNotes(textarea.dataset.orgName, e.target.value);
+      });
+      textarea.__orgListenerAttached = true;
     });
   }
 

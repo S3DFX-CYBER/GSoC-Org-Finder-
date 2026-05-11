@@ -2373,24 +2373,36 @@
   },
   "TARDIS RT Collaboration": {
     "org": "TARDIS RT Collaboration",
-    "ideasUrl": "https://github.com/tardis-sn/tardis/wiki/GSOC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://tardis-sn.github.io/summer_of_code/ideas/",
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/tardis-sn/gsoc",
+        "label": "TARDIS Gitter Chat"
+      }
+    ],
+    "mentors": ["wkerzendorf", "atharya", "afullard", "voglchi", "jackobrien", "jgillanders"],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+    "tip": "Introducing yourself on Gitter is the first step. They also require a 'warm-up' PR with a first objective to be considered.",
+    "status": "ok",
+    "lastFetched": "2026-05-11T20:49:33.000Z"
+},
   "The FreeBSD Project": {
     "org": "The FreeBSD Project",
-    "ideasUrl": "https://wiki.freebsd.org/SummerOfCode",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+    "ideasUrl": "https://wiki.freebsd.org/SummerOfCode2026",
+    "channels": [
+      {
+        "type": "IRC",
+        "url": "irc://irc.libera.chat/#freebsd-soc",
+        "label": "#freebsd-soc on Libera.Chat"
+      }
+    ],
+    "mentors": ["asomers", "jrm", "imp", "0mp", "kprovost", "bsdimp"],
+    "mailingLists": ["freebsd-hackers@freebsd.org"],
+    "tip": "FreeBSD prefers students who have already tried installing the OS.",
+    "status": "ok",
+    "lastFetched": "2026-05-11T22:30:00.000Z"
+},
   "The Honeynet Project": {
     "org": "The Honeynet Project",
     "ideasUrl": "https://www.honeynet.org/gsoc/gsoc-2026/",

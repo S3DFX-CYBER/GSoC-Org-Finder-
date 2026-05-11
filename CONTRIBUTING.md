@@ -4,68 +4,120 @@
 
 This repository follows a **zero-build, zero-dependency philosophy**.
 
-## Principles
+### Principles
 
-- No build tools
-- No unnecessary dependencies
-- Minimal runtime overhead
-- Simple and readable code
+* No build tools
+* No unnecessary dependencies
+* Minimal runtime overhead
+* Simple and readable code
 
 When contributing, avoid adding libraries, bundlers, or complex tooling **unless clearly justified**.
 
 ---
 
-# Architecture
+## Architecture
 
 The project is built using **Vercel Edge Functions**.
 
-## Key Characteristics
+### Key Characteristics
 
-- Serverless execution at the edge
-- Fast global responses
-- Minimal backend infrastructure
-- Lightweight runtime environment
+* Serverless execution at the edge
+* Fast global responses
+* Minimal backend infrastructure
+* Lightweight runtime environment
 
 Changes should remain compatible with the **Edge Function architecture**.
 
 ---
 
-# Local Development
+## Local Development
 
-## Install Vercel CLI
+### Install Vercel CLI
 
 ```bash
 npm install -g vercel
 ```
 
-## Clone Repository
+### Clone Repository
 
 ```bash
-git clone https://github.com/<repo>.git
-cd <repo>
+git clone https://github.com/S3DFX-CYBER/GSoC-Org-Finder-.git
+cd GSoC-Org-Finder-
 ```
 
-## Run Locally
+### Run Locally
 
 ```bash
 vercel dev
 ```
 
-This command simulates the **Vercel environment locally**.
+This command simulates the Vercel environment locally.
 
 ---
 
-# How to Start Contributing
+## How to Start Contributing
 
 1. Go to the **Issues** tab
 2. Filter by issue labels (`level-1`, `level-2`, `level-3`)
-3. Comment **"assign me"** on the issue
-4. Wait for maintainer assignment
-5. Start working only after assignment
+3. Comment one of the following on the issue:
+
+   * `/assign`
+   * `assign me`
+4. Wait for the assignment bot response
+5. Start working **only after the issue is assigned to you**
 
 ---
 
-# Contribution Workflow
+## 🤖 Automated Assignment System
+
+This repository uses an automated assignment workflow.
+
+### Supported Commands
+
+| Command       | Action                     |
+| ------------- | -------------------------- |
+| `/assign`     | Request assignment         |
+| `assign me`   | Request assignment         |
+| `/unassign`   | Remove yourself from issue |
+| `unassign me` | Remove yourself from issue |
+
+### Assignment Rules
+
+Before assigning an issue, the bot automatically checks:
+
+* Issue title quality
+* Issue description quality
+* Existing assignees
+* Contribution level requirements
+* Contributor PR history for advanced issues
+
+### Level Restrictions
+
+* `level-1` → Open to everyone
+* `level-2` → Requires intermediate understanding
+* `level-3` → Requires at least **1 merged PR** in this repository
+
+If requirements are not met, the bot will explain why assignment was rejected.
+
+### Inactive Policy
+
+To keep issues active and fair for contributors:
+
+* Assigned issues with **no progress for 2–3 days** may be automatically unassigned
+* Other contributors may then claim the issue
+* Maintainers may manually override assignments when necessary
+
+### Important Notes
+
+* Do **not** ping maintainers for assignment
+* Do **not** self-assign issues through GitHub UI
+* Assignment is handled only through the bot workflow
+
+PRs opened without assignment may be closed without review.
+
+---
+
+## Contribution Workflow
 
 1. Fork the repository
 2. Create a branch from `main`
@@ -74,51 +126,7 @@ This command simulates the **Vercel environment locally**.
 5. Push to your fork
 6. Open a Pull Request
 
----
-
-# Issue Assignment (Mandatory)
-
-- You must **comment "assign me"** before starting work
-- Wait for assignment from a maintainer
-- PRs without assignment may be **closed without review**
-
-## Inactive Policy
-
-- If no progress is made within **2–3 days**, the issue may be unassigned
-- Other contributors can claim it afterward
-
----
-
-# Contribution Levels
-
-## Level 1 — Beginner Friendly
-- Open to all contributors
-- Ideal for first-time contributors
-- Includes:
-  - UI fixes
-  - Minor bugs
-  - Documentation updates
-
-## Level 2 — Intermediate
-- Requires understanding of the codebase
-- Includes:
-  - Logic improvements
-  - Feature enhancements
-  - Performance tweaks
-
-## Level 3 — Advanced (Restricted)
-- Only for experienced contributors
-- Requires **at least 1–2 merged PRs in this repository**
-- Includes:
-  - Core features
-  - Architecture changes
-  - Complex optimizations
-
-Maintainers will **not assign Level 3 issues** to new contributors.
-
----
-
-# Create Branch
+### Create Branch
 
 ```bash
 git checkout -b feature/short-description
@@ -126,83 +134,169 @@ git checkout -b feature/short-description
 
 ---
 
-# Commit Message Convention
+## Commit Message Convention
 
-## Format
+### Format
 
-```
+```text
 type: short description
 ```
 
-## Examples
+### Examples
 
-```
+```text
 docs: add contributing guide
 fix: correct edge function handler
 feat: improve request validation
 ```
 
-## Common Types
+### Common Types
 
-| Type     | Description                     |
-|----------|---------------------------------|
-| docs     | Documentation updates           |
-| fix      | Bug fixes                       |
-| feat     | New features                    |
-| refactor | Internal improvements           |
-
----
-
-# Contribution Quality Standards
-
-## Important Rules
-
-- Contributions must be **written and understood by the contributor**
-- Do not submit code you do not understand
-- Keep changes minimal and focused
-
-## Disallowed Contributions
-
-- AI-generated or agentic PRs without proper understanding
-- Copy-paste or low-effort submissions
-- Spam PRs or repeated low-quality contributions
-
-Such PRs may be **closed without detailed review**
+| Type       | Description           |
+| ---------- | --------------------- |
+| `docs`     | Documentation updates |
+| `fix`      | Bug fixes             |
+| `feat`     | New features          |
+| `refactor` | Internal improvements |
 
 ---
 
-# Pull Request Guidelines
+## Contribution Levels
 
-- Issue must be assigned to you
-- Reference the issue (`Closes #issue`)
-- Keep changes minimal
-- Follow project style
-- Do **not introduce dependencies**
+### Level 1 — Beginner Friendly
+
+Open to all contributors. Ideal for first-time contributors.
+
+Includes:
+
+* UI fixes
+* Minor bugs
+* Documentation updates (with meaningful new content)
+
+### Level 2 — Intermediate
+
+Requires understanding of the codebase.
+
+Includes:
+
+* Logic improvements
+* Feature enhancements
+* Performance tweaks
+
+### Level 3 — Advanced *(Restricted)*
+
+Only for experienced contributors.
+
+Requirements:
+
+* At least **1 merged PR** in this repository
+* Understanding of repository architecture
+* Ability to work with Edge Functions and internal logic
+
+Includes:
+
+* Core features
+* Architecture changes
+* Complex optimizations
+* Security-sensitive logic
+
+> The assignment bot automatically validates Level 3 eligibility.
 
 ---
 
-# PR Checklist (Required)
+## ⚠️ NSoC'26 & GSSoC'26 Contribution Quality Standards
+
+This project participates in **NSoC'26** and **GSSoC'26**. All contributors are required to maintain fairness, integrity, and quality in every submission.
+
+These standards are actively enforced.
+
+### Strictly Prohibited
+
+The following may result in PR rejection, label correction, or contribution disqualification:
+
+* Assigning high-level labels to trivial work
+* PRs with tiny changes presented as major contributions
+* Multiple low-effort documentation-only PRs
+* PRs with no meaningful impact
+* Merging without proper review/testing
+
+### What Makes a Valid Contribution
+
+Before opening a PR, ask:
+
+> "Does this meaningfully improve the project for users or maintainers?"
+
+Valid contributions include:
+
+* Bug fixes with reproducible cases
+* Scoped feature implementations
+* Performance improvements
+* Readability refactors with clear rationale
+* Meaningful documentation improvements
+
+### Disallowed Contributions
+
+* AI-generated PRs submitted without understanding the code
+* Spam submissions
+* Copy-paste contributions
+* Low-effort repeated PRs
+
+Such PRs may be closed without detailed review.
+
+---
+
+## Compliance Enforcement
+
+Failure to comply may result in:
+
+* PR closure
+* Label corrections
+* Reverted merges
+* Escalation to NSoC'26 moderators for repeated abuse
+
+### For Project Admins
+
+* Re-review merged PRs if labels appear incorrect
+* Ensure changes were tested before merging
+* Reject low-quality work with concise feedback
+* Maintain fairness across contributors
+
+---
+
+## Pull Request Guidelines
+
+* Issue must be assigned to you before opening a PR
+* Reference the issue using:
+
+```text
+Closes #issue-number
+```
+
+* Keep changes minimal and focused
+* Follow repository philosophy
+* Do not introduce unnecessary dependencies
+
+### PR Checklist *(Required)*
 
 Before submitting:
 
-- [ ] Issue is assigned to me
-- [ ] PR is linked to an issue
-- [ ] No dependencies added
-- [ ] Code follows project philosophy
-- [ ] Changes are minimal and focused
-- [ ] Proper explanation is provided
+* [ ] Issue is assigned to me
+* [ ] PR is linked to an issue (`Closes #N`)
+* [ ] No unnecessary dependencies added
+* [ ] Code follows zero-build philosophy
+* [ ] Changes are minimal and focused
+* [ ] PR description clearly explains the change
+* [ ] I understand the code I submitted
 
 For UI changes:
 
-- [ ] Screenshots attached
+* [ ] Screenshots attached
 
 ---
 
-# Testing and Verification
+## Testing and Verification
 
-Before submitting a PR:
-
-Run locally:
+Before submitting a PR, run locally:
 
 ```bash
 vercel dev
@@ -210,44 +304,35 @@ vercel dev
 
 Verify:
 
-- Edge functions run correctly
-- No build step is introduced
-- No dependencies added
-- Existing behavior remains unchanged
+* Edge functions run correctly
+* No build step is introduced
+* No unnecessary dependencies added
+* Existing functionality still works
 
 ---
 
-# Review Process
+## Review Process
 
-- PRs are reviewed within **24–48 hours**
-- Changes may be requested before approval
-- Approval depends on:
-  - Code quality
-  - Simplicity
-  - Adherence to project philosophy
+* PRs are usually reviewed within **24–48 hours**
+* Changes may be requested before approval
+* Approval depends on:
 
-Not all PRs are guaranteed to be merged
+  * code quality
+  * simplicity
+  * maintainability
+  * adherence to repository philosophy
 
----
-
-# Need Help?
-
-If unsure:
-
-- Open an issue
-- Ask in discussions
+Not all PRs are guaranteed to be merged.
 
 ---
 
-# Getting Started
+## Need Help?
 
-Thank you for your interest in contributing! 🎉
+If unsure about anything:
 
-## Setup Instructions
+* Open an issue
+* Use GitHub Discussions
+* Or use our discord channel 
+---
 
-### 1. Fork & Clone
-
-```bash
-git clone https://github.com/your-username/repo-name.git
-cd repo-name
-```
+Thank you for contributing to FindMyGSoC! 🎉

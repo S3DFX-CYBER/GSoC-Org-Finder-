@@ -1,4 +1,5 @@
 /* global ORGS */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // THEME
@@ -8,6 +9,16 @@
   document.documentElement.classList.toggle('dark', saved === 'dark');
   updateThemeIcon();
 })();
+
+// Shared escaping helper for this script (prevents HTML injection)
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
 
 globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
@@ -65,7 +76,7 @@ const cdTimer=setInterval(updateCountdown,1000);
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
 const AN={
-  g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d}catch{return d}},
+  g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d;}catch{return d;}},
   s(k,v){
     try{
       localStorage.setItem('gaf_'+k,JSON.stringify(v));
@@ -73,27 +84,27 @@ const AN={
       console.warn('Analytics storage write failed for key:',k,err);
     }
   },
-  inc(k){this.s(k,(this.g(k,0)+1))},
-  push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max))},
-  today(){return new Date().toISOString().slice(0,10)},
+  inc(k){this.s(k,(this.g(k,0)+1));},
+  push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max));},
+  today(){return new Date().toISOString().slice(0,10);},
   trackVisit(){
     this.inc('total');
     const td=this.today(),daily=this.g('daily',{});
     daily[td]=(daily[td]||0)+1;this.s('daily',daily);
     if(!sessionStorage.getItem('gaf_s'))sessionStorage.setItem('gaf_s',Date.now());
   },
-  trackSearch(t){if(t.length>1){this.inc('searches');this.push('sterms',t.toLowerCase().trim())}},
-  trackCat(c){if(c){this.inc('filters');const cf=this.g('cats',{});cf[c]=(cf[c]||0)+1;this.s('cats',cf)}},
-  trackOrg(n){this.inc('views');const oc=this.g('orgs',{});oc[n]=(oc[n]||0)+1;this.s('orgs',oc)},
-  todayVisits(){return this.g('daily',{})[this.today()]||0},
+  trackSearch(t){if(t.length>1){this.inc('searches');this.push('sterms',t.toLowerCase().trim());}},
+  trackCat(c){if(c){this.inc('filters');const cf=this.g('cats',{});cf[c]=(cf[c]||0)+1;this.s('cats',cf);}},
+  trackOrg(n){this.inc('views');const oc=this.g('orgs',{});oc[n]=(oc[n]||0)+1;this.s('orgs',oc);},
+  todayVisits(){return this.g('daily',{})[this.today()]||0;},
   sessionTime(){
     const s=sessionStorage.getItem('gaf_s');if(!s)return'—';
     const sec=Math.floor((Date.now()-parseInt(s))/1000);
     return sec<60?sec+'s':Math.floor(sec/60)+'m'+(sec%60)+'s';
   },
-  topCats(){return Object.entries(this.g('cats',{})).sort((a,b)=>b[1]-a[1]).slice(0,6)},
-  topOrgs(){return Object.entries(this.g('orgs',{})).sort((a,b)=>b[1]-a[1]).slice(0,5)},
-  topTerms(){const f={};this.g('sterms',[]).forEach(t=>{f[t]=(f[t]||0)+1});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,12)}
+  topCats(){return Object.entries(this.g('cats',{})).sort((a,b)=>b[1]-a[1]).slice(0,6);},
+  topOrgs(){return Object.entries(this.g('orgs',{})).sort((a,b)=>b[1]-a[1]).slice(0,5);},
+  topTerms(){const f={};this.g('sterms',[]).forEach(t=>{f[t]=(f[t]||0)+1;});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,12);}
 };
 AN.trackVisit();
 
@@ -154,10 +165,10 @@ function renderTrending(){
     const o=ORGS.find(x=>x.name===name);
     if(!o)return'';
     return`<div class="trend-card" onclick="openModal(${ORGS.indexOf(o)})">
-      <div class="trend-rank">${i+1}</div>
+      <div class="trend-rank">${escapeHtml(String(i+1))}</div>
       <div class="trend-info">
-        <div class="trend-name">${name}</div>
-        <div class="trend-views">${views} view${views!==1?'s':''} · ${catLabel(o.cat)}</div>
+        <div class="trend-name">${escapeHtml(name)}</div>
+        <div class="trend-views">${escapeHtml(String(views))} view${views!==1?'s':''} · ${escapeHtml(catLabel(o.cat))}</div>
       </div>
     </div>`;
   }).join('');
@@ -175,28 +186,35 @@ function openAnalytics(){
   document.getElementById('aTime').textContent=AN.sessionTime();
   const tc=AN.topCats(),mx=tc[0]?.[1]||1;
   document.getElementById('catChart').innerHTML=tc.length
-    ?tc.map(([c,n])=>`<div class="bar-row"><span class="bar-lbl">${catLabel(c)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mx*100)}%"></div></div><span class="bar-val">${n}</span></div>`).join('')
+    ?tc.map(([c,n])=>`<div class="bar-row"><span class="bar-lbl">${escapeHtml(catLabel(c))}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mx*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
     :'<span style="color:var(--muted);font-size:12px">Use category filters to track data</span>';
   const to=AN.topOrgs(),mo=to[0]?.[1]||1;
   document.getElementById('orgChart').innerHTML=to.length
-    ?to.map(([o,n])=>`<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${o.length>16?o.slice(0,16)+'…':o}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mo*100)}%"></div></div><span class="bar-val">${n}</span></div>`).join('')
+    ?to.map(([o,n])=>`<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${escapeHtml(o.length>16?o.slice(0,16)+'…':o)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mo*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
     :'<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
   const tt=AN.topTerms();
   document.getElementById('srchTerms').innerHTML=tt.length
-    ?tt.map(([t,c],i)=>`<span class="sch ${i<3?'hot':''}">${t} (${c})</span>`).join('')
+    ?tt.map(([t,c],i)=>`<span class="sch ${i<3?'hot':''}">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
     :'<span style="color:var(--muted);font-size:12px">No searches yet</span>';
   document.getElementById('anBg').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn()}
-function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow=''}
+function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn();}
+function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow='';}
 
 // ══════════════════════════════════════════════
 // GITHUB API
 // ══════════════════════════════════════════════
 const API='/api/github';
-let cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
-let modalIdx=-1,pills=new Set(),chips=new Set(),fetching=false,lastSearch='';
+const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
+let modalIdx=-1,fetching=false,lastSearch='';
+const pills=new Set();
+const chips=new Set();
+let matchAllLanguages=false; // false = OR (any), true = AND (all)
+
+// Expose to global scope for HTML onclick handlers and debugging
+globalThis.pills = pills;
+globalThis.matchAllLanguages = matchAllLanguages;
 let filteredOrgs=[]; // for keyboard nav
 let focusedIdx=-1;
 
@@ -229,7 +247,7 @@ async function fetchGH(repo){
     const d=await r.json();
     if(d.error)return null;
     cache[repo]=d;localStorage.setItem('gaf_ghc',JSON.stringify(cache));return d;
-  }catch{return null}
+  }catch{return null;}
 }
 
 async function fetchGFI(repo){
@@ -245,7 +263,7 @@ async function fetchGFI(repo){
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
     localStorage.setItem('gaf_ghc',JSON.stringify(cache));
     return d.gfi;
-  }catch{return null}
+  }catch{return null;}
 }
 
 async function fetchAll(){
@@ -291,25 +309,25 @@ async function fetchModalGH(){
   }else document.getElementById('mFetchBtn').textContent='✗ Failed';
 }
 
-function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n)}
+function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n);}
 
 // ══════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════
-function yCls(y){return y>=8?'veteran':y>=4?'experienced':'newcomer'}
-function yLbl(y){return y>=8?'🏆 Veteran':y>=4?'⭐ Experienced':'🌱 Newcomer'}
-function yBdg(y){return y>=8?'bv':y>=4?'be':'bn'}
-function cLbl(c){return c==='hot'?'🔥 High':c==='moderate'?'🟡 Moderate':'😎 Low'}
-function cBdg(c){return c==='hot'?'bh':c==='moderate'?'bm':'bc'}
-function aLbl(a){return a==='active'?'⚡ Active':a==='moderate'?'📊 Moderate':a==='low'?'💤 Low':'○ —'}
-function aBdg(a){return a==='active'?'bac':a==='moderate'?'bam':a==='low'?'bal':'bna'}
-function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c}
-function catBdg(c){return'cb-'+(c||'other')}
+function yCls(y){return y>=8?'veteran':y>=4?'experienced':'newcomer';}
+function yLbl(y){return y>=8?'🏆 Veteran':y>=4?'⭐ Experienced':'🌱 Newcomer';}
+function yBdg(y){return y>=8?'bv':y>=4?'be':'bn';}
+function cLbl(c){return c==='hot'?'🔥 High':c==='moderate'?'🟡 Moderate':'😎 Low';}
+function cBdg(c){return c==='hot'?'bh':c==='moderate'?'bm':'bc';}
+function aLbl(a){return a==='active'?'⚡ Active':a==='moderate'?'📊 Moderate':a==='low'?'💤 Low':'○ —';}
+function aBdg(a){return a==='active'?'bac':a==='moderate'?'bam':a==='low'?'bal':'bna';}
+function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c;}
+function catBdg(c){return'cb-'+(c||'other');}
 
 // ══════════════════════════════════════════════
 // COMPARE
 // ══════════════════════════════════════════════
-let compareSet=new Set(); // stores ORGS indices
+const compareSet=new Set(); // stores ORGS indices
 
 function toggleCompare(idx,e){
   if(e){e.stopPropagation();}
@@ -363,8 +381,8 @@ function renderCompareSlots(){
     if(o){
       const idx=ORGS.indexOf(o);
       html+=`<div class="compare-slot filled">
-        <span class="slot-cat ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-        <span class="slot-name">${o.name}</span>
+        <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
+        <span class="slot-name">${escapeHtml(o.name)}</span>
         <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">✕ Remove</button>
       </div>`;
     } else {
@@ -397,15 +415,15 @@ function renderCompareTable(){
     {label:'Languages',   vals:arr.map(o=>o.tags.slice(0,3).join(', ')), type:'text'},
   ];
 
-  let thead=`<tr><th>Metric</th>${arr.map(o=>`<th>${o.name.length>22?o.name.slice(0,22)+'…':o.name}</th>`).join('')}</tr>`;
+  const thead=`<tr><th>Metric</th>${arr.map(o=>`<th>${escapeHtml(o.name.length>22?o.name.slice(0,22)+'…':o.name)}</th>`).join('')}</tr>`;
   let tbody='';
   for(const row of rows){
     let cells='';
     if(row.type==='bar'){
       const mx=Math.max(...row.vals);
-      cells=row.vals.map((v,i)=>{
+      cells=row.vals.map((v)=>{
         const pct=mx>0?Math.round(v/mx*100):0;
-        return`<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${v}y</span></div></td>`;
+        return`<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${escapeHtml(String(v))}y</span></div></td>`;
       }).join('');
     } else if(row.type==='scored'&&row.scores&&row.scores.some(s=>s>0)){
       const mx=Math.max(...row.scores),mn=Math.min(...row.scores.filter(s=>s>0)||[0]);
@@ -415,12 +433,12 @@ function renderCompareTable(){
         if(s>0){
           cls=row.best==='high'?(s===mx?'cmp-best':s===mn?'cmp-worst':'cmp-val'):(s===mn?'cmp-best':s===mx?'cmp-worst':'cmp-val');
         }
-        return`<td class="${cls}">${v}</td>`;
+        return`<td class="${cls}">${escapeHtml(String(v))}</td>`;
       }).join('');
     } else {
-      cells=row.vals.map(v=>`<td class="cmp-val">${v}</td>`).join('');
+      cells=row.vals.map(v=>`<td class="cmp-val">${escapeHtml(String(v))}</td>`).join('');
     }
-    tbody+=`<tr><td class="row-label">${row.label}</td>${cells}</tr>`;
+    tbody+=`<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
   }
   wrap.innerHTML=`<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
     <p style="font-size:10px;color:var(--muted);margin-top:10px;text-align:right">🟢 Best value &nbsp; 🔴 Lowest value &nbsp; (requires GitHub stats to be fetched)</p>`;
@@ -458,15 +476,46 @@ function showSkeletons(count = 12) {
 // ══════════════════════════════════════════════
 // FILTER & RENDER
 // ══════════════════════════════════════════════
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
+
+// Language mapping: display label → array of possible org tag matches
+const LANGUAGE_MAP = {
+  'Python': ['python'],
+  'JavaScript': ['javascript', 'js'],
+  'TypeScript': ['typescript', 'ts'],
+  'C/C++': ['c', 'c++'],
+  'Java': ['java'],
+  'Rust': ['rust'],
+  'Go': ['go', 'golang'],
+  'Ruby': ['ruby'],
+  'Haskell': ['haskell'],
+  'Scala': ['scala'],
+  'ML/AI': ['machine learning', 'ml', 'ai', 'artificial intelligence'],
+  'Robotics': ['robotics', 'robot', 'ros']
+};
+
+function normalizeTag(value) {
+  return value.trim().toLowerCase();
 }
 
-const debouncedFilter = debounce(applyFilters, 280);
+function orgMatchesLanguages(org, selectedLanguages) {
+  if (!selectedLanguages.size) return true;
+
+  const orgTags = new Set((org.tags || []).map(normalizeTag));
+
+  if (matchAllLanguages) {
+    // AND logic: org must have ALL selected languages
+    return [...selectedLanguages].every(label => {
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(normalizeTag);
+      return aliases.some(alias => orgTags.has(alias));
+    });
+  } else {
+    // OR logic: org must have ANY selected language
+    return [...selectedLanguages].some(label => {
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(normalizeTag);
+      return aliases.some(alias => orgTags.has(alias));
+    });
+  }
+}
 
 function applyFilters(){
   const search=document.getElementById('searchInput').value.trim().toLowerCase();
@@ -476,17 +525,22 @@ function applyFilters(){
   const compF=document.getElementById('compFilter').value;
   const sort=document.getElementById('sortSelect').value;
 
-  if(search!==lastSearch&&search.length>1){AN.trackSearch(search);lastSearch=search}
+  if(search!==lastSearch&&search.length>1){AN.trackSearch(search);lastSearch=search;}
   if(cat)AN.trackCat(cat);
 
-  let res=ORGS.filter(o=>{
+  const res=ORGS.filter(o=>{
     const txt=(o.name+' '+o.tags.join(' ')+' '+o.desc).toLowerCase();
     if(cat&&o.cat!==cat)return false;
     if(lang&&!txt.includes(lang))return false;
     if(search&&!txt.includes(search))return false;
-    if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false}
+    if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false;}
     if(compF&&o.competition!==compF)return false;
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true});if(!m)return false}
+
+    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true;});if(!m)return false;}
+
+    // Use proper language matching with LANGUAGE_MAP
+    if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
+ 
     if(chips.has('veteran')&&yCls(o.years)!=='veteran')return false;
     if(chips.has('newcomer')&&yCls(o.years)!=='newcomer')return false;
     if(chips.has('hot')&&o.competition!=='hot')return false;
@@ -508,6 +562,15 @@ function applyFilters(){
   renderGrid(res);
   document.getElementById('countDisplay').textContent=res.length;
   document.getElementById('filteredStat').textContent=res.length;
+
+  // Sync filter state to URL
+  const params = new URLSearchParams();
+  if (search)    params.set('q',search);
+  if (cat)    params.set('cat',cat);
+  const selectedLangs = pills.size ? [...pills] : (lang ? [lang] : []);
+  if (selectedLangs.length)    params.set('lang', selectedLangs.join(','));
+  if (sort && sort !== 'alpha')    params.set('sort',sort);
+  history.replaceState(null,'',params.toString()?'?'+params.toString():location.pathname);
 }
 
 // Umbrella orgs: link goes to org page, not a single example repo
@@ -587,20 +650,28 @@ function isBookmarked(orgName) {
 
 function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
-  return `<span class="gh-s">🟢 <b>${fmt(gh.gfi)} GFI</b></span>`;
+  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
-
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
-  if(!orgs.length){g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>No matches found</h3><p>Try removing some filters.</p></div>`;return}
+  if(!orgs.length){
+    g.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <h3>No organizations match your current filters.</h3>
+        <p>Try adjusting your search or clearing some filters.</p>
+        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
+      </div>`;
+    return;
+  }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${t}</span>`).join('');
+    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
       ${renderGfiBadge(o._gh)}
-      <span class="gh-s">🕐 <b>${o._gh.lastCommit}</b></span>
+      <span class="gh-s">🕐 <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
     </div>`:'';
     const globalIdx=ORGS.indexOf(o);
     const inCompare=compareSet.has(globalIdx);
@@ -610,19 +681,19 @@ function renderGrid(orgs){
     // shortRepo now handled by repoLinkLabel()
     return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
       role="article"
-      aria-label="Organization: ${o.name}"
+      aria-label="Organization: ${escapeHtml(o.name)}"
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">
       <div class="card-header-row">
-        ${logo?`<img class="org-logo" src="${logo}" alt="${o.name[0]}" loading="lazy" onerror="imgErr(this)">`:``}
+        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name||'')[0]||'') }" loading="lazy" onerror="imgErr(this)">`:``}
         <div class="org-logo-info">
           <div class="card-top-line">
-            <div class="org-name">${o.name}</div>
+            <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${o.name}">
+              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
                   <path
                     d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
@@ -635,7 +706,7 @@ function renderGrid(orgs){
               </button>
             </div>
           </div>
-          ${repoHref?`<a class="card-repo-link" href="${repoHref}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${repoHref}">
+          ${repoHref?`<a class="card-repo-link" href="${escapeHtml(repoHref)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(repoHref)}">
             ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
@@ -733,23 +804,88 @@ function scrollToFocused(){
 // PILLS & CHIPS
 // ══════════════════════════════════════════════
 function togglePill(el){
-  const l=el.dataset.lang;el.classList.toggle('active');
-  if(el.classList.contains('active'))pills.add(l);else pills.delete(l);
+  const l=el.dataset.lang;
+  const isActive = el.classList.toggle('active');
+  el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  if(isActive)pills.add(l);else pills.delete(l);
+  renderSelectedLanguages();
   applyFilters();
 }
+
+// ══════════════════════════════════════════════
+// SELECTED LANGUAGES STRIP
+// ══════════════════════════════════════════════
+// Expose to global scope for HTML onclick handlers
+globalThis.togglePill = togglePill;
+
+globalThis.renderSelectedLanguages = renderSelectedLanguages;
+function renderSelectedLanguages(){
+  const container=document.getElementById('selectedLangsStrip');
+  if(!container)return;
+
+  if(pills.size===0){
+    container.innerHTML='<span class="empty-state">No languages selected</span>';
+    return;
+  }
+
+  const badges=[...pills].map(lang=>{
+    return`<span class="selected-lang-badge" data-lang="${lang}">
+      ${lang}
+      <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
+    </span>`;
+  }).join('');
+
+  const clearAll=`<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+
+  container.innerHTML=badges+clearAll;
+}
+
+function unselectLanguage(lang){
+  pills.delete(lang);
+
+  const pillBtn=document.querySelector(`.pill[data-lang="${lang}"]`);
+  if(pillBtn){
+    pillBtn.classList.remove('active');
+    pillBtn.setAttribute('aria-pressed','false');
+  }
+
+  renderSelectedLanguages();
+  applyFilters();
+}
+globalThis.unselectLanguage = unselectLanguage;
+
+function clearAllLanguages(){
+  pills.clear();
+
+  document.querySelectorAll('.pill.active').forEach(p=>{
+    p.classList.remove('active');
+    p.setAttribute('aria-pressed','false');
+  });
+
+  renderSelectedLanguages();
+  applyFilters();
+}
+globalThis.clearAllLanguages = clearAllLanguages;
+
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
-  if(chips.has(k)){chips.delete(k);el.className='chip'}
-  else{chips.add(k);el.className='chip '+chipCls[k]}
+  if(chips.has(k)){chips.delete(k);el.className='chip';}
+  else{chips.add(k);el.className='chip '+chipCls[k];}
   applyFilters();
 }
 function resetFilters(){
-  ['searchInput','catFilter','langFilter','yearsFilter','compFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  ['searchInput','catFilter','langFilter','yearsFilter','compFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('sortSelect').value='alpha';
   pills.clear();chips.clear();
+
   document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip'});
+  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
+
+  document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
+  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
+  renderSelectedLanguages();
+ 
   applyFilters();
 }
 
@@ -758,16 +894,16 @@ function resetFilters(){
 // ══════════════════════════════════════════════
 function openModal(idx){
   const o=ORGS[idx];modalIdx=idx;AN.trackOrg(o.name);
-  document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>`;
+  document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
   document.getElementById('mName').textContent=o.name;
   document.getElementById('mDesc').textContent=o.desc;
   const cc={hot:'var(--red)',moderate:'#92600A',chill:'var(--green)'};
   document.getElementById('mMetrics').innerHTML=`
-    <div class="mc"><div class="mv" style="color:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}">${o.years}</div>
+    <div class="mc"><div class="mv" style="color:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}">${escapeHtml(String(o.years))}</div>
     <div class="ml">GSoC Years</div><div class="prog"><div class="prog-fill" style="width:${Math.min(o.years/11*100,100)}%;background:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}"></div></div></div>
-    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎'}</div><div class="ml">${cLbl(o.competition)}</div></div>
-    <div class="mc"><div class="mv" style="color:var(--orange)">${o.firstYear}</div><div class="ml">First Year</div></div>
-    <div class="mc"><div class="mv" style="color:var(--green)">${o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—'}</div><div class="ml">Good 1st Issues</div></div>`;
+    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${escapeHtml(o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎')}</div><div class="ml">${escapeHtml(String(cLbl(o.competition)))}</div></div>
+    <div class="mc"><div class="mv" style="color:var(--orange)">${escapeHtml(String(o.firstYear))}</div><div class="ml">First Year</div></div>
+    <div class="mc"><div class="mv" style="color:var(--green)">${escapeHtml(o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—')}</div><div class="ml">Good 1st Issues</div></div>`;
   const gh=o._gh;
   document.getElementById('ghStars').textContent=gh?fmt(gh.stars):'—';
   document.getElementById('ghForks').textContent=gh?fmt(gh.forks):'—';
@@ -775,13 +911,12 @@ function openModal(idx){
   document.getElementById('ghCommit').textContent=gh?gh.lastCommit:'—';
   document.getElementById('ghGFI').textContent=gh?.gfi!==null&&gh?.gfi!==undefined?fmt(gh.gfi):'—';
   document.getElementById('mFetchBtn').textContent=gh?'↻ Refresh':'Fetch Live Data';
-  document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${t}</span>`).join('');
-  document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${f}</span>`).join('');
+  document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${escapeHtml(t)}</span>`).join('');
+  document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${escapeHtml(f)}</span>`).join('');
   let tl='';
   for(let y=o.firstYear;y<=2026;y++){
     const cur=y===2026;
-    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${cur?'⭐':'✓'} ${y}</span>`;
-  }
+    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${escapeHtml(cur?'⭐':'✓')} ${escapeHtml(String(y))}</span>`;}
   document.getElementById('mTimeline').innerHTML=tl;
   // Smart link: umbrella orgs → org page, single-project → specific repo
   const mLinkEl=document.getElementById('mLink');
@@ -832,7 +967,7 @@ function openModal(idx){
     });
   }
 }
-function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal()}
+function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
 function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
 
 // ══════════════════════════════════════════════
@@ -850,7 +985,6 @@ let issuesFetching=false;
 let cacheLoading=false;
 
 function openIssuesPage(){
-  loadCachedIssues();
   document.getElementById('issuesPage').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -872,6 +1006,7 @@ async function loadCachedIssues() {
   } finally {
     cacheLoading = false;
   }
+  loadCachedIssues();
 }
 
 function closeIssuesPage(){
@@ -962,6 +1097,42 @@ async function fetchAllIssues(){
   updateStats();
 }
 
+async function loadCachedIssues(){
+  if(allIssues.length||issuesFetching) return;
+  try{
+    const res=await fetch('/data/issues.json');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    if(!Array.isArray(data.issues)) return;
+
+    const orgByGithub=new Map(ORGS.map(o=>[o.github?.toLowerCase(),o]));
+    const orgByName=new Map(ORGS.map(o=>[o.name?.toLowerCase(),o]));
+
+    allIssues=data.issues.map(issue=>{
+      const key=issue.github?.toLowerCase()||issue.repo?.toLowerCase()||issue.org?.toLowerCase();
+      const orgMeta=orgByGithub.get(key)||orgByName.get(issue.org?.toLowerCase());
+      const owner=(issue.github||issue.repo||'').split('/')[0]||'';
+      return{
+        title:issue.title||'',
+        url:issue.url||'',
+        org:issue.org||'',
+        orgCat:orgMeta?.cat||'',
+        orgTags:orgMeta?.tags||[],
+        logo:owner?`https://github.com/${owner}.png?size=64`:'',
+        repo:issue.repo||issue.github||'',
+        created_at:issue.created_at||'',
+        labels:Array.isArray(issue.labels)?issue.labels.map(l=>typeof l==='string'?l:(l.name||'')):[],
+        comments:typeof issue.comments==='number'?issue.comments:Number(issue.comments||0),
+      };
+    });
+
+    allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    filterIssues();
+  }catch(err){
+    console.warn('Failed to load cached issues:',err);
+  }
+}
+
 function filterIssues(){
   const search=(document.getElementById('issueSearch')?.value||'').toLowerCase().trim();
   const cat=document.getElementById('issueCatFilter')?.value||'';
@@ -1017,25 +1188,29 @@ function renderIssues(){
 }
 
 function renderIssueCard(iss){
-  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${t}</span>`).join('');
+  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${escapeHtml(t)}</span>`).join('');
   const gfiNames=['good first issue','good-first-issue'];
-  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(l.toLowerCase())).slice(0,2)
-    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`).join('');
-  return`<a class="issue-card" href="${iss.url}" target="_blank" rel="noopener noreferrer">
-    <img class="issue-logo" src="${iss.logo}" alt="${iss.org}" loading="lazy" onerror="this.style.display='none'">
+  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
+    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
+  const safeHref = validateIdeasUrl(iss.url);
+  const imgSrc = validateIdeasUrl(iss.logo);
+  const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
+  const hrefEnd = safeHref ? '</a>' : '</div>';
+  return `${hrefStart}
+    ${imgSrc?`<img class="issue-logo" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(iss.org)}" loading="lazy" onerror="this.style.display='none'">`:``}
     <div class="issue-body">
       <div class="issue-top">
-        <span class="issue-org">${iss.org}</span>
+        <span class="issue-org">${escapeHtml(iss.org)}</span>
         <span class="issue-label gfi">✓ Good First Issue</span>
-        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${iss.comments}</span>`:''}
+        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${escapeHtml(String(iss.comments))}</span>`:''}
       </div>
-      <div class="issue-title">${iss.title}</div>
+      <div class="issue-title">${escapeHtml(iss.title)}</div>
       <div class="issue-meta">
         ${langTags}${otherLabels}
-        <span class="issue-date">${relativeTime(iss.created_at)}</span>
+        <span class="issue-date">${escapeHtml(relativeTime(iss.created_at))}</span>
       </div>
     </div>
-  </a>`;
+  ${hrefEnd}`;
 }
 
 function showMoreIssues(){
@@ -1047,12 +1222,41 @@ function showMoreIssues(){
   document.getElementById('issShown').textContent=shownIssues;
 }
 
-ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github]});
+ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github];});
 showSkeletons();
 updateStats();
+renderSelectedLanguages();
+
+// Initialize match mode toggle listener
+document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
+  matchAllLanguages = e.target.checked;
+  applyFilters();
+});
+
 requestAnimationFrame(()=>{
+  const params = new URLSearchParams(location.search);
+  if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
+  if (params.get('cat'))    document.getElementById('catFilter').value = params.get('cat');
+  const langParam = params.get('lang');
+  if (langParam) {
+    const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
+    if (langs.length > 1) {
+      pills.clear();
+      document.querySelectorAll('.pill').forEach(btn => {
+        const active = langs.includes(btn.dataset.lang);
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        if (active) pills.add(btn.dataset.lang);
+      });
+      document.getElementById('langFilter').value = '';
+      renderSelectedLanguages();
+    } else {
+      document.getElementById('langFilter').value = langs[0];
+    }
+  }
   applyFilters();
   renderTrending();
+  loadCachedIssues();
   checkAPI();
 });
 

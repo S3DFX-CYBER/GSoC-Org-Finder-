@@ -1256,19 +1256,72 @@ let allWinners = [];           // All winners loaded from data/winners.json
 let filteredWinners = [];      // Filtered winners based on search/org filter
 const winnersOrgFilter = new Set(); // Currently selected org filters
 let winnersSearchTerm = '';     // Current search term
+let winnersDataReady = false;
+let winnersInitialRenderDone = false;
+let winnersRenderGeneration = 0;
+let winnersSectionObserver = null;
+const WINNERS_RENDER_BATCH_SIZE = 18;
+
+function isWinnersSectionNearViewport() {
+  const winnersSection = document.getElementById('winners');
+  if (!winnersSection) return false;
+
+  const rect = winnersSection.getBoundingClientRect();
+  return rect.top < window.innerHeight + 300 && rect.bottom > -300;
+}
+
+function hideWinnersLoadingState() {
+  const loadingState = document.getElementById('winnersLoadingState');
+  if (loadingState) loadingState.style.display = 'none';
+}
+
+function showWinnersLoadingState() {
+  const loadingState = document.getElementById('winnersLoadingState');
+  const emptyState = document.getElementById('winnersEmptyState');
+  if (loadingState) loadingState.style.display = 'block';
+  if (emptyState) emptyState.style.display = 'none';
+}
+
+function ensureWinnersRendered() {
+  if (!winnersDataReady || winnersInitialRenderDone || !isWinnersSectionNearViewport()) {
+    return;
+  }
+
+  winnersInitialRenderDone = true;
+  filterAndRenderWinners();
+  winnersSectionObserver?.disconnect();
+}
+
+function setupWinnersSectionObserver() {
+  const winnersSection = document.getElementById('winners');
+  if (!winnersSection) return;
+
+  if ('IntersectionObserver' in window) {
+    winnersSectionObserver?.disconnect();
+    winnersSectionObserver = new IntersectionObserver((entries) => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        ensureWinnersRendered();
+      }
+    }, { rootMargin: '300px 0px' });
+
+    winnersSectionObserver.observe(winnersSection);
+    return;
+  }
+
+  const fallbackCheck = () => ensureWinnersRendered();
+  window.addEventListener('scroll', fallbackCheck, { passive: true });
+  window.addEventListener('resize', fallbackCheck, { passive: true });
+  fallbackCheck();
+}
 
 /**
  * Loads winners data from cache
  */
 async function loadWinnersData() {
-  const loadingState = document.getElementById('winnersLoadingState');
   const errorState = document.getElementById('winnersErrorState');
   
   try {
-    loadingState?.style.display ? (loadingState.style.display = 'block') : null;
-    errorState?.style.display ? (errorState.style.display = 'none') : null;
-    
-    if (loadingState) loadingState.style.display = 'block';
+    showWinnersLoadingState();
     if (errorState) errorState.style.display = 'none';
     
     const res = await fetch('/data/winners.json');
@@ -1289,13 +1342,11 @@ async function loadWinnersData() {
       winnersOrgFilter.add(urlOrg);
     }
     
-    // Initial render
-    filterAndRenderWinners();
-    
-    loadingState?.style.display ? (loadingState.style.display = 'none') : null;
+    winnersDataReady = true;
+    ensureWinnersRendered();
   } catch (err) {
     console.error('Failed to load winners:', err);
-    loadingState?.style.display ? (loadingState.style.display = 'none') : null;
+    hideWinnersLoadingState();
     errorState?.style.display ? (errorState.style.display = 'block') : null;
   }
 }
@@ -1351,6 +1402,8 @@ function updateWinnersOrgChips() {
  * Filters winners based on search term and org filters
  */
 function filterAndRenderWinners() {
+  if (!winnersDataReady) return;
+
   winnersSearchTerm = (document.getElementById('winnersSearchInput')?.value || '').toLowerCase().trim();
   
   filteredWinners = allWinners.filter(winner => {
@@ -1372,24 +1425,8 @@ function filterAndRenderWinners() {
   renderWinnersCards();
 }
 
-/**
- * Renders winner cards
- */
-function renderWinnersCards() {
-  const grid = document.getElementById('winnersGrid');
-  const emptyState = document.getElementById('winnersEmptyState');
-  
-  if (!grid) return;
-  
-  if (filteredWinners.length === 0) {
-    grid.innerHTML = '';
-    emptyState?.style.display ? (emptyState.style.display = 'block') : null;
-    return;
-  }
-  
-  emptyState?.style.display ? (emptyState.style.display = 'none') : null;
-  
-  grid.innerHTML = filteredWinners.map(winner => `
+function buildWinnerCardHtml(winner) {
+  return `
     <div class="winner-card group bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-200">
       <div class="p-6">
         <!-- Contributor Avatar & Info -->
@@ -1397,8 +1434,11 @@ function renderWinnersCards() {
           <img 
             src="https://github.com/${winner.username}.png?size=64" 
             alt="${winner.username}"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
             class="w-16 h-16 rounded-full border-2 border-primary/20 object-cover"
-            onerror="this.src='https://api.github.com/users/${winner.username}/avatar_url?s=64'"
+            onerror="this.src='https://avatars.githubusercontent.com/${encodeURIComponent(winner.username)}?size=64'"
           />
           <div class="flex-1 min-w-0">
             <h3 class="font-bold text-sm text-zinc-900 dark:text-white truncate">${escapeHtml(winner.username)}</h3>
@@ -1433,7 +1473,49 @@ function renderWinnersCards() {
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+}
+
+/**
+ * Renders winner cards
+ */
+function renderWinnersCards() {
+  const grid = document.getElementById('winnersGrid');
+  const emptyState = document.getElementById('winnersEmptyState');
+  const loadingState = document.getElementById('winnersLoadingState');
+  
+  if (!grid) return;
+  
+  const renderGeneration = ++winnersRenderGeneration;
+
+  if (filteredWinners.length === 0) {
+    grid.innerHTML = '';
+    emptyState?.style.display ? (emptyState.style.display = 'block') : null;
+    hideWinnersLoadingState();
+    return;
+  }
+  
+  emptyState?.style.display ? (emptyState.style.display = 'none') : null;
+
+  grid.innerHTML = '';
+  const winnersToRender = filteredWinners.slice();
+
+  (async () => {
+    for (let index = 0; index < winnersToRender.length; index += WINNERS_RENDER_BATCH_SIZE) {
+      if (renderGeneration !== winnersRenderGeneration) return;
+
+      const batch = winnersToRender.slice(index, index + WINNERS_RENDER_BATCH_SIZE);
+      grid.insertAdjacentHTML('beforeend', batch.map(buildWinnerCardHtml).join(''));
+
+      if (index === 0) {
+        hideWinnersLoadingState();
+      }
+
+      if (index + WINNERS_RENDER_BATCH_SIZE < winnersToRender.length) {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+    }
+  })();
 }
 
 
@@ -1479,5 +1561,6 @@ globalThis.setWinnersOrgFilter = function(orgName) {
 // Load winners on page load
 document.addEventListener('DOMContentLoaded', () => {
   loadWinnersData();
+  setupWinnersSectionObserver();
   setupWinnersEventListeners();
 });

@@ -749,11 +749,50 @@
   </div>
 
   <!-- Loading State -->
-  <div id="winnersLoadingState" class="py-20 text-center">
-    <div class="inline-block">
-      <div class="animate-spin inline-block w-8 h-8 border-4 border-zinc-200 border-t-primary rounded-full"></div>
-      <p class="text-zinc-600 mt-4">Loading winners data...</p>
+  <div id="winnersLoadingState" class="py-20">
+    <div class="flex items-center justify-between gap-4 mb-6">
+      <p class="text-zinc-600 text-sm font-medium">Featured accepted proposals preview</p>
+      <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        Live data loading
+      </span>
     </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <article class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 shadow-sm">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">AC</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white truncate">Avery Chen</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2">@averychen</p>
+          </div>
+        </div>
+        <p class="text-sm font-semibold text-zinc-900 dark:text-white leading-tight line-clamp-3 mb-4">Proposal title preview for a mentorship dashboard</p>
+        <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">OpenMRS</span>
+      </article>
+      <article class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 shadow-sm">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">NP</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white truncate">Noah Patel</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2">@noahpatel</p>
+          </div>
+        </div>
+        <p class="text-sm font-semibold text-zinc-900 dark:text-white leading-tight line-clamp-3 mb-4">Telemetry and reporting improvements preview</p>
+        <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">ArduPilot</span>
+      </article>
+      <article class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 shadow-sm hidden lg:block">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">MG</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white truncate">Mia Gomez</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2">@miagomez</p>
+          </div>
+        </div>
+        <p class="text-sm font-semibold text-zinc-900 dark:text-white leading-tight line-clamp-3 mb-4">Build tooling and analytics preview</p>
+        <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">Dart</span>
+      </article>
+    </div>
+    <p class="text-zinc-500 text-sm mt-6">Loading the live winners list in the background.</p>
   </div>
 
   <!-- Error State -->

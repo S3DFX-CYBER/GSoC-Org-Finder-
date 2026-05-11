@@ -1,48 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>404 - Page Not Found</title>
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f9f9f9;
-      color: #1a1c1c;
-      text-align: center;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      color: #584237;
-      margin-bottom: 1.5rem;
-    }
-    a {
-      color: #f97316;
-      text-decoration: none;
-      font-weight: bold;
-      border: 1px solid #f97316;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      transition: all 0.2s;
-    }
-    a:hover {
-      background-color: `#f97316`;
-      color: `#1a1c1c`;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <meta http-equiv="refresh" content="3;url=/">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #212529;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: #6c757d;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-  <h1>Page Not Found</h1>
-  <p>Redirecting to the homepage in 3 seconds...</p>
-  <a href="/">Go Home</a>
+    <h1>404 — Page Not Found</h1>
+    <p>Redirecting to home in 3 seconds...</p>
+    <a href="/" class="btn">Go Home Now</a>
 </body>
 </html>

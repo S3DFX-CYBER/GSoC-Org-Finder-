@@ -1583,27 +1583,80 @@
     "org": "NumFOCUS",
     "ideasUrl": "https://github.com/numfocus/gsoc/blob/master/2026/ideas-list.md",
     "channels": [],
-    "mentors": [
+    "mentors": [],
+    "mailingLists": [
       {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
+        "type": "Mailing list",
+        "url": "https://groups.google.com/a/numfocus.org/forum/#!forum/gsoc",
+        "label": "NumFOCUS GSoC mailing list"
+      },
+      {
+        "type": "Email",
+        "url": "mailto:gsoc@numfocus.org",
+        "label": "gsoc@numfocus.org"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "tip": "NumFOCUS is an umbrella organization. For project-specific questions, contact the individual project communities under the umbrella.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-12T00:00:00.000Z"
   },
   "omegaUp": {
     "org": "omegaUp",
     "ideasUrl": "https://github.com/omegaup/omegaup/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/gMEMX7Mrwe",
+        "label": "omegaUp GSoC Discord (Candidates)"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/K3JFd9d3wk",
+        "label": "omegaUp Community Discord"
+      },
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/omegaup/omegaup/discussions",
+        "label": "omegaUp GitHub Discussions"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "",
+        "github": "pabo99",
+        "githubUrl": "https://github.com/pabo99"
+      },
+      {
+        "name": "",
+        "github": "heduenas",
+        "githubUrl": "https://github.com/heduenas"
+      },
+      {
+        "name": "",
+        "github": "Ankitsinghsisodya",
+        "githubUrl": "https://github.com/Ankitsinghsisodya"
+      },
+      {
+        "name": "",
+        "github": "carlosabcs",
+        "githubUrl": "https://github.com/carlosabcs"
+      },
+      {
+        "name": "",
+        "github": "iqbalcodes6602",
+        "githubUrl": "https://github.com/iqbalcodes6602"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:hello@omegaup.com",
+        "label": "hello@omegaup.com"
+      }
+    ],
+    "tip": "Join the Discord server to get help and connect with mentors. Make sure to solve at least 2 of 3 problems on the GSoC 2026 arena test.",
+    "status": "ok",
+    "lastFetched": "2026-05-12T00:00:00.000Z"
   },
   "Open Food Facts": {
     "org": "Open Food Facts",

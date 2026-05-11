@@ -2932,11 +2932,12 @@ footer a:hover {
   margin-left: 2px;
 }
 
-.unselect-lang-btn:hover {
-  background: var(--orange);
-  color: white;
+[data-theme="dark"] .unselect-lang-btn:hover {
+  background: var(--orange-deep);
+  color: #ffffff;
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
 }
-
 /* Clear all button */
 .clear-all-langs-btn {
   display: inline-flex;
@@ -2953,10 +2954,12 @@ footer a:hover {
   margin-left: 4px;
 }
 
-.clear-all-langs-btn:hover {
+[data-theme="dark"] .clear-all-langs-btn:hover {
   border-color: var(--orange);
-  color: var(--orange);
+  color: var(--orange-deep);
   background: var(--orange-pale);
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
 }
 
 /* Dark mode overrides */
@@ -2990,6 +2993,13 @@ footer a:hover {
   border-color: var(--orange);
   color: var(--orange-deep);
   background: var(--orange-pale);
+}
+[data-theme="dark"] .clear-all-langs-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange-deep);
+  background: var(--orange-pale);
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
 }
 button:hover {
   transform: scale(1.05);

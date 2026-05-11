@@ -1306,13 +1306,13 @@ async function loadWinnersData() {
 function renderWinnersOrgChips(orgs) {
   const container = document.getElementById('winnersOrgChips');
   if (!container) return;
-  
+  // Escape org names to prevent DOM-based XSS when injecting into innerHTML
   container.innerHTML = orgs.map(org => `
     <button 
       class="winners-org-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors"
-      data-org="${org}"
+      data-org="${escapeHtml(org)}"
       onclick="toggleWinnersOrgFilter(this.dataset.org)"
-    >${org}</button>
+    >${escapeHtml(org)}</button>
   `).join('');
 }
 

@@ -147,11 +147,17 @@ function parseWinnerPath(path) {
     return null;
   }
 
-  // The first part is the username
-  const username = parts[0];
+  // Detect username token: prefer the first part that looks like a GitHub username
+  // GitHub usernames typically use letters, numbers, hyphens or underscores (no spaces)
+  const usernameRegex = /^[A-Za-z0-9_-]{1,39}$/;
+  let usernameIndex = parts.findIndex(p => usernameRegex.test(p) && !/^\d{4}$/.test(p));
+
+  // Fallback: if none found, assume the first part is the username
+  if (usernameIndex === -1) usernameIndex = 0;
+  const username = parts[usernameIndex];
 
   // Remove year suffix (4-digit number at the end) if present
-  let projectTitleParts = parts.slice(1);
+  let projectTitleParts = parts.slice(usernameIndex + 1);
   if (projectTitleParts.length > 0 && /^\d{4}$/.test(projectTitleParts[projectTitleParts.length - 1])) {
     projectTitleParts = projectTitleParts.slice(0, -1);
   }
@@ -232,6 +238,11 @@ async function fetchWinners() {
  * Writes winners data to file
  */
 function writeWinnersData(winners) {
+  // Defensive: don't overwrite existing data when fetch returned nothing
+  if (!Array.isArray(winners) || winners.length === 0) {
+    console.warn('No winners to write; skipping write to preserve existing data.');
+    return;
+  }
   const dataDir = 'data';
 
   // Ensure data directory exists

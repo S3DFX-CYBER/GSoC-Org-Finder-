@@ -2196,6 +2196,62 @@
     }
   }
 
+  // Watchlist metadata: progress, notes, checklist
+  function loadWatchlistMeta() {
+    try {
+      const raw = localStorage.getItem('watchlist_meta');
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveWatchlistMeta(meta) {
+    try {
+      localStorage.setItem('watchlist_meta', JSON.stringify(meta));
+    } catch (e) {
+      console.warn('Failed to save watchlist metadata:', e.message);
+    }
+  }
+
+  function getOrgMeta(meta, orgName) {
+    if (!meta[orgName]) {
+      meta[orgName] = {
+        checklist: { read_ideas: false, intro_contact: false, first_pr: false, proposal: false },
+        notes: '',
+        progress: 0,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    // Normalize persisted entries
+    const entry = meta[orgName];
+    if (typeof entry.checklist !== 'object' || entry.checklist === null) entry.checklist = {};
+    Object.keys({ read_ideas: false, intro_contact: false, first_pr: false, proposal: false }).forEach(k => {
+      if (!(k in entry.checklist)) entry.checklist[k] = false;
+    });
+    if (typeof entry.notes !== 'string') entry.notes = '';
+    if (typeof entry.progress !== 'number' || entry.progress < 0 || entry.progress > 100) entry.progress = 0;
+    return entry;
+  }
+
+  function updateChecklistItem(orgName, key, value) {
+    const meta = loadWatchlistMeta();
+    const entry = getOrgMeta(meta, orgName);
+    entry.checklist[key] = value;
+    entry.progress = Math.round(Object.values(entry.checklist).filter(Boolean).length / Object.keys(entry.checklist).length * 100);
+    entry.updatedAt = new Date().toISOString();
+    saveWatchlistMeta(meta);
+    renderWatchlist();
+  }
+
+  function updateOrgNotes(orgName, notes) {
+    const meta = loadWatchlistMeta();
+    const entry = getOrgMeta(meta, orgName);
+    entry.notes = String(notes || '').slice(0, 200);
+    entry.updatedAt = new Date().toISOString();
+    saveWatchlistMeta(meta);
+  }
+
   function toggleBookmark(e, name) {
     if (e) e.stopPropagation();
     if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
@@ -2208,9 +2264,15 @@
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
     if (!container) return;
+    
+    // Capture which org's details drawer is currently open
+    const openDetails = container.querySelector('details[open]');
+    const openOrgName = openDetails?.dataset?.orgName;
+    
     container.innerHTML = '';
     
     const bookmarks = Array.from(bookmarkedSet).map(name => ORGS.find(o => o.name === name)).filter(Boolean);
+    const watchlistMeta = loadWatchlistMeta();
     
     if (bookmarks.length === 0) {
       container.innerHTML = `
@@ -2223,39 +2285,66 @@
     }
 
     bookmarks.forEach(org => {
+      const meta = getOrgMeta(watchlistMeta, org.name);
+      const checklistItems = Object.entries(meta.checklist).map(([k, v]) => `<li class="flex items-center gap-2 text-xs"><input type="checkbox" ${v ? 'checked' : ''} data-org-name="${escapeHtml(org.name)}" data-key="${k}" class="rounded watchlist-checkbox" /> ${k.replace(/_/g, ' ')}</li>`).join('');
+      const progressPct = meta.progress || 0;
+      
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
+      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 grid md:grid-cols-[1fr,240px] gap-4 hover:shadow-lg hover:border-primary/30 transition-all';
       item.innerHTML = `
-        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-orange-600">psychology</span>
-        </div>
-        <div class="flex-1 w-full">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${escapeHtml(org.name)}</h4>
-            <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
+        <div>
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <h4 class="font-bold text-base">${escapeHtml(org.name)}</h4>
+              <p class="text-xs text-zinc-500">${escapeHtml(org.cat)} • ${escapeHtml(org.competition)} • ${org.years}y</p>
+            </div>
+            <span class="text-[10px] font-bold uppercase bg-orange-100 text-orange-700 px-2 py-1 rounded-full">watchlisted</span>
           </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
-          <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
-            <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+          <p class="text-sm text-zinc-600 mb-3 line-clamp-2">${escapeHtml(org.desc)}</p>
+          <div class="flex flex-wrap gap-2 mb-3 text-xs">
+            <span class="px-2 py-1 bg-zinc-100 rounded">⭐ ${org.years}y veteran</span>
+            <span class="px-2 py-1 bg-zinc-100 rounded">📊 ${escapeHtml(org.competition)}</span>
+            <span class="px-2 py-1 bg-zinc-100 rounded">🔧 ${escapeHtml(org.codebase)}</span>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${org.tags.slice(0, 4).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
+            ${org.tags.length > 4 ? `<span class="px-2 py-0.5 text-[10px] text-zinc-500">+${org.tags.length - 4}</span>` : ''}
           </div>
         </div>
+        <aside class="bg-surface-container-low rounded-xl p-4">
+          <div class="mb-3">
+            <p class="text-xs font-bold text-zinc-600 mb-1">Progress</p>
+            <div class="h-2 bg-zinc-200 rounded-full overflow-hidden">
+              <div class="h-full bg-orange-500 transition-all" style="width: ${progressPct}%"></div>
+            </div>
+            <p class="text-xs text-zinc-500 mt-1 text-right">${progressPct}%</p>
+          </div>
+          <details ${org.name === openOrgName ? 'open' : ''} data-org-name="${escapeHtml(org.name)}" class="text-xs space-y-2">
+            <summary class="font-bold text-zinc-700 cursor-pointer mb-2">Checklist</summary>
+            <ul class="space-y-1.5">${checklistItems}</ul>
+          </details>
+          <textarea placeholder="Add notes..." data-org-name="${escapeHtml(org.name)}" class="mt-3 w-full text-xs p-2 border border-zinc-200 rounded resize-none watchlist-notes" rows="2" maxlength="200">${escapeHtml(meta.notes)}</textarea>
+          <button data-bookmark-org="${escapeHtml(org.name)}" class="bookmark-btn mt-3 w-full text-xs font-bold text-red-500 hover:text-red-700">Remove</button>
+        </aside>
       `;
       container.appendChild(item);
       attachOrgCardListeners(item);
     });
 
-    // Data-driven AI Insight
+    // Personalized AI insights based on watchlist
     const allTags = bookmarks.flatMap(o => o.tags);
     const topTag = [...new Set(allTags)].sort((a,b) => allTags.filter(t => t===b).length - allTags.filter(t => t===a).length)[0];
-    const skillFocus = topTag ? `Focus on mastering **${escapeHtml(topTag)}**` : "Start contributing to Good First Issues";
-    const safeTopTag = topTag ? escapeHtml(topTag) : null;
+    const avgProgress = bookmarks.length > 0 
+      ? Math.round(bookmarks.reduce((sum, org) => sum + (watchlistMeta[org.name]?.progress || 0), 0) / bookmarks.length)
+      : 0;
+    const insight = avgProgress < 40 
+      ? `<strong>Keep momentum!</strong> ${avgProgress}% progress. Pick one org and read its ideas list this week.`
+      : `<strong>Nice start!</strong> ${avgProgress}% progress. Consider drafting a proposal for your top-fit org.`;
 
     document.getElementById('aiInsightText').innerHTML = `
       <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-sm">sparkles</span>
-        <span>Insight: Your watchlist highlights a strong interest in <strong>${safeTopTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
+        <span class="material-symbols-outlined text-sm" style="color:#f97316">lightbulb</span>
+        <span>Watching: ${bookmarks.length} org${bookmarks.length !== 1 ? 's' : ''}. Top skill: <strong>${escapeHtml(topTag || 'diverse')}</strong>. ${insight}</span>
       </span>
     `;
   }

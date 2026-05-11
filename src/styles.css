@@ -24,10 +24,32 @@
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body{
+  background:
+    radial-gradient(circle at top left, rgba(249,115,22,.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(59,130,246,.08), transparent 30%),
+    var(--bg);
+
+  color:var(--ink);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
 
 /* ── NAV ── */
-.nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
+.nav{
+  position:sticky;
+  top:0;
+  z-index:60;
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.18);
+  box-shadow:0 8px 32px rgba(0,0,0,.06);
+  transition:all .3s ease;
+}
+
 .nav-inner{max-width:1340px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px}
 .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
 .gsoc-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBBC04,var(--orange));border-radius:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.04em;box-shadow:0 2px 8px rgba(244,107,14,.3)}
@@ -154,9 +176,36 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-bottom:60px}
 
 /* ── CARD ── */
-.org-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;position:relative;overflow:hidden;animation:fadeUp .25s ease forwards;transition:border-color .18s,box-shadow .18s,transform .15s,background .3s}
+.org-card{
+ background:
+  linear-gradient(
+    145deg,
+    rgba(255,255,255,.85),
+    rgba(255,255,255,.65)
+  );
+
+backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.25);
+}
 .org-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--orange),#FBBC04);opacity:0;transition:opacity .2s}
-.org-card:hover,.org-card.focused{border-color:var(--orange-border);box-shadow:0 4px 20px rgba(244,107,14,.1);transform:translateY(-2px)}
+.org-card:hover,
+.org-card.focused{
+
+  transform:
+    perspective(1200px)
+    rotateX(3deg)
+    rotateY(-3deg)
+    translateY(-10px);
+
+  border-color:rgba(249,115,22,.45);
+
+  box-shadow:
+    0 12px 30px rgba(249,115,22,.18),
+    0 0 50px rgba(249,115,22,.12),
+    0 0 100px rgba(249,115,22,.08);
+}
 .org-card:hover::after,.org-card.focused::after{opacity:1}
 .org-card.focused{outline:2px solid var(--orange);outline-offset:2px}
 .org-card.in-compare{border-color:var(--blue);background:rgba(26,86,219,.03)}
@@ -706,4 +755,22 @@ footer a:hover{text-decoration:underline}
   border-color: var(--orange);
   color: var(--orange-deep);
   background: var(--orange-pale);
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+  background-size:40px 40px;
+  pointer-events:none;
+  z-index:-1;
+}
+body{
+  background:
+    radial-gradient(circle at top left, rgba(249,115,22,.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(59,130,246,.08), transparent 30%),
+    var(--bg);
 }

@@ -37,6 +37,7 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -95,14 +96,49 @@
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
     .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
     .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    .futuristic-card{
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03),
+    0 10px 40px rgba(0,0,0,0.35),
+    0 0 30px rgba(139,92,246,0.15);
+  transition: all 0.35s ease;
+}
+
+.futuristic-card:hover{
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 20px 60px rgba(139,92,246,0.25),
+    0 0 50px rgba(6,182,212,0.18);
+}
     .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     .fade-up{animation:fadeUp .6s ease-out both}
+    .reveal{
+        opacity:0;
+        transform:translateY(40px);
+        transition:all .8s ease;
+      }
+
+    .reveal.active{
+      opacity:1;
+      transform:translateY(0);
+      }
     @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
     .pulse-dot{animation:pulse-dot 2s infinite}
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
-    .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
+    .hero-gradient{
+    background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #312e81 30%,
+    #7c3aed 60%,
+    #06b6d4 100%
+  );
+}
 
     /* Modal Styles */
     .modal-bg {
@@ -217,10 +253,52 @@
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
     .bookmark-btn.active { color: #f59e0b; }
     .bookmark-btn:hover { transform: scale(1.2); }
+    .glow-btn{
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glow-btn::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transform:translateX(-100%);
+  transition:0.6s;
+}
+
+.glow-btn:hover::before{
+  transform:translateX(100%);
+}
+
+.glow-btn:hover{
+  box-shadow:
+    0 0 20px rgba(168,85,247,0.6),
+    0 0 50px rgba(59,130,246,0.35);
+}
 
     /* Base mobile-first styles */
     html, body { width: 100%; overflow-x: hidden; }
     html { scroll-behavior: smooth; }
+    #cursorGlow{
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+      circle,
+      rgba(168,85,247,0.18),
+      transparent 70%
+    );
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
     
     /* Scroll offset for fixed header */
     #timeline, #orgs, #guide, #watchlist, #issues, #mentors {
@@ -438,6 +516,13 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+  <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-violet-500/20 blur-3xl rounded-full animate-pulse"></div>
+
+  <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/20 blur-3xl rounded-full animate-pulse"></div>
+
+  <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+</div>
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -616,7 +701,7 @@
 </section>
 
 <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-<section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
+<section id="filterBar" class="px-6 max-w-7xl mx-auto mb-6 fade-up py-3 transition-all duration-300" style="animation-delay:.3s">
   <div class="flex flex-wrap gap-2 mb-4">
     <button class="filter-chip px-4 py-2 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center gap-1 transition-all"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
@@ -624,6 +709,12 @@
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
     <button class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+    
+  <button 
+  id="clearFiltersBtn"
+  class="px-4 py-2 rounded-full bg-red-100 text-red-600 text-xs font-bold hover:bg-red-200 transition-colors">
+  Clear Filters
+  </button>
   </div>
   <div class="flex flex-wrap gap-2">
     <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
@@ -2613,6 +2704,50 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.closeHelpModal = closeHelpModal;
+
+});
+document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+
+  document.getElementById("searchInput").value = "";
+  document.getElementById("hero-search").value = "";
+
+  document.getElementById("categoryFilter").value = "all";
+  document.getElementById("complexityFilter").value = "all";
+
+  document.querySelectorAll(".pill").forEach(pill => {
+    pill.classList.remove("active");
+    pill.setAttribute("aria-pressed", "false");
+  });
+
+  document.getElementById("selectedLangsStrip").innerHTML =
+    '<span class="empty-state">No languages selected</span>';
+});
+
+const filterBar = document.getElementById("filterBar");
+
+window.addEventListener("scroll", () => {
+
+  if (window.scrollY > 500) {
+    filterBar.classList.add(
+      "fixed",
+      "top-16",
+      "left-0",
+      "right-0",
+      "z-40",
+      "bg-white",
+      "shadow-md"
+    );
+  } else {
+    filterBar.classList.remove(
+      "fixed",
+      "top-16",
+      "left-0",
+      "right-0",
+      "z-40",
+      "bg-white",
+      "shadow-md"
+    );
+  }
 
 });
 </script>

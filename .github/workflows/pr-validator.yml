@@ -1,0 +1,154 @@
+name: 🛡️ PR Validation & Contribution Rules
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: write
+  issues: read
+  contents: read
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const username = pr.user.login;
+
+            const lowerBody = body.toLowerCase();
+
+            let warnings = [];
+
+            // ─────────────────────────────────────────────
+            // Ignore bots
+            // ─────────────────────────────────────────────
+            if (pr.user.type === 'Bot') {
+              core.info('Ignoring bot PR');
+              return;
+            }
+
+            // ─────────────────────────────────────────────
+            // Check linked issue
+            // ─────────────────────────────────────────────
+            const issueRegex =
+              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+
+            const hasLinkedIssue = issueRegex.test(body);
+
+            if (!hasLinkedIssue) {
+              warnings.push(
+                '❌ This PR does not reference a linked issue.\n\n' +
+                'Please add:\n' +
+                '`Closes #issue-number`'
+              );
+            }
+
+            // ─────────────────────────────────────────────
+            // Detect contribution program
+            // ─────────────────────────────────────────────
+            const mentionsNSOC =
+              lowerBody.includes('nsoc');
+
+            const mentionsGSSOC =
+              lowerBody.includes('gssoc');
+
+            if (!mentionsNSOC && !mentionsGSSOC) {
+              warnings.push(
+                '⚠️ Contribution program not detected.\n\n' +
+                'Please use the proper PR template:\n' +
+                '- NSOC template\n' +
+                '- GSSOC template'
+              );
+            }
+
+            // ─────────────────────────────────────────────
+            // Required template sections
+            // ─────────────────────────────────────────────
+            const requiredSections = [
+              'description',
+              'related issue',
+              'type of change',
+              'how to test',
+              'checklist'
+            ];
+
+            for (const section of requiredSections) {
+              if (!lowerBody.includes(section)) {
+                warnings.push(
+                  `⚠️ Missing PR template section: \`${section}\``
+                );
+              }
+            }
+
+            // ─────────────────────────────────────────────
+            // Conventional commit title validation
+            // ─────────────────────────────────────────────
+            const conventionalRegex =
+              /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
+
+            if (!conventionalRegex.test(title)) {
+              warnings.push(
+                '⚠️ PR title does not follow Conventional Commits format.\n\n' +
+                'Examples:\n' +
+                '- feat: add search filters\n' +
+                '- fix: resolve mobile navbar overlap\n' +
+                '- docs: update contribution guide'
+              );
+            }
+
+            // ─────────────────────────────────────────────
+            // Encourage grouped PRs
+            // ─────────────────────────────────────────────
+            warnings.push(
+              '💡 Contributors are encouraged to combine 1–2 related fixes/features into a single focused PR instead of opening many tiny PRs.'
+            );
+
+            // ─────────────────────────────────────────────
+            // Warn only (do not close)
+            // ─────────────────────────────────────────────
+            if (warnings.length > 0) {
+              const comment =
+                `## ⚠️ PR Validation Warning\n\n` +
+                `Hi @${username}, thanks for contributing 🚀\n\n` +
+                warnings.map(w => `- ${w}`).join('\n\n') +
+                `\n\n---\n\n` +
+                `Please update the PR accordingly. ` +
+                `This is currently a warning only and does not automatically close the PR.`;
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body:
+                  `## ✅ PR Validation Passed\n\n` +
+                  `Thanks @${username}! Your PR follows the repository contribution requirements 🚀`
+              });
+            }

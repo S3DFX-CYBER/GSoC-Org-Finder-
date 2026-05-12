@@ -25,8 +25,10 @@ jobs:
     steps:
       - name: Validate PR structure
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const pr = context.payload.pull_request;
 
@@ -54,7 +56,7 @@ jobs:
 
             if (!issueRegex.test(body)) {
               warnings.push(
-                '❌ Missing linked issue.\nAdd:\n`Closes #issue-number`'
+                '❌ Missing linked issue. Add: `Closes #issue-number`'
               );
             }
 
@@ -64,7 +66,7 @@ jobs:
 
             if (!mentionsNSOC && !mentionsGSSOC) {
               warnings.push(
-                '⚠️ Contribution program not detected.\nUse the correct PR template.'
+                '⚠️ Contribution program not detected. Please use the correct PR template.'
               );
             }
 
@@ -107,17 +109,33 @@ jobs:
               }
             }
 
-            // Conventional title
+            // Conventional title validation
             const conventionalRegex =
               /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
 
             if (!conventionalRegex.test(title)) {
               warnings.push(
-                '⚠️ PR title should follow Conventional Commits.\nExample:\n`feat: add search filters`'
+                '⚠️ PR title should follow Conventional Commits.'
               );
             }
 
-            // Final comment
+            // Build comment body
+            let commentBody = '';
+
+            if (warnings.length > 0) {
+              commentBody =
+                '## ⚠️ PR Validation Warning\n\n' +
+                `Hi @${username}, thanks for contributing 🚀\n\n` +
+                warnings.map(w => `- ${w}`).join('\n') +
+                '\n\n---\n\n' +
+                'Please update the PR accordingly.';
+            } else {
+              commentBody =
+                '## ✅ PR Validation Passed\n\n' +
+                `Thanks @${username}! Your PR follows the repository guidelines 🚀`;
+            }
+
+            // Find existing validation comment
             const comments = await github.rest.issues.listComments({
               owner,
               repo,
@@ -125,39 +143,24 @@ jobs:
               per_page: 100
             });
 
-            const existing = comments.data.find(
-              c =>
-                c.user.type === 'Bot' &&
-                c.body.includes('PR Validation')
+            const existing = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('PR Validation')
             );
 
-            const bodyComment =
-              warnings.length > 0
-                ? `## ⚠️ PR Validation Warning
-
-Hi @${username}, thanks for contributing 🚀
-
-${warnings.map(w => `- ${w}`).join('\n')}
-
----
-
-Please update the PR accordingly.`
-                : `## ✅ PR Validation Passed
-
-Thanks @${username}! Your PR follows the repository guidelines 🚀`;
-
+            // Update existing comment instead of spamming
             if (existing) {
               await github.rest.issues.updateComment({
                 owner,
                 repo,
                 comment_id: existing.id,
-                body: bodyComment
+                body: commentBody
               });
             } else {
               await github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: prNumber,
-                body: bodyComment
+                body: commentBody
               });
             }

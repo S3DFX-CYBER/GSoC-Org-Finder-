@@ -1247,13 +1247,31 @@
     "org": "libssh",
     "ideasUrl": "https://www.libssh.org/development/google-summer-of-code/",
     "channels": [
-      "https://matrix.to/#/!yBkUIMByeIPFgUzcVM:matrix.org?via=matrix.org"
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/!yBkUIMByeIPFgUzcVM:matrix.org",
+        "label": "libssh Matrix channel"
+      }
     ],
     "mentors": [
-      "Eshan Kelkar"
+      {
+        "name": "Jakub Jelen",
+        "github": "jakuje",
+        "githubUrl": "https://github.com/jakuje"
+      },
+      {
+        "name": "Sahana Prasad"
+      },
+      {
+        "name": "Eshan Kelkar"
+      }
     ],
     "mailingLists": [
-      "libssh@libssh.org"
+      {
+        "type": "Mailing list",
+        "url": "https://lists.libssh.org/pipermail/libssh-devel/",
+        "label": "libssh-devel mailing list"
+      }
     ],
     "tip": "Use the official Matrix channel for project discussions.",
     "status": "ok",

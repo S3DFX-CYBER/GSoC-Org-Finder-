@@ -35,7 +35,11 @@ No sign-up. No install. No build step. Just open and explore.
 
 ## 📈 Flowchart
 
-<img width="8192" height="1328" alt="User Action Flow for Org-2026-05-05-154517" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" />
+<!-- <img width="8192" height="1328" alt="User Action Flow for Org-2026-05-05-154517" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" /> -->
+
+<img width="100%" alt="User Action Flow for Org-2026-05-05-154517" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" />
+
+<!-- I have added width to 100% and omit height. The problem is that the size is very large. It can increase load. It may trigger Github preview issues.It will not responsive on smaller screens. -->
 
 ---
 
@@ -339,8 +343,16 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.
 Share it with anyone applying! Applications open **March 16, 2026**. 🙌
-<center>
+<!-- <center> -->
   
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
+<!-- ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png) -->
 
-</center>
+<!-- </center> Always leave an empty line before HTML blocks -->
+
+---
+<div align="center">
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" alt="rainbow divider/">
+</div>
+
+<!-- Github markdown rendered sometimes breaks when mixing:
+raw HTML tags like <center> and markdown image syntax inside HTML Blocks -->

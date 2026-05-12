@@ -258,6 +258,23 @@ Each org entry looks like this:
 - Generic GSoC organization pages are acceptable as placeholders but should be updated when possible
 - Run `node agent/scripts/validate-ideas-urls.js` to check all URLs before submitting
 
+## 🧾 DCO Sign-off Helper
+If the repository enforces the DCO check, use these helper commands:
+
+```bash
+npm run dco:sign   # create a new commit with Signed-off-by
+npm run dco:amend  # amend the latest commit and add Signed-off-by
+npm run dco:push   # push with --force-with-lease after amending
+```
+
+Or run the script directly:
+
+```bash
+./scripts/dco.sh sign
+./scripts/dco.sh amend
+./scripts/dco.sh push
+```
+
 **Competition levels** (subjective, based on org popularity + slot count):
 - `hot` — high applicant volume, very competitive (Django, LLVM, Git, KDE…)
 - `moderate` — good balance of applicants and slots

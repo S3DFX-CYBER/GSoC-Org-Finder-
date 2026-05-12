@@ -1985,7 +1985,7 @@
       }
       compareList.push(name);
     }
-    renderOrgs(true);
+    refreshOrgGridPreservingVisibleCount();
     renderCompare();
   }
 
@@ -2109,8 +2109,11 @@
     const grid = document.getElementById('orgGrid');
     if (!grid) return;
     grid.innerHTML = '';
-    visibleCount = previousVisibleCount; // preserve pagination state
-    renderOrgs(false); // re-render currently visible window
+    visibleCount = 0; // Temporarily reset
+    while (visibleCount < previousVisibleCount) {
+      visibleCount += 12;
+      renderOrgs(false); // rebuild the grid page by page up to the previous state
+    }
   }
 
   function toggleBookmark(e, name) {

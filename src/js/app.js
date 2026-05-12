@@ -529,16 +529,15 @@ function applyFilters(){
   if(cat)AN.trackCat(cat);
 
   const res=ORGS.filter(o=>{
-    const txt=(o.name+' '+o.tags.join(' ')+' '+o.desc).toLowerCase();
+    // Search only organization names, not descriptions or tags
+    const orgName=o.name.toLowerCase();
     if(cat&&o.cat!==cat)return false;
-    if(lang&&!txt.includes(lang))return false;
-    if(search&&!txt.includes(search))return false;
+    if(lang&&!orgName.includes(lang))return false;
+    if(search&&!orgName.includes(search))return false;
     if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false;}
     if(compF&&o.competition!==compF)return false;
 
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true;});if(!m)return false;}
-
-    // Use proper language matching with LANGUAGE_MAP
+    // Language pills still work independently
     if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
  
     if(chips.has('veteran')&&yCls(o.years)!=='veteran')return false;
@@ -550,12 +549,37 @@ function applyFilters(){
     return true;
   });
 
-  if(sort==='alpha')res.sort((a,b)=>a.name.localeCompare(b.name));
-  else if(sort==='years-desc')res.sort((a,b)=>b.years-a.years);
-  else if(sort==='years-asc')res.sort((a,b)=>a.years-b.years);
-  else if(sort==='comp-low')res.sort((a,b)=>['chill','moderate','hot'].indexOf(a.competition)-['chill','moderate','hot'].indexOf(b.competition));
-  else if(sort==='stars')res.sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0));
-  else if(sort==='gfi')res.sort((a,b)=>(b._gh?.gfi||0)-(a._gh?.gfi||0));
+  // Improved search ranking: exact matches first, then startsWith, then partial
+  if(search){
+    res.sort((a,b)=>{
+      const nameA=a.name.toLowerCase();
+      const nameB=b.name.toLowerCase();
+      
+      // Exact match gets highest priority
+      if(nameA===search && nameB!==search) return -1;
+      if(nameB===search && nameA!==search) return 1;
+      
+      // Starts with gets second priority  
+      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
+      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
+      
+      // Both start with search, sort alphabetically
+      if(nameA.startsWith(search) && nameB.startsWith(search)) return nameA.localeCompare(nameB);
+      
+      // Neither starts with, sort alphabetically
+      return nameA.localeCompare(nameB);
+    });
+  }
+
+  // Apply other sorting if no search or as secondary sort
+  if(!search){
+    if(sort==='alpha')res.sort((a,b)=>a.name.localeCompare(b.name));
+    else if(sort==='years-desc')res.sort((a,b)=>b.years-a.years);
+    else if(sort==='years-asc')res.sort((a,b)=>a.years-b.years);
+    else if(sort==='comp-low')res.sort((a,b)=>['chill','moderate','hot'].indexOf(a.competition)-['chill','moderate','hot'].indexOf(b.competition));
+    else if(sort==='stars')res.sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0));
+    else if(sort==='gfi')res.sort((a,b)=>(b._gh?.gfi||0)-(a._gh?.gfi||0));
+  }
 
   filteredOrgs=res;
   focusedIdx=-1;

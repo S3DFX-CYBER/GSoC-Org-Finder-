@@ -2698,10 +2698,16 @@
   "VideoLAN": {
     "org": "VideoLAN",
     "ideasUrl": "https://wiki.videolan.org/SoC_2026/",
-    "channels": [],
+    "channels": [
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#videolan",
+        "label": "#videolan on Libera.Chat"
+      }
+    ],
     "mentors": [
       {
-        "name": "Pierre VLC",
+        "name": "Pierre",
         "github": "",
         "githubUrl": ""
       },
@@ -2711,7 +2717,7 @@
         "githubUrl": ""
       },
       {
-        "name": "Diogo Simao",
+        "name": "Diogo Simao Marques",
         "github": "",
         "githubUrl": ""
       },
@@ -2721,7 +2727,7 @@
         "githubUrl": ""
       },
       {
-        "name": "Felix Paul",
+        "name": "Felix Paul Kühne",
         "github": "",
         "githubUrl": ""
       },
@@ -2736,7 +2742,7 @@
         "githubUrl": ""
       },
       {
-        "name": "Nicolas",
+        "name": "Nicolas Pomepuy",
         "github": "",
         "githubUrl": ""
       },
@@ -2751,7 +2757,7 @@
         "githubUrl": ""
       },
       {
-        "name": "David",
+        "name": "Martin",
         "github": "",
         "githubUrl": ""
       }
@@ -2760,21 +2766,53 @@
       {
         "type": "Mailing list",
         "url": "https://mailman.videolan.org/mailman/listinfo",
-        "label": "mailing-lists"
+        "label": "VideoLAN mailing lists"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Join #videolan on Libera.Chat IRC or send an email to the mailing list to introduce yourself before asking project-specific questions.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Wagtail": {
     "org": "Wagtail",
-    "ideasUrl": "https://github.com/wagtail/wagtail/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/wagtail/gsoc/blob/main/project-ideas.md",
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/wagtail/gsoc/discussions",
+        "label": "Wagtail GSoC GitHub Discussions"
+      },
+      {
+        "type": "Slack",
+        "url": "https://wagtail.org/slack/",
+        "label": "Wagtail Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Thibaud Colas",
+        "github": "thibaudcolas",
+        "githubUrl": "https://github.com/thibaudcolas"
+      },
+      {
+        "name": "Meagen Voss",
+        "github": "vossisboss",
+        "githubUrl": "https://github.com/vossisboss"
+      },
+      {
+        "name": "Coen van der Kamp",
+        "github": "allcaps",
+        "githubUrl": "https://github.com/allcaps"
+      },
+      {
+        "name": "Sævar Öfjörð Magnússon",
+        "github": "saevarom",
+        "githubUrl": "https://github.com/saevarom"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Use GitHub Discussions at github.com/wagtail/gsoc/discussions to introduce yourself and ask questions before contacting mentors directly.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "webpack": {

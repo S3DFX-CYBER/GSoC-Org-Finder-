@@ -301,6 +301,16 @@ All contributors must maintain contribution quality and fairness.
 
 ---
 
+## Assignment Priority Policy
+
+Issue assignments are granted only when the contributor is currently eligible under repository rules.
+
+Commenting first does not reserve or guarantee assignment ownership.
+
+If another eligible contributor claims the issue earlier, the assignment may be granted to them instead.
+
+---
+
 ## ❌ Strictly Prohibited
 
 The following may result in rejection or disqualification:

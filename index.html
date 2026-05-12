@@ -571,7 +571,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organizations, languages, or domains..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -655,10 +655,6 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <div class="relative">
-        <input type="text" id="searchInput" placeholder="Search language, tech, or name..." class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary w-64">
-        <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">search</span>
-      </div>
       <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -679,6 +675,9 @@
       </select>
     </div>
   </div>
+  
+  <!-- Hidden search input for JavaScript compatibility -->
+  <input type="hidden" id="searchInput" />
   
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
@@ -2263,7 +2262,7 @@ if(org.ideas){
     const comp = document.getElementById('complexityFilter').value;
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query) || o.tags.join(' ').toLowerCase().includes(query);
+      const matchSearch = o.name.toLowerCase().includes(query);
       const matchCat = cat === 'all' || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
       const tags = (o.tags || []).map(t => String(t).toLowerCase());

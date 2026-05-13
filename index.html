@@ -677,6 +677,9 @@
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
+      <button id="clearAllFiltersBtn" onclick="clearAllFilters()" class="hidden px-3 py-2 rounded-xl text-xs font-bold text-zinc-500 hover:text-primary hover:bg-primary/10 transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">filter_alt_off</span> Clear All
+      </button>
     </div>
   </div>
   
@@ -2293,6 +2296,10 @@ if(org.ideas){
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
 
+    // Show Clear All button only when at least one filter is active
+    const hasActiveFilters = query || cat !== 'all' || comp !== 'all' || activeChip || selectedLanguages.size > 0;
+    document.getElementById('clearAllFiltersBtn')?.classList.toggle('hidden', !hasActiveFilters);
+
     renderOrgs(true);
   }
 
@@ -2302,12 +2309,30 @@ if(org.ideas){
     document.getElementById('complexityFilter').value = 'all';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
-    // Reset chips
+
+    // Reset quick-filter chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
+    activeChip = null;
+
+    // Reset language pills
+    selectedLanguages.clear();
+    document.querySelectorAll('.pill.active').forEach(pill => {
+      pill.classList.remove('active');
+      pill.setAttribute('aria-pressed', 'false');
+    });
+    renderSelectedLanguages();
+
+    // Reset match-all toggle
+    const matchToggle = document.getElementById('matchAllLanguagesToggle');
+    if (matchToggle) matchToggle.checked = false;
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = false;
+
+    // Hide the button itself
+    document.getElementById('clearAllFiltersBtn')?.classList.add('hidden');
 
     filteredOrgs = [...ORGS];
     renderOrgs(true);

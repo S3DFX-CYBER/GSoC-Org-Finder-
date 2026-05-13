@@ -90,7 +90,7 @@ jobs:
                 s2Text = 'Not applicable for NSOC — proceeds to maintainer review';
               } else {
                 s2Icon = '⏳';
-                s2Text = isGSSOC ? 'Awaiting GSSOC mentor review (2 mentors assigned)' : 'Awaiting reviewer approval';
+                s2Text = isGSSOC ? 'Awaiting GSSOC mentor review' : 'Awaiting reviewer approval';
                 if (stage2Passed) {
                   s2Icon = '✅';
                   s2Text = isGSSOC ? 'GSSOC mentor approved' : 'Reviewer approved';

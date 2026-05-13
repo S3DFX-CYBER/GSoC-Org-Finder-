@@ -74,7 +74,7 @@ jobs:
               '| Stage | Reviewer | Checks |',
               '|-------|----------|--------|',
               '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate |',
-              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Maintainer'} | Code + Quality Review |`,
+              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : isNsoc ? '⏭️ Skipped (NSOC)' : '👥 Maintainer'} | Code + Quality Review |`,
               '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
               '',
               'A **pipeline status comment** will appear below and update automatically as your PR progresses.',

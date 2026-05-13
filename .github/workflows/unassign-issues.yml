@@ -2,9 +2,7 @@ name: 💤 Auto Unassign Inactive Issues
 
 on:
   schedule:
-    # Runs every 12 hours
     - cron: '0 */12 * * *'
-
   workflow_dispatch:
 
 permissions:
@@ -15,7 +13,6 @@ permissions:
 jobs:
   auto-unassign:
     runs-on: ubuntu-latest
-
     steps:
       - name: Auto unassign inactive contributors
         uses: actions/github-script@v8
@@ -24,168 +21,71 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
-            // ─────────────────────────────────────────────
-            // Config
-            // ─────────────────────────────────────────────
             const INACTIVE_DAYS = 3;
-
             const now = new Date();
-            const cutoff = new Date(
-              now.getTime() - INACTIVE_DAYS * 24 * 60 * 60 * 1000
-            );
+            const cutoff = new Date(now.getTime() - INACTIVE_DAYS * 24 * 60 * 60 * 1000);
 
-            core.info(`Checking for inactivity older than ${cutoff.toISOString()}`);
-
-            // ─────────────────────────────────────────────
-            // Fetch open issues
-            // ─────────────────────────────────────────────
             const issues = await github.paginate(
               github.rest.issues.listForRepo,
-              {
-                owner,
-                repo,
-                state: 'open',
-                per_page: 100
-              }
+              { owner, repo, state: 'open', per_page: 100 }
             );
 
             for (const issue of issues) {
-
-              // Skip PRs
-              if (issue.pull_request) {
-                continue;
-              }
+              if (issue.pull_request) continue;
 
               const assignees = (issue.assignees || []).map(a => a.login);
+              if (assignees.length === 0) continue;
 
-              if (assignees.length === 0) {
-                continue;
-              }
-
-              core.info(`Checking issue #${issue.number}`);
-
-              // ─────────────────────────────────────────────
-              // Fetch timeline/comments/events
-              // ─────────────────────────────────────────────
               const comments = await github.paginate(
                 github.rest.issues.listComments,
-                {
-                  owner,
-                  repo,
-                  issue_number: issue.number,
-                  per_page: 100
-                }
+                { owner, repo, issue_number: issue.number, per_page: 100 }
               );
 
               const events = await github.paginate(
                 github.rest.issues.listEvents,
-                {
-                  owner,
-                  repo,
-                  issue_number: issue.number,
-                  per_page: 100
-                }
+                { owner, repo, issue_number: issue.number, per_page: 100 }
               );
 
               for (const assignee of assignees) {
-
-                // ─────────────────────────────────────────────
-                // Find assignment timestamp
-                // ─────────────────────────────────────────────
                 const assignedEvent = events
-                  .filter(e =>
-                    e.event === 'assigned' &&
-                    e.assignee &&
-                    e.assignee.login === assignee
-                  )
-                  .sort((a, b) =>
-                    new Date(b.created_at) - new Date(a.created_at)
-                  )[0];
+                  .filter(e => e.event === 'assigned' && e.assignee && e.assignee.login === assignee)
+                  .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
 
-                if (!assignedEvent) {
-                  continue;
-                }
+                if (!assignedEvent) continue;
 
                 const assignedAt = new Date(assignedEvent.created_at);
+                if (assignedAt > cutoff) continue;
 
-                // Skip fresh assignments
-                if (assignedAt > cutoff) {
-                  core.info(
-                    `Skipping ${assignee} on #${issue.number} (recent assignment)`
-                  );
-                  continue;
-                }
-
-                // ─────────────────────────────────────────────
-                // Check contributor activity
-                // ─────────────────────────────────────────────
+                // Check for activity after assignment
                 const contributorComments = comments.filter(c =>
-                  c.user &&
-                  c.user.login === assignee &&
-                  new Date(c.created_at) > assignedAt
+                  c.user && c.user.login === assignee && new Date(c.created_at) > assignedAt
                 );
 
-                // Linked PR detection
                 const prs = await github.paginate(
                   github.rest.pulls.list,
-                  {
-                    owner,
-                    repo,
-                    state: 'open',
-                    per_page: 100
-                  }
+                  { owner, repo, state: 'open', per_page: 100 }
                 );
 
                 const linkedPR = prs.find(pr => {
                   const body = (pr.body || '').toLowerCase();
-
-                  return (
-                    pr.user &&
-                    pr.user.login === assignee &&
-                    (
-                      body.includes(`#${issue.number}`) ||
-                      body.includes(`closes #${issue.number}`) ||
-                      body.includes(`fixes #${issue.number}`)
-                    )
+                  return pr.user && pr.user.login === assignee && (
+                    body.includes(`#${issue.number}`) ||
+                    body.includes(`closes #${issue.number}`) ||
+                    body.includes(`fixes #${issue.number}`)
                   );
                 });
 
-                const hasActivity =
-                  contributorComments.length > 0 ||
-                  Boolean(linkedPR);
-
-                if (hasActivity) {
-                  core.info(
-                    `${assignee} has activity on issue #${issue.number}`
-                  );
-                  continue;
-                }
-
-                // ─────────────────────────────────────────────
-                // Auto-unassign inactive contributor
-                // ─────────────────────────────────────────────
-                core.info(
-                  `Unassigning inactive contributor ${assignee} from #${issue.number}`
-                );
+                if (contributorComments.length > 0 || linkedPR) continue;
 
                 await github.rest.issues.removeAssignees({
-                  owner,
-                  repo,
-                  issue_number: issue.number,
-                  assignees: [assignee]
+                  owner, repo, issue_number: issue.number, assignees: [assignee]
                 });
 
                 await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number: issue.number,
-                  body:
-                    `⚠️ Auto-unassigned @${assignee} due to inactivity.\n\n` +
+                  owner, repo, issue_number: issue.number,
+                  body: `⚠️ Auto-unassigned @${assignee} due to inactivity.\n\n` +
                     `Per the contribution guidelines, assigned contributors are expected to show progress within ${INACTIVE_DAYS} days.\n\n` +
                     `You may re-request assignment later if you intend to continue working on this issue.`
                 });
               }
             }
-
-            core.info('Finished inactivity sweep.');

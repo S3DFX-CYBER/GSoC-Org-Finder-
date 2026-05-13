@@ -1,0 +1,93 @@
+name: 🤖 DCO Helper
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  dco-helper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Signed-off-by
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          script: |
+            const pr = context.payload.pull_request;
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const commits = await github.paginate(
+              github.rest.pulls.listCommits,
+              {
+                owner,
+                repo,
+                pull_number: pr.number,
+                per_page: 100
+              }
+            );
+
+            let missingDCO = false;
+
+            for (const commit of commits) {
+              const msg = commit.commit.message;
+
+              if (!msg.includes('Signed-off-by:')) {
+                missingDCO = true;
+                break;
+              }
+            }
+
+            if (!missingDCO) {
+              core.info('All commits contain Signed-off-by');
+              return;
+            }
+
+            const body =
+              `## ⚠️ DCO Sign-off Missing\n\n` +
+              `Hi @${pr.user.login} 👋\n\n` +
+              `Some commits in this PR are missing a \`Signed-off-by\` line required by the Developer Certificate of Origin (DCO).\n\n` +
+              `### Fix\n\n` +
+              `Please run:\n\n` +
+              '```bash\n' +
+              'git commit --amend --signoff\n' +
+              'git push --force\n' +
+              '```\n\n' +
+              `For multiple commits:\n\n` +
+              '```bash\n' +
+              'git rebase --signoff HEAD~N\n' +
+              'git push --force\n' +
+              '```\n\n' +
+              `Example sign-off:\n\n` +
+              '```text\n' +
+              'Signed-off-by: Your Name <you@example.com>\n' +
+              '```\n\n' +
+              `This is currently informational and does not automatically close the PR.`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pr.number,
+              body
+            });
+
+            try {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: pr.number,
+                labels: ['dco-missing']
+              });
+            } catch (err) {
+              core.info('Label may not exist');
+            }

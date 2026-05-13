@@ -74,7 +74,8 @@ jobs:
                   owner, repo, path: '.github/reviewers/nsoc-reviewers.json', ref: 'main'
                 });
                 const content = Buffer.from(file.content, 'base64').toString('utf8');
-                reviewerPool = JSON.parse(content).nsoc_reviewers || [];
+                const parsedReviewers = JSON.parse(content).nsoc_reviewers;
+                reviewerPool = Array.isArray(parsedReviewers) ? parsedReviewers : [];
                 core.info(`Found ${reviewerPool.length} NSOC reviewers from list`);
               } catch (e) {
                 core.warning(`Failed to load NSOC reviewers: ${e?.message || e}`);

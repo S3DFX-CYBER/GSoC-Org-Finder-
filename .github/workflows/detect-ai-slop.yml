@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Anti Slop Detection
-        uses: peakoss/anti-slop@v0
+        uses: peakoss/anti-slop@v0.2.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 

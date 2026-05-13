@@ -48,10 +48,7 @@ jobs:
               return;
             }
 
-            const isNsoc =
-              labels.includes('nsoc26') ||
-              branch.includes('nsoc') ||
-              body.includes('nsoc');
+            const isNsoc = labels.includes('nsoc26');
 
             const programNote = isGssoc
               ? `> 🟢 **GSSOC PR detected** — your PR will be routed to an approved GSSOC mentor for Stage 2 review.`

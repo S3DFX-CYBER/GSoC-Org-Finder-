@@ -45,7 +45,7 @@ jobs:
               ...invalidResults.data.items.map(i => i.number)
             ]);
             const totalBadIssues = uniqueBadIssues.size;
-            core.info(`User @${username}: ${spamCount} spam, ${invalidCount} invalid issues`);
+            core.info(`User @${username}: ${spamResults.data.items.length} spam, ${invalidResults.data.items.length} invalid, ${totalBadIssues} unique bad issues`);
 
             const THRESHOLD = 3;
 

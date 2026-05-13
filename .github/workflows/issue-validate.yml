@@ -130,11 +130,11 @@ jobs:
               owner, repo, issue_number, labels: ['needs-quality']
             }).catch(() => {});
 
-            if (!usesTemplate && contentLines.length < 2) {
+            if (!usesTemplate && contentLines.length === 0) {
               await github.rest.issues.update({
                 owner, repo, issue_number,
                 state: 'closed',
                 state_reason: 'not_planned'
               });
-              core.info(`Closed #${issue_number} due to empty/no-template submission.`);
+              core.info(`Closed #${issue_number} due to empty submission with no template.`);
             }

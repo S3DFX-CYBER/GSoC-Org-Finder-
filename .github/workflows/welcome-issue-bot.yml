@@ -11,7 +11,6 @@ permissions:
 jobs:
   welcome:
     runs-on: ubuntu-latest
-
     steps:
       - name: Welcome contributor
         uses: actions/github-script@v8
@@ -19,100 +18,70 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
-
             const username = issue.user.login;
 
-            const body = `
-            ## 👋 Thanks for opening an issue, @${username}!
+            if (issue.user.type === 'Bot') return;
 
-            Our maintainers will review this issue shortly 🚀
-
-            ---
-
-            ## 📘 Before Contributing
-
-            Please read the contribution guide carefully before requesting assignment:
-
-            👉 https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/blob/main/CONTRIBUTING.md
-
-            ---
-
-            ## 🏷️ NSoC'26 / GSSoC'26 Requirement
-
-            Please clearly mention whether you are contributing via:
-
-            - \`NSoC'26\`
-            - \`GSSoC'26\`
-            - or as a regular contributor
-
-            Example:
-
-            \`\`\`
-            I am contributing under NSoC'26
-            \`\`\`
-
-            or
-
-            \`\`\`
-            I am contributing under GSSoC'26
-            \`\`\`
-
-            ⚠️ Assignment requests without this information may be rejected automatically.
-
-            ---
-
-            ## ⏳ GSSoC Assignment Restriction
-
-            GSSoC contributors will only be allowed to take issue assignments after:
-
-            ### 🗓️ May 15th, 12:00 AM IST
-
-            Before that date, assignment requests from GSSoC contributors will be automatically blocked by the assignment workflow.
-
-            ---
-
-            ## 🤖 Assignment System
-
-            To request assignment, comment:
-
-            \`\`\`
-            /assign
-            \`\`\`
-
-            or
-
-            \`\`\`
-            assign me
-            \`\`\`
-
-            The smart assignment workflow automatically validates:
-
-            - contributor eligibility
-            - NSoC/GSSoC participation mention
-            - active issue assignment limits
-            - contribution level eligibility
-            - repository contribution rules
-
-            ---
-
-            ## ⚠️ Important Repository Rules
-
-            - Do not start working before assignment
-            - Maximum 3 active assigned issues per contributor
-            - Contributors are encouraged to combine related fixes into 1–2 quality PRs instead of many small PRs
-            - Level 3 issues require previous merged PRs
-            - PRs without assignment may be closed
-            - Spam or low-quality PRs may be rejected
-            - Follow the zero-build, zero-dependency philosophy
-
-            ---
-
-            ## 🔗 Repository
-
-            https://github.com/S3DFX-CYBER/GSoC-Org-Finder-
-
-            Happy contributing 🎉
-            `;
+            const body = [
+              `## 👋 Thanks for opening an issue, @${username}!`,
+              ``,
+              `Our maintainers will review this issue shortly 🚀`,
+              ``,
+              `---`,
+              ``,
+              `## 📘 Before Contributing`,
+              ``,
+              `Please read the contribution guide carefully before requesting assignment:`,
+              ``,
+              `👉 https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md`,
+              ``,
+              `---`,
+              ``,
+              `## 🏷️ NSoC'26 / GSSoC'26 Requirement`,
+              ``,
+              `Please clearly mention whether you are contributing via:`,
+              `- \`NSoC'26\``,
+              `- \`GSSoC'26\``,
+              `- or as a regular contributor`,
+              ``,
+              `Example: \`I am contributing under GSSoC'26\``,
+              ``,
+              `⚠️ Assignment requests without this information may be rejected automatically.`,
+              ``,
+              `---`,
+              ``,
+              `## ⏳ GSSoC Assignment Restriction`,
+              ``,
+              `GSSoC contributors will only be allowed to take issue assignments after:`,
+              `### 🗓️ May 15th, 12:00 AM IST`,
+              ``,
+              `Before that date, assignment requests from GSSoC contributors will be automatically blocked.`,
+              ``,
+              `---`,
+              ``,
+              `## 🤖 Assignment System`,
+              ``,
+              `To request assignment, comment: \`/assign\` or \`assign me\``,
+              ``,
+              `The smart assignment workflow validates:`,
+              `- contributor eligibility`,
+              `- NSoC/GSSoC participation mention`,
+              `- active issue assignment limits`,
+              `- repository contribution rules`,
+              ``,
+              `---`,
+              ``,
+              `## ⚠️ Important Repository Rules`,
+              ``,
+              `- Do not start working before assignment`,
+              `- Maximum 3 active assigned issues per contributor`,
+              `- Contributors are encouraged to combine related fixes into 1–2 quality PRs instead of many small PRs`,
+              `- PRs without assignment may be closed`,
+              `- Spam or low-quality PRs may be rejected`,
+              `- Follow the zero-build, zero-dependency philosophy`,
+              ``,
+              `Happy contributing 🎉`
+            ].join('\n');
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,

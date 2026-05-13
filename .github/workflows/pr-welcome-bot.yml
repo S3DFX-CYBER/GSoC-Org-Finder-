@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Post welcome comment + apply routing label
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -27,7 +27,7 @@ jobs:
             const number = pr.number;
             const author = pr.user.login;
 
-            // GSSOC Detection
+            // GSSOC / NSOC Detection
             const branch = (pr.head.ref || '').toLowerCase();
             const body = (pr.body || '').toLowerCase();
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());
@@ -37,14 +37,14 @@ jobs:
               branch.includes('gssoc') ||
               body.includes('gssoc');
 
-            // Idempotency Check
+            // Idempotency - Don't post multiple times
             const { data: existing } = await github.rest.issues.listComments({
               owner, repo, issue_number: number, per_page: 100
             });
 
             const MARKER = '<!-- pr-welcome-v1 -->';
             if (existing.some(c => c.body.includes(MARKER))) {
-              console.log('Welcome comment already posted — skipping.');
+              core.info('Welcome comment already posted — skipping.');
               return;
             }
 
@@ -69,16 +69,16 @@ jobs:
               '|-------|----------|--------|',
               '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate |',
               `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Reviewer / NSOC Contributor'} | Code + Quality Review |`,
-              '| **Stage 3** — PA Review | 🔑 Project Admin | Final Merge Decision |',
+              '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
               '',
-              'A **pipeline status comment** will appear below and update automatically.',
+              'A **pipeline status comment** will appear below and update automatically as your PR progresses.',
               '',
               '---',
               '',
               '### While you wait',
               '',
               '- Sign all commits (`git commit -s`)',
-              '- Link issue with `Closes #123`',
+              '- Link your issue (`Closes #123`)',
               '- Use a feature branch (not `main`)',
               '- Avoid unrelated changes',
               '',
@@ -89,16 +89,16 @@ jobs:
               owner, repo, issue_number: number, body: comment
             });
 
-            console.log(`Welcome comment posted for PR #${number}`);
+            core.info(`Welcome comment posted for PR #${number}`);
 
-            // Apply routing label
+            // Apply routing label for GSSOC
             if (isGssoc) {
               try {
                 await github.rest.issues.addLabels({
                   owner, repo, issue_number: number, labels: ['gssoc-review']
                 });
-                console.log('Added gssoc-review label');
+                core.info('Added gssoc-review label');
               } catch (e) {
-                console.log('Label already exists or error');
+                core.warning(`Failed adding gssoc-review label: ${e?.message || e}`);
               }
             }

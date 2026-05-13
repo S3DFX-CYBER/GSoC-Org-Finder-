@@ -1,0 +1,88 @@
+name: 🏷️ Sync Issue Labels to PR
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: label-sync-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Propagate issue labels to PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+            const body = pr.body || '';
+
+            if (pr.user.type === 'Bot') return;
+
+            const issueRefs = body.match(/(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/gi);
+            if (!issueRefs || issueRefs.length === 0) {
+              core.info('No linked issues found in PR body.');
+              return;
+            }
+
+            const issueNumbers = issueRefs.map(ref => {
+              const match = ref.match(/#(\d+)/);
+              return match ? parseInt(match[1], 10) : null;
+            }).filter(Boolean);
+
+            const labelsToSync = [
+              'bug', 'enhancement', 'feature', 'documentation', 'good first issue',
+              'help wanted', 'level1', 'level2', 'level3',
+              'gssoc26', 'nsoc26', 'priority:high', 'priority:medium', 'priority:low',
+              'ui', 'backend', 'frontend', 'api', 'security', 'performance'
+            ];
+
+            const labelsToAdd = new Set();
+
+            for (const issueNum of issueNumbers) {
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner, repo, issue_number: issueNum
+                });
+
+                if (issue.pull_request) continue;
+
+                const issueLabels = (issue.labels || []).map(l => l.name.toLowerCase());
+                for (const label of issueLabels) {
+                  if (labelsToSync.includes(label)) {
+                    labelsToAdd.add(label);
+                  }
+                }
+              } catch (e) {
+                core.info(`Could not fetch issue #${issueNum}: ${e?.message || e}`);
+              }
+            }
+
+            if (labelsToAdd.size === 0) {
+              core.info('No matching labels to sync from linked issues.');
+              return;
+            }
+
+            const labelsArray = Array.from(labelsToAdd);
+            try {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: prNumber, labels: labelsArray
+              });
+              core.info(`Synced labels from linked issues: ${labelsArray.join(', ')}`);
+            } catch (e) {
+              core.warning(`Failed to sync labels: ${e?.message || e}`);
+            }

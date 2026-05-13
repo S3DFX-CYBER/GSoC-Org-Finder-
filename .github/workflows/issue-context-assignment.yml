@@ -140,7 +140,7 @@ jobs:
             if (programLabel) {
               await github.rest.issues.addLabels({
                 owner, repo, issue_number, labels: [programLabel]
-              }).catch(() => {});
+              });
             }
 
             // Success message

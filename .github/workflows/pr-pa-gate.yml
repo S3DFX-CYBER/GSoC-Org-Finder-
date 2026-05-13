@@ -130,6 +130,6 @@ jobs:
             }
 
             // Cleanup
-            if (hasLabel('merge-ready') && hasLabel('needs-stage-1-fixes')) {
+            if (stage1Complete && stage2Complete && hasLabel('needs-stage-1-fixes')) {
               await removeLabel('needs-stage-1-fixes');
             }

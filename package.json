@@ -7,10 +7,7 @@
         "lint:js": "eslint src/js/app.js src/js/org.js agent/scripts/validate-ideas-urls.js agent/scripts/extract-mentors.js agent/scripts/validate-mentors.js api/github.js",
         "lint:css": "stylelint src/styles.css",
         "lint:html": "htmlhint --config .htmlhintrc index.html",
-        "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
-        "dco:sign": "sh ./scripts/dco.sh sign",
-        "dco:amend": "sh ./scripts/dco.sh amend",
-        "dco:push": "sh ./scripts/dco.sh push"
+        "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
     },
     "devDependencies": {
         "eslint": "^8.57.0",

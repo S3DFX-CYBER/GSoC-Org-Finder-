@@ -258,23 +258,6 @@ Each org entry looks like this:
 - Generic GSoC organization pages are acceptable as placeholders but should be updated when possible
 - Run `node agent/scripts/validate-ideas-urls.js` to check all URLs before submitting
 
-## 🧾 DCO Sign-off Helper
-If the repository enforces the DCO check, use these helper commands:
-
-```bash
-npm run dco:sign   # create a new commit with Signed-off-by
-npm run dco:amend  # amend the latest commit and add Signed-off-by
-npm run dco:push   # push with --force-with-lease after amending
-```
-
-Or run the script directly:
-
-```bash
-./scripts/dco.sh sign
-./scripts/dco.sh amend
-./scripts/dco.sh push
-```
-
 **Competition levels** (subjective, based on org popularity + slot count):
 - `hot` — high applicant volume, very competitive (Django, LLVM, Git, KDE…)
 - `moderate` — good balance of applicants and slots
@@ -325,6 +308,7 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
 <a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
 <a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
+<a href="https://github.com/Bushra-gh"><img src="https://github.com/Bushra-gh.png" width="50px" alt="Bushra-gh" /></a>
 <a href="https://github.com/Chizaram-Igolo"><img src="https://github.com/Chizaram-Igolo.png" width="50px" alt="Chizaram-Igolo" /></a>
 <a href="https://github.com/Dj-Shortcut"><img src="https://github.com/Dj-Shortcut.png" width="50px" alt="Dj-Shortcut" /></a>
 <a href="https://github.com/HarshaVardhan31012007"><img src="https://github.com/HarshaVardhan31012007.png" width="50px" alt="HarshaVardhan31012007" /></a>
@@ -342,8 +326,10 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/bhaktiyadav08"><img src="https://github.com/bhaktiyadav08.png" width="50px" alt="bhaktiyadav08" /></a>
 <a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
 <a href="https://github.com/diksha78dev"><img src="https://github.com/diksha78dev.png" width="50px" alt="diksha78dev" /></a>
+<a href="https://github.com/gloooomed"><img src="https://github.com/gloooomed.png" width="50px" alt="gloooomed" /></a>
 <a href="https://github.com/kiranShamsHere"><img src="https://github.com/kiranShamsHere.png" width="50px" alt="kiranShamsHere" /></a>
 <a href="https://github.com/maanyadanayak"><img src="https://github.com/maanyadanayak.png" width="50px" alt="maanyadanayak" /></a>
+<a href="https://github.com/omkartike"><img src="https://github.com/omkartike.png" width="50px" alt="omkartike" /></a>
 <a href="https://github.com/pranav-pachn"><img src="https://github.com/pranav-pachn.png" width="50px" alt="pranav-pachn" /></a>
 <a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>

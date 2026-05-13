@@ -98,7 +98,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         with:
-          commit-message: "chore: refresh issue dataset and UI cache [skip actions]"
+          commit-message: "chore: refresh issue dataset and UI cache"
           title: "chore: refresh good first issues + UI cache"
           body: |
             ## Automated Refresh

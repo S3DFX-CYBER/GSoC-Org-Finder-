@@ -1,0 +1,122 @@
+name: 🔁 Duplicate PR Guard
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: duplicate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  detect-duplicate-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Detect duplicate PRs
+        uses: actions/github-script@v8
+
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          script: |
+            const pr =
+              context.payload.pull_request;
+
+            const owner =
+              context.repo.owner;
+
+            const repo =
+              context.repo.repo;
+
+            const prNumber =
+              pr.number;
+
+            const title =
+              (pr.title || '').trim();
+
+            const username =
+              pr.user.login;
+
+            // Ignore bots
+            if (pr.user.type === 'Bot') {
+              core.info('Ignoring bot PR');
+              return;
+            }
+
+            const normalize = str =>
+              str
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            const current =
+              normalize(title);
+
+            const existingPRs =
+              await github.paginate(
+                github.rest.pulls.list,
+                {
+                  owner,
+                  repo,
+                  state: 'open',
+                  per_page: 100
+                }
+              );
+
+            let duplicatePR = null;
+
+            for (const existing of existingPRs) {
+
+              if (existing.number === prNumber)
+                continue;
+
+              const existingTitle =
+                normalize(existing.title || '');
+
+              // Exact title match only
+              if (existingTitle === current) {
+
+                duplicatePR = existing;
+                break;
+              }
+            }
+
+            if (!duplicatePR) {
+              core.info('No duplicate PR found');
+              return;
+            }
+
+            const body =
+              `## 🔁 Possible Duplicate PR\n\n` +
+              `Hi @${username}, a similar PR already exists:\n\n` +
+              `➡️ #${duplicatePR.number}\n\n` +
+              `Please verify whether your PR overlaps with the existing contribution.\n\n` +
+              `This is informational only and does not automatically close the PR.`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body
+            });
+
+            try {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: prNumber,
+                labels: ['possible-duplicate-pr']
+              });
+            } catch (err) {
+              core.info(err.message);
+            }

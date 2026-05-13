@@ -1,0 +1,144 @@
+name: 🔑 PA / Maintainer Final Gate
+
+# Promotes a PR to merge-ready when a PA/maintainer approves AND both
+# Stage 1 and Stage 2 are already complete.
+#
+# If a PA approves before Stage 1+2 complete, we apply pa-review so it's
+# visible in the lifecycle comment, but do NOT apply merge-ready yet.
+# When Stage 1+2 later complete (via pr-stage-manager.yml), the PA can
+# re-approve (or the PA-review label signals manual follow-up is needed).
+#
+# Trigger: pull_request_review submitted (same as stage-2 in pr-stage-manager)
+# No conflict: the two workflows are additive — stage-manager handles routing
+# labels; this workflow handles the final merge-ready promotion.
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+  # Also re-evaluate when stage-1-approved is applied, in case a PA already
+  # approved but was waiting on Stage 1 — now Stage 1 is done, check if
+  # Stage 2 is also done and upgrade to merge-ready.
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: pr-pa-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  pa-gate:
+    name: PA Final Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Evaluate PA approval and promote if ready
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner  = context.repo.owner;
+            const repo   = context.repo.repo;
+
+            const isReview    = context.eventName === 'pull_request_review';
+            const isLabeled   = context.eventName === 'pull_request_target';
+
+            const number = context.payload.pull_request?.number;
+            if (!number) return;
+
+            // ── Fetch labels ───────────────────────────────────────────────
+            const { data: labelData } =
+              await github.rest.issues.listLabelsOnIssue({
+                owner, repo, issue_number: number
+              });
+            const labels = labelData.map(l => l.name);
+
+            const s1Done = labels.includes('stage-1-approved');
+            const s2Done =
+              labels.includes('gssoc-mentor-approved') ||
+              labels.includes('nsoc-reviewed');
+
+            const addLabel = async (name) => {
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: number, labels: [name]
+                });
+              } catch (_) {}
+            };
+            const removeLabel = async (name) => {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: number, name
+                });
+              } catch (_) {}
+            };
+
+            // ── On labeled event: check if we can now upgrade to merge-ready
+            if (isLabeled) {
+              const triggeredByLabel = context.payload.label?.name;
+
+              // Only re-evaluate when stage-1-approved or nsoc-reviewed or
+              // gssoc-mentor-approved is applied (not on every label change)
+              const triggerLabels = [
+                'stage-1-approved',
+                'nsoc-reviewed',
+                'gssoc-mentor-approved'
+              ];
+
+              if (!triggerLabels.includes(triggeredByLabel)) return;
+
+              // PA must have already approved (pa-review label present)
+              if (!labels.includes('pa-review')) return;
+
+              if (s1Done && s2Done) {
+                core.info('All stages now complete — upgrading to merge-ready');
+                await addLabel('merge-ready');
+                await removeLabel('pa-review');
+              }
+              return;
+            }
+
+            // ── On review event ────────────────────────────────────────────
+            const review   = context.payload.review;
+            const reviewer = review.user.login;
+
+            if (review.state !== 'APPROVED') {
+              core.info(`Review state '${review.state}' — skipping`);
+              return;
+            }
+
+            // ── Verify reviewer is a repo collaborator with write+ access ──
+            let isMaintainer = false;
+            try {
+              const { data: perm } =
+                await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner, repo, username: reviewer
+                });
+              isMaintainer =
+                ['admin', 'maintain', 'write'].includes(perm.permission);
+            } catch (e) {
+              core.info(`Permission check failed for @${reviewer}: ${e.message}`);
+            }
+
+            if (!isMaintainer) {
+              core.info(`@${reviewer} lacks maintainer permission — not a PA approval`);
+              return;
+            }
+
+            core.info(`PA approval from @${reviewer}`);
+
+            // ── All three stages complete? ─────────────────────────────────
+            if (s1Done && s2Done) {
+              core.info('All stages complete — applying merge-ready');
+              await addLabel('merge-ready');
+              await removeLabel('pa-review');
+            } else {
+              // PA approved early — note it but don't merge-ready yet
+              core.info('Stage 1 or 2 not yet complete — applying pa-review (holding merge-ready)');
+              await addLabel('pa-review');
+            }

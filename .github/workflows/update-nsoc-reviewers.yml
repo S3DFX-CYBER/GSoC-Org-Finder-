@@ -41,7 +41,11 @@ jobs:
               data = { nsoc_reviewers: [] };
             } else {
               const content = fs.readFileSync(path, 'utf8');
-              data = JSON.parse(content);
+              try {
+                data = JSON.parse(content);
+              } catch (e) {
+                throw new Error(`Failed to parse ${path}: ${e.message}`);
+              }
               if (!Array.isArray(data.nsoc_reviewers)) {
                 data.nsoc_reviewers = [];
               }
@@ -68,7 +72,9 @@ jobs:
           git commit -m "chore: add ${CONTRIBUTOR_NAME} to nsoc-reviewers list"
           pushed=false
           for attempt in 1 2 3; do
-            git rebase --abort || true
+            if [ -d ".git/rebase-merge" ] || [ -d ".git/rebase-apply" ]; then
+              git rebase --abort
+            fi
             if git pull --rebase origin main && git push origin main; then
               pushed=true
               break

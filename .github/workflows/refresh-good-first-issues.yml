@@ -3,7 +3,6 @@ name: 🔄 Refresh Good First Issues + UI Data
 on:
   schedule:
     - cron: '0 */6 * * *'
-
   workflow_dispatch:
 
 concurrency:
@@ -18,7 +17,6 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,21 +30,13 @@ jobs:
         if: hashFiles('package.json') != ''
         run: npm ci
 
-      # ─────────────────────────────────────────────
-      # Ensure required directories/files exist
-      # Prevent create-pull-request failures
-      # ─────────────────────────────────────────────
       - name: Prepare data directory
         run: |
           mkdir -p data
-
           [ -f data/issues.json ] || echo "{}" > data/issues.json
           [ -f data/mentors.json ] || echo "{}" > data/mentors.json
           [ -f data/last-updated.json ] || echo "{}" > data/last-updated.json
 
-      # ─────────────────────────────────────────────
-      # Refresh issue dataset
-      # ─────────────────────────────────────────────
       - name: Fetch good first issues
         run: node agent/scripts/fetch-issues.js
         env:
@@ -58,87 +48,43 @@ jobs:
       - name: Validate mentor data
         run: node agent/scripts/validate-mentors.js
 
-      # ─────────────────────────────────────────────
-      # Generate UI summary cache
-      # ─────────────────────────────────────────────
       - name: Generate UI cache
         run: |
           if [ -f agent/scripts/generate-ui-cache.js ]; then
             node agent/scripts/generate-ui-cache.js
-          else
-            echo "No UI cache generator found."
           fi
 
-      # ─────────────────────────────────────────────
-      # Refresh org stats if script exists
-      # ─────────────────────────────────────────────
       - name: Refresh organization metadata
         run: |
           if [ -f agent/scripts/refresh-org-stats.js ]; then
             node agent/scripts/refresh-org-stats.js
-          else
-            echo "No org stats refresh script found."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ─────────────────────────────────────────────
-      # Ensure optional generated files exist
-      # ─────────────────────────────────────────────
       - name: Ensure generated files exist
         run: |
           mkdir -p data
+          [ -f data/ui-summary.json ] || echo '{}' > data/ui-summary.json
+          [ -f data/org-stats.json ] || echo '{}' > data/org-stats.json
 
-          if [ ! -f data/ui-summary.json ]; then
-            echo '{}' > data/ui-summary.json
-          fi
-
-          if [ ! -f data/org-stats.json ]; then
-            echo '{}' > data/org-stats.json
-          fi
-
-      # ─────────────────────────────────────────────
-      # Update refresh timestamp
-      # ─────────────────────────────────────────────
       - name: Update refresh timestamp
         run: |
           mkdir -p data
+          echo "{\"updatedAt\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}" > data/last-updated.json
 
-          cat > data/last-updated.json <<EOF
-          {
-            "updatedAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          }
-          EOF
-
-      # ─────────────────────────────────────────────
-      # Update hardcoded UI stats
-      # ─────────────────────────────────────────────
       - name: Update UI statistics
         run: |
           ORG_COUNT=$(node -e "const d=require('./data/issues.json'); const s=new Set(d.issues.map(i=>i.org)); console.log(s.size)")
-
           sed -i "s/Browse all <strong>[0-9]*<\/strong> organizations/Browse all <strong>${ORG_COUNT}<\/strong> organizations/g" index.html
 
-          echo "Updated org count to ${ORG_COUNT}"
-
-      # ─────────────────────────────────────────────
-      # Bust service worker cache
-      # ─────────────────────────────────────────────
       - name: Bump service worker cache version
         run: |
           if [ -f sw.js ]; then
             TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
-
             sed -i "s/const CACHE_NAME = '[^']*'/const CACHE_NAME = 'gsoc-finder-${TIMESTAMP}'/" sw.js
-
-            echo "Updated service worker cache version"
-          else
-            echo "No sw.js found. Skipping."
           fi
 
-      # ─────────────────────────────────────────────
-      # Prevent empty PRs
-      # ─────────────────────────────────────────────
       - name: Check for changes
         id: changes
         run: |
@@ -148,24 +94,16 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # ─────────────────────────────────────────────
-      # Create PR only when changes exist
-      # ─────────────────────────────────────────────
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         with:
-          commit-message: |
-            chore: refresh issue dataset and UI cache [skip actions]
-
-          title: |
-            chore: refresh good first issues + UI cache
-
+          commit-message: "chore: refresh issue dataset and UI cache"
+          title: "chore: refresh good first issues + UI cache"
           body: |
             ## Automated Refresh
 
             This PR updates:
-
             - good first issue dataset
             - mentor contact dataset
             - UI summary cache
@@ -175,15 +113,11 @@ jobs:
             - UI statistics
 
             Generated automatically by GitHub Actions.
-
           branch: refresh-issues
-
           delete-branch: true
-
           add-paths: |
             data/issues.json
             data/mentors.json
-            
             data/ui-summary.json
             data/last-updated.json
             data/org-stats.json

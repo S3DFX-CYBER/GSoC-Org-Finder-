@@ -1,3 +1,6 @@
+## 🚀 Program
+NSOC
+
 ## 📝 Description
 <!-- Describe what this PR does and why -->
 
@@ -24,6 +27,7 @@ Closes #<!-- issue number -->
 <!-- Before and after screenshots for UI changes -->
 
 ## ✅ Checklist
+- [ ] I am contributing under NSOC
 - [ ] My code follows the project's existing style
 - [ ] I have tested my changes in a browser
 - [ ] I have linked the related issue above

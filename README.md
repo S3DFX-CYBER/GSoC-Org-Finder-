@@ -228,12 +228,25 @@ For full functionality locally, run `vercel dev` to start the Edge Function.
 ---
 
 ## 🤝 Contributing
-Kindly read the Contributor Guide before contributing!!!
+
 Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
+
+**Read the guide for your contribution track before getting started:**
+
+| Track | Guide |
+|-------|-------|
+| GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |
+| GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) |
+| NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) |
+| General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
+
+For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Quick Start
 
 1. Fork the repo
 2. Edit the `ORGS` array in `index.html`
-3. Open a pull request
+3. Open a pull request using the appropriate template
 
 Each org entry looks like this:
 
@@ -308,6 +321,7 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
 <a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
 <a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
+<a href="https://github.com/Bushra-gh"><img src="https://github.com/Bushra-gh.png" width="50px" alt="Bushra-gh" /></a>
 <a href="https://github.com/Chizaram-Igolo"><img src="https://github.com/Chizaram-Igolo.png" width="50px" alt="Chizaram-Igolo" /></a>
 <a href="https://github.com/Dj-Shortcut"><img src="https://github.com/Dj-Shortcut.png" width="50px" alt="Dj-Shortcut" /></a>
 <a href="https://github.com/HarshaVardhan31012007"><img src="https://github.com/HarshaVardhan31012007.png" width="50px" alt="HarshaVardhan31012007" /></a>
@@ -325,8 +339,10 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <a href="https://github.com/bhaktiyadav08"><img src="https://github.com/bhaktiyadav08.png" width="50px" alt="bhaktiyadav08" /></a>
 <a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
 <a href="https://github.com/diksha78dev"><img src="https://github.com/diksha78dev.png" width="50px" alt="diksha78dev" /></a>
+<a href="https://github.com/gloooomed"><img src="https://github.com/gloooomed.png" width="50px" alt="gloooomed" /></a>
 <a href="https://github.com/kiranShamsHere"><img src="https://github.com/kiranShamsHere.png" width="50px" alt="kiranShamsHere" /></a>
 <a href="https://github.com/maanyadanayak"><img src="https://github.com/maanyadanayak.png" width="50px" alt="maanyadanayak" /></a>
+<a href="https://github.com/omkartike"><img src="https://github.com/omkartike.png" width="50px" alt="omkartike" /></a>
 <a href="https://github.com/pranav-pachn"><img src="https://github.com/pranav-pachn.png" width="50px" alt="pranav-pachn" /></a>
 <a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   lint-javascript:
-    name: 🔍 Lint JavaScript
+    name: Lint JavaScript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
       - run: npm run lint:js
 
   lint-css:
-    name: 🎨 Lint CSS
+    name: Lint CSS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       - run: npm run lint:css
 
   lint-html:
-    name: 🏗️ Lint HTML
+    name: Lint HTML
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -9,35 +9,26 @@ on:
       - reopened
       - ready_for_review
 
-  pull_request_review:
-    types:
-      - submitted
-
-  pull_request_review_comment:
-    types:
-      - created
-      - deleted
-
 permissions:
   contents: read
   pull-requests: write
   issues: write
 
 concurrency:
-  group: validate-pr-${{ github.event.pull_request.number || github.event.pull_request_review.pull_request.number }}
-  cancel-in-progress: false
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   validate-pr:
-    if: github.event_name == 'pull_request_target'
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Validate PR structure
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const pr = context.payload.pull_request;
 
@@ -47,58 +38,39 @@ jobs:
             const prNumber = pr.number;
             const body = pr.body || '';
             const title = pr.title || '';
-
             const username = pr.user.login;
 
             const lowerBody = body.toLowerCase();
 
             let warnings = [];
 
-            // ─────────────────────────────────────────────
             // Ignore bots
-            // ─────────────────────────────────────────────
             if (pr.user.type === 'Bot') {
               core.info('Ignoring bot PR');
               return;
             }
 
-            // ─────────────────────────────────────────────
-            // Check linked issue
-            // ─────────────────────────────────────────────
+            // Linked issue check
             const issueRegex =
               /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
 
-            const hasLinkedIssue = issueRegex.test(body);
-
-            if (!hasLinkedIssue) {
+            if (!issueRegex.test(body)) {
               warnings.push(
-                '❌ This PR does not reference a linked issue.\n\n' +
-                'Please add:\n' +
-                '`Closes #issue-number`'
+                '❌ Missing linked issue. Add: `Closes #issue-number`'
               );
             }
 
-            // ─────────────────────────────────────────────
-            // Detect contribution program
-            // ─────────────────────────────────────────────
-            const mentionsNSOC =
-              lowerBody.includes('nsoc');
-
-            const mentionsGSSOC =
-              lowerBody.includes('gssoc');
+            // Contribution program detection
+            const mentionsNSOC = lowerBody.includes('nsoc');
+            const mentionsGSSOC = lowerBody.includes('gssoc');
 
             if (!mentionsNSOC && !mentionsGSSOC) {
               warnings.push(
-                '⚠️ Contribution program not detected.\n\n' +
-                'Please use the proper PR template:\n' +
-                '- NSOC template\n' +
-                '- GSSOC template'
+                '⚠️ Contribution program not detected. Please use the correct PR template.'
               );
             }
 
-            // ─────────────────────────────────────────────
             // Apply labels
-            // ─────────────────────────────────────────────
             try {
               if (mentionsNSOC) {
                 await github.rest.issues.addLabels({
@@ -121,201 +93,74 @@ jobs:
               core.warning(err.message);
             }
 
-            // ─────────────────────────────────────────────
-            // Required template sections
-            // ─────────────────────────────────────────────
+            // Required sections
             const requiredSections = [
               'description',
               'related issue',
               'type of change',
-              'how to test',
               'checklist'
             ];
 
             for (const section of requiredSections) {
               if (!lowerBody.includes(section)) {
                 warnings.push(
-                  `⚠️ Missing PR template section: \`${section}\``
+                  `⚠️ Missing section: \`${section}\``
                 );
               }
             }
 
-            // ─────────────────────────────────────────────
-            // Conventional commit title validation
-            // ─────────────────────────────────────────────
+            // Conventional title validation
             const conventionalRegex =
               /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
 
             if (!conventionalRegex.test(title)) {
               warnings.push(
-                '⚠️ PR title does not follow Conventional Commits format.\n\n' +
-                'Examples:\n' +
-                '- feat: add search filters\n' +
-                '- fix: resolve mobile navbar overlap\n' +
-                '- docs: update contribution guide'
+                '⚠️ PR title should follow Conventional Commits.'
               );
             }
 
-            // ─────────────────────────────────────────────
-            // Encourage grouped PRs
-            // ─────────────────────────────────────────────
-            warnings.push(
-              '💡 Contributors are encouraged to combine 1–2 related fixes/features into a single focused PR instead of opening many tiny PRs.'
-            );
+            // Build comment body
+            let commentBody = '';
 
-            // ─────────────────────────────────────────────
-            // Detect unresolved review comments
-            // ─────────────────────────────────────────────
-            try {
-              const reviewComments = await github.paginate(
-                github.rest.pulls.listReviewComments,
-                {
-                  owner,
-                  repo,
-                  pull_number: prNumber,
-                  per_page: 100
-                }
-              );
-
-              const unresolved = reviewComments.filter(
-                c => !c.in_reply_to_id
-              );
-
-              if (unresolved.length > 0) {
-                warnings.push(
-                  `⚠️ This PR currently has ${unresolved.length} unresolved review conversation(s).`
-                );
-
-                try {
-                  await github.rest.issues.addLabels({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    labels: ['needs-review-updates']
-                  });
-                } catch (err) {
-                  core.warning(err.message);
-                }
-              }
-            } catch (err) {
-              core.warning(err.message);
-            }
-
-            // ─────────────────────────────────────────────
-            // Comment result
-            // ─────────────────────────────────────────────
             if (warnings.length > 0) {
-
-              const comment =
-                `## ⚠️ PR Validation Warning\n\n` +
+              commentBody =
+                '## ⚠️ PR Validation Warning\n\n' +
                 `Hi @${username}, thanks for contributing 🚀\n\n` +
-                warnings.map(w => `- ${w}`).join('\n\n') +
-                `\n\n---\n\n` +
-                `Please update the PR accordingly.\n` +
-                `This is currently a warning only and does not automatically close the PR.`;
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: comment
-              });
-
+                warnings.map(w => `- ${w}`).join('\n') +
+                '\n\n---\n\n' +
+                'Please update the PR accordingly.';
             } else {
-
-              try {
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['validated-pr']
-                });
-              } catch (err) {
-                core.warning(err.message);
-              }
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body:
-                  `## ✅ PR Validation Passed\n\n` +
-                  `Thanks @${username}! Your PR follows the repository contribution requirements 🚀`
-              });
+              commentBody =
+                '## ✅ PR Validation Passed\n\n' +
+                `Thanks @${username}! Your PR follows the repository guidelines 🚀`;
             }
 
-  unresolved-conversations:
-    if: github.event_name == 'pull_request_review' || github.event_name == 'pull_request_review_comment'
+            // Find existing validation comment
+            const comments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: prNumber,
+              per_page: 100
+            });
 
-    runs-on: ubuntu-latest
+            const existing = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('PR Validation')
+            );
 
-    steps:
-      - name: Check unresolved conversations
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr =
-              context.payload.pull_request ||
-              context.payload.pull_request_review?.pull_request;
-
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
-            const prNumber = pr.number;
-
-            const comments = await github.paginate(
-              github.rest.pulls.listReviewComments,
-              {
+            // Update existing comment instead of spamming
+            if (existing) {
+              await github.rest.issues.updateComment({
                 owner,
                 repo,
-                pull_number: prNumber,
-                per_page: 100
-              }
-            );
-
-            const unresolved = comments.filter(
-              c => !c.in_reply_to_id
-            );
-
-            try {
-              if (unresolved.length === 0) {
-
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    name: 'needs-review-updates'
-                  });
-                } catch (err) {}
-
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['0-unresolved-conversations']
-                });
-
-              } else {
-
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    name: '0-unresolved-conversations'
-                  });
-                } catch (err) {}
-
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['needs-review-updates']
-                });
-              }
-
-            } catch (err) {
-              core.warning(err.message);
+                comment_id: existing.id,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
             }

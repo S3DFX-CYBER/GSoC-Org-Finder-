@@ -239,6 +239,25 @@ Low-effort PR spam may be rejected.
 
 ---
 
+## ✍️ Developer Certificate of Origin (DCO)
+
+This repository enforces the Developer Certificate of Origin (DCO).
+
+By submitting a contribution, you certify that:
+
+- You wrote the code/content yourself, or
+- You have the legal right to contribute it
+
+Every commit must be signed off.
+
+### How to sign commits
+
+Use:
+
+```bash
+git commit -s -m "feat: add search improvements"
+```
+---
 ## 🔕 Maintainer Ping Policy
 
 Please avoid repeatedly pinging maintainers for:

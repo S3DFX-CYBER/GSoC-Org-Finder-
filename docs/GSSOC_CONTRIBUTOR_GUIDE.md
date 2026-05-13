@@ -161,60 +161,18 @@ When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMP
 
 ---
 
-## Review Process — 3-Stage Pipeline
+## Review Process
 
-Every GSSoC PR goes through a structured 3-stage review pipeline. You can track your PR's progress via the automated **PR Review Pipeline** status comment that appears on your PR.
-
-### Stage 1 — Automated Validation
-
-A bot performs the following checks immediately after you open your PR:
-
-| Check | What it verifies |
-|-------|-----------------|
-| DCO Sign-off | Every commit has `Signed-off-by` line |
-| PR Format | Conventional title, linked issue, template sections |
-| AI/Slop Detection | Flags AI-generated or low-effort content |
-| Duplicate Detection | Checks for duplicate PRs |
-
-If Stage 1 fails, the pipeline status comment will show the specific issues. Fix them and push new commits — the checks re-run automatically.
-
-### Stage 2 — GSSoC Mentor Review
-
-Once Stage 1 passes, your PR is assigned to GSSoC mentors from the mentor pool.
-
-- Mentors review code quality, functionality, and adherence to project standards
-- They may **approve** or **request changes**
-- If changes are requested, address the feedback and push new commits
-- The mentor re-reviews until satisfied
-
-Your PR cannot proceed to Stage 3 until a mentor approves it.
-
-### Stage 3 — Maintainer / PA Review
-
-After mentor approval, the project admin (@S3DFX-CYBER) performs the final review:
-
-- Verifies the contribution aligns with project direction
-- Confirms no architectural or security concerns
-- Merges the PR when satisfied
-
-Points are awarded based on the issue level after merge.
-
-### Pipeline Status Labels
-
-| Label | Meaning |
-|-------|---------|
-| `stage-1-approved` | Automated checks passed |
-| `gssoc-mentor-approved` | Mentor has approved |
-| `pa-approved` / `merge-ready` | Maintainer approved, ready to merge |
-| `needs-stage-1-fixes` | Automated checks failed — fix required |
+1. Your PR enters the automated validation pipeline
+2. A GSSoC mentor is assigned for review
+3. The mentor may request changes — address them promptly
+4. Once approved, a maintainer merges the PR
+5. Points are awarded based on the issue level
 
 ### Expected Review Times
 
-- Stage 1: Immediate (automated)
-- Stage 2 (mentor review): 24–72 hours
-- Stage 3 (maintainer review): 24–48 hours after mentor approval
-
-Do not ping maintainers or mentors for faster reviews. Excessive pinging may trigger spam warnings.
+- PR review: 24–72 hours
+- Please do not ping for faster reviews
 
 ---
 

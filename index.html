@@ -2227,8 +2227,9 @@
   function saveWatchlistMeta(meta) {
     try {
       localStorage.setItem('watchlist_meta', JSON.stringify(meta));
-    } catch (e) {
-      console.warn('Failed to save watchlist metadata:', e.message);
+    } catch (error) {
+      // localStorage may be unavailable (private browsing, quota exceeded, etc.)
+      console.warn('Watchlist metadata save failed:', error);
     }
   }
 
@@ -2240,16 +2241,22 @@
         progress: 0,
         updatedAt: new Date().toISOString()
       };
+    } else {
+      // Normalize persisted entry: ensure checklist shape is valid
+      const entry = meta[orgName];
+      if (!entry.checklist || typeof entry.checklist !== 'object') {
+        entry.checklist = { read_ideas: false, intro_contact: false, first_pr: false, proposal: false };
+      } else {
+        // Fill in any missing keys with defaults
+        const defaults = { read_ideas: false, intro_contact: false, first_pr: false, proposal: false };
+        Object.keys(defaults).forEach(key => {
+          if (!(key in entry.checklist)) entry.checklist[key] = defaults[key];
+        });
+      }
+      if (typeof entry.notes !== 'string') entry.notes = '';
+      if (typeof entry.progress !== 'number' || isNaN(entry.progress)) entry.progress = 0;
     }
-    // Normalize persisted entries
-    const entry = meta[orgName];
-    if (typeof entry.checklist !== 'object' || entry.checklist === null) entry.checklist = {};
-    Object.keys({ read_ideas: false, intro_contact: false, first_pr: false, proposal: false }).forEach(k => {
-      if (!(k in entry.checklist)) entry.checklist[k] = false;
-    });
-    if (typeof entry.notes !== 'string') entry.notes = '';
-    if (typeof entry.progress !== 'number' || entry.progress < 0 || entry.progress > 100) entry.progress = 0;
-    return entry;
+    return meta[orgName];
   }
 
   function updateChecklistItem(orgName, key, value) {
@@ -2265,6 +2272,7 @@
   function updateOrgNotes(orgName, notes) {
     const meta = loadWatchlistMeta();
     const entry = getOrgMeta(meta, orgName);
+    // Enforce length limit (200 chars) in case browser enforcement is bypassed
     entry.notes = String(notes || '').slice(0, 200);
     entry.updatedAt = new Date().toISOString();
     saveWatchlistMeta(meta);

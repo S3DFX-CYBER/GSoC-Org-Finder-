@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR structure
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -63,7 +63,7 @@ jobs:
               if (mentionsNSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
               if (mentionsGSSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
             } catch (e) {
-              console.log('Label operation failed (usually harmless)');
+              core.warning(`Label operation failed: ${e?.message || e}`);
             }
 
             // 4. Required Template Sections

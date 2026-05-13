@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Detect spam pings
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -38,7 +38,7 @@ jobs:
             // Ignore maintainers and collaborators
             const association = comment.author_association || '';
             if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
-              console.log('Ignoring maintainer/collaborator comment.');
+              core.info('Ignoring maintainer/collaborator comment.');
               return;
             }
 
@@ -85,7 +85,7 @@ jobs:
 
             const spamCount = userSpamComments.length;
 
-            console.log(`Spam ping count for @${username}: ${spamCount}`);
+            core.info(`Spam ping count for @${username}: ${spamCount}`);
 
             if (spamCount <= 2) {
               // First / Second warning
@@ -124,6 +124,6 @@ jobs:
                   labels: ['spam']
                 });
               } catch (e) {
-                console.log('Label already exists or error');
+                core.warning(`Failed adding spam label: ${e?.message || e}`);
               }
             }

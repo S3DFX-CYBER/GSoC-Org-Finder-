@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Auto Request Reviewers (Smart)
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -45,7 +45,7 @@ jobs:
             const alreadyRequested = (requested.users || []).map(u => u.login.toLowerCase());
 
             if (alreadyRequested.length >= 2) {
-              console.log('Enough reviewers already requested. Skipping.');
+              core.info('Enough reviewers already requested. Skipping.');
               return;
             }
 
@@ -60,11 +60,11 @@ jobs:
                 const content = Buffer.from(file.content, 'base64').toString('utf8');
                 reviewerPool = JSON.parse(content).reviewers || [];
               } catch (e) {
-                console.log('Failed to load GSSOC mentors');
+                core.warning(`Failed to load GSSOC mentors: ${e?.message || e}`);
               }
             } else {
               // NSOC: Dynamic - People who have merged NSOC PRs
-              console.log('Fetching NSOC experienced contributors...');
+              core.info('Fetching NSOC experienced contributors...');
               try {
                 const prs = await github.paginate(github.rest.pulls.list, {
                   owner,
@@ -86,14 +86,14 @@ jobs:
                 }
 
                 reviewerPool = Array.from(nsocContributors);
-                console.log(`Found ${reviewerPool.length} NSOC experienced contributors`);
+                core.info(`Found ${reviewerPool.length} NSOC experienced contributors`);
               } catch (e) {
-                console.error('Failed to fetch NSOC contributors:', e.message);
+                core.warning(`Failed to fetch NSOC contributors: ${e?.message || e}`);
               }
             }
 
             if (reviewerPool.length === 0) {
-              console.log('No reviewers available. Skipping.');
+              core.info('No reviewers available. Skipping.');
               return;
             }
 
@@ -104,7 +104,7 @@ jobs:
             );
 
             if (reviewerPool.length < 2) {
-              console.log(`Not enough eligible reviewers (${reviewerPool.length}). Skipping.`);
+              core.info(`Not enough eligible reviewers (${reviewerPool.length}). Skipping.`);
               return;
             }
 
@@ -121,9 +121,9 @@ jobs:
               await github.rest.pulls.requestReviewers({
                 owner, repo, pull_number: prNumber, reviewers: selected
               });
-              console.log(`Requested reviewers: ${selected.join(', ')}`);
+              core.info(`Requested reviewers: ${selected.join(', ')}`);
             } catch (err) {
-              console.error('Failed to request reviewers:', err.message);
+              core.warning(`Failed to request reviewers: ${err?.message || err}`);
             }
 
             // Add tracking label
@@ -133,5 +133,5 @@ jobs:
                 owner, repo, issue_number: prNumber, labels: [reviewLabel]
               });
             } catch (e) {
-              console.warn(`Failed to add ${reviewLabel} label: ${e.message}`);
+              core.warning(`Failed to add ${reviewLabel} label: ${e?.message || e}`);
             }

@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Evaluate PR Pipeline
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -52,10 +52,10 @@ jobs:
             const stage1Passed = dcoVerified && !dcoMissing && !aiSlop;
 
             async function addLabel(name) {
-              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [name] }); } catch (e) {}
+              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [name] }); } catch (e) { core.warning(`Failed adding label '${name}': ${e?.message || e}`); }
             }
             async function removeLabel(name) {
-              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name }); } catch (e) {}
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name }); } catch (e) { core.info(`Label '${name}' may not exist`); }
             }
 
             // Stage 1
@@ -138,8 +138,8 @@ jobs:
 
             if (existing) {
               await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-              console.log('Updated pipeline comment');
+              core.info('Updated pipeline comment');
             } else {
               await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
-              console.log('Created pipeline comment');
+              core.info('Created pipeline comment');
             }

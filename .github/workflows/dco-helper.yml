@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Signed-off-by
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -47,8 +47,9 @@ jobs:
             );
 
             let missingDCO = false;
+            const signoffRegex = /^Signed-off-by:\s+.+\s+<[^<>\s@]+@[^<>\s@]+>\s*$/mi;
             for (const commit of commits) {
-              if (!commit.commit.message.includes('Signed-off-by:')) {
+              if (!signoffRegex.test(commit.commit.message || '')) {
                 missingDCO = true;
                 break;
               }
@@ -87,8 +88,8 @@ jobs:
                 `After fixing, this comment will update automatically.`;
 
               // Update labels
-              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'dco-verified' }); } catch (e) {}
-              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['dco-missing'] }); } catch (e) {}
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'dco-verified' }); } catch (e) { core.info('Label dco-verified not present'); }
+              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['dco-missing'] }); } catch (e) { core.warning(`Failed adding dco-missing label: ${e?.message || e}`); }
 
             } else {
               body = `## ✅ DCO Sign-off Verified\n\n` +
@@ -97,8 +98,8 @@ jobs:
                 `Thank you for following the DCO requirements! 🚀`;
 
               // Update labels
-              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'dco-missing' }); } catch (e) {}
-              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['dco-verified'] }); } catch (e) {}
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'dco-missing' }); } catch (e) { core.info('Label dco-missing not present'); }
+              try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['dco-verified'] }); } catch (e) { core.warning(`Failed adding dco-verified label: ${e?.message || e}`); }
             }
 
             // Upsert comment

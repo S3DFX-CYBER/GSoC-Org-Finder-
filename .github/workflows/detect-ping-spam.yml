@@ -42,12 +42,15 @@ jobs:
               return;
             }
 
+            // Skip valid assignment commands (handled by issue-context-assignment workflow)
+            const trimmedBody = body.trim();
+            if (/^(\/assign|assign me|\/unassign|unassign me)$/.test(trimmedBody)) return;
+
             // Spam ping patterns (common during GSSOC/NSOC)
             const spamPatterns = [
               '@s3dfx-cyber',
               'please assign',
               'assign fast',
-              'assign me',
               'review pls',
               'merge pls',
               'please merge',

@@ -5,8 +5,15 @@
 // THEME
 // ══════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.classList.toggle('dark', saved === 'dark');
+  let theme = localStorage.getItem('theme');
+  
+  // If no saved preference, detect system preference
+  if (!theme) {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    theme = prefersDark ? 'dark' : 'light';
+  }
+  
+  document.documentElement.classList.toggle('dark', theme === 'dark');
   updateThemeIcon();
 })();
 

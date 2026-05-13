@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Detect duplicate PRs
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -34,12 +34,12 @@ jobs:
 
             // Ignore bots
             if (pr.user.type === 'Bot') {
-              console.log('Ignoring bot PR');
+              core.info('Ignoring bot PR');
               return;
             }
 
             if (title.length < 10) {
-              console.log('Title too short, skipping duplicate check');
+              core.info('Title too short, skipping duplicate check');
               return;
             }
 
@@ -74,7 +74,7 @@ jobs:
             }
 
             if (!duplicatePR) {
-              console.log('No duplicate PR found');
+              core.info('No duplicate PR found');
               return;
             }
 
@@ -101,7 +101,7 @@ jobs:
                 labels: ['possible-duplicate-pr']
               });
             } catch (e) {
-              console.log('Label already exists or error');
+              core.warning(`Failed adding duplicate label: ${e?.message || e}`);
             }
 
-            console.log(`Duplicate PR detected: #${prNumber} → #${duplicatePR.number}`);
+            core.info(`Duplicate PR detected: #${prNumber} → #${duplicatePR.number}`);

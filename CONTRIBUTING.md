@@ -1,5 +1,20 @@
 # Contributing Guide
 
+## Program-Specific Guides
+
+If you are contributing under a specific program, refer to the dedicated guide for your track:
+
+| Track | Guide |
+|-------|-------|
+| GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |
+| GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) |
+| NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) |
+| General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
+
+The rest of this document covers the shared rules, architecture, and workflow that apply to **all** contributors regardless of program.
+
+---
+
 ## Project Philosophy
 
 This repository follows a **zero-build, zero-dependency** philosophy.
@@ -149,22 +164,23 @@ This repository uses automated contributor management workflows.
 
 ---
 
-## 📌 Mandatory Program Declaration
+## 📌 Program Declaration
 
-Contributors **MUST** clearly mention whether they are contributing under:
+Contributors should mention their contribution track when requesting assignment:
 
-- **GSSoC**
-- **NSoC**
+- **GSSoC** — GirlScript Summer of Code participants
+- **NSoC** — Nexus Spring of Code participants
+- **General** — Independent contributors (no program affiliation)
 
-**Example:**
+**Examples:**
 
 > I want to work on this issue under GSSoC.
 
-or
-
 > I would like to contribute under NSOC.
 
-If not mentioned, the assignment bot will reject the assignment request.
+> I would like to work on this issue as a general contributor.
+
+General contributors do not need to declare a program but must still follow the assignment process.
 
 ---
 
@@ -417,10 +433,11 @@ PRs without linked issues may be automatically closed.
 
 ## 🧾 Required PR Templates
 
-Contributors **MUST** use the proper template:
+Contributors **MUST** use the proper template for their track:
 
-- GSSoC PR Template
-- NSoC PR Template
+- GSSoC PR Template — for GSSoC participants
+- NSoC PR Template — for NSoC participants
+- General PR Template — for independent contributors
 
 The validation bot checks for:
 

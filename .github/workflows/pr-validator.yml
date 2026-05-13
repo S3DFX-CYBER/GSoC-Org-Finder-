@@ -21,198 +21,91 @@ concurrency:
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
-
     steps:
       - name: Validate PR structure
         uses: actions/github-script@v8
-
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
           script: |
             const pr = context.payload.pull_request;
-
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
             const prNumber = pr.number;
             const body = pr.body || '';
             const title = pr.title || '';
             const username = pr.user.login;
 
             const lowerBody = body.toLowerCase();
-
             let warnings = [];
 
-            // ─────────────────────────────────────────────
             // Ignore bots
-            // ─────────────────────────────────────────────
-            if (pr.user.type === 'Bot') {
-              core.info('Ignoring bot PR');
-              return;
-            }
+            if (pr.user.type === 'Bot') return;
 
-            // ─────────────────────────────────────────────
-            // Linked issue check
-            // ─────────────────────────────────────────────
-            const issueRegex =
-              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
-
+            // 1. Linked Issue Check
+            const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
             if (!issueRegex.test(body)) {
-              warnings.push(
-                '❌ Missing linked issue. Add: `Closes #issue-number`'
-              );
+              warnings.push('❌ Missing linked issue. Add: `Closes #issue-number`');
             }
 
-            // ─────────────────────────────────────────────
-            // Contribution program detection
-            // ─────────────────────────────────────────────
+            // 2. Program Detection (NSOC / GSSOC)
             const mentionsNSOC = lowerBody.includes('nsoc');
             const mentionsGSSOC = lowerBody.includes('gssoc');
 
             if (!mentionsNSOC && !mentionsGSSOC) {
-              warnings.push(
-                '⚠️ Missing contribution program tag (`NSOC` or `GSSOC`) in PR template.'
-              );
+              warnings.push('⚠️ Missing program tag (`GSSOC` or `NSOC`)');
             }
 
-            // ─────────────────────────────────────────────
-            // Apply labels
-            // ─────────────────────────────────────────────
+            // 3. Apply Program Labels
             try {
-
-              // Remove old labels first
-              try {
-                await github.rest.issues.removeLabel({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  name: 'nsoc26'
-                });
-              } catch (err) {}
-
-              try {
-                await github.rest.issues.removeLabel({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  name: 'gssoc26'
-                });
-              } catch (err) {}
-
-              // Add current labels
-              if (mentionsNSOC) {
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['nsoc26']
-                });
+              for (const label of ['nsoc26', 'gssoc26']) {
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label }); } catch (e) {}
               }
-
-              if (mentionsGSSOC) {
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['gssoc26']
-                });
-              }
-
-            } catch (err) {
-              core.warning(err.message);
+              if (mentionsNSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
+              if (mentionsGSSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
+            } catch (e) {
+              core.warning(`Label operation failed: ${e?.message || e}`);
             }
 
-            // ─────────────────────────────────────────────
-            // Required template sections
-            // ─────────────────────────────────────────────
-            const requiredSections = [
-              'description',
-              'related issue',
-              'type of change',
-              'checklist'
-            ];
-
+            // 4. Required Template Sections
+            const requiredSections = ['description', 'related issue', 'type of change', 'checklist'];
             for (const section of requiredSections) {
               if (!lowerBody.includes(section)) {
-                warnings.push(
-                  `⚠️ Missing PR template section: \`${section}\``
-                );
+                warnings.push(`⚠️ Missing template section: \`${section}\``);
               }
             }
 
-            // ─────────────────────────────────────────────
-            // Conventional title validation
-            // ─────────────────────────────────────────────
-            const conventionalRegex =
-              /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
-
+            // 5. Conventional Title
+            const conventionalRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
             if (!conventionalRegex.test(title)) {
-              warnings.push(
-                '⚠️ Invalid PR title format. Example: `feat: add search filters`'
-              );
+              warnings.push('⚠️ Use conventional PR title. Example: `feat: add search filters`');
             }
 
-            // ─────────────────────────────────────────────
-            // Build comment body
-            // ─────────────────────────────────────────────
-            let commentBody = '';
-
-            if (warnings.length > 0) {
-
-              commentBody =
-                '## ⚠️ PR Format Issues Detected\n\n' +
-                `Hi @${username}, please update the following:\n\n` +
+            // Build Comment
+            let commentBody = warnings.length > 0 
+              ? `## ⚠️ PR Format Issues Detected\n\n` +
+                `Hi @${username},\n\n` +
                 warnings.map(w => `- ${w}`).join('\n') +
-                '\n\n---\n\n' +
-                'After pushing new commits, this comment will automatically update.';
+                `\n\nPlease fix these and push new commits.`
+              : `## ✅ PR Format Check Passed\n\n` +
+                `Hi @${username}, basic PR structure checks passed.\n\n` +
+                `This does **not** mean the PR is approved.`;
 
-            } else {
-
-              commentBody =
-                '## ✅ PR Format Check Passed\n\n' +
-                `Hi @${username}, the PR structure and formatting checks passed successfully.\n\n` +
-                'This does not mean the PR is approved or ready to merge.\n' +
-                'Maintainer review is still required.';
-            }
-
-            // ─────────────────────────────────────────────
-            // Find existing validation comment
-            // ─────────────────────────────────────────────
-            const comments = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number: prNumber,
-              per_page: 100
+            // Upsert Comment (avoid spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100
             });
 
-            const existing = comments.data.find(comment =>
-              comment.user.type === 'Bot' &&
-              (
-                comment.body.includes('PR Format Issues Detected') ||
-                comment.body.includes('PR Format Check Passed')
-              )
+            const existing = comments.find(c => 
+              c.user.type === 'Bot' && 
+              (c.body.includes('PR Format Issues Detected') || c.body.includes('PR Format Check Passed'))
             );
 
-            // ─────────────────────────────────────────────
-            // Update existing comment instead of spamming
-            // ─────────────────────────────────────────────
             if (existing) {
-
               await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existing.id,
-                body: commentBody
+                owner, repo, comment_id: existing.id, body: commentBody
               });
-
             } else {
-
               await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: commentBody
+                owner, repo, issue_number: prNumber, body: commentBody
               });
-
             }

@@ -1,4 +1,4 @@
-name: 🔑 PA / Maintainer Final Gate
+name: 🔑 Stage 3 - Maintainer Final Gate
 
 on:
   pull_request_review:
@@ -19,44 +19,49 @@ permissions:
   contents: read
 
 concurrency:
-  group: pa-final-gate-${{ github.event.pull_request.number || github.event.review.pull_request_number }}
+  group: pa-final-gate-${{ github.event.pull_request.number || github.event.review.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   pa-gate:
-    name: PA Final Gate
+    name: Stage 3 - Maintainer Gate
     runs-on: ubuntu-latest
     if: |
       !github.event.pull_request.draft
 
     steps:
-      - name: Evaluate PA Approval State
+      - name: Evaluate Maintainer Approval
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const MAINTAINER = 's3dfx-cyber';
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const pr = context.payload.pull_request || 
+            const pr = context.payload.pull_request ||
                        (context.payload.review && context.payload.review.pull_request);
-            
+
             if (!pr) {
               core.info('No PR context found.');
               return;
             }
 
             const prNumber = pr.number;
-            const labels = (pr.labels || []).map(l => l.name);
 
-            const hasLabel = (name) => labels.includes(name);
+            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: prNumber
+            });
+            const labels = labelData.map(l => l.name.toLowerCase());
+
+            const hasLabel = (name) => labels.includes(name.toLowerCase());
 
             const stage1Complete = hasLabel('stage-1-approved');
-            const stage2Complete = hasLabel('mentor-approved') || 
+            const stage2Complete = hasLabel('mentor-approved') ||
                                   hasLabel('review-approved') ||
                                   hasLabel('gssoc-mentor-approved') ||
                                   hasLabel('nsoc-reviewed');
 
-            // Helper functions
             async function addLabel(label) {
               try {
                 await github.rest.issues.addLabels({
@@ -73,63 +78,49 @@ jobs:
               } catch (e) { core.info(`Label '${label}' may not exist`); }
             }
 
-            // Fetch all reviews
+            if (!stage1Complete || !stage2Complete) {
+              core.info('Stage 1 or Stage 2 not complete. Stage 3 blocked.');
+              await removeLabel('pa-approved');
+              await removeLabel('merge-ready');
+              return;
+            }
+
+            if (!hasLabel('stage-3-maintainer-review')) {
+              await addLabel('stage-3-maintainer-review');
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner, repo, pull_number: prNumber, reviewers: ['S3DFX-CYBER']
+                });
+                core.info('Requested maintainer @S3DFX-CYBER for Stage 3 review');
+              } catch (err) {
+                core.warning(`Failed requesting maintainer review: ${err?.message || err}`);
+              }
+            }
+
             const reviews = await github.paginate(
               github.rest.pulls.listReviews,
               { owner, repo, pull_number: prNumber }
             );
 
-            // Find latest review per user
             const latestReviews = new Map();
             for (const review of reviews) {
               latestReviews.set(review.user.login.toLowerCase(), review);
             }
 
-            // Check for valid maintainer approval
-            let maintainerApproved = false;
-
-            for (const [, review] of latestReviews) {
-              if (review.state !== 'APPROVED') continue;
-              
-              // Prevent self-approval
-              if (review.user.login.toLowerCase() === pr.user.login.toLowerCase()) continue;
-
-              try {
-                const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
-                  owner,
-                  repo,
-                  username: review.user.login
-                });
-
-                if (['admin', 'maintain', 'write'].includes(permission.permission)) {
-                  maintainerApproved = true;
-                  core.info(`Valid maintainer approval from @${review.user.login}`);
-                  break;
-                }
-              } catch (err) {
-                core.warning(`Permission check failed for @${review.user.login}: ${err?.message || err}`);
-              }
-            }
+            const maintainerReview = latestReviews.get(MAINTAINER);
+            const maintainerApproved = maintainerReview && maintainerReview.state === 'APPROVED';
 
             if (!maintainerApproved) {
-              core.info('No valid PA/Maintainer approval yet.');
-              await removeLabel('pa-review');
+              core.info('Waiting for maintainer @S3DFX-CYBER approval.');
+              await removeLabel('pa-approved');
               await removeLabel('merge-ready');
               return;
             }
 
-            // Maintainer has approved
-            await addLabel('pa-review');
+            core.info('Maintainer @S3DFX-CYBER has approved. PR is merge-ready.');
+            await addLabel('pa-approved');
+            await addLabel('merge-ready');
 
-            // Final merge-ready check
-            if (stage1Complete && stage2Complete) {
-              core.info('All stages passed → PR is merge-ready');
-              await addLabel('merge-ready');
-            } else {
-              await removeLabel('merge-ready');
-            }
-
-            // Cleanup
-            if (stage1Complete && stage2Complete && hasLabel('needs-stage-1-fixes')) {
+            if (hasLabel('needs-stage-1-fixes')) {
               await removeLabel('needs-stage-1-fixes');
             }

@@ -1,4 +1,4 @@
-name: 👥 Request Reviewers
+name: 👥 Request Reviewers (Stage 2)
 
 on:
   pull_request_target:
@@ -25,7 +25,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'stage-1-approved')
 
     steps:
-      - name: Auto Request Reviewers (Smart)
+      - name: Stage 2 - Request Reviewers
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,8 +37,13 @@ jobs:
 
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());
             const isGssoc = labels.includes('gssoc26');
+            const isNsoc = labels.includes('nsoc26');
 
-            // Prevent duplicate requests
+            if (!isGssoc && !isNsoc) {
+              core.info('PR is not GSSOC or NSOC. Skipping reviewer assignment.');
+              return;
+            }
+
             const { data: requested } = await github.rest.pulls.listRequestedReviewers({
               owner, repo, pull_number: prNumber
             });
@@ -52,7 +57,6 @@ jobs:
             let reviewerPool = [];
 
             if (isGssoc) {
-              // GSSOC: Use static mentor list
               try {
                 const { data: file } = await github.rest.repos.getContent({
                   owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
@@ -61,34 +65,32 @@ jobs:
                 reviewerPool = JSON.parse(content).reviewers || [];
               } catch (e) {
                 core.warning(`Failed to load GSSOC mentors: ${e?.message || e}`);
+                return;
               }
             } else {
-              // NSOC: Dynamic - People who have merged NSOC PRs
-              core.info('Fetching NSOC experienced contributors...');
+              core.info('Fetching NSOC experienced contributors (ranked by merged PRs)...');
               try {
                 const prs = await github.paginate(github.rest.pulls.list, {
-                  owner,
-                  repo,
-                  state: 'closed',
-                  per_page: 100
+                  owner, repo, state: 'closed', per_page: 100
                 });
 
-                const nsocContributors = new Set();
-
+                const mergeCount = new Map();
                 for (const p of prs) {
                   if (!p.merged_at) continue;
                   const prLabels = (p.labels || []).map(l => l.name.toLowerCase());
-                  if (prLabels.includes('nsoc26')) {
-                    if (p.user && p.user.login) {
-                      nsocContributors.add(p.user.login);
-                    }
+                  if (prLabels.includes('nsoc26') && p.user && p.user.login) {
+                    mergeCount.set(p.user.login, (mergeCount.get(p.user.login) || 0) + 1);
                   }
                 }
 
-                reviewerPool = Array.from(nsocContributors);
-                core.info(`Found ${reviewerPool.length} NSOC experienced contributors`);
+                reviewerPool = Array.from(mergeCount.entries())
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([login]) => login);
+
+                core.info(`Found ${reviewerPool.length} NSOC contributors ranked by merged PRs`);
               } catch (e) {
                 core.warning(`Failed to fetch NSOC contributors: ${e?.message || e}`);
+                return;
               }
             }
 
@@ -97,26 +99,29 @@ jobs:
               return;
             }
 
-            // Remove PR author and already requested
             reviewerPool = reviewerPool.filter(reviewer =>
               reviewer.toLowerCase() !== pr.user.login.toLowerCase() &&
               !alreadyRequested.includes(reviewer.toLowerCase())
             );
 
-            if (reviewerPool.length < 2) {
-              core.info(`Not enough eligible reviewers (${reviewerPool.length}). Skipping.`);
+            if (reviewerPool.length === 0) {
+              core.info('No eligible reviewers after filtering. Skipping.');
               return;
             }
 
-            // Shuffle and pick 2
-            for (let i = reviewerPool.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [reviewerPool[i], reviewerPool[j]] = [reviewerPool[j], reviewerPool[i]];
+            let selected;
+            if (isGssoc) {
+              const seed = prNumber;
+              const poolSize = reviewerPool.length;
+              const idx1 = seed % poolSize;
+              let idx2 = (seed * 7 + 3) % poolSize;
+              if (idx2 === idx1) idx2 = (idx1 + 1) % poolSize;
+              selected = [reviewerPool[idx1]];
+              if (poolSize > 1) selected.push(reviewerPool[idx2]);
+            } else {
+              selected = reviewerPool.slice(0, 2);
             }
 
-            const selected = reviewerPool.slice(0, 2);
-
-            // Request reviewers
             try {
               await github.rest.pulls.requestReviewers({
                 owner, repo, pull_number: prNumber, reviewers: selected
@@ -126,7 +131,6 @@ jobs:
               core.warning(`Failed to request reviewers: ${err?.message || err}`);
             }
 
-            // Add tracking label
             const reviewLabel = isGssoc ? 'mentor-review-requested' : 'nsoc-review-requested';
             try {
               await github.rest.issues.addLabels({

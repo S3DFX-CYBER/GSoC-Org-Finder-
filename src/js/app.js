@@ -536,8 +536,6 @@ function applyFilters(){
     if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false;}
     if(compF&&o.competition!==compF)return false;
 
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true;});if(!m)return false;}
-
     // Use proper language matching with LANGUAGE_MAP
     if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
  
@@ -714,7 +712,7 @@ function renderGrid(orgs){
           </a>`:''}
         </div>
       </div>
-      <div class="org-desc">${o.desc}</div>
+      <div class="org-desc">${escapeHtml(o.desc)}</div>
       <div class="badges">
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
@@ -785,7 +783,10 @@ document.addEventListener('keydown',e=>{
     openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
   } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
     e.preventDefault();
-    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+    const org=filteredOrgs[focusedIdx];
+    const globalIdx=ORGS.indexOf(org);
+    toggleCompare(globalIdx,null);
+    showCompareToast(compareSet.has(globalIdx)?`Added "${org.name}" to compare`:`Removed "${org.name}" from compare`);
   } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
     e.preventDefault();
     document.getElementById('searchInput').focus();
@@ -879,13 +880,13 @@ function resetFilters(){
   document.getElementById('sortSelect').value='alpha';
   pills.clear();chips.clear();
 
-  document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
-
-  document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
+  document.querySelectorAll('.pill.active').forEach(p=>{
+    p.classList.remove('active');
+    p.setAttribute('aria-pressed','false');
+  });
   Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
   renderSelectedLanguages();
- 
+
   applyFilters();
 }
 

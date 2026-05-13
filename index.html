@@ -137,10 +137,13 @@
     .modal-bg.open .modal {
       transform: scale(1);
     }
+    /* Fix #475: sticky positioning keeps close button visible while scrolling modal */
     .close-btn {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
+      position: sticky;
+      top: 1rem;
+      z-index: 10;
+      float: right;
+      margin: 1rem 1rem 0 0;
       width: 2.5rem;
       height: 2.5rem;
       border-radius: 99px;
@@ -150,6 +153,7 @@
       justify-content: center;
       color: #555;
       font-size: 1.2rem;
+      cursor: pointer;
       transition: all 0.2s;
     }
     .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
@@ -937,7 +941,7 @@
       <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
         <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
         <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+        <p class="text-zinc-400 text-sm leading-relaxed">Browse all 184 open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
       <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
@@ -1027,7 +1031,7 @@
     <nav class="flex flex-wrap gap-6">
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">Privacy</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>

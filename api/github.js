@@ -4,11 +4,18 @@ const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 export default async function handler(req) {
+  // Security: restrict CORS to known origins instead of wildcard '*'
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
+  const requestOrigin = req.headers.get('origin') || '';
+  const origin = allowedOrigins.includes('*') ? '*'
+    : allowedOrigins.includes(requestOrigin) ? requestOrigin : '';
+
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin || allowedOrigins[0] || '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
+    'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
   };
 
   if (req.method === 'OPTIONS') {

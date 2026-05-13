@@ -71,12 +71,15 @@ jobs:
             if (!isSpamPing) return;
 
             // Count previous spam comments by this user
-            const { data: allComments } = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number,
-              per_page: 100
-            });
+            const allComments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number,
+                per_page: 100
+              }
+            );
 
             const userSpamComments = allComments.filter(c => 
               c.user.login === username &&

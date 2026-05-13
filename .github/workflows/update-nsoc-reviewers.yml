@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-nsoc-reviewers
+  cancel-in-progress: false
+
 jobs:
   update-nsoc-reviewers:
     runs-on: ubuntu-latest
@@ -33,15 +37,14 @@ jobs:
             const contributor = context.payload.pull_request.user.login;
 
             let data;
-            try {
+            if (!fs.existsSync(path)) {
+              data = { nsoc_reviewers: [] };
+            } else {
               const content = fs.readFileSync(path, 'utf8');
               data = JSON.parse(content);
-            } catch (e) {
-              data = { nsoc_reviewers: [] };
-            }
-
-            if (!data.nsoc_reviewers) {
-              data.nsoc_reviewers = [];
+              if (!Array.isArray(data.nsoc_reviewers)) {
+                data.nsoc_reviewers = [];
+              }
             }
 
             const existing = data.nsoc_reviewers.map(r => r.toLowerCase());

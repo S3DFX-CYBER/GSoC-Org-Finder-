@@ -132,4 +132,6 @@ jobs:
               await github.rest.issues.addLabels({
                 owner, repo, issue_number: prNumber, labels: [reviewLabel]
               });
-            } catch (e) {}
+            } catch (e) {
+              console.warn(`Failed to add ${reviewLabel} label: ${e.message}`);
+            }

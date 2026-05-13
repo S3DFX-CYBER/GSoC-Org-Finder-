@@ -27,7 +27,7 @@ jobs:
             const number = pr.number;
             const author = pr.user.login;
 
-            // GSSOC Detection
+            // GSSOC / NSOC Detection
             const branch = (pr.head.ref || '').toLowerCase();
             const body = (pr.body || '').toLowerCase();
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());
@@ -37,7 +37,7 @@ jobs:
               branch.includes('gssoc') ||
               body.includes('gssoc');
 
-            // Idempotency Check
+            // Idempotency - Don't post multiple times
             const { data: existing } = await github.rest.issues.listComments({
               owner, repo, issue_number: number, per_page: 100
             });
@@ -69,16 +69,16 @@ jobs:
               '|-------|----------|--------|',
               '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate |',
               `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Reviewer / NSOC Contributor'} | Code + Quality Review |`,
-              '| **Stage 3** — PA Review | 🔑 Project Admin | Final Merge Decision |',
+              '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
               '',
-              'A **pipeline status comment** will appear below and update automatically.',
+              'A **pipeline status comment** will appear below and update automatically as your PR progresses.',
               '',
               '---',
               '',
               '### While you wait',
               '',
               '- Sign all commits (`git commit -s`)',
-              '- Link issue with `Closes #123`',
+              '- Link your issue (`Closes #123`)',
               '- Use a feature branch (not `main`)',
               '- Avoid unrelated changes',
               '',
@@ -91,7 +91,7 @@ jobs:
 
             console.log(`Welcome comment posted for PR #${number}`);
 
-            // Apply routing label
+            // Apply routing label for GSSOC
             if (isGssoc) {
               try {
                 await github.rest.issues.addLabels({

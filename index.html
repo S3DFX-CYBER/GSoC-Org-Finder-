@@ -2656,6 +2656,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
+<!-- Scroll to Top Button -->
+<button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 p-3 bg-primary text-white rounded-full shadow-lg hover:shadow-primary/50 hover:scale-110 transition-all opacity-0 pointer-events-none z-50 flex items-center justify-center" aria-label="Scroll to top">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        scrollToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+        scrollToTopBtn.classList.add('opacity-100', 'pointer-events-auto');
+      } else {
+        scrollToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+        scrollToTopBtn.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+    });
+  });
+</script>
 </body>
 
 </html>

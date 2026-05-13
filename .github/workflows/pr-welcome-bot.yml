@@ -27,9 +27,7 @@ jobs:
             const number = pr.number;
             const author = pr.user.login;
 
-            // ─────────────────────────────────────────────
             // GSSOC Detection
-            // ─────────────────────────────────────────────
             const branch = (pr.head.ref || '').toLowerCase();
             const body = (pr.body || '').toLowerCase();
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());
@@ -39,14 +37,9 @@ jobs:
               branch.includes('gssoc') ||
               body.includes('gssoc');
 
-            // ─────────────────────────────────────────────
             // Idempotency Check
-            // ─────────────────────────────────────────────
             const { data: existing } = await github.rest.issues.listComments({
-              owner, 
-              repo, 
-              issue_number: number, 
-              per_page: 100
+              owner, repo, issue_number: number, per_page: 100
             });
 
             const MARKER = '<!-- pr-welcome-v1 -->';
@@ -55,9 +48,7 @@ jobs:
               return;
             }
 
-            // ─────────────────────────────────────────────
             // Build Comment
-            // ─────────────────────────────────────────────
             const programNote = isGssoc
               ? `> 🟢 **GSSOC PR detected** — your PR will be routed to an approved GSSOC mentor for Stage 2 review.`
               : `> ⚪ **NSOC PR detected** — your PR will be reviewed by a repository reviewer or contributor with accepted NSOC PRs.`;
@@ -80,42 +71,34 @@ jobs:
               `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Reviewer / NSOC Contributor'} | Code + Quality Review |`,
               '| **Stage 3** — PA Review | 🔑 Project Admin | Final Merge Decision |',
               '',
-              'A **pipeline status comment** will appear below and update as your PR progresses.',
+              'A **pipeline status comment** will appear below and update automatically.',
               '',
               '---',
               '',
               '### While you wait',
               '',
               '- Sign all commits (`git commit -s`)',
-              '- Link your issue with `Closes #123`',
+              '- Link issue with `Closes #123`',
               '- Use a feature branch (not `main`)',
               '- Avoid unrelated changes',
               '',
-              '*This comment is posted only once.*',
+              '*This comment is posted only once.*'
             ].join('\n');
 
             await github.rest.issues.createComment({
-              owner, 
-              repo, 
-              issue_number: number, 
-              body: comment
+              owner, repo, issue_number: number, body: comment
             });
 
             console.log(`Welcome comment posted for PR #${number}`);
 
-            // ─────────────────────────────────────────────
             // Apply routing label
-            // ─────────────────────────────────────────────
             if (isGssoc) {
               try {
                 await github.rest.issues.addLabels({
-                  owner, 
-                  repo, 
-                  issue_number: number,
-                  labels: ['gssoc-review']
+                  owner, repo, issue_number: number, labels: ['gssoc-review']
                 });
                 console.log('Added gssoc-review label');
               } catch (e) {
-                console.log('Label already exists or error:', e.message);
+                console.log('Label already exists or error');
               }
             }

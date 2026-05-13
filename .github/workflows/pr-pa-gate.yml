@@ -5,7 +5,6 @@ on:
     types:
       - submitted
       - dismissed
-
   pull_request_target:
     types:
       - labeled
@@ -20,222 +19,117 @@ permissions:
   contents: read
 
 concurrency:
-  group: pa-final-gate-${{ github.event.pull_request.number || github.event.pull_request_review.pull_request.number }}
+  group: pa-final-gate-${{ github.event.pull_request.number || github.event.review.pull_request_number }}
   cancel-in-progress: true
 
 jobs:
   pa-gate:
     name: PA Final Gate
     runs-on: ubuntu-latest
-
     if: |
       !github.event.pull_request.draft
 
     steps:
-      - name: Evaluate PA approval state
-        uses: actions/github-script@v8
-
+      - name: Evaluate PA Approval State
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
-            const pr =
-              context.payload.pull_request;
-
+            const pr = context.payload.pull_request || 
+                       (context.payload.review && context.payload.review.pull_request);
+            
             if (!pr) {
-              core.info('No PR context found.');
+              console.log('No PR context found.');
               return;
             }
 
             const prNumber = pr.number;
+            const labels = (pr.labels || []).map(l => l.name);
 
-            // ─────────────────────────────────────────────
-            // Helpers
-            // ─────────────────────────────────────────────
-            const addLabel = async (label) => {
+            const hasLabel = (name) => labels.includes(name);
 
+            const stage1Complete = hasLabel('stage-1-approved');
+            const stage2Complete = hasLabel('mentor-approved') || 
+                                  hasLabel('review-approved') ||
+                                  hasLabel('gssoc-mentor-approved') ||
+                                  hasLabel('nsoc-reviewed');
+
+            // Helper functions
+            async function addLabel(label) {
               try {
-
                 await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: [label]
+                  owner, repo, issue_number: prNumber, labels: [label]
                 });
-
-              } catch (err) {
-
-                core.info(
-                  `Failed adding label '${label}': ${err.message}`
-                );
-              }
-            };
-
-            const removeLabel = async (label) => {
-
-              try {
-
-                await github.rest.issues.removeLabel({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  name: label
-                });
-
-              } catch (_) {}
-            };
-
-            // ─────────────────────────────────────────────
-            // Current labels
-            // ─────────────────────────────────────────────
-            const labels =
-              (pr.labels || []).map(
-                label => label.name
-              );
-
-            const hasLabel = (name) =>
-              labels.includes(name);
-
-            const stage1Complete =
-              hasLabel('stage-1-approved');
-
-            const stage2Complete =
-              hasLabel('gssoc-mentor-approved') ||
-              hasLabel('nsoc-reviewed');
-
-            // ─────────────────────────────────────────────
-            // Fetch all reviews
-            // ─────────────────────────────────────────────
-            const reviews =
-              await github.paginate(
-                github.rest.pulls.listReviews,
-                {
-                  owner,
-                  repo,
-                  pull_number: prNumber
-                }
-              );
-
-            // ─────────────────────────────────────────────
-            // Latest review state per reviewer
-            // ─────────────────────────────────────────────
-            const latestReviews = new Map();
-
-            for (const review of reviews) {
-
-              latestReviews.set(
-                review.user.login.toLowerCase(),
-                review
-              );
+              } catch (e) {}
             }
 
-            // ─────────────────────────────────────────────
-            // Find maintainer approvals
-            // ─────────────────────────────────────────────
+            async function removeLabel(label) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: prNumber, name: label
+                });
+              } catch (e) {}
+            }
+
+            // Fetch all reviews
+            const reviews = await github.paginate(
+              github.rest.pulls.listReviews,
+              { owner, repo, pull_number: prNumber }
+            );
+
+            // Find latest review per user
+            const latestReviews = new Map();
+            for (const review of reviews) {
+              latestReviews.set(review.user.login.toLowerCase(), review);
+            }
+
+            // Check for valid maintainer approval
             let maintainerApproved = false;
 
             for (const [, review] of latestReviews) {
-
-              if (review.state !== 'APPROVED') {
-                continue;
-              }
-
-              const reviewer =
-                review.user.login;
-
+              if (review.state !== 'APPROVED') continue;
+              
               // Prevent self-approval
-              if (
-                reviewer.toLowerCase() ===
-                pr.user.login.toLowerCase()
-              ) {
-                continue;
-              }
+              if (review.user.login.toLowerCase() === pr.user.login.toLowerCase()) continue;
 
               try {
+                const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner,
+                  repo,
+                  username: review.user.login
+                });
 
-                const { data: permission } =
-                  await github.rest.repos.getCollaboratorPermissionLevel({
-                    owner,
-                    repo,
-                    username: reviewer
-                  });
-
-                const isMaintainer =
-                  ['admin', 'maintain', 'write']
-                    .includes(permission.permission);
-
-                if (isMaintainer) {
-
+                if (['admin', 'maintain', 'write'].includes(permission.permission)) {
                   maintainerApproved = true;
-
-                  core.info(
-                    `Valid maintainer approval from @${reviewer}`
-                  );
-
+                  console.log(`Valid maintainer approval from @${review.user.login}`);
                   break;
                 }
-
               } catch (err) {
-
-                core.info(
-                  `Permission lookup failed for @${reviewer}: ${err.message}`
-                );
+                console.log(`Permission check failed for @${review.user.login}`);
               }
             }
 
-            // ─────────────────────────────────────────────
-            // No maintainer approval
-            // ─────────────────────────────────────────────
             if (!maintainerApproved) {
-
-              core.info(
-                'No valid maintainer approval found.'
-              );
-
+              console.log('No valid PA/Maintainer approval yet.');
               await removeLabel('pa-review');
               await removeLabel('merge-ready');
-
               return;
             }
 
-            // ─────────────────────────────────────────────
-            // Maintainer approved
-            // ─────────────────────────────────────────────
+            // Maintainer has approved
             await addLabel('pa-review');
 
-            // ─────────────────────────────────────────────
-            // Final merge-ready gate
-            // ─────────────────────────────────────────────
-            if (
-              stage1Complete &&
-              stage2Complete
-            ) {
-
-              core.info(
-                'All stages complete — applying merge-ready.'
-              );
-
+            // Final merge-ready check
+            if (stage1Complete && stage2Complete) {
+              console.log('All stages passed → PR is merge-ready');
               await addLabel('merge-ready');
-
             } else {
-
-              core.info(
-                'Waiting for Stage 1 or Stage 2 completion.'
-              );
-
               await removeLabel('merge-ready');
             }
 
-            // ─────────────────────────────────────────────
-            // Remove stale needs-fixes
-            // ─────────────────────────────────────────────
-            if (
-              hasLabel('merge-ready') &&
-              hasLabel('needs-fixes')
-            ) {
-
-              await removeLabel('needs-fixes');
+            // Cleanup
+            if (hasLabel('merge-ready') && hasLabel('needs-stage-1-fixes')) {
+              await removeLabel('needs-stage-1-fixes');
             }

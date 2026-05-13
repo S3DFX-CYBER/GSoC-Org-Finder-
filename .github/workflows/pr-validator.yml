@@ -44,13 +44,17 @@ jobs:
 
             let warnings = [];
 
+            // ─────────────────────────────────────────────
             // Ignore bots
+            // ─────────────────────────────────────────────
             if (pr.user.type === 'Bot') {
               core.info('Ignoring bot PR');
               return;
             }
 
+            // ─────────────────────────────────────────────
             // Linked issue check
+            // ─────────────────────────────────────────────
             const issueRegex =
               /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
 
@@ -60,18 +64,43 @@ jobs:
               );
             }
 
+            // ─────────────────────────────────────────────
             // Contribution program detection
+            // ─────────────────────────────────────────────
             const mentionsNSOC = lowerBody.includes('nsoc');
             const mentionsGSSOC = lowerBody.includes('gssoc');
 
             if (!mentionsNSOC && !mentionsGSSOC) {
               warnings.push(
-                '⚠️ Contribution program not detected. Please use the correct PR template.'
+                '⚠️ Missing contribution program tag (`NSOC` or `GSSOC`) in PR template.'
               );
             }
 
+            // ─────────────────────────────────────────────
             // Apply labels
+            // ─────────────────────────────────────────────
             try {
+
+              // Remove old labels first
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  name: 'nsoc26'
+                });
+              } catch (err) {}
+
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  name: 'gssoc26'
+                });
+              } catch (err) {}
+
+              // Add current labels
               if (mentionsNSOC) {
                 await github.rest.issues.addLabels({
                   owner,
@@ -89,11 +118,14 @@ jobs:
                   labels: ['gssoc26']
                 });
               }
+
             } catch (err) {
               core.warning(err.message);
             }
 
-            // Required sections
+            // ─────────────────────────────────────────────
+            // Required template sections
+            // ─────────────────────────────────────────────
             const requiredSections = [
               'description',
               'related issue',
@@ -104,38 +136,49 @@ jobs:
             for (const section of requiredSections) {
               if (!lowerBody.includes(section)) {
                 warnings.push(
-                  `⚠️ Missing section: \`${section}\``
+                  `⚠️ Missing PR template section: \`${section}\``
                 );
               }
             }
 
+            // ─────────────────────────────────────────────
             // Conventional title validation
+            // ─────────────────────────────────────────────
             const conventionalRegex =
               /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
 
             if (!conventionalRegex.test(title)) {
               warnings.push(
-                '⚠️ PR title should follow Conventional Commits.'
+                '⚠️ Invalid PR title format. Example: `feat: add search filters`'
               );
             }
 
+            // ─────────────────────────────────────────────
             // Build comment body
+            // ─────────────────────────────────────────────
             let commentBody = '';
 
             if (warnings.length > 0) {
+
               commentBody =
-                '## ⚠️ PR Validation Warning\n\n' +
-                `Hi @${username}, thanks for contributing 🚀\n\n` +
+                '## ⚠️ PR Format Issues Detected\n\n' +
+                `Hi @${username}, please update the following:\n\n` +
                 warnings.map(w => `- ${w}`).join('\n') +
                 '\n\n---\n\n' +
-                'Please update the PR accordingly.';
+                'After pushing new commits, this comment will automatically update.';
+
             } else {
+
               commentBody =
-                '## ✅ PR Validation Passed\n\n' +
-                `Thanks @${username}! Your PR follows the repository guidelines 🚀`;
+                '## ✅ PR Format Check Passed\n\n' +
+                `Hi @${username}, the PR structure and formatting checks passed successfully.\n\n` +
+                'This does not mean the PR is approved or ready to merge.\n' +
+                'Maintainer review is still required.';
             }
 
+            // ─────────────────────────────────────────────
             // Find existing validation comment
+            // ─────────────────────────────────────────────
             const comments = await github.rest.issues.listComments({
               owner,
               repo,
@@ -145,22 +188,31 @@ jobs:
 
             const existing = comments.data.find(comment =>
               comment.user.type === 'Bot' &&
-              comment.body.includes('PR Validation')
+              (
+                comment.body.includes('PR Format Issues Detected') ||
+                comment.body.includes('PR Format Check Passed')
+              )
             );
 
+            // ─────────────────────────────────────────────
             // Update existing comment instead of spamming
+            // ─────────────────────────────────────────────
             if (existing) {
+
               await github.rest.issues.updateComment({
                 owner,
                 repo,
                 comment_id: existing.id,
                 body: commentBody
               });
+
             } else {
+
               await github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: prNumber,
                 body: commentBody
               });
+
             }

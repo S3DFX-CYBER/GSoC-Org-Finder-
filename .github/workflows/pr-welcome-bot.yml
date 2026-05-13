@@ -48,10 +48,13 @@ jobs:
               return;
             }
 
-            // Build Comment
+            const isNsoc = labels.includes('nsoc26');
+
             const programNote = isGssoc
               ? `> 🟢 **GSSOC PR detected** — your PR will be routed to an approved GSSOC mentor for Stage 2 review.`
-              : `> ⚪ **NSOC PR detected** — your PR will be reviewed by a repository reviewer or contributor with accepted NSOC PRs.`;
+              : isNsoc
+                ? `> 🔵 **NSOC PR detected** — your PR will follow the standard review pipeline.`
+                : `> ⚪ **Standard PR detected** — your PR will follow the standard review pipeline.`;
 
             const comment = [
               MARKER,
@@ -68,7 +71,7 @@ jobs:
               '| Stage | Reviewer | Checks |',
               '|-------|----------|--------|',
               '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate |',
-              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Reviewer / NSOC Contributor'} | Code + Quality Review |`,
+              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Maintainer'} | Code + Quality Review |`,
               '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
               '',
               'A **pipeline status comment** will appear below and update automatically as your PR progresses.',

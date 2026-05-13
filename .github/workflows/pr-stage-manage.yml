@@ -71,8 +71,8 @@ jobs:
             }
 
             const mentorApproved = labels.includes('gssoc-mentor-approved') || labels.includes('mentor-approved');
-            const reviewerApproved = labels.includes('nsoc-reviewed') || labels.includes('review-approved');
-            const stage2Passed = mentorApproved || reviewerApproved;
+            const reviewerApproved = labels.includes('review-approved');
+            const stage2Passed = isNSOC ? stage1Passed : (mentorApproved || reviewerApproved);
             const paApproved = labels.includes('pa-approved');
             const mergeReady = labels.includes('merge-ready');
 
@@ -85,11 +85,16 @@ jobs:
 
             let s2Icon = '🔒', s2Text = 'Blocked until Stage 1 passes';
             if (stage1Passed) {
-              s2Icon = '⏳';
-              s2Text = isGSSOC ? 'Awaiting GSSOC mentor review (2 mentors assigned)' : 'Awaiting NSOC reviewer approval';
-              if (stage2Passed) {
+              if (isNSOC) {
                 s2Icon = '✅';
-                s2Text = isGSSOC ? 'GSSOC mentor approved' : 'NSOC reviewer approved';
+                s2Text = 'Not applicable for NSOC — proceeds to maintainer review';
+              } else {
+                s2Icon = '⏳';
+                s2Text = isGSSOC ? 'Awaiting GSSOC mentor review' : 'Awaiting reviewer approval';
+                if (stage2Passed) {
+                  s2Icon = '✅';
+                  s2Text = isGSSOC ? 'GSSOC mentor approved' : 'Reviewer approved';
+                }
               }
             }
 

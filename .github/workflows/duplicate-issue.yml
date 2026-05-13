@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Detect duplicate issues
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -31,96 +31,69 @@ jobs:
             const title = (issue.title || '').trim();
 
             if (issue.user.type === 'Bot') return;
-
+            
             const labels = (issue.labels || []).map(l => l.name.toLowerCase());
             if (labels.includes('research')) return;
-
+            
             if (title.length < 8) return;
 
-            const normalize = str =>
+            const normalize = str => 
               str.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-
-            const tokenize = str => {
-              const words = normalize(str).split(' ');
-              return new Set(words.filter(w => w.length > 2));
-            };
-
-            const similarity = (setA, setB) => {
-              if (setA.size === 0 || setB.size === 0) return 0;
-              let intersection = 0;
-              for (const word of setA) {
-                if (setB.has(word)) intersection++;
-              }
-              return intersection / Math.max(setA.size, setB.size);
-            };
-
+            
             const currentTitle = normalize(title);
-            const currentTokens = tokenize(title);
 
             const existingIssues = await github.paginate(github.rest.issues.listForRepo, {
-              owner,
-              repo,
-              state: 'all',
+              owner, 
+              repo, 
+              state: 'open', 
               per_page: 100
             });
 
             let duplicateIssue = null;
-            let matchType = null;
-
             for (const existing of existingIssues) {
               if (existing.number === issue_number || existing.pull_request) continue;
               if ((existing.labels || []).some(l => l.name.toLowerCase() === 'research')) continue;
 
-              const existingTitle = normalize(existing.title || '');
-
-              if (existingTitle === currentTitle) {
+              if (normalize(existing.title || '') === currentTitle) {
                 duplicateIssue = existing;
-                matchType = 'exact';
-                break;
-              }
-
-              const existingTokens = tokenize(existing.title || '');
-              if (similarity(currentTokens, existingTokens) >= 0.8) {
-                duplicateIssue = existing;
-                matchType = 'similar';
                 break;
               }
             }
 
             if (duplicateIssue) {
-              const marker = '<!-- duplicate-detector -->';
-
-              const bodyText = marker + '\n' +
-                `## 🔁 Duplicate Issue Detected\n\n` +
+              const bodyText = `## 🔁 Duplicate Issue Detected\n\n` +
                 `Hi @${username}, this issue appears to be a duplicate of:\n\n` +
-                `➡️ #${duplicateIssue.number} (${matchType === 'exact' ? 'exact title match' : 'very similar title'})\n\n` +
-                `Closing as duplicate. If this is **not** a duplicate, please reopen and explain the difference.`;
+                `➡️ #${duplicateIssue.number}\n\n` +
+                `Maintainers may close this issue to keep discussion in one place.\n\n` +
+                `If this is not a duplicate, please explain the difference.`;
 
               const { data: comments } = await github.rest.issues.listComments({
                 owner, repo, issue_number, per_page: 100
               });
 
-              const existingComment = comments.find(c => c.body && c.body.includes(marker));
+              const marker = '<!-- duplicate-detector -->';
+              const existingComment = comments.find(c => c.body.includes(marker));
 
               if (existingComment) {
                 await github.rest.issues.updateComment({
-                  owner, repo, comment_id: existingComment.id, body: bodyText
+                  owner, 
+                  repo, 
+                  comment_id: existingComment.id, 
+                  body: bodyText
                 });
               } else {
                 await github.rest.issues.createComment({
-                  owner, repo, issue_number, body: bodyText
+                  owner, 
+                  repo, 
+                  issue_number, 
+                  body: bodyText
                 });
               }
 
               await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['duplicate']
+                owner, 
+                repo, 
+                issue_number, 
+                labels: ['duplicate']
               }).catch(() => {});
-
-              await github.rest.issues.update({
-                owner, repo, issue_number,
-                state: 'closed',
-                state_reason: 'not_planned'
-              });
-
-              core.info(`Closed #${issue_number} as duplicate of #${duplicateIssue.number}`);
             }

@@ -46,15 +46,56 @@ Before reviewing contributions, ensure you understand:
 
 ---
 
-## PR Review Process
+## PR Review Process — 3-Stage Pipeline
 
-### Automated Pipeline
+As a GSSoC mentor, you are the key reviewer in Stage 2. Here is how the full pipeline works and where you fit in.
 
-PRs go through a 3-stage automated pipeline before reaching you:
+### Stage 1 — Automated Validation (Bot)
 
-1. **Stage 1 — Validation**: Bot checks PR structure, linked issues, program declaration
-2. **Stage 2 — Review**: You review the code quality and functionality
-3. **Stage 3 — Approval**: Final maintainer merge after your approval
+Before a PR reaches you, bots automatically verify:
+
+| Check | What it verifies |
+|-------|-----------------|
+| DCO Sign-off | Every commit has `Signed-off-by` line |
+| PR Format | Conventional title, linked issue, template sections filled |
+| AI/Slop Detection | Flags AI-generated or low-effort submissions |
+| Duplicate Detection | Checks for duplicate PRs against open PRs |
+
+PRs that fail Stage 1 are blocked from reaching you. The contributor must fix the issues first.
+
+### Stage 2 — Mentor Review (You)
+
+Once Stage 1 passes, the PR is routed to you via the automated reviewer assignment system.
+
+**Your workflow:**
+
+1. You receive a GitHub review request notification
+2. Review the code for quality, correctness, and project fit (see checklist below)
+3. Either **Approve** (adds `gssoc-mentor-approved` label automatically) or **Request Changes**
+4. If you request changes, wait for the contributor to push fixes, then re-review
+5. Once you approve, the PR advances to Stage 3
+
+**Labels you'll see:**
+
+| Label | Meaning |
+|-------|---------|
+| `mentor-review-requested` | PR assigned to you for review |
+| `gssoc-mentor-approved` | You (or another mentor) approved — advances to Stage 3 |
+| `needs-stage-1-fixes` | Stage 1 checks failed — not ready for your review yet |
+
+### Stage 3 — Maintainer / PA Review
+
+After your approval, the project admin (@S3DFX-CYBER) performs the final merge decision:
+
+- Confirms the PR aligns with project direction and architecture
+- Checks for security or performance concerns you may have flagged
+- Merges the PR and awards points
+
+You do not need to take action during Stage 3, but the maintainer may ask you for additional context.
+
+### Pipeline Status Comment
+
+Every PR has an auto-updating **PR Review Pipeline** status comment showing the current stage. You can use this to quickly see where a PR stands.
 
 ### What to Check
 

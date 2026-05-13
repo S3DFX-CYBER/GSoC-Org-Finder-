@@ -42,7 +42,6 @@ jobs:
             const labels = labelData.map(l => l.name.toLowerCase());
 
             const isGssoc = labels.includes('gssoc26');
-            const isNsoc = labels.includes('nsoc26');
             const stage1Passed = labels.includes('stage-1-approved');
 
             if (!stage1Passed) {
@@ -58,80 +57,44 @@ jobs:
               } catch (e) { core.warning(`Failed adding label '${label}': ${e?.message || e}`); }
             }
 
-            if (isGssoc) {
-              let mentorList = [];
-              try {
-                const { data: file } = await github.rest.repos.getContent({
-                  owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
-                });
-                const content = Buffer.from(file.content, 'base64').toString('utf8');
-                mentorList = (JSON.parse(content).reviewers || []).map(r => r.toLowerCase());
-              } catch (e) {
-                core.warning(`Failed to load mentor list: ${e?.message || e}`);
-                return;
+            if (!isGssoc) {
+              core.info('PR is not GSSOC. Stage 2 special review not applicable.');
+              return;
+            }
+
+            let mentorList = [];
+            try {
+              const { data: file } = await github.rest.repos.getContent({
+                owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
+              });
+              const content = Buffer.from(file.content, 'base64').toString('utf8');
+              mentorList = (JSON.parse(content).reviewers || []).map(r => r.toLowerCase());
+            } catch (e) {
+              core.warning(`Failed to load mentor list: ${e?.message || e}`);
+              return;
+            }
+
+            if (!mentorList.includes(reviewer.toLowerCase())) {
+              core.info(`@${reviewer} is not a GSSOC mentor. Ignoring.`);
+              return;
+            }
+
+            const reviews = await github.paginate(
+              github.rest.pulls.listReviews,
+              { owner, repo, pull_number: prNumber }
+            );
+
+            const mentorApprovals = new Set();
+            for (const review of reviews) {
+              if (review.state !== 'APPROVED') continue;
+              if (mentorList.includes(review.user.login.toLowerCase())) {
+                mentorApprovals.add(review.user.login.toLowerCase());
               }
+            }
 
-              if (!mentorList.includes(reviewer.toLowerCase())) {
-                core.info(`@${reviewer} is not a GSSOC mentor. Ignoring.`);
-                return;
-              }
+            core.info(`GSSOC mentor approvals: ${mentorApprovals.size} (${Array.from(mentorApprovals).join(', ')})`);
 
-              const reviews = await github.paginate(
-                github.rest.pulls.listReviews,
-                { owner, repo, pull_number: prNumber }
-              );
-
-              const mentorApprovals = new Set();
-              for (const review of reviews) {
-                if (review.state !== 'APPROVED') continue;
-                if (mentorList.includes(review.user.login.toLowerCase())) {
-                  mentorApprovals.add(review.user.login.toLowerCase());
-                }
-              }
-
-              core.info(`GSSOC mentor approvals: ${mentorApprovals.size} (${Array.from(mentorApprovals).join(', ')})`);
-
-              if (mentorApprovals.size >= 1) {
-                await addLabel('gssoc-mentor-approved');
-                core.info('Stage 2 complete: GSSOC mentor approved.');
-              }
-            } else if (isNsoc) {
-              let nsocReviewersList = [];
-              try {
-                const { data: file } = await github.rest.repos.getContent({
-                  owner, repo, path: '.github/reviewers/nsoc-reviewers.json', ref: 'main'
-                });
-                const content = Buffer.from(file.content, 'base64').toString('utf8');
-                nsocReviewersList = (JSON.parse(content).nsoc_reviewers || []).map(r => r.toLowerCase());
-              } catch (e) {
-                core.warning(`Failed to load NSOC reviewers list: ${e?.message || e}`);
-                return;
-              }
-
-              if (!nsocReviewersList.includes(reviewer.toLowerCase())) {
-                core.info(`@${reviewer} is not in the NSOC reviewers list. Ignoring for NSOC review.`);
-                return;
-              }
-
-              const nsocMergedUsers = new Set(nsocReviewersList);
-
-              const reviews = await github.paginate(
-                github.rest.pulls.listReviews,
-                { owner, repo, pull_number: prNumber }
-              );
-
-              const nsocApprovals = new Set();
-              for (const review of reviews) {
-                if (review.state !== 'APPROVED') continue;
-                if (nsocMergedUsers.has(review.user.login.toLowerCase())) {
-                  nsocApprovals.add(review.user.login.toLowerCase());
-                }
-              }
-
-              core.info(`NSOC reviewer approvals: ${nsocApprovals.size}`);
-
-              if (nsocApprovals.size >= 1) {
-                await addLabel('nsoc-reviewed');
-                core.info('Stage 2 complete: NSOC reviewer approved.');
-              }
+            if (mentorApprovals.size >= 1) {
+              await addLabel('gssoc-mentor-approved');
+              core.info('Stage 2 complete: GSSOC mentor approved.');
             }

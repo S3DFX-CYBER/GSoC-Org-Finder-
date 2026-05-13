@@ -429,6 +429,9 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    #notificationList {
+      min-height: 60px;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -440,7 +443,7 @@
 <body class="bg-background text-on-surface font-body antialiased">
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm relative">
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
     <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
       <!-- Hamburger menu button (mobile only) -->
@@ -464,7 +467,7 @@
       </nav>
     </div>
     
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 relative">
 
       <button id="notificationBtn"
         class="relative inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
@@ -474,16 +477,17 @@
           notifications
         </span>
         <span id="notificationCount" 
-          class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
-          3
+          class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+          0
         </span>
       </button>
 
       <div id="notificationDropdown"
-        class="hidden absolute right-0 top-16 w-80 bg-white rounded-2xl shadow-xl border border-zinc-200 p-4 z-50 origin-top-right">
-
-        <h3 class="font-bold text-sm mb-3">Notifications</h3>
-
+        class="hidden absolute right-0 top-full mt-1 w-80 bg-white rounded-2xl shadow-xl border border-zinc-200 p-4 z-50 origin-top-right">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm">Notifications</h3>
+          <button id="markAllReadBtn" class="text-[10px] text-primary font-bold hover:underline">Mark all read</button>
+        </div>
         <div id="notificationList" class="space-y-2 max-h-96 overflow-y-auto"></div>
       </div>
     
@@ -2678,63 +2682,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-  const notifications = [
-    {
-      title: "New organization added",
-      read: false
-    },
-    {
-      title: "Deadline approaching",
-      read: false
-    },
-    {
-      title: "New good first issue available",
-      read: true
-    }
-  ];
-
+  
   const notificationBtn = document.getElementById('notificationBtn');
   const notificationDropdown = document.getElementById('notificationDropdown');
   const notificationList = document.getElementById('notificationList');
   const notificationCount = document.getElementById('notificationCount');
 
-  function renderNotifications() {
-    const unreadCount = notifications.filter(
-      notification => !notification.read
-    ).length;
+  function renderNotifications(liveData) {
+    const data = liveData || notifications;
+    const unreadCount = data.filter(n => !n.read).length;
 
     notificationCount.textContent = unreadCount;
-
-    if (unreadCount === 0) {
-      notificationCount.classList.add('hidden');
-    } else {
-      notificationCount.classList.remove('hidden');
-    }
+    notificationCount.classList.toggle('hidden', unreadCount === 0);
     notificationList.innerHTML = '';
 
-    notifications.forEach(notification => {
+    if (data.length === 0) {
+      notificationList.innerHTML = '<p class="text-xs text-zinc-400 text-center py-4">Loading notifications...</p>';
+      return;
+    }
+
+    data.forEach(notification => {
       const item = document.createElement('div');
-
-     item.className =
-       'p-3 rounded-lg text-sm transition cursor-pointer hover:opacity-90';
-
-        if (notification.read) {
-            item.classList.add(
-              'bg-zinc-800',
-              'text-white'
-            );
-          } else {
-            item.classList.add(
-              'bg-orange-200',
-              '!text-black'
-          );
-          }
-      item.textContent = notification.title;
-      item.addEventListener('click', () => {
-        notification.read = true;
-        renderNotifications();
-      });
-
+      item.className = 'p-3 rounded-lg text-sm transition cursor-pointer hover:opacity-90 flex items-start gap-2';
+      if (notification.read) {
+        item.classList.add('bg-zinc-100', 'text-zinc-500');
+      } else {
+        item.classList.add('bg-orange-100', 'text-zinc-900', 'font-medium');
+      }
+      item.innerHTML = `
+        <span class="material-symbols-outlined text-base mt-0.5 ${notification.read ? 'text-zinc-400' : 'text-orange-500'}">          ${notification.read ? 'notifications' : 'notifications_active'}
+        </span>
+        <div class="flex-1">
+          <p>${escapeHtml(notification.title)}</p>
+          ${notification.createdAt
+            ? `<p class="text-[10px] text-zinc-400 mt-0.5">${new Date(notification.createdAt?.toDate?.() || notification.createdAt).toLocaleDateString()}</p>`
+            : ''}
+        </div>
+        ${!notification.read
+          ? `<button class="text-[10px] text-primary font-bold shrink-0" onclick="markNotificationRead('${notification.id}')">Mark read</button>`
+          : ''}
+      `;
       notificationList.appendChild(item);
     });
   }
@@ -2744,15 +2731,63 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('click', (event) => {
-    if (
-      !notificationBtn.contains(event.target) &&
-      !notificationDropdown.contains(event.target)
-    ) {
+    if (!notificationBtn.contains(event.target) && !notificationDropdown.contains(event.target)) {
       notificationDropdown.classList.add('hidden');
     }
   });
 
-  renderNotifications();
+  // Initial render using local fallback data until Firebase loads
+  renderNotifications([]);
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    doc,
+    updateDoc,
+    query,
+    orderBy,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAykQZStY31T2Ah8JVOlywlDjFA1bllojY",
+    authDomain: "gsoc-org-finder.firebaseapp.com",
+    projectId: "gsoc-org-finder",
+    storageBucket: "gsoc-org-finder.firebasestorage.app",
+    messagingSenderId: "985373216966",
+    appId: "1:985373216966:web:ff71debde5624e926447c7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Real-time listener — updates UI instantly when Firestore changes
+  const notifRef = collection(db, "notifications");
+  const notifQuery = query(notifRef, orderBy("createdAt", "desc"));
+
+  onSnapshot(notifQuery, (snapshot) => {
+    const liveNotifications = snapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+    renderNotifications(liveNotifications);
+  });
+
+  // Override the click handler to write "read: true" back to Firestore
+  window.markNotificationRead = async function(id) {
+    try {
+      await updateDoc(doc(db, "notifications", id), { read: true });
+      // onSnapshot will automatically re-render — no need to call renderNotifications manually
+    } catch (e) {
+      console.error("Failed to mark notification as read:", e);
+    }
+  };
+
+  console.log("Firebase connected ✅");
 </script>
 </body>
 

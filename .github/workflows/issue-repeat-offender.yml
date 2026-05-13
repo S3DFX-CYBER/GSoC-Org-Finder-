@@ -36,14 +36,15 @@ jobs:
             const invalidQuery = `repo:${owner}/${repo} author:${username} label:invalid is:issue`;
 
             const [spamResults, invalidResults] = await Promise.all([
-              github.rest.search.issuesAndPullRequests({ q: spamQuery, per_page: 10 }),
-              github.rest.search.issuesAndPullRequests({ q: invalidQuery, per_page: 10 })
+              github.rest.search.issuesAndPullRequests({ q: spamQuery, per_page: 100 }),
+              github.rest.search.issuesAndPullRequests({ q: invalidQuery, per_page: 100 })
             ]);
 
-            const spamCount = spamResults.data.total_count;
-            const invalidCount = invalidResults.data.total_count;
-            const totalBadIssues = spamCount + invalidCount;
-
+            const uniqueBadIssues = new Set([
+              ...spamResults.data.items.map(i => i.number),
+              ...invalidResults.data.items.map(i => i.number)
+            ]);
+            const totalBadIssues = uniqueBadIssues.size;
             core.info(`User @${username}: ${spamCount} spam, ${invalidCount} invalid issues`);
 
             const THRESHOLD = 3;

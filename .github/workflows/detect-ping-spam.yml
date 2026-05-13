@@ -44,8 +44,7 @@ jobs:
 
             // Skip valid assignment commands (handled by issue-context-assignment workflow)
             const trimmedBody = body.trim();
-            if (/^(\/assign|assign me|\/unassign|unassign me)/.test(trimmedBody)) return;
-            if (trimmedBody.includes('/assign') || trimmedBody.includes('assign me')) return;
+            if (/^(\/assign|assign me|\/unassign|unassign me)$/.test(trimmedBody)) return;
 
             // Spam ping patterns (common during GSSOC/NSOC)
             const spamPatterns = [

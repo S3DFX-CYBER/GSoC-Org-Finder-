@@ -55,10 +55,10 @@ jobs:
             const isNsoc = nsocMentions.some(m => body.includes(m) || title.includes(m));
 
             if (isGssoc) {
-              await github.rest.issues.addLabels({
+              const added = await github.rest.issues.addLabels({
                 owner, repo, issue_number, labels: ['gssoc']
-              }).catch(() => {});
-              return;
+              }).then(() => true).catch(() => false);
+              if (added) return;
             }
 
             if (isNsoc) {

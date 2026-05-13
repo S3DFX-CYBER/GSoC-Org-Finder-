@@ -31,6 +31,7 @@ jobs:
             const repo = context.repo.repo;
             const prNumber = context.payload.pull_request.number;
 
+            // Small delay for other workflows to apply labels
             if (['opened', 'synchronize'].includes(context.payload.action)) {
               await new Promise(r => setTimeout(r, 8000));
             }
@@ -57,6 +58,7 @@ jobs:
               try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name }); } catch (e) {}
             }
 
+            // Stage 1
             if (stage1Passed) {
               await addLabel('stage-1-approved');
               await removeLabel('needs-stage-1-fixes');
@@ -65,30 +67,31 @@ jobs:
               await addLabel('needs-stage-1-fixes');
             }
 
-            const mentorApproved = labels.includes('mentor-approved');
-            const reviewerApproved = labels.includes('review-approved');
-            const paApproved = labels.includes('pa-approved');
+            const mentorApproved = labels.includes('mentor-approved') || labels.includes('gssoc-mentor-approved');
+            const reviewerApproved = labels.includes('review-approved') || labels.includes('nsoc-reviewed');
+            const paApproved = labels.includes('pa-approved') || labels.includes('merge-ready');
 
+            // Build Status
             let s1Icon = '⏳', s1Text = 'Waiting for automated checks';
             if (stage1Passed) {
               s1Icon = '✅'; s1Text = 'Stage 1 — All checks passed';
             } else if (dcoMissing || aiSlop) {
-              s1Icon = '❌'; s1Text = 'Stage 1 — Failed';
+              s1Icon = '❌'; s1Text = 'Stage 1 — Failed (fix required)';
             }
 
             let s2Icon = '🔒', s2Text = 'Blocked until Stage 1 passes';
             if (stage1Passed) {
               s2Icon = '⏳';
-              s2Text = isGSSOC ? 'Waiting for GSSOC Mentor' : 'Waiting for Reviewer';
+              s2Text = isGSSOC ? 'Waiting for GSSOC Mentor Review' : 'Waiting for Reviewer Approval';
               if (mentorApproved || reviewerApproved) {
                 s2Icon = '✅';
-                s2Text = isGSSOC ? 'Stage 2 — Mentor Approved' : 'Stage 2 — Reviewer Approved';
+                s2Text = isGSSOC ? 'Stage 2 — GSSOC Mentor Approved' : 'Stage 2 — Reviewer Approved';
               }
             }
 
             let s3Icon = '🔒', s3Text = 'Blocked until Stage 2 passes';
             if (mentorApproved || reviewerApproved) {
-              s3Icon = '⏳'; s3Text = 'Waiting for PA / Maintainer';
+              s3Icon = '⏳'; s3Text = 'Waiting for PA / Maintainer Final Review';
               if (paApproved) {
                 s3Icon = '✅'; s3Text = 'Stage 3 — Approved for Merge';
               }
@@ -100,10 +103,15 @@ jobs:
             if (aiSlop) details.push('AI/Slop flagged');
             if (duplicatePR) details.push('Possible duplicate PR');
 
-            const typeBadge = isGSSOC ? '> 🟢 **GSSOC PR**' : isNSOC ? '> 🔵 **NSOC PR**' : '> ⚪ **Standard PR**';
+            const typeBadge = isGSSOC 
+              ? '> 🟢 **GSSOC PR**' 
+              : isNSOC 
+                ? '> 🔵 **NSOC PR**' 
+                : '> ⚪ **Standard PR**';
+
             const marker = '<!-- pr-stage-manager -->';
 
-            // Build body using string concatenation (safer in YAML)
+            // Safe body construction
             let body = marker + '\n';
             body += '## 🚦 PR Review Pipeline\n';
             body += typeBadge + '\n\n';
@@ -119,9 +127,9 @@ jobs:
               body += '> - No active issues\n\n';
             }
 
-            body += '---\n';
-            body += '**Last updated:** ' + new Date().toUTCString();
+            body += '---\n**Last updated:** ' + new Date().toUTCString();
 
+            // Upsert comment
             const { data: comments } = await github.rest.issues.listComments({
               owner, repo, issue_number: prNumber, per_page: 50
             });

@@ -167,10 +167,10 @@ When creating a PR, use the NSoC template located at `.github/PULL_REQUEST_TEMPL
 
 ## Review Process
 
-1. Your PR enters the automated validation pipeline
-2. An NSoC reviewer is assigned
-3. The reviewer may request changes — address them promptly
-4. Once approved, a maintainer merges the PR
+1. Your PR enters the automated validation pipeline (Stage 1)
+2. Once Stage 1 passes, the maintainer reviews your PR directly
+3. The maintainer may request changes — address them promptly
+4. Once approved, the maintainer merges the PR
 5. Your contribution is recorded
 
 ### Expected Review Times

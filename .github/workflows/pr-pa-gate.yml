@@ -57,10 +57,10 @@ jobs:
             const hasLabel = (name) => labels.includes(name.toLowerCase());
 
             const stage1Complete = hasLabel('stage-1-approved');
-            const stage2Complete = hasLabel('mentor-approved') ||
+            const isNsoc = hasLabel('nsoc26');
+            const stage2Complete = isNsoc || hasLabel('mentor-approved') ||
                                   hasLabel('review-approved') ||
-                                  hasLabel('gssoc-mentor-approved') ||
-                                  hasLabel('nsoc-reviewed');
+                                  hasLabel('gssoc-mentor-approved');
 
             async function addLabel(label) {
               try {

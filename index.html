@@ -464,9 +464,30 @@
       </nav>
     </div>
     
-    <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
+
+      <button id="notificationBtn"
+        class="relative inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="Notifications">
     
+        <span class="material-symbols-outlined text-zinc-600">
+          notifications
+        </span>
+        <span id="notificationCount" 
+          class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+          3
+        </span>
+      </button>
+
+      <div id="notificationDropdown"
+        class="hidden absolute right-0 top-16 w-80 bg-white rounded-2xl shadow-xl border border-zinc-200 p-4 z-50 origin-top-right">
+
+        <h3 class="font-bold text-sm mb-3">Notifications</h3>
+
+        <div id="notificationList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+      </div>
+    
+      <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
       <button id="themeToggleBtn" onclick="toggleTheme()"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
@@ -2655,6 +2676,83 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeHelpModal = closeHelpModal;
 
 });
+</script>
+<script>
+  const notifications = [
+    {
+      title: "New organization added",
+      read: false
+    },
+    {
+      title: "Deadline approaching",
+      read: false
+    },
+    {
+      title: "New good first issue available",
+      read: true
+    }
+  ];
+
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationDropdown = document.getElementById('notificationDropdown');
+  const notificationList = document.getElementById('notificationList');
+  const notificationCount = document.getElementById('notificationCount');
+
+  function renderNotifications() {
+    const unreadCount = notifications.filter(
+      notification => !notification.read
+    ).length;
+
+    notificationCount.textContent = unreadCount;
+
+    if (unreadCount === 0) {
+      notificationCount.classList.add('hidden');
+    } else {
+      notificationCount.classList.remove('hidden');
+    }
+    notificationList.innerHTML = '';
+
+    notifications.forEach(notification => {
+      const item = document.createElement('div');
+
+     item.className =
+       'p-3 rounded-lg text-sm transition cursor-pointer hover:opacity-90';
+
+        if (notification.read) {
+            item.classList.add(
+              'bg-zinc-800',
+              'text-white'
+            );
+          } else {
+            item.classList.add(
+              'bg-orange-200',
+              '!text-black'
+          );
+          }
+      item.textContent = notification.title;
+      item.addEventListener('click', () => {
+        notification.read = true;
+        renderNotifications();
+      });
+
+      notificationList.appendChild(item);
+    });
+  }
+
+  notificationBtn.addEventListener('click', () => {
+    notificationDropdown.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (
+      !notificationBtn.contains(event.target) &&
+      !notificationDropdown.contains(event.target)
+    ) {
+      notificationDropdown.classList.add('hidden');
+    }
+  });
+
+  renderNotifications();
 </script>
 </body>
 

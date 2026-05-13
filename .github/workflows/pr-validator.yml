@@ -41,13 +41,13 @@ jobs:
             // Ignore bots
             if (pr.user.type === 'Bot') return;
 
-            // Linked Issue Check
+            // 1. Linked Issue Check
             const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
             if (!issueRegex.test(body)) {
               warnings.push('❌ Missing linked issue. Add: `Closes #issue-number`');
             }
 
-            // Program Detection
+            // 2. Program Detection (NSOC / GSSOC)
             const mentionsNSOC = lowerBody.includes('nsoc');
             const mentionsGSSOC = lowerBody.includes('gssoc');
 
@@ -55,26 +55,18 @@ jobs:
               warnings.push('⚠️ Missing program tag (`GSSOC` or `NSOC`)');
             }
 
-            // Apply Program Labels
+            // 3. Apply Program Labels
             try {
-              // Remove old labels
               for (const label of ['nsoc26', 'gssoc26']) {
-                try {
-                  await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label });
-                } catch (e) {}
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label }); } catch (e) {}
               }
-              // Add correct labels
-              if (mentionsNSOC) {
-                await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
-              }
-              if (mentionsGSSOC) {
-                await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
-              }
+              if (mentionsNSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
+              if (mentionsGSSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
             } catch (e) {
               console.log('Label operation failed (usually harmless)');
             }
 
-            // Required Template Sections
+            // 4. Required Template Sections
             const requiredSections = ['description', 'related issue', 'type of change', 'checklist'];
             for (const section of requiredSections) {
               if (!lowerBody.includes(section)) {
@@ -82,26 +74,23 @@ jobs:
               }
             }
 
-            // Conventional Commit Title
+            // 5. Conventional Title
             const conventionalRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
             if (!conventionalRegex.test(title)) {
               warnings.push('⚠️ Use conventional PR title. Example: `feat: add search filters`');
             }
 
             // Build Comment
-            let commentBody = '';
-            if (warnings.length > 0) {
-              commentBody = `## ⚠️ PR Format Issues Detected\n\n` +
+            let commentBody = warnings.length > 0 
+              ? `## ⚠️ PR Format Issues Detected\n\n` +
                 `Hi @${username},\n\n` +
                 warnings.map(w => `- ${w}`).join('\n') +
-                `\n\nPlease fix these and push new commits.`;
-            } else {
-              commentBody = `## ✅ PR Format Check Passed\n\n` +
+                `\n\nPlease fix these and push new commits.`
+              : `## ✅ PR Format Check Passed\n\n` +
                 `Hi @${username}, basic PR structure checks passed.\n\n` +
                 `This does **not** mean the PR is approved.`;
-            }
 
-            // Upsert Comment
+            // Upsert Comment (avoid spam)
             const { data: comments } = await github.rest.issues.listComments({
               owner, repo, issue_number: prNumber, per_page: 100
             });

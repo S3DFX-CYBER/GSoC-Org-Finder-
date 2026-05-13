@@ -68,28 +68,17 @@ jobs:
                 return;
               }
             } else {
-              core.info('Fetching NSOC experienced contributors (ranked by merged PRs)...');
+              core.info('Loading NSOC reviewers from nsoc-reviewers.json...');
               try {
-                const prs = await github.paginate(github.rest.pulls.list, {
-                  owner, repo, state: 'closed', per_page: 100
+                const { data: file } = await github.rest.repos.getContent({
+                  owner, repo, path: '.github/reviewers/nsoc-reviewers.json', ref: 'main'
                 });
-
-                const mergeCount = new Map();
-                for (const p of prs) {
-                  if (!p.merged_at) continue;
-                  const prLabels = (p.labels || []).map(l => l.name.toLowerCase());
-                  if (prLabels.includes('nsoc26') && p.user && p.user.login) {
-                    mergeCount.set(p.user.login, (mergeCount.get(p.user.login) || 0) + 1);
-                  }
-                }
-
-                reviewerPool = Array.from(mergeCount.entries())
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([login]) => login);
-
-                core.info(`Found ${reviewerPool.length} NSOC contributors ranked by merged PRs`);
+                const content = Buffer.from(file.content, 'base64').toString('utf8');
+                const parsedReviewers = JSON.parse(content).nsoc_reviewers;
+                reviewerPool = Array.isArray(parsedReviewers) ? parsedReviewers : [];
+                core.info(`Found ${reviewerPool.length} NSOC reviewers from list`);
               } catch (e) {
-                core.warning(`Failed to fetch NSOC contributors: ${e?.message || e}`);
+                core.warning(`Failed to load NSOC reviewers: ${e?.message || e}`);
                 return;
               }
             }

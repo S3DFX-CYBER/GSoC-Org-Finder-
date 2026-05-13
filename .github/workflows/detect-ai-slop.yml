@@ -36,8 +36,6 @@ jobs:
           require-conventional-title: true
           require-conventional-commits: false
 
-          max-changed-files: 35
-          max-changed-lines: 4500
           max-description-length: 2200
 
           max-emoji-count: 5
@@ -68,10 +66,7 @@ jobs:
             main
             master
 
-          exempt-author-association: |
-            OWNER
-            MEMBER
-            COLLABORATOR
+          exempt-author-association: "OWNER,MEMBER,COLLABORATOR"
 
           exempt-bots: |
             github-actions[bot]

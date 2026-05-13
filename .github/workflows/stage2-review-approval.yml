@@ -96,23 +96,24 @@ jobs:
                 core.info('Stage 2 complete: GSSOC mentor approved.');
               }
             } else if (isNsoc) {
-              const prs = await github.paginate(github.rest.pulls.list, {
-                owner, repo, state: 'closed', per_page: 100
-              });
-
-              const nsocMergedUsers = new Set();
-              for (const p of prs) {
-                if (!p.merged_at) continue;
-                const prLabels = (p.labels || []).map(l => l.name.toLowerCase());
-                if (prLabels.includes('nsoc26') && p.user && p.user.login) {
-                  nsocMergedUsers.add(p.user.login.toLowerCase());
-                }
-              }
-
-              if (!nsocMergedUsers.has(reviewer.toLowerCase())) {
-                core.info(`@${reviewer} has no merged NSOC PRs. Ignoring for NSOC review.`);
+              let nsocReviewersList = [];
+              try {
+                const { data: file } = await github.rest.repos.getContent({
+                  owner, repo, path: '.github/reviewers/nsoc-reviewers.json', ref: 'main'
+                });
+                const content = Buffer.from(file.content, 'base64').toString('utf8');
+                nsocReviewersList = (JSON.parse(content).nsoc_reviewers || []).map(r => r.toLowerCase());
+              } catch (e) {
+                core.warning(`Failed to load NSOC reviewers list: ${e?.message || e}`);
                 return;
               }
+
+              if (!nsocReviewersList.includes(reviewer.toLowerCase())) {
+                core.info(`@${reviewer} is not in the NSOC reviewers list. Ignoring for NSOC review.`);
+                return;
+              }
+
+              const nsocMergedUsers = new Set(nsocReviewersList);
 
               const reviews = await github.paginate(
                 github.rest.pulls.listReviews,

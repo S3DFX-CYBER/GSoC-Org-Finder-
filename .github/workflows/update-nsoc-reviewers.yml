@@ -1,0 +1,88 @@
+name: 🔄 Update NSOC Reviewers List
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-nsoc-reviewers
+  cancel-in-progress: false
+
+jobs:
+  update-nsoc-reviewers:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'nsoc26') &&
+      github.event.pull_request.user.login != github.repository_owner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add contributor to NSOC reviewers
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.github/reviewers/nsoc-reviewers.json';
+
+            const contributor = context.payload.pull_request.user.login;
+
+            let data;
+            if (!fs.existsSync(path)) {
+              data = { nsoc_reviewers: [] };
+            } else {
+              const content = fs.readFileSync(path, 'utf8');
+              try {
+                data = JSON.parse(content);
+              } catch (e) {
+                throw new Error(`Failed to parse ${path}: ${e.message}`);
+              }
+              if (!Array.isArray(data.nsoc_reviewers)) {
+                data.nsoc_reviewers = [];
+              }
+            }
+
+            const existing = data.nsoc_reviewers.map(r => r.toLowerCase());
+            if (existing.includes(contributor.toLowerCase())) {
+              core.info(`${contributor} is already in the NSOC reviewers list.`);
+              return;
+            }
+
+            data.nsoc_reviewers.push(contributor);
+            fs.writeFileSync(path, JSON.stringify(data, null, 2) + '\n');
+            core.info(`Added ${contributor} to NSOC reviewers list.`);
+            core.exportVariable('CONTRIBUTOR_ADDED', 'true');
+            core.exportVariable('CONTRIBUTOR_NAME', contributor);
+
+      - name: Commit and push updated reviewers list
+        if: env.CONTRIBUTOR_ADDED == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/reviewers/nsoc-reviewers.json
+          git commit -m "chore: add ${CONTRIBUTOR_NAME} to nsoc-reviewers list"
+          pushed=false
+          for attempt in 1 2 3; do
+            if [ -d ".git/rebase-merge" ] || [ -d ".git/rebase-apply" ]; then
+              git rebase --abort
+            fi
+            if git pull --rebase origin main && git push origin main; then
+              pushed=true
+              break
+            fi
+            sleep 2
+          done
+
+          if [ "$pushed" != "true" ]; then
+            echo "Failed to push updated reviewers list after 3 attempts."
+            exit 1
+          fi

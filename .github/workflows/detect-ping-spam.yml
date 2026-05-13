@@ -1,0 +1,132 @@
+name: 🔕 Auto Detect Ping Spam
+
+on:
+  issue_comment:
+    types:
+      - created
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+concurrency:
+  group: ping-spam-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  detect-ping-spam:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect spam pings
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+            const sender = context.payload.sender;
+            const issue_number = issue.number;
+            const username = sender.login;
+            const body = (comment.body || '').toLowerCase();
+
+            // Ignore bots
+            if (sender.type === 'Bot') return;
+
+            // Ignore maintainers and collaborators
+            const association = comment.author_association || '';
+            if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
+              core.info('Ignoring maintainer/collaborator comment.');
+              return;
+            }
+
+            // Spam ping patterns (common during GSSOC/NSOC)
+            const spamPatterns = [
+              '@s3dfx-cyber',
+              'please assign',
+              'assign fast',
+              'assign me',
+              'review pls',
+              'merge pls',
+              'please merge',
+              'why no response',
+              'why not assigned',
+              'ping',
+              'hello maintainer',
+              'kindly review',
+              'please review',
+              'check this pr',
+              'any updates',
+              'waiting for response',
+              'please respond',
+              'pls respond',
+              'urgent review',
+              'when will it be merged'
+            ];
+
+            const isSpamPing = spamPatterns.some(pattern => body.includes(pattern));
+
+            if (!isSpamPing) return;
+
+            // Count previous spam comments by this user
+            const allComments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number,
+                per_page: 100
+              }
+            );
+
+            const userSpamComments = allComments.filter(c => 
+              c.user.login === username &&
+              spamPatterns.some(p => (c.body || '').toLowerCase().includes(p))
+            );
+
+            const spamCount = userSpamComments.length;
+
+            core.info(`Spam ping count for @${username}: ${spamCount}`);
+
+            if (spamCount <= 2) {
+              // First / Second warning
+              const warning = `## ⚠️ Maintainer Ping Warning\n\n` +
+                `Hi @${username},\n\n` +
+                `Please avoid repeatedly pinging maintainers for assignment, review, or merge requests.\n\n` +
+                `Reviews and assignments are handled in queue order. Excessive pinging may lead to spam labeling and restrictions.\n\n` +
+                `Recommended wait times:\n` +
+                `- Assignment: 12–24 hours\n` +
+                `- Review: 24–72 hours`;
+
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body: warning
+              });
+            } else {
+              // Escalation
+              const escalation = `## 🚨 Repeated Ping Spam Detected\n\n` +
+                `Hi @${username},\n\n` +
+                `You have repeatedly pinged maintainers despite previous warnings.\n\n` +
+                `This behavior may result in:\n` +
+                `- \`spam\` label\n` +
+                `- Assignment removal\n` +
+                `- Further moderation\n\n` +
+                `Please be patient. Thank you for understanding.`;
+
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body: escalation
+              });
+
+              // Add spam label
+              try {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number,
+                  labels: ['spam']
+                });
+              } catch (e) {
+                core.warning(`Failed adding spam label: ${e?.message || e}`);
+              }
+            }

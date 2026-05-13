@@ -228,12 +228,25 @@ For full functionality locally, run `vercel dev` to start the Edge Function.
 ---
 
 ## 🤝 Contributing
-Kindly read the Contributor Guide before contributing!!!
+
 Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
+
+**Read the guide for your contribution track before getting started:**
+
+| Track | Guide |
+|-------|-------|
+| GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |
+| GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) |
+| NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) |
+| General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
+
+For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Quick Start
 
 1. Fork the repo
 2. Edit the `ORGS` array in `index.html`
-3. Open a pull request
+3. Open a pull request using the appropriate template
 
 Each org entry looks like this:
 

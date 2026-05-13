@@ -1,154 +1,111 @@
-name: 🛡️ PR Validation & Contribution Rules
+name: 🔍 Validate PR
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - edited
       - synchronize
+      - reopened
+      - ready_for_review
 
 permissions:
-  pull-requests: write
-  issues: read
   contents: read
+  pull-requests: write
+  issues: write
 
 concurrency:
-  group: pr-validation-${{ github.event.pull_request.number }}
+  group: validate-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Validate PR
+      - name: Validate PR structure
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const prNumber = pr.number;
-
             const body = pr.body || '';
             const title = pr.title || '';
             const username = pr.user.login;
 
             const lowerBody = body.toLowerCase();
-
             let warnings = [];
 
-            // ─────────────────────────────────────────────
             // Ignore bots
-            // ─────────────────────────────────────────────
-            if (pr.user.type === 'Bot') {
-              core.info('Ignoring bot PR');
-              return;
+            if (pr.user.type === 'Bot') return;
+
+            // 1. Linked Issue Check
+            const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+            if (!issueRegex.test(body)) {
+              warnings.push('❌ Missing linked issue. Add: `Closes #issue-number`');
             }
 
-            // ─────────────────────────────────────────────
-            // Check linked issue
-            // ─────────────────────────────────────────────
-            const issueRegex =
-              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
-
-            const hasLinkedIssue = issueRegex.test(body);
-
-            if (!hasLinkedIssue) {
-              warnings.push(
-                '❌ This PR does not reference a linked issue.\n\n' +
-                'Please add:\n' +
-                '`Closes #issue-number`'
-              );
-            }
-
-            // ─────────────────────────────────────────────
-            // Detect contribution program
-            // ─────────────────────────────────────────────
-            const mentionsNSOC =
-              lowerBody.includes('nsoc');
-
-            const mentionsGSSOC =
-              lowerBody.includes('gssoc');
+            // 2. Program Detection (NSOC / GSSOC)
+            const mentionsNSOC = lowerBody.includes('nsoc');
+            const mentionsGSSOC = lowerBody.includes('gssoc');
 
             if (!mentionsNSOC && !mentionsGSSOC) {
-              warnings.push(
-                '⚠️ Contribution program not detected.\n\n' +
-                'Please use the proper PR template:\n' +
-                '- NSOC template\n' +
-                '- GSSOC template'
-              );
+              warnings.push('⚠️ Missing program tag (`GSSOC` or `NSOC`)');
             }
 
-            // ─────────────────────────────────────────────
-            // Required template sections
-            // ─────────────────────────────────────────────
-            const requiredSections = [
-              'description',
-              'related issue',
-              'type of change',
-              'how to test',
-              'checklist'
-            ];
+            // 3. Apply Program Labels
+            try {
+              for (const label of ['nsoc26', 'gssoc26']) {
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label }); } catch (e) {}
+              }
+              if (mentionsNSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
+              if (mentionsGSSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
+            } catch (e) {
+              core.warning(`Label operation failed: ${e?.message || e}`);
+            }
 
+            // 4. Required Template Sections
+            const requiredSections = ['description', 'related issue', 'type of change', 'checklist'];
             for (const section of requiredSections) {
               if (!lowerBody.includes(section)) {
-                warnings.push(
-                  `⚠️ Missing PR template section: \`${section}\``
-                );
+                warnings.push(`⚠️ Missing template section: \`${section}\``);
               }
             }
 
-            // ─────────────────────────────────────────────
-            // Conventional commit title validation
-            // ─────────────────────────────────────────────
-            const conventionalRegex =
-              /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
-
+            // 5. Conventional Title
+            const conventionalRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
             if (!conventionalRegex.test(title)) {
-              warnings.push(
-                '⚠️ PR title does not follow Conventional Commits format.\n\n' +
-                'Examples:\n' +
-                '- feat: add search filters\n' +
-                '- fix: resolve mobile navbar overlap\n' +
-                '- docs: update contribution guide'
-              );
+              warnings.push('⚠️ Use conventional PR title. Example: `feat: add search filters`');
             }
 
-            // ─────────────────────────────────────────────
-            // Encourage grouped PRs
-            // ─────────────────────────────────────────────
-            warnings.push(
-              '💡 Contributors are encouraged to combine 1–2 related fixes/features into a single focused PR instead of opening many tiny PRs.'
+            // Build Comment
+            let commentBody = warnings.length > 0 
+              ? `## ⚠️ PR Format Issues Detected\n\n` +
+                `Hi @${username},\n\n` +
+                warnings.map(w => `- ${w}`).join('\n') +
+                `\n\nPlease fix these and push new commits.`
+              : `## ✅ PR Format Check Passed\n\n` +
+                `Hi @${username}, basic PR structure checks passed.\n\n` +
+                `This does **not** mean the PR is approved.`;
+
+            // Upsert Comment (avoid spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100
+            });
+
+            const existing = comments.find(c => 
+              c.user.type === 'Bot' && 
+              (c.body.includes('PR Format Issues Detected') || c.body.includes('PR Format Check Passed'))
             );
 
-            // ─────────────────────────────────────────────
-            // Warn only (do not close)
-            // ─────────────────────────────────────────────
-            if (warnings.length > 0) {
-              const comment =
-                `## ⚠️ PR Validation Warning\n\n` +
-                `Hi @${username}, thanks for contributing 🚀\n\n` +
-                warnings.map(w => `- ${w}`).join('\n\n') +
-                `\n\n---\n\n` +
-                `Please update the PR accordingly. ` +
-                `This is currently a warning only and does not automatically close the PR.`;
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: comment
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body: commentBody
               });
             } else {
               await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body:
-                  `## ✅ PR Validation Passed\n\n` +
-                  `Thanks @${username}! Your PR follows the repository contribution requirements 🚀`
+                owner, repo, issue_number: prNumber, body: commentBody
               });
             }

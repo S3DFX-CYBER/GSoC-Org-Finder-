@@ -2436,13 +2436,46 @@
   },
   "The Julia Language": {
     "org": "The Julia Language",
-    "ideasUrl": "https://julialang.org/jsoc/gsoc/projects/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "ideasUrl": "https://julialang.org/jsoc/projects/",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://julialang.org/slack/",
+        "label": "#jsoc"
+      },
+      {
+        "type": "Discourse",
+        "url": "https://discourse.julialang.org/",
+        "label": "Julia Discourse"
+      },
+      {
+        "type": "Zulip",
+        "url": "https://julialang.zulipchat.com/register/",
+        "label": "Julia Zulip"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/mm2kYjB",
+        "label": "Julia Discord"
+      }
+    ],
+    "mentors": [
+      "@sbozzolo","@mortenpi","@fredrikekre","@termi-official","@koehlerson",
+      "@yangmr04","@jgreener64","@rwexler","@apkille","@Krastanov",
+      "@CarloLucibello","@maleadt","@vchuravy","@jpsamaroo",
+      "@fda-tome","@Rabab53","@Datseris","@mforets","@schillic",
+      "@TheCedarPrince","@cncastillo"
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:jsoc@julialang.org",
+        "label": "JSoC Program Administrators"
+      }
+    ],
+    "tip": "Introduce yourself in the #jsoc Slack channel or reach out to jsoc@julialang.org for GSoC inquiries.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T18:22:00.000Z"
   },
   "The Libreswan Project": {
     "org": "The Libreswan Project",

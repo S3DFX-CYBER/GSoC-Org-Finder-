@@ -2483,11 +2483,22 @@
   "The NetBSD Foundation": {
     "org": "The NetBSD Foundation",
     "ideasUrl": "https://wiki.netbsd.org/projects/gsoc/",
-    "channels": [],
+    "channels": [
+      {"type": "Libera Chat",
+        "url": "https://web.libera.chat/#NetBSD-code",
+        "label": "NetBSD Foundation IRC Channel on Libera Chat"
+      }
+      ],
     "mentors": [],
-    "mailingLists": [],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://www.netbsd.org/mailinglists/",
+        "label": "NetBSD Foundation GSoC discussion list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The ns-3 Network Simulator Project": {

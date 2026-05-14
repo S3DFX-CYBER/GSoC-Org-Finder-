@@ -135,7 +135,6 @@ jobs:
               owner, repo, issue_number, assignees: [username]
             });
 
-            // Add program label
             const programLabel = mentionsGSSOC ? 'gssoc26' : mentionsNSOC ? 'nsoc26' : null;
             if (programLabel) {
               await github.rest.issues.addLabels({
@@ -143,11 +142,25 @@ jobs:
               });
             }
 
-            // Success message
+            const existingLabels = (currentIssue.labels || []).map(l => l.name.toLowerCase());
+            const gssocDifficultyLabels = ['level:beginner', 'level:intermediate', 'level:advanced', 'level:critical'];
+            const nsocDifficultyLabels = ['level1', 'level2', 'level3'];
+
+            const hasGssocDifficulty = gssocDifficultyLabels.some(l => existingLabels.includes(l));
+            const hasNsocDifficulty = nsocDifficultyLabels.some(l => existingLabels.includes(l));
+
+            let difficultyNote = '';
+            if (mentionsGSSOC && !hasGssocDifficulty) {
+              difficultyNote = '\n\n⚠️ No GSSoC difficulty label set. A maintainer will add one (`level:beginner`, `level:intermediate`, `level:advanced`, or `level:critical`).';
+            } else if (mentionsNSOC && !hasNsocDifficulty) {
+              difficultyNote = '\n\n⚠️ No NSOC difficulty label set. A maintainer will add one (`level1`, `level2`, or `level3`).';
+            }
+
             await github.rest.issues.createComment({
               owner, repo, issue_number,
               body: `✅ **Assigned @${username}**\n\n` +
                     `🏷️ Program: \`${programLabel || 'Not Specified'}\`\n\n` +
                     `📌 You now have **${activeIssues.length + 1}** active assignment(s).\n` +
-                    `Please work on meaningful contributions and avoid opening many tiny PRs.`
+                    `Please work on meaningful contributions and avoid opening many tiny PRs.` +
+                    difficultyNote
             });

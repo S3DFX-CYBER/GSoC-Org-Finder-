@@ -48,7 +48,13 @@ jobs:
               'bug', 'enhancement', 'feature', 'documentation', 'good first issue',
               'help wanted', 'level1', 'level2', 'level3',
               'gssoc26', 'nsoc26', 'priority:high', 'priority:medium', 'priority:low',
-              'ui', 'backend', 'frontend', 'api', 'security', 'performance'
+              'ui', 'backend', 'frontend', 'api', 'security', 'performance',
+              'level:beginner', 'level:intermediate', 'level:advanced', 'level:critical',
+              'quality:clean', 'quality:exceptional',
+              'type:docs', 'type:testing', 'type:accessibility', 'type:performance',
+              'type:security', 'type:design', 'type:refactor', 'type:devops',
+              'type:bug', 'type:feature',
+              'gssoc:approved', 'gssoc:invalid', 'gssoc:spam', 'gssoc:ai-slop'
             ];
 
             const labelsToAdd = new Set();
@@ -61,9 +67,10 @@ jobs:
 
                 if (issue.pull_request) continue;
 
-                const issueLabels = (issue.labels || []).map(l => l.name.toLowerCase());
+                const issueLabels = (issue.labels || []).map(l => l.name);
                 for (const label of issueLabels) {
-                  if (labelsToSync.includes(label)) {
+                  const lower = label.toLowerCase();
+                  if (labelsToSync.includes(lower) || lower.startsWith('mentor:')) {
                     labelsToAdd.add(label);
                   }
                 }

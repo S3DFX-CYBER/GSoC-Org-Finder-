@@ -461,6 +461,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
       </nav>
     </div>
     
@@ -543,6 +544,10 @@
       <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
+      </a>
+      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        AI Recommender
       </a>
     </div>
     
@@ -708,6 +713,70 @@
     <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
       View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
     </button>
+  </div>
+</section>
+
+<!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
+<section id="ai-recommender" class="px-6 max-w-7xl mx-auto py-20 border-t border-zinc-100 dark:border-zinc-800">
+  <div class="mb-12">
+    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">AI-Powered</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Personalized Org Suggestions</h2>
+    <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Enter your GitHub username or paste your resume to get deterministic AI-style organization recommendations tailored to your skills and experience.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Input Form -->
+    <div class="lg:col-span-4 bg-white dark:bg-[#18181b] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm h-fit">
+      <div class="space-y-5">
+        <div>
+          <label for="aiGhUsername" class="block text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">GitHub Username</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">person</span>
+            <input type="text" id="aiGhUsername" placeholder="e.g. torvalds" class="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
+          </div>
+          <p class="text-[10px] text-zinc-500 mt-1 ml-1">Used to analyze your repo languages and activity.</p>
+        </div>
+
+        <div>
+          <label for="aiResumeText" class="block text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">Resume / Skills</label>
+          <textarea id="aiResumeText" rows="4" placeholder="Paste your resume or list your skills here (e.g. Python, React, Machine Learning)..." class="w-full p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all resize-none"></textarea>
+          <div class="mt-2 flex items-center justify-between">
+            <label class="text-xs text-primary font-bold cursor-pointer hover:underline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt
+              <input type="file" id="aiResumeFile" accept=".txt" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <button id="btnGetRecommendations" class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-sm">auto_awesome</span> Get Recommendations
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div class="lg:col-span-8">
+      <!-- Initial State -->
+      <div id="aiLoadingState" aria-live="polite" class="hidden flex flex-col items-center justify-center py-16 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700">
+        <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-zinc-600 dark:text-zinc-400 font-bold animate-pulse">Analyzing profile & calculating matches...</p>
+      </div>
+      
+      <!-- Error State -->
+      <div id="aiErrorState" aria-live="assertive" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 text-center block">
+        <span class="material-symbols-outlined text-red-500 text-4xl mb-2">error</span>
+        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Analysis Failed</h3>
+        <p id="aiErrorMsg" class="text-red-600 dark:text-red-300 text-sm"></p>
+      </div>
+
+      <!-- Results Container -->
+      <div id="aiResultsContainer" class="org-grid w-full">
+        <div class="flex flex-col items-center justify-center py-20 text-center text-zinc-400 dark:text-zinc-500">
+          <span class="material-symbols-outlined text-6xl mb-4 opacity-50">magic_button</span>
+          <p class="font-bold">Provide your details to see personalized matches.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1196,7 +1265,7 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline'];
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
     const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
     let currentSection = 'orgs'; // Default
@@ -1325,6 +1394,8 @@
     globalThis.pills = selectedLanguages;
     // Expose matchAllLanguages as a global variable reference (kept in sync below)
     globalThis.matchAllLanguages = matchAllLanguages;
+    globalThis.compareList = compareList;
+    globalThis.bookmarkedSet = bookmarkedSet;
 
     // Build a LANGUAGE_MAP with display-label keys matching src/js/app.js expectations
     const toDisplayKey = (k) => {
@@ -2589,6 +2660,10 @@ document.addEventListener('keydown', (e) => {
   }
 
 });
+  // Export helpers to global scope
+  globalThis.toggleCompare = toggleCompare;
+  globalThis.toggleBookmark = toggleBookmark;
+  globalThis.openModal = openModal;
 </script>
 
 <!-- Vercel Speed Insights -->
@@ -2697,6 +2772,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-</body>
+<script src="src/js/githubAnalyzer.js"></script>
+<script src="src/js/skillExtractor.js"></script>
+<script src="src/js/recommender.js"></script>
+<script src="src/js/recommendation-ui.js"></script>
 
+</body>
 </html>

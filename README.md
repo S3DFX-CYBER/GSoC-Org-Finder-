@@ -396,6 +396,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Mohit-368"><img src="https://github.com/Mohit-368.png" width="50px" alt="Mohit-368" /></a>
 <a href="https://github.com/diksha78dev"><img src="https://github.com/diksha78dev.png" width="50px" alt="diksha78dev" /></a>
 <a href="https://github.com/Mrigakshi-Rathore"><img src="https://github.com/Mrigakshi-Rathore.png" width="50px" alt="Mrigakshi-Rathore" /></a>
+<a href="https://github.com/itsdakshjain"><img src="https://github.com/itsdakshjain.png" width="50px" alt="itsdakshjain" /></a>
 <!-- GSSOC_MENTORS_END -->
 
 ## We thank all our Contributors for improving this project

@@ -1244,14 +1244,29 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "libssh": {
-    "org": "libssh",
-    "ideasUrl": "https://gitlab.com/libssh/libssh-mirror/-/wikis/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+  "org": "libssh",
+  "ideasUrl": "https://www.libssh.org/development/google-summer-of-code/",
+  "channels": [
+    {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#libssh:matrix.org",
+      "label": "libssh Matrix Room"
+    }
+  ],
+  "mentors": [
+    { "name": "Jakub Jelen", "github": "", "githubUrl": "" },
+    { "name": "Sahana Prasad", "github": "", "githubUrl": "" },
+    { "name": "Eshan Kelkar", "github": "eshan-kelkar", "githubUrl": "https://github.com/eshan-kelkar" }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://www.libssh.org/communication/",
+      "label": "libssh@libssh.org"
+    }
+  ],
+  "status": "ok"
+  "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Liquid Galaxy project": {
     "org": "Liquid Galaxy project",

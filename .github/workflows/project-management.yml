@@ -25,6 +25,9 @@ jobs:
   auto-label-by-path:
     if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
       - name: Auto-label PR by changed file paths
         uses: actions/github-script@v8
@@ -34,6 +37,8 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const prNumber = context.payload.pull_request.number;
+
+            if (typeof prNumber !== 'number' || prNumber <= 0) return;
 
             const { data: files } = await github.rest.pulls.listFiles({
               owner, repo, pull_number: prNumber, per_page: 100
@@ -49,9 +54,11 @@ jobs:
               'docs/': 'area:docs'
             };
 
+            const safeFilenamePattern = /^[\w\-./]+$/;
             const labelsToAdd = new Set();
 
             for (const file of files) {
+              if (!safeFilenamePattern.test(file.filename)) continue;
               for (const [prefix, label] of Object.entries(pathLabels)) {
                 if (file.filename.startsWith(prefix)) {
                   labelsToAdd.add(label);
@@ -77,6 +84,8 @@ jobs:
   issue-project-triage:
     if: github.event_name == 'issues'
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: Auto-triage issues by content
         uses: actions/github-script@v8
@@ -141,6 +150,9 @@ jobs:
   stale-pr-reminder:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      issues: write
     steps:
       - name: Check for stale mentor reviews
         uses: actions/github-script@v8

@@ -9,6 +9,8 @@ on:
     types:
       - opened
       - edited
+  schedule:
+    - cron: '0 */12 * * *'
 
 permissions:
   pull-requests: write
@@ -16,7 +18,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: project-mgmt-${{ github.event.pull_request.number || github.event.issue.number }}
+  group: project-mgmt-${{ github.event.pull_request.number || github.event.issue.number || 'scheduled' }}
   cancel-in-progress: true
 
 jobs:
@@ -94,18 +96,18 @@ jobs:
             const combined = title + ' ' + body;
 
             const areaKeywords = {
-              'area:frontend': ['ui', 'css', 'style', 'button', 'page', 'component', 'layout', 'responsive', 'design'],
-              'area:api': ['api', 'endpoint', 'fetch', 'request', 'response', 'cors', 'proxy'],
-              'area:docs': ['readme', 'documentation', 'docs', 'typo', 'grammar', 'spelling'],
-              'area:devops': ['workflow', 'ci', 'cd', 'action', 'deploy', 'build', 'pipeline'],
-              'area:data': ['data', 'json', 'organizations', 'org list', 'scrape'],
-              'area:performance': ['slow', 'performance', 'speed', 'optimize', 'cache', 'loading']
+              'area:frontend': ['ui component', 'css', 'stylesheet', 'button', 'layout', 'responsive design', 'frontend'],
+              'area:api': ['api endpoint', 'rest api', 'fetch data', 'cors', 'proxy', 'graphql'],
+              'area:docs': ['readme', 'documentation', 'typo in docs', 'grammar fix', 'spelling'],
+              'area:devops': ['workflow', 'ci/cd', 'github action', 'deploy', 'pipeline', 'docker'],
+              'area:data': ['org data', 'json data', 'organizations list', 'scrape', 'dataset'],
+              'area:performance': ['slow loading', 'performance issue', 'optimize', 'cache', 'page speed']
             };
 
             const typeKeywords = {
-              'bug': ['bug', 'broken', 'not working', 'error', 'crash', 'fix', 'issue with'],
-              'enhancement': ['feature', 'add', 'improve', 'enhancement', 'new', 'implement', 'request'],
-              'documentation': ['docs', 'readme', 'documentation', 'typo', 'comment']
+              'bug': ['bug', 'broken', 'not working', 'error message', 'crash', 'regression'],
+              'enhancement': ['feature request', 'enhancement', 'implement', 'add support'],
+              'documentation': ['documentation', 'typo', 'readme update']
             };
 
             const labelsToAdd = new Set();
@@ -137,7 +139,7 @@ jobs:
             }
 
   stale-pr-reminder:
-    if: github.event_name == 'pull_request_target' && github.event.action == 'synchronize'
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - name: Check for stale mentor reviews
@@ -147,24 +149,33 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const prNumber = context.payload.pull_request.number;
 
-            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
-              owner, repo, issue_number: prNumber
-            });
-            const labels = labelData.map(l => l.name.toLowerCase());
-
-            if (!labels.includes('mentor-review-requested')) return;
-            if (labels.includes('gssoc-mentor-approved')) return;
-
-            const { data: pr } = await github.rest.pulls.get({
-              owner, repo, pull_number: prNumber
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo, state: 'open', per_page: 100
             });
 
-            const createdAt = new Date(pr.created_at);
-            const hoursSinceCreation = (new Date() - createdAt) / (1000 * 60 * 60);
+            for (const pr of prs) {
+              const prNumber = pr.number;
+              const prLabels = (pr.labels || []).map(l => l.name.toLowerCase());
 
-            if (hoursSinceCreation > 48) {
+              if (!prLabels.includes('mentor-review-requested')) continue;
+              if (prLabels.includes('gssoc-mentor-approved')) continue;
+
+              const { data: events } = await github.rest.issues.listEvents({
+                owner, repo, issue_number: prNumber, per_page: 100
+              });
+
+              const labelEvent = events
+                .filter(e => e.event === 'labeled' && e.label && e.label.name === 'mentor-review-requested')
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+              if (!labelEvent) continue;
+
+              const labeledAt = new Date(labelEvent.created_at);
+              const hoursSinceLabeled = (new Date() - labeledAt) / (1000 * 60 * 60);
+
+              if (hoursSinceLabeled <= 48) continue;
+
               const { data: requested } = await github.rest.pulls.listRequestedReviewers({
                 owner, repo, pull_number: prNumber
               });

@@ -68,9 +68,8 @@ function extractSkills(text) {
     
     if (isSingleChar) {
       // Harden boundary check for 1-char tokens to prevent "C" matching inside "C++"
-      // Requires standard whitespace/start OR explicitly permitted lead punctuation
-      // Followed by lookahead verifying it's not glued to other valid word chars or common operators
-      regexStr = String.raw`(?:^|\s|[(\[])` + escapedSkill + String.raw`(?=$|\s|[.,:;!)])`;
+      // Supports comma-delimited lists like "python,c,java"
+      regexStr = String.raw`(?:^|\s|[(\[,])` + escapedSkill + String.raw`(?=$|\s|[.,:;!)])`;
     } else {
       // Standardized boundaries for full-sized terms
       if (/[a-z0-9]/i.test(skill[0])) {
@@ -95,9 +94,8 @@ function extractSkills(text) {
     }
   });
   
-  // Dedicated case-sensitive check for "Go" to prevent prose false positives (e.g. "go to market")
-  // Matches "Go" or "GO" as whole words, but NOT if followed by common English verbs/prepositions
-  const goRegex = /\b(Go|GO)\b(?!\s+(to|into|for|ahead|back|on|through|with))/;
+  // Improved Go detector: Case-insensitive to catch "go", but uses negative lookahead to exclude common prose
+  const goRegex = /\bgo\b(?!\s+(to|into|for|ahead|back|on|through|with))/i;
   if (goRegex.test(text)) {
     matchedSkills.add("go");
   }

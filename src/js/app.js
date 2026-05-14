@@ -69,8 +69,9 @@ function updateCountdown() {
   sub.textContent = subText;
   banner.querySelector('.countdown-label').textContent = label;
 }
+let cdTimer;
 updateCountdown();
-const cdTimer = setInterval(updateCountdown, 1000);
+cdTimer = setInterval(updateCountdown, 1000);
 
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE

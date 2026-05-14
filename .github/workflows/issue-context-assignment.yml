@@ -192,17 +192,58 @@ jobs:
             const hasGssocDifficulty = gssocDifficultyLabels.some(l => existingLabels.includes(l));
             const hasNsocDifficulty = nsocDifficultyLabels.some(l => existingLabels.includes(l));
 
+            const issueText = `${(currentIssue.title || '')} ${(currentIssue.body || '')}`.toLowerCase();
+
+            const criticalKeywords = [
+              'security vulnerability', 'critical bug', 'data loss', 'breaking change',
+              'production down', 'zero-day', 'exploit', 'authentication bypass'
+            ];
+            const advancedKeywords = [
+              'architecture', 'optimization', 'security', 'performance',
+              'edge function', 'refactor', 'api', 'caching', 'core feature',
+              'database', 'migration', 'scalability', 'infrastructure'
+            ];
+            const intermediateKeywords = [
+              'feature', 'logic', 'analytics', 'sorting', 'filter',
+              'enhancement', 'improvement', 'integration', 'validation',
+              'component', 'state management', 'responsive'
+            ];
+
+            const hasCritical = criticalKeywords.some(k => issueText.includes(k));
+            const hasAdvanced = advancedKeywords.some(k => issueText.includes(k));
+            const hasIntermediate = intermediateKeywords.some(k => issueText.includes(k));
+
             let difficultyNote = '';
+
             if (mentionsGSSOC && !hasGssocDifficulty) {
+              let gssocLevel = 'level:beginner';
+              if (hasCritical) gssocLevel = 'level:critical';
+              else if (hasAdvanced) gssocLevel = 'level:advanced';
+              else if (hasIntermediate) gssocLevel = 'level:intermediate';
+
+              const oldGssocLabels = existingLabels.filter(l => gssocDifficultyLabels.includes(l));
+              for (const old of oldGssocLabels) {
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number, name: old }); } catch (e) {}
+              }
+
               await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['level:beginner']
+                owner, repo, issue_number, labels: [gssocLevel]
               });
-              difficultyNote = '\n\n🏷️ Auto-assigned difficulty: `level:beginner`. A maintainer may update this to `level:intermediate`, `level:advanced`, or `level:critical`.';
+              difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${gssocLevel}\`. A maintainer may update this.`;
             } else if (mentionsNSOC && !hasNsocDifficulty) {
+              let nsocLevel = 'level1';
+              if (hasAdvanced || hasCritical) nsocLevel = 'level3';
+              else if (hasIntermediate) nsocLevel = 'level2';
+
+              const oldNsocLabels = existingLabels.filter(l => nsocDifficultyLabels.includes(l));
+              for (const old of oldNsocLabels) {
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number, name: old }); } catch (e) {}
+              }
+
               await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['level1']
+                owner, repo, issue_number, labels: [nsocLevel]
               });
-              difficultyNote = '\n\n🏷️ Auto-assigned difficulty: `level1`. A maintainer may update this to `level2` or `level3`.';
+              difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${nsocLevel}\`. A maintainer may update this.`;
             }
 
             await github.rest.issues.createComment({

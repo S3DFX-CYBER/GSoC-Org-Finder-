@@ -13,7 +13,7 @@
 // Shared escaping helper for this script (prevents HTML injection)
 function escapeHtml(value) {
   return String(value)
-    .replaceAll('&', '&amp;')
+    .repl
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')

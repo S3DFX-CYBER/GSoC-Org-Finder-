@@ -96,5 +96,6 @@ jobs:
 
             if (mentorApprovals.size >= 1) {
               await addLabel('gssoc-mentor-approved');
+              await addLabel(`mentor:${reviewer}`);
               core.info('Stage 2 complete: GSSOC mentor approved.');
             }

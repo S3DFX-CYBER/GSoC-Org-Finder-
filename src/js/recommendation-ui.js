@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, ORGS, escapeHtml, openModal, toggleCompare, toggleBookmark, compareList, bookmarkedSet */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
@@ -25,6 +25,35 @@ async function analyzeProfile(username, resume) {
 
   return getRecommendations(skills, githubProfile);
 }
+
+/**
+ * Global image error handler for recommendation cards.
+ * Replaces broken images with a styled initial-based placeholder.
+ */
+globalThis.handleRecImgError = function(img, name) {
+  img.style.display = 'none';
+  const container = img.parentElement;
+  if (container) {
+    const placeholder = container.querySelector('.logo-placeholder');
+    if (placeholder) {
+      placeholder.classList.remove('hidden');
+      placeholder.classList.add('flex');
+      placeholder.textContent = (name || '?')[0].toUpperCase();
+    }
+  }
+};
+
+// Internal safety helper in case globalThis.escapeHtml is not yet initialized
+const safeEscapeHtml = (str) => {
+  if (typeof escapeHtml === 'function') return escapeHtml(str);
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+};
+
 
 function handleBookmarkAction(e, btn) {
   e.stopPropagation();
@@ -189,23 +218,25 @@ document.addEventListener('DOMContentLoaded', () => {
         ? currentBookmarkedSet.has(o.name) 
         : false;
       
-      const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${escapeHtml(r)}</span></li>`).join('');
+      const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`).join('');
       
       let matchedSkillsHtml = '';
       if (rec.matchedSkills.length > 0) {
-         const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${escapeHtml(s)}</span>`).join('');
+         const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`).join('');
          matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
       }
 
+
       // Defined explicitly outside string to eliminate linting issues with nested template literals
       const logoHtml = logoUrl 
-        ? `<img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(o.name)}" alt="${escapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="typeof handleImgError === 'function' ? handleImgError(this, this.dataset.orgName) : (this.style.display='none')">
+        ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
-        : `<div class="text-primary font-bold text-xl font-headline">${escapeHtml(o.name[0] || '?')}</div>`;
+        : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
+
 
       return `
       <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
-               data-org-name="${escapeHtml(o.name)}">
+               data-org-name="${safeEscapeHtml(o.name)}">
         
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
@@ -220,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div class="flex items-center gap-2 mt-2">
              <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${escapeHtml(o.name)}" 
+                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
                      title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
                 <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
              </button>
@@ -229,10 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Body Text & Category -->
         <div class="flex-1">
-          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${escapeHtml(o.name)}</h3>
-          <span class="category-tag inline-block mb-3">${escapeHtml((o.cat || 'Other').toUpperCase())}</span>
+          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
+          <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
           
-          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${escapeHtml(o.desc || '')}</p>
+          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
 
           <!-- Insights Box -->
           <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
@@ -245,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Bottom: Action Bar -->
         <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${escapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
+          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           

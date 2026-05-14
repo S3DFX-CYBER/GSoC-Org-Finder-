@@ -82,7 +82,7 @@ jobs:
             let s1Icon = '⏳', s1Text = 'Waiting for automated checks';
             if (stage1Passed) {
               s1Icon = '✅'; s1Text = 'All automated checks passed';
-            } else if (dcoMissing || aiSlop) {
+            } else if (dcoMissing || aiSlop || gssocSpam || gssocInvalid) {
               s1Icon = '❌'; s1Text = 'Failed — fix required';
             }
 

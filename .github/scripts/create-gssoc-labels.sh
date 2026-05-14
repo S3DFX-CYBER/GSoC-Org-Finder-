@@ -45,7 +45,7 @@ upsert_label() {
       --color "$color" \
       --description "$description" \
       "${REPO_ARG[@]}" \
-      >/dev/null 2>&1 || true
+      >/dev/null 2>&1
   else
     printf '  +  created  %s\n' "$name"
     gh label create "$name" \

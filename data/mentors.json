@@ -2960,15 +2960,41 @@
   },
   "Zulip": {
     "org": "Zulip",
-    "ideasUrl": "https://github.com/zulip/zulip/wiki/GSoC-2026",
+    "ideasUrl": "https://zulip.readthedocs.io/en/latest/outreach/gsoc.html",
     "channels": [
+      {
+        "type": "Chat",
+        "url": "https://chat.zulip.org/",
+        "label": "Official GSoC Chat"
+      },
       {
         "type": "Zulip",
         "url": "https://zulip.com/development-community/",
         "label": "development community chat"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Prakhar Pratyush",
+        "github": "prakhar1144",
+        "githubUrl": "https://github.com/prakhar1144"
+      },
+      {
+        "name": "Tim Abbott",
+        "github": "timabbott",
+        "githubUrl": "https://github.com/timabbott"
+      },
+      {
+        "name": "Lauryn Menard",
+        "github": "laurynmm",
+        "githubUrl": "https://github.com/laurynmm"
+      },
+      {
+        "name": "Aman Agrawal",
+        "github": "amanagr",
+        "githubUrl": "https://github.com/amanagr"
+      }
+    ],
     "mailingLists": [],
     "tip": "Post a new topic in the GSoC stream with your background and interest.",
     "status": "ok",

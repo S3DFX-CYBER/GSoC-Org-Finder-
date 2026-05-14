@@ -108,6 +108,21 @@ const AN={
 };
 AN.trackVisit();
 
+// Restore filters from URL query parameters on page load
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.size > 0) {
+    selectedCategory = params.get("category") || "";
+    selectedLanguage = params.get("language") || "";
+    selectedYears = params.get("years") || "";
+    selectedCompetition = params.get("competition") || "";
+    selectedSort = params.get("sort") || "";
+    searchInput.value = params.get("search") || "";
+
+    applyFilters(); // refresh org list
+  }
+});
+
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION
 // ══════════════════════════════════════════════
@@ -202,6 +217,30 @@ function openAnalytics(){
 function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn();}
 function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow='';}
 
+// Add "Share this search" button next to Reset Filters
+const shareBtn = document.createElement("button");
+shareBtn.textContent = "Share this search";
+shareBtn.className = "share-btn";
+
+shareBtn.onclick = () => {
+  const filters = {
+    category: selectedCategory || "",
+    language: selectedLanguage || "",
+    years: selectedYears || "",
+    competition: selectedCompetition || "",
+    sort: selectedSort || "",
+    search: searchInput.value.trim() || ""
+  };
+
+  const params = new URLSearchParams(filters).toString();
+  const shareUrl = `${window.location.origin}?${params}`;
+
+  navigator.clipboard.writeText(shareUrl);
+  alert("Search link copied!");
+};
+
+document.querySelector("#filter-bar").appendChild(shareBtn);
+
 // ══════════════════════════════════════════════
 // GITHUB API
 // ══════════════════════════════════════════════
@@ -217,6 +256,14 @@ globalThis.pills = pills;
 globalThis.matchAllLanguages = matchAllLanguages;
 let filteredOrgs=[]; // for keyboard nav
 let focusedIdx=-1;
+
+// Filter state variables
+let selectedCategory = "";
+let selectedLanguage = "";
+let selectedYears = "";
+let selectedCompetition = "";
+let selectedSort = "";
+const searchInput = document.getElementById("searchInput");
 
 async function checkAPI(){
   try{

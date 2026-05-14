@@ -153,6 +153,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 /* ── GRID ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-bottom:60px}
 
+/* Share This Search Button */
+.share-btn {
+  background-color: var(--orange-deep);
+  color: var(--white);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.share-btn:hover {
+  background-color: var(--orange-pale);
+}
+
 /* ── CARD ── */
 .org-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;position:relative;overflow:hidden;animation:fadeUp .25s ease forwards;transition:border-color .18s,box-shadow .18s,transform .15s,background .3s}
 .org-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--orange),#FBBC04);opacity:0;transition:opacity .2s}

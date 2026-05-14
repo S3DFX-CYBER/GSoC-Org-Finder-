@@ -480,7 +480,7 @@
       <!-- HELP BUTTON -->
       <button id="helpBtn"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        title="Keyboard shortcuts (?)">
+        aria-label="Open help dialog" title="Keyboard shortcuts (?)">
     
         <span class="material-symbols-outlined text-zinc-600">
           help
@@ -515,7 +515,7 @@
         </div>
         <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
       </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+      <button onclick="toggleMenu()" aria-label="Close menu panel" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
         <span class="material-symbols-outlined text-zinc-600">close</span>
       </button>
     </div>
@@ -576,7 +576,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" aria-label="Search organizations" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -660,7 +660,7 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
         <option value="programming">Programming</option>
@@ -672,13 +672,13 @@
         <option value="media">Media</option>
         <option value="other">Other</option>
       </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="complexityFilter" aria-label="Filter by complexity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="all">Complexity: All</option>
         <option value="beginner">Beginner</option>
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
-      <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -903,9 +903,9 @@
       <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
         <label class="relative block">
           <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
-          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
+          <input id="mentorSearchInput" type="text" aria-label="Search mentors" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
         </label>
-        <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
+        <select id="mentorChannelFilter" aria-label="Filter mentor channels" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
           <option value="all">All channels</option>
           <option value="Slack">Slack</option>
           <option value="Zulip">Zulip</option>
@@ -1112,7 +1112,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" aria-label="Close organization modal" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1165,7 +1165,7 @@
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" aria-label="Close compare modal" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
       <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
@@ -2679,7 +2679,7 @@ document.addEventListener('keydown', (e) => {
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" aria-label="Close help modal" onclick="closeHelpModal()">
       <span class="material-symbols-outlined">close</span>
     </button>
 

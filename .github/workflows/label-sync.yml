@@ -44,14 +44,27 @@ jobs:
               return match ? parseInt(match[1], 10) : null;
             }).filter(Boolean);
 
-            const labelsToSync = [
+            const commonLabels = [
               'bug', 'enhancement', 'feature', 'documentation', 'good first issue',
-              'help wanted', 'level1', 'level2', 'level3',
-              'gssoc26', 'nsoc26', 'priority:high', 'priority:medium', 'priority:low',
+              'help wanted', 'gssoc26', 'nsoc26',
+              'priority:high', 'priority:medium', 'priority:low',
               'ui', 'backend', 'frontend', 'api', 'security', 'performance'
             ];
 
+            const nsocLabels = ['level1', 'level2', 'level3'];
+
+            const gssocLabels = [
+              'level:beginner', 'level:intermediate', 'level:advanced', 'level:critical',
+              'quality:clean', 'quality:exceptional',
+              'type:docs', 'type:testing', 'type:accessibility', 'type:performance',
+              'type:security', 'type:design', 'type:refactor', 'type:devops',
+              'type:bug', 'type:feature',
+              'gssoc:approved', 'gssoc:invalid', 'gssoc:spam', 'gssoc:ai-slop'
+            ];
+
             const labelsToAdd = new Set();
+            let detectedGssoc = false;
+            let detectedNsoc = false;
 
             for (const issueNum of issueNumbers) {
               try {
@@ -61,9 +74,39 @@ jobs:
 
                 if (issue.pull_request) continue;
 
-                const issueLabels = (issue.labels || []).map(l => l.name.toLowerCase());
+                const issueLabels = (issue.labels || []).map(l => l.name);
                 for (const label of issueLabels) {
-                  if (labelsToSync.includes(label)) {
+                  const lower = label.toLowerCase();
+                  if (lower === 'gssoc26') detectedGssoc = true;
+                  if (lower === 'nsoc26') detectedNsoc = true;
+                }
+
+                for (const label of issueLabels) {
+                  const lower = label.toLowerCase();
+                  if (commonLabels.includes(lower)) {
+                    labelsToAdd.add(label);
+                  }
+                }
+              } catch (e) {
+                core.info(`Could not fetch issue #${issueNum}: ${e?.message || e}`);
+              }
+            }
+
+            for (const issueNum of issueNumbers) {
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner, repo, issue_number: issueNum
+                });
+
+                if (issue.pull_request) continue;
+
+                const issueLabels = (issue.labels || []).map(l => l.name);
+                for (const label of issueLabels) {
+                  const lower = label.toLowerCase();
+                  if (detectedGssoc && (gssocLabels.includes(lower) || lower.startsWith('mentor:'))) {
+                    labelsToAdd.add(label);
+                  }
+                  if (detectedNsoc && nsocLabels.includes(lower)) {
                     labelsToAdd.add(label);
                   }
                 }

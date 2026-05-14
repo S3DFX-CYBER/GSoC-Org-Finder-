@@ -199,7 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Defined explicitly outside string to eliminate linting issues with nested template literals
       const logoHtml = logoUrl 
-        ? `<img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(o.name)}" alt="${escapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="typeof handleImgError === 'function' ? handleImgError(this, this.dataset.orgName) : (this.style.display='none')">`
+        ? `<img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(o.name)}" alt="${escapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="typeof handleImgError === 'function' ? handleImgError(this, this.dataset.orgName) : (this.style.display='none')">
+           <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
         : `<div class="text-primary font-bold text-xl font-headline">${escapeHtml(o.name[0] || '?')}</div>`;
 
       return `

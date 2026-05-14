@@ -688,6 +688,10 @@ function toggleBookmark(event, orgIdx) {
   else saved.splice(idx, 1);
   localStorage.setItem('bookmarks', JSON.stringify(saved));
   applyFilters();
+  // Notify the Watchlist panel (index.html inline script) about the change so
+  // renderWatchlist() and updateAIInsights() stay in sync across both bookmark
+  // systems without tight coupling between the two scripts.
+  document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail: { name: orgName } }));
 }
 
 function isBookmarked(orgName) {

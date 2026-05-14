@@ -124,15 +124,15 @@ function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchRe
 function calculateActivityScore(profile, org, matchReasons) {
     if (!profile) return 5; // Baseline score with no specific reasons
 
-    const userAct = profile.activity;
-    const orgAct = org._gh ? org._gh.activity : 'low';
+    const userAct = (profile.activity || 'low').toLowerCase();
+    const orgAct = (org._gh?.activity || org.activity || 'low').toLowerCase();
     
-    if (userAct === 'high' && orgAct === 'active') {
+    if (userAct === 'high' && (orgAct === 'active' || orgAct === 'high')) {
       matchReasons.push(`Both you and this org are highly active`);
       return 15;
     } 
     
-    if (userAct === 'medium' && orgAct === 'moderate') {
+    if (userAct === 'medium' && (orgAct === 'moderate' || orgAct === 'medium')) {
       matchReasons.push(`Good match for moderate activity levels`);
       return 15;
     }
@@ -144,6 +144,7 @@ function calculateActivityScore(profile, org, matchReasons) {
 
     return 5;
 }
+
 
 function calculateExperienceScore(profile, org, matchReasons) {
     let delta = 0;

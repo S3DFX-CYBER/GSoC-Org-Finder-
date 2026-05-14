@@ -591,8 +591,35 @@
         "label": "CRIU Gitter"
       }
     ],
-    "mentors": [],
-    "mailingLists": [],
+    "mentors": [
+      {
+        "name": "Adrian Reber",
+        "github": "adrianreber",
+        "githubUrl": "https://github.com/adrianreber"
+      },
+      {
+        "name": "Radostin Stoyanov",
+        "github": "rst0git",
+        "githubUrl": "https://github.com/rst0git"
+      },
+      {
+        "name": "Pavel Tikhomirov",
+        "github": "Snorch",
+        "githubUrl": "https://github.com/Snorch"
+      },
+      {
+        "name": "Alexander Mikhalitsyn",
+        "github": "mihalicyn",
+        "githubUrl": "https://github.com/mihalicyn"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing List",
+        "url": "mailto:criu@openvz.org",
+        "label": "criu@openvz.org"
+      }
+    ],
     "tip": "Clone and build CRIU locally, and run a simple checkpoint/restore test before reaching out.",
     "status": "ok",
     "lastFetched": "2026-05-14T20:00:00.000Z"

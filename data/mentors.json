@@ -584,12 +584,18 @@
   "CRIU": {
     "org": "CRIU",
     "ideasUrl": "https://github.com/checkpoint-restore/criu/wiki/GSoC-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/checkpoint-restore/criu",
+        "label": "CRIU Gitter"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Clone and build CRIU locally, and run a simple checkpoint/restore test before reaching out.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "Cuneiform Digital Library Initiative (CDLI)": {
     "org": "Cuneiform Digital Library Initiative (CDLI)",

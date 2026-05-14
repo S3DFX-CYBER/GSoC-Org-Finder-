@@ -34,7 +34,7 @@ When contributing, avoid introducing libraries, frameworks, bundlers, or unneces
 
 ## Architecture
 
-The project is built using **Vanilla HTML/CSS/JavaScript + Vercel Edge Functions**.
+The project is built using **Vanilla HTML/CSS/JavaScript + Vercel Edge Functions**. For a deeper dive into the system overview and internal data flows, see the **[Architecture Documentation](docs/ARCHITECTURE.md)**.
 
 ### Core Stack
 

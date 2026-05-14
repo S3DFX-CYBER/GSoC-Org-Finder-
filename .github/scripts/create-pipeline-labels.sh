@@ -59,7 +59,7 @@ upsert_label() {
       --color "$color" \
       --description "$description" \
       "${REPO_ARG[@]}" \
-      >/dev/null 2>&1 || true
+      >/dev/null 2>&1
 
   else
 
@@ -143,4 +143,4 @@ upsert_label \
 echo ""
 echo "✅ Pipeline lifecycle labels synchronized successfully."
 echo ""
-echo "Existing non-pipeline labels were intentionally not modified."
+echo "Run .github/scripts/create-gssoc-labels.sh to sync GSSoC labels (difficulty, quality, type bonus, validation, mentor attribution)."

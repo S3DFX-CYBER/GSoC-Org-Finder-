@@ -50,10 +50,12 @@ jobs:
 
             const dcoVerified = labels.includes('dco-verified');
             const dcoMissing = labels.includes('dco-missing');
-            const aiSlop = labels.includes('ai-slop');
+            const aiSlop = labels.includes('ai-slop') || labels.includes('gssoc:ai-slop');
             const duplicatePR = labels.includes('possible-duplicate-pr');
+            const gssocSpam = labels.includes('gssoc:spam');
+            const gssocInvalid = labels.includes('gssoc:invalid');
 
-            const stage1Passed = dcoVerified && !dcoMissing && !aiSlop;
+            const stage1Passed = dcoVerified && !dcoMissing && !aiSlop && !gssocSpam && !gssocInvalid;
 
             async function addLabel(name) {
               try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [name] }); } catch (e) { core.warning(`Failed adding label '${name}': ${e?.message || e}`); }
@@ -72,14 +74,15 @@ jobs:
 
             const mentorApproved = labels.includes('gssoc-mentor-approved') || labels.includes('mentor-approved');
             const reviewerApproved = labels.includes('review-approved');
+            const gssocApproved = labels.includes('gssoc:approved');
             const stage2Passed = isNSOC ? stage1Passed : (mentorApproved || reviewerApproved);
-            const paApproved = labels.includes('pa-approved');
+            const paApproved = labels.includes('pa-approved') || gssocApproved;
             const mergeReady = labels.includes('merge-ready');
 
             let s1Icon = '⏳', s1Text = 'Waiting for automated checks';
             if (stage1Passed) {
               s1Icon = '✅'; s1Text = 'All automated checks passed';
-            } else if (dcoMissing || aiSlop) {
+            } else if (dcoMissing || aiSlop || gssocSpam || gssocInvalid) {
               s1Icon = '❌'; s1Text = 'Failed — fix required';
             }
 
@@ -111,6 +114,8 @@ jobs:
             if (dcoMissing) details.push('DCO sign-off missing');
             if (aiSlop) details.push('AI/Slop flagged');
             if (duplicatePR) details.push('Possible duplicate PR');
+            if (gssocSpam) details.push('Marked as GSSoC spam');
+            if (gssocInvalid) details.push('Marked as GSSoC invalid');
 
             const typeBadge = isGSSOC
               ? '> 🟢 **GSSOC PR**'

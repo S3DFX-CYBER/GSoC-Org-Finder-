@@ -27,6 +27,7 @@ No sign-up. No install. No build step. Just open and explore.
 - [Deploy Your Own](#-deploy-your-own)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+- [Architecture](#-architecture)
 - [GSSoC Mentors](#-gssoc-mentors)
 - [Key Dates](#-gsoc-2026-key-dates)
 - [Tips for Users](#-tips-for-users)
@@ -241,7 +242,11 @@ Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
 | NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) |
 | General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
 
-For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md).
+For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md) and the [Architecture Overview](docs/ARCHITECTURE.md).
+
+## 🏗️ Architecture
+
+For a detailed explanation of the project's internal structure, data flow, and API integration, please refer to the **[Architecture Documentation](docs/ARCHITECTURE.md)**.
 
 ### Quick Start
 

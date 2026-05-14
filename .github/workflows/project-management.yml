@@ -1,0 +1,182 @@
+name: 📋 Project Management
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+  issues:
+    types:
+      - opened
+      - edited
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: project-mgmt-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  auto-label-by-path:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label PR by changed file paths
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.payload.pull_request.number;
+
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner, repo, pull_number: prNumber, per_page: 100
+            });
+
+            const pathLabels = {
+              'src/': 'area:frontend',
+              'api/': 'area:api',
+              'data/': 'area:data',
+              '.github/workflows/': 'area:devops',
+              '.github/': 'area:config',
+              'agent/': 'area:automation',
+              'docs/': 'area:docs'
+            };
+
+            const labelsToAdd = new Set();
+
+            for (const file of files) {
+              for (const [prefix, label] of Object.entries(pathLabels)) {
+                if (file.filename.startsWith(prefix)) {
+                  labelsToAdd.add(label);
+                }
+              }
+            }
+
+            if (files.length > 20) {
+              labelsToAdd.add('large-pr');
+            }
+
+            if (labelsToAdd.size > 0) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: prNumber,
+                  labels: Array.from(labelsToAdd)
+                });
+              } catch (e) {
+                core.warning(`Failed to add path labels: ${e?.message || e}`);
+              }
+            }
+
+  issue-project-triage:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-triage issues by content
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue = context.payload.issue;
+            const issue_number = issue.number;
+
+            if (issue.user.type === 'Bot') return;
+            if (issue.pull_request) return;
+
+            const title = (issue.title || '').toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const combined = title + ' ' + body;
+
+            const areaKeywords = {
+              'area:frontend': ['ui', 'css', 'style', 'button', 'page', 'component', 'layout', 'responsive', 'design'],
+              'area:api': ['api', 'endpoint', 'fetch', 'request', 'response', 'cors', 'proxy'],
+              'area:docs': ['readme', 'documentation', 'docs', 'typo', 'grammar', 'spelling'],
+              'area:devops': ['workflow', 'ci', 'cd', 'action', 'deploy', 'build', 'pipeline'],
+              'area:data': ['data', 'json', 'organizations', 'org list', 'scrape'],
+              'area:performance': ['slow', 'performance', 'speed', 'optimize', 'cache', 'loading']
+            };
+
+            const typeKeywords = {
+              'bug': ['bug', 'broken', 'not working', 'error', 'crash', 'fix', 'issue with'],
+              'enhancement': ['feature', 'add', 'improve', 'enhancement', 'new', 'implement', 'request'],
+              'documentation': ['docs', 'readme', 'documentation', 'typo', 'comment']
+            };
+
+            const labelsToAdd = new Set();
+
+            for (const [label, keywords] of Object.entries(areaKeywords)) {
+              if (keywords.some(k => combined.includes(k))) {
+                labelsToAdd.add(label);
+              }
+            }
+
+            for (const [label, keywords] of Object.entries(typeKeywords)) {
+              if (keywords.some(k => combined.includes(k))) {
+                labelsToAdd.add(label);
+                break;
+              }
+            }
+
+            const existingLabels = (issue.labels || []).map(l => l.name.toLowerCase());
+            const newLabels = Array.from(labelsToAdd).filter(l => !existingLabels.includes(l));
+
+            if (newLabels.length > 0) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number, labels: newLabels
+                });
+              } catch (e) {
+                core.warning(`Failed to add triage labels: ${e?.message || e}`);
+              }
+            }
+
+  stale-pr-reminder:
+    if: github.event_name == 'pull_request_target' && github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for stale mentor reviews
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.payload.pull_request.number;
+
+            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: prNumber
+            });
+            const labels = labelData.map(l => l.name.toLowerCase());
+
+            if (!labels.includes('mentor-review-requested')) return;
+            if (labels.includes('gssoc-mentor-approved')) return;
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner, repo, pull_number: prNumber
+            });
+
+            const createdAt = new Date(pr.created_at);
+            const hoursSinceCreation = (new Date() - createdAt) / (1000 * 60 * 60);
+
+            if (hoursSinceCreation > 48) {
+              const { data: requested } = await github.rest.pulls.listRequestedReviewers({
+                owner, repo, pull_number: prNumber
+              });
+
+              const pendingReviewers = (requested.users || []).map(u => `@${u.login}`);
+
+              if (pendingReviewers.length > 0) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: prNumber,
+                  body: `⏰ **Reminder:** This PR has been awaiting mentor review for over 48 hours.\n\n` +
+                    `Pending reviewers: ${pendingReviewers.join(', ')}\n\n` +
+                    `If reviewers are unavailable, a maintainer may reassign.`
+                });
+              }
+            }

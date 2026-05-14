@@ -451,22 +451,34 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
+        "label": "#cncf-mentoring Slack"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-15T00:00:00.000Z"
   },
   "CRIU": {
     "org": "CRIU",
     "ideasUrl": "https://github.com/checkpoint-restore/criu/wiki/GSoC-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/checkpoint-restore/criu",
+        "label": "CRIU Gitter"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Clone and build CRIU locally, and run a simple checkpoint/restore test before reaching out.",
+    "status": "ok",
+    "lastFetched": "2026-05-15T00:00:00.000Z"
   },
   "Cuneiform Digital Library Initiative (CDLI)": {
     "org": "Cuneiform Digital Library Initiative (CDLI)",
@@ -481,12 +493,29 @@
   "D Language Foundation": {
     "org": "D Language Foundation",
     "ideasUrl": "https://github.com/dlang/projects/blob/master/gsoc/gsoc-2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/tw2c6mcKAp",
+        "label": "D Community Discord"
+      },
+      {
+        "type": "Forum",
+        "url": "https://forum.dlang.org/",
+        "label": "Official D Forums"
+      }
+    ],
     "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:social@dlang.org",
+        "label": "General Assistance Email"
+      }
+    ],
+    "tip": "Engage early in the forums or Discord. Check project descriptions for specific mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "Dart": {
     "org": "Dart",

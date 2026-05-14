@@ -4,7 +4,7 @@
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
-(function(){
+(function () {
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
   updateThemeIcon();
@@ -20,15 +20,15 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
-globalThis.toggleTheme = function(){
+globalThis.toggleTheme = function () {
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateThemeIcon();
 };
 
-function updateThemeIcon(){
+function updateThemeIcon() {
   const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
-  if(icon){
+  if (icon) {
     const isDark = document.documentElement.classList.contains('dark');
     icon.textContent = isDark ? 'light_mode' : 'dark_mode';
   }
@@ -37,77 +37,80 @@ function updateThemeIcon(){
 // ══════════════════════════════════════════════
 // COUNTDOWN
 // ══════════════════════════════════════════════
-const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
-const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
-function updateCountdown(){
-  const now=Date.now();
-  const banner=document.getElementById('countdownBanner');
-  const sub=document.getElementById('countdownSub');
-  let target=OPEN_DATE.getTime();
-  let label='📅 GSoC 2026 Applications Open In';
-  let subText='Until March 16, 2026';
-  if(now>=OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
-    target=CLOSE_DATE.getTime();
-    label='🚀 Applications Are Open — Closes In';
-    subText='Until April 8, 2026';
-    banner.style.background='linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
-    banner.style.borderBottomColor='rgba(0,135,90,.3)';
-    banner.style.color='var(--green)';
-  } else if(now>=CLOSE_DATE.getTime()){
-    banner.innerHTML='<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
-    clearInterval(cdTimer);return;
+const OPEN_DATE = new Date('2026-03-16T00:00:00Z');
+const CLOSE_DATE = new Date('2026-04-08T18:00:00Z');
+function updateCountdown() {
+  const now = Date.now();
+  const banner = document.getElementById('countdownBanner');
+  const sub = document.getElementById('countdownSub');
+  let target = OPEN_DATE.getTime();
+  let label = '📅 GSoC 2026 Applications Open In';
+  let subText = 'Until March 16, 2026';
+  if (now >= OPEN_DATE.getTime() && now < CLOSE_DATE.getTime()) {
+    target = CLOSE_DATE.getTime();
+    label = '🚀 Applications Are Open — Closes In';
+    subText = 'Until April 8, 2026';
+    banner.style.background = 'linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
+    banner.style.borderBottomColor = 'rgba(0,135,90,.3)';
+    banner.style.color = 'var(--green)';
+  } else if (now >= CLOSE_DATE.getTime()) {
+    banner.innerHTML = '<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
+    clearInterval(cdTimer); return;
   }
-  const diff=Math.max(0,target-now);
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  document.getElementById('cdDays').textContent=String(d).padStart(2,'0');
-  document.getElementById('cdHours').textContent=String(h).padStart(2,'0');
-  document.getElementById('cdMins').textContent=String(m).padStart(2,'0');
-  document.getElementById('cdSecs').textContent=String(s).padStart(2,'0');
-  sub.textContent=subText;
-  banner.querySelector('.countdown-label').textContent=label;
+  const diff = Math.max(0, target - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cdDays').textContent = String(d).padStart(2, '0');
+  document.getElementById('cdHours').textContent = String(h).padStart(2, '0');
+  document.getElementById('cdMins').textContent = String(m).padStart(2, '0');
+  document.getElementById('cdSecs').textContent = String(s).padStart(2, '0');
+  sub.textContent = subText;
+  banner.querySelector('.countdown-label').textContent = label;
 }
 updateCountdown();
-const cdTimer=setInterval(updateCountdown,1000);
+const cdTimer = setInterval(updateCountdown, 1000);
 
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
-const AN={
-  g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d;}catch{return d;}},
-  s(k,v){
-    try{
-      localStorage.setItem('gaf_'+k,JSON.stringify(v));
-    }catch(err){
-      console.warn('Analytics storage write failed for key:',k,err);
+const AN = {
+  g(k, d) { try { return JSON.parse(localStorage.getItem('gaf_' + k)) ?? d; } catch { return d; } },
+  s(k, v) {
+    try {
+      localStorage.setItem('gaf_' + k, JSON.stringify(v));
+    } catch (err) {
+      console.warn('Analytics storage write failed for key:', k, err);
     }
   },
-  inc(k){this.s(k,(this.g(k,0)+1));},
-  push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max));},
-  today(){return new Date().toISOString().slice(0,10);},
-  trackVisit(){
+  inc(k) { this.s(k, (this.g(k, 0) + 1)); },
+  push(k, v, max = 20) { const a = this.g(k, []); a.unshift(v); this.s(k, a.slice(0, max)); },
+  today() { return new Date().toISOString().slice(0, 10); },
+  trackVisit() {
     this.inc('total');
-    const td=this.today(),daily=this.g('daily',{});
-    daily[td]=(daily[td]||0)+1;this.s('daily',daily);
-    if(!sessionStorage.getItem('gaf_s'))sessionStorage.setItem('gaf_s',Date.now());
+    const td = this.today(), daily = this.g('daily', {});
+    daily[td] = (daily[td] || 0) + 1; this.s('daily', daily);
+    if (!sessionStorage.getItem('gaf_s')) sessionStorage.setItem('gaf_s', Date.now());
   },
-  trackSearch(t){if(t.length>1){this.inc('searches');this.push('sterms',t.toLowerCase().trim());}},
-  trackCat(c){if(c){this.inc('filters');const cf=this.g('cats',{});cf[c]=(cf[c]||0)+1;this.s('cats',cf);}},
-  trackOrg(n){this.inc('views');const oc=this.g('orgs',{});oc[n]=(oc[n]||0)+1;this.s('orgs',oc);},
-  todayVisits(){return this.g('daily',{})[this.today()]||0;},
-  sessionTime(){
-    const s=sessionStorage.getItem('gaf_s');if(!s)return'—';
-    const sec=Math.floor((Date.now()-parseInt(s))/1000);
-    return sec<60?sec+'s':Math.floor(sec/60)+'m'+(sec%60)+'s';
+  trackSearch(t) { if (t.length > 1) { this.inc('searches'); this.push('sterms', t.toLowerCase().trim()); } },
+  trackCat(c) { if (c) { this.inc('filters'); const cf = this.g('cats', {}); cf[c] = (cf[c] || 0) + 1; this.s('cats', cf); } },
+  trackOrg(n) { this.inc('views'); const oc = this.g('orgs', {}); oc[n] = (oc[n] || 0) + 1; this.s('orgs', oc); },
+  todayVisits() { return this.g('daily', {})[this.today()] || 0; },
+  sessionTime() {
+    const s = sessionStorage.getItem('gaf_s'); if (!s) return '—';
+    const sec = Math.floor((Date.now() - parseInt(s)) / 1000);
+    return sec < 60 ? sec + 's' : Math.floor(sec / 60) + 'm' + (sec % 60) + 's';
   },
-  topCats(){return Object.entries(this.g('cats',{})).sort((a,b)=>b[1]-a[1]).slice(0,6);},
-  topOrgs(){return Object.entries(this.g('orgs',{})).sort((a,b)=>b[1]-a[1]).slice(0,5);},
-  topTerms(){const f={};this.g('sterms',[]).forEach(t=>{f[t]=(f[t]||0)+1;});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,12);}
+  topCats() { return Object.entries(this.g('cats', {})).sort((a, b) => b[1] - a[1]).slice(0, 6); },
+  topOrgs() { return Object.entries(this.g('orgs', {})).sort((a, b) => b[1] - a[1]).slice(0, 5); },
+  topTerms() { const f = {}; this.g('sterms', []).forEach(t => { f[t] = (f[t] || 0) + 1; }); return Object.entries(f).sort((a, b) => b[1] - a[1]).slice(0, 12); }
 };
 AN.trackVisit();
-
+//Fix Add fonts loaded class once font is ready
+document.fonts.ready.then(() => {
+  document.documentElement.classList.add('fonts-loaded');
+});
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION
 // ══════════════════════════════════════════════
@@ -124,25 +127,25 @@ function validateIdeasUrl(ideasUrl) {
   if (!ideasUrl || !ideasUrl.trim()) {
     return null;
   }
-  
+
   try {
     let url = ideasUrl.trim();
-    
+
     // Prepend https:// only if no protocol scheme is present
     // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
     if (!url.includes('://')) {
       url = 'https://' + url;
     }
-    
+
     // Parse and validate URL
     const urlObj = new URL(url);
-    
+
     // Security: Only allow http and https protocols
     // This prevents javascript:, data:, file:, and other potentially dangerous schemes
     if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
       return url;
     }
-    
+
     console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
     return null;
   } catch (e) {
@@ -155,20 +158,20 @@ function validateIdeasUrl(ideasUrl) {
 // ══════════════════════════════════════════════
 // TRENDING
 // ══════════════════════════════════════════════
-function renderTrending(){
-  const top=AN.topOrgs();
-  const sec=document.getElementById('trendingSection');
-  const scroll=document.getElementById('trendingScroll');
-  if(!top.length){sec.style.display='none';return;}
-  sec.style.display='block';
-  scroll.innerHTML=top.map(([name,views],i)=>{
-    const o=ORGS.find(x=>x.name===name);
-    if(!o)return'';
-    return`<div class="trend-card" onclick="openModal(${ORGS.indexOf(o)})">
-      <div class="trend-rank">${escapeHtml(String(i+1))}</div>
+function renderTrending() {
+  const top = AN.topOrgs();
+  const sec = document.getElementById('trendingSection');
+  const scroll = document.getElementById('trendingScroll');
+  if (!top.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  scroll.innerHTML = top.map(([name, views], i) => {
+    const o = ORGS.find(x => x.name === name);
+    if (!o) return '';
+    return `<div class="trend-card" onclick="openModal(${ORGS.indexOf(o)})">
+      <div class="trend-rank">${escapeHtml(String(i + 1))}</div>
       <div class="trend-info">
         <div class="trend-name">${escapeHtml(name)}</div>
-        <div class="trend-views">${escapeHtml(String(views))} view${views!==1?'s':''} · ${escapeHtml(catLabel(o.cat))}</div>
+        <div class="trend-views">${escapeHtml(String(views))} view${views !== 1 ? 's' : ''} · ${escapeHtml(catLabel(o.cat))}</div>
       </div>
     </div>`;
   }).join('');
@@ -177,164 +180,164 @@ function renderTrending(){
 // ══════════════════════════════════════════════
 // ANALYTICS PANEL
 // ══════════════════════════════════════════════
-function openAnalytics(){
-  document.getElementById('aTot').textContent=AN.g('total',0).toLocaleString();
-  document.getElementById('aToday').textContent=AN.todayVisits();
-  document.getElementById('aSearches').textContent=AN.g('searches',0);
-  document.getElementById('aViews').textContent=AN.g('views',0);
-  document.getElementById('aFilters').textContent=AN.g('filters',0);
-  document.getElementById('aTime').textContent=AN.sessionTime();
-  const tc=AN.topCats(),mx=tc[0]?.[1]||1;
-  document.getElementById('catChart').innerHTML=tc.length
-    ?tc.map(([c,n])=>`<div class="bar-row"><span class="bar-lbl">${escapeHtml(catLabel(c))}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mx*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
-    :'<span style="color:var(--muted);font-size:12px">Use category filters to track data</span>';
-  const to=AN.topOrgs(),mo=to[0]?.[1]||1;
-  document.getElementById('orgChart').innerHTML=to.length
-    ?to.map(([o,n])=>`<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${escapeHtml(o.length>16?o.slice(0,16)+'…':o)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/mo*100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
-    :'<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
-  const tt=AN.topTerms();
-  document.getElementById('srchTerms').innerHTML=tt.length
-    ?tt.map(([t,c],i)=>`<span class="sch ${i<3?'hot':''}">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
-    :'<span style="color:var(--muted);font-size:12px">No searches yet</span>';
+function openAnalytics() {
+  document.getElementById('aTot').textContent = AN.g('total', 0).toLocaleString();
+  document.getElementById('aToday').textContent = AN.todayVisits();
+  document.getElementById('aSearches').textContent = AN.g('searches', 0);
+  document.getElementById('aViews').textContent = AN.g('views', 0);
+  document.getElementById('aFilters').textContent = AN.g('filters', 0);
+  document.getElementById('aTime').textContent = AN.sessionTime();
+  const tc = AN.topCats(), mx = tc[0]?.[1] || 1;
+  document.getElementById('catChart').innerHTML = tc.length
+    ? tc.map(([c, n]) => `<div class="bar-row"><span class="bar-lbl">${escapeHtml(catLabel(c))}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n / mx * 100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
+    : '<span style="color:var(--muted);font-size:12px">Use category filters to track data</span>';
+  const to = AN.topOrgs(), mo = to[0]?.[1] || 1;
+  document.getElementById('orgChart').innerHTML = to.length
+    ? to.map(([o, n]) => `<div class="bar-row"><span class="bar-lbl" style="font-size:10px">${escapeHtml(o.length > 16 ? o.slice(0, 16) + '…' : o)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n / mo * 100)}%"></div></div><span class="bar-val">${escapeHtml(String(n))}</span></div>`).join('')
+    : '<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
+  const tt = AN.topTerms();
+  document.getElementById('srchTerms').innerHTML = tt.length
+    ? tt.map(([t, c], i) => `<span class="sch ${i < 3 ? 'hot' : ''}">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
+    : '<span style="color:var(--muted);font-size:12px">No searches yet</span>';
   document.getElementById('anBg').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
-function closeAnEvent(e){if(e.target===document.getElementById('anBg'))closeAn();}
-function closeAn(){document.getElementById('anBg').classList.remove('open');document.body.style.overflow='';}
+function closeAnEvent(e) { if (e.target === document.getElementById('anBg')) closeAn(); }
+function closeAn() { document.getElementById('anBg').classList.remove('open'); document.body.style.overflow = ''; }
 
 // ══════════════════════════════════════════════
 // GITHUB API
 // ══════════════════════════════════════════════
-const API='/api/github';
-const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
-let modalIdx=-1,fetching=false,lastSearch='';
-const pills=new Set();
-const chips=new Set();
-let matchAllLanguages=false; // false = OR (any), true = AND (all)
+const API = '/api/github';
+const cache = JSON.parse(localStorage.getItem('gaf_ghc') || '{}');
+let modalIdx = -1, fetching = false, lastSearch = '';
+const pills = new Set();
+const chips = new Set();
+let matchAllLanguages = false; // false = OR (any), true = AND (all)
 
 // Expose to global scope for HTML onclick handlers and debugging
 globalThis.pills = pills;
 globalThis.matchAllLanguages = matchAllLanguages;
-let filteredOrgs=[]; // for keyboard nav
-let focusedIdx=-1;
+let filteredOrgs = []; // for keyboard nav
+let focusedIdx = -1;
 
-async function checkAPI(){
-  try{
-    const r=await fetch(`${API}?repo=django/django`);
-    const banner=document.getElementById('apiBanner');
-    if(r.ok){
-      banner.className='api-banner api-ok';
-      document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
-      document.getElementById('apiText').textContent='Live stats (stars, forks, good first issues) available for all visitors.';
-      document.getElementById('fetchBtn').style.display='flex';
-    }else{
-      banner.className='api-banner api-warn';
-      document.getElementById('apiStrong').textContent='⚠ API Error';
-      document.getElementById('apiText').textContent='Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
+async function checkAPI() {
+  try {
+    const r = await fetch(`${API}?repo=django/django`);
+    const banner = document.getElementById('apiBanner');
+    if (r.ok) {
+      banner.className = 'api-banner api-ok';
+      document.getElementById('apiStrong').textContent = '✓ GitHub API Connected';
+      document.getElementById('apiText').textContent = 'Live stats (stars, forks, good first issues) available for all visitors.';
+      document.getElementById('fetchBtn').style.display = 'flex';
+    } else {
+      banner.className = 'api-banner api-warn';
+      document.getElementById('apiStrong').textContent = '⚠ API Error';
+      document.getElementById('apiText').textContent = 'Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
     }
-  }catch{
-    document.getElementById('apiStrong').textContent='○ Running Locally';
-    document.getElementById('apiText').textContent='Deploy to Vercel for live GitHub stats.';
+  } catch {
+    document.getElementById('apiStrong').textContent = '○ Running Locally';
+    document.getElementById('apiText').textContent = 'Deploy to Vercel for live GitHub stats.';
   }
 }
 
-async function fetchGH(repo){
-  if(!repo)return null;
-  if(cache[repo]&&Date.now()-cache[repo].ts<3600000)return cache[repo];
-  try{
-    const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
-    if(!r.ok)return null;
-    const d=await r.json();
-    if(d.error)return null;
-    cache[repo]=d;localStorage.setItem('gaf_ghc',JSON.stringify(cache));return d;
-  }catch{return null;}
+async function fetchGH(repo) {
+  if (!repo) return null;
+  if (cache[repo] && Date.now() - cache[repo].ts < 3600000) return cache[repo];
+  try {
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d.error) return null;
+    cache[repo] = d; localStorage.setItem('gaf_ghc', JSON.stringify(cache)); return d;
+  } catch { return null; }
 }
 
-async function fetchGFI(repo){
-  if(!repo)return null;
-  const cacheKey=repo+'__gfi';
-  const hit=cache[cacheKey];
-  if(hit&&Date.now()-hit.ts<3600000&&hit.count!==null&&hit.count!==undefined)return hit.count;
-  try{
-    const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
-    if(!r.ok)return null;
-    const d=await r.json();
-    if(d.gfi===null||d.gfi===undefined)return null;
-    cache[cacheKey]={count:d.gfi,ts:Date.now()};
-    localStorage.setItem('gaf_ghc',JSON.stringify(cache));
+async function fetchGFI(repo) {
+  if (!repo) return null;
+  const cacheKey = repo + '__gfi';
+  const hit = cache[cacheKey];
+  if (hit && Date.now() - hit.ts < 3600000 && hit.count !== null && hit.count !== undefined) return hit.count;
+  try {
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d.gfi === null || d.gfi === undefined) return null;
+    cache[cacheKey] = { count: d.gfi, ts: Date.now() };
+    localStorage.setItem('gaf_ghc', JSON.stringify(cache));
     return d.gfi;
-  }catch{return null;}
+  } catch { return null; }
 }
 
-async function fetchAll(){
-  if(fetching)return; fetching=true;
-  const spin=document.getElementById('fetchSpin'),txt=document.getElementById('fetchTxt'),btn=document.getElementById('fetchBtn');
-  spin.style.display='block';btn.disabled=true;
-  let done=0;
-  for(const o of ORGS){
-    if(o.github){
-      txt.textContent=`${++done}/${ORGS.length}…`;
-      const d=await fetchGH(o.github);if(d)o._gh=d;
-      await new Promise(r=>setTimeout(r,85));
+async function fetchAll() {
+  if (fetching) return; fetching = true;
+  const spin = document.getElementById('fetchSpin'), txt = document.getElementById('fetchTxt'), btn = document.getElementById('fetchBtn');
+  spin.style.display = 'block'; btn.disabled = true;
+  let done = 0;
+  for (const o of ORGS) {
+    if (o.github) {
+      txt.textContent = `${++done}/${ORGS.length}…`;
+      const d = await fetchGH(o.github); if (d) o._gh = d;
+      await new Promise(r => setTimeout(r, 85));
     }
   }
-  spin.style.display='none';btn.disabled=false;txt.textContent='✓ Done';fetching=false;
-  applyFilters();updateStats();
+  spin.style.display = 'none'; btn.disabled = false; txt.textContent = '✓ Done'; fetching = false;
+  applyFilters(); updateStats();
 }
 
-async function fetchModalGH(){
-  const o=ORGS[modalIdx];if(!o?.github)return;
-  document.getElementById('mFetchBtn').textContent='Loading…';
+async function fetchModalGH() {
+  const o = ORGS[modalIdx]; if (!o?.github) return;
+  document.getElementById('mFetchBtn').textContent = 'Loading…';
   delete cache[o.github];
-  delete cache[o.github+'__gfi'];
-  const d=await fetchGH(o.github);
-  if(d){
-    o._gh=d;
-    document.getElementById('ghStars').textContent=fmt(d.stars);
-    document.getElementById('ghForks').textContent=fmt(d.forks);
-    document.getElementById('ghIssues').textContent=fmt(d.issues);
-    document.getElementById('ghCommit').textContent=d.lastCommit;
-    document.getElementById('mFetchBtn').textContent='↻ Refresh';
-    document.getElementById('ghGFI').textContent='…';
-    const gfi=await fetchGFI(o.github);
-    const gfiTxt=gfi!==null?fmt(gfi):'—';
-    document.getElementById('ghGFI').textContent=gfiTxt;
-    if(gfi!==null){
-      o._gh.gfi=gfi;
-      const cells=document.getElementById('mMetrics')?.querySelectorAll('.mv');
-      if(cells&&cells[3])cells[3].textContent=gfiTxt;
+  delete cache[o.github + '__gfi'];
+  const d = await fetchGH(o.github);
+  if (d) {
+    o._gh = d;
+    document.getElementById('ghStars').textContent = fmt(d.stars);
+    document.getElementById('ghForks').textContent = fmt(d.forks);
+    document.getElementById('ghIssues').textContent = fmt(d.issues);
+    document.getElementById('ghCommit').textContent = d.lastCommit;
+    document.getElementById('mFetchBtn').textContent = '↻ Refresh';
+    document.getElementById('ghGFI').textContent = '…';
+    const gfi = await fetchGFI(o.github);
+    const gfiTxt = gfi !== null ? fmt(gfi) : '—';
+    document.getElementById('ghGFI').textContent = gfiTxt;
+    if (gfi !== null) {
+      o._gh.gfi = gfi;
+      const cells = document.getElementById('mMetrics')?.querySelectorAll('.mv');
+      if (cells && cells[3]) cells[3].textContent = gfiTxt;
     }
     applyFilters();
     renderCompareTable();
-  }else document.getElementById('mFetchBtn').textContent='✗ Failed';
+  } else document.getElementById('mFetchBtn').textContent = '✗ Failed';
 }
 
-function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n);}
+function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n); }
 
 // ══════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════
-function yCls(y){return y>=8?'veteran':y>=4?'experienced':'newcomer';}
-function yLbl(y){return y>=8?'🏆 Veteran':y>=4?'⭐ Experienced':'🌱 Newcomer';}
-function yBdg(y){return y>=8?'bv':y>=4?'be':'bn';}
-function cLbl(c){return c==='hot'?'🔥 High':c==='moderate'?'🟡 Moderate':'😎 Low';}
-function cBdg(c){return c==='hot'?'bh':c==='moderate'?'bm':'bc';}
-function aLbl(a){return a==='active'?'⚡ Active':a==='moderate'?'📊 Moderate':a==='low'?'💤 Low':'○ —';}
-function aBdg(a){return a==='active'?'bac':a==='moderate'?'bam':a==='low'?'bal':'bna';}
-function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c;}
-function catBdg(c){return'cb-'+(c||'other');}
+function yCls(y) { return y >= 8 ? 'veteran' : y >= 4 ? 'experienced' : 'newcomer'; }
+function yLbl(y) { return y >= 8 ? '🏆 Veteran' : y >= 4 ? '⭐ Experienced' : '🌱 Newcomer'; }
+function yBdg(y) { return y >= 8 ? 'bv' : y >= 4 ? 'be' : 'bn'; }
+function cLbl(c) { return c === 'hot' ? '🔥 High' : c === 'moderate' ? '🟡 Moderate' : '😎 Low'; }
+function cBdg(c) { return c === 'hot' ? 'bh' : c === 'moderate' ? 'bm' : 'bc'; }
+function aLbl(a) { return a === 'active' ? '⚡ Active' : a === 'moderate' ? '📊 Moderate' : a === 'low' ? '💤 Low' : '○ —'; }
+function aBdg(a) { return a === 'active' ? 'bac' : a === 'moderate' ? 'bam' : a === 'low' ? 'bal' : 'bna'; }
+function catLabel(c) { return { science: 'Science', programming: 'Programming', data: 'Data', web: 'Web', os: 'OS', security: 'Security', media: 'Media', infra: 'Infra', ai: 'AI', dev: 'Dev Tools', other: 'Other' }[c] || c; }
+function catBdg(c) { return 'cb-' + (c || 'other'); }
 
 // ══════════════════════════════════════════════
 // COMPARE
 // ══════════════════════════════════════════════
-const compareSet=new Set(); // stores ORGS indices
+const compareSet = new Set(); // stores ORGS indices
 
-function toggleCompare(idx,e){
-  if(e){e.stopPropagation();}
-  if(compareSet.has(idx)){
+function toggleCompare(idx, e) {
+  if (e) { e.stopPropagation(); }
+  if (compareSet.has(idx)) {
     compareSet.delete(idx);
   } else {
-    if(compareSet.size>=3){showCompareToast('Max 3 orgs for comparison');return;}
+    if (compareSet.size >= 3) { showCompareToast('Max 3 orgs for comparison'); return; }
     compareSet.add(idx);
   }
   updateCompareBadge();
@@ -342,113 +345,113 @@ function toggleCompare(idx,e){
   renderCompareTable();
 }
 
-function toggleCompareFromModal(){
-  if(modalIdx<0)return;
-  toggleCompare(modalIdx,null);
+function toggleCompareFromModal() {
+  if (modalIdx < 0) return;
+  toggleCompare(modalIdx, null);
   updateModalCompareBtn();
 }
 
-function updateModalCompareBtn(){
-  const btn=document.getElementById('mCompareBtn');
-  if(!btn)return;
-  const inSet=compareSet.has(modalIdx);
-  btn.classList.toggle('active',inSet);
-  btn.title=inSet?'Remove from compare':'Add to compare';
-  btn.textContent=inSet?'✓⚖':'⚖️';
+function updateModalCompareBtn() {
+  const btn = document.getElementById('mCompareBtn');
+  if (!btn) return;
+  const inSet = compareSet.has(modalIdx);
+  btn.classList.toggle('active', inSet);
+  btn.title = inSet ? 'Remove from compare' : 'Add to compare';
+  btn.textContent = inSet ? '✓⚖' : '⚖️';
 }
 
-function updateCompareBadge(){
-  const badge=document.getElementById('compareBadge');
-  badge.textContent=compareSet.size;
-  badge.classList.toggle('show',compareSet.size>0);
+function updateCompareBadge() {
+  const badge = document.getElementById('compareBadge');
+  badge.textContent = compareSet.size;
+  badge.classList.toggle('show', compareSet.size > 0);
 }
 
-function openCompare(){
+function openCompare() {
   renderCompareSlots();
   renderCompareTable();
   document.getElementById('compareBg').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
-function closeCompare(){document.getElementById('compareBg').classList.remove('open');document.body.style.overflow='';}
-function closeCompareEv(e){if(e.target===document.getElementById('compareBg'))closeCompare();}
+function closeCompare() { document.getElementById('compareBg').classList.remove('open'); document.body.style.overflow = ''; }
+function closeCompareEv(e) { if (e.target === document.getElementById('compareBg')) closeCompare(); }
 
-function renderCompareSlots(){
-  const arr=[...compareSet].map(i=>ORGS[i]);
-  const slots=document.getElementById('compareSlots');
-  let html='';
-  for(let i=0;i<3;i++){
-    const o=arr[i];
-    if(o){
-      const idx=ORGS.indexOf(o);
-      html+=`<div class="compare-slot filled">
+function renderCompareSlots() {
+  const arr = [...compareSet].map(i => ORGS[i]);
+  const slots = document.getElementById('compareSlots');
+  let html = '';
+  for (let i = 0; i < 3; i++) {
+    const o = arr[i];
+    if (o) {
+      const idx = ORGS.indexOf(o);
+      html += `<div class="compare-slot filled">
         <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
         <span class="slot-name">${escapeHtml(o.name)}</span>
         <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">✕ Remove</button>
       </div>`;
     } else {
-      html+=`<div class="compare-slot"><span class="slot-empty">+ Add org</span><span style="font-size:10px;color:var(--muted)">Click ⚖️ on any card</span></div>`;
+      html += `<div class="compare-slot"><span class="slot-empty">+ Add org</span><span style="font-size:10px;color:var(--muted)">Click ⚖️ on any card</span></div>`;
     }
   }
-  slots.innerHTML=html;
+  slots.innerHTML = html;
 }
 
-function renderCompareTable(){
+function renderCompareTable() {
   renderCompareSlots();
-  const arr=[...compareSet].map(i=>ORGS[i]);
-  const wrap=document.getElementById('compareTableWrap');
-  if(arr.length<2){
-    wrap.innerHTML=`<div class="compare-hint">Select at least 2 organizations using the ⚖️ button on cards to compare them here.</div>`;
+  const arr = [...compareSet].map(i => ORGS[i]);
+  const wrap = document.getElementById('compareTableWrap');
+  if (arr.length < 2) {
+    wrap.innerHTML = `<div class="compare-hint">Select at least 2 organizations using the ⚖️ button on cards to compare them here.</div>`;
     return;
   }
 
-  const compScore={hot:3,moderate:2,chill:1};
-  const rows=[
-    {label:'Category',    vals:arr.map(o=>catLabel(o.cat)), type:'text'},
-    {label:'GSoC Years',  vals:arr.map(o=>o.years), type:'bar', max:11, best:'high'},
-    {label:'Since',       vals:arr.map(o=>o.firstYear), type:'text'},
-    {label:'Competition', vals:arr.map(o=>cLbl(o.competition)), scores:arr.map(o=>compScore[o.competition]), type:'scored', best:'low'},
-    {label:'Stars ⭐',     vals:arr.map(o=>o._gh?fmt(o._gh.stars):'—'), scores:arr.map(o=>o._gh?.stars||0), type:'scored', best:'high'},
-    {label:'Forks',       vals:arr.map(o=>o._gh?fmt(o._gh.forks):'—'), scores:arr.map(o=>o._gh?.forks||0), type:'scored', best:'high'},
-    {label:'Open Issues', vals:arr.map(o=>o._gh?fmt(o._gh.issues):'—'), scores:arr.map(o=>o._gh?.issues||0), type:'scored', best:'low'},
-    {label:'Last Commit', vals:arr.map(o=>o._gh?o._gh.lastCommit:'—'), type:'text'},
-    {label:'Good 1st Issues', vals:arr.map(o=>o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—'), scores:arr.map(o=>o._gh?.gfi||0), type:'scored', best:'high'},
-    {label:'Languages',   vals:arr.map(o=>o.tags.slice(0,3).join(', ')), type:'text'},
+  const compScore = { hot: 3, moderate: 2, chill: 1 };
+  const rows = [
+    { label: 'Category', vals: arr.map(o => catLabel(o.cat)), type: 'text' },
+    { label: 'GSoC Years', vals: arr.map(o => o.years), type: 'bar', max: 11, best: 'high' },
+    { label: 'Since', vals: arr.map(o => o.firstYear), type: 'text' },
+    { label: 'Competition', vals: arr.map(o => cLbl(o.competition)), scores: arr.map(o => compScore[o.competition]), type: 'scored', best: 'low' },
+    { label: 'Stars ⭐', vals: arr.map(o => o._gh ? fmt(o._gh.stars) : '—'), scores: arr.map(o => o._gh?.stars || 0), type: 'scored', best: 'high' },
+    { label: 'Forks', vals: arr.map(o => o._gh ? fmt(o._gh.forks) : '—'), scores: arr.map(o => o._gh?.forks || 0), type: 'scored', best: 'high' },
+    { label: 'Open Issues', vals: arr.map(o => o._gh ? fmt(o._gh.issues) : '—'), scores: arr.map(o => o._gh?.issues || 0), type: 'scored', best: 'low' },
+    { label: 'Last Commit', vals: arr.map(o => o._gh ? o._gh.lastCommit : '—'), type: 'text' },
+    { label: 'Good 1st Issues', vals: arr.map(o => o._gh?.gfi !== null && o._gh?.gfi !== undefined ? fmt(o._gh.gfi) : '—'), scores: arr.map(o => o._gh?.gfi || 0), type: 'scored', best: 'high' },
+    { label: 'Languages', vals: arr.map(o => o.tags.slice(0, 3).join(', ')), type: 'text' },
   ];
 
-  const thead=`<tr><th>Metric</th>${arr.map(o=>`<th>${escapeHtml(o.name.length>22?o.name.slice(0,22)+'…':o.name)}</th>`).join('')}</tr>`;
-  let tbody='';
-  for(const row of rows){
-    let cells='';
-    if(row.type==='bar'){
-      const mx=Math.max(...row.vals);
-      cells=row.vals.map((v)=>{
-        const pct=mx>0?Math.round(v/mx*100):0;
-        return`<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${escapeHtml(String(v))}y</span></div></td>`;
+  const thead = `<tr><th>Metric</th>${arr.map(o => `<th>${escapeHtml(o.name.length > 22 ? o.name.slice(0, 22) + '…' : o.name)}</th>`).join('')}</tr>`;
+  let tbody = '';
+  for (const row of rows) {
+    let cells = '';
+    if (row.type === 'bar') {
+      const mx = Math.max(...row.vals);
+      cells = row.vals.map((v) => {
+        const pct = mx > 0 ? Math.round(v / mx * 100) : 0;
+        return `<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${escapeHtml(String(v))}y</span></div></td>`;
       }).join('');
-    } else if(row.type==='scored'&&row.scores&&row.scores.some(s=>s>0)){
-      const mx=Math.max(...row.scores),mn=Math.min(...row.scores.filter(s=>s>0)||[0]);
-      cells=row.vals.map((v,i)=>{
-        const s=row.scores[i];
-        let cls='cmp-val';
-        if(s>0){
-          cls=row.best==='high'?(s===mx?'cmp-best':s===mn?'cmp-worst':'cmp-val'):(s===mn?'cmp-best':s===mx?'cmp-worst':'cmp-val');
+    } else if (row.type === 'scored' && row.scores && row.scores.some(s => s > 0)) {
+      const mx = Math.max(...row.scores), mn = Math.min(...row.scores.filter(s => s > 0) || [0]);
+      cells = row.vals.map((v, i) => {
+        const s = row.scores[i];
+        let cls = 'cmp-val';
+        if (s > 0) {
+          cls = row.best === 'high' ? (s === mx ? 'cmp-best' : s === mn ? 'cmp-worst' : 'cmp-val') : (s === mn ? 'cmp-best' : s === mx ? 'cmp-worst' : 'cmp-val');
         }
-        return`<td class="${cls}">${escapeHtml(String(v))}</td>`;
+        return `<td class="${cls}">${escapeHtml(String(v))}</td>`;
       }).join('');
     } else {
-      cells=row.vals.map(v=>`<td class="cmp-val">${escapeHtml(String(v))}</td>`).join('');
+      cells = row.vals.map(v => `<td class="cmp-val">${escapeHtml(String(v))}</td>`).join('');
     }
-    tbody+=`<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
+    tbody += `<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
   }
-  wrap.innerHTML=`<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+  wrap.innerHTML = `<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
     <p style="font-size:10px;color:var(--muted);margin-top:10px;text-align:right">🟢 Best value &nbsp; 🔴 Lowest value &nbsp; (requires GitHub stats to be fetched)</p>`;
 }
 
-function showCompareToast(msg){
-  let t=document.getElementById('compareToast');
-  if(!t){t=document.createElement('div');t.id='compareToast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;transition:opacity .3s;white-space:nowrap';document.body.appendChild(t);}
-  t.textContent=msg;t.style.opacity='1';
-  setTimeout(()=>t.style.opacity='0',2200);
+function showCompareToast(msg) {
+  let t = document.getElementById('compareToast');
+  if (!t) { t = document.createElement('div'); t.id = 'compareToast'; t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;transition:opacity .3s;white-space:nowrap'; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2200);
 }
 
 function showSkeletons(count = 12) {
@@ -517,7 +520,7 @@ function orgMatchesLanguages(org, selectedLanguages) {
   }
 }
 
-function applyFilters(){
+function applyFilters() {
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || '';
   const cat = categoryValue === 'all' ? '' : categoryValue;
@@ -525,65 +528,65 @@ function applyFilters(){
   const compF = document.getElementById('complexityFilter')?.value || '';
   const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
-  if(search!==lastSearch&&search.length>1){AN.trackSearch(search);lastSearch=search;}
-  if(cat)AN.trackCat(cat);
+  if (search !== lastSearch && search.length > 1) { AN.trackSearch(search); lastSearch = search; }
+  if (cat) AN.trackCat(cat);
 
-  const res=ORGS.filter(o=>{
+  const res = ORGS.filter(o => {
     // Search only organization names
-    const orgName=o.name.toLowerCase();
-    
+    const orgName = o.name.toLowerCase();
+
     // Category Filter
-    if(cat && o.cat !== cat) return false;
+    if (cat && o.cat !== cat) return false;
 
     // Complexity Filter (if it exists in data, otherwise skip)
     // Note: Complexity is currently a display-only field in the card UI 
     // based on competition/years, but the filter select exists in HTML.
-    if(compF && compF !== 'all') {
-       if(o.codebase !== compF) return false;
+    if (compF && compF !== 'all') {
+      if (o.codebase !== compF) return false;
     }
 
     // Language Filter
-    if(lang){
-      const langLabel=Object.keys(LANGUAGE_MAP).find(label=>label.toLowerCase()===lang)||lang;
-      if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
+    if (lang) {
+      const langLabel = Object.keys(LANGUAGE_MAP).find(label => label.toLowerCase() === lang) || lang;
+      if (!orgMatchesLanguages(o, new Set([langLabel]))) return false;
     }
 
     // Search input (synchronized from hero-search)
-    if(search && !orgName.includes(search)) return false;
+    if (search && !orgName.includes(search)) return false;
 
     // Language pills (multi-select)
-    if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
- 
+    if (pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
+
     // Filter chips
-    if(chips.has('veteran') && yCls(o.years) !== 'veteran') return false;
-    if(chips.has('newcomer') && yCls(o.years) !== 'newcomer') return false;
-    if(chips.has('hot') && o.competition !== 'hot') return false;
-    if(chips.has('chill') && o.competition !== 'chill') return false;
-    if(chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
-    if(chips.has('bookmarked') && !isBookmarked(o.name)) return false;
-    
+    if (chips.has('veteran') && yCls(o.years) !== 'veteran') return false;
+    if (chips.has('newcomer') && yCls(o.years) !== 'newcomer') return false;
+    if (chips.has('hot') && o.competition !== 'hot') return false;
+    if (chips.has('chill') && o.competition !== 'chill') return false;
+    if (chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
+    if (chips.has('bookmarked') && !isBookmarked(o.name)) return false;
+
     return true;
   });
 
   // Improved search ranking: exact matches first, then startsWith, then partial
-  if(search){
-    res.sort((a,b)=>{
-      const nameA=a.name.toLowerCase();
-      const nameB=b.name.toLowerCase();
-      
+  if (search) {
+    res.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+
       // Exact match gets highest priority
-      if(nameA===search && nameB!==search) return -1;
-      if(nameB===search && nameA!==search) return 1;
-      
+      if (nameA === search && nameB !== search) return -1;
+      if (nameB === search && nameA !== search) return 1;
+
       // Starts with gets second priority  
-      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
-      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
-      
+      if (nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
+      if (nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
+
       // Both start with search, sort by selected sort option or alphabetically
-      if(nameA.startsWith(search) && nameB.startsWith(search)) {
+      if (nameA.startsWith(search) && nameB.startsWith(search)) {
         return applySecondarySort(a, b, sort);
       }
-      
+
       // Neither starts with, sort by selected sort option or alphabetically
       return applySecondarySort(a, b, sort);
     });
@@ -592,78 +595,78 @@ function applyFilters(){
 
 
   // Apply other sorting if no search
-  if(!search){
-    res.sort((a,b) => applySecondarySort(a, b, sort));
+  if (!search) {
+    res.sort((a, b) => applySecondarySort(a, b, sort));
   }
 
-  filteredOrgs=res;
-  focusedIdx=-1;
+  filteredOrgs = res;
+  focusedIdx = -1;
   renderGrid(res);
   document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
   const params = new URLSearchParams();
-  if (search)    params.set('q',search);
-  if (cat)    params.set('cat',cat);
+  if (search) params.set('q', search);
+  if (cat) params.set('cat', cat);
   const selectedLangs = pills.size ? [...pills] : (lang ? [lang] : []);
-  if (selectedLangs.length)    params.set('lang', selectedLangs.join(','));
-  if (sort && sort !== 'alpha')    params.set('sort',sort);
-  history.replaceState(null,'',params.toString()?'?'+params.toString():location.pathname);
+  if (selectedLangs.length) params.set('lang', selectedLangs.join(','));
+  if (sort && sort !== 'alpha') params.set('sort', sort);
+  history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
 }
 
 function applySecondarySort(a, b, sortType) {
-  if(sortType==='years-desc') return b.years - a.years;
-  if(sortType==='years-asc') return a.years - b.years;
-  if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
-  if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
-  if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  if (sortType === 'years-desc') return b.years - a.years;
+  if (sortType === 'years-asc') return a.years - b.years;
+  if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition) - ['chill', 'moderate', 'hot'].indexOf(b.competition);
+  if (sortType === 'stars') return (b._gh?.stars || 0) - (a._gh?.stars || 0);
+  if (sortType === 'gfi') return (b._gh?.gfi || 0) - (a._gh?.gfi || 0);
   return a.name.localeCompare(b.name);
 }
 
 // Umbrella orgs: link goes to org page, not a single example repo
 // Single-project orgs: link goes to that specific repo
-const UMBRELLA_ORGS=new Set([
-  'Apache Software Foundation','CNCF','Eclipse Foundation','FOSSASIA','GNOME Foundation',
-  'GNU Project','Jenkins','KDE Community','NumFOCUS','OpenMRS','openSUSE Project',
-  'OWASP Foundation','The Linux Foundation','Wikimedia Foundation','AOSSIE','CERN-HSF',
-  'CCExtractor Development','Blender Foundation','Open Robotics','JBoss Community',
-  'The Honeynet Project','MetaBrainz Foundation Inc','OSGeo (Open Source Geospatial Foundation)',
-  'SW360','DBpedia','LibreOffice','Oppia Foundation','Sugar Labs','Internet Archive',
-  'VideoLAN','JdeRobot','Kubeflow','INCF','OpenAstronomy','Machine Learning for Science (ML4SCI)',
-  'SageMath','National Resource for Network Biology (NRNB)','FOSSology','JabRef e.V.',
-  'FOSSASIA','LabLua','Liquid Galaxy project','Free and Open Source Silicon Foundation',
+const UMBRELLA_ORGS = new Set([
+  'Apache Software Foundation', 'CNCF', 'Eclipse Foundation', 'FOSSASIA', 'GNOME Foundation',
+  'GNU Project', 'Jenkins', 'KDE Community', 'NumFOCUS', 'OpenMRS', 'openSUSE Project',
+  'OWASP Foundation', 'The Linux Foundation', 'Wikimedia Foundation', 'AOSSIE', 'CERN-HSF',
+  'CCExtractor Development', 'Blender Foundation', 'Open Robotics', 'JBoss Community',
+  'The Honeynet Project', 'MetaBrainz Foundation Inc', 'OSGeo (Open Source Geospatial Foundation)',
+  'SW360', 'DBpedia', 'LibreOffice', 'Oppia Foundation', 'Sugar Labs', 'Internet Archive',
+  'VideoLAN', 'JdeRobot', 'Kubeflow', 'INCF', 'OpenAstronomy', 'Machine Learning for Science (ML4SCI)',
+  'SageMath', 'National Resource for Network Biology (NRNB)', 'FOSSology', 'JabRef e.V.',
+  'FOSSASIA', 'LabLua', 'Liquid Galaxy project', 'Free and Open Source Silicon Foundation',
 ]);
 
-function orgLogoOwner(o){
-  if(!o.github)return'';
-  return o.github.includes('/')?o.github.split('/')[0]:o.github;
+function orgLogoOwner(o) {
+  if (!o.github) return '';
+  return o.github.includes('/') ? o.github.split('/')[0] : o.github;
 }
-function imgErr(img){
-  img.onerror=null;
-  const p=document.createElement('div');
-  p.className='org-logo-placeholder';
-  p.textContent=(img.alt||'?')[0].toUpperCase();
-  img.parentNode.replaceChild(p,img);
+function imgErr(img) {
+  img.onerror = null;
+  const p = document.createElement('div');
+  p.className = 'org-logo-placeholder';
+  p.textContent = (img.alt || '?')[0].toUpperCase();
+  img.parentNode.replaceChild(p, img);
 }
-function orgLogo(o){
-  const owner=orgLogoOwner(o);
-  if(!owner)return'';
+function orgLogo(o) {
+  const owner = orgLogoOwner(o);
+  if (!owner) return '';
   // Use avatars.githubusercontent.com — no redirect, works cross-origin
-  return`https://github.com/${owner}.png?size=64`;
+  return `https://github.com/${owner}.png?size=64`;
 }
-function repoUrl(o){
-  if(!o.github)return'';
-  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
+function repoUrl(o) {
+  if (!o.github) return '';
+  const owner = o.github.includes('/') ? o.github.split('/')[0] : o.github;
   // Umbrella orgs → link to their org page; single-project orgs → their specific repo
-  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
-    return`https://github.com/${owner}`;
-  return`https://github.com/${o.github}`;
+  if (UMBRELLA_ORGS.has(o.name) || !o.github.includes('/'))
+    return `https://github.com/${owner}`;
+  return `https://github.com/${o.github}`;
 }
-function repoLinkLabel(o){
-  if(!o.github)return'';
-  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
-  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
-    return owner+' (org)';
+function repoLinkLabel(o) {
+  if (!o.github) return '';
+  const owner = o.github.includes('/') ? o.github.split('/')[0] : o.github;
+  if (UMBRELLA_ORGS.has(o.name) || !o.github.includes('/'))
+    return owner + ' (org)';
   return o.github;
 }
 
@@ -695,14 +698,14 @@ function isBookmarked(orgName) {
   return saved.includes(orgName);
 }
 
-function renderGfiBadge(gh){
-  if(gh?.gfi===null||gh?.gfi===undefined)return '';
+function renderGfiBadge(gh) {
+  if (gh?.gfi === null || gh?.gfi === undefined) return '';
   return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
-function renderGrid(orgs){
-  const g=document.getElementById('orgGrid');
-  if(!orgs.length){
-    g.innerHTML=`
+function renderGrid(orgs) {
+  const g = document.getElementById('orgGrid');
+  if (!orgs.length) {
+    g.innerHTML = `
       <div class="empty">
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
@@ -711,54 +714,54 @@ function renderGrid(orgs){
       </div>`;
     return;
   }
-  g.innerHTML=orgs.map((o,i)=>{
-    const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
-    const ghm=o._gh?`<div class="gh-mini">
+  g.innerHTML = orgs.map((o, i) => {
+    const act = o._gh?.activity || null;
+    const tags = o.tags.slice(0, 5).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    const ghm = o._gh ? `<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
       ${renderGfiBadge(o._gh)}
       <span class="gh-s">🕐 <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
-    </div>`:'';
-    const globalIdx=ORGS.indexOf(o);
-    const inCompare=compareSet.has(globalIdx);
-    const isFocused=focusedIdx===i;
-    const logo=orgLogo(o);
-    const repoHref=repoUrl(o);
+    </div>`: '';
+    const globalIdx = ORGS.indexOf(o);
+    const inCompare = compareSet.has(globalIdx);
+    const isFocused = focusedIdx === i;
+    const logo = orgLogo(o);
+    const repoHref = repoUrl(o);
     // shortRepo now handled by repoLinkLabel()
-    return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
+    return `<div class="org-card${inCompare ? ' in-compare' : ''}${isFocused ? ' focused' : ''}"
       role="article"
       aria-label="Organization: ${escapeHtml(o.name)}"
       onclick="openModal(${globalIdx})"
       data-filtered-idx="${i}"
       tabindex="0">
       <div class="card-header-row">
-        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name||'')[0]||'') }" loading="lazy" onerror="imgErr(this)">`:``}
+        ${logo ? `<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name || '')[0] || '')}" loading="lazy" onerror="imgErr(this)">` : ``}
         <div class="org-logo-info">
           <div class="card-top-line">
             <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
-              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <button class="btn-card-compare${inCompare ? ' active' : ''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare ? 'Remove from compare' : 'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
               <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
                   <path
                     d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
                     ${isBookmarked(o.name)
-                      ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
-                      : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
-                    }
+        ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
+        : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
+      }
                   />
                 </svg>
               </button>
             </div>
           </div>
-          ${repoHref?`<a class="card-repo-link" href="${escapeHtml(repoHref)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(repoHref)}">
-            ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
-              '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
-              '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
+          ${repoHref ? `<a class="card-repo-link" href="${escapeHtml(repoHref)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(repoHref)}">
+            ${UMBRELLA_ORGS.has(o.name) || !o.github.includes('/') ?
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>' :
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
             ${repoLinkLabel(o)}
-          </a>`:''}
+          </a>`: ''}
         </div>
       </div>
       <div class="org-desc">${o.desc}</div>
@@ -766,7 +769,7 @@ function renderGrid(orgs){
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
         <span class="b ${aBdg(act)}">${aLbl(act)}</span>
-        ${o._gh?.gfi>0?`<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>`:''}
+        ${o._gh?.gfi > 0 ? `<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>` : ''}
       </div>
       <div class="tags">${tags}</div>
       ${ghm}
@@ -774,87 +777,87 @@ function renderGrid(orgs){
   }).join('');
 }
 
-function updateStats(){
-  document.getElementById('totalStat').textContent=ORGS.length;
-  document.getElementById('veteranStat').textContent=ORGS.filter(o=>o.years>=8).length;
-  document.getElementById('newcomerStat').textContent=ORGS.filter(o=>o.years<=3).length;
-  document.getElementById('visitorStat').textContent=AN.todayVisits();
+function updateStats() {
+  document.getElementById('totalStat').textContent = ORGS.length;
+  document.getElementById('veteranStat').textContent = ORGS.filter(o => o.years >= 8).length;
+  document.getElementById('newcomerStat').textContent = ORGS.filter(o => o.years <= 3).length;
+  document.getElementById('visitorStat').textContent = AN.todayVisits();
 }
 
 // ══════════════════════════════════════════════
 // KEYBOARD NAVIGATION
 // ══════════════════════════════════════════════
-const GRID_COLS=()=>{
-  const g=document.getElementById('orgGrid');
-  if(!g||!g.children.length)return 3;
-  const firstRect=g.children[0].getBoundingClientRect();
-  let cols=1;
-  for(let i=1;i<g.children.length;i++){
-    if(Math.abs(g.children[i].getBoundingClientRect().top-firstRect.top)<5)cols++;
+const GRID_COLS = () => {
+  const g = document.getElementById('orgGrid');
+  if (!g || !g.children.length) return 3;
+  const firstRect = g.children[0].getBoundingClientRect();
+  let cols = 1;
+  for (let i = 1; i < g.children.length; i++) {
+    if (Math.abs(g.children[i].getBoundingClientRect().top - firstRect.top) < 5) cols++;
     else break;
   }
   return cols;
 };
 
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown', e => {
   // Close modals first
-  if(e.key==='Escape'){
-    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
-    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
-    if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
+  if (e.key === 'Escape') {
+    if (document.getElementById('modalBg').classList.contains('open')) { closeModal(); return; }
+    if (document.getElementById('compareBg').classList.contains('open')) { closeCompare(); return; }
+    if (document.getElementById('anBg').classList.contains('open')) { closeAn(); return; }
   }
   // Don't hijack when typing in inputs
-  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
-  const n=filteredOrgs.length;
-  if(!n)return;
-  const cols=GRID_COLS();
-  if(e.key==='ArrowRight'){
+  if (document.activeElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+  const n = filteredOrgs.length;
+  if (!n) return;
+  const cols = GRID_COLS();
+  if (e.key === 'ArrowRight') {
     e.preventDefault();
-    focusedIdx=Math.min(focusedIdx+1,n-1);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowLeft'){
+    focusedIdx = Math.min(focusedIdx + 1, n - 1);
+    if (focusedIdx < 0) focusedIdx = 0;
+    scrollToFocused(); renderGrid(filteredOrgs);
+  } else if (e.key === 'ArrowLeft') {
     e.preventDefault();
-    focusedIdx=Math.max(focusedIdx-1,0);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowDown'){
+    focusedIdx = Math.max(focusedIdx - 1, 0);
+    if (focusedIdx < 0) focusedIdx = 0;
+    scrollToFocused(); renderGrid(filteredOrgs);
+  } else if (e.key === 'ArrowDown') {
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.min(focusedIdx+cols,n-1);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowUp'){
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.min(focusedIdx + cols, n - 1);
+    scrollToFocused(); renderGrid(filteredOrgs);
+  } else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.max(focusedIdx-cols,0);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.max(focusedIdx - cols, 0);
+    scrollToFocused(); renderGrid(filteredOrgs);
+  } else if (e.key === 'Enter' && focusedIdx >= 0 && focusedIdx < n) {
     openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
-  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
+  } else if ((e.key === 'c' || e.key === 'C') && focusedIdx >= 0 && focusedIdx < n) {
     e.preventDefault();
-    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]), null);
   } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
     e.preventDefault();
     document.getElementById('searchInput').focus();
   }
 });
 
-function scrollToFocused(){
-  setTimeout(()=>{
-    const g=document.getElementById('orgGrid');
-    const card=g?.querySelector(`[data-filtered-idx="${focusedIdx}"]`);
-    if(card)card.scrollIntoView({block:'nearest',behavior:'smooth'});
-  },30);
+function scrollToFocused() {
+  setTimeout(() => {
+    const g = document.getElementById('orgGrid');
+    const card = g?.querySelector(`[data-filtered-idx="${focusedIdx}"]`);
+    if (card) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, 30);
 }
 
 // ══════════════════════════════════════════════
 // PILLS & CHIPS
 // ══════════════════════════════════════════════
-function togglePill(el){
-  const l=el.dataset.lang;
+function togglePill(el) {
+  const l = el.dataset.lang;
   const isActive = el.classList.toggle('active');
   el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-  if(isActive)pills.add(l);else pills.delete(l);
+  if (isActive) pills.add(l); else pills.delete(l);
   renderSelectedLanguages();
   applyFilters();
 }
@@ -866,34 +869,34 @@ function togglePill(el){
 globalThis.togglePill = togglePill;
 
 globalThis.renderSelectedLanguages = renderSelectedLanguages;
-function renderSelectedLanguages(){
-  const container=document.getElementById('selectedLangsStrip');
-  if(!container)return;
+function renderSelectedLanguages() {
+  const container = document.getElementById('selectedLangsStrip');
+  if (!container) return;
 
-  if(pills.size===0){
-    container.innerHTML='<span class="empty-state">No languages selected</span>';
+  if (pills.size === 0) {
+    container.innerHTML = '<span class="empty-state">No languages selected</span>';
     return;
   }
 
-  const badges=[...pills].map(lang=>{
-    return`<span class="selected-lang-badge" data-lang="${lang}">
+  const badges = [...pills].map(lang => {
+    return `<span class="selected-lang-badge" data-lang="${lang}">
       ${lang}
       <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
     </span>`;
   }).join('');
 
-  const clearAll=`<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+  const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
 
-  container.innerHTML=badges+clearAll;
+  container.innerHTML = badges + clearAll;
 }
 
-function unselectLanguage(lang){
+function unselectLanguage(lang) {
   pills.delete(lang);
 
-  const pillBtn=document.querySelector(`.pill[data-lang="${lang}"]`);
-  if(pillBtn){
+  const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
+  if (pillBtn) {
     pillBtn.classList.remove('active');
-    pillBtn.setAttribute('aria-pressed','false');
+    pillBtn.setAttribute('aria-pressed', 'false');
   }
 
   renderSelectedLanguages();
@@ -901,12 +904,12 @@ function unselectLanguage(lang){
 }
 globalThis.unselectLanguage = unselectLanguage;
 
-function clearAllLanguages(){
+function clearAllLanguages() {
   pills.clear();
 
-  document.querySelectorAll('.pill.active').forEach(p=>{
+  document.querySelectorAll('.pill.active').forEach(p => {
     p.classList.remove('active');
-    p.setAttribute('aria-pressed','false');
+    p.setAttribute('aria-pressed', 'false');
   });
 
   renderSelectedLanguages();
@@ -914,13 +917,13 @@ function clearAllLanguages(){
 }
 globalThis.clearAllLanguages = clearAllLanguages;
 
-const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
-function toggleChip(k){
-  const el=document.getElementById('chip-'+k);
-  if(!el) return;
-  
+const chipCls = { veteran: 'cv', newcomer: 'cn', hot: 'ch', chill: 'cc', active: 'ca', bookmarked: 'cb' };
+function toggleChip(k) {
+  const el = document.getElementById('chip-' + k);
+  if (!el) return;
+
   const isActive = !chips.has(k);
-  if(isActive){
+  if (isActive) {
     chips.add(k);
     el.classList.add('bg-orange-600', 'text-white');
     el.classList.remove('bg-surface-container-highest');
@@ -931,110 +934,111 @@ function toggleChip(k){
   }
   applyFilters();
 }
-function resetFilters(){
+function resetFilters() {
   ['searchInput', 'hero-search', 'categoryFilter', 'complexityFilter', 'langFilter'].forEach(id => {
     const e = document.getElementById(id);
     if (e) e.value = (id === 'categoryFilter' || id === 'complexityFilter') ? 'all' : '';
   });
-  document.getElementById('sortSelect').value='alpha';
-  pills.clear();chips.clear();
+  document.getElementById('sortSelect').value = 'alpha';
+  pills.clear(); chips.clear();
 
-  document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
+  document.querySelectorAll('.pill.active').forEach(p => p.classList.remove('active'));
+  Object.keys(chipCls).forEach(k => { const e = document.getElementById('chip-' + k); if (e) e.className = 'chip'; });
 
-  document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
-  Object.keys(chipCls).forEach(k=>{
-    const e=document.getElementById('chip-'+k);
-    if(e) {
+  document.querySelectorAll('.pill.active').forEach(p => { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
+  Object.keys(chipCls).forEach(k => {
+    const e = document.getElementById('chip-' + k);
+    if (e) {
       e.classList.remove('bg-orange-600', 'text-white');
       e.classList.add('bg-surface-container-highest');
     }
   });
   renderSelectedLanguages();
- 
+
   applyFilters();
 }
 
 // ══════════════════════════════════════════════
 // MODAL
 // ══════════════════════════════════════════════
-function openModal(idx){
-  const o=ORGS[idx];modalIdx=idx;AN.trackOrg(o.name);
-  document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
-  document.getElementById('mName').textContent=o.name;
-  document.getElementById('mDesc').textContent=o.desc;
-  const cc={hot:'var(--red)',moderate:'#92600A',chill:'var(--green)'};
-  document.getElementById('mMetrics').innerHTML=`
-    <div class="mc"><div class="mv" style="color:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}">${escapeHtml(String(o.years))}</div>
-    <div class="ml">GSoC Years</div><div class="prog"><div class="prog-fill" style="width:${Math.min(o.years/11*100,100)}%;background:${o.years>=8?'#C2410C':o.years>=4?'var(--blue)':'var(--purple)'}"></div></div></div>
-    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${escapeHtml(o.competition==='hot'?'🔥':o.competition==='moderate'?'🟡':'😎')}</div><div class="ml">${escapeHtml(String(cLbl(o.competition)))}</div></div>
+function openModal(idx) {
+  const o = ORGS[idx]; modalIdx = idx; AN.trackOrg(o.name);
+  document.getElementById('mCat').innerHTML = `<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
+  document.getElementById('mName').textContent = o.name;
+  document.getElementById('mDesc').textContent = o.desc;
+  const cc = { hot: 'var(--red)', moderate: '#92600A', chill: 'var(--green)' };
+  document.getElementById('mMetrics').innerHTML = `
+    <div class="mc"><div class="mv" style="color:${o.years >= 8 ? '#C2410C' : o.years >= 4 ? 'var(--blue)' : 'var(--purple)'}">${escapeHtml(String(o.years))}</div>
+    <div class="ml">GSoC Years</div><div class="prog"><div class="prog-fill" style="width:${Math.min(o.years / 11 * 100, 100)}%;background:${o.years >= 8 ? '#C2410C' : o.years >= 4 ? 'var(--blue)' : 'var(--purple)'}"></div></div></div>
+    <div class="mc"><div class="mv" style="color:${cc[o.competition]}">${escapeHtml(o.competition === 'hot' ? '🔥' : o.competition === 'moderate' ? '🟡' : '😎')}</div><div class="ml">${escapeHtml(String(cLbl(o.competition)))}</div></div>
     <div class="mc"><div class="mv" style="color:var(--orange)">${escapeHtml(String(o.firstYear))}</div><div class="ml">First Year</div></div>
-    <div class="mc"><div class="mv" style="color:var(--green)">${escapeHtml(o._gh?.gfi!==null&&o._gh?.gfi!==undefined?fmt(o._gh.gfi):'—')}</div><div class="ml">Good 1st Issues</div></div>`;
-  const gh=o._gh;
-  document.getElementById('ghStars').textContent=gh?fmt(gh.stars):'—';
-  document.getElementById('ghForks').textContent=gh?fmt(gh.forks):'—';
-  document.getElementById('ghIssues').textContent=gh?fmt(gh.issues):'—';
-  document.getElementById('ghCommit').textContent=gh?gh.lastCommit:'—';
-  document.getElementById('ghGFI').textContent=gh?.gfi!==null&&gh?.gfi!==undefined?fmt(gh.gfi):'—';
-  document.getElementById('mFetchBtn').textContent=gh?'↻ Refresh':'Fetch Live Data';
-  document.getElementById('mTags').innerHTML=o.tags.map(t=>`<span class="m-tag">${escapeHtml(t)}</span>`).join('');
-  document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${escapeHtml(f)}</span>`).join('');
-  let tl='';
-  for(let y=o.firstYear;y<=2026;y++){
-    const cur=y===2026;
-    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${escapeHtml(cur?'⭐':'✓')} ${escapeHtml(String(y))}</span>`;}
-  document.getElementById('mTimeline').innerHTML=tl;
-  // Smart link: umbrella orgs → org page, single-project → specific repo
-  const mLinkEl=document.getElementById('mLink');
-  if(mLinkEl&&o.github){
-    const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
-    const isUmbrella=UMBRELLA_ORGS.has(o.name)||!o.github.includes('/');
-    mLinkEl.href=isUmbrella?`https://github.com/${owner}`:`https://github.com/${o.github}`;
-    mLinkEl.textContent=isUmbrella?'View GitHub Org →':'View Repository →';
+    <div class="mc"><div class="mv" style="color:var(--green)">${escapeHtml(o._gh?.gfi !== null && o._gh?.gfi !== undefined ? fmt(o._gh.gfi) : '—')}</div><div class="ml">Good 1st Issues</div></div>`;
+  const gh = o._gh;
+  document.getElementById('ghStars').textContent = gh ? fmt(gh.stars) : '—';
+  document.getElementById('ghForks').textContent = gh ? fmt(gh.forks) : '—';
+  document.getElementById('ghIssues').textContent = gh ? fmt(gh.issues) : '—';
+  document.getElementById('ghCommit').textContent = gh ? gh.lastCommit : '—';
+  document.getElementById('ghGFI').textContent = gh?.gfi !== null && gh?.gfi !== undefined ? fmt(gh.gfi) : '—';
+  document.getElementById('mFetchBtn').textContent = gh ? '↻ Refresh' : 'Fetch Live Data';
+  document.getElementById('mTags').innerHTML = o.tags.map(t => `<span class="m-tag">${escapeHtml(t)}</span>`).join('');
+  document.getElementById('mFit').innerHTML = o.fit.map(f => `<span class="m-tag">${escapeHtml(f)}</span>`).join('');
+  let tl = '';
+  for (let y = o.firstYear; y <= 2026; y++) {
+    const cur = y === 2026;
+    tl += `<span style="margin-right:10px;color:${cur ? 'var(--orange)' : 'var(--ink3)'};font-weight:${cur ? 700 : 400}">${escapeHtml(cur ? '⭐' : '✓')} ${escapeHtml(String(y))}</span>`;
   }
-  
+  document.getElementById('mTimeline').innerHTML = tl;
+  // Smart link: umbrella orgs → org page, single-project → specific repo
+  const mLinkEl = document.getElementById('mLink');
+  if (mLinkEl && o.github) {
+    const owner = o.github.includes('/') ? o.github.split('/')[0] : o.github;
+    const isUmbrella = UMBRELLA_ORGS.has(o.name) || !o.github.includes('/');
+    mLinkEl.href = isUmbrella ? `https://github.com/${owner}` : `https://github.com/${o.github}`;
+    mLinkEl.textContent = isUmbrella ? 'View GitHub Org →' : 'View Repository →';
+  }
+
   // Validate and display Ideas page link if available
   // Uses security-hardened validation that ensures only http/https protocols
   // Displays fallback message when no valid link exists
-  const mIdeasEl=document.getElementById('mIdeasLink');
-  const mIdeasText=document.getElementById('mIdeasText');
-  const validatedUrl=validateIdeasUrl(o.ideas);
-  
-  if(mIdeasEl){
-    mIdeasEl.style.display=validatedUrl?'inline-flex':'none';
-    if(validatedUrl){
-      mIdeasEl.href=validatedUrl;
-      mIdeasEl.textContent='View Ideas List →';
+  const mIdeasEl = document.getElementById('mIdeasLink');
+  const mIdeasText = document.getElementById('mIdeasText');
+  const validatedUrl = validateIdeasUrl(o.ideas);
+
+  if (mIdeasEl) {
+    mIdeasEl.style.display = validatedUrl ? 'inline-flex' : 'none';
+    if (validatedUrl) {
+      mIdeasEl.href = validatedUrl;
+      mIdeasEl.textContent = 'View Ideas List →';
     }
   }
-  
-  if(mIdeasText){
-    mIdeasText.style.display=validatedUrl?'none':'block';
+
+  if (mIdeasText) {
+    mIdeasText.style.display = validatedUrl ? 'none' : 'block';
   }
-  
+
   updateModalCompareBtn();
   document.getElementById('modalBg').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
   // Fetch GFI lazily on modal open
-  if(o.github&&(o._gh?.gfi===null||o._gh?.gfi===undefined)){
-    document.getElementById('ghGFI').textContent='…';
-    fetchGFI(o.github).then(gfi=>{
-      if(gfi!==null){
-        if(!o._gh)o._gh={};
-        o._gh.gfi=gfi;
-        document.getElementById('ghGFI').textContent=fmt(gfi);
-        const cells=document.getElementById('mMetrics')?.querySelectorAll('.mv');
-        if(cells&&cells[3])cells[3].textContent=fmt(gfi);
+  if (o.github && (o._gh?.gfi === null || o._gh?.gfi === undefined)) {
+    document.getElementById('ghGFI').textContent = '…';
+    fetchGFI(o.github).then(gfi => {
+      if (gfi !== null) {
+        if (!o._gh) o._gh = {};
+        o._gh.gfi = gfi;
+        document.getElementById('ghGFI').textContent = fmt(gfi);
+        const cells = document.getElementById('mMetrics')?.querySelectorAll('.mv');
+        if (cells && cells[3]) cells[3].textContent = fmt(gfi);
         renderGrid(filteredOrgs);
         renderCompareTable();
-      }else{
-        document.getElementById('ghGFI').textContent='—';
+      } else {
+        document.getElementById('ghGFI').textContent = '—';
       }
     });
   }
 }
-function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
-function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
+function closeModalEv(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); document.body.style.overflow = ''; modalIdx = -1; }
 
 // ══════════════════════════════════════════════
 // INIT
@@ -1043,37 +1047,37 @@ function closeModal(){document.getElementById('modalBg').classList.remove('open'
 // ══════════════════════════════════════════════
 // ISSUES PAGE
 // ══════════════════════════════════════════════
-let allIssues=[];        // flat list of {title,url,org,orgCat,orgTags,logo,repo,created_at}
-let filteredIssues=[];
-let shownIssues=0;
-const ISSUES_PAGE_SIZE=40;
-let issuesFetching=false;
+let allIssues = [];        // flat list of {title,url,org,orgCat,orgTags,logo,repo,created_at}
+let filteredIssues = [];
+let shownIssues = 0;
+const ISSUES_PAGE_SIZE = 40;
+let issuesFetching = false;
 
-function openIssuesPage(){
+function openIssuesPage() {
   document.getElementById('issuesPage').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
   loadCachedIssues();
 }
 
-function closeIssuesPage(){
+function closeIssuesPage() {
   document.getElementById('issuesPage').classList.remove('open');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
 
-async function fetchAllIssues(){
-  if(issuesFetching)return;
-  issuesFetching=true;
-  const btn=document.getElementById('fetchIssuesBtn');
-  const spin=document.getElementById('fetchIssuesSpin');
-  const txt=document.getElementById('fetchIssuesTxt');
-  btn.disabled=true; spin.style.display='inline-block';
+async function fetchAllIssues() {
+  if (issuesFetching) return;
+  issuesFetching = true;
+  const btn = document.getElementById('fetchIssuesBtn');
+  const spin = document.getElementById('fetchIssuesSpin');
+  const txt = document.getElementById('fetchIssuesTxt');
+  btn.disabled = true; spin.style.display = 'inline-block';
 
-  allIssues=[];
-  const orgsWithGithub=ORGS.filter(o=>o.github);
-  let done=0;
-  let found=0;
+  allIssues = [];
+  const orgsWithGithub = ORGS.filter(o => o.github);
+  let done = 0;
+  let found = 0;
 
-  document.getElementById('issuesContainer').innerHTML=`
+  document.getElementById('issuesContainer').innerHTML = `
     <div class="fetch-progress">
       <div style="font-size:14px;font-weight:600;color:var(--ink)">Fetching Good First Issues…</div>
       <div style="font-size:12px;color:var(--muted);margin-top:4px" id="fpStatus">Checking 0 / ${orgsWithGithub.length} orgs</div>
@@ -1082,173 +1086,173 @@ async function fetchAllIssues(){
     </div>`;
 
   // Batch in groups of 5 to avoid hammering the proxy
-  const BATCH=5;
-  for(let i=0;i<orgsWithGithub.length;i+=BATCH){
-    const batch=orgsWithGithub.slice(i,i+BATCH);
-    await Promise.all(batch.map(async o=>{
-      try{
-        const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
-        if(!r.ok)return;
-        const data=await r.json();
-        if(data.items?.length){
-          const owner=o.github.split('/')[0];
-          const logo=`https://github.com/${owner}.png?size=64`;
-          data.items.forEach(issue=>{
-            const labelNames=(issue.labels||[]).map(l=>typeof l==='string'?l:(l.name||''));
+  const BATCH = 5;
+  for (let i = 0; i < orgsWithGithub.length; i += BATCH) {
+    const batch = orgsWithGithub.slice(i, i + BATCH);
+    await Promise.all(batch.map(async o => {
+      try {
+        const r = await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
+        if (!r.ok) return;
+        const data = await r.json();
+        if (data.items?.length) {
+          const owner = o.github.split('/')[0];
+          const logo = `https://github.com/${owner}.png?size=64`;
+          data.items.forEach(issue => {
+            const labelNames = (issue.labels || []).map(l => typeof l === 'string' ? l : (l.name || ''));
             allIssues.push({
-              title:issue.title,
-              url:issue.html_url,
-              org:o.name,
-              orgCat:o.cat,
-              orgTags:o.tags,
+              title: issue.title,
+              url: issue.html_url,
+              org: o.name,
+              orgCat: o.cat,
+              orgTags: o.tags,
               logo,
-              repo:o.github,
-              created_at:issue.created_at,
-              labels:labelNames,
-              comments:issue.comments||0,
+              repo: o.github,
+              created_at: issue.created_at,
+              labels: labelNames,
+              comments: issue.comments || 0,
             });
           });
-          found+=data.items.length;
+          found += data.items.length;
         }
-        const gfiCount=data.total??data.gfi;
-        if(gfiCount!==null&&gfiCount!==undefined){
-          if(!o._gh)o._gh={};
-          o._gh.gfi=gfiCount;
+        const gfiCount = data.total ?? data.gfi;
+        if (gfiCount !== null && gfiCount !== undefined) {
+          if (!o._gh) o._gh = {};
+          o._gh.gfi = gfiCount;
         }
-      }catch(err){
-        console.warn('Failed fetching GFI issues for org:',o.github,err);
+      } catch (err) {
+        console.warn('Failed fetching GFI issues for org:', o.github, err);
       }
       done++;
     }));
     // Update progress UI
-    const pct=Math.round(done/orgsWithGithub.length*100);
-    const fpStatus=document.getElementById('fpStatus');
-    const fpBar=document.getElementById('fpBar');
-    const fpFound=document.getElementById('fpFound');
-    if(fpStatus)fpStatus.textContent=`Checking ${done} / ${orgsWithGithub.length} orgs`;
-    if(fpBar)fpBar.style.width=pct+'%';
-    if(fpFound)fpFound.textContent=`${found} issues found so far`;
-    txt.textContent=`${done}/${orgsWithGithub.length}…`;
-    await new Promise(r=>setTimeout(r,60));
+    const pct = Math.round(done / orgsWithGithub.length * 100);
+    const fpStatus = document.getElementById('fpStatus');
+    const fpBar = document.getElementById('fpBar');
+    const fpFound = document.getElementById('fpFound');
+    if (fpStatus) fpStatus.textContent = `Checking ${done} / ${orgsWithGithub.length} orgs`;
+    if (fpBar) fpBar.style.width = pct + '%';
+    if (fpFound) fpFound.textContent = `${found} issues found so far`;
+    txt.textContent = `${done}/${orgsWithGithub.length}…`;
+    await new Promise(r => setTimeout(r, 60));
   }
 
   // Sort: newest first
-  allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  issuesFetching=false;
-  btn.disabled=false; spin.style.display='none'; txt.textContent='↻ Refresh';
+  issuesFetching = false;
+  btn.disabled = false; spin.style.display = 'none'; txt.textContent = '↻ Refresh';
 
   filterIssues();
   renderGrid(filteredOrgs);
   updateStats();
 }
 
-async function loadCachedIssues(){
-  if(allIssues.length||issuesFetching) return;
-  try{
-    const res=await fetch('/data/issues.json');
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data=await res.json();
-    if(!Array.isArray(data.issues)) return;
+async function loadCachedIssues() {
+  if (allIssues.length || issuesFetching) return;
+  try {
+    const res = await fetch('/data/issues.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data.issues)) return;
 
-    const orgByGithub=new Map(ORGS.map(o=>[o.github?.toLowerCase(),o]));
-    const orgByName=new Map(ORGS.map(o=>[o.name?.toLowerCase(),o]));
+    const orgByGithub = new Map(ORGS.map(o => [o.github?.toLowerCase(), o]));
+    const orgByName = new Map(ORGS.map(o => [o.name?.toLowerCase(), o]));
 
-    allIssues=data.issues.map(issue=>{
-      const key=issue.github?.toLowerCase()||issue.repo?.toLowerCase()||issue.org?.toLowerCase();
-      const orgMeta=orgByGithub.get(key)||orgByName.get(issue.org?.toLowerCase());
-      const owner=(issue.github||issue.repo||'').split('/')[0]||'';
-      return{
-        title:issue.title||'',
-        url:issue.url||'',
-        org:issue.org||'',
-        orgCat:orgMeta?.cat||'',
-        orgTags:orgMeta?.tags||[],
-        logo:owner?`https://github.com/${owner}.png?size=64`:'',
-        repo:issue.repo||issue.github||'',
-        created_at:issue.created_at||'',
-        labels:Array.isArray(issue.labels)?issue.labels.map(l=>typeof l==='string'?l:(l.name||'')):[],
-        comments:typeof issue.comments==='number'?issue.comments:Number(issue.comments||0),
+    allIssues = data.issues.map(issue => {
+      const key = issue.github?.toLowerCase() || issue.repo?.toLowerCase() || issue.org?.toLowerCase();
+      const orgMeta = orgByGithub.get(key) || orgByName.get(issue.org?.toLowerCase());
+      const owner = (issue.github || issue.repo || '').split('/')[0] || '';
+      return {
+        title: issue.title || '',
+        url: issue.url || '',
+        org: issue.org || '',
+        orgCat: orgMeta?.cat || '',
+        orgTags: orgMeta?.tags || [],
+        logo: owner ? `https://github.com/${owner}.png?size=64` : '',
+        repo: issue.repo || issue.github || '',
+        created_at: issue.created_at || '',
+        labels: Array.isArray(issue.labels) ? issue.labels.map(l => typeof l === 'string' ? l : (l.name || '')) : [],
+        comments: typeof issue.comments === 'number' ? issue.comments : Number(issue.comments || 0),
       };
     });
 
-    allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     filterIssues();
-  }catch(err){
-    console.warn('Failed to load cached issues:',err);
+  } catch (err) {
+    console.warn('Failed to load cached issues:', err);
   }
 }
 
-function filterIssues(){
-  const search=(document.getElementById('issueSearch')?.value||'').toLowerCase().trim();
-  const cat=document.getElementById('issueCatFilter')?.value||'';
-  const lang=document.getElementById('issueLangFilter')?.value||'';
-  
-  filteredIssues=allIssues.filter(iss=>{
-    if(cat&&iss.orgCat!==cat)return false;
-    if(lang&&!iss.orgTags.some(t=>t.includes(lang)))return false;
-    if(search&&!iss.title.toLowerCase().includes(search)&&!iss.org.toLowerCase().includes(search))return false;
+function filterIssues() {
+  const search = (document.getElementById('issueSearch')?.value || '').toLowerCase().trim();
+  const cat = document.getElementById('issueCatFilter')?.value || '';
+  const lang = document.getElementById('issueLangFilter')?.value || '';
+
+  filteredIssues = allIssues.filter(iss => {
+    if (cat && iss.orgCat !== cat) return false;
+    if (lang && !iss.orgTags.some(t => t.includes(lang))) return false;
+    if (search && !iss.title.toLowerCase().includes(search) && !iss.org.toLowerCase().includes(search)) return false;
     return true;
   });
-  
-  shownIssues=0;
+
+  shownIssues = 0;
   renderIssues();
 }
 
-function relativeTime(dateStr){
-  const diff=Date.now()-new Date(dateStr).getTime();
-  const d=Math.floor(diff/86400000);
-  if(d===0)return'Today';
-  if(d===1)return'Yesterday';
-  if(d<30)return d+'d ago';
-  if(d<365)return Math.floor(d/30)+'mo ago';
-  return Math.floor(d/365)+'y ago';
+function relativeTime(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const d = Math.floor(diff / 86400000);
+  if (d === 0) return 'Today';
+  if (d === 1) return 'Yesterday';
+  if (d < 30) return d + 'd ago';
+  if (d < 365) return Math.floor(d / 30) + 'mo ago';
+  return Math.floor(d / 365) + 'y ago';
 }
 
-function renderIssues(){
-  const container=document.getElementById('issuesContainer');
-  const statsDiv=document.getElementById('issuesStats');
-  const loadMore=document.getElementById('loadMoreWrap');
+function renderIssues() {
+  const container = document.getElementById('issuesContainer');
+  const statsDiv = document.getElementById('issuesStats');
+  const loadMore = document.getElementById('loadMoreWrap');
 
-  if(!allIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
-    statsDiv.style.display='none';loadMore.style.display='none';return;
+  if (!allIssues.length) {
+    container.innerHTML = `<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
+    statsDiv.style.display = 'none'; loadMore.style.display = 'none'; return;
   }
 
-  if(!filteredIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
-    statsDiv.style.display='flex';loadMore.style.display='none';
+  if (!filteredIssues.length) {
+    container.innerHTML = `<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    statsDiv.style.display = 'flex'; loadMore.style.display = 'none';
   } else {
-    shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);
-    const visible=filteredIssues.slice(0,shownIssues);
-    container.innerHTML=`<div class="issues-grid">${visible.map(renderIssueCard).join('')}</div>`;
-    loadMore.style.display=shownIssues<filteredIssues.length?'flex':'none';
+    shownIssues = Math.min(shownIssues + ISSUES_PAGE_SIZE, filteredIssues.length);
+    const visible = filteredIssues.slice(0, shownIssues);
+    container.innerHTML = `<div class="issues-grid">${visible.map(renderIssueCard).join('')}</div>`;
+    loadMore.style.display = shownIssues < filteredIssues.length ? 'flex' : 'none';
   }
 
   // Update stats
-  const orgsWithIssues=new Set(allIssues.map(i=>i.org)).size;
-  document.getElementById('issTotal').textContent=allIssues.length.toLocaleString();
-  document.getElementById('issOrgs').textContent=orgsWithIssues;
-  document.getElementById('issShown').textContent=Math.min(shownIssues,filteredIssues.length);
-  statsDiv.style.display='flex';
+  const orgsWithIssues = new Set(allIssues.map(i => i.org)).size;
+  document.getElementById('issTotal').textContent = allIssues.length.toLocaleString();
+  document.getElementById('issOrgs').textContent = orgsWithIssues;
+  document.getElementById('issShown').textContent = Math.min(shownIssues, filteredIssues.length);
+  statsDiv.style.display = 'flex';
 }
 
-function renderIssueCard(iss){
-  const langTags=iss.orgTags.slice(0,2).map(t=>`<span class="issue-label lang">${escapeHtml(t)}</span>`).join('');
-  const gfiNames=['good first issue','good-first-issue'];
-  const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
-    .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
+function renderIssueCard(iss) {
+  const langTags = iss.orgTags.slice(0, 2).map(t => `<span class="issue-label lang">${escapeHtml(t)}</span>`).join('');
+  const gfiNames = ['good first issue', 'good-first-issue'];
+  const otherLabels = iss.labels.filter(l => !gfiNames.includes(String(l).toLowerCase())).slice(0, 2)
+    .map(l => `<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
   const safeHref = validateIdeasUrl(iss.url);
   const imgSrc = validateIdeasUrl(iss.logo);
   const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
   const hrefEnd = safeHref ? '</a>' : '</div>';
   return `${hrefStart}
-    ${imgSrc?`<img class="issue-logo" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(iss.org)}" loading="lazy" onerror="this.style.display='none'">`:``}
+    ${imgSrc ? `<img class="issue-logo" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(iss.org)}" loading="lazy" onerror="this.style.display='none'">` : ``}
     <div class="issue-body">
       <div class="issue-top">
         <span class="issue-org">${escapeHtml(iss.org)}</span>
         <span class="issue-label gfi">✓ Good First Issue</span>
-        ${iss.comments>0?`<span style="font-size:10px;color:var(--muted)">💬 ${escapeHtml(String(iss.comments))}</span>`:''}
+        ${iss.comments > 0 ? `<span style="font-size:10px;color:var(--muted)">💬 ${escapeHtml(String(iss.comments))}</span>` : ''}
       </div>
       <div class="issue-title">${escapeHtml(iss.title)}</div>
       <div class="issue-meta">
@@ -1259,16 +1263,16 @@ function renderIssueCard(iss){
   ${hrefEnd}`;
 }
 
-function showMoreIssues(){
-  const container=document.getElementById('issuesContainer');
-  const next=filteredIssues.slice(shownIssues,shownIssues+ISSUES_PAGE_SIZE);
-  shownIssues+=next.length;
-  container.querySelector('.issues-grid').insertAdjacentHTML('beforeend',next.map(renderIssueCard).join(''));
-  document.getElementById('loadMoreWrap').style.display=shownIssues<filteredIssues.length?'flex':'none';
-  document.getElementById('issShown').textContent=shownIssues;
+function showMoreIssues() {
+  const container = document.getElementById('issuesContainer');
+  const next = filteredIssues.slice(shownIssues, shownIssues + ISSUES_PAGE_SIZE);
+  shownIssues += next.length;
+  container.querySelector('.issues-grid').insertAdjacentHTML('beforeend', next.map(renderIssueCard).join(''));
+  document.getElementById('loadMoreWrap').style.display = shownIssues < filteredIssues.length ? 'flex' : 'none';
+  document.getElementById('issShown').textContent = shownIssues;
 }
 
-ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github];});
+ORGS.forEach(o => { if (o.github && cache[o.github]) o._gh = cache[o.github]; });
 showSkeletons();
 updateStats();
 renderSelectedLanguages();
@@ -1279,10 +1283,10 @@ document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (
   applyFilters();
 });
 
-requestAnimationFrame(()=>{
+requestAnimationFrame(() => {
   const params = new URLSearchParams(location.search);
-  if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
-  if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');
+  if (params.get('q')) document.getElementById('searchInput').value = params.get('q');
+  if (params.get('cat')) document.getElementById('categoryFilter').value = params.get('cat');
   const langParam = params.get('lang');
   if (langParam) {
     const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);

@@ -2317,12 +2317,29 @@
   "Swift": {
     "org": "Swift",
     "ideasUrl": "https://github.com/apple/swift/wiki/GSoC-2026-Ideas",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://forums.swift.org/c/development/16",
+        "label": "Swift Forums - Development"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "",
+        "github": "DougGregor",
+        "githubUrl": "https://github.com/DougGregor"
+      },
+      {
+        "name": "",
+        "github": "lattner",
+        "githubUrl": "https://github.com/lattner"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Post in the Development & Tooling category with your GSoC proposal details.",
+    "status": "ok",
+    "lastFetched": "2026-05-15T00:00:00.000Z"
   },
   "SymPy": {
     "org": "SymPy",

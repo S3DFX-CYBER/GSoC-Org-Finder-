@@ -1892,12 +1892,29 @@
   },
   "OWASP Foundation": {
     "org": "OWASP Foundation",
-    "ideasUrl": "https://owasp.org/initiatives/gsoc/",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://owasp.org/www-community/initiatives/gsoc/gsoc2026ideas",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://owasp.org/slack/invite",
+        "label": "OWASP Slack — #gsoc channel"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Arkadii Yakovets",
+        "github": "arkid15r",
+        "githubUrl": "https://github.com/arkid15r"
+      },
+      {
+        "name": "Bjoern Kimminich",
+        "github": "bkimminich",
+        "githubUrl": "https://github.com/bkimminich"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Join OWASP Slack via the invite link and post in the #gsoc channel. Each project has its own Slack channel listed on the ideas page.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "PEcAn Project": {

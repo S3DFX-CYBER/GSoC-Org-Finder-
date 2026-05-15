@@ -174,6 +174,69 @@ function renderTrending(){
 }
 
 // ══════════════════════════════════════════════
+// RECENTLY VIEWED
+// ══════════════════════════════════════════════
+const RECENT_KEY = 'recentOrgs';
+const RECENT_MAX = 5;
+
+function saveRecentlyViewed(org) {
+  try {
+    let recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+    recent = recent.filter(item => item.name !== org.name);
+    recent.unshift({
+      name: org.name,
+      cat: org.cat,
+      github: org.github || '',
+      tags: (org.tags || []).slice(0, 3),
+      competition: org.competition,
+      years: org.years
+    });
+    if (recent.length > RECENT_MAX) {
+      recent = recent.slice(0, RECENT_MAX);
+    }
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    renderRecentlyViewed();
+  } catch (e) {
+    console.warn('Failed to save recently viewed:', e);
+  }
+}
+
+function renderRecentlyViewed() {
+  const section = document.getElementById('recently-viewed-section');
+  const container = document.getElementById('recently-viewed-list');
+  const countBadge = document.getElementById('recently-viewed-count');
+  if (!section || !container) return;
+  let recent = [];
+  try { recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch { recent = []; }
+  if (!recent.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  if (countBadge) countBadge.textContent = recent.length;
+  container.innerHTML = recent.map(org => {
+    const idx = ORGS.findIndex(o => o.name === org.name);
+    const logo = idx >= 0 ? orgLogo(ORGS[idx]) : '';
+    const tagsHtml = (org.tags || []).map(t => `<span class="recent-tag">${escapeHtml(t)}</span>`).join('');
+    const compIcon = org.competition === 'hot' ? '\ud83d\udd25' : org.competition === 'moderate' ? '\ud83d\udfe1' : '\ud83d\ude0e';
+    return `<div class="recent-card" onclick="${idx >= 0 ? 'openModal('+idx+')' : ''}" tabindex="0" role="button" aria-label="Open ${escapeHtml(org.name)}">
+      <div class="recent-card-top">
+        ${logo ? '<img class="recent-logo" src="'+escapeHtml(logo)+'" alt="'+escapeHtml((org.name||'')[0]||'')+'" loading="lazy" onerror="imgErr(this)">' : '<div class="recent-logo-placeholder">'+escapeHtml((org.name||'?')[0])+'</div>'}
+        <span class="cat-pill ${catBdg(org.cat)}" style="font-size:8px;padding:2px 6px">${escapeHtml(catLabel(org.cat))}</span>
+      </div>
+      <div class="recent-card-name">${escapeHtml(org.name)}</div>
+      <div class="recent-card-meta">
+        <span>${compIcon}</span>
+        <span>${escapeHtml(String(org.years||'?'))}y</span>
+      </div>
+      <div class="recent-card-tags">${tagsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+globalThis.clearRecentlyViewed = function() {
+  localStorage.removeItem(RECENT_KEY);
+  renderRecentlyViewed();
+};
+
+// ══════════════════════════════════════════════
 // ANALYTICS PANEL
 // ══════════════════════════════════════════════
 function openAnalytics(){
@@ -1046,6 +1109,7 @@ function resetFilters(){
 // ══════════════════════════════════════════════
 function openModal(idx){
   const o=ORGS[idx];modalIdx=idx;AN.trackOrg(o.name);
+  saveRecentlyViewed(o);
   document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
   document.getElementById('mName').textContent=o.name;
   document.getElementById('mDesc').textContent=o.desc;
@@ -1389,6 +1453,7 @@ requestAnimationFrame(()=>{
   }
   applyFilters();
   renderTrending();
+  renderRecentlyViewed();
   loadCachedIssues();
   checkAPI();
 });

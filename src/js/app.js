@@ -328,7 +328,7 @@ function catBdg(c){return'cb-'+(c||'other');}
 // COMPARE
 // ══════════════════════════════════════════════
 const compareSet=new Set(); // stores ORGS indices
-const COMPARE_STORAGE_KEY='gaf_compare_orgs';
+const COMPARE_STORAGE_KEY='compareList';
 
 function persistCompareSelection(){
   try{

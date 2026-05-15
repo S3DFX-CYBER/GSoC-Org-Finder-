@@ -109,17 +109,16 @@ const AN={
 AN.trackVisit();
 
 // Restore filters from URL query parameters on page load
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
+globalThis.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(globalThis.location.search);
   if (params.size > 0) {
-    selectedCategory = params.get("category") || "";
-    selectedLanguage = params.get("language") || "";
-    selectedYears = params.get("years") || "";
-    selectedCompetition = params.get("competition") || "";
-    selectedSort = params.get("sort") || "";
-    searchInput.value = params.get("search") || "";
-
-    applyFilters(); // refresh org list
+    document.getElementById("categoryFilter").value = params.get("category") || "";
+    document.getElementById("langFilter").value = params.get("language") || "";
+    document.getElementById("yearFilter").value = params.get("years") || "";
+    document.getElementById("competitionFilter").value = params.get("competition") || "";
+    document.getElementById("sortSelect").value = params.get("sort") || "";
+    document.getElementById("searchInput").value = params.get("search") || "";
+    applyFilters();
   }
 });
 
@@ -224,16 +223,16 @@ shareBtn.className = "share-btn";
 
 shareBtn.onclick = () => {
   const filters = {
-    category: selectedCategory || "",
-    language: selectedLanguage || "",
-    years: selectedYears || "",
-    competition: selectedCompetition || "",
-    sort: selectedSort || "",
-    search: searchInput.value.trim() || ""
+  category: document.getElementById("categoryFilter").value || "",
+  language: document.getElementById("langFilter").value || "",
+  years: document.getElementById("yearFilter").value || "",
+  competition: document.getElementById("competitionFilter").value || "",
+  sort: document.getElementById("sortSelect").value || "",
+  search: document.getElementById("searchInput").value.trim() || ""
   };
 
   const params = new URLSearchParams(filters).toString();
-  const shareUrl = `${window.location.origin}?${params}`;
+  const shareUrl = `${globalThis.location.origin}?${params.toString()}`;
 
   navigator.clipboard.writeText(shareUrl);
   alert("Search link copied!");
@@ -256,14 +255,6 @@ globalThis.pills = pills;
 globalThis.matchAllLanguages = matchAllLanguages;
 let filteredOrgs=[]; // for keyboard nav
 let focusedIdx=-1;
-
-// Filter state variables
-let selectedCategory = "";
-let selectedLanguage = "";
-let selectedYears = "";
-let selectedCompetition = "";
-let selectedSort = "";
-const searchInput = document.getElementById("searchInput");
 
 async function checkAPI(){
   try{

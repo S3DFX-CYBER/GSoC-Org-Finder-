@@ -1396,9 +1396,18 @@
     setActiveNavSection(currentSection);
   }
 
+  let resizeTimeout;
+
   // Listen for scroll events
   window.addEventListener('scroll', updateActiveSection);
-  window.addEventListener('resize', closeMobileMenuOnDesktop);
+  window.addEventListener('resize', () => {
+    closeMobileMenuOnDesktop();
+
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      updateActiveSection();
+    }, 100);
+  });
   
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {

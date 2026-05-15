@@ -40,11 +40,11 @@ You **must** include `gssoc` in your assignment command.
 
 The automated system validates:
 
-- Your GitHub account is at least **7 days old**
 - The issue is available (not already assigned)
 - Your active assignment count is under the maximum (**3 issues** for GSSoC)
 - No recent spam/AI-slop flags on your account
 - GSSoC assignments are open (opened **15 May 2026, 12:00 AM IST**)
+- Level-specific eligibility (see table below)
 
 **Auto-assignment rules by difficulty (on verified issues):**
 

@@ -45,13 +45,13 @@ jobs:
             });
 
             const pathLabels = {
-              'src/': 'area:frontend',
-              'api/': 'area:api',
-              'data/': 'area:data',
-              '.github/workflows/': 'area:devops',
-              '.github/': 'area:config',
-              'agent/': 'area:automation',
-              'docs/': 'area:docs'
+              'src/': 'type:feature',
+              'api/': 'type:feature',
+              'data/': 'type:feature',
+              '.github/workflows/': 'type:devops',
+              '.github/': 'type:devops',
+              'agent/': 'type:devops',
+              'docs/': 'type:docs'
             };
 
             const safeFilenamePattern = /^[\w\-./]+$/;
@@ -104,33 +104,24 @@ jobs:
             const body = (issue.body || '').toLowerCase();
             const combined = title + ' ' + body;
 
-            const areaKeywords = {
-              'area:frontend': ['ui component', 'css', 'stylesheet', 'button', 'layout', 'responsive design', 'frontend'],
-              'area:api': ['api endpoint', 'rest api', 'fetch data', 'cors', 'proxy', 'graphql'],
-              'area:docs': ['readme', 'documentation', 'typo in docs', 'grammar fix', 'spelling'],
-              'area:devops': ['workflow', 'ci/cd', 'github action', 'deploy', 'pipeline', 'docker'],
-              'area:data': ['org data', 'json data', 'organizations list', 'scrape', 'dataset'],
-              'area:performance': ['slow loading', 'performance issue', 'optimize', 'cache', 'page speed']
-            };
-
-            const typeKeywords = {
-              'bug': ['bug', 'broken', 'not working', 'error message', 'crash', 'regression'],
-              'enhancement': ['feature request', 'enhancement', 'implement', 'add support'],
-              'documentation': ['documentation', 'typo', 'readme update']
+            const typeLabels = {
+              'type:bug': ['bug', 'broken', 'not working', 'error message', 'crash', 'regression'],
+              'type:feature': ['feature request', 'enhancement', 'implement', 'add support', 'ui component', 'css', 'stylesheet', 'button', 'layout', 'responsive design', 'frontend', 'api endpoint', 'rest api', 'fetch data', 'cors', 'proxy', 'graphql', 'org data', 'json data', 'organizations list', 'scrape', 'dataset'],
+              'type:docs': ['readme', 'documentation', 'typo in docs', 'grammar fix', 'spelling', 'typo', 'readme update'],
+              'type:devops': ['workflow', 'ci/cd', 'github action', 'deploy', 'pipeline', 'docker'],
+              'type:performance': ['slow loading', 'performance issue', 'optimize', 'cache', 'page speed'],
+              'type:testing': ['test', 'unit test', 'integration test', 'coverage', 'test case', 'failing test'],
+              'type:accessibility': ['accessibility', 'a11y', 'screen reader', 'aria', 'keyboard navigation', 'contrast'],
+              'type:security': ['security', 'vulnerability', 'xss', 'injection', 'auth', 'authentication', 'authorization'],
+              'type:design': ['design', 'ui/ux', 'mockup', 'figma', 'color scheme', 'theme', 'dark mode'],
+              'type:refactor': ['refactor', 'cleanup', 'technical debt', 'code smell', 'restructure']
             };
 
             const labelsToAdd = new Set();
 
-            for (const [label, keywords] of Object.entries(areaKeywords)) {
+            for (const [label, keywords] of Object.entries(typeLabels)) {
               if (keywords.some(k => combined.includes(k))) {
                 labelsToAdd.add(label);
-              }
-            }
-
-            for (const [label, keywords] of Object.entries(typeKeywords)) {
-              if (keywords.some(k => combined.includes(k))) {
-                labelsToAdd.add(label);
-                break;
               }
             }
 

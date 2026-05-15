@@ -738,9 +738,14 @@ function renderGrid(orgs){
           <div class="card-top-line">
             <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
-              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+            <button
+              class="btn-card-compare${inCompare ? ' active' : ''}" 
+              onclick="event.stopPropagation(); toggleCompare(${globalIdx},event)" 
+              title="${inCompare?'Remove from compare':'Add to compare'}">
+              ⚖
+            </button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
-              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
+              <button type="button" onclick="event.stopPropagation(); toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
                   <path
                     d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
@@ -1033,8 +1038,8 @@ function openModal(idx){
     });
   }
 }
-function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
-function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
+function closeModalEv(e){if(e.target===document.getElementById('orgModal'))closeModal();}
+function closeModal(){document.getElementById('orgModal').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
 
 // ══════════════════════════════════════════════
 // INIT

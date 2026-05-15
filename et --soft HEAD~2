@@ -1,0 +1,471 @@
+[33m55db0df[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfix-modal-overflow[m[33m, [m[1;31morigin/fix-modal-overflow[m[33m)[m Fix modal overflow and scrolling behavior2
+[33m6227012[m Fix modal overflow and scrolling behavior
+[33m5c1d706[m Add 'itsdakshjain' to GSSOC mentors list (#548)
+[33md48a46c[m feat: add AI-powered organization recommender with functional and navigation fixes (#534)
+[33m40e2f9b[m Update GSSoC mentors list in JSON file and remaining imp changes for GSSOC (#528)
+[33m388852b[m force: rebuild production pipeline for PR 471
+[33m068bf90[m docs: backfill contributors (#524)
+[33m5415b13[m fix: improve organization search relevance and remove duplicate search bar (#468)
+[33md3d5a40[m feat: add AI-powered organization recommender (#169) (#471)
+[33md13650b[m Delete update-nsoc-reviewers.yml (#516)
+[33m60d441b[m Update nsoc-reviewers.json (#513)
+[33me2ef789[m fix: all automation workflows for gssoc preparation (#508)
+[33mf4c2397[m Update request-review workflow for GitHub Actions
+[33mda156a5[m Refactor PR welcome bot for clarity and efficiency
+[33mbc4bec2[m Update GitHub Action to detect duplicate PRs
+[33mbad496e[m Refactor PR stage management workflow
+[33m1e0661d[m Refactor duplicate issue detection logic
+[33ma59a552[m Update GitHub Actions workflow for duplicate issues
+[33m0c46a2e[m Refactor PR stage manager workflow
+[33m915d72d[m Refactor PR welcome bot workflow
+[33mb121707[m Refactor create-pipeline-labels.sh for clarity and updates
+[33mc82716a[m Enhance PR final gate workflow with new triggers
+[33mb80523d[m Update request-review workflow for pull requests
+[33m3f2b8a6[m Add gssoc-mentors.json with reviewer list
+[33mb18d7c5[m Add nsoc-reviewers.json for reviewer configuration
+[33m20dae5d[m Add GitHub Actions workflow for requesting reviewers
+[33m2399fdd[m Refactor PR stage manager workflow
+[33m7dee0c7[m Add script to create new pipeline labels
+[33m78946a5[m Add PA Final Gate workflow for PR approvals
+[33m5225c71[m Add PR welcome bot workflow
+[33m7f5a788[m Add PR Stage Manager workflow
+[33ma447d62[m Rename duplicate.yml to duplicate-issue.yml
+[33m021b427[m Add duplicate PR detection workflow
+[33mb04f59c[m Refine duplicate issue detection and messaging
+[33m9bfdbcf[m Enhance DCO helper workflow with new features
+[33mbdd4747[m Update AI slop detection settings and blocked terms
+[33m055163f[m Refactor PR validation messages for clarity
+[33m487e9e3[m Fix: added mentor contact info for VideoLAN and Wagtail (#482)
+[33m1df0e8b[m Update pr-validator.yml
+[33m84eab7b[m Update pr-validator.yml
+[33m443beae[m Create dco-helper.yml
+[33meab0341[m Create CODEOWNERS
+[33meacfa68[m Delete dco.yml
+[33m00c5e5f[m Create duplicate.yml
+[33mc08b0c7[m Update CONTRIBUTING.md
+[33m3f83c5c[m Create dco.yml
+[33m0f5bbbf[m Merge pull request #479 from S3DFX-CYBER/backfill-contributors
+[33m66ac779[m docs: backfill contributors
+[33m14858b7[m Merge pull request #253 from diksha78dev/fix/issue-238
+[33m4d68c28[m Merge pull request #456 from gloooomed/wikimedia-mentor-contact
+[33m876759b[m fix: move refreshOrgGridPreservingVisibleCount to outer scope, preserve pagination on bookmark toggle
+[33me77b781[m Create detect-ping-spam.yml
+[33ma7a4edf[m Update CONTRIBUTING.md
+[33mc35ad36[m Create spam-escalation.yml
+[33m10eea89[m Update detect-ai-slop.yml
+[33md5f8906[m Create detect-ai-slop.yml
+[33m95c4baa[m Update CONTRIBUTING.md
+[33m8b638bf[m Update CONTRIBUTING.md
+[33mda3746d[m Update CONTRIBUTING.md
+[33m30b0cee[m fix: corrected Wikimedia mentor contact details
+[33mf0ac841[m fix: added Wikimedia GSoC mentor contacts
+[33m7a26f15[m Merge pull request #452 from S3DFX-CYBER/backfill-contributors
+[33mcd8f4a5[m docs: backfill contributors
+[33m5bc32a4[m Delete smart-moderator.yml
+[33mde861f0[m Merge pull request #450 from omkartike/main
+[33ma47698a[m Enhance PR validation workflow with new checks
+[33m0f8b868[m Refactor PR validation workflow for clarity and updates
+[33m904ccf0[m Rename NSoC Leaderboard workflow to Contributor Leaderboard
+[33m984c63c[m Fix issue level formatting in workflow YAML
+[33m2c2b288[m Fix Contact button: Add contact section and link
+[33me121e26[m Add PR validation workflow with contribution rules
+[33m754c963[m Update smart-moderator.yml
+[33m7be7570[m Create smart-moderator.yml
+[33m2f8e2dd[m Update welcome-issue-bot.yml
+[33meeec9aa[m Update issue-context-assignment.yml
+[33ma5331d8[m Update issue-context-assignment.yml
+[33ma7fed93[m Update issue-context-assignment.yml
+[33m836d698[m fix: re-render grid on bookmark toggle so star icon updates correctly
+[33m3bcfa24[m Merge pull request #250 from Bushra-gh/add-template-files
+[33m4dce80c[m Fix GitHub template structure
+[33m7d021c1[m Added NSOC and GSSoC issue and PR templates
+[33m8ed6481[m Merge pull request #248 from S3DFX-CYBER/backfill-contributors
+[33m6049091[m docs: backfill contributors
+[33m394c098[m Merge pull request #234 from maanyadanayak/fix-navbar-bug
+[33m629f550[m Update index.html
+[33m92e9626[m Merge pull request #247 from S3DFX-CYBER/backfill-contributors
+[33mb0f692f[m docs: backfill contributors
+[33me316ce6[m Merge branch 'main' into fix-navbar-bug
+[33m7f43b26[m Update CONTRIBUTING.md
+[33mecd2373[m Update project recognition in README.md
+[33m1430b6d[m Merge pull request #242 from diksha78dev/fix/issue-236
+[33m12d9691[m fix: dynamically exclude all bots and maintainers from leaderboard
+[33m6c8f13e[m Merge pull request #243 from S3DFX-CYBER/alert-autofix-7
+[33mef28848[m Potential fix for code scanning alert no. 7: Double escaping or unescaping
+[33mdc76634[m fix: handle empty leaderboard output in workflow
+[33m37a3a32[m fix: exclude bots and maintainers from leaderboard script
+[33md4fdd91[m Merge pull request #237 from pranav-pachn/feature/mentor-finder
+[33mb3e7a3a[m fix
+[33mc2b3189[m security fix
+[33m54feccf[m fixed sonar
+[33ma2bb3a3[m fixed sonar
+[33m9503831[m fixed conflicts
+[33md7ccfac[m small changes
+[33m5f172f3[m Merge branch 'S3DFX-CYBER:main' into feature/mentor-finder
+[33mf613623[m Update organization count in index.html
+[33mfb62522[m Merge branch 'main' into feature/mentor-finder
+[33m8f78fed[m Merge pull request #227 from S3DFX-CYBER/refresh-issues
+[33mca06bb6[m feat: add mentor data validation script and update workflow to include validation step
+[33m5e3af6d[m chore: refresh issue dataset and UI cache [skip actions]
+[33m6d5ad3c[m Merge pull request #235 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33ma4f1586[m Ensure generated files exist in refresh workflow
+[33m2546ffb[m Revise CONTRIBUTING.md for clarity and structure
+[33m7af6a91[m Correct organization count in README
+[33m80ec5f8[m Refresh good first issues and update UI cache
+[33mf2515d4[m Create generate-ui-cache.js
+[33m627a526[m Delete .github/issue-routing.json
+[33m635db42[m Fix navbar active tab state
+[33ma54105c[m Merge pull request #230 from S3DFX-CYBER/backfill-contributors
+[33m349499c[m Delete claude-pr-review.yml
+[33m3ef270c[m docs: backfill contributors
+[33mc2dd1fe[m Merge pull request #229 from HarshaVardhan31012007/main
+[33mf512e63[m Update index.html
+[33m05b6756[m Update app.js
+[33m8574fc3[m Update app.js
+[33mc4c7b05[m Update index.html
+[33m59e388b[m Update index.html
+[33m9b1c2e1[m Update index.html
+[33m257b2ac[m Update app.js
+[33m59e4249[m Update index.html
+[33m977f9d3[m Update app.js
+[33mcea6c62[m Update index.html
+[33m9892191[m Update app.js
+[33mb7dc3bf[m Update index.html
+[33maedc48e[m Merge pull request #228 from S3DFX-CYBER/dependabot/npm_and_yarn/fast-uri-3.1.2
+[33m52e3ab2[m feat: add mentor finder section with search and filter functionality
+[33md1daf95[m chore(deps): bump fast-uri from 3.1.0 to 3.1.2
+[33me50ca0b[m Merge pull request #221 from S3DFX-CYBER/S3DFX-CYBER-patch-2
+[33m489198b[m Refactor issues page functions by removing loadCachedIssues
+[33m4229b13[m Merge pull request #220 from S3DFX-CYBER/refresh-issues
+[33m73cc8f4[m chore: refresh issue dataset [skip actions]
+[33meabe82e[m Add welcome issue bot workflow
+[33mdc8acaa[m Create claude-pr-review.yml
+[33m9559ac0[m Merge pull request #217 from S3DFX-CYBER/refresh-issues
+[33mf3e5050[m chore: refresh issue dataset [skip actions]
+[33mf43543b[m Merge pull request #214 from Aditya8369/212
+[33m87f9c16[m Merge pull request #215 from S3DFX-CYBER/backfill-contributors
+[33m240e4ab[m docs: backfill contributors
+[33mebdfc0f[m Merge pull request #213 from Aditya8369/211
+[33m7e64189[m fix: Filter mismatch / confusing behavior: different language-filter logic for pills vs search/dropdowns
+[33ma7a1a64[m coderabbit fixes
+[33md219b73[m Merge pull request #210 from S3DFX-CYBER/refresh-issues
+[33m0fbc96f[m fix: XSS/HTML injection risk from unsafe innerHTML rendering of data
+[33mb8c3a4a[m Delete update-leaderboard.js
+[33mea3f368[m Delete nsoc-leaderboard.json
+[33mbfd3f12[m Update generate-leaderboard-comment.js
+[33m58b6d9e[m Delete update-nsoc-leaderboard.yml
+[33mb29ef53[m Update nsoc-leaderboard.yml
+[33m11683c0[m chore: refresh issue dataset [skip actions]
+[33m2fa2bd9[m Update update-nsoc-leaderboard.yml
+[33m7cf0e86[m Update nsoc-leaderboard.yml
+[33ma25e407[m Merge pull request #142 from prisha-sh/fix-good-first-issues-cache
+[33mcb957e8[m Create update-leaderboard.js
+[33md27957f[m Create update-nsoc-leaderboard.yml
+[33m49b9eb4[m Create nsoc-leaderboard.json
+[33m6b3595f[m Create scripts/generate-leaderboard-comment.js
+[33m4852f5c[m Create nsoc-leaderboard.yml
+[33me114853[m Merge pull request #208 from S3DFX-CYBER/refresh-issues
+[33m7ad9694[m chore: refresh issue dataset [skip actions]
+[33m9e5c8b8[m Update refresh-good-first-issues.yml
+[33m4944b43[m Update fetch-issues.js
+[33me606a54[m Update refresh-good-first-issues.yml
+[33m77ad990[m Create unassign-issues.yml
+[33m3d0e3dc[m Update issue-context-assignment.yml
+[33m8f6fe22[m Update issue-context-assignment.yml
+[33m6b26f7e[m Merge pull request #207 from S3DFX-CYBER/backfill-contributors
+[33mdc4cc83[m docs: backfill contributors
+[33me573b37[m Update add-contributor.yml
+[33m3b7d360[m Merge pull request #206 from S3DFX-CYBER/refresh-issues
+[33m8c1aaab[m Update add-contributor.yml
+[33m2efebc4[m Merge pull request #188 from S3DFX-CYBER/S3DFX-CYBER-patch-2
+[33ma6582a2[m Update add-contributor.yml
+[33m79b0806[m chore: refresh good first issues [skip actions]
+[33m15ad820[m Merge pull request #205 from S3DFX-CYBER/refresh-issues
+[33m1be4831[m chore: refresh good first issues [skip actions]
+[33m8220cdb[m Merge pull request #167 from S3DFX-CYBER/refresh-issues
+[33m73d2a46[m Merge pull request #203 from ShailiBoddula/fix/vercel-speed-insights-local-error
+[33mda0f349[m Merge pull request #201 from prisha-sh/fix-gfi-fallback
+[33ma70dd10[m chore: refresh good first issues [skip actions]
+[33m6d3ed8c[m Merge pull request #198 from Harshith1702/patch-1
+[33m8c11281[m Merge pull request #202 from vaibhavi-vaishnav/fix/help-modal-production
+[33m41f1485[m fix: restore working keyboard shortcuts modal
+[33m31bf6d8[m Merge branch 'main' into fix/help-modal-production
+[33mda2a32d[m fix: prevent speed insights loading in local development
+[33m6be49de[m fix: restore navbar layout and help modal
+[33m34e600f[m fix: restore working keyboard shortcuts modal
+[33mf548353[m Add fallback UI for GFI fetch failures
+[33m6706c63[m fix: persist pill language selections in URL and restore on page load
+[33m92588c0[m Fix cached issues loading on page open
+[33m33520b7[m feat: sync filter state to URL using history.replaceState and URLSearchParams
+[33m81f851e[m Revert "feat: add keyboard shortcuts help modal with '?' toggle and Esc close…" (#197)
+[33m0067398[m feat: add keyboard shortcuts help modal with '?' toggle and Esc close (#173)
+[33m1a6db11[m Revise GSoC organization count and add project info
+[33md7c68ea[m Add concurrency to add-contributor workflow
+[33medc31e6[m Merge pull request #194 from VaibhavMP/fix/core-warning-syntax
+[33m0365d0b[m fix: resolve mismatched quote causing SyntaxError in core.warning
+[33m3022a3a[m Merge pull request #189 from Harshith1702/patch-1
+[33meeac3b5[m fix: use step output flag to conditionally skip TENET PR Review when key is missing
+[33mb23f306[m Apply suggestion from @coderabbitai[bot]
+[33mf6c77de[m Enhance contributor addition with validation and env usage
+[33mdb7d9b4[m Remove empty contributors section from README
+[33m8b5f377[m Add GitHub Actions workflow to update contributors
+[33m27119a1[m Update README.md
+[33m6ffa01a[m Merge pull request #186 from Akshayaqueen/main
+[33m15bf019[m Update README.md
+[33mb1dcf79[m Update README.md
+[33m36f3bad[m Update README.md
+[33m287a29a[m Enhance README with troubleshooting and contributors
+[33m743c12c[m Merge pull request #181 from S3DFX-CYBER/codex/fix-issue-assignment-by-workflow-bot
+[33mabe85e4[m Enhance error handling in issue assignment workflow
+[33m8bfdd2e[m Update .github/workflows/issue-context-assignment.yml
+[33m901e629[m feat: auto-assign issues by title and description context
+[33m35ddd23[m Merge pull request #180 from Dj-Shortcut/fix/comparison-tool-button
+[33m22c7f9e[m Fix comparison tool button modal trigger
+[33m5329e44[m Merge pull request #175 from prisha-sh/feat-bug-template
+[33mfaf9c38[m Merge pull request #129 from pranav-pachn/fix/lang-broken
+[33meea8b51[m Merge branch 'main' into fix/lang-broken
+[33mebf2fae[m refactor: improve filter composability and fix language tag matching logic
+[33mee32e5e[m feat: add bug report issue template
+[33ma5aa358[m Add community Discord link to README
+[33m00d0471[m Merge pull request #160 from SHUBHAM2775/feature/empty-state-75
+[33md8bca6c[m Merge pull request #163 from S3DFX-CYBER/alert-autofix-4
+[33mf82443d[m Potential fix for code scanning alert no. 4: Incomplete string escaping or encoding
+[33mc39f416[m Merge pull request #162 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33m83f46fc[m Correct phrasing in contributors acknowledgment
+[33m3f05f11[m Update README.md
+[33m891763c[m Merge pull request #156 from Kuldeeps1505/fix/0pen-comparison-tool
+[33m3787083[m Improved font for dark mode comparison tool modal
+[33m6674df4[m Merge pull request #141 from S3DFX-CYBER/refresh-issues
+[33md842d99[m Merge pull request #158 from prisha-sh/fix-data-batch
+[33md53c631[m style: fix rgba to modern rgb notation in styles.css
+[33mbcc1713[m lint fix
+[33m6d95a53[m UX: Add friendly empty state when no orgs match filters (#75)
+[33mc556285[m fix: handle undefined orgs and correct competition badge mapping
+[33m1a5485b[m chore: refresh good first issues [skip actions]
+[33m85d2300[m Merge branch 'fix-add-logo-field' into fix-data-batch
+[33m3a012ba[m Merge pull request #155 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33m5d5cf0e[m Revise CONTRIBUTING.md for better clarity and structure
+[33m55e8d94[m Fixed Open Comparison tool button
+[33m7e05073[m Merge branch 'main' into fix/lang-broken
+[33ma2b70cd[m Update index.html
+[33m7f16968[m feat: add selected languages strip and match mode functionality
+[33m02237e3[m fix: add logo field to issues for frontend rendering
+[33mca467e7[m fix: filter stale issues older than 12 months
+[33mef6792d[m fix: load cached issues on page open without manual click
+[33m9bedf4d[m Merge pull request #139 from prisha-sh/seo-jsonld-structured-data
+[33m0f20e06[m Merge pull request #122 from SHUBHAM2775/feature/pwa-manifest-support
+[33m1e06204[m Update manifest.json
+[33m70b0725[m Update index.html
+[33m6b5023f[m feat: add JSON-LD structured data (schema.org WebApplication) to index.html
+[33mff8492e[m Merge pull request #128 from bipinchaudhary28899/fix/dynamic-timeline-milestone-state
+[33m4934cb5[m fix(timeline): restore text-primary class when countdown returns to future-milestone state
+[33m66caf0f[m Merge pull request #125 from S3DFX-CYBER/dependabot/npm_and_yarn/postcss-8.5.13
+[33ma1bc64f[m Merge pull request #126 from S3DFX-CYBER/refresh-issues
+[33m6ac7293[m fixed the broken language
+[33m3ddc1a7[m fix(timeline): normalize milestone dates to UTC and fix dark mode connector
+[33mbf6fd38[m refactor(timeline): remove edge case comments, keep code clean
+[33m449b53a[m fix(timeline): replace hardcoded milestone state with dynamic date-based rendering
+[33m2da1bc5[m chore: refresh good first issues [skip actions]
+[33m019b5b1[m build(deps): bump postcss from 8.5.8 to 8.5.13
+[33me142155[m Merge pull request #116 from S3DFX-CYBER/refresh-issues
+[33m8a06fed[m Merge pull request #124 from prisha-sh/fix/vercel-deploy-trigger
+[33mb4b758b[m fix: replace [skip ci] with [skip actions] to enable deployment
+[33mb28a5c3[m refactor: add maskable icon support and basic offline caching
+[33m9f1ba59[m fix: use relative paths for manifest and service worker to support portable hosting
+[33m4e4476f[m feat: add PWA web app manifest and service worker for installability
+[33m4516937[m Merge pull request #119 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33mc7732bc[m Enhance CONTRIBUTING.md with guidelines and standards
+[33m121e8e5[m chore: refresh good first issues [skip ci]
+[33m38f474e[m Merge pull request #111 from S3DFX-CYBER/refresh-issues
+[33m324faad[m Merge pull request #113 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33mc6dc27f[m fix fetch path
+[33m6d14954[m chore: refresh good first issues [skip ci]
+[33ma1427e8[m Merge pull request #109 from S3DFX-CYBER/refresh-issues
+[33m39bf75d[m Merge pull request #110 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33m1fb9452[m Update vercel.json
+[33m059a8e1[m chore: refresh good first issues [skip ci]
+[33mb3c4ecf[m Merge pull request #108 from S3DFX-CYBER/refresh-issues
+[33mafffc77[m chore: refresh good first issues [skip ci]
+[33m9a92b8c[m Merge pull request #107 from S3DFX-CYBER/refresh-issues
+[33mf28cb27[m chore: refresh good first issues [skip ci]
+[33m8b0a04a[m Merge pull request #106 from S3DFX-CYBER/refresh-issues
+[33m4fe8e7c[m chore: refresh good first issues [skip ci]
+[33mf974484[m Merge pull request #105 from S3DFX-CYBER/refresh-issues
+[33m8a16dcf[m chore: refresh good first issues [skip ci]
+[33meaaf032[m Merge pull request #103 from S3DFX-CYBER/refresh-issues
+[33mc962893[m Merge pull request #104 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33md27f63b[m Update index.html
+[33mb6313fb[m add timestamp query param
+[33m577d764[m chore: refresh good first issues [skip ci]
+[33ma9e0194[m Merge pull request #102 from S3DFX-CYBER/refresh-issues
+[33m6fe3a84[m chore: refresh good first issues [skip ci]
+[33mbbd4309[m Merge pull request #101 from S3DFX-CYBER/refresh-issues
+[33m5d67f4d[m chore: refresh good first issues [skip ci]
+[33mf49520a[m Merge pull request #100 from S3DFX-CYBER/refresh-issues
+[33m8187b71[m chore: refresh good first issues [skip ci]
+[33m6574a0f[m Merge pull request #99 from S3DFX-CYBER/refresh-issues
+[33m55537e7[m chore: refresh good first issues [skip ci]
+[33m49733ac[m Merge pull request #98 from S3DFX-CYBER/refresh-issues
+[33m432d9c9[m chore: refresh good first issues [skip ci]
+[33m2f7b8aa[m Merge pull request #97 from S3DFX-CYBER/refresh-issues
+[33m6397908[m chore: refresh good first issues [skip ci]
+[33m2b9cc47[m Merge pull request #96 from S3DFX-CYBER/S3DFX-CYBER-remove-Mdlabs
+[33m7034eaf[m Update index.html
+[33mee4d1df[m Update index.html
+[33md7c4ab6[m Update orgs.js
+[33m18cf1b9[m Update org.js
+[33meeee140[m Merge pull request #95 from S3DFX-CYBER/codex/refactor-codebase-structure
+[33mdf5ee5d[m fix: restore Vercel serverless function to root api directory
+[33m16a4aae[m refactor: reorganize repository into modular src/agent layout
+[33mf26a8ba[m Merge pull request #93 from S3DFX-CYBER/codex/fix-issue-with-organization-search
+[33mf46a172[m Update refresh-good-first-issues.yml
+[33mf682983[m Update .github/workflows/refresh-good-first-issues.yml
+[33m206abbb[m chore: remove favicon asset from metadata update
+[33mdbf07e9[m Merge pull request #90 from S3DFX-CYBER/vercel/install-vercel-speed-insights-n1n7nn
+[33m923e173[m Install Vercel Speed Insights
+[33mfde075c[m Merge pull request #87 from S3DFX-CYBER/S3DFX-CYBER-patch-8
+[33maee47ac[m Update README.md
+[33mcd954d6[m Revise README for GSoC 2026 Org Finder
+[33m06a5519[m Update application deadlines and coding period dates
+[33m23bc099[m Merge pull request #89 from S3DFX-CYBER/alert-autofix-3
+[33m158ac88[m Potential fix for code scanning alert no. 3: Workflow does not contain permissions
+[33ma3ae320[m Update .github/tenet_agent/tenet_review.py
+[33m9bfee01[m Add TENET agent PR review workflow
+[33mad389d5[m Add shared utilities for TENET Agent
+[33m2e23c2b[m Add TENET Agent for PR review workflow
+[33mb807fd4[m Add requirements for Tenet agent dependencies
+[33m9b36185[m Add TENET Agent prompt templates for PR reviews and issues
+[33m54e5756[m Merge pull request #84 from kiranShamsHere/feat/copy-link-button
+[33me3cf881[m Update Node version in GitHub Actions workflow
+[33m5a3506a[m Merge pull request #85 from S3DFX-CYBER/dependabot/npm_and_yarn/picomatch-2.3.2
+[33m9aa1066[m Merge pull request #86 from S3DFX-CYBER/dependabot/npm_and_yarn/flatted-3.4.2
+[33m0686adc[m build(deps-dev): bump flatted from 3.3.4 to 3.4.2
+[33mf9ed2cc[m build(deps): bump picomatch from 2.3.1 to 2.3.2
+[33m5dae967[m feat: add copy link button next to Project Ideas URL in modal
+[33m9d4ca98[m Merge pull request #80 from Aditya-debugs141/fix/dark-mode-toggle
+[33md08dd88[m fix: resolve all 13 SonarQube code quality issues
+[33m8d63bf4[m Fix: Address PR review comments for accessibility and theme
+[33m562238a[m Fix: resolved text issue in dark theme toggle
+[33m370f668[m Merge pull request #82 from Ashusf90/patch-1
+[33ma8c459f[m Update CONTRIBUTING.md
+[33m89dc478[m Add contributing guide and setup instructions
+[33m1fe1494[m Fix: resolved text issue in dark theme toggle
+[33mbcdf0cd[m fix: resolve dark mode toggle and add icon switching
+[33m07a171d[m Merge pull request #66 from S3DFX-CYBER/codex/fix-issue-65-from-github
+[33m2d89526[m fix: make guide generic for gsoc contributors
+[33mfc3e42f[m Merge pull request #64 from S3DFX-CYBER/codex/fix-issue-#63-in-github-repo
+[33m8644ba9[m feat: show fallback GFI browse cards for all orgs
+[33m67bfcb1[m feat: fetch GFI candidates across all 185 org entries
+[33m683bb9a[m fix: remove misleading fallback GFI issue titles
+[33m4b9264f[m fix: make fallback GFI cards open GitHub searches
+[33mae25728[m fix: keep GFI cards visible when prefetch payload is empty
+[33ma59356b[m fix: keep GFI feed fresh with open issue filtering
+[33mdfd33d6[m Merge pull request #62 from S3DFX-CYBER/codex/fix-issue-with-github-api-integration
+[33mde8a188[m Add canonical URL tag to index head
+[33me7b639e[m Merge pull request #59 from S3DFX-CYBER/codex/fix-coding-standards-violations-41ftk0
+[33m0fcdd61[m Update index.html
+[33m77c2bfb[m Add automated Good First Issues refresh pipeline
+[33m5eb6f3b[m Merge pull request #58 from S3DFX-CYBER/codex/fix-coding-standards-violations
+[33mff93f85[m Address SonarCloud findings in app.js
+[33mf80c10d[m Tighten lint config and fix remaining JS lint errors
+[33m3a25ded[m Merge pull request #48 from Itheshjs/add-ci-code-quality
+[33m5109bdf[m Merge pull request #55 from Itheshjs/feat/codebase-complexity-rating
+[33m10866cf[m feat: add codebase complexity rating to all org entries (#50)
+[33m7d63ca6[m Merge pull request #54 from Itheshjs/add-feature-request-template
+[33m7f4b6ef[m Create CODE_OF_CONDUCT.md
+[33m67d8668[m docs: add feature request issue template
+[33m04a5d91[m Merge pull request #53 from Chizaram-Igolo/feat/add-loading-skeleton-cards-for-org-cards
+[33m03f6e66[m Add guard clause to `showSkeletons()` and remove debugging lines from `requestAnimationFrame()`
+[33mbe9f384[m Apply reviewer's suggested style improvements
+[33m889f930[m Apply reviewer's suggested style improvements
+[33mf70d31f[m Apply reviewer's suggested fixes
+[33md7cef14[m Resolve merge conflicts
+[33mc93efa3[m Merge branch 'main' of https://github.com/S3DFX-CYBER/GSoC-Org-Finder- into feat/add-loading-skeleton-cards-for-org-cards
+[33mab5ab4e[m Add skeleton inner elements and styles for them
+[33m6771541[m Merge pull request #52 from Chizaram-Igolo/a11y/filter-controls-aria-keyboard-support
+[33m938f289[m Update styles.css
+[33mc67bd19[m Update app.js
+[33mb0c188e[m feat: Show loading skeleton cards while organisation data is being fetched (#42)
+[33md40c38a[m feat(a11y): Add ARIA labels and keyboard navigation support to filter controls (#43)
+[33m9ff5be0[m Update CONTRIBUTING.md
+[33mca1644f[m Merge pull request #49 from Manasa-2303/contribute-file
+[33m9469205[m Merge pull request #51 from Chizaram-Igolo/feat/add-search-box-focus-kbd-shortcut
+[33m6ea7d1c[m feat: Add `/` keyboard shortcut to focus the search box (#26)
+[33m8adb923[m docs: improve contributing guide
+[33mdfba3ce[m docs: add contributing guide with proper markdown structure
+[33m963bff0[m Update CONTRIBUTING.md
+[33m8ef40dc[m docs: update CONTRIBUTING.md
+[33m2c1786e[m docs: add CONTRIBUTING.md for contributor guidelines
+[33m6d76cc2[m Merge pull request #47 from shivam-kakkar/feature/bookmark-organisations
+[33m53b86de[m Update app.js
+[33m043b63a[m Update app.js
+[33m355df46[m Add ESLint, Stylelint, and HTMLHint with CI workflow
+[33ma131808[m Update styles.css
+[33m0da41bd[m Update index.html
+[33m9c694ec[m Add bookmarking system using localStorage for org cards
+[33m5cf3e52[m Merge pull request #46 from bhaktiyadav08/issue-template-fix
+[33me0465ba[m Added pull request template
+[33m65639fb[m Merge pull request #45 from Itheshjs/feature-add-social-meta-tags
+[33mbb4e0d3[m Update index.html
+[33m5a38fe4[m Add Open Graph meta tags and og-image banner
+[33m1f131da[m Merge pull request #30 from Itheshjs/feature-scroll-button
+[33m0de0da0[m Update styles.css
+[33mcc3b134[m Update app.js
+[33m82d5c57[m Add floating scroll-to-top button for improved usability
+[33m03ecd9f[m Merge pull request #29 from a638011/main
+[33m92e2d2b[m Update index.html
+[33m68acf34[m fix: add debounce to search filter
+[33mc2fffb9[m fix: remove duplicate CSS rule for .modal-ideas-link
+[33m1bffcad[m fix: add favicon to browser tab
+[33mc67658c[m Merge pull request #22 from anirudh645/main
+[33m197f832[m Update styles.css
+[33m0a44ae6[m feat: fixed URL sanitization
+[33md045764[m feat: add URL sanitization, accessibility fixes, and validation script for ideas links
+[33m838330d[m Fix:improve URL validation for ideas links and enhance fallback messaging
+[33m5a3d0f0[m Fix: Implemented Suggestions by Code-Rabbit
+[33maf32d45[m Update: Added Ideas page link
+[33m490851a[m Merge pull request #20 from S3DFX-CYBER/S3DFX-CYBER-patch-4
+[33mf1c0de2[m Merge pull request #19 from abdussamad567/add-security-md
+[33m350b59b[m Update SECURITY.md
+[33mfeaffbf[m Update SECURITY.md
+[33mc9286b4[m Update index.html
+[33m1d351b2[m Update styles.css
+[33m1057023[m Update github.js
+[33maf613d1[m Update org.js
+[33ma5defbb[m Update app.js
+[33m806da72[m Update styles.css
+[33m4354dd6[m Update index.html
+[33mff5c32e[m Update github.js
+[33mb5d93e3[m Create app.js
+[33m016a986[m Create org.js
+[33mee76978[m Create styles.css
+[33mea34ff4[m Update index.html
+[33m97a6f40[m Update index.html
+[33m3df8ea4[m Update github.js
+[33md091fdc[m Update index.html
+[33m6de69a6[m docs: add SECURITY.md security policy
+[33mab037e5[m Merge pull request #9 from S3DFX-CYBER/S3DFX-CYBER-patch-2
+[33mc9946d6[m Update index.html
+[33m4f98c32[m Update README.md
+[33m45261ad[m Merge pull request #7 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33mb5cc753[m Update index.html
+[33m405759a[m Update github.js
+[33mdd77bcc[m Update index.html
+[33m39273f1[m Update index.html
+[33m14de4e1[m Merge pull request #5 from S3DFX-CYBER/S3DFX-CYBER-patch-1
+[33m3b71db4[m Update index.html
+[33m4d1c7d6[m Update index.html
+[33mbb2d08b[m Merge pull request #4 from S3DFX-CYBER/features-new
+[33m264a262[m Create github.js
+[33mf8c2875[m Update index.html
+[33mdee4dc4[m Create vercel.json
+[33mf7f6a23[m Update index.html
+[33m94d16a7[m Merge pull request #2 from S3DFX-CYBER/vercel/set-up-vercel-web-analytics-in-oggpxf
+[33m6430f37[m Set up Vercel Web Analytics integration
+[33m14f0a49[m Update README.md
+[33mbf346f8[m Update README.md
+[33m9558d3b[m Update README.md
+[33mcef1294[m Update README.md
+[33m1361d1b[m Create index.html
+[33m4a51cde[m Update README.md
+[33m0872d5f[m Initial commit

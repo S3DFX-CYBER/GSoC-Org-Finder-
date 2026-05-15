@@ -27,6 +27,7 @@ No sign-up. No install. No build step. Just open and explore.
 - [Deploy Your Own](#-deploy-your-own)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+- [Project Admin](#-project-admin)
 - [GSSoC Mentors](#-gssoc-mentors)
 - [Key Dates](#-gsoc-2026-key-dates)
 - [Tips for Users](#-tips-for-users)
@@ -306,6 +307,14 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <img width="400" height="300" alt="Gemini_Generated_Image_1eyond1eyond1eyo" src="https://github.com/user-attachments/assets/0cfe15fe-2d4a-4389-9a0b-8cf8d0cfd8cd" />
 
 
+
+## 🔑 Project Admin
+
+<a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="80px" alt="S3DFX-CYBER" /></a>
+
+**[@S3DFX-CYBER](https://github.com/S3DFX-CYBER)** — Project Admin (PA) for GSSoC'26 and NSoC'26. Responsible for final merge decisions, mentor coordination, repository maintenance, and ensuring contribution quality across all programs.
+
+---
 
 ## 👥 GSSoC Mentors
 

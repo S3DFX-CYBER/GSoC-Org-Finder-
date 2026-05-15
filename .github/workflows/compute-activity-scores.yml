@@ -1,0 +1,30 @@
+name: Compute Community Activity Scores
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  compute-scores:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Run activity score computation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node agent/scripts/compute-activity-scores.js
+
+      - name: Commit updated scores
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/community_activity.json
+          git diff --staged --quiet || git commit -m "chore: update community activity scores"
+          git push

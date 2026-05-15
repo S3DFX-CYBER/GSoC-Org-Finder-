@@ -45,11 +45,10 @@ jobs:
               }
             } else {
               const comment = context.payload.comment;
-              const commentBody = (comment.body || '').toLowerCase();
-              const lgtmPatterns = ['lgtm', 'looks good to me', 'ready to merge', 'ship it', 'approved'];
-              const hasApprovalKeyword = lgtmPatterns.some(p => commentBody.includes(p));
+              const commentBody = (comment.body || '').trim().toLowerCase();
 
-              if (!hasApprovalKeyword) return;
+              const isExplicitApproval = /^\/(approve-pr|lgtm)\b/.test(commentBody);
+              if (!isExplicitApproval) return;
 
               reviewer = comment.user.login;
               prNumber = context.payload.issue.number;

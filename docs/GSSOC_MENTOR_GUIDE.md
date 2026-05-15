@@ -72,8 +72,8 @@ Once Stage 1 passes, the PR is routed to you via the automated reviewer assignme
 1. You receive a GitHub review request notification
 2. You have **24 hours** to begin your review — after that, the bot will reassign the PR to another mentor
 3. Review the code for quality, correctness, and project fit (see checklist below)
-4. Either **Approve** (adds `mentor-approved` + `pa-review-required` labels automatically) or **Request Changes**
-5. You can also comment "LGTM" or "ready to merge" to approve via comment
+4. Either **Approve** via GitHub review (adds `mentor-approved` + `pa-review-required` labels automatically) or **Request Changes**
+5. You can also comment `/approve-pr` or `/lgtm` to approve via comment (must be the first word in the comment)
 6. If you request changes, wait for the contributor to push fixes, then re-review
 7. Once you approve, the PR advances to Stage 3
 

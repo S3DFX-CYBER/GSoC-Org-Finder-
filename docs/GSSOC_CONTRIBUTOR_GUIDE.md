@@ -196,7 +196,7 @@ The **LLM PR Analysis** bot will automatically verify that your PR:
 1. After Stage 1 passes, mentors are automatically assigned from our mentor pool
 2. Labels `needs-mentor-review` and `mentor-review-requested` are applied
 3. Mentors have **24 hours** to review — if they don't respond, they are automatically replaced with another active mentor
-4. When a mentor approves (via GitHub approval or comments like "LGTM", "ready to merge"), the bot applies `mentor-approved` and `pa-review-required`
+4. When a mentor approves (via GitHub review approval or commenting `/approve-pr` or `/lgtm`), the bot applies `mentor-approved` and `pa-review-required`
 5. The maintainer is then notified for final review
 
 ### Expected Review Times

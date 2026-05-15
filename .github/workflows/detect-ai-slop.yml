@@ -101,16 +101,28 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
-            const prTitle = (pr.title || '').slice(0, 200);
-            const prBody = (pr.body || '').slice(0, 2000);
 
             if (!process.env.GEMINI_API_KEY) {
               core.info('GEMINI_API_KEY not set — skipping LLM verification, PR stays open.');
               return;
             }
 
+            function sanitizeInput(text, maxLen) {
+              if (!text) return '';
+              return text
+                .replace(/```[\s\S]*?```/g, '[code block]')
+                .replace(/\{[\s\S]*?\}/g, '[object]')
+                .replace(/ignore previous|disregard|system prompt|you are now|forget (all|your|the) instructions|do not follow|override|new instructions|act as|pretend you|roleplay|jailbreak/gi, '[filtered]')
+                .replace(/\b(SYSTEM|ASSISTANT|USER)\s*:/gi, '[filtered]:')
+                .replace(/https?:\/\/[^\s)]+/gi, '[url]')
+                .slice(0, maxLen);
+            }
+
+            const prTitle = sanitizeInput(pr.title, 200);
+            const prBody = sanitizeInput(pr.body, 2000);
+
             const prompt = [
-              'SYSTEM: You are a spam classifier. Reply with ONLY "spam" or "legitimate". No other text.',
+              'You are a spam classifier. Reply with ONLY the word "spam" or "legitimate". No other text.',
               '',
               'Determine if this GitHub pull request is AI-generated spam or a low-effort contribution.',
               '',

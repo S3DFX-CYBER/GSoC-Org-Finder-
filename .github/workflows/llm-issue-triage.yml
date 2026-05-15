@@ -85,7 +85,9 @@ jobs:
               return text
                 .replace(/```[\s\S]*?```/g, '[code block]')
                 .replace(/\{[\s\S]*?\}/g, '[object]')
-                .replace(/ignore previous|disregard|system prompt|you are now/gi, '[filtered]')
+                .replace(/ignore previous|disregard|system prompt|you are now|forget (all|your|the) instructions|do not follow|override|new instructions|act as|pretend you|roleplay|jailbreak/gi, '[filtered]')
+                .replace(/\b(SYSTEM|ASSISTANT|USER)\s*:/gi, '[filtered]:')
+                .replace(/https?:\/\/[^\s)]+/gi, '[url]')
                 .slice(0, maxLen);
             }
 

@@ -193,9 +193,13 @@ jobs:
             }
 
             if (!isMaintainerApprovedAssignment && isVerified && !isMaintainer) {
-              const isBeginnerIssue = issueLabels.includes('level:beginner') || issueLabels.includes('level1');
-              const isAdvancedIssue = issueLabels.includes('level:advanced') || issueLabels.includes('level:critical') || issueLabels.includes('level3');
-              const isIntermediateIssue = issueLabels.includes('level:intermediate') || issueLabels.includes('level2');
+              const BEGINNER_LABELS = ['level:beginner', 'level1'];
+              const INTERMEDIATE_LABELS = ['level:intermediate', 'level2'];
+              const ADVANCED_LABELS = ['level:advanced', 'level:critical', 'level3'];
+
+              const isBeginnerIssue = issueLabels.some(l => BEGINNER_LABELS.includes(l));
+              const isAdvancedIssue = issueLabels.some(l => ADVANCED_LABELS.includes(l));
+              const isIntermediateIssue = issueLabels.some(l => INTERMEDIATE_LABELS.includes(l));
 
               if (isAdvancedIssue) {
                 const { data: closedPRs } = await github.rest.pulls.list({

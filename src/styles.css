@@ -729,8 +729,8 @@ footer a:hover{text-decoration:underline}
 .org-card:hover {
   transform: translateY(-10px) rotateX(10deg) rotateY(-10deg) scale(1.02);
   box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.18),
-    0 10px 25px rgba(244, 107, 14, 0.15);
+  0 25px 60px rgb(0 0 0 / 0.18),
+  0 10px 25px rgb(244 107 14 / 0.15);
   border-color: var(--orange-border);
 }
 
@@ -740,10 +740,10 @@ footer a:hover{text-decoration:underline}
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    circle at var(--x, 50%) var(--y, 50%),
-    rgba(244, 107, 14, 0.25),
-    transparent 40%
-  );
+  circle at var(--x, 50%) var(--y, 50%),
+  rgb(244 107 14 / 0.25),
+  transparent 40%
+);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;

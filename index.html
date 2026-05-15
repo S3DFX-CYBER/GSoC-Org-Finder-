@@ -429,6 +429,37 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f97316;
+      color: white;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(249,115,22,.35);
+      transition: 
+        opacity 0.3s ease,
+        transform 0.3s ease;
+      transform: translateY(10px);
+    } 
+    .scroll-top-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0); 
+    } 
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -2772,10 +2803,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+ 
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+ 
+<button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
 
+  if (!scrollTopBtn) return;
+
+  function toggleScrollButton() {
+    if (window.scrollY > 300) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
+  }
+
+  window.addEventListener('scroll', toggleScrollButton);
+
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+});
+</script>
 </body>
 </html>

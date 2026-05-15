@@ -1,4 +1,4 @@
-name: 🔕 Auto Detect Ping Spam
+name: 🔕 Ping Spam Guard
 
 on:
   issue_comment:
@@ -8,140 +8,163 @@ on:
 permissions:
   issues: write
   pull-requests: write
-  contents: read
 
 concurrency:
-  group: ping-spam-${{ github.event.issue.number }}
-  cancel-in-progress: false
+  group: ping-spam-${{ github.event.issue.number }}-${{ github.event.comment.user.login }}
+  cancel-in-progress: true
 
 jobs:
   detect-ping-spam:
+    name: Detect Maintainer Ping Spam
     runs-on: ubuntu-latest
+
+    if: |
+      github.actor != 'github-actions[bot]'
+
     steps:
-      - name: Detect spam pings
+      - name: Analyze Comment
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+
             const issue = context.payload.issue;
             const comment = context.payload.comment;
             const sender = context.payload.sender;
+
             const issue_number = issue.number;
             const username = sender.login;
-            const body = (comment.body || '').toLowerCase();
+
+            const body = (comment.body || '').toLowerCase().trim();
 
             // Ignore bots
-            if (sender.type === 'Bot') return;
-
-            // Ignore maintainers and collaborators
-            const association = comment.author_association || '';
-            if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
-              core.info('Ignoring maintainer/collaborator comment.');
+            if (
+              sender.type === 'Bot' ||
+              username.endsWith('[bot]')
+            ) {
+              core.info('Skipping bot comment');
               return;
             }
 
-            const trimmedBody = body.trim();
-            if (/^(\/assign|\/unassign|assign me|unassign me)(\s+(gssoc|nsoc))?$/i.test(trimmedBody)) return;
+            // Ignore maintainers
+            const association = comment.author_association || '';
 
+            if (
+              ['OWNER', 'MEMBER', 'COLLABORATOR']
+                .includes(association)
+            ) {
+              core.info('Skipping maintainer comment');
+              return;
+            }
+
+            // Ignore valid assignment commands
+            if (
+              /^(\/assign|\/unassign)(\s+(gssoc|nsoc))?$/i
+                .test(body)
+            ) {
+              core.info('Valid assignment command');
+              return;
+            }
+
+            // Suspicious patterns
             const spamPatterns = [
-              '@s3dfx-cyber',
-              'please assign',
-              'assign fast',
-              'review pls',
-              'merge pls',
-              'please merge',
-              'why no response',
-              'why not assigned',
-              'ping',
-              'hello maintainer',
-              'kindly review',
-              'please review',
-              'check this pr',
-              'any updates',
-              'waiting for response',
-              'please respond',
-              'pls respond',
-              'urgent review',
-              'when will it be merged',
-              'assign me this',
-              'i want this issue',
-              'plz assign',
+              'assign me',
               'pls assign',
+              'plz assign',
+              'please assign',
+              'merge pls',
+              'review pls',
               'kindly assign',
-              'bump',
-              'any update on this',
-              'is anyone reviewing',
+              'urgent review',
+              'hello maintainer',
+              'any updates',
               'still waiting',
-              'how long will it take',
-              'assign this to me',
-              'give me this issue',
-              'can you assign',
-              'please assign this'
+              'bump'
             ];
 
-            const isSpamPing = spamPatterns.some(pattern => body.includes(pattern));
+            const matched = spamPatterns.some(pattern =>
+              body.includes(pattern)
+            );
 
-            if (!isSpamPing) return;
+            if (!matched) {
+              core.info('No spam pattern detected');
+              return;
+            }
 
-            // Count previous spam comments by this user
-            const allComments = await github.paginate(
+            // Marker prevents duplicate warnings
+            const WARNING_MARKER =
+              '<!-- ping-spam-warning -->';
+
+            // Fetch recent comments only
+            const comments = await github.paginate(
               github.rest.issues.listComments,
               {
                 owner,
                 repo,
                 issue_number,
-                per_page: 100
+                per_page: 50
               }
             );
 
-            const userSpamComments = allComments.filter(c => 
-              c.user.login === username &&
-              spamPatterns.some(p => (c.body || '').toLowerCase().includes(p))
+            // Existing warning?
+            const existingWarning = comments.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes(WARNING_MARKER) &&
+              c.body.includes(`@${username}`)
             );
 
-            const spamCount = userSpamComments.length;
+            // Count recent spam comments by user
+            const spamCount = comments.filter(c =>
+              c.user.login === username &&
+              spamPatterns.some(p =>
+                (c.body || '').toLowerCase().includes(p)
+              )
+            ).length;
 
-            core.info(`Spam ping count for @${username}: ${spamCount}`);
+            core.info(
+              `Spam count for @${username}: ${spamCount}`
+            );
 
-            if (spamCount <= 2) {
-              // First / Second warning
-              const warning = `## ⚠️ Maintainer Ping Warning\n\n` +
-                `Hi @${username},\n\n` +
-                `Please avoid repeatedly pinging maintainers for assignment, review, or merge requests.\n\n` +
-                `Reviews and assignments are handled in queue order. Excessive pinging may lead to spam labeling and restrictions.\n\n` +
-                `Recommended wait times:\n` +
-                `- Assignment: 12–24 hours\n` +
-                `- Review: 24–72 hours`;
-
-              await github.rest.issues.createComment({
-                owner, repo, issue_number, body: warning
-              });
-            } else {
-              // Escalation
-              const escalation = `## 🚨 Repeated Ping Spam Detected\n\n` +
-                `Hi @${username},\n\n` +
-                `You have repeatedly pinged maintainers despite previous warnings.\n\n` +
-                `This behavior may result in:\n` +
-                `- \`spam\` label\n` +
-                `- Assignment removal\n` +
-                `- Further moderation\n\n` +
-                `Please be patient. Thank you for understanding.`;
-
-              await github.rest.issues.createComment({
-                owner, repo, issue_number, body: escalation
-              });
-
-              // Add spam label
+            // Add moderation labels quietly
+            if (spamCount >= 3) {
               try {
                 await github.rest.issues.addLabels({
                   owner,
                   repo,
                   issue_number,
-                  labels: ['spam']
+                  labels: ['needs-moderation']
                 });
               } catch (e) {
-                core.warning(`Failed adding spam label: ${e?.message || e}`);
+                core.warning(
+                  `Failed adding label: ${e.message}`
+                );
               }
             }
+
+            // Only ONE warning comment
+            if (existingWarning) {
+              core.info('Warning already exists');
+              return;
+            }
+
+            const warning =
+              `${WARNING_MARKER}\n` +
+              `## ⚠️ Please Avoid Repeated Maintainer Pings\n\n` +
+              `Hi @${username},\n\n` +
+              `Maintainers review issues and PRs in queue order.\n\n` +
+              `Repeated requests for assignment, review, or merge priority may slow moderation for everyone.\n\n` +
+              `Typical response times:\n` +
+              `- Assignment: 12–24 hours\n` +
+              `- Review: 24–72 hours\n\n` +
+              `Thank you for your patience and contribution 🚀`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: warning
+            });
+
+            core.info('Posted warning comment');

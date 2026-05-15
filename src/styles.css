@@ -797,3 +797,9 @@ footer a:hover{text-decoration:underline}
 .org-card {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+/* FIX: keep compare-state bar visible */
+.org-card.in-compare::after {
+  transform: scaleX(1);
+  opacity: 1;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+}

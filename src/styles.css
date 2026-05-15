@@ -288,14 +288,15 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .btn-clear-filters:hover{background:var(--orange);color:white;transform:translateY(-1px);box-shadow:0 4px 12px rgb(244 107 14 / 0.2)}
 
 /* ── MODAL ── */
-.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(28,16,8,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(28,16,8,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;overflow:hidden;scrollbar-gutter:stable;}
+.modal-bg::-webkit-scrollbar{display:none}
 [data-theme="dark"] .modal-bg{background:rgba(0,0,0,.7)}
 .modal-bg.open{display:flex}
-.modal{background:var(--modal-bg);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;animation:su .22s ease;box-shadow:var(--shadow-lg);border:1.5px solid var(--border);transition:background .3s,border-color .3s}
-.modal::-webkit-scrollbar{width:3px}
-.modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.modal{ background:var(--modal-bg);border-radius:20px; width:100%;  max-width:560px;  max-height:90vh;  overflow:hidden;  position:relative;  display:flex;  flex-direction:column; }
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 @keyframes su{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.modal-top{padding:26px 26px 0}
+.modal-top{padding:26px 26px 0 ; overflow-y:auto; flex:1;}
 .modal-top-actions{position:absolute;top:14px;right:14px;display:flex;gap:6px}
 .close-btn,.modal-compare-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .18s}
 .close-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
@@ -498,9 +499,12 @@ footer a:hover{text-decoration:underline}
   .gh-s{font-size:10px}
 
   /* Modal */
-  .modal-bg{padding:8px}
+  .modal-bg{padding:8px;overflow:hidden;scrollbar-gutter:stable;}
+  .modal-bg::-webkit-scrollbar{display:none}
   .modal{border-radius:16px;max-height:96vh}
-  .modal-top{padding:18px 16px 0}
+  .modal-top{padding:18px 16px 0;overflow-y:auto;scrollbar-width:thin;}
+  .modal-top::-webkit-scrollbar{width:4px}
+  .modal-top::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
   .m-desc{padding:0 16px 12px;font-size:12px}
   .modal-body{padding:0 16px 20px}
   .m-name{font-size:17px;padding-right:60px}

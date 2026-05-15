@@ -200,6 +200,15 @@ GITHUB_TOKEN = ghp_your_token_here
 ```
 Generate a token at [github.com/settings/tokens](https://github.com/settings/tokens) — only `public_repo` scope needed.
 
+**Optional (recommended) — lock down CORS origins**
+
+By default, the Edge proxy only allows same-origin browser requests. If you host the UI and API on different domains, explicitly allow the UI origin(s):
+```
+CORS_ALLOW_ORIGINS = https://your-ui-domain.com, https://your-other-domain.com
+```
+
+The Edge proxy also includes a lightweight per-IP rate limiter (defaults to 60 requests/min per IP). You can tune it in `api/github.js`.
+
 ### 3. Deploy
 ```bash
 vercel --prod

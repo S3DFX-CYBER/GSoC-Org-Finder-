@@ -42,7 +42,7 @@ The automated system validates:
 
 - Your GitHub account is at least **7 days old**
 - The issue is available (not already assigned)
-- Your active assignment count is under the maximum (**2 issues** for GSSoC)
+- Your active assignment count is under the maximum (**3 issues** for GSSoC)
 - No recent spam/AI-slop flags on your account
 - GSSoC assignments are open (opened **15 May 2026, 12:00 AM IST**)
 
@@ -173,20 +173,29 @@ When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMP
 
 Your PR goes through an automated 3-stage pipeline:
 
-| Stage | What Happens |
-|-------|-------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** |
-| **Stage 2** — Human Review | A GSSoC mentor reviews code quality |
-| **Stage 3** — Maintainer Gate | Final approval and merge |
+| Stage | What Happens | Labels Applied |
+|-------|-------------|----------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Mentor Review | A GSSoC mentor reviews code quality | `needs-mentor-review` → `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
 
 The **LLM PR Analysis** bot will automatically verify that your PR:
 - Links to a valid issue
 - Actually addresses the linked issue
 - Does not include out-of-scope changes
 
+### How Mentor Review Works
+
+1. After Stage 1 passes, mentors are automatically assigned from our mentor pool
+2. Labels `needs-mentor-review` and `mentor-review-requested` are applied
+3. Mentors have **24 hours** to review — if they don't respond, they are automatically replaced with another active mentor
+4. When a mentor approves (via GitHub approval or comments like "LGTM", "ready to merge"), the bot applies `mentor-approved` and `pa-review-required`
+5. The maintainer is then notified for final review
+
 ### Expected Review Times
 
-- PR review: 24–72 hours
+- Mentor review: **24 hours** (auto-rotation if no response)
+- Maintainer review: 24–72 hours
 - Please do not ping for faster reviews
 
 ---

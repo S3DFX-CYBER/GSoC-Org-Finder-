@@ -55,7 +55,7 @@ The automated system validates:
 
 - Your GitHub account is at least **7 days old**
 - The issue is available (not already assigned)
-- Your active assignment count is under the maximum (**3 issues** for NSoC)
+- Your active assignment count is under the maximum (**3 issues**)
 - No recent spam/AI-slop flags on your account
 
 **Auto-assignment for verified issues:**
@@ -177,11 +177,11 @@ When creating a PR, use the NSoC template located at `.github/PULL_REQUEST_TEMPL
 
 Your PR goes through an automated 3-stage pipeline:
 
-| Stage | What Happens |
-|-------|-------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** |
-| **Stage 2** — Human Review | Maintainer or reviewer checks code quality |
-| **Stage 3** — Maintainer Gate | Final approval and merge |
+| Stage | What Happens | Labels Applied |
+|-------|-------------|----------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Reviewer/Maintainer Review | A reviewer checks code quality | `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
 
 The **LLM PR Analysis** bot will automatically verify that your PR:
 - Links to a valid issue

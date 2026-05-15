@@ -21,7 +21,7 @@ Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) 
 - Issues **without** `gssoc26` or `nsoc26` labels (these are program-reserved)
 - `good first issue` label for beginner-friendly tasks
 - `help wanted` label for tasks needing contributors
-- Issues labeled `level-1`, `level-2`, or `level-3` without program restrictions
+- Issues labeled `level:beginner`, `level:intermediate`, or `level:advanced` without program restrictions
 
 You can also **create your own issue** if you've found a bug or have a feature idea.
 
@@ -170,11 +170,11 @@ Before opening a PR, ask yourself:
 
 Your PR goes through an automated 3-stage pipeline:
 
-| Stage | What Happens |
-|-------|-------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** |
-| **Stage 2** — Human Review | Maintainer or reviewer checks code quality |
-| **Stage 3** — Maintainer Gate | Final approval and merge |
+| Stage | What Happens | Labels Applied |
+|-------|-------------|----------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Human Review | Maintainer or reviewer checks code quality | `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
 
 The **LLM PR Analysis** bot will automatically verify that your PR:
 - Links to a valid issue

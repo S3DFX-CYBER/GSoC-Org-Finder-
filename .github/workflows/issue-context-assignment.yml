@@ -109,7 +109,7 @@ jobs:
                   });
                   const activeIssues = assignedIssues.filter(i => !i.pull_request);
 
-                  const maxAssignments = request.program === 'gssoc' ? 2 : 3;
+                  const maxAssignments = 3;
 
                   if (activeIssues.length < maxAssignments) {
                     targetUser = candidateUsername;
@@ -277,7 +277,7 @@ jobs:
               return;
             }
 
-            const maxAssignments = mentionsGSSOC ? 2 : 3;
+            const maxAssignments = 3;
             const assignedIssues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', assignee: username, per_page: 100
             });
@@ -285,7 +285,7 @@ jobs:
 
             if (activeIssues.length >= maxAssignments) {
               await github.rest.issues.createComment({ owner, repo, issue_number,
-                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed for ${mentionsGSSOC ? 'GSSOC' : 'NSOC'}: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
+                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
               return;
             }
 

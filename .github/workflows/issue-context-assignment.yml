@@ -56,6 +56,8 @@ jobs:
             let mentionsGSSOC = commentBody.includes('gssoc');
             let mentionsNSOC = commentBody.includes('nsoc');
             let isMaintainerApprovedAssignment = false;
+            let isAutoApproved = false;
+            let maintainerApprover = null;
 
             if (isApproveAssignment) {
               if (!isMaintainer) {
@@ -107,7 +109,7 @@ jobs:
                   });
                   const activeIssues = assignedIssues.filter(i => !i.pull_request);
 
-                  const maxAssignments = request.program === 'gssoc' ? 2 : 3;
+                  const maxAssignments = 3;
 
                   if (activeIssues.length < maxAssignments) {
                     targetUser = candidateUsername;
@@ -147,6 +149,7 @@ jobs:
               mentionsGSSOC = targetRequest.program === 'gssoc';
               mentionsNSOC = targetRequest.program === 'nsoc';
               isMaintainerApprovedAssignment = true;
+              maintainerApprover = sender.login;
 
               core.info(`Maintainer ${sender.login} approved assignment for ${targetUser}`);
             }
@@ -190,19 +193,60 @@ jobs:
             }
 
             if (!isMaintainerApprovedAssignment && isVerified && !isMaintainer) {
-              await github.rest.issues.createComment({
-                owner, repo, issue_number,
-                body: `✅ **Assignment Request Recorded**\n\n` +
-                      `Hi @${username}! Your request has been queued.\n\n` +
-                      `⏰ **Requested at:** ${new Date().toISOString()}\n\n` +
-                      `A maintainer will review all requests and approve the assignment soon.\n\n` +
-                      `Selection criteria:\n` +
-                      `- ⏱️ First come, first served (by timestamp)\n` +
-                      `- 📊 Current workload (users with fewer active issues get priority)\n` +
-                      `- ✅ Contribution history\n\n` +
-                      `Thank you for your interest! 🚀`
-              });
-              return;
+              const BEGINNER_LABELS = ['level:beginner', 'level1'];
+              const INTERMEDIATE_LABELS = ['level:intermediate', 'level2'];
+              const ADVANCED_LABELS = ['level:advanced', 'level:critical', 'level3'];
+
+              const isBeginnerIssue = issueLabels.some(l => BEGINNER_LABELS.includes(l));
+              const isAdvancedIssue = issueLabels.some(l => ADVANCED_LABELS.includes(l));
+              const isIntermediateIssue = issueLabels.some(l => INTERMEDIATE_LABELS.includes(l));
+
+              const hasLevelLabel = isBeginnerIssue || isIntermediateIssue || isAdvancedIssue;
+
+              if (!hasLevelLabel) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⏳ **Assignment Request Queued**\n\n` +
+                        `@${username}, this issue hasn't been labeled with a difficulty level yet.\n\n` +
+                        `A maintainer will triage and approve assignments. Thank you for your patience!`
+                });
+                return;
+              }
+
+              if (isAdvancedIssue) {
+                const { data: mergedSearch } = await github.rest.search.issuesAndPullRequests({
+                  q: `repo:${owner}/${repo} is:pr is:merged author:${username}`,
+                  per_page: 1
+                });
+                if ((mergedSearch.total_count || 0) < 1) {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⛔ **Assignment Denied**\n\n` +
+                          `@${username}, this is an **advanced/Level 3** issue that requires prior experience.\n\n` +
+                          `You need at least **1 merged PR** in this repository before working on advanced issues.\n\n` +
+                          `Please start with a \`level:beginner\` or \`level:intermediate\` issue first.`
+                  });
+                  return;
+                }
+                isAutoApproved = true;
+              } else if (isIntermediateIssue) {
+                const { data: profile } = await github.rest.users.getByUsername({ username });
+                const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
+                if (acctAgeDays >= 30) {
+                  isAutoApproved = true;
+                } else {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⏳ **Assignment Request Queued**\n\n` +
+                          `@${username}, intermediate/Level 2 issues require an account at least **30 days old** for auto-assignment.\n\n` +
+                          `A maintainer will review and approve using \`/approve-assignment\`.\n\n` +
+                          `Tip: You can get auto-assigned immediately on \`level:beginner\` issues!`
+                  });
+                  return;
+                }
+              } else {
+                isAutoApproved = true;
+              }
             }
 
             if (mentionsGSSOC) {
@@ -274,7 +318,7 @@ jobs:
               return;
             }
 
-            const maxAssignments = mentionsGSSOC ? 2 : 3;
+            const maxAssignments = 3;
             const assignedIssues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', assignee: username, per_page: 100
             });
@@ -282,7 +326,7 @@ jobs:
 
             if (activeIssues.length >= maxAssignments) {
               await github.rest.issues.createComment({ owner, repo, issue_number,
-                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed for ${mentionsGSSOC ? 'GSSOC' : 'NSOC'}: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
+                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
               return;
             }
 
@@ -380,7 +424,11 @@ jobs:
               difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${nsocLevel}\`. A maintainer may update this.`;
             }
 
-            const approvalNote = isMaintainerApprovedAssignment ? `\n\n✅ **Approved by maintainer:** @${sender.login}` : '';
+            const approvalNote = maintainerApprover
+              ? `\n\n✅ **Approved by maintainer:** @${maintainerApprover}`
+              : isAutoApproved
+                ? `\n\n✅ **Auto-approved** (verified issue, trusted account)`
+                : '';
 
             await github.rest.issues.createComment({
               owner, repo, issue_number,

@@ -2694,13 +2694,19 @@
   },
   "United Nations Office of Information Communication Technology": {
     "org": "United Nations Office of Information Communication Technology",
-    "ideasUrl": "https://gitlab.com/google-summer-of-code/google-summer-of-code/-/blob/main/README.md",
+    "ideasUrl": "https://gitlab.com/google-summer-of-code/google-summer-of-code",
     "channels": [
-      {
-        "type": "Email",
-        "url": "mailto:mithusa.kajendran@un.org",
-        "label": "UN OICT GSoC Admin"
-      }
+   {
+    "type": "Email",
+    "url": "mailto:mithusa.kajendran@un.org",
+    "label": "UN OICT GSoC Admin"
+  },
+  {
+    "type": "Email",
+    "url": "mailto:mdowney@humanitech.group",
+    "label": "Michael Downey - OICT Admin"
+  }
+],
     ],
     "mentors": [
       {
@@ -2724,13 +2730,7 @@
         "githubUrl": ""
       }
     ],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "mailto:mdowney@humanitech.group",
-        "label": "Michael Downey - OICT Admin"
-      }
-    ],
+    
     "tip": "Contact mentors directly via email or reach org admins at mithusa.kajendran@un.org for general GSoC questions.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"

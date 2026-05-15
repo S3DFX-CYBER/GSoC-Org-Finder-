@@ -104,25 +104,40 @@ jobs:
 
             if (!process.env.GEMINI_API_KEY) {
               core.info('GEMINI_API_KEY not set — skipping LLM verification, PR stays open.');
+      - name: LLM cross-check before closing flagged PRs
+        if: steps.slop-detection.outputs.flagged == 'true'
+        uses: actions/github-script@v8
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            if (pr.state !== 'open') {
+              core.info(`PR #${pr.number} is already ${pr.state} — skipping LLM cross-check.`);
+              return;
+            }
+            const CLOSE_MARKER = '<!-- llm-slop-close -->';
+            const { data: existing } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              per_page: 100
+            });
+            if (existing.some(c => (c.body || '').includes(CLOSE_MARKER))) {
+              core.info('LLM close comment already posted — skipping.');
+              return;
+            }
+            const prTitle = (pr.title || '').slice(0, 200);
+            const prBody = (pr.body || '').slice(0, 2000);
+
+            if (!process.env.GEMINI_API_KEY) {
+              core.info('GEMINI_API_KEY not set — skipping LLM verification, PR stays open.');
               return;
             }
 
-            function sanitizeInput(text, maxLen) {
-              if (!text) return '';
-              return text
-                .replace(/```[\s\S]*?```/g, '[code block]')
-                .replace(/\{[\s\S]*?\}/g, '[object]')
-                .replace(/ignore previous|disregard|system prompt|you are now|forget (all|your|the) instructions|do not follow|override|new instructions|act as|pretend you|roleplay|jailbreak/gi, '[filtered]')
-                .replace(/\b(SYSTEM|ASSISTANT|USER)\s*:/gi, '[filtered]:')
-                .replace(/https?:\/\/[^\s)]+/gi, '[url]')
-                .slice(0, maxLen);
-            }
-
-            const prTitle = sanitizeInput(pr.title, 200);
-            const prBody = sanitizeInput(pr.body, 2000);
-
             const prompt = [
-              'You are a spam classifier. Reply with ONLY the word "spam" or "legitimate". No other text.',
+              'SYSTEM: You are a spam classifier. Reply with ONLY "spam" or "legitimate". No other text.',
               '',
               'Determine if this GitHub pull request is AI-generated spam or a low-effort contribution.',
               '',
@@ -165,6 +180,7 @@ jobs:
                 repo: context.repo.repo,
                 issue_number: pr.number,
                 body: [
+                  CLOSE_MARKER,
                   '## :no_entry_sign: Auto-closed: AI-generated / low-effort PR',
                   '',
                   'This PR was flagged by the quality guard **and** confirmed by automated LLM review.',

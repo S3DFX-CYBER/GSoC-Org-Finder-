@@ -285,12 +285,24 @@
   "BRL-CAD": {
     "org": "BRL-CAD",
     "ideasUrl": "https://brlcad.org/wiki/Google_Summer_of_Code",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://brlcad.zulipchat.com",
+        "label": "BRL-CAD Zulip"
+      }
+    ],
     "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:devs@brlcad.org",
+        "label": "BRL-CAD Developer Mailing List"
+      }
+    ],
+    "tip": "BRL-CAD uses group mentorship. Contact the community via Zulip at https://brlcad.zulipchat.com or email devs@brlcad.org.",
+    "status": "ok",
+    "lastFetched": "2026-05-15T00:00:00.000Z"
   },
   "C2SI": {
     "org": "C2SI",

@@ -1,4 +1,4 @@
-name: 🛡️ Detect AI Slop PRs
+name: "🛡️ Detect AI Slop PRs"
 
 on:
   pull_request_target:
@@ -7,6 +7,7 @@ on:
       - reopened
       - edited
       - synchronize
+      - labeled
 
 permissions:
   contents: read
@@ -22,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Anti Slop Detection
+        if: github.event.action != 'labeled'
+        id: slop-detection
         uses: peakoss/anti-slop@v0.2.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -76,7 +79,7 @@ jobs:
             ai-slop
             low-quality-pr
           failure-pr-message: |
-            ## 🚫 PR Flagged by Quality Guard
+            ## :no_entry_sign: PR Flagged by Quality Guard
 
             This PR has been flagged by automated quality checks.
 
@@ -88,5 +91,100 @@ jobs:
 
             Please fix the issues mentioned and push new commits.
 
-          close-pr: true
+          close-pr: false
           lock-pr: false
+
+      - name: LLM cross-check before closing flagged PRs
+        if: contains(github.event.pull_request.labels.*.name, 'ai-slop')
+        uses: actions/github-script@v8
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            if (pr.state !== 'open') {
+              core.info(`PR #${pr.number} is already ${pr.state} — skipping LLM cross-check.`);
+              return;
+            }
+            const CLOSE_MARKER = '<!-- llm-slop-close -->';
+            const { data: existing } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              per_page: 100
+            });
+            if (existing.some(c => (c.body || '').includes(CLOSE_MARKER))) {
+              core.info('LLM close comment already posted — skipping.');
+              return;
+            }
+            const prTitle = (pr.title || '').slice(0, 200);
+            const prBody = (pr.body || '').slice(0, 2000);
+
+            if (!process.env.GEMINI_API_KEY) {
+              core.info('GEMINI_API_KEY not set — skipping LLM verification, PR stays open.');
+              return;
+            }
+
+            const prompt = [
+              'SYSTEM: You are a spam classifier. Reply with ONLY "spam" or "legitimate". No other text.',
+              '',
+              'Determine if this GitHub pull request is AI-generated spam or a low-effort contribution.',
+              '',
+              `TITLE: ${prTitle}`,
+              `BODY: ${prBody}`
+            ].join('\n');
+
+            let verdict = 'unknown';
+            const models = ['gemini-2.0-flash-lite', 'gemini-2.0-flash'];
+
+            for (const model of models) {
+              try {
+                const res = await fetch(
+                  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+                  {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      contents: [{ parts: [{ text: prompt }] }],
+                      generationConfig: { temperature: 0.0, maxOutputTokens: 10 }
+                    })
+                  }
+                );
+
+                if (!res.ok) continue;
+                const data = await res.json();
+                const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim().toLowerCase();
+                if (raw === 'spam' || raw === 'legitimate') {
+                  verdict = raw;
+                  break;
+                }
+              } catch (e) {
+                core.warning(`Model ${model} failed: ${e.message}`);
+              }
+            }
+
+            if (verdict === 'spam') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: [
+                  CLOSE_MARKER,
+                  '## :no_entry_sign: Auto-closed: AI-generated / low-effort PR',
+                  '',
+                  'This PR was flagged by the quality guard **and** confirmed by automated LLM review.',
+                  '',
+                  'If you believe this is a mistake, please contact a maintainer.'
+                ].join('\n')
+              });
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                state: 'closed'
+              });
+              core.info('Both anti-slop and LLM agree: spam. PR closed.');
+            } else {
+              core.info(`LLM verdict: "${verdict}" — not closing. PR stays labeled for manual review.`);
+            }

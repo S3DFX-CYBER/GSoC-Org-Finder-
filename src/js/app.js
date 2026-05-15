@@ -733,7 +733,7 @@ function renderGrid(orgs){
       data-filtered-idx="${i}"
       tabindex="0">
       <div class="card-header-row">
-        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name||'')[0]||'') }" loading="lazy" onerror="imgErr(this)">`:``}
+        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml(o.name||'')} logo" loading="lazy" onerror="imgErr(this)">`:``}
         <div class="org-logo-info">
           <div class="card-top-line">
             <div class="org-name">${escapeHtml(o.name)}</div>

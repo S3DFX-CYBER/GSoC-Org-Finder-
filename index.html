@@ -250,6 +250,37 @@
       font-weight: 600;
     }
 
+    /* Floating "Go to Compare" button */
+    #compareFloatingBtn {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 70;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.9rem;
+      background: #f97316;
+      color: white;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+    #compareFloatingBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    #compareFloatingBtn:focus { outline: 3px solid rgba(255,255,255,0.16); box-shadow: 0 0 0 4px rgba(249,115,22,0.12); }
+    @media (max-width: 420px) {
+      #compareFloatingBtn { right: 0.6rem; bottom: 0.8rem; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #compareFloatingBtn { transition: none; }
+    }
+
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
@@ -1190,6 +1221,12 @@
   </div>
 </div>
 
+<!-- Floating go-to-compare button -->
+<button id="compareFloatingBtn" aria-label="Go to Compare" title="Go to Compare" type="button">
+  <span class="material-symbols-outlined">compare</span>
+  <span id="compareFloatingText">Go to Compare</span>
+</button>
+
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
@@ -1510,6 +1547,71 @@
       alert('Could not copy automatically. Use this link: ' + shareUrl);
     }
   }
+
+  // Floating compare button helpers
+  let compareSectionInView = false;
+
+  function setFloatingCompareButtonMode(mode) {
+    const btn = document.getElementById('compareFloatingBtn');
+    const text = document.getElementById('compareFloatingText');
+    const icon = btn?.querySelector('.material-symbols-outlined');
+    if (!btn || !text || !icon) return;
+
+    if (mode === 'top') {
+      btn.setAttribute('aria-label', 'Go to Top');
+      btn.setAttribute('title', 'Go to Top');
+      text.textContent = 'Go to Top';
+      icon.textContent = 'arrow_upward';
+    } else {
+      btn.setAttribute('aria-label', 'Go to Compare');
+      btn.setAttribute('title', 'Go to Compare');
+      text.textContent = 'Go to Compare';
+      icon.textContent = 'compare';
+    }
+  }
+
+  function updateCompareFloatingVisibility() {
+    try {
+      const btn = document.getElementById('compareFloatingBtn');
+      if (!btn) return;
+      const hasSelections = compareList && compareList.length > 0;
+      btn.classList.toggle('visible', hasSelections);
+      if (!hasSelections) return;
+      setFloatingCompareButtonMode(compareSectionInView ? 'top' : 'compare');
+    } catch (e) {
+      // swallow
+    }
+  }
+
+  document.getElementById('compareFloatingBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.getElementById('compare');
+    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (compareSectionInView) {
+      window.scrollTo({ top: 0, behavior: prefersReduce ? 'auto' : 'smooth' });
+      return;
+    }
+
+    if (target) {
+      target.scrollIntoView({ behavior: prefersReduce ? 'auto' : 'smooth', block: 'center' });
+      const btn = document.getElementById('compareFloatingBtn');
+      if (btn) btn.blur();
+    } else {
+      openCompareModal();
+    }
+  });
+
+  const compareFloatingObserverTarget = document.getElementById('compare');
+  if (compareFloatingObserverTarget && 'IntersectionObserver' in window) {
+    const compareFloatingObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      compareSectionInView = !!(entry && entry.isIntersecting && entry.intersectionRatio >= 0.35);
+      updateCompareFloatingVisibility();
+    }, { threshold: [0.35, 0.6, 1] });
+    compareFloatingObserver.observe(compareFloatingObserverTarget);
+  }
+  
 
   function renderSelectedLanguages() {
     const container = document.getElementById('selectedLangsStrip');
@@ -2184,6 +2286,7 @@
     persistCompareList();
     renderOrgs(true);
     renderCompare();
+    updateCompareFloatingVisibility();
   }
 
   function renderCompare() {
@@ -2757,6 +2860,8 @@ if(org.ideas){
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
+  // sync floating compare button visibility
+  updateCompareFloatingVisibility();
   const helpModal = document.getElementById('helpModal');
 const helpBtn = document.getElementById('helpBtn');
 

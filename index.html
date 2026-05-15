@@ -820,15 +820,18 @@
     <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
   </div>
   <!-- Status Banner -->
-  <div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+  <div id="issuesBanner" class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
     <div class="flex items-center gap-3">
-      <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot"></div>
+      <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot" id="issuesBannerDot"></div>
       <div>
-        <p class="font-bold text-green-800 text-sm">Pre-fetched Issues Ready</p>
-        <p class="text-xs text-green-600">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
+        <p class="font-bold text-green-800 text-sm" id="issuesBannerTitle">Pre-fetched Issues Ready</p>
+        <p class="text-xs text-green-600" id="issuesBannerSubtitle">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
       </div>
     </div>
-    <span id="issuesLastUpdated" class="text-xs font-mono text-green-600 ml-auto">Last updated: pending refresh</span>
+    <div class="ml-auto text-right">
+      <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: pending refresh</span>
+      <span id="issuesStaleNote" class="hidden ml-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
+    </div>
   </div>
   <!-- Issue Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -890,13 +893,16 @@
 
     <div class="bg-white border border-zinc-100 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-3 h-3 rounded-full bg-orange-500 pulse-dot"></div>
+        <div class="w-3 h-3 rounded-full pulse-dot" id="mentorBannerDot" style="background-color:#f97316"></div>
         <div>
           <p class="font-bold text-zinc-900 text-sm">Cached mentor contact data</p>
           <p class="text-xs text-zinc-600">Generated offline by the project workflow to keep scraping out of the browser.</p>
         </div>
       </div>
-      <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500 ml-auto">Last updated: pending refresh</span>
+      <div class="ml-auto text-right">
+        <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500">Last updated: pending refresh</span>
+        <span id="mentorStaleNote" class="hidden ml-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">ℹ GSoC selection complete. Data won't update frequently.</span>
+      </div>
     </div>
 
     <div class="bg-white rounded-2xl border border-zinc-100 p-6 mb-8">
@@ -1836,12 +1842,62 @@
     }
   }
 
+  // GSoC contributor selection completion date (Accepted Projects Announced)
+  const GSOC_SELECTION_DATE = new Date('2026-04-30T23:59:59Z');
+
+  /** Returns true if GSoC selection is complete (i.e. today is past the announcement date). */
+  function isPostSelection() {
+    return Date.now() > GSOC_SELECTION_DATE.getTime();
+  }
+
+  /** Applies the post-selection stale-data UI treatment to both banners. */
+  function applyStaleDataNotice() {
+    if (!isPostSelection()) return;
+
+    // --- Good First Issues banner ---
+    const issuesStaleNote = document.getElementById('issuesStaleNote');
+    const issuesBannerSubtitle = document.getElementById('issuesBannerSubtitle');
+    const issuesBannerDot = document.getElementById('issuesBannerDot');
+    const issuesBanner = document.getElementById('issuesBanner');
+    if (issuesStaleNote) issuesStaleNote.classList.remove('hidden');
+    // Soften the "Updated every 6 hours" claim so it no longer contradicts the stale timestamp
+    if (issuesBannerSubtitle) {
+      issuesBannerSubtitle.textContent = 'Data is cached. Updates may be infrequent post-selection.';
+    }
+    // Switch dot from pulsing green to steady grey
+    if (issuesBannerDot) {
+      issuesBannerDot.classList.remove('pulse-dot', 'bg-green-500');
+      issuesBannerDot.classList.add('bg-zinc-400');
+    }
+    // Soften banner background to neutral
+    if (issuesBanner) {
+      issuesBanner.classList.remove('bg-green-50', 'border-green-200');
+      issuesBanner.classList.add('bg-zinc-50', 'border-zinc-200');
+      const title = document.getElementById('issuesBannerTitle');
+      if (title) { title.classList.remove('text-green-800'); title.classList.add('text-zinc-800'); }
+      const subtitle = document.getElementById('issuesBannerSubtitle');
+      if (subtitle) { subtitle.classList.remove('text-green-600'); subtitle.classList.add('text-zinc-500'); }
+      const lastUpdated = document.getElementById('issuesLastUpdated');
+      if (lastUpdated) { lastUpdated.classList.remove('text-green-600'); lastUpdated.classList.add('text-zinc-500'); }
+    }
+
+    // --- Mentor Finder banner ---
+    const mentorStaleNote = document.getElementById('mentorStaleNote');
+    const mentorBannerDot = document.getElementById('mentorBannerDot');
+    if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
+    // Replace amber warning dot with a calm neutral dot (no pulse)
+    if (mentorBannerDot) {
+      mentorBannerDot.classList.remove('pulse-dot');
+      mentorBannerDot.style.backgroundColor = '#a1a1aa'; // zinc-400
+    }
+  }
+
   // Dynamic timeline milestones
   const MILESTONES = [
     { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
-    { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
+    { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
   ].filter(m => !isNaN(m.date.getTime())); 
 
   function renderTimeline() {
@@ -2628,6 +2684,7 @@ if(org.ideas){
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
+  applyStaleDataNotice(); // show post-selection message if GSoC selection is complete
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();

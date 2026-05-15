@@ -2212,16 +2212,50 @@
 "Submitty": {
   "org": "Submitty",
   "ideasUrl": "https://github.com/Submitty/Submitty/wiki/Google-Summer-of-Code",
-  "channels": ["Zulip"],
+  "channels": [
+  {
+    "type": "Zulip",
+    "url": "https://submitty.org/communication",
+    "label": "Submitty Zulip"
+  }
+],
   "mentors": [
-    "JManion32",
-    "williamjallen",
-    "cjreed121",
-    "bmcutler",
-    "IDzyre",
-    "shailpatels",
-    "MasterOdin"
-  ],
+  {
+    "name": "JManion32",
+    "github": "JManion32",
+    "githubUrl": "https://github.com/JManion32"
+  },
+  {
+    "name": "williamjallen",
+    "github": "williamjallen",
+    "githubUrl": "https://github.com/williamjallen"
+  },
+  {
+    "name": "cjreed121",
+    "github": "cjreed121",
+    "githubUrl": "https://github.com/cjreed121"
+  },
+  {
+    "name": "bmcutler",
+    "github": "bmcutler",
+    "githubUrl": "https://github.com/bmcutler"
+  },
+  {
+    "name": "IDzyre",
+    "github": "IDzyre",
+    "githubUrl": "https://github.com/IDzyre"
+  },
+  {
+    "name": "shailpatels",
+    "github": "shailpatels",
+    "githubUrl": "https://github.com/shailpatels"
+  },
+  {
+    "name": "MasterOdin",
+    "github": "MasterOdin",
+    "githubUrl": "https://github.com/MasterOdin"
+  }
+],
   "mailingLists": [],
   "tip": "Join the Submitty Zulip server to communicate with mentors and contributors.",
   "status": "ok",

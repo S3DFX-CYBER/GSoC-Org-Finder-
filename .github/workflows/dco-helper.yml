@@ -102,8 +102,13 @@ jobs:
               try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['dco-verified'] }); } catch (e) { core.warning(`Failed adding dco-verified label: ${e?.message || e}`); }
             }
 
-            // Upsert comment
             if (existing) {
+              const statusChanged = (missingDCO && existing.body.includes('DCO Sign-off Verified')) ||
+                                    (!missingDCO && existing.body.includes('DCO Sign-off Missing'));
+              if (!statusChanged) {
+                core.info('DCO status unchanged — skipping comment update');
+                return;
+              }
               await github.rest.issues.updateComment({
                 owner,
                 repo,

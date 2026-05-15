@@ -440,33 +440,33 @@
 <body class="bg-background text-on-surface font-body antialiased">
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50">
+  <div class="flex items-center justify-between px-4 xl:px-8 py-2.5 max-w-[1400px] mx-auto w-full">
+    <div class="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8">
       <!-- Hamburger menu button (mobile only) -->
       <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#" class="flex items-center gap-2">
+      <a href="#" class="flex items-center gap-2 shrink-0">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
-        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
+        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline whitespace-nowrap"><span class="hidden sm:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
+      <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium">
+        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors whitespace-nowrap" href="#orgs" data-section="orgs">Organizations</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#guide" data-section="guide">Guide</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#watchlist" data-section="watchlist">Watchlist</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#issues" data-section="issues">Issues</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#mentors" data-section="mentors">Mentors</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
       </nav>
     </div>
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center gap-1 sm:gap-2 shrink-0">
     
       <button id="themeToggleBtn" onclick="toggleTheme()"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
@@ -488,7 +488,7 @@
       </button>
     
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
-        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+        class="hidden sm:flex shrink-0 whitespace-nowrap items-center gap-1.5 px-3 lg:px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
     
         <span class="material-symbols-outlined text-sm">
           star
@@ -560,59 +560,83 @@
 </div>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
-        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
-        <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
+<section class="relative pt-24 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 max-w-6xl mx-auto fade-up flex flex-col justify-center min-h-[auto] lg:min-h-[500px]">
+  
+  <!-- Subtle Grid Background -->
+  <div class="absolute inset-0 opacity-[0.015] dark:opacity-5 pointer-events-none" style="background-size: 24px 24px; background-image: linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px);"></div>
+  <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-primary-container/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+  <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+    <!-- Left Text Content -->
+    <div class="lg:col-span-7 text-center lg:text-left px-2 sm:px-0">
+      
+      <!-- Pill Badge -->
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60 mb-5 transition-all cursor-default shadow-sm">
+        <span class="material-symbols-outlined text-[10px] text-primary icon-fill">verified</span>
+        <span class="font-label text-[10px] uppercase font-bold tracking-widest text-[#52525B] dark:text-zinc-300">GSoC 2026</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
-        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
+      
+      <!-- Main Title -->
+      <h1 class="text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight text-[#111111] dark:text-white mb-4 leading-[1.1] relative z-20">
+        Find Your <br class="hidden sm:block"/>
+        <span class="text-primary tracking-tight">Perfect GSoC Org</span>
       </h1>
-      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+      
+      <p class="text-sm sm:text-base text-[#52525B] dark:text-zinc-400 max-w-lg lg:mx-0 mx-auto mb-6 leading-relaxed font-medium relative z-20">
+        Browse <strong class="text-[#111111] dark:text-white font-semibold bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded border border-zinc-200/50 dark:border-zinc-700">184</strong> organizations. Filter instantly by tech stack, domain, competition level, and real-time GitHub activity.
       </p>
-      <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
-      </div>
-      <!-- Surprise Button -->
-      <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
+      
+      <div class="relative max-w-lg lg:mx-0 mx-auto mb-5 transform transition-transform focus-within:scale-[1.01] duration-300 group shadow-sm bg-white dark:bg-zinc-900 rounded-xl">
+        <div class="absolute left-1.5 top-1 bottom-1 w-10 flex items-center justify-center bg-transparent z-10">
+          <span class="material-symbols-outlined text-zinc-400 group-focus-within:text-primary transition-colors" style="font-size: 1.1rem">search</span>
+        </div>
+        <input id="hero-search" type="text" placeholder="Search orgs..." class="w-full bg-transparent border border-zinc-200/80 dark:border-zinc-800 text-[#111111] dark:text-white placeholder-zinc-400 rounded-xl py-2 pl-10 pr-20 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" />
+        
+        <!-- Search Button inner -->
+        <button class="absolute right-1 top-1 bottom-1 bg-primary hover:bg-orange-600 text-white font-semibold rounded-lg px-3 shadow-[0_2px_10px_rgba(244,107,14,0.2)] transition-colors active:scale-95 flex items-center gap-1 text-xs">
+          <span class="hidden sm:inline">Search</span>
+          <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
         </button>
       </div>
-      <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+
+      <!-- Actions Row -->
+      <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-2">
+        <button id="surpriseBtn" class="inline-flex items-center gap-1 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-[#111111] dark:text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none">
+          <span class="material-symbols-outlined text-primary text-[14px]">casino</span>Surprise!
+        </button>
+        <button onclick="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); updateThemeIcon();" class="inline-flex items-center gap-1 px-3 py-1.5 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 rounded-lg text-xs font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.1)] transition-all focus:outline-none">
+          <span class="material-symbols-outlined text-[14px]" id="heroThemeIcon">dark_mode</span>Theme
+        </button>
+      </div>
+      
+      <!-- Minimal Stat Badges -->
+      <div class="flex flex-wrap justify-center lg:justify-start gap-3 mt-4 pt-3 border-t border-zinc-100/50 dark:border-zinc-800/50">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[14px] text-[#71717A] dark:text-zinc-500">groups</span>
+          <span class="text-xs text-[#52525B] dark:text-zinc-400 font-medium">184 Orgs</span>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[14px] text-[#71717A] dark:text-zinc-500">code</span>
+          <span class="text-xs text-[#52525B] dark:text-zinc-400 font-medium">30+ Langs</span>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[14px] text-[#71717A] dark:text-zinc-500">category</span>
+          <span class="text-xs text-[#52525B] dark:text-zinc-400 font-medium">15+ Domains</span>
         </div>
       </div>
     </div>
     <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+    <div id="timeline" class="lg:col-span-5 fade-up hidden lg:block relative z-20">
+      <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-200/50 dark:border-zinc-800/50 text-[#111111] dark:text-white transform transition-transform duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-headline font-bold text-lg text-[#111111] dark:text-white tracking-tight">Timeline</h3>
+          <span class="px-2 py-0.5 bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20 rounded-md text-[9px] font-bold uppercase tracking-wider">Live</span>
         </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+        <div id="timeline-milestones" class="space-y-4 text-sm scale-95 origin-top-left lg:origin-top-center w-[105%]"></div>
+        <div class="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+            <span class="text-[10px] text-[#71717A] dark:text-zinc-500 uppercase tracking-wider font-semibold" id="countdown-label">Next milestone</span>
+            <span id="countdown" class="font-mono text-xs font-bold text-primary dark:text-orange-400">--d --h --m</span>
           </div>
         </div>
       </div>
@@ -686,6 +710,9 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button onclick="exportToCSV()" class="bg-primary text-white rounded-xl px-4 py-2 text-xs font-bold shadow-lg shadow-primary/20 hover:bg-orange-600 transition-colors" title="Export current filtered list to CSV">
+        Export CSV
+      </button>
     </div>
   </div>
   
@@ -701,7 +728,7 @@
 
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
-    <div class="text-6xl mb-4">🔍</div>
+    <div class="text-6xl mb-4 text-[#A1A1AA] dark:text-zinc-600"><span class="material-symbols-outlined" style="font-size: 60px">search_off</span></div>
     <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
     <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
     <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
@@ -1860,7 +1887,7 @@
       container.innerHTML = MILESTONES.map((m, i) => {
         const isActive = i === activeIdx;
         const isLast = i === MILESTONES.length - 1;
-        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        const connector = !isLast ? `<div class="w-[1px] h-8 bg-[#E4E4E7] dark:bg-zinc-800 my-1"></div>` : '';
         let dateStr;
         try {
           dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -1869,24 +1896,24 @@
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
-              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
-              <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
-              ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
+            return `<div class="flex gap-2 sm:gap-3">
+              <div class="flex flex-col items-center"><div class="w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-orange-100 dark:ring-orange-900/30 pulse-dot"></div>${connector}</div>
+              <div class="-mt-0.5"><p class="text-[9px] font-bold text-primary uppercase tracking-wider">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-semibold text-[#111111] dark:text-white leading-tight mt-0.5">${escapeHtml(m.label)}</p>
+              ${m.note ? `<p class="text-[10px] text-[#71717A] dark:text-zinc-400 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
-              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
-              <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
-              <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
+            return `<div class="flex gap-2 sm:gap-3">
+              <div class="flex flex-col items-center"><div class="w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-green-100 dark:ring-green-900/30"></div>${connector}</div>
+              <div class="-mt-0.5"><p class="text-[9px] font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-semibold text-[#111111] dark:text-white leading-tight mt-0.5">${escapeHtml(m.label)}</p>
+              <p class="text-[10px] text-green-600 dark:text-green-400 mt-1 font-medium">✓ Completed</p></div>
             </div>`;
           } else {
-            return `<div class="flex gap-3 sm:gap-4 opacity-40">
-              <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
-              <p class="text-sm font-bold text-zinc-500">${escapeHtml(m.label)}</p></div>
+            return `<div class="flex gap-2 sm:gap-3 opacity-75">
+              <div class="flex flex-col items-center"><div class="w-1.5 h-1.5 rounded-full bg-[#E4E4E7] dark:bg-zinc-700 mt-0.5"></div>${connector}</div>
+              <div class="-mt-0.5"><p class="text-[9px] font-bold text-[#A1A1AA] dark:text-zinc-500 uppercase tracking-wider">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-medium text-[#52525B] dark:text-zinc-400 mt-0.5">${escapeHtml(m.label)}</p></div>
             </div>`;
           }
       }).join('');
@@ -1909,7 +1936,7 @@
 
       if (!next) {
         labelEl.textContent = 'GSoC 2026 selection complete';
-        countdownEl.textContent = '🎉 All done!';
+        countdownEl.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">celebration</span>All done!</span>';
         countdownEl.classList.remove('text-primary');
         countdownEl.classList.add('text-green-600');
         return;

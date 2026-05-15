@@ -1,5 +1,5 @@
 /* global ORGS */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, exportToCSV */
 
 // ══════════════════════════════════════════════
 // THEME
@@ -54,7 +54,7 @@ function updateCountdown(){
     banner.style.borderBottomColor='rgba(0,135,90,.3)';
     banner.style.color='var(--green)';
   } else if(now>=CLOSE_DATE.getTime()){
-    banner.innerHTML='<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
+    banner.innerHTML='<span style="display:inline-flex;align-items:center;gap:4px;"><span class="material-symbols-outlined text-[1.2rem]">celebration</span> GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
     clearInterval(cdTimer);return;
   }
   const diff=Math.max(0,target-now);
@@ -315,7 +315,7 @@ function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n
 // HELPERS
 // ══════════════════════════════════════════════
 function yCls(y){return y>=8?'veteran':y>=4?'experienced':'newcomer';}
-function yLbl(y){return y>=8?'🏆 Veteran':y>=4?'⭐ Experienced':'🌱 Newcomer';}
+function yLbl(y){return y>=8?'<span class="material-symbols-outlined shrink-0 text-orange-600 align-text-bottom" style="font-size:1em">emoji_events</span> Veteran':y>=4?'<span class="material-symbols-outlined shrink-0 text-orange-500 align-text-bottom text-[1em]">star</span> Experienced':'<span class="material-symbols-outlined shrink-0 text-green-600 align-text-bottom text-[1em]">eco</span> Newcomer';}
 function yBdg(y){return y>=8?'bv':y>=4?'be':'bn';}
 function cLbl(c){return c==='hot'?'🔥 High':c==='moderate'?'🟡 Moderate':'😎 Low';}
 function cBdg(c){return c==='hot'?'bh':c==='moderate'?'bm':'bc';}
@@ -407,7 +407,7 @@ function renderCompareTable(){
     {label:'GSoC Years',  vals:arr.map(o=>o.years), type:'bar', max:11, best:'high'},
     {label:'Since',       vals:arr.map(o=>o.firstYear), type:'text'},
     {label:'Competition', vals:arr.map(o=>cLbl(o.competition)), scores:arr.map(o=>compScore[o.competition]), type:'scored', best:'low'},
-    {label:'Stars ⭐',     vals:arr.map(o=>o._gh?fmt(o._gh.stars):'—'), scores:arr.map(o=>o._gh?.stars||0), type:'scored', best:'high'},
+    {label:'<span class="material-symbols-outlined align-text-bottom text-[1em]">star</span> Stars',     vals:arr.map(o=>o._gh?fmt(o._gh.stars):'—'), scores:arr.map(o=>o._gh?.stars||0), type:'scored', best:'high'},
     {label:'Forks',       vals:arr.map(o=>o._gh?fmt(o._gh.forks):'—'), scores:arr.map(o=>o._gh?.forks||0), type:'scored', best:'high'},
     {label:'Open Issues', vals:arr.map(o=>o._gh?fmt(o._gh.issues):'—'), scores:arr.map(o=>o._gh?.issues||0), type:'scored', best:'low'},
     {label:'Last Commit', vals:arr.map(o=>o._gh?o._gh.lastCommit:'—'), type:'text'},
@@ -441,7 +441,7 @@ function renderCompareTable(){
     tbody+=`<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
   }
   wrap.innerHTML=`<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
-    <p style="font-size:10px;color:var(--muted);margin-top:10px;text-align:right">🟢 Best value &nbsp; 🔴 Lowest value &nbsp; (requires GitHub stats to be fetched)</p>`;
+    <p style="font-size:10px;color:var(--muted);margin-top:10px;text-align:right"><span class="material-symbols-outlined align-text-bottom text-green-500 text-[1.2em]">check_circle</span> Best value &nbsp; <span class="material-symbols-outlined align-text-bottom text-red-500 text-[1.2em]">cancel</span> Lowest value &nbsp; (requires GitHub stats to be fetched)</p>`;
 }
 
 function showCompareToast(msg){
@@ -697,14 +697,14 @@ function isBookmarked(orgName) {
 
 function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
-  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
+  return `<span class="gh-s"><span class="material-symbols-outlined text-green-500 text-[1.1em]">task_alt</span> <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
   if(!orgs.length){
     g.innerHTML=`
       <div class="empty">
-        <div class="empty-icon">🔍</div>
+        <div class="empty-icon"><span class="material-symbols-outlined text-[48px] text-[#A1A1AA]">search_off</span></div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
         <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
@@ -715,10 +715,10 @@ function renderGrid(orgs){
     const act=o._gh?.activity||null;
     const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
     const ghm=o._gh?`<div class="gh-mini">
-      <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
-      <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
+      <span class="gh-s"><span class="material-symbols-outlined text-[1.1em]">star</span> <b>${fmt(o._gh.stars)}</b></span>
+      <span class="gh-s"><span class="material-symbols-outlined text-[1.1em]">fork_right</span> <b>${fmt(o._gh.forks)}</b></span>
       ${renderGfiBadge(o._gh)}
-      <span class="gh-s">🕐 <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
+      <span class="gh-s"><span class="material-symbols-outlined text-[1.1em]">schedule</span> <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
     </div>`:'';
     const globalIdx=ORGS.indexOf(o);
     const inCompare=compareSet.has(globalIdx);
@@ -766,7 +766,7 @@ function renderGrid(orgs){
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
         <span class="b ${aBdg(act)}">${aLbl(act)}</span>
-        ${o._gh?.gfi>0?`<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>`:''}
+        ${o._gh?.gfi>0?`<span class="b bgfi"><span class="material-symbols-outlined text-[1em]">task_alt</span> ${o._gh.gfi} GFI</span>`:''}
       </div>
       <div class="tags">${tags}</div>
       ${ghm}
@@ -955,6 +955,42 @@ function resetFilters(){
   applyFilters();
 }
 
+globalThis.exportToCSV = exportToCSV;
+function exportToCSV() {
+  if (!filteredOrgs || filteredOrgs.length === 0) {
+    alert("No organizations to export.");
+    return;
+  }
+  const headers = ["Name", "Category", "Technologies", "Topics", "GitHub URL", "Good First Issues", "Stars", "Forks", "Last Commit"];
+  const rows = filteredOrgs.map(o => {
+    const ghUrl = o.github || '';
+    const gfi = o._gh?.gfi ?? 'N/A';
+    const stars = o._gh?.stars ?? 'N/A';
+    const forks = o._gh?.forks ?? 'N/A';
+    const lastCommit = o._gh?.lastCommit ?? 'N/A';
+    const cleanTech = Array.isArray(o.tags) ? o.tags.join('; ') : '';
+    const cleanTopics = Array.isArray(o.topics) ? o.topics.join('; ') : '';
+    return [
+      `"${o.name.replace(/"/g, '""')}"`,
+      `"${o.cat}"`,
+      `"${cleanTech.replace(/"/g, '""')}"`,
+      `"${cleanTopics.replace(/"/g, '""')}"`,
+      `"${ghUrl}"`,
+      gfi, stars, forks, `"${lastCommit}"`
+    ].join(',');
+  });
+  
+  const csvContent = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "gsoc_orgs_export.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 // ══════════════════════════════════════════════
 // MODAL
 // ══════════════════════════════════════════════
@@ -982,7 +1018,7 @@ function openModal(idx){
   let tl='';
   for(let y=o.firstYear;y<=2026;y++){
     const cur=y===2026;
-    tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${escapeHtml(cur?'⭐':'✓')} ${escapeHtml(String(y))}</span>`;}
+    tl+=`<span style="display:inline-flex;align-items:center;gap:2px;margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}"><span class="material-symbols-outlined text-[1.1em]">${cur?'star':'check'}</span> ${escapeHtml(String(y))}</span>`;}
   document.getElementById('mTimeline').innerHTML=tl;
   // Smart link: umbrella orgs → org page, single-project → specific repo
   const mLinkEl=document.getElementById('mLink');
@@ -1211,12 +1247,12 @@ function renderIssues(){
   const loadMore=document.getElementById('loadMoreWrap');
 
   if(!allIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei"><span class="material-symbols-outlined text-green-500 text-[1.5em]">task_alt</span></div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
     statsDiv.style.display='none';loadMore.style.display='none';return;
   }
 
   if(!filteredIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei"><span class="material-symbols-outlined text-[#A1A1AA] text-[1.5em]">search_off</span></div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
     statsDiv.style.display='flex';loadMore.style.display='none';
   } else {
     shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);

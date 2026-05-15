@@ -21,7 +21,12 @@ Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) 
 - Issues **without** `gssoc26` or `nsoc26` labels (these are program-reserved)
 - `good first issue` label for beginner-friendly tasks
 - `help wanted` label for tasks needing contributors
-- Issues labeled `level-1`, `level-2`, or `level-3` without program restrictions
+- Issues labeled `level:beginner`, `level:intermediate`, or `level:advanced` without program restrictions
+
+**Assignment eligibility by level:**
+- `level:beginner` — Anyone can self-assign (no restrictions)
+- `level:intermediate` — Account must be at least 30 days old for auto-assignment
+- `level:advanced` — Requires at least 1 merged PR in this repository
 
 You can also **create your own issue** if you've found a bug or have a feature idea.
 
@@ -166,13 +171,22 @@ Before opening a PR, ask yourself:
 
 ---
 
-## Review Process
+## Review Process (3-Stage Pipeline)
 
-1. Your PR enters the automated validation pipeline
-2. A maintainer or reviewer is assigned
-3. They may request changes — address them promptly
-4. Once approved, your PR is merged
-5. You're added to the Contributors section in the README
+Your PR goes through an automated 3-stage pipeline:
+
+| Stage | What Happens | Labels Applied |
+|-------|-------------|----------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Human Review | Maintainer or reviewer checks code quality | `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
+
+The **LLM PR Analysis** bot will automatically verify that your PR:
+- Links to a valid issue
+- Actually addresses the linked issue
+- Does not include out-of-scope changes
+
+Once merged, you're added to the Contributors section in the README.
 
 ### Expected Review Times
 

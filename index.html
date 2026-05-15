@@ -123,17 +123,16 @@
       pointer-events: auto;
     }
     .modal {
-      background: white;
-      width: 90%;
-      max-width: 700px;
-      max-height: 90vh;
-      border-radius: 2rem;
-      position: relative;
-      overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      transform: scale(0.9);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  border-radius: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
     .modal-bg.open .modal {
       transform: scale(1);
     }
@@ -169,7 +168,9 @@
     .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
     .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
 
-    .modal-body { padding: 0 3rem 3rem; }
+    .modal-body { padding: 0 3rem 3rem;
+                  overflow-y: auto;
+                  max-height: 70vh;}
     .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
     
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
@@ -295,7 +296,11 @@
 
     @media (max-width: 640px) {
       .modal-header { padding: 2rem 1.5rem 1rem; }
-      .modal-body { padding: 0 1.5rem 2rem; }
+      .modal-body {
+  padding: 0 3rem 3rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 200px);
+}
       .modal-footer { padding: 1.5rem; flex-direction: column; }
       .modal-cta { width: 100%; }
     }

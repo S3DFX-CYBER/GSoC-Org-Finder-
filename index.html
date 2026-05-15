@@ -2792,10 +2792,25 @@ if(org.ideas){
       document.getElementById('searchInput').value = e.target.value;
       if (!heroScrolledForThisFocus && e.target.value.length > 0) {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        document.getElementById('orgs').scrollIntoView({
-          behavior: prefersReducedMotion ? 'auto' : 'smooth',
-          block: 'start'
-        });
+        const orgsSection = document.getElementById('orgs');
+        if (prefersReducedMotion) {
+          const root = document.documentElement;
+          const previousScrollBehavior = root.style.scrollBehavior;
+          try {
+            root.style.scrollBehavior = 'auto';
+            orgsSection.scrollIntoView({
+              behavior: 'auto',
+              block: 'start'
+            });
+          } finally {
+            root.style.scrollBehavior = previousScrollBehavior;
+          }
+        } else {
+          orgsSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
         heroScrolledForThisFocus = true;
       }
       applyFilters();

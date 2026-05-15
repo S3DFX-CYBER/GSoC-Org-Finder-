@@ -439,6 +439,10 @@ These mentors help guide and review contributions for the GSSoC program:
 2. **Experienced?** Check "Veterans" filter + sort by Competition for challenges
 3. **Building a comparison?** Use keyboard shortcut `C` to quickly add orgs
 4. **Mobile browsing?** Try portrait mode — everything scrolls smoothly
+
+
+
+
    
 ## ✨ Contributors
 <!-- CONTRIBUTORS_START -->
@@ -474,6 +478,8 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
+<a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/her-name-priyanka.png" width="50px" alt="her-name-priyanka" /></a>
+
 <!-- CONTRIBUTORS_END -->
 ## 📄 License
 

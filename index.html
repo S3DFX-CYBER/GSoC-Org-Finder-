@@ -1167,8 +1167,16 @@
   <div class="modal w-full max-w-5xl">
     <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
-      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
-      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
+          <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+        </div>
+        <button id="compareShareBtn" type="button" onclick="shareCompareList()" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-zinc-200 bg-white text-sm font-bold text-zinc-700 hover:border-primary hover:text-primary transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-lg">ios_share</span>
+          Share Link
+        </button>
+      </div>
     </div>
     <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
       <!-- Injected table -->
@@ -1352,6 +1360,7 @@
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
   let compareList = [];
+  const compareStorageKey = 'compareList';
   const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
   const selectedLanguages = new Set();
   let matchAllLanguages = false;
@@ -1441,6 +1450,59 @@
       pill.setAttribute('aria-pressed', 'false');
     });
     renderSelectedLanguages();
+  }
+
+  function persistCompareList() {
+    try {
+      localStorage.setItem(compareStorageKey, JSON.stringify(compareList));
+    } catch (err) {
+      console.warn('Failed to persist compare list:', err);
+    }
+  }
+
+  function restoreCompareList() {
+    try {
+      const params = new URLSearchParams(location.search);
+      const shared = params.get('compare');
+      const saved = shared
+        ? shared.split(',').map(name => name.trim()).filter(Boolean)
+        : JSON.parse(localStorage.getItem(compareStorageKey) || '[]');
+      if (!Array.isArray(saved)) return;
+      compareList = saved.filter(name => ORGS.some(o => o.name === name)).slice(0, 3);
+      if (compareList.length) persistCompareList();
+    } catch (err) {
+      console.warn('Failed to restore compare list:', err);
+      compareList = [];
+    }
+  }
+
+  function getCompareShareUrl() {
+    const url = new URL(location.href);
+    url.searchParams.set('compare', compareList.join(','));
+    return url.toString();
+  }
+
+  async function shareCompareList() {
+    if (!compareList.length) {
+      alert('Select at least one organization before sharing.');
+      return;
+    }
+
+    const shareUrl = getCompareShareUrl();
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      const btn = document.getElementById('compareShareBtn');
+      if (btn) {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined text-lg">check</span> Link Copied';
+        setTimeout(() => {
+          btn.innerHTML = original;
+        }, 1800);
+      }
+    } catch (err) {
+      console.warn('Failed to copy compare share link:', err);
+      alert('Could not copy automatically. Use this link: ' + shareUrl);
+    }
   }
 
   function renderSelectedLanguages() {
@@ -2063,6 +2125,7 @@
       }
       compareList.push(name);
     }
+    persistCompareList();
     renderOrgs(true);
     renderCompare();
   }
@@ -2631,6 +2694,7 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+  restoreCompareList();
   renderOrgs();
   renderWatchlist();
   loadMentorData();

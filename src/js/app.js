@@ -328,6 +328,31 @@ function catBdg(c){return'cb-'+(c||'other');}
 // COMPARE
 // ══════════════════════════════════════════════
 const compareSet=new Set(); // stores ORGS indices
+const COMPARE_STORAGE_KEY='gaf_compare_orgs';
+
+function persistCompareSelection(){
+  try{
+    const selected=[...compareSet].map(idx=>ORGS[idx]?.name).filter(Boolean);
+    localStorage.setItem(COMPARE_STORAGE_KEY,JSON.stringify(selected));
+  }catch(err){
+    console.warn('Failed to persist compare selections:',err);
+  }
+}
+
+function restoreCompareSelection(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(COMPARE_STORAGE_KEY)||'[]');
+    if(!Array.isArray(saved))return;
+    compareSet.clear();
+    saved.slice(0,3).forEach(name=>{
+      const idx=ORGS.findIndex(o=>o.name===name);
+      if(idx>=0)compareSet.add(idx);
+    });
+  }catch(err){
+    console.warn('Failed to restore compare selections:',err);
+    compareSet.clear();
+  }
+}
 
 function toggleCompare(idx,e){
   if(e){e.stopPropagation();}
@@ -337,6 +362,7 @@ function toggleCompare(idx,e){
     if(compareSet.size>=3){showCompareToast('Max 3 orgs for comparison');return;}
     compareSet.add(idx);
   }
+  persistCompareSelection();
   updateCompareBadge();
   renderGrid(filteredOrgs); // refresh cards
   renderCompareTable();
@@ -1269,6 +1295,8 @@ function showMoreIssues(){
 }
 
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github];});
+restoreCompareSelection();
+updateCompareBadge();
 showSkeletons();
 updateStats();
 renderSelectedLanguages();

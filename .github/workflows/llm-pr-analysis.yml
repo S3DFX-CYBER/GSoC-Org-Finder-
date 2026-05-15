@@ -54,39 +54,46 @@ jobs:
               ];
 
               for (const model of models) {
-                try {
-                  const controller = new AbortController();
-                  const timeout = setTimeout(() => controller.abort(), 15000);
-                  const res = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-                    {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      signal: controller.signal,
-                      body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { temperature: 0.1, maxOutputTokens: 512 }
-                      })
+                let retries = 0;
+                while (retries < 3) {
+                  try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 15000);
+                    const res = await fetch(
+                      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+                      {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        signal: controller.signal,
+                        body: JSON.stringify({
+                          contents: [{ parts: [{ text: prompt }] }],
+                          generationConfig: { temperature: 0.1, maxOutputTokens: 512 }
+                        })
+                      }
+                    );
+                    clearTimeout(timeout);
+
+                    if (res.status === 429) {
+                      retries++;
+                      const wait = Math.min(10000 * retries, 30000);
+                      core.info(`Rate limited on ${model}, waiting ${wait/1000}s before retry (attempt ${retries}/3)...`);
+                      await new Promise(r => setTimeout(r, wait));
+                      continue;
                     }
-                  );
-                  clearTimeout(timeout);
 
-                  if (res.status === 429) {
-                    core.info(`Rate limited on ${model}, trying fallback...`);
-                    continue;
+                    if (!res.ok) {
+                      core.warning(`${model} returned ${res.status}, trying fallback...`);
+                      break;
+                    }
+
+                    const data = await res.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    return text;
+                  } catch (e) {
+                    retries++;
+                    core.warning(`${model} failed: ${e.message} (attempt ${retries}/3)`);
+                    if (retries >= 3) break;
                   }
-
-                  if (!res.ok) {
-                    core.warning(`${model} returned ${res.status}, trying fallback...`);
-                    continue;
-                  }
-
-                  const data = await res.json();
-                  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                  return text;
-                } catch (e) {
-                  core.warning(`${model} failed: ${e.message}, trying fallback...`);
-                  continue;
                 }
               }
 

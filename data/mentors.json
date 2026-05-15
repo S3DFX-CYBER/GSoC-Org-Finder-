@@ -2036,11 +2036,43 @@
   "Qubes OS": {
     "org": "Qubes OS",
     "ideasUrl": "https://www.qubes-os.org/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "mailing-list",
+        "name": "qubes-devel",
+        "url": "https://groups.google.com/g/qubes-devel"
+      },
+      {
+        "type": "forum",
+        "name": "Qubes OS Forum",
+        "url": "https://forum.qubes-os.org"
+      }
+    ],
+    "mentors": [
+      {
+        "github": "marmarek",
+        "name": "Marek Marczykowski-Górecki"
+      },
+      {
+        "github": "marmarta",
+        "name": "Marta Marczykowska-Górecka"
+      },
+      {
+        "github": "piotrbartman",
+        "name": "Piotr Bartman-Szwarc"
+      },
+      {
+        "github": "unman"
+      },
+      {
+        "github": "ben-grande"
+      }
+    ],
+    "mailingLists": [
+      "qubes-devel@googlegroups.com"
+    ],
+    "tip": "Post to qubes-devel@googlegroups.com to introduce yourself. Subscribe first by sending a blank email to qubes-devel+subscribe@googlegroups.com. Ideas page lists 'Mentor: Inquire on qubes-devel' for all projects.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "R project for statistical computing": {

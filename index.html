@@ -2601,6 +2601,25 @@
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
 
+    // Fix #646(2): reset live-stats placeholders when switching orgs so the
+    // previous org's numbers don't bleed through until the user clicks Fetch.
+    const mStarsEl = document.getElementById('mStars');
+    const mForksEl = document.getElementById('mForks');
+    const mIssuesEl = document.getElementById('mIssues');
+    const mActivityEl = document.getElementById('mActivity');
+    if (mStarsEl) mStarsEl.textContent = '---';
+    if (mForksEl) mForksEl.textContent = '---';
+    if (mIssuesEl) mIssuesEl.textContent = '---';
+    if (mActivityEl) {
+      mActivityEl.textContent = '---';
+      mActivityEl.className = 'gh-stat-item text-zinc-400';
+    }
+    const mFetchBtnEl = document.getElementById('mFetchBtn');
+    if (mFetchBtnEl) {
+      mFetchBtnEl.textContent = 'Fetch Live Stats';
+      mFetchBtnEl.disabled = false;
+    }
+
     // Timeline
     let timelineHtml = '';
     for(let y=2020; y<=2026; y++) {
@@ -2761,12 +2780,24 @@ if(org.ideas){
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
   // Hero Search Link
+  // Fix #646(1): only scroll into the orgs section once per focus session.
+  // Previously this fired scrollIntoView on EVERY keystroke, which made the
+  // viewport jump up and down while the user was typing.
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    let heroScrolledForThisFocus = false;
+    heroSearch.addEventListener('focus', () => { heroScrolledForThisFocus = false; });
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
+      if (!heroScrolledForThisFocus && e.target.value.length > 0) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.getElementById('orgs').scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start'
+        });
+        heroScrolledForThisFocus = true;
+      }
       applyFilters();
     });
   }
@@ -2855,9 +2886,25 @@ if(org.ideas){
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');
       if (lastUpdatedEl) {
         if (data.updated_at) {
-          const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
+          const ageMs = Date.now() - new Date(data.updated_at).getTime();
+          const mins = Math.max(1, Math.floor(ageMs / 60000));
           const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
-          lastUpdatedEl.textContent = `Last updated: ${relative}`;
+          // Fix #646(3): the dataset is refreshed by a scheduled workflow that
+          // opens a PR; if the PR isn't merged the dataset can drift well past
+          // the advertised 6-hour cadence. Surface that honestly to the user
+          // instead of silently showing stale data as 'fresh'.
+          const STALE_THRESHOLD_MS = 12 * 60 * 60 * 1000; // 12h
+          if (ageMs > STALE_THRESHOLD_MS) {
+            lastUpdatedEl.textContent = `Last updated: ${relative} (may be stale)`;
+            lastUpdatedEl.classList.remove('text-green-600');
+            lastUpdatedEl.classList.add('text-amber-600');
+            lastUpdatedEl.title = 'Dataset has not refreshed in over 12 hours; the maintainer may not have merged the latest auto-refresh PR yet.';
+          } else {
+            lastUpdatedEl.textContent = `Last updated: ${relative}`;
+            lastUpdatedEl.classList.remove('text-amber-600');
+            lastUpdatedEl.classList.add('text-green-600');
+            lastUpdatedEl.removeAttribute('title');
+          }
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';
         }

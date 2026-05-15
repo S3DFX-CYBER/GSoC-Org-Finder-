@@ -318,6 +318,28 @@
     .dark #compareModalBody .text-zinc-500 { color: #a1a1aa !important; }
     .dark #compareModalBody .text-zinc-400 { color: #d4d4d8 !important; }
 
+    /* Similar Organizations (issue #488) */
+    .similar-orgs-container { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+    .similar-orgs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+    .similar-org-card {
+      display: flex; flex-direction: column; gap: 0.25rem; padding: 0.85rem 1rem;
+      background: #f9f9f9; border: 1px solid #eee; border-radius: 0.75rem;
+      text-align: left; cursor: pointer; font-family: inherit;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .similar-org-card:hover, .similar-org-card:focus-visible {
+      transform: translateY(-2px); border-color: #9d4300;
+      box-shadow: 0 4px 12px rgba(157, 67, 0, 0.12); outline: none;
+    }
+    .similar-org-name { font-weight: 700; font-size: 0.9rem; color: #1a1c1c; }
+    .similar-org-meta { font-size: 0.72rem; color: #6b6b6b; text-transform: capitalize; }
+    @media (max-width: 640px) { .similar-orgs-list { grid-template-columns: 1fr; } }
+    .dark .similar-orgs-container { border-top-color: #27272a; }
+    .dark .similar-org-card { background: #27272a; border-color: #3f3f46; }
+    .dark .similar-org-card:hover, .dark .similar-org-card:focus-visible { border-color: #fb923c; box-shadow: 0 4px 12px rgba(251, 146, 60, 0.18); }
+    .dark .similar-org-name { color: #f4f4f5; }
+    .dark .similar-org-meta { color: #a1a1aa; }
+
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
     .dark #guide article h3 { color: #f4f4f5 !important; }
@@ -1149,6 +1171,12 @@
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+      </div>
+
+      <!-- Similar Organizations (issue #488) -->
+      <div id="mSimilarSection" class="similar-orgs-container" hidden>
+        <div class="section-title">You Might Also Like</div>
+        <div id="mSimilarList" class="similar-orgs-list"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -2324,9 +2352,57 @@ if(org.ideas){
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
     renderMentorContactSection(org);
+    renderSimilarOrgs(org);
      
     document.getElementById('orgModal').classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+
+  // Similar Organizations renderer (issue #488).
+  // Canonical scoring helper lives in src/js/app.js as `getSimilarOrgs`;
+  // mirrored locally here because src/js/app.js is not currently <script>-
+  // included by index.html (it has unrelated runtime dependencies on IDs
+  // that don't exist on this page).
+  function getSimilarOrgsLocal(currentOrg, n) {
+    if (!currentOrg || !Array.isArray(ORGS)) return [];
+    const limit = Number.isInteger(n) && n > 0 ? n : 3;
+    const curTags = new Set((currentOrg.tags || []).map(t => String(t).toLowerCase()));
+    return ORGS
+      .filter(o => o && o.name !== currentOrg.name)
+      .map(o => {
+        const oTags = (o.tags || []).map(t => String(t).toLowerCase());
+        let tagOverlap = 0;
+        for (const t of oTags) if (curTags.has(t)) tagOverlap++;
+        const catMatch = o.cat === currentOrg.cat ? 1 : 0;
+        return { org: o, score: catMatch * 3 + tagOverlap * 2 };
+      })
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score || a.org.name.localeCompare(b.org.name))
+      .slice(0, limit)
+      .map(x => x.org);
+  }
+
+  function renderSimilarOrgs(org) {
+    const section = document.getElementById('mSimilarSection');
+    const list = document.getElementById('mSimilarList');
+    if (!section || !list) return;
+    const similar = getSimilarOrgsLocal(org, 3);
+    if (!similar.length) {
+      section.hidden = true;
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = similar.map(s => {
+      const meta = [s.cat, (s.tags || []).slice(0, 2).join(', ')].filter(Boolean).join(' • ');
+      return `<button type="button" class="similar-org-card" data-org-name="${escapeHtml(s.name)}">
+        <span class="similar-org-name">${escapeHtml(s.name)}</span>
+        <span class="similar-org-meta">${escapeHtml(meta)}</span>
+      </button>`;
+    }).join('');
+    list.querySelectorAll('.similar-org-card').forEach(btn => {
+      btn.addEventListener('click', () => openModal(btn.dataset.orgName));
+    });
+    section.hidden = false;
   }
 
   function closeModal() {

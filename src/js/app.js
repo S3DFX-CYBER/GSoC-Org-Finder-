@@ -1,5 +1,38 @@
 /* global ORGS */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, getSimilarOrgs */
+
+// ══════════════════════════════════════════════
+// SIMILAR ORGANIZATIONS (issue #488)
+// Lightweight scoring helper: given an org, returns the top `n` most
+// similar organizations from the global ORGS array based on shared
+// category (`cat`) and overlapping technology tags (`tags`).
+// Exposed on `window` so the modal renderer in index.html can call it.
+// ══════════════════════════════════════════════
+(function(){
+  if (typeof window === 'undefined') return;
+  function getSimilarOrgs(currentOrg, n) {
+    if (!currentOrg || typeof ORGS === 'undefined' || !Array.isArray(ORGS)) return [];
+    const limit = Number.isInteger(n) && n > 0 ? n : 3;
+    const curTags = new Set((currentOrg.tags || []).map(t => String(t).toLowerCase()));
+    return ORGS
+      .filter(o => o && o.name !== currentOrg.name)
+      .map(o => {
+        const oTags = (o.tags || []).map(t => String(t).toLowerCase());
+        let tagOverlap = 0;
+        for (const t of oTags) if (curTags.has(t)) tagOverlap++;
+        const catMatch = o.cat === currentOrg.cat ? 1 : 0;
+        // Category match weighted higher than any single tag overlap so
+        // domain-relevant suggestions dominate the ranking.
+        const score = catMatch * 3 + tagOverlap * 2;
+        return { org: o, score };
+      })
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score || a.org.name.localeCompare(b.org.name))
+      .slice(0, limit)
+      .map(x => x.org);
+  }
+  window.getSimilarOrgs = getSimilarOrgs;
+})();
 
 // ══════════════════════════════════════════════
 // THEME

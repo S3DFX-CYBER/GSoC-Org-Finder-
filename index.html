@@ -574,7 +574,7 @@
     }
 
     .recently-viewed-btn.favorite-toggle:hover {
-      color: #f59e0b;
+      color: #9d4300;
       background: #fff7ed;
       border-color: #fed7aa;
     }
@@ -594,51 +594,62 @@
     }
 
     /* Dark mode - Recently viewed cards */
+    .dark .recently-viewed-card,
     [data-theme="dark"] .recently-viewed-card {
       background: var(--bg);
       border-color: transparent;
     }
 
+    .dark .recently-viewed-card::after,
     [data-theme="dark"] .recently-viewed-card::after {
       border-color: #3f3f46;
     }
 
+    .dark .recently-viewed-card:hover,
     [data-theme="dark"] .recently-viewed-card:hover {
       box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
     }
 
+    .dark .recently-viewed-card:hover::after,
     [data-theme="dark"] .recently-viewed-card:hover::after {
       border-color: var(--orange);
     }
 
+    .dark .recently-viewed-card h4,
     [data-theme="dark"] .recently-viewed-card h4 {
       color: var(--ink);
     }
 
+    .dark .recently-viewed-card p,
     [data-theme="dark"] .recently-viewed-card p {
       color: var(--ink3);
     }
 
+    .dark .recently-viewed-logo,
     [data-theme="dark"] .recently-viewed-logo {
       background: var(--orange-pale);
       border-color: var(--orange-border);
     }
 
+    .dark .recently-viewed-btn,
     [data-theme="dark"] .recently-viewed-btn {
       border-color: #3f3f46;
       color: var(--ink3);
     }
 
+    .dark .recently-viewed-btn:hover,
     [data-theme="dark"] .recently-viewed-btn:hover {
       border-color: var(--orange);
       color: var(--orange);
       background: var(--orange-pale);
     }
 
+    .dark .recently-viewed-btn.favorite-toggle,
     [data-theme="dark"] .recently-viewed-btn.favorite-toggle {
       color: #71717a;
     }
 
+    .dark .recently-viewed-btn.favorite-toggle.active,
     [data-theme="dark"] .recently-viewed-btn.favorite-toggle.active {
       color: #f59e0b;
       background: transparent;
@@ -646,9 +657,10 @@
       box-shadow: none;
     }
 
+    .dark .recently-viewed-btn.favorite-toggle:hover,
     [data-theme="dark"] .recently-viewed-btn.favorite-toggle:hover {
-      color: #f59e0b;
-      background: rgba(124, 45, 18, 0.35);
+      color: #fed7aa;
+      background: rgba(124, 45, 18, 0.75);
       border-color: rgba(251, 146, 60, 0.45);
     }
 
@@ -660,6 +672,7 @@
       }
     }
 
+    .dark .recently-viewed-time,
     [data-theme="dark"] .recently-viewed-time {
       background: var(--border2);
       color: var(--muted);
@@ -1715,11 +1728,11 @@
         const isBookmarked = bookmarkedSet.has(org.name);
         
         return `
-          <article class="recently-viewed-card group bg-white animate-fade-up" data-org="${escapeHtml(org.name)}" onclick="openModal('${escapeHtml(org.name)}')">
+          <article class="recently-viewed-card group bg-white animate-fade-up" data-org="${escapeHtml(org.name)}">
             <div class="recently-viewed-time">${escapeHtml(timeAgo)}</div>
             <div class="recently-viewed-card-header">
-              <div class="recently-viewed-logo">
-                <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(org.name)}" onerror="this.style.display='none';this.parentElement.innerHTML='<span>${escapeHtml(org.name.substring(0,2).toUpperCase())}</span>'" />
+              <div class="recently-viewed-logo" data-logo-name="${escapeHtml(org.name)}">
+                <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(org.name)}" data-logo-name="${escapeHtml(org.name)}" />
               </div>
               <div class="recently-viewed-badges">
                 <span class="category-tag">${escapeHtml(org.cat)}</span>
@@ -1734,16 +1747,71 @@
               ${org.tags.map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
             </div>
             <div class="recently-viewed-actions">
-              <button class="recently-viewed-btn" onclick="openModal('${escapeHtml(org.name)}'); event.stopPropagation();" title="View details">
+              <button class="recently-viewed-btn" type="button" data-rv-action="open" title="View details">
                 <span class="material-symbols-outlined" style="font-size:12px;">open_in_full</span> View
               </button>
-              <button class="recently-viewed-btn favorite-toggle ${isBookmarked ? 'active' : ''}" onclick="toggleBookmark(event, '${escapeHtml(org.name)}'); event.stopPropagation();" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarked ? 'true' : 'false'}">
+              <button class="recently-viewed-btn favorite-toggle ${isBookmarked ? 'active' : ''}" type="button" data-rv-action="favorite" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarked ? 'true' : 'false'}">
                 <span class="material-symbols-outlined ${isBookmarked ? 'icon-fill' : ''}" style="font-size:12px;">star</span>
               </button>
             </div>
           </article>
         `;
       }).join('');
+      this.attachListeners(container);
+    },
+
+    attachListeners(container) {
+      if (!container) return;
+
+      if (!container.__rvClickListenerAttached) {
+        container.addEventListener('click', (event) => {
+          const favoriteBtn = event.target.closest('.recently-viewed-btn.favorite-toggle');
+          if (favoriteBtn) {
+            const card = favoriteBtn.closest('.recently-viewed-card');
+            const orgName = card?.dataset.org;
+            if (!orgName) return;
+            toggleBookmark(event, orgName);
+            return;
+          }
+
+          const openBtn = event.target.closest('.recently-viewed-btn');
+          if (openBtn) {
+            const card = openBtn.closest('.recently-viewed-card');
+            const orgName = card?.dataset.org;
+            if (!orgName) return;
+            event.stopPropagation();
+            openModal(orgName);
+            return;
+          }
+
+          const card = event.target.closest('.recently-viewed-card');
+          const orgName = card?.dataset.org;
+          if (orgName) openModal(orgName);
+        });
+        container.__rvClickListenerAttached = true;
+      }
+
+      container.querySelectorAll('.recently-viewed-logo img[data-logo-name]').forEach((img) => {
+        if (img.__rvErrorAttached) return;
+        img.addEventListener('error', () => {
+          const orgName = img.dataset.logoName || img.closest('.recently-viewed-logo')?.dataset.logoName || '';
+          const initials = orgName
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((part) => part[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase();
+          const logo = img.closest('.recently-viewed-logo');
+          if (!logo) return;
+          img.remove();
+          const fallback = document.createElement('span');
+          fallback.textContent = initials;
+          logo.textContent = '';
+          logo.appendChild(fallback);
+        });
+        img.__rvErrorAttached = true;
+      });
     },
     
     getTimeAgo(timestamp) {

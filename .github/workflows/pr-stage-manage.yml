@@ -28,7 +28,7 @@ jobs:
       - name: Evaluate PR Pipeline
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PR_STAGE_BOT_TOKEN }}
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;

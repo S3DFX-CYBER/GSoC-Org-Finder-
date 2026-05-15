@@ -926,6 +926,28 @@
         </details>
       </div>
     </article>
+    <section id="panel-winners" class="tab-panel" hidden aria-label="GSoC 2026 Accepted Contributors">
+  <div class="winners-toolbar">
+    <input
+      type="text"
+      id="winners-search"
+      placeholder="Search contributor or project…"
+      oninput="filterWinners()"
+      aria-label="Search winners"
+    />
+    <select id="winners-org-filter" onchange="filterWinners()" aria-label="Filter by organisation">
+      <option value="">All Organisations</option>
+    </select>
+  </div>
+  <p id="winners-loading" class="state-msg">Loading accepted proposals…</p>
+  <p id="winners-error" class="state-msg state-error hidden">
+    Archive unavailable.
+    <a href="https://github.com/satwiksps/GSoC_archive_2026" target="_blank" rel="noopener">
+      Browse directly ↗
+    </a>
+  </p>
+  <div id="winners-grid" class="card-grid" role="list"></div>
+</section>
   </div>
 </section>
 

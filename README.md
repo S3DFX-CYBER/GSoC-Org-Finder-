@@ -244,6 +244,17 @@ Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
 
 For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+### Assignment Process
+
+This repo uses a **maintainer-verified** assignment system:
+
+1. Find an issue and comment `/assign gssoc` or `/assign nsoc`
+2. Your request is **queued** (not immediately assigned)
+3. A maintainer verifies the issue and runs `/approve-assignment`
+4. You get notified and can begin work
+
+**Do not start working before you are assigned.**
+
 ### Quick Start
 
 1. Fork the repo
@@ -277,6 +288,18 @@ Each org entry looks like this:
 - `hot` — high applicant volume, very competitive (Django, LLVM, Git, KDE…)
 - `moderate` — good balance of applicants and slots
 - `chill` — fewer applicants, easier to stand out
+
+### PR Review Pipeline
+
+All PRs pass through a 3-stage pipeline:
+
+| Stage | What | Who |
+|-------|------|-----|
+| Stage 1 | DCO, format, AI/slop, diff size | Automated |
+| Stage 2 | Code review, quality | Mentor |
+| Stage 3 | Final merge decision | Project Admin |
+
+Stage 2 unlocks only after Stage 1 passes. The pipeline status comment on your PR updates only when the stage actually changes (no spam).
 
 ---
 

@@ -2646,53 +2646,45 @@ if(org.ideas){
   (function restoreFiltersFromURL() {
     const params = new URLSearchParams(location.search);
 
-    const q    = params.get('q');
-    const cat  = params.get('cat');
-    const comp = params.get('comp');
-    const sort = params.get('sort');
-    const lang = params.get('lang');
-    const chip = params.get('chip');
+    function setElValue(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.value = value;
+    }
 
-    if (q) {
-      const searchEl = document.getElementById('searchInput');
-      if (searchEl) searchEl.value = q;
-      const heroEl = document.getElementById('hero-search');
-      if (heroEl) heroEl.value = q;
+    function getChipKey(text) {
+      if (text.includes('bookmarked'))            return 'bookmarked';
+      if (text.includes('veteran'))               return 'veterans';
+      if (text.includes('newcomer'))              return 'newcomers';
+      if (text.includes('low competition'))       return 'low-competition';
+      if (text.includes('high competition'))      return 'high-competition';
+      if (text.includes('actively'))              return 'active';
+      return null;
     }
-    if (cat) {
-      const catEl = document.getElementById('categoryFilter');
-      if (catEl) catEl.value = cat;
-    }
-    if (comp) {
-      const compEl = document.getElementById('complexityFilter');
-      if (compEl) compEl.value = comp;
-    }
-    if (sort) {
-      const sortEl = document.getElementById('sortSelect');
-      if (sortEl) sortEl.value = sort;
-    }
+
+    setElValue('searchInput', params.get('q'));
+    setElValue('hero-search', params.get('q'));
+    setElValue('categoryFilter', params.get('cat'));
+    setElValue('complexityFilter', params.get('comp'));
+    setElValue('sortSelect', params.get('sort'));
+
+    const lang = params.get('lang');
     if (lang) {
-    lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
         selectedLanguages.add(l);
         const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
         if (pillBtn) {
-            pillBtn.classList.add('active');
-            pillBtn.setAttribute('aria-pressed', 'true');
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
         }
-    });
-    renderSelectedLanguages();
-}
+      });
+      renderSelectedLanguages();
+    }
+
+    const chip = params.get('chip');
     if (chip) {
       activeChip = chip;
       document.querySelectorAll('.filter-chip').forEach(el => {
-        const text = el.textContent.trim().toLowerCase();
-        const key =
-          text.includes('bookmarked')       ? 'bookmarked' :
-          text.includes('veteran')          ? 'veterans' :
-          text.includes('newcomer')         ? 'newcomers' :
-          text.includes('low competition')  ? 'low-competition' :
-          text.includes('high competition') ? 'high-competition' :
-          text.includes('actively')         ? 'active' : null;
+        const key = getChipKey(el.textContent.trim().toLowerCase());
         if (key === chip) {
           el.classList.add('bg-orange-600', 'text-white');
           el.classList.remove('bg-surface-container-highest');
@@ -2702,7 +2694,6 @@ if(org.ideas){
 
     applyFilters();
   })();
-
   renderOrgs();
   renderWatchlist();
   loadMentorData();

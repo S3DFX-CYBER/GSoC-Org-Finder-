@@ -767,6 +767,12 @@
         <span class="material-symbols-outlined text-red-500 text-4xl mb-2">error</span>
         <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Analysis Failed</h3>
         <p id="aiErrorMsg" class="text-red-600 dark:text-red-300 text-sm"></p>
+        <button id="aiRetryBtn" style="display:none"
+    class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg
+           bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition">
+    <span class="material-symbols-outlined text-sm">refresh</span>
+    Try Again
+  </button>
       </div>
 
       <!-- Results Container -->
@@ -830,6 +836,17 @@
     </div>
     <span id="issuesLastUpdated" class="text-xs font-mono text-green-600 ml-auto">Last updated: pending refresh</span>
   </div>
+  <div id="issuesStaleWarn" style="
+   display:none;
+   background:#FEF3C7;
+   color:#92600A;
+   border:1px solid #FCD34D;
+   border-radius:6px;
+   padding:8px 12px;
+   font-size:12px;
+   font-weight:600;
+   margin-bottom:10px;">
+   </div>
   <!-- Issue Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
@@ -1842,6 +1859,8 @@
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: new Date('2026-04-30T00:00:00Z'), label: 'Accepted Projects Announced', note: null },
+    { date: new Date('2026-05-15T00:00:00Z'), label: 'Coding Period Begins', note: 'Start Contributing to earn points!' },
+    { date: new Date('2026-08-31T00:00:00Z'), label: 'Program Ends' ,note:'Final evaluation and results.' }
   ].filter(m => !isNaN(m.date.getTime())); 
 
   function renderTimeline() {
@@ -2538,6 +2557,11 @@ if(org.ideas){
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
           const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
+          const staleWarn = document.getElementById('issuesStaleWarn');
+            if (staleWarn && mins > 1440) { 
+                staleWarn.innerHTML = ` Issue data is <strong>${Math.floor(mins/60)} hours old</strong>. Refresh the page to try fetching newer data.`;
+                staleWarn.style.display = 'block';
+  }
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';
         }

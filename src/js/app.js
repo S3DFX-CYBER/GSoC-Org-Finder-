@@ -39,24 +39,40 @@ function updateThemeIcon(){
 // ══════════════════════════════════════════════
 const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
 const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+const CODING_START=new Date('2026-05-15T00:00:00Z');
+const CODING_END=new Date('2026-08-31T00:00:00Z');
 function updateCountdown(){
   const now=Date.now();
   const banner=document.getElementById('countdownBanner');
   const sub=document.getElementById('countdownSub');
-  let target=OPEN_DATE.getTime();
-  let label='📅 GSoC 2026 Applications Open In';
-  let subText='Until March 16, 2026';
-  if(now>=OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
+  let target,label,subText;
+  if(now<OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
+    target=OPEN_DATE.getTime();
+    label='📅 GSoC 2026 Applications Open In';
+    subText='Until March 16, 2026';
+  } else if(now<CLOSE_DATE.getTime()){
     target=CLOSE_DATE.getTime();
     label='🚀 Applications Are Open — Closes In';
     subText='Until April 8, 2026';
     banner.style.background='linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
     banner.style.borderBottomColor='rgba(0,135,90,.3)';
     banner.style.color='var(--green)';
-  } else if(now>=CLOSE_DATE.getTime()){
-    banner.innerHTML='<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
-    clearInterval(cdTimer);return;
-  }
+  }else if(now<CODING_START.getTime()){
+target=CODING_START.getTime();
+label='Selection Period — Coding Starts In';
+subText='Mentors are reviewing applications right now!';
+  }else if(now<CODING_END.getTime()){
+    target=CODING_END.getTime();
+    label='GSoC 2026 Coding Period — Ends In';
+subText='Contributors are coding right now!';
+    banner.style.background='linear-gradient(135deg,rgba(59,130,246,.07),rgba(59,130,246,.12))';
+  banner.style.borderBottomColor='rgba(59,130,246,.3)';
+banner.style.color='var(--blue)';
+}else{
+  banner.innerHTML='<span>🎉 GSoC 2026 has ended. Results are out — Check now in GSoC website!</span>';
+  clearInterval(cdTimer);
+  return;
+}
   const diff=Math.max(0,target-now);
   const d=Math.floor(diff/86400000);
   const h=Math.floor((diff%86400000)/3600000);
@@ -954,7 +970,16 @@ function resetFilters(){
  
   applyFilters();
 }
-
+globalThis.surpriseMe = function(){
+  const pool = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+  if(!pool.length){
+    showCompareToast('No orgs match your current filters!');
+    return;
+  }
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  const idx  = ORGS.indexOf(pick);
+  if(idx >= 0) openModal(idx);
+};
 // ══════════════════════════════════════════════
 // MODAL
 // ══════════════════════════════════════════════
@@ -1173,9 +1198,29 @@ async function loadCachedIssues(){
     });
 
     allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-    filterIssues();
+    const staleWarn=document.getElementById('issuesStaleWarn');
+    if(staleWarn){
+      if(data.updated_at){
+        const ageHours=(Date.now()-new Date(data.updated_at).getTime())/3600000;
+        if(ageHours>24){
+          staleWarn.innerHTML=`⚠️ Issue data is <strong>${Math.round(ageHours)} hours old</strong>. Hit <strong>Load Issues</strong> to refresh.`;
+          staleWarn.style.display='block';
+      }else{
+          staleWarn.style.display='none';
+      }
+    }else{
+      staleWarn.innerHTML='Could not verify freshness of issue data. Hit <strong>Load Issues</strong> to ensure you have the latest issues.';
+      staleWarn.style.display='block';
+    }
+  }
+  filterIssues();
   }catch(err){
     console.warn('Failed to load cached issues:',err);
+    const staleWarn=document.getElementById('issuesStaleWarn');
+    if(staleWarn){
+      staleWarn.innerHTML='Failed to load cached issues. Hit <strong>Load Issues</strong> to fetch the latest issues.';
+      staleWarn.style.display='block';
+    }
   }
 }
 
@@ -1323,4 +1368,13 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-
+document.getElementById('surpriseBtn')?.addEventListener('click', () => {
+  const pool = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+if(!pool.length){
+    showCompareToast('No orgs match your current filters!');
+return;
+}
+const pick = pool[Math.floor(Math.random() * pool.length)];
+const idx  = ORGS.indexOf(pick);
+if(idx >= 0) openModal(idx);
+});

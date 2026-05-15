@@ -161,16 +161,28 @@ document.addEventListener('DOMContentLoaded', () => {
       const recommendations = await analyzeProfile(username, resume);
       renderRecommendations(recommendations);
     } catch (err) {
-      showError(err.message || "An unexpected error occurred during analysis.");
-    } finally {
+      showError(
+        err.message || "An error occurred while analyzing your profile. Please try again.",
+        ()=>getRecsBtn.click() 
+      );
+      } finally {
       setAnalysisStateUI(false);
     }
   });
 
-  function showError(msg) {
+  function showError(msg,retryFunc=null) {
     errorMsg.textContent = msg;
     errorState.classList.remove('hidden');
     resultsContainer.innerHTML = '';
+    const retryBtn=document.getElementById('aiRetryBtn');
+    if(retryBtn&&retryFunc){
+      retryBtn.style.display='inline-flex';
+      retryBtn.onclick =()=>{
+          errorState.classList.add('hidden');
+          document.getElementById('github-username').value='';
+        retryFunc();
+        };
+    }
   }
 
 

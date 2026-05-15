@@ -2391,6 +2391,16 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+
+    // Persist filter state to URL so it survives page refresh
+    const params = new URLSearchParams();
+    if (query)                              params.set('q', query);
+    if (cat)                               params.set('cat', cat);
+    if (comp && comp !== 'all')            params.set('comp', comp);
+    if (sort && sort !== 'alpha')          params.set('sort', sort);
+    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
+    if (activeChip)                        params.set('chip', activeChip);
+    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2409,7 +2419,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -2631,6 +2641,68 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+
+  // Restore filter state from URL params on page load/refresh
+  (function restoreFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+
+    const q    = params.get('q');
+    const cat  = params.get('cat');
+    const comp = params.get('comp');
+    const sort = params.get('sort');
+    const lang = params.get('lang');
+    const chip = params.get('chip');
+
+    if (q) {
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) searchEl.value = q;
+      const heroEl = document.getElementById('hero-search');
+      if (heroEl) heroEl.value = q;
+    }
+    if (cat) {
+      const catEl = document.getElementById('categoryFilter');
+      if (catEl) catEl.value = cat;
+    }
+    if (comp) {
+      const compEl = document.getElementById('complexityFilter');
+      if (compEl) compEl.value = comp;
+    }
+    if (sort) {
+      const sortEl = document.getElementById('sortSelect');
+      if (sortEl) sortEl.value = sort;
+    }
+    if (lang) {
+    lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+            pillBtn.classList.add('active');
+            pillBtn.setAttribute('aria-pressed', 'true');
+        }
+    });
+    renderSelectedLanguages();
+}
+    if (chip) {
+      activeChip = chip;
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        const text = el.textContent.trim().toLowerCase();
+        const key =
+          text.includes('bookmarked')       ? 'bookmarked' :
+          text.includes('veteran')          ? 'veterans' :
+          text.includes('newcomer')         ? 'newcomers' :
+          text.includes('low competition')  ? 'low-competition' :
+          text.includes('high competition') ? 'high-competition' :
+          text.includes('actively')         ? 'active' : null;
+        if (key === chip) {
+          el.classList.add('bg-orange-600', 'text-white');
+          el.classList.remove('bg-surface-container-highest');
+        }
+      });
+    }
+
+    applyFilters();
+  })();
+
   renderOrgs();
   renderWatchlist();
   loadMentorData();

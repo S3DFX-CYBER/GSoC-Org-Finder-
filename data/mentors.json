@@ -1931,14 +1931,37 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "PostgreSQL": {
+"PostgreSQL": {
     "org": "PostgreSQL",
     "ideasUrl": "https://wiki.postgresql.org/wiki/GSoC_2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/",
+        "label": "PostgreSQL Slack — #gsoc-contributors channel"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jesper Pedersen",
+        "github": "jesperpedersen",
+        "githubUrl": "https://github.com/jesperpedersen"
+      },
+      {
+        "name": "Pavlo Golub",
+        "github": "pashagolub",
+        "githubUrl": "https://github.com/pashagolub"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:gsoc-mentors@lists.postgresql.org",
+        "label": "PostgreSQL GSoC Mentors Mailing List"
+      }
+    ],
+    "tip": "Join the #gsoc-contributors channel on PostgreSQL Slack. Email gsoc-mentors@lists.postgresql.org before submitting your proposal.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "preCICE": {

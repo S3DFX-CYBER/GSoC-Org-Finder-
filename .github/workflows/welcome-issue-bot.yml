@@ -7,67 +7,127 @@ on:
 
 permissions:
   issues: write
+  contents: read
+
+concurrency:
+  group: issue-welcome-${{ github.event.issue.number }}
+  cancel-in-progress: true
 
 jobs:
   welcome:
     runs-on: ubuntu-latest
+
     steps:
       - name: Welcome contributor
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const issue = context.payload.issue;
-            const username = issue.user.login;
 
+            if (!issue) return;
+            if (issue.pull_request) return;
             if (issue.user.type === 'Bot') return;
 
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issue_number = issue.number;
+            const username = issue.user.login;
+
+            const MARKER =
+              '<!-- issue-welcome-bot -->';
+
+            // Prevent duplicate welcome comments
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number,
+                  per_page: 100
+                }
+              );
+
+            const alreadyWelcomed =
+              comments.some(c =>
+                c.body &&
+                c.body.includes(MARKER)
+              );
+
+            if (alreadyWelcomed) {
+              core.info('Welcome already posted');
+              return;
+            }
+
             const body = [
-              `## 👋 Thanks for opening an issue, @${username}!`,
+              MARKER,
               ``,
-              `Our **AI triage bot** will automatically classify this issue with difficulty and type labels shortly.`,
+              `# 👋 Welcome @${username}`,
+              ``,
+              `Thanks for opening an issue in **${repo}** 🚀`,
+              ``,
+              `Our automation system will now:`,
+              ``,
+              `- classify the issue`,
+              `- apply labels`,
+              `- check issue quality`,
+              `- detect duplicates`,
+              `- prepare assignment eligibility`,
               ``,
               `---`,
               ``,
-              `## 📘 Contributor Guides`,
-              ``,
-              `Read the guide for your program before requesting assignment:`,
+              `# 📘 Contributor Guides`,
               ``,
               `| Program | Guide |`,
-              `|---------|-------|`,
-              `| GSSoC'26 | [GSSoC Contributor Guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md) |`,
-              `| NSoC'26 | [NSoC Contributor Guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/NSOC_GUIDE.md) |`,
-              `| General | [General Guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md) |`,
+              `|---|---|`,
+              `| GSSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
+              `| NSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md |`,
+              `| General | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
               ``,
               `---`,
               ``,
-              `## 🧭 How Assignment Works`,
+              `# 🧭 Assignment Flow`,
               ``,
-              `1. **Wait for triage** — the AI bot will label this issue with difficulty and type`,
-              `2. **Request assignment**: \`/assign gssoc\` or \`/assign nsoc\``,
-              `3. **Verified issues** (labeled \`verified\`, \`ready-for-assignment\`, or \`approved\`):`,
-              `   - **Beginner** issues: anyone can self-assign immediately`,
-              `   - **Intermediate** issues: account must be ≥30 days old`,
-              `   - **Advanced** issues: must have ≥1 merged PR in this repo`,
-              `4. **Unverified issues** require maintainer approval via \`/approve-assignment\``,
+              `After triage completes, request assignment using:`,
+              ``,
+              '```',
+              `/assign gssoc`,
+              `/assign nsoc`,
+              '```',
+              ``,
+              `Depending on issue difficulty and verification status,`,
+              `assignment may be:`,
+              ``,
+              `- automatic`,
+              `- mentor-approved`,
+              `- maintainer-reviewed`,
+              ``,
+              `Two mentors may be requested automatically for validation.`,
               ``,
               `---`,
               ``,
-              `## ⚠️ Important Rules`,
+              `# ⚠️ Important`,
               ``,
-              `- **Do not start working before assignment is confirmed**`,
-              `- Maximum active assignments: **3** (both GSSOC and NSOC)`,
-              `- Inactive assignments (no PR within **7 days**) are auto-unassigned`,
-              `- Combine related fixes into quality PRs — avoid many tiny PRs`,
-              `- Spam or AI-generated low-effort PRs will be rejected`,
-              `- Follow the zero-build, zero-dependency philosophy`,
+              `- Do NOT start work before assignment confirmation`,
+              `- Maximum active assignments: 3`,
+              `- Low-quality or AI-spam PRs may be rejected`,
+              `- Inactive assignments may be automatically removed`,
+              `- Follow repository contribution guidelines carefully`,
               ``,
-              `Happy contributing!`
+              `Happy contributing 💙`
             ].join('\n');
 
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
+              owner,
+              repo,
+              issue_number,
               body
             });
+
+            core.info(
+              `Posted welcome message on issue #${issue_number}`
+            );

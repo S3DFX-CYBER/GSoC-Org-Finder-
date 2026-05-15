@@ -1,0 +1,131 @@
+name: 📋 Issue Quality Validator
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: issue-validate-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate issue quality
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue = context.payload.issue;
+            const issue_number = issue.number;
+            const username = issue.user.login;
+            const body = issue.body || '';
+            const title = (issue.title || '').trim();
+
+            if (issue.user.type === 'Bot') return;
+
+            const association = issue.author_association || '';
+            if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) return;
+
+            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
+            if (labels.includes('research') || labels.includes('meta')) return;
+
+            const marker = '<!-- issue-quality-validator -->';
+            const problems = [];
+
+            const templateMarkers = [
+              'Describe the bug',
+              'Steps to Reproduce',
+              'Expected Behavior',
+              'Feature Description',
+              'Problem It Solves',
+              'Proposed Solution',
+              'Bug Report'
+            ];
+            const usesTemplate = templateMarkers.some(m => body.includes(m));
+
+            if (!usesTemplate) {
+              problems.push('❌ **No issue template detected.** Please use one of the [issue templates](../../issues/new/choose).');
+            }
+
+            const contentLines = body.split('\n').filter(l => {
+              const trimmed = l.trim();
+              return trimmed.length > 0 &&
+                !trimmed.startsWith('#') &&
+                !trimmed.startsWith('---') &&
+                !trimmed.startsWith('- [ ]') &&
+                !trimmed.startsWith('- [x]') &&
+                !trimmed.startsWith('<!--');
+            });
+
+            if (contentLines.length < 3) {
+              problems.push('❌ **Insufficient detail.** Please provide more context (at least a few sentences describing the issue).');
+            }
+
+            if (title.length < 10) {
+              problems.push('⚠️ **Title too short.** Use a descriptive title that summarizes the issue.');
+            }
+
+            const genericTitles = ['bug', 'issue', 'fix', 'help', 'error', 'problem', 'feature', 'request'];
+            const normalizedTitle = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+            if (genericTitles.includes(normalizedTitle)) {
+              problems.push('⚠️ **Title too generic.** Please use a specific, descriptive title.');
+            }
+
+            if (problems.length === 0) {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner, repo, issue_number, per_page: 50
+              });
+              const existingComment = comments.find(c => c.body && c.body.includes(marker));
+              if (existingComment) {
+                await github.rest.issues.deleteComment({
+                  owner, repo, comment_id: existingComment.id
+                });
+              }
+
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number, name: 'needs-quality'
+                });
+              } catch (e) {}
+
+              core.info(`Issue #${issue_number} passes quality checks.`);
+              return;
+            }
+
+            const commentBody = [
+              marker,
+              `## 📋 Issue Quality Check\n`,
+              `Hi @${username}, your issue needs some improvements before it can be triaged:\n`,
+              ...problems,
+              `\n---`,
+              `Please edit your issue to fix the above. This comment will update automatically.`
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number, per_page: 50
+            });
+            const existingComment = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existingComment.id, body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body: commentBody
+              });
+            }
+
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number, labels: ['needs-quality']
+            }).catch(() => {});

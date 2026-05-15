@@ -1,0 +1,75 @@
+name: 🏷️ Issue Label Enforcement
+
+on:
+  issues:
+    types:
+      - opened
+      - labeled
+      - unlabeled
+
+permissions:
+  issues: write
+
+concurrency:
+  group: issue-label-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  enforce-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce program label or triage
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue = context.payload.issue;
+            const issue_number = issue.number;
+
+            if (issue.user.type === 'Bot') return;
+            if (issue.pull_request) return;
+
+            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
+
+            const programLabels = ['gssoc', 'gssoc26', 'nsoc', 'nsoc26', 'hacktoberfest'];
+            const hasProgramLabel = labels.some(l => programLabels.includes(l));
+
+            if (hasProgramLabel) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number, name: 'needs-triage'
+                });
+              } catch (e) {}
+              return;
+            }
+
+            const body = (issue.body || '').toLowerCase();
+            const title = (issue.title || '').toLowerCase();
+
+            const gssocMentions = ['gssoc', 'girlscript', 'girl script'];
+            const nsocMentions = ['nsoc', 'netsoc'];
+
+            const isGssoc = gssocMentions.some(m => body.includes(m) || title.includes(m));
+            const isNsoc = nsocMentions.some(m => body.includes(m) || title.includes(m));
+
+            if (isGssoc) {
+              const added = await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: ['gssoc']
+              }).then(() => true).catch(() => false);
+              if (added) return;
+            }
+
+            if (isNsoc) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: ['nsoc']
+              }).catch(() => {});
+              return;
+            }
+
+            if (!labels.includes('needs-triage')) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: ['needs-triage']
+              }).catch(() => {});
+            }

@@ -1,0 +1,254 @@
+name: 🧭 Smart Issue Assignment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: smart-issue-assignment-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  handle-assignment:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smart Assignment Validation
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+            const sender = context.payload.sender;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = issue.number;
+            const username = sender.login;
+
+            if (sender.type === 'Bot') return;
+
+            const validGitHubUsername = /^[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?$/;
+            if (!validGitHubUsername.test(username)) return;
+
+            const commentBody = (comment.body || '').toLowerCase();
+
+            const wantsAssign = commentBody.includes('/assign') || commentBody.includes('assign me');
+            const wantsUnassign = commentBody.includes('/unassign') || commentBody.includes('unassign me');
+
+            if (!wantsAssign && !wantsUnassign) return;
+
+            const mentionsGSSOC = commentBody.includes('gssoc');
+            const mentionsNSOC = commentBody.includes('nsoc');
+
+            const { data: currentIssue } = await github.rest.issues.get({
+              owner, repo, issue_number
+            });
+
+            if (wantsUnassign) {
+              const isAssigned = (currentIssue.assignees || []).some(a => a.login === username);
+              if (!isAssigned) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⚠️ @${username} is not currently assigned to this issue.`
+                });
+                return;
+              }
+              await github.rest.issues.removeAssignees({
+                owner, repo, issue_number, assignees: [username]
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `✅ Unassigned @${username} from this issue.`
+              });
+              return;
+            }
+
+            if (mentionsGSSOC) {
+              const now = new Date();
+              const unlockDate = new Date(Date.UTC(2026, 4, 14, 18, 30, 0)); // 15 May 2026, 12:00 AM IST
+              if (now < unlockDate) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⏳ **GSSOC assignments are not yet open.**\n\n` +
+                        `GSSOC 2026 contributions open on **15 May 2026, 12:00 AM IST**.\n\n` +
+                        `You can still request assignment under **NSOC** if participating.`
+                });
+                return;
+              }
+            }
+
+            if (wantsAssign && mentionsGSSOC && mentionsNSOC) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `❌ Please mention exactly one program: either \`gssoc\` or \`nsoc\`.`
+              });
+              return;
+            }
+
+            if (wantsAssign && !mentionsGSSOC && !mentionsNSOC) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `❌ Please specify the program:\n\n` +
+                      `- \`/assign gssoc\`\n` +
+                      `- \`/assign nsoc\``
+              });
+              return;
+            }
+
+            const { data: userProfile } = await github.rest.users.getByUsername({ username });
+            const accountAge = (new Date() - new Date(userProfile.created_at)) / (1000 * 60 * 60 * 24);
+            if (accountAge < 7) {
+              await github.rest.issues.createComment({ owner, repo, issue_number,
+                body: `❌ @${username}, your GitHub account must be at least **7 days old** to request assignments. This helps prevent spam.` });
+              return;
+            }
+
+            if ((issue.title || '').trim().length < 10) {
+              await github.rest.issues.createComment({ owner, repo, issue_number,
+                body: `❌ Issue title is too short. Please improve it before requesting assignment.` });
+              return;
+            }
+
+            const { data: issueEvents } = await github.rest.issues.listEventsForTimeline({
+              owner, repo, issue_number, per_page: 100
+            });
+            const recentUnassign = issueEvents
+              .filter(e => e.event === 'unassigned' && e.assignee && e.assignee.login === username)
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+            if (recentUnassign) {
+              const hoursSinceUnassign = (new Date() - new Date(recentUnassign.created_at)) / (1000 * 60 * 60);
+              if (hoursSinceUnassign < 24) {
+                await github.rest.issues.createComment({ owner, repo, issue_number,
+                  body: `⏳ @${username}, you were recently unassigned from this issue. Please wait **24 hours** before re-requesting assignment.` });
+                return;
+              }
+            }
+
+            if ((currentIssue.assignees || []).length > 0) {
+              const current = (currentIssue.assignees || []).map(a => a.login).join(', ');
+              await github.rest.issues.createComment({ owner, repo, issue_number,
+                body: `⚠️ This issue is already assigned to: ${current}` });
+              return;
+            }
+
+            const maxAssignments = mentionsGSSOC ? 2 : 3;
+            const assignedIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', assignee: username, per_page: 100
+            });
+            const activeIssues = assignedIssues.filter(i => !i.pull_request);
+
+            if (activeIssues.length >= maxAssignments) {
+              await github.rest.issues.createComment({ owner, repo, issue_number,
+                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed for ${mentionsGSSOC ? 'GSSOC' : 'NSOC'}: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
+              return;
+            }
+
+            const sanitizedUsername = encodeURIComponent(username);
+            const { data: spamResult } = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} is:pr author:${sanitizedUsername} label:"gssoc:spam"`
+            });
+            const { data: slopResult } = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} is:pr author:${sanitizedUsername} label:"gssoc:ai-slop"`
+            });
+            const spamSet = new Set([
+              ...(spamResult.items || []).map(i => i.number),
+              ...(slopResult.items || []).map(i => i.number)
+            ]);
+            const spamPRs = { length: spamSet.size };
+
+            if (spamPRs.length >= 2) {
+              await github.rest.issues.createComment({ owner, repo, issue_number,
+                body: `🚫 @${username}, your assignment request has been **denied**.\n\nYou have ${spamPRs.length} PRs previously flagged as spam/AI-slop. Please contact a maintainer to appeal.` });
+              return;
+            }
+
+            await github.rest.issues.addAssignees({
+              owner, repo, issue_number, assignees: [username]
+            });
+
+            const programLabel = mentionsGSSOC ? 'gssoc26' : mentionsNSOC ? 'nsoc26' : null;
+            if (programLabel) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: [programLabel]
+              });
+            }
+
+            const existingLabels = (currentIssue.labels || []).map(l => l.name.toLowerCase());
+            const gssocDifficultyLabels = ['level:beginner', 'level:intermediate', 'level:advanced', 'level:critical'];
+            const nsocDifficultyLabels = ['level1', 'level2', 'level3'];
+
+            const hasGssocDifficulty = gssocDifficultyLabels.some(l => existingLabels.includes(l));
+            const hasNsocDifficulty = nsocDifficultyLabels.some(l => existingLabels.includes(l));
+
+            const issueText = `${(currentIssue.title || '')} ${(currentIssue.body || '')}`.toLowerCase();
+
+            const criticalKeywords = [
+              'security vulnerability', 'critical bug', 'data loss', 'breaking change',
+              'production down', 'zero-day', 'exploit', 'authentication bypass'
+            ];
+            const advancedKeywords = [
+              'architecture', 'optimization', 'security', 'performance',
+              'edge function', 'refactor', 'api', 'caching', 'core feature',
+              'database', 'migration', 'scalability', 'infrastructure'
+            ];
+            const intermediateKeywords = [
+              'feature', 'logic', 'analytics', 'sorting', 'filter',
+              'enhancement', 'improvement', 'integration', 'validation',
+              'component', 'state management', 'responsive'
+            ];
+
+            const hasCritical = criticalKeywords.some(k => issueText.includes(k));
+            const hasAdvanced = advancedKeywords.some(k => issueText.includes(k));
+            const hasIntermediate = intermediateKeywords.some(k => issueText.includes(k));
+
+            const issueAuthor = (currentIssue.user && currentIssue.user.login) || '';
+            const isSelfAssigning = issueAuthor.toLowerCase() === username.toLowerCase();
+            const maxAutoLevel = isSelfAssigning ? 'intermediate' : 'critical';
+
+            let difficultyNote = '';
+
+            if (mentionsGSSOC && !hasGssocDifficulty) {
+              let gssocLevel = 'level:beginner';
+              if (maxAutoLevel === 'critical') {
+                if (hasCritical) gssocLevel = 'level:critical';
+                else if (hasAdvanced) gssocLevel = 'level:advanced';
+                else if (hasIntermediate) gssocLevel = 'level:intermediate';
+              } else {
+                if (hasCritical || hasAdvanced) gssocLevel = 'level:intermediate';
+                else if (hasIntermediate) gssocLevel = 'level:intermediate';
+              }
+
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: [gssocLevel]
+              });
+              difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${gssocLevel}\`. A maintainer may update this.`;
+            } else if (mentionsNSOC && !hasNsocDifficulty) {
+              let nsocLevel = 'level1';
+              if (maxAutoLevel === 'critical') {
+                if (hasAdvanced || hasCritical) nsocLevel = 'level3';
+                else if (hasIntermediate) nsocLevel = 'level2';
+              } else {
+                if (hasAdvanced || hasCritical || hasIntermediate) nsocLevel = 'level2';
+              }
+
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: [nsocLevel]
+              });
+              difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${nsocLevel}\`. A maintainer may update this.`;
+            }
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: `✅ **Assigned @${username}**\n\n` +
+                    `🏷️ Program: \`${programLabel || 'Not Specified'}\`\n\n` +
+                    `📌 You now have **${activeIssues.length + 1}** active assignment(s).\n` +
+                    `Please work on meaningful contributions and avoid opening many tiny PRs.` +
+                    difficultyNote
+            });

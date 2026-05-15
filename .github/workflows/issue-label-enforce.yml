@@ -16,60 +16,124 @@ concurrency:
 
 jobs:
   enforce-labels:
+    name: Enforce Triage Labels
+
+    if: |
+      github.actor != 'github-actions[bot]'
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Enforce program label or triage
+      - name: Validate Issue Labels
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
+            const issue = context.payload.issue;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const issue = context.payload.issue;
+
             const issue_number = issue.number;
 
-            if (issue.user.type === 'Bot') return;
-            if (issue.pull_request) return;
+            // Ignore bots
+            if (
+              issue.user.type === 'Bot'
+            ) {
+              core.info('Skipping bot issue');
+              return;
+            }
 
-            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
+            // Ignore PRs
+            if (issue.pull_request) {
+              core.info('Skipping pull request');
+              return;
+            }
 
-            const programLabels = ['gssoc', 'gssoc26', 'nsoc', 'nsoc26', 'hacktoberfest'];
-            const hasProgramLabel = labels.some(l => programLabels.includes(l));
+            const labels = (issue.labels || [])
+              .map(l => l.name.toLowerCase());
+
+            // Valid program labels
+            const PROGRAM_LABELS = [
+              'gssoc',
+              'gssoc26',
+              'nsoc',
+              'nsoc26',
+              'hacktoberfest'
+            ];
+
+            const hasProgramLabel =
+              PROGRAM_LABELS.some(l =>
+                labels.includes(l)
+              );
+
+            //
+            // --------------------------------------------------
+            // ISSUE HAS PROGRAM LABEL
+            // --------------------------------------------------
+            //
 
             if (hasProgramLabel) {
-              try {
-                await github.rest.issues.removeLabel({
-                  owner, repo, issue_number, name: 'needs-triage'
-                });
-              } catch (e) {}
+
+              // Remove needs-triage if present
+              if (labels.includes('needs-triage')) {
+
+                try {
+
+                  await github.rest.issues.removeLabel({
+                    owner,
+                    repo,
+                    issue_number,
+                    name: 'needs-triage'
+                  });
+
+                  core.info(
+                    'Removed needs-triage label'
+                  );
+
+                } catch (e) {
+
+                  core.info(
+                    `Failed removing label: ${e.message}`
+                  );
+                }
+              }
+
               return;
             }
 
-            const body = (issue.body || '').toLowerCase();
-            const title = (issue.title || '').toLowerCase();
-
-            const gssocMentions = ['gssoc', 'girlscript', 'girl script'];
-            const nsocMentions = ['nsoc', 'netsoc'];
-
-            const isGssoc = gssocMentions.some(m => body.includes(m) || title.includes(m));
-            const isNsoc = nsocMentions.some(m => body.includes(m) || title.includes(m));
-
-            if (isGssoc) {
-              const added = await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['gssoc']
-              }).then(() => true).catch(() => false);
-              if (added) return;
-            }
-
-            if (isNsoc) {
-              await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['nsoc']
-              }).catch(() => {});
-              return;
-            }
+            //
+            // --------------------------------------------------
+            // ISSUE NEEDS TRIAGE
+            // --------------------------------------------------
+            //
 
             if (!labels.includes('needs-triage')) {
-              await github.rest.issues.addLabels({
-                owner, repo, issue_number, labels: ['needs-triage']
-              }).catch(() => {});
+
+              try {
+
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number,
+                  labels: ['needs-triage']
+                });
+
+                core.info(
+                  'Added needs-triage label'
+                );
+
+              } catch (e) {
+
+                core.info(
+                  `Failed adding label: ${e.message}`
+                );
+              }
+
+            } else {
+
+              core.info(
+                'Issue already marked for triage'
+              );
             }

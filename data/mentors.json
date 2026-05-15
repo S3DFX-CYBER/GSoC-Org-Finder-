@@ -10,7 +10,7 @@
         "githubUrl": "https://github.com/52north"
       }
     ],
-    "mailingLists": [],
+    "mailingLists": [], 
     "tip": "",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -1941,14 +1941,31 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "preCICE": {
+"preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://precice.discourse.group/c/gsoc/15",
+        "label": "preCICE GSoC Discourse Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gerasimos Chourdakis",
+        "github": "MakisH",
+        "githubUrl": "https://github.com/MakisH"
+      },
+      {
+        "name": "Frédéric Simonis",
+        "github": "fsimonis",
+        "githubUrl": "https://github.com/fsimonis"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Post in the GSoC category on the preCICE Discourse forum to introduce yourself and ask questions.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Processing Foundation": {

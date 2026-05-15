@@ -120,30 +120,30 @@ Go to the repository **Issues** tab and filter using labels:
 
 ### Step 2 — Request Assignment
 
-Comment **ONE** of the following:
+Comment with your program:
 
 ```
-/assign
+/assign gssoc
 ```
 
 or
 
 ```
-assign me
+/assign nsoc
 ```
+
+Your request will be **queued** — not immediately assigned. A maintainer must verify the issue and approve assignments.
 
 ---
 
-### Step 3 — Wait for Bot Validation
+### Step 3 — Wait for Maintainer Approval
 
-The assignment bot automatically validates:
+This repository uses a **maintainer-verified assignment system**:
 
-- Issue quality
-- Duplicate/spam detection
-- Contributor eligibility
-- Active issue count
-- Contribution program
-- Level restrictions
+1. You request assignment with `/assign gssoc` or `/assign nsoc`
+2. Your request is **queued** (you'll see a confirmation)
+3. A maintainer verifies the issue and approves assignments
+4. You'll be notified when assigned
 
 > **Do NOT start work before assignment.**
 
@@ -151,16 +151,26 @@ The assignment bot automatically validates:
 
 ## 🤖 Smart Assignment System
 
-This repository uses automated contributor management workflows.
+This repository uses a maintainer-verified assignment system with smart selection.
 
 ### Supported Commands
 
-| Command      | Action              |
-|--------------|---------------------|
-| `/assign`    | Request assignment  |
-| `assign me`  | Request assignment  |
-| `/unassign`  | Remove assignment   |
-| `unassign me`| Remove assignment   |
+| Command | Who | Action |
+|---------|-----|--------|
+| `/assign gssoc` | Contributors | Request assignment under GSSoC |
+| `/assign nsoc` | Contributors | Request assignment under NSoC |
+| `/unassign` | Contributors | Remove your assignment |
+| `unassign me` | Contributors | Remove your assignment |
+| `/approve-assignment` | Maintainers | Auto-select assignee by timestamp + workload |
+| `/approve-assignment @user` | Maintainers | Manually approve a specific user |
+
+### How Smart Selection Works
+
+When a maintainer uses `/approve-assignment` without specifying a user, the system:
+
+1. Finds all assignment requests on the issue (sorted by timestamp)
+2. Checks each requester's current workload
+3. Assigns the first eligible user (fewest active issues, earliest request)
 
 ---
 
@@ -234,11 +244,14 @@ Manual self-assignment may be removed automatically.
 
 ## 📌 Maximum Active Assignments
 
-To maintain fairness, contributors may only hold:
+To maintain fairness, contributors may only hold a limited number of issues:
 
-> **Maximum 3 assigned issues at once**
+| Program | Max Active Issues |
+|---------|-------------------|
+| GSSoC | 2 |
+| NSoC | 3 |
 
-The assignment bot automatically checks this. If you already have 3 active issues, new assignments will be rejected until progress is made.
+The assignment bot automatically checks this. If you've reached your limit, new assignments will be rejected until you complete or unassign existing issues.
 
 ---
 
@@ -524,13 +537,21 @@ Verify:
 
 ## 🔍 Review Process
 
-PRs are reviewed based on:
+PRs go through a **3-stage pipeline**:
 
-- Code quality
-- Maintainability
-- Simplicity
-- Architectural consistency
-- Real project impact
+| Stage | Reviewer | Checks |
+|-------|----------|--------|
+| **Stage 1** — Automated | Bot | DCO sign-off, PR format, AI/slop detection, duplicate detection, diff size |
+| **Stage 2** — Human Review | Mentor | Code quality, relevance, correctness |
+| **Stage 3** — Final Decision | Project Admin | Merge approval |
+
+Stage 2 is blocked until Stage 1 passes. Stage 3 is blocked until Stage 2 passes.
+
+The PR validator also checks:
+
+- Diff size relative to PR type (bug fixes shouldn't be 500+ lines)
+- Unnecessary file changes (lock files, unrelated extensions)
+- Template completeness
 
 Maintainers may:
 
@@ -545,15 +566,17 @@ Maintainers may:
 
 The repository includes automated workflows for:
 
-- Smart issue assignment
-- Duplicate issue detection
+- Maintainer-verified smart issue assignment (`/approve-assignment`)
+- Duplicate issue and PR detection
 - AI-slop filtering
-- PR validation
-- Unresolved review tracking
-- Automatic labeling
+- PR format and diff size validation
+- PR size labeling (XS/S/M/L/XL)
+- Stale PR cleanup (auto-close after 14 days of inactivity with unresolved Stage 1 failures)
+- DCO sign-off verification
+- Spam detection and escalation
+- Automatic `type:` labeling (feature, bug, docs, devops, etc.)
+- PR review pipeline (3-stage)
 - Contribution program validation
-- Project board automation
-- Cache/data refresh workflows
 
 ---
 

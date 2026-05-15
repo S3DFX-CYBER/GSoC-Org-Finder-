@@ -42,11 +42,9 @@ jobs:
               return;
             }
 
-            // Skip valid assignment commands (handled by issue-context-assignment workflow)
             const trimmedBody = body.trim();
-            if (/^(\/assign|assign me|\/unassign|unassign me)$/.test(trimmedBody)) return;
+            if (/^(\/assign|\/unassign|assign me|unassign me)(\s+(gssoc|nsoc))?$/i.test(trimmedBody)) return;
 
-            // Spam ping patterns (common during GSSOC/NSOC)
             const spamPatterns = [
               '@s3dfx-cyber',
               'please assign',
@@ -66,7 +64,21 @@ jobs:
               'please respond',
               'pls respond',
               'urgent review',
-              'when will it be merged'
+              'when will it be merged',
+              'assign me this',
+              'i want this issue',
+              'plz assign',
+              'pls assign',
+              'kindly assign',
+              'bump',
+              'any update on this',
+              'is anyone reviewing',
+              'still waiting',
+              'how long will it take',
+              'assign this to me',
+              'give me this issue',
+              'can you assign',
+              'please assign this'
             ];
 
             const isSpamPing = spamPatterns.some(pattern => body.includes(pattern));

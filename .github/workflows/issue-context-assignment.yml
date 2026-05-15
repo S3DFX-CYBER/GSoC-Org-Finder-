@@ -7,6 +7,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: read
   contents: read
 
 concurrency:
@@ -47,7 +48,6 @@ jobs:
 
             const MAX_ASSIGNMENTS = 3;
 
-            // Two mentors randomly pinged
             const mentors = [
               "srinadhtadikonda",
               "ritika",
@@ -140,7 +140,11 @@ jobs:
             ];
 
             function pickRandomMentors(list, count = 2) {
-              const shuffled = [...list]
+              const filtered = list.filter(
+                mentor => mentor.toLowerCase() !== username.toLowerCase()
+              );
+
+              const shuffled = [...filtered]
                 .sort(() => 0.5 - Math.random());
 
               return shuffled.slice(0, count);
@@ -201,7 +205,7 @@ jobs:
               });
 
             // --------------------------------------------------
-            // LABELS
+            // LABEL CHECKS
             // --------------------------------------------------
 
             const labels = (currentIssue.labels || [])
@@ -218,7 +222,7 @@ jobs:
               !hasNeedsQuality;
 
             // --------------------------------------------------
-            // MAINTAINER CHECK
+            // MAINTAINER / MENTOR CHECK
             // --------------------------------------------------
 
             const { data: permission } =
@@ -233,6 +237,12 @@ jobs:
               ['admin', 'maintain', 'write']
                 .includes(permission.permission);
 
+            const isMentor =
+              mentors.includes(username);
+
+            const canApprove =
+              isMaintainer || isMentor;
+
             // --------------------------------------------------
             // UNASSIGN
             // --------------------------------------------------
@@ -244,7 +254,15 @@ jobs:
                   .some(a => a.login === username);
 
               if (!isAssigned) {
-                core.info('User not assigned');
+
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number,
+                  body:
+                    `❌ @${username}, you are not assigned to this issue.`
+                });
+
                 return;
               }
 
@@ -254,6 +272,15 @@ jobs:
                 issue_number,
                 assignees: [username]
               });
+
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name: 'assigned'
+                });
+              } catch (e) {}
 
               await github.rest.issues.createComment({
                 owner,
@@ -272,7 +299,7 @@ jobs:
 
             if (wantsApprove) {
 
-              if (!isMaintainer) {
+              if (!canApprove) {
 
                 await github.rest.issues.createComment({
                   owner,
@@ -354,7 +381,9 @@ jobs:
                 );
 
               const activeIssues =
-                assignedIssues.filter(i => !i.pull_request);
+                assignedIssues.filter(
+                  i => !i.pull_request
+                );
 
               if (
                 activeIssues.length >= MAX_ASSIGNMENTS
@@ -371,7 +400,7 @@ jobs:
                 return;
               }
 
-              // Assign
+              // Assign issue
               await github.rest.issues.addAssignees({
                 owner,
                 repo,
@@ -379,7 +408,7 @@ jobs:
                 assignees: [targetUser]
               });
 
-              // Labels
+              // Add assigned label
               try {
                 await github.rest.issues.addLabels({
                   owner,
@@ -389,7 +418,7 @@ jobs:
                 });
               } catch (e) {}
 
-              // Cleanup request label
+              // Remove request label
               try {
                 await github.rest.issues.removeLabel({
                   owner,
@@ -414,7 +443,6 @@ jobs:
             // ASSIGN REQUEST
             // --------------------------------------------------
 
-            // Account age check
             const { data: profile } =
               await github.rest.users.getByUsername({
                 username
@@ -474,7 +502,9 @@ jobs:
               );
 
             const activeIssues =
-              assignedIssues.filter(i => !i.pull_request);
+              assignedIssues.filter(
+                i => !i.pull_request
+              );
 
             if (
               activeIssues.length >= MAX_ASSIGNMENTS
@@ -498,9 +528,7 @@ jobs:
                 owner,
                 repo,
                 issue_number,
-                labels: [
-                  'assignment-requested'
-                ]
+                labels: ['assignment-requested']
               });
 
             } catch (e) {
@@ -543,7 +571,7 @@ jobs:
                 .map(m => `@${m}`)
                 .join(' ');
 
-            // Queue request
+            // Create request comment
             await github.rest.issues.createComment({
               owner,
               repo,
@@ -555,12 +583,13 @@ jobs:
 
                 (
                   isValidated
-                    ? `This issue is already validated and awaiting mentor approval.\n\n`
+                    ? `✅ This issue is already validated and awaiting mentor approval.\n\n`
                     : `⚠️ This issue still requires validation/triage before assignment.\n\n`
                 ) +
 
                 `### 👀 Mentor Review Requested\n\n` +
                 `${mentorMentions}\n\n` +
+
                 `Please:\n` +
                 `- validate the issue\n` +
                 `- review contributor suitability\n` +

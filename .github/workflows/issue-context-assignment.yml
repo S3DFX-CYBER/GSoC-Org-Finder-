@@ -29,7 +29,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issue_number = issue.number;
-            const username = sender.login;
+            let username = sender.login;
 
             if (sender.type === 'Bot') return;
 
@@ -38,17 +38,121 @@ jobs:
 
             const commentBody = (comment.body || '').toLowerCase();
 
-            const wantsAssign = commentBody.includes('/assign') || commentBody.includes('assign me');
-            const wantsUnassign = commentBody.includes('/unassign') || commentBody.includes('unassign me');
+            let wantsAssign = commentBody.includes('/assign') || commentBody.includes('assign me');
+            let wantsUnassign = commentBody.includes('/unassign') || commentBody.includes('unassign me');
+            const isApproveAssignment = commentBody.includes('/approve-assignment');
 
-            if (!wantsAssign && !wantsUnassign) return;
+            if (!wantsAssign && !wantsUnassign && !isApproveAssignment) return;
 
-            const mentionsGSSOC = commentBody.includes('gssoc');
-            const mentionsNSOC = commentBody.includes('nsoc');
+            const { data: userPermission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner, repo, username
+            });
+            const isMaintainer = ['admin', 'maintain', 'write'].includes(userPermission.permission);
 
             const { data: currentIssue } = await github.rest.issues.get({
               owner, repo, issue_number
             });
+
+            let mentionsGSSOC = commentBody.includes('gssoc');
+            let mentionsNSOC = commentBody.includes('nsoc');
+            let isMaintainerApprovedAssignment = false;
+            let isAutoApproved = false;
+            let maintainerApprover = null;
+
+            if (isApproveAssignment) {
+              if (!isMaintainer) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `❌ @${username}, only maintainers can approve assignments.`
+                });
+                return;
+              }
+
+              const mentionMatch = comment.body.match(/@([a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?)/);
+              let targetUser = mentionMatch ? mentionMatch[1] : null;
+
+              const { data: allComments } = await github.rest.issues.listComments({
+                owner, repo, issue_number, per_page: 100
+              });
+
+              const assignmentRequests = allComments
+                .filter(c => {
+                  const body = (c.body || '').toLowerCase();
+                  return (body.includes('/assign') || body.includes('assign me')) &&
+                         c.user &&
+                         c.user.type !== 'Bot' &&
+                         validGitHubUsername.test(c.user.login);
+                })
+                .map(c => ({
+                  username: c.user.login,
+                  timestamp: new Date(c.created_at),
+                  commentId: c.id,
+                  program: (c.body || '').toLowerCase().includes('gssoc') ? 'gssoc' :
+                           (c.body || '').toLowerCase().includes('nsoc') ? 'nsoc' : null
+                }))
+                .sort((a, b) => a.timestamp - b.timestamp);
+
+              if (assignmentRequests.length === 0) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⚠️ No assignment requests found in the comments.`
+                });
+                return;
+              }
+
+              if (!targetUser) {
+                for (const request of assignmentRequests) {
+                  const candidateUsername = request.username;
+
+                  const assignedIssues = await github.paginate(github.rest.issues.listForRepo, {
+                    owner, repo, state: 'open', assignee: candidateUsername, per_page: 100
+                  });
+                  const activeIssues = assignedIssues.filter(i => !i.pull_request);
+
+                  const maxAssignments = 3;
+
+                  if (activeIssues.length < maxAssignments) {
+                    targetUser = candidateUsername;
+                    await github.rest.issues.createComment({
+                      owner, repo, issue_number,
+                      body: `✅ **Smart Selection:** @${targetUser} selected (requested at ${request.timestamp.toISOString()}, current workload: ${activeIssues.length}/${maxAssignments})`
+                    });
+                    break;
+                  }
+                }
+
+                if (!targetUser) {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `❌ All users who requested assignment have reached their maximum workload.\n\n` +
+                          `**Requests received from:**\n` +
+                          assignmentRequests.map(r => `- @${r.username} (${r.timestamp.toISOString()})`).join('\n')
+                  });
+                  return;
+                }
+              }
+
+              const targetRequest = assignmentRequests.find(r => r.username.toLowerCase() === targetUser.toLowerCase());
+              if (!targetRequest) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `❌ @${targetUser} has not requested assignment for this issue.\n\n` +
+                        `**Valid requests from:**\n` +
+                        assignmentRequests.map(r => `- @${r.username} (${r.timestamp.toISOString()})`).join('\n')
+                });
+                return;
+              }
+
+              username = targetUser;
+              wantsAssign = true;
+              wantsUnassign = false;
+              mentionsGSSOC = targetRequest.program === 'gssoc';
+              mentionsNSOC = targetRequest.program === 'nsoc';
+              isMaintainerApprovedAssignment = true;
+              maintainerApprover = sender.login;
+
+              core.info(`Maintainer ${sender.login} approved assignment for ${targetUser}`);
+            }
 
             if (wantsUnassign) {
               const isAssigned = (currentIssue.assignees || []).some(a => a.login === username);
@@ -67,6 +171,82 @@ jobs:
                 body: `✅ Unassigned @${username} from this issue.`
               });
               return;
+            }
+
+            const issueLabels = (currentIssue.labels || []).map(l => l.name.toLowerCase());
+            const isVerified = issueLabels.includes('verified') ||
+                              issueLabels.includes('ready-for-assignment') ||
+                              issueLabels.includes('approved');
+
+            if (!isMaintainerApprovedAssignment && !isVerified && !isMaintainer) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `⏳ **Assignment Request Queued**\n\n` +
+                      `Hi @${username}! Your assignment request has been recorded.\n\n` +
+                      `⚠️ **This issue needs maintainer verification first.**\n\n` +
+                      `A maintainer will review this issue and approve assignments using:\n` +
+                      `- \`/approve-assignment\` (auto-selects based on timestamp + workload)\n` +
+                      `- \`/approve-assignment @username\` (manual selection)\n\n` +
+                      `You'll be notified once a decision is made. Thank you for your patience! 🙏`
+              });
+              return;
+            }
+
+            if (!isMaintainerApprovedAssignment && isVerified && !isMaintainer) {
+              const BEGINNER_LABELS = ['level:beginner', 'level1'];
+              const INTERMEDIATE_LABELS = ['level:intermediate', 'level2'];
+              const ADVANCED_LABELS = ['level:advanced', 'level:critical', 'level3'];
+
+              const isBeginnerIssue = issueLabels.some(l => BEGINNER_LABELS.includes(l));
+              const isAdvancedIssue = issueLabels.some(l => ADVANCED_LABELS.includes(l));
+              const isIntermediateIssue = issueLabels.some(l => INTERMEDIATE_LABELS.includes(l));
+
+              const hasLevelLabel = isBeginnerIssue || isIntermediateIssue || isAdvancedIssue;
+
+              if (!hasLevelLabel) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⏳ **Assignment Request Queued**\n\n` +
+                        `@${username}, this issue hasn't been labeled with a difficulty level yet.\n\n` +
+                        `A maintainer will triage and approve assignments. Thank you for your patience!`
+                });
+                return;
+              }
+
+              if (isAdvancedIssue) {
+                const { data: mergedSearch } = await github.rest.search.issuesAndPullRequests({
+                  q: `repo:${owner}/${repo} is:pr is:merged author:${username}`,
+                  per_page: 1
+                });
+                if ((mergedSearch.total_count || 0) < 1) {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⛔ **Assignment Denied**\n\n` +
+                          `@${username}, this is an **advanced/Level 3** issue that requires prior experience.\n\n` +
+                          `You need at least **1 merged PR** in this repository before working on advanced issues.\n\n` +
+                          `Please start with a \`level:beginner\` or \`level:intermediate\` issue first.`
+                  });
+                  return;
+                }
+                isAutoApproved = true;
+              } else if (isIntermediateIssue) {
+                const { data: profile } = await github.rest.users.getByUsername({ username });
+                const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
+                if (acctAgeDays >= 30) {
+                  isAutoApproved = true;
+                } else {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⏳ **Assignment Request Queued**\n\n` +
+                          `@${username}, intermediate/Level 2 issues require an account at least **30 days old** for auto-assignment.\n\n` +
+                          `A maintainer will review and approve using \`/approve-assignment\`.\n\n` +
+                          `Tip: You can get auto-assigned immediately on \`level:beginner\` issues!`
+                  });
+                  return;
+                }
+              } else {
+                isAutoApproved = true;
+              }
             }
 
             if (mentionsGSSOC) {
@@ -138,7 +318,7 @@ jobs:
               return;
             }
 
-            const maxAssignments = mentionsGSSOC ? 2 : 3;
+            const maxAssignments = 3;
             const assignedIssues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', assignee: username, per_page: 100
             });
@@ -146,7 +326,7 @@ jobs:
 
             if (activeIssues.length >= maxAssignments) {
               await github.rest.issues.createComment({ owner, repo, issue_number,
-                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed for ${mentionsGSSOC ? 'GSSOC' : 'NSOC'}: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
+                body: `❌ @${username} already has ${activeIssues.length} active assignment(s).\n\nMaximum allowed: **${maxAssignments}**\n\nPlease complete or unassign existing issues first.` });
               return;
             }
 
@@ -244,11 +424,18 @@ jobs:
               difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${nsocLevel}\`. A maintainer may update this.`;
             }
 
+            const approvalNote = maintainerApprover
+              ? `\n\n✅ **Approved by maintainer:** @${maintainerApprover}`
+              : isAutoApproved
+                ? `\n\n✅ **Auto-approved** (verified issue, trusted account)`
+                : '';
+
             await github.rest.issues.createComment({
               owner, repo, issue_number,
               body: `✅ **Assigned @${username}**\n\n` +
                     `🏷️ Program: \`${programLabel || 'Not Specified'}\`\n\n` +
                     `📌 You now have **${activeIssues.length + 1}** active assignment(s).\n` +
                     `Please work on meaningful contributions and avoid opening many tiny PRs.` +
-                    difficultyNote
+                    difficultyNote +
+                    approvalNote
             });

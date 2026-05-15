@@ -55,17 +55,21 @@ jobs:
 
               for (const model of models) {
                 try {
+                  const controller = new AbortController();
+                  const timeout = setTimeout(() => controller.abort(), 15000);
                   const res = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
                     {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
+                      signal: controller.signal,
                       body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: { temperature: 0.1, maxOutputTokens: 512 }
                       })
                     }
                   );
+                  clearTimeout(timeout);
 
                   if (res.status === 429) {
                     core.info(`Rate limited on ${model}, trying fallback...`);
@@ -104,13 +108,11 @@ jobs:
             function parseJSON(text) {
               if (!text) return null;
               const cleaned = text.replace(/```json|```/g, '').trim();
-              const match = cleaned.match(/\{[^{}]*("concerns"\s*:\s*\[[^\]]*\][^}]*)\}/s);
-              if (match) {
-                try { return JSON.parse('{' + match[1] + '}'); } catch {}
-              }
-              const simpleMatch = cleaned.match(/\{[\s\S]*\}/);
-              if (!simpleMatch) return null;
-              try { return JSON.parse(simpleMatch[0]); } catch { return null; }
+              try { return JSON.parse(cleaned); } catch {}
+              const start = cleaned.indexOf('{');
+              const end = cleaned.lastIndexOf('}');
+              if (start === -1 || end <= start) return null;
+              try { return JSON.parse(cleaned.slice(start, end + 1)); } catch { return null; }
             }
 
             const prTitle = sanitizeInput(pr.title, 200);

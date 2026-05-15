@@ -30,7 +30,7 @@ New issues are **automatically triaged by our AI bot** which applies difficulty 
 
 Comment on the issue with:
 
-```
+```bash
 /assign gssoc
 ```
 

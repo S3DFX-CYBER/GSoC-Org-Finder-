@@ -71,7 +71,7 @@ jobs:
               '| Stage | Reviewer | Checks |',
               '|-------|----------|--------|',
               '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate · LLM Analysis |',
-              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : '👥 Maintainer'} | Code + Quality Review |`,
+              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : isNsoc ? '⏭️ Auto (Stage 1 pass)' : '👥 Reviewer'} | Code + Quality Review |`,
               '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
               '',
               '> The **LLM PR Analysis** bot will verify your PR links to a valid issue and that changes match the issue scope.',

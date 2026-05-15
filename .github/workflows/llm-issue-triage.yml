@@ -45,17 +45,21 @@ jobs:
 
               for (const model of models) {
                 try {
+                  const controller = new AbortController();
+                  const timeout = setTimeout(() => controller.abort(), 15000);
                   const res = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
                     {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
+                      signal: controller.signal,
                       body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: { temperature: 0.1, maxOutputTokens: 256 }
                       })
                     }
                   );
+                  clearTimeout(timeout);
 
                   if (res.status === 429) {
                     core.info(`Rate limited on ${model}, trying fallback...`);
@@ -120,7 +124,7 @@ jobs:
               return validated;
             }
 
-            async function triageIssue(issue) {
+            async function triageIssue(issue, cachedOpenIssues) {
               const issueNumber = issue.number;
 
               const existingLabels = (issue.labels || []).map(l => l.name);
@@ -129,7 +133,7 @@ jobs:
               );
               if (alreadyTriaged) return;
 
-              const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              const openIssues = cachedOpenIssues || await github.paginate(github.rest.issues.listForRepo, {
                 owner, repo, state: 'open', per_page: 100
               });
 
@@ -240,7 +244,7 @@ jobs:
             if (context.eventName === 'issues') {
               const issue = context.payload.issue;
               if (issue.user.type === 'Bot') return;
-              await triageIssue(issue);
+              await triageIssue(issue, null);
             } else {
               const openIssues = await github.paginate(github.rest.issues.listForRepo, {
                 owner, repo, state: 'open', per_page: 100
@@ -257,7 +261,7 @@ jobs:
               core.info(`Found ${untriaged.length} untriaged issues. Processing up to ${MAX_ISSUES_PER_RUN}.`);
 
               for (const issue of untriaged.slice(0, MAX_ISSUES_PER_RUN)) {
-                await triageIssue(issue);
+                await triageIssue(issue, openIssues);
                 await new Promise(r => setTimeout(r, 2000));
               }
             }

@@ -7,6 +7,7 @@ on:
       - reopened
       - edited
       - synchronize
+      - labeled
 
 permissions:
   contents: read
@@ -22,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Anti Slop Detection
+        if: github.event.action != 'labeled'
         id: slop-detection
         uses: peakoss/anti-slop@v0.2.1
         with:
@@ -93,19 +95,7 @@ jobs:
           lock-pr: false
 
       - name: LLM cross-check before closing flagged PRs
-        if: steps.slop-detection.outputs.flagged == 'true'
-        uses: actions/github-script@v8
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr = context.payload.pull_request;
-
-            if (!process.env.GEMINI_API_KEY) {
-              core.info('GEMINI_API_KEY not set — skipping LLM verification, PR stays open.');
-      - name: LLM cross-check before closing flagged PRs
-        if: steps.slop-detection.outputs.flagged == 'true'
+        if: contains(github.event.pull_request.labels.*.name, 'ai-slop')
         uses: actions/github-script@v8
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

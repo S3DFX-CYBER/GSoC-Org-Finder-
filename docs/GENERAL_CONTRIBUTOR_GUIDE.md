@@ -23,6 +23,11 @@ Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) 
 - `help wanted` label for tasks needing contributors
 - Issues labeled `level:beginner`, `level:intermediate`, or `level:advanced` without program restrictions
 
+**Assignment eligibility by level:**
+- `level:beginner` — Anyone can self-assign (no restrictions)
+- `level:intermediate` — Account must be at least 30 days old for auto-assignment
+- `level:advanced` — Requires at least 1 merged PR in this repository
+
 You can also **create your own issue** if you've found a bug or have a feature idea.
 
 ### Step 2 — Request Assignment

@@ -201,12 +201,24 @@ jobs:
               const isAdvancedIssue = issueLabels.some(l => ADVANCED_LABELS.includes(l));
               const isIntermediateIssue = issueLabels.some(l => INTERMEDIATE_LABELS.includes(l));
 
-              if (isAdvancedIssue) {
-                const { data: closedPRs } = await github.rest.pulls.list({
-                  owner, repo, state: 'closed', per_page: 50
+              const hasLevelLabel = isBeginnerIssue || isIntermediateIssue || isAdvancedIssue;
+
+              if (!hasLevelLabel) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⏳ **Assignment Request Queued**\n\n` +
+                        `@${username}, this issue hasn't been labeled with a difficulty level yet.\n\n` +
+                        `A maintainer will triage and approve assignments. Thank you for your patience!`
                 });
-                const mergedPRs = closedPRs.filter(p => p.merged_at && p.user.login.toLowerCase() === username.toLowerCase());
-                if (mergedPRs.length < 1) {
+                return;
+              }
+
+              if (isAdvancedIssue) {
+                const { data: mergedSearch } = await github.rest.search.issuesAndPullRequests({
+                  q: `repo:${owner}/${repo} is:pr is:merged author:${username}`,
+                  per_page: 1
+                });
+                if ((mergedSearch.total_count || 0) < 1) {
                   await github.rest.issues.createComment({
                     owner, repo, issue_number,
                     body: `⛔ **Assignment Denied**\n\n` +

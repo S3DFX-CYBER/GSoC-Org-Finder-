@@ -32,9 +32,9 @@ Nexus Spring of Code is a program designed to:
 Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter by:
 
 - `nsoc26` label for NSoC-specific issues
-- `level1` for beginner-friendly tasks
-- `level2` for intermediate tasks
-- `level3` for advanced tasks
+- `level:beginner` (or `level1`) for beginner-friendly tasks
+- `level:intermediate` (or `level2`) for intermediate tasks
+- `level:advanced` (or `level3`) for advanced tasks
 - `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement` for specific types
 
 New issues are **automatically triaged by our AI bot** which applies difficulty and type labels. You can filter by these labels to find issues that match your skill level.
@@ -43,7 +43,7 @@ New issues are **automatically triaged by our AI bot** which applies difficulty 
 
 Comment on the issue with:
 
-```
+```bash
 /assign nsoc
 ```
 

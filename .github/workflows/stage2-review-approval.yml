@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: stage2-review-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   handle-review-approval:

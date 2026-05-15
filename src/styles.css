@@ -202,11 +202,20 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   cursor:pointer;
   padding:4px;            /* larger tap target */
   border-radius:6px;
+  transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 .bookmark-btn:focus-visible{
   outline:2px solid var(--orange);
   outline-offset:2px;
 }
+.bookmark-btn:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+}
+
+.bookmark-btn:active {
+  transform: scale(0.9);
+}ssssssssss
 
 /* ── ISSUES PAGE ── */
 .page{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;transition:background .3s}

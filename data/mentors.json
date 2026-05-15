@@ -1422,15 +1422,27 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Metasploit": {
-    "org": "Metasploit",
-    "ideasUrl": "https://github.com/rapid7/metasploit-framework/wiki",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "Metasploit",
+  "ideasUrl": "https://github.com/rapid7/metasploit-framework/wiki",
+  "channels": [
+    {
+      "type": "Slack",
+      "url": "https://metasploit.slack.com/",
+      "label": "Metasploit Slack"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Rapid7",
+      "github": "rapid7",
+      "githubUrl": "https://github.com/rapid7"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Join the Metasploit community Slack and introduce yourself before discussing project ideas.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "MIT App Inventor": {
     "org": "MIT App Inventor",
     "ideasUrl": "https://github.com/mit-cml/appinventor-sources/wiki/Google-Summer-of-Code-2026",

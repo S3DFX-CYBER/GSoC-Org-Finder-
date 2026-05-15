@@ -659,7 +659,7 @@
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
-    <div class="flex items-center gap-4">
+    <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -686,6 +686,10 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button type="button" onclick="clearAllFilters()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-200 bg-white text-xs font-bold text-zinc-600 hover:border-primary hover:text-primary hover:bg-orange-50 transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-base">restart_alt</span>
+        Clear Filters
+      </button>
     </div>
   </div>
   
@@ -2459,21 +2463,33 @@ if(org.ideas){
   }
 
   window.clearAllFilters = function() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('categoryFilter').value = 'all';
-    document.getElementById('complexityFilter').value = 'all';
-    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
+    const searchInput = document.getElementById('searchInput');
     const heroSearch = document.getElementById('hero-search');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const complexityFilter = document.getElementById('complexityFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    const languageToggle = document.getElementById('matchAllLanguagesToggle');
+
+    if (searchInput) searchInput.value = '';
     if (heroSearch) heroSearch.value = '';
-    
-    // Reset chips
+    if (categoryFilter) categoryFilter.value = 'all';
+    if (complexityFilter) complexityFilter.value = 'all';
+    if (sortSelect) sortSelect.value = 'alpha';
+    if (languageToggle) languageToggle.checked = false;
+
+    selectedLanguages.clear();
+    renderSelectedLanguages();
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = matchAllLanguages;
+    updateLanguageModeHint();
+
+    activeChip = null;
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
 
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    applyFilters();
   };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);

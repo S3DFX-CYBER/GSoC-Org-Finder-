@@ -6,10 +6,12 @@
 // Lightweight scoring helper: given an org, returns the top `n` most
 // similar organizations from the global ORGS array based on shared
 // category (`cat`) and overlapping technology tags (`tags`).
-// Exposed on `window` so the modal renderer in index.html can call it.
+// Exposed on globalThis for any page that loads this script. The live
+// org modal in index.html mirrors this helper inline (with a comment
+// pointing here) until both surfaces can share a common module.
 // ══════════════════════════════════════════════
 (function(){
-  if (typeof window === 'undefined') return;
+  if (typeof globalThis === 'undefined') return;
   function getSimilarOrgs(currentOrg, n) {
     if (!currentOrg || typeof ORGS === 'undefined' || !Array.isArray(ORGS)) return [];
     const limit = Number.isInteger(n) && n > 0 ? n : 3;
@@ -20,7 +22,9 @@
         const oTags = (o.tags || []).map(t => String(t).toLowerCase());
         let tagOverlap = 0;
         for (const t of oTags) if (curTags.has(t)) tagOverlap++;
-        const catMatch = o.cat === currentOrg.cat ? 1 : 0;
+        // Only count a category match when both sides have a non-empty
+        // category, so two orgs missing `cat` are not treated as similar.
+        const catMatch = (o.cat && currentOrg.cat && o.cat === currentOrg.cat) ? 1 : 0;
         // Category match weighted higher than any single tag overlap so
         // domain-relevant suggestions dominate the ranking.
         const score = catMatch * 3 + tagOverlap * 2;
@@ -31,7 +35,7 @@
       .slice(0, limit)
       .map(x => x.org);
   }
-  window.getSimilarOrgs = getSimilarOrgs;
+  globalThis.getSimilarOrgs = getSimilarOrgs;
 })();
 
 // ══════════════════════════════════════════════

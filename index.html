@@ -2373,7 +2373,9 @@ if(org.ideas){
         const oTags = (o.tags || []).map(t => String(t).toLowerCase());
         let tagOverlap = 0;
         for (const t of oTags) if (curTags.has(t)) tagOverlap++;
-        const catMatch = o.cat === currentOrg.cat ? 1 : 0;
+        // Only count a category match when both sides have a non-empty
+        // category, so two orgs missing `cat` are not treated as similar.
+        const catMatch = (o.cat && currentOrg.cat && o.cat === currentOrg.cat) ? 1 : 0;
         return { org: o, score: catMatch * 3 + tagOverlap * 2 };
       })
       .filter(x => x.score > 0)
@@ -2400,7 +2402,13 @@ if(org.ideas){
       </button>`;
     }).join('');
     list.querySelectorAll('.similar-org-card').forEach(btn => {
-      btn.addEventListener('click', () => openModal(btn.dataset.orgName));
+      btn.addEventListener('click', () => {
+        // Reset modal scroll so the user lands at the new org's header,
+        // not stuck at the bottom where the similar section lives.
+        const modalEl = document.querySelector('#orgModal .modal');
+        if (modalEl) modalEl.scrollTop = 0;
+        openModal(btn.dataset.orgName);
+      });
     });
     section.hidden = false;
   }

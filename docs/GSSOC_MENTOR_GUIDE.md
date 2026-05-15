@@ -169,6 +169,7 @@ Action: Close the duplicate, direct to the original.
 - Provide educational feedback
 - Focus on whether the change works correctly
 - Guide contributors toward improvement
+- **Assignment:** No restrictions — anyone can self-assign beginner issues
 
 ### Level 2 (25 pts) — Intermediate
 
@@ -176,6 +177,7 @@ Action: Close the duplicate, direct to the original.
 - Verify logic correctness
 - Check edge cases
 - Ensure proper error handling where appropriate
+- **Assignment:** Requires account age ≥30 days for auto-assignment
 
 ### Level 3 (45 pts) — Advanced
 
@@ -184,6 +186,7 @@ Action: Close the duplicate, direct to the original.
 - Check security considerations
 - Ensure architectural consistency
 - Require thorough testing evidence
+- **Assignment:** Requires at least 1 merged PR in this repository
 
 ---
 

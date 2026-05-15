@@ -46,9 +46,16 @@ The automated system validates:
 - No recent spam/AI-slop flags on your account
 - GSSoC assignments are open (opened **15 May 2026, 12:00 AM IST**)
 
-**Auto-assignment for verified issues:**
-- If the issue has a `verified`, `ready-for-assignment`, or `approved` label AND your account is >30 days old, you are assigned immediately
-- Otherwise, a maintainer will review and approve via `/approve-assignment`
+**Auto-assignment rules by difficulty (on verified issues):**
+
+| Issue Level | Requirement |
+|-------------|-------------|
+| `level:beginner` | Anyone can self-assign immediately (no restrictions) |
+| `level:intermediate` | Account must be at least **30 days old** for auto-assignment |
+| `level:advanced` | Must have at least **1 merged PR** in this repository |
+
+- If the issue is not yet verified, a maintainer approves via `/approve-assignment`
+- If you don't meet the requirements for a level, you can still request assignment and a maintainer can manually approve
 
 Do **NOT** start working until the bot confirms your assignment.
 
@@ -77,7 +84,7 @@ GSSoC uses a level-based points system:
 
 Points are tracked on the GSSoC leaderboard throughout the program. The leaderboard only updates when PRs are **merged**.
 
-**Advanced issues** require at least 1 previously merged PR in this repository.
+**Advanced issues** require at least 1 previously merged PR in this repository. **Intermediate issues** require an account at least 30 days old for auto-assignment. **Beginner issues** have no restrictions — anyone can start here.
 
 ---
 

@@ -193,18 +193,43 @@ jobs:
             }
 
             if (!isMaintainerApprovedAssignment && isVerified && !isMaintainer) {
-              const { data: profile } = await github.rest.users.getByUsername({ username });
-              const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
-              if (acctAgeDays >= 30) {
-                isAutoApproved = true;
-              } else {
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number,
-                  body: `⏳ **Assignment Request Queued**\n\n` +
-                        `Hi @${username}! Your account is less than 30 days old, so a maintainer must approve your assignment on verified issues.\n\n` +
-                        `A maintainer will review and approve using \`/approve-assignment\`.`
+              const isBeginnerIssue = issueLabels.includes('level:beginner') || issueLabels.includes('level1');
+              const isAdvancedIssue = issueLabels.includes('level:advanced') || issueLabels.includes('level:critical') || issueLabels.includes('level3');
+              const isIntermediateIssue = issueLabels.includes('level:intermediate') || issueLabels.includes('level2');
+
+              if (isAdvancedIssue) {
+                const { data: closedPRs } = await github.rest.pulls.list({
+                  owner, repo, state: 'closed', per_page: 50
                 });
-                return;
+                const mergedPRs = closedPRs.filter(p => p.merged_at && p.user.login.toLowerCase() === username.toLowerCase());
+                if (mergedPRs.length < 1) {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⛔ **Assignment Denied**\n\n` +
+                          `@${username}, this is an **advanced/Level 3** issue that requires prior experience.\n\n` +
+                          `You need at least **1 merged PR** in this repository before working on advanced issues.\n\n` +
+                          `Please start with a \`level:beginner\` or \`level:intermediate\` issue first.`
+                  });
+                  return;
+                }
+                isAutoApproved = true;
+              } else if (isIntermediateIssue) {
+                const { data: profile } = await github.rest.users.getByUsername({ username });
+                const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
+                if (acctAgeDays >= 30) {
+                  isAutoApproved = true;
+                } else {
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number,
+                    body: `⏳ **Assignment Request Queued**\n\n` +
+                          `@${username}, intermediate/Level 2 issues require an account at least **30 days old** for auto-assignment.\n\n` +
+                          `A maintainer will review and approve using \`/approve-assignment\`.\n\n` +
+                          `Tip: You can get auto-assigned immediately on \`level:beginner\` issues!`
+                  });
+                  return;
+                }
+              } else {
+                isAutoApproved = true;
               }
             }
 

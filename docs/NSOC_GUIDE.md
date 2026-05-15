@@ -58,9 +58,16 @@ The automated system validates:
 - Your active assignment count is under the maximum (**3 issues**)
 - No recent spam/AI-slop flags on your account
 
-**Auto-assignment for verified issues:**
-- If the issue has a `verified`, `ready-for-assignment`, or `approved` label AND your account is >30 days old, you are assigned immediately
-- Otherwise, a maintainer will review and approve via `/approve-assignment`
+**Auto-assignment rules by difficulty (on verified issues):**
+
+| Issue Level | Requirement |
+|-------------|-------------|
+| `level1` (Beginner) | Anyone can self-assign immediately (no restrictions) |
+| `level2` (Intermediate) | Account must be at least **30 days old** for auto-assignment |
+| `level3` (Advanced) | Must have at least **1 merged PR** in this repository |
+
+- If the issue is not yet verified, a maintainer approves via `/approve-assignment`
+- If you don't meet the requirements for a level, you can still request assignment and a maintainer can manually approve
 
 Do **NOT** start working until the bot confirms your assignment.
 
@@ -80,7 +87,7 @@ NSoC contributors can request assignments immediately — there is no date restr
 | Level 2 | `level2` | Filter logic, caching, API improvements, search |
 | Level 3 | `level3` | Architecture changes, performance, security |
 
-**Level 3 issues** require at least 1 previously merged PR in this repository.
+**Level 3 issues** require at least 1 previously merged PR in this repository. **Level 2 issues** require an account at least 30 days old for auto-assignment. **Level 1 issues** have no restrictions — anyone can start here.
 
 ---
 

@@ -96,6 +96,10 @@
     .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
     .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
     .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     .fade-up{animation:fadeUp .6s ease-out both}
     @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
@@ -691,11 +695,15 @@
   
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
-  
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+
+  <div class="bg-white rounded-3xl border border-zinc-100 p-6 overflow-hidden">
+    <div id="orgScrollContainer" class="max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
+      <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
+        <!-- Organizations will be rendered here dynamically -->
+        <div class="col-span-full py-20 text-center animate-pulse">
+          <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -706,12 +714,6 @@
     <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
     <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
       Clear All Filters
-    </button>
-  </div>
-
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
     </button>
   </div>
 </section>
@@ -923,9 +925,13 @@
       </div>
     </div>
 
-    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+    <div class="bg-white rounded-2xl border border-zinc-100 p-6 overflow-hidden">
+      <div id="mentorScrollContainer" class="max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+        <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
+            <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1352,8 +1358,6 @@
   // ══════════════════════════════════════════════
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
-  let visibleCount = 12;
-
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
@@ -1792,7 +1796,7 @@
       const safeContactHref = sanitizeHrefUrl(contactHref);
 
       return `
-        <article class="mentor-card">
+        <article class="mentor-card" data-org="${escapeHtml(org.name)}">
           <div class="flex items-start justify-between gap-3 mb-4">
             <div>
               <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
@@ -1808,8 +1812,6 @@
         </article>
       `;
     }).join('');
-
-    attachOrgCardListeners(grid);
   }
 
   async function loadMentorData() {
@@ -1999,112 +2001,71 @@
     }
   };
 
-  function renderOrgs(reset = true) {
+  function renderOrgs() {
     const grid = document.getElementById('orgGrid');
-
     const emptyState = document.getElementById('emptyState');
-    if (reset) {
-      grid.innerHTML = '';
-      visibleCount = 12;
-    }
+    if (!grid) return;
 
     if (filteredOrgs.length === 0) {
+      grid.innerHTML = '';
       grid.classList.add('hidden');
       if (emptyState) emptyState.classList.remove('hidden');
       document.getElementById('orgCount').textContent = '0';
-      document.getElementById('loadMoreContainer').style.display = 'none';
       return;
     } else {
       grid.classList.remove('hidden');
       if (emptyState) emptyState.classList.add('hidden');
     }
-    
-    const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
-    slice.forEach(org => {
+
+    const html = filteredOrgs.map(org => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
-      const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
-      card.dataset.org = org.name;
-      
       const githubOwner = org.github.split('/')[0];
       const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
       
-      card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-          <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
-            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
+      return `
+        <article class="group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up" data-org="${escapeHtml(org.name)}">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
+              <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" loading="lazy" onerror="handleImgError(this, '${escapeHtml(org.name)}')"/>
+              <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
+              <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+              <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
+                <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
-            <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
-            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
-              <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
-            </button>
+          <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
+          <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
+          <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
+            ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
           </div>
-        </div>
-        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
-        <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
-        <div class="flex flex-wrap gap-1.5 mb-4">
-          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
-        </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
-          <div class="flex items-center gap-3">
-             <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
-             </button>
+          <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+            <div class="flex items-center gap-3">
+               <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
+               </button>
+            </div>
+             <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
           </div>
-           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
-        </div>
+        </article>
       `;
-      grid.appendChild(card);
-        // Attach per-card listeners for non-bubbling events and data-driven actions
-        attachOrgCardListeners(card);
-    });
+    }).join('');
 
+    grid.innerHTML = html;
     document.getElementById('orgCount').textContent = filteredOrgs.length;
-    document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
   }
 
   // Attach listeners to elements created from org templates.
   // Uses data-* attributes to avoid injecting user data into inline JS handlers.
   function attachOrgCardListeners(root = document) {
-    // image error fallback (error doesn't bubble reliably)
-    (root.querySelectorAll ? root.querySelectorAll('img[data-org-name]') : []).forEach(img => {
-      if (img.__orgListenerAttached) return;
-      img.addEventListener('error', (e) => {
-        handleImgError(e.target, e.target.dataset.orgName);
-      });
-      img.__orgListenerAttached = true;
-    });
-
-    // bookmark buttons
-    (root.querySelectorAll ? root.querySelectorAll('.bookmark-btn[data-bookmark-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => toggleBookmark(e, btn.dataset.bookmarkOrg));
-      btn.__orgListenerAttached = true;
-    });
-
-    // compare buttons
-    (root.querySelectorAll ? root.querySelectorAll('[data-compare-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => toggleCompare(e, btn.dataset.compareOrg));
-      btn.__orgListenerAttached = true;
-    });
-
-    // open modal buttons
-    (root.querySelectorAll ? root.querySelectorAll('[data-open-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openModal(btn.dataset.openOrg);
-      });
-      btn.__orgListenerAttached = true;
-    });
+    // Deprecated: Using global event delegation instead for better performance.
   }
 
   function toggleCompare(e, name) {
@@ -2126,38 +2087,35 @@
   function renderCompare() {
     const container = document.querySelector('#compare .grid');
     if (!container) return;
-    container.innerHTML = '';
     
-    compareList.forEach(name => {
+    const html = compareList.map(name => {
       const org = ORGS.find(o => o.name === name);
       const githubOwner = org.github.split('/')[0];
       const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
       
-      const item = document.createElement('div');
-      item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
-      item.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+      return `
+        <div class="bg-white rounded-xl p-4 border border-zinc-100">
+          <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" onerror="handleImgError(this, '${escapeHtml(org.name)}')"/>
+          </div>
+          <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
+          <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+          <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
         </div>
-        <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
-        <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
-        <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
-      container.appendChild(item);
-      attachOrgCardListeners(item);
-    });
+    }).join('');
 
     // Add empty slots
+    let emptySlotsHtml = '';
     for (let i = compareList.length; i < 3; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-        <p class="font-bold text-sm text-zinc-400">Add org</p>
-        <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i+1}</p>
+      emptySlotsHtml += `
+        <div class="bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-xl p-4 flex flex-center justify-center items-center h-[120px]">
+          <p class="text-xs text-zinc-400 font-medium">Empty Slot</p>
+        </div>
       `;
-      container.appendChild(empty);
     }
+
+    container.innerHTML = html + emptySlotsHtml;
   }
 
   function renderCompareModal() {
@@ -2278,29 +2236,29 @@
       return;
     }
 
-    bookmarks.forEach(org => {
-      const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
-      item.innerHTML = `
-        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-orange-600">psychology</span>
-        </div>
-        <div class="flex-1 w-full">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${escapeHtml(org.name)}</h4>
-            <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
+    const html = bookmarks.map(org => {
+      return `
+        <div class="bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up" data-org="${escapeHtml(org.name)}">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-orange-600">psychology</span>
           </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
-          <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
-            <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+          <div class="flex-1 w-full">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <h4 class="font-bold">${escapeHtml(org.name)}</h4>
+              <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
+            </div>
+            <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
+            <div class="flex items-center gap-4 text-xs text-zinc-500">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
+              <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+            </div>
           </div>
         </div>
       `;
-      container.appendChild(item);
-      attachOrgCardListeners(item);
-    });
+    }).join('');
+
+    container.innerHTML = html;
 
     // Data-driven AI Insight
     const allTags = bookmarks.flatMap(o => o.tags);
@@ -2488,10 +2446,26 @@ if(org.ideas){
     globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
   });
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    visibleCount += 12;
-    renderOrgs(false);
-  });
+  const handleDelegatedClick = (e) => {
+    const target = e.target.closest('[data-bookmark-org], [data-compare-org], [data-open-org]');
+    if (!target) return;
+
+    if (target.dataset.bookmarkOrg) {
+      toggleBookmark(e, target.dataset.bookmarkOrg);
+    } else if (target.dataset.compareOrg) {
+      toggleCompare(e, target.dataset.compareOrg);
+    } else if (target.dataset.openOrg) {
+      e.stopPropagation();
+      openModal(target.dataset.openOrg);
+    }
+  };
+
+  document.getElementById('orgGrid')?.addEventListener('click', handleDelegatedClick);
+  document.getElementById('mentorGrid')?.addEventListener('click', handleDelegatedClick);
+  document.getElementById('watchlistContainer')?.addEventListener('click', handleDelegatedClick);
+  document.getElementById('compareModalBody')?.addEventListener('click', handleDelegatedClick);
+
+  document.getElementById('loadMoreBtn')?.parentElement?.remove();
 
   // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);

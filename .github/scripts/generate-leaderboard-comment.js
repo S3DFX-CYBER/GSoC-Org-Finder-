@@ -20,21 +20,13 @@ const EXCLUDED_USERS = ['S3DFX-CYBER']; // Specific edge cases if any
 function isExcluded(login, type, association) {
   if (!login) return true;
   const lowercaseLogin = login.toLowerCase();
-  
-  const isBot = 
-    type === 'Bot' || 
-    lowercaseLogin.endsWith('[bot]') || 
-    lowercaseLogin.endsWith('-bot');
-    
-  const isMaintainer = 
-    association === 'OWNER' || 
-    association === 'MEMBER';
 
-  return (
-    EXCLUDED_USERS.some(u => u.toLowerCase() === lowercaseLogin) ||
-    isBot ||
-    isMaintainer
-  );
+  const isBot =
+    type === 'Bot' || lowercaseLogin.endsWith('[bot]') || lowercaseLogin.endsWith('-bot');
+
+  const isMaintainer = association === 'OWNER' || association === 'MEMBER';
+
+  return EXCLUDED_USERS.some((u) => u.toLowerCase() === lowercaseLogin) || isBot || isMaintainer;
 }
 
 // Early exit if the PR author is a bot or maintainer
@@ -47,8 +39,8 @@ async function github(path) {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github+json',
-      'User-Agent': 'nsoc-leaderboard'
-    }
+      'User-Agent': 'nsoc-leaderboard',
+    },
   });
 
   if (!res.ok) {
@@ -92,7 +84,7 @@ async function getAllClosedPRs() {
         username: login,
         merged: 0,
         closed: 0,
-        score: 0
+        score: 0,
       });
     }
 
@@ -107,9 +99,7 @@ async function getAllClosedPRs() {
   }
 
   // Add open PR score
-  const openPRs = await github(
-    `/repos/${owner}/${repo}/pulls?state=open&per_page=100`
-  );
+  const openPRs = await github(`/repos/${owner}/${repo}/pulls?state=open&per_page=100`);
 
   for (const pr of openPRs) {
     if (!pr.user || isExcluded(pr.user.login, pr.user.type, pr.author_association)) continue;
@@ -121,7 +111,7 @@ async function getAllClosedPRs() {
         username: login,
         merged: 0,
         closed: 0,
-        score: 0
+        score: 0,
       });
     }
 
@@ -130,18 +120,12 @@ async function getAllClosedPRs() {
     user.score += 1;
   }
 
-  const leaderboard = Array.from(contributorMap.values())
-    .sort((a, b) => b.score - a.score);
+  const leaderboard = Array.from(contributorMap.values()).sort((a, b) => b.score - a.score);
 
   const rank =
-    leaderboard.findIndex(
-      u => u.username.toLowerCase() === username.toLowerCase()
-    ) + 1;
+    leaderboard.findIndex((u) => u.username.toLowerCase() === username.toLowerCase()) + 1;
 
-  const current =
-    leaderboard.find(
-      u => u.username.toLowerCase() === username.toLowerCase()
-    );
+  const current = leaderboard.find((u) => u.username.toLowerCase() === username.toLowerCase());
 
   let title = '## 📊 Monthly Leaderboard';
 
@@ -157,10 +141,7 @@ async function getAllClosedPRs() {
     title = '## 📌 Pull Request Closed';
   }
 
-  const nearby = leaderboard.slice(
-    Math.max(rank - 2, 0),
-    Math.min(rank + 1, leaderboard.length)
-  );
+  const nearby = leaderboard.slice(Math.max(rank - 2, 0), Math.min(rank + 1, leaderboard.length));
 
   let md = '';
 
@@ -176,10 +157,7 @@ async function getAllClosedPRs() {
   for (const user of nearby) {
     const r = leaderboard.indexOf(user) + 1;
 
-    const highlight =
-      user.username.toLowerCase() === username.toLowerCase()
-        ? ' ✨'
-        : '';
+    const highlight = user.username.toLowerCase() === username.toLowerCase() ? ' ✨' : '';
 
     md += `| ${r} | @${user.username}${highlight} | ${user.merged} | ${user.score} |\n`;
   }

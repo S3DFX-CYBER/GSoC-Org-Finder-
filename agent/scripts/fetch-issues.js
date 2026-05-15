@@ -25,9 +25,7 @@ function normalizeTargets(orgs) {
           name: org.name,
           github,
           query:
-            `repo:${github} ` +
-            `is:issue state:open archived:false ` +
-            `label:"good first issue"`
+            `repo:${github} ` + `is:issue state:open archived:false ` + `label:"good first issue"`,
         };
       }
 
@@ -35,9 +33,7 @@ function normalizeTargets(orgs) {
         name: org.name,
         github,
         query:
-          `user:${github} ` +
-          `is:issue state:open archived:false ` +
-          `label:"good first issue"`
+          `user:${github} ` + `is:issue state:open archived:false ` + `label:"good first issue"`,
       };
     });
 }
@@ -52,7 +48,7 @@ async function fetchWithTimeout(url, options = {}) {
   try {
     const response = await fetch(url, {
       ...options,
-      signal: controller.signal
+      signal: controller.signal,
     });
 
     return response;
@@ -61,12 +57,7 @@ async function fetchWithTimeout(url, options = {}) {
   }
 }
 
-async function fetchTargetIssues({
-  target,
-  headers,
-  oneYearAgo,
-  seenIssueUrls
-}) {
+async function fetchTargetIssues({ target, headers, oneYearAgo, seenIssueUrls }) {
   try {
     const q = encodeURIComponent(target.query);
 
@@ -82,9 +73,7 @@ async function fetchTargetIssues({
     if (!res.ok) {
       const errorBody = await res.text();
 
-      throw new Error(
-        `GitHub API ${res.status}: ${errorBody.slice(0, 200)}`
-      );
+      throw new Error(`GitHub API ${res.status}: ${errorBody.slice(0, 200)}`);
     }
 
     const data = await res.json();
@@ -111,15 +100,12 @@ async function fetchTargetIssues({
           logo: `https://avatars.githubusercontent.com/${orgName}`,
           title: issue.title,
           url: issue.html_url,
-          repo: issue.repository_url
-            .split('/')
-            .slice(-2)
-            .join('/'),
+          repo: issue.repository_url.split('/').slice(-2).join('/'),
           labels: issue.labels.map((label) => label.name),
           comments: issue.comments,
           created_at: issue.created_at,
           updated_at: issue.updated_at,
-          language: null
+          language: null,
         };
       });
 
@@ -127,16 +113,11 @@ async function fetchTargetIssues({
       seenIssueUrls.add(issue.url);
     });
 
-    console.log(
-      `✅ ${target.github} → ${mapped.length} issues`
-    );
+    console.log(`✅ ${target.github} → ${mapped.length} issues`);
 
     return mapped;
   } catch (e) {
-    console.error(
-      `❌ Failed for ${target.name} (${target.github}):`,
-      e.message
-    );
+    console.error(`❌ Failed for ${target.name} (${target.github}):`, e.message);
 
     return [];
   }
@@ -153,17 +134,14 @@ async function fetchIssues() {
 
   const headers = {
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'gsoc-org-finder-actions'
+    'User-Agent': 'gsoc-org-finder-actions',
   };
 
   if (process.env.GITHUB_TOKEN) {
-    headers.Authorization =
-      `Bearer ${process.env.GITHUB_TOKEN}`;
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
-  console.log(
-    `🚀 Fetching issues from ${targets.length} targets`
-  );
+  console.log(`🚀 Fetching issues from ${targets.length} targets`);
 
   // ─────────────────────────────────────────────
   // Process in batches
@@ -172,8 +150,7 @@ async function fetchIssues() {
     const batch = targets.slice(i, i + BATCH_SIZE);
 
     console.log(
-      `📦 Processing batch ${Math.floor(i / BATCH_SIZE) + 1} ` +
-      `(${batch.length} targets)`
+      `📦 Processing batch ${Math.floor(i / BATCH_SIZE) + 1} ` + `(${batch.length} targets)`
     );
 
     const batchResults = await Promise.all(
@@ -182,7 +159,7 @@ async function fetchIssues() {
           target,
           headers,
           oneYearAgo,
-          seenIssueUrls
+          seenIssueUrls,
         })
       )
     );
@@ -193,9 +170,7 @@ async function fetchIssues() {
 
     // Delay between batches
     if (i + BATCH_SIZE < targets.length) {
-      console.log(
-        `⏳ Waiting ${BATCH_DELAY_MS}ms before next batch`
-      );
+      console.log(`⏳ Waiting ${BATCH_DELAY_MS}ms before next batch`);
 
       await sleep(BATCH_DELAY_MS);
     }
@@ -218,16 +193,14 @@ async function fetchIssues() {
         updated_at: new Date().toISOString(),
         source_org_count: targets.length,
         total_issues: results.length,
-        issues: results
+        issues: results,
       },
       null,
       2
     )
   );
 
-  console.log(
-    `🎉 Saved ${results.length} issues from ${targets.length} org targets`
-  );
+  console.log(`🎉 Saved ${results.length} issues from ${targets.length} org targets`);
 }
 
 fetchIssues().catch((err) => {

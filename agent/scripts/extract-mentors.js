@@ -10,16 +10,60 @@ const CONTACT_TIPS = {
   Zulip: 'Post a new topic in the GSoC stream with your background and interest.',
   Matrix: "Say hello in the public room and mention the project area you're exploring.",
   IRC: 'Stay in the channel for a while; replies are often asynchronous.',
-  'Mailing list': "Send a short intro email with your background and the idea you're interested in."
+  'Mailing list':
+    "Send a short intro email with your background and the idea you're interested in.",
 };
 
 const CHANNEL_MATCHERS = [
-  { type: 'Slack', match: (hostname) => hostname === 'slack.com' || hostname.endsWith('.slack.com') || hostname === 'slack.gg' || hostname.endsWith('.slack.gg') },
-  { type: 'Zulip', match: (hostname) => hostname === 'zulip.com' || hostname.endsWith('.zulip.com') || hostname.endsWith('.zulipchat.com') || hostname === 'chat.zulip.org' },
-  { type: 'Matrix', match: (hostname) => hostname === 'matrix.to' || hostname.endsWith('.matrix.to') || hostname === 'app.element.io' || hostname.endsWith('.element.io') },
-  { type: 'IRC', match: (hostname) => hostname === 'irc.libera.chat' || hostname.endsWith('.irc.libera.chat') || hostname === 'irc.freenode.net' || hostname.endsWith('.irc.freenode.net') || /(^|\.)irc\.o.*\.net$/i.test(hostname) },
-  { type: 'Discord', match: (hostname) => hostname === 'discord.gg' || hostname.endsWith('.discord.gg') || hostname === 'discord.com' || hostname.endsWith('.discord.com') },
-  { type: 'Mailing list', match: (hostname) => hostname === 'groups.google.com' || hostname.includes('lists.') || hostname.includes('mailman') || hostname.includes('pipermail') },
+  {
+    type: 'Slack',
+    match: (hostname) =>
+      hostname === 'slack.com' ||
+      hostname.endsWith('.slack.com') ||
+      hostname === 'slack.gg' ||
+      hostname.endsWith('.slack.gg'),
+  },
+  {
+    type: 'Zulip',
+    match: (hostname) =>
+      hostname === 'zulip.com' ||
+      hostname.endsWith('.zulip.com') ||
+      hostname.endsWith('.zulipchat.com') ||
+      hostname === 'chat.zulip.org',
+  },
+  {
+    type: 'Matrix',
+    match: (hostname) =>
+      hostname === 'matrix.to' ||
+      hostname.endsWith('.matrix.to') ||
+      hostname === 'app.element.io' ||
+      hostname.endsWith('.element.io'),
+  },
+  {
+    type: 'IRC',
+    match: (hostname) =>
+      hostname === 'irc.libera.chat' ||
+      hostname.endsWith('.irc.libera.chat') ||
+      hostname === 'irc.freenode.net' ||
+      hostname.endsWith('.irc.freenode.net') ||
+      /(^|\.)irc\.o.*\.net$/i.test(hostname),
+  },
+  {
+    type: 'Discord',
+    match: (hostname) =>
+      hostname === 'discord.gg' ||
+      hostname.endsWith('.discord.gg') ||
+      hostname === 'discord.com' ||
+      hostname.endsWith('.discord.com'),
+  },
+  {
+    type: 'Mailing list',
+    match: (hostname) =>
+      hostname === 'groups.google.com' ||
+      hostname.includes('lists.') ||
+      hostname.includes('mailman') ||
+      hostname.includes('pipermail'),
+  },
 ];
 
 const REQUEST_TIMEOUT_MS = 15000;
@@ -28,12 +72,89 @@ const BATCH_DELAY_MS = 1200;
 const OUTPUT_PATH = path.resolve(__dirname, '../../data/mentors.json');
 const DEFAULT_HEADERS = {
   Accept: 'text/html,application/xhtml+xml',
-  'User-Agent': 'gsoc-org-finder-mentor-refresh'
+  'User-Agent': 'gsoc-org-finder-mentor-refresh',
 };
-const CHANNEL_CONFIDENCE_REGEX = /\b(join|chat|channel|community|stream|forum|discussion|mailing|list|gsoc|mentor)\b/i;
+const CHANNEL_CONFIDENCE_REGEX =
+  /\b(join|chat|channel|community|stream|forum|discussion|mailing|list|gsoc|mentor)\b/i;
 const MENTOR_WORDS = ['mentor', 'contact', 'maintainer', 'reach out', 'gsoc'];
-const STOPWORD_NAMES = new Set(['improve', 'update', 'other', 'vulkan', 'skins', 'project', 'lua', 'declarative', 'choose', 'co', 'mentor', 'mentors', 'contact', 'contacts', 'maintainer', 'maintainers', 'gsoc', 'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'is', 'are', 'be', 'been', 'being', 'have', 'has', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'us', 'we', 'you', 'he', 'she', 'it', 'they']);
-const GENERIC_GITHUB_HANDLES = new Set(['mentor', 'mentors', 'contact', 'gsoc', 'ta', 'am', 'pm', 'io', 'org', 'com', 'net', 'google', 'github', 'heroku', 'aws', 'mdanalysis', 'xaos']);
+const STOPWORD_NAMES = new Set([
+  'improve',
+  'update',
+  'other',
+  'vulkan',
+  'skins',
+  'project',
+  'lua',
+  'declarative',
+  'choose',
+  'co',
+  'mentor',
+  'mentors',
+  'contact',
+  'contacts',
+  'maintainer',
+  'maintainers',
+  'gsoc',
+  'a',
+  'an',
+  'the',
+  'and',
+  'or',
+  'but',
+  'in',
+  'on',
+  'at',
+  'to',
+  'for',
+  'of',
+  'with',
+  'by',
+  'from',
+  'is',
+  'are',
+  'be',
+  'been',
+  'being',
+  'have',
+  'has',
+  'do',
+  'does',
+  'did',
+  'will',
+  'would',
+  'could',
+  'should',
+  'may',
+  'might',
+  'must',
+  'can',
+  'us',
+  'we',
+  'you',
+  'he',
+  'she',
+  'it',
+  'they',
+]);
+const GENERIC_GITHUB_HANDLES = new Set([
+  'mentor',
+  'mentors',
+  'contact',
+  'gsoc',
+  'ta',
+  'am',
+  'pm',
+  'io',
+  'org',
+  'com',
+  'net',
+  'google',
+  'github',
+  'heroku',
+  'aws',
+  'mdanalysis',
+  'xaos',
+]);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -42,7 +163,7 @@ function sleep(ms) {
 function parseArgs(argv) {
   const options = {
     limit: null,
-    orgs: null
+    orgs: null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -53,10 +174,17 @@ function parseArgs(argv) {
     } else if (arg.startsWith('--limit=')) {
       options.limit = Number(arg.split('=')[1]);
     } else if (arg === '--org' && argv[i + 1]) {
-      options.orgs = argv[i + 1].split(',').map((value) => value.trim().toLowerCase()).filter(Boolean);
+      options.orgs = argv[i + 1]
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean);
       i += 1;
     } else if (arg.startsWith('--org=')) {
-      options.orgs = arg.split('=')[1].split(',').map((value) => value.trim().toLowerCase()).filter(Boolean);
+      options.orgs = arg
+        .split('=')[1]
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean);
     }
   }
 
@@ -72,7 +200,7 @@ function buildBaseEntry(org, fetchedAt) {
     mailingLists: [],
     tip: '',
     status: 'fetch-failed',
-    lastFetched: fetchedAt
+    lastFetched: fetchedAt,
   };
 }
 
@@ -148,7 +276,7 @@ function fetchWithTimeout(url, options = {}) {
 
   return fetch(url, {
     ...options,
-    signal: controller.signal
+    signal: controller.signal,
   }).finally(() => {
     clearTimeout(timeout);
   });
@@ -172,7 +300,7 @@ function extractAnchorCandidates(html) {
     const anchorHtml = html.slice(anchorStart, anchorClose + 4);
     const tagText = html.slice(anchorStart, tagEnd + 1);
     const hrefMatch = tagText.match(/href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
-    const href = hrefMatch ? (hrefMatch[1] || hrefMatch[2] || hrefMatch[3] || '') : '';
+    const href = hrefMatch ? hrefMatch[1] || hrefMatch[2] || hrefMatch[3] || '' : '';
     const label = stripHtml(html.slice(tagEnd + 1, anchorClose));
     const before = html.slice(Math.max(0, anchorStart - 180), anchorStart);
     const after = html.slice(anchorClose + 4, anchorClose + 184);
@@ -180,7 +308,7 @@ function extractAnchorCandidates(html) {
       href,
       label,
       anchorHtml,
-      context: stripHtml(`${before} ${anchorHtml} ${after}`)
+      context: stripHtml(`${before} ${anchorHtml} ${after}`),
     });
 
     searchIndex = anchorClose + 4;
@@ -224,7 +352,11 @@ function isMeaningfulLabel(label) {
   if (!label) return false;
   const normalized = label.trim().toLowerCase();
   if (!normalized) return false;
-  if (normalized.startsWith('http://') || normalized.startsWith('https://') || normalized.startsWith('www.')) {
+  if (
+    normalized.startsWith('http://') ||
+    normalized.startsWith('https://') ||
+    normalized.startsWith('www.')
+  ) {
     return false;
   }
   const genericLabels = new Set([
@@ -236,7 +368,7 @@ function isMeaningfulLabel(label) {
     'join',
     'chat',
     'server',
-    'group'
+    'group',
   ]);
   return !genericLabels.has(normalized);
 }
@@ -245,7 +377,7 @@ function createChannelRecord(orgName, type, normalizedUrl, label) {
   return {
     type,
     url: normalizedUrl,
-    label: isMeaningfulLabel(label) ? label.trim() : `${orgName} ${type}`
+    label: isMeaningfulLabel(label) ? label.trim() : `${orgName} ${type}`,
   };
 }
 
@@ -263,15 +395,22 @@ function isHighConfidenceChannel(type, normalizedUrl, anchor) {
   }
 
   if (type === 'Matrix') {
-    return normalizedUrl.includes('/#/') || normalizedUrl.includes('#/') || normalizedUrl.includes('/room/') || CHANNEL_CONFIDENCE_REGEX.test(lowerContext);
+    return (
+      normalizedUrl.includes('/#/') ||
+      normalizedUrl.includes('#/') ||
+      normalizedUrl.includes('/room/') ||
+      CHANNEL_CONFIDENCE_REGEX.test(lowerContext)
+    );
   }
 
   if (type === 'Zulip') {
     const lowerUrl = normalizedUrl.toLowerCase();
-    return hostname.endsWith('.zulipchat.com')
-      || lowerUrl.includes('/development-community')
-      || lowerUrl.includes('/#narrow/')
-      || /\b(join|stream|zulipchat)\b/i.test(lowerContext);
+    return (
+      hostname.endsWith('.zulipchat.com') ||
+      lowerUrl.includes('/development-community') ||
+      lowerUrl.includes('/#narrow/') ||
+      /\b(join|stream|zulipchat)\b/i.test(lowerContext)
+    );
   }
 
   return CHANNEL_CONFIDENCE_REGEX.test(lowerContext);
@@ -287,7 +426,7 @@ function isGitHubProfileUrl(urlString) {
     if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(username)) return null;
     return {
       github: username,
-      githubUrl: `https://github.com/${username}`
+      githubUrl: `https://github.com/${username}`,
     };
   } catch {
     return null;
@@ -304,7 +443,10 @@ function extractMentorMentions(text) {
     while (fromIndex < lowered.length) {
       const wordIndex = lowered.indexOf(word, fromIndex);
       if (wordIndex === -1) break;
-      const snippet = text.slice(Math.max(0, wordIndex - 80), Math.min(text.length, wordIndex + 140));
+      const snippet = text.slice(
+        Math.max(0, wordIndex - 80),
+        Math.min(text.length, wordIndex + 140)
+      );
 
       const handleRegex = /(^|[\s(])@([a-z\d](?:[a-z\d-]{0,38}))/gi;
       let handleMatch;
@@ -313,11 +455,13 @@ function extractMentorMentions(text) {
         if (!isMeaningfulGitHubHandle(github)) continue;
         results.push({
           github,
-          githubUrl: `https://github.com/${github}`
+          githubUrl: `https://github.com/${github}`,
         });
       }
 
-      const namePattern = new RegExp(String.raw`${word}\s*[:-]\s*([A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)?)\b`);
+      const namePattern = new RegExp(
+        String.raw`${word}\s*[:-]\s*([A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)?)\b`
+      );
       const nameMatch = snippet.match(namePattern);
       if (nameMatch) {
         const candidateName = nameMatch[1].trim();
@@ -406,14 +550,11 @@ function finalizeStatus(entry) {
 
 function extractMentors(html, orgInput, options = {}) {
   const fetchedAt = options.fetchedAt || new Date().toISOString();
-  const org = typeof orgInput === 'string'
-    ? { name: orgInput, ideas: options.ideasUrl || '' }
-    : orgInput;
+  const org =
+    typeof orgInput === 'string' ? { name: orgInput, ideas: options.ideasUrl || '' } : orgInput;
 
   const entry = buildBaseEntry(org, fetchedAt);
-  const ideasUrl = typeof options.ideasUrl === 'string'
-    ? options.ideasUrl
-    : entry.ideasUrl;
+  const ideasUrl = typeof options.ideasUrl === 'string' ? options.ideasUrl : entry.ideasUrl;
   const baseUrl = ideasUrl || 'https://example.test/';
   const anchors = extractAnchorCandidates(html);
   const seenUrls = new Set();
@@ -425,7 +566,10 @@ function extractMentors(html, orgInput, options = {}) {
 
     const channelType = detectChannelType(normalizedUrl);
     if (channelType) {
-      if (!seenUrls.has(normalizedUrl) && isHighConfidenceChannel(channelType, normalizedUrl, anchor)) {
+      if (
+        !seenUrls.has(normalizedUrl) &&
+        isHighConfidenceChannel(channelType, normalizedUrl, anchor)
+      ) {
         seenUrls.add(normalizedUrl);
         const record = createChannelRecord(org.name, channelType, normalizedUrl, anchor.label);
         if (channelType === 'Mailing list') {
@@ -441,9 +585,9 @@ function extractMentors(html, orgInput, options = {}) {
       mentors.push(githubProfile);
     }
 
-      if (isLikelyMentor(anchor.context)) {
-        mentors.push(...extractMentorMentions(anchor.context));
-      }
+    if (isLikelyMentor(anchor.context)) {
+      mentors.push(...extractMentorMentions(anchor.context));
+    }
   });
 
   const pageText = stripHtml(html);
@@ -451,11 +595,15 @@ function extractMentors(html, orgInput, options = {}) {
     mentors.push(...extractMentorMentions(pageText));
   }
   entry.mentors = dedupeMentors(mentors)
-    .filter((mentor) => (mentor.github && isMeaningfulGitHubHandle(mentor.github)) || isMeaningfulMentorName(mentor.name))
+    .filter(
+      (mentor) =>
+        (mentor.github && isMeaningfulGitHubHandle(mentor.github)) ||
+        isMeaningfulMentorName(mentor.name)
+    )
     .map((mentor) => ({
       name: mentor.name || '',
       github: mentor.github || '',
-      githubUrl: mentor.githubUrl || ''
+      githubUrl: mentor.githubUrl || '',
     }));
 
   entry.status = 'no-contact-found';
@@ -514,7 +662,7 @@ async function main() {
 
   // Load existing data to preserve non-target orgs during partial runs
   const results = loadExistingMentorsData();
-  
+
   // Initialize only target orgs (new ones won't be in existing data)
   for (const org of targets) {
     if (!results[org.name]) {
@@ -528,7 +676,9 @@ async function main() {
 
     extracted.forEach((entry) => {
       results[entry.org] = entry;
-      console.log(`✅ ${entry.org} → ${entry.status} (${entry.channels.length} channels, ${entry.mailingLists.length} lists, ${entry.mentors.length} mentors)`);
+      console.log(
+        `✅ ${entry.org} → ${entry.status} (${entry.channels.length} channels, ${entry.mailingLists.length} lists, ${entry.mentors.length} mentors)`
+      );
     });
 
     if (i + BATCH_SIZE < targets.length) {
@@ -542,7 +692,7 @@ async function main() {
 }
 
 module.exports = {
-  extractMentors
+  extractMentors,
 };
 
 if (require.main === module) {

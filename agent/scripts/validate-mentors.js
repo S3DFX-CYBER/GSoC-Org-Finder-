@@ -22,7 +22,9 @@ function main() {
   // Threshold is set above the current baseline so the workflow catches regressions
   // without blocking until extractor coverage improves.
   if (fetchFailed.length > MAX_FETCH_FAILED) {
-    console.error(`Too many fetch failures: ${fetchFailed.length} (threshold: ${MAX_FETCH_FAILED})`);
+    console.error(
+      `Too many fetch failures: ${fetchFailed.length} (threshold: ${MAX_FETCH_FAILED})`
+    );
     process.exit(1);
   }
 

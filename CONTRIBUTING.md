@@ -282,6 +282,7 @@ Before submitting:
 
 * [ ] Issue is assigned to me
 * [ ] PR is linked to an issue (`Closes #N`)
+* [ ] Code is formatted (`npm run format`)
 * [ ] No unnecessary dependencies added
 * [ ] Code follows zero-build philosophy
 * [ ] Changes are minimal and focused
@@ -299,6 +300,7 @@ For UI changes:
 Before submitting a PR, run locally:
 
 ```bash
+npm run format
 vercel dev
 ```
 

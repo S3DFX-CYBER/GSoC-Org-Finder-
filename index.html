@@ -223,8 +223,34 @@
     html { scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
+    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #ai-recommender, #contact {
       scroll-margin-top: 80px;
+    }
+
+    .desktop-nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding-bottom: 0.35rem;
+      text-decoration: none;
+    }
+    .desktop-nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 9999px;
+      background: currentColor;
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+    .desktop-nav-link.is-active::after {
+      opacity: 1;
+      transform: scaleX(1);
     }
 
     /* Minimal dark-mode support */
@@ -455,7 +481,7 @@
         <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
+        <a class="desktop-nav-link text-orange-600 is-active transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
@@ -1240,6 +1266,21 @@
       }, 300);
     }
   };
+
+  function closeMobileMenuOnDesktop(){
+    if(window.innerWidth < 768) return;
+
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+    if(!menu || !panel || !menuBtn || menu.classList.contains('hidden')) return;
+
+    panel.style.transform = 'translateX(-100%)';
+    menu.classList.add('hidden');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Open menu');
+    document.removeEventListener('keydown', handleMenuEscape);
+  }
   
   function handleMenuEscape(e){
     if(e.key === 'Escape'){
@@ -1250,76 +1291,120 @@
     }
   }
 
-  // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    // Remove active class from all menu links
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    });
-    
-    // Add active class to clicked link
-    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    
-    // Close menu after a short delay
-    setTimeout(() => {
-      toggleMenu();
-    }, 300);
-  };
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
-    
-    let currentSection = 'orgs'; // Default
-    
-    sections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = sectionId;
-        }
-      }
-    });
-    
-    // Update mobile menu items
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-      }
-    });
-
-    // Update desktop navbar items
+  function setDesktopNavState(activeSection){
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
       const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
+      if(linkSection === activeSection){
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+        link.classList.add('text-orange-600', 'is-active');
       } else {
-        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+        link.classList.remove('text-orange-600', 'is-active');
         link.classList.add('text-zinc-600', 'hover:text-zinc-900');
       }
     });
   }
 
+  function setMobileNavState(activeSection){
+    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
+    allMobileLinks.forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if(linkSection === activeSection){
+        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100');
+        link.classList.add('text-orange-600', 'bg-orange-50');
+      } else {
+        link.classList.remove('text-orange-600', 'bg-orange-50');
+        link.classList.add('text-zinc-700', 'hover:bg-zinc-100');
+      }
+    });
+  }
+
+  function setActiveNavSection(activeSection){
+    setDesktopNavState(activeSection);
+    setMobileNavState(activeSection);
+  }
+
+  function getTrackedSections(){
+    const sectionIds = Array.from(new Set(
+      Array.from(document.querySelectorAll('.desktop-nav-link, .mobile-menu-link'))
+        .map(link => link.getAttribute('data-section'))
+        .filter(Boolean)
+    ));
+
+    return sectionIds
+      .map(sectionId => document.getElementById(sectionId))
+      .filter(Boolean)
+      .sort((a, b) => a.offsetTop - b.offsetTop);
+  }
+
+  let pendingSection = null;
+
+  // Set active menu item and update UI
+  window.setActiveMenu = function(clickedLink){
+    pendingSection = clickedLink.getAttribute('data-section');
+    setActiveNavSection(pendingSection);
+
+    setTimeout(() => {
+      toggleMenu();
+    }, 300);
+  };
+
+  document.querySelectorAll('.desktop-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      pendingSection = link.getAttribute('data-section');
+      setActiveNavSection(pendingSection);
+    });
+  });
+
+  // Update active state based on scroll position
+  function updateActiveSection() {
+    const sections = getTrackedSections();
+    if(!sections.length) return;
+
+    const offset = 100;
+    const topLockThreshold = 24;
+    const scrollPosition = window.scrollY + offset;
+    let currentSection = sections[0].id;
+
+    if(window.scrollY <= topLockThreshold){
+      setActiveNavSection('orgs');
+      return;
+    }
+
+    sections.forEach(section => {
+      if(scrollPosition >= section.offsetTop){
+        currentSection = section.id;
+      }
+    });
+
+    if(pendingSection){
+      const targetSection = document.getElementById(pendingSection);
+      if(targetSection){
+        const targetTop = targetSection.offsetTop - offset;
+        const targetBottom = targetSection.offsetTop + targetSection.offsetHeight - offset;
+        const targetReached = window.scrollY >= targetTop && window.scrollY < targetBottom;
+
+        if(!targetReached){
+          setActiveNavSection(pendingSection);
+          return;
+        }
+      }
+
+      pendingSection = null;
+    }
+
+    setActiveNavSection(currentSection);
+  }
+
   // Listen for scroll events
   window.addEventListener('scroll', updateActiveSection);
+  window.addEventListener('resize', closeMobileMenuOnDesktop);
   
   // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
+  document.addEventListener('DOMContentLoaded', () => {
+    closeMobileMenuOnDesktop();
+    updateActiveSection();
+  });
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)

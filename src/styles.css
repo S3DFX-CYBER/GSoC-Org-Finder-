@@ -707,3 +707,93 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* ─────────────────────────────
+   ADVANCED 3D HOVER CARD
+───────────────────────────── */
+
+.org-card {
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  transition: transform 0.25s cubic-bezier(.2,.8,.2,1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+  will-change: transform;
+}
+
+/* Main 3D hover */
+.org-card:hover {
+  transform: translateY(-10px) rotateX(10deg) rotateY(-10deg) scale(1.02);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.18),
+    0 10px 25px rgba(244, 107, 14, 0.15);
+  border-color: var(--orange-border);
+}
+
+/* Floating light glow layer */
+.org-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(244, 107, 14, 0.25),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  transform: translateZ(1px);
+}
+
+.org-card:hover::before {
+  opacity: 1;
+}
+
+/* Top highlight edge */
+.org-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--orange), #FBBC04);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.org-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Inner elements depth (creates real 3D layers) */
+.org-card .org-name {
+  transform: translateZ(30px);
+}
+
+.org-card .org-desc {
+  transform: translateZ(20px);
+}
+
+.org-card .badges,
+.org-card .tags {
+  transform: translateZ(15px);
+}
+
+/* Smooth image lift */
+.org-logo {
+  transform: translateZ(25px);
+  transition: transform 0.3s ease;
+}
+
+.org-card:hover .org-logo {
+  transform: translateZ(40px) scale(1.05);
+}
+
+/* Smooth exit reset */
+.org-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}

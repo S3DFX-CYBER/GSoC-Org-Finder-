@@ -1404,7 +1404,17 @@
   let mentorDataState = 'idle';
   let compareList = [];
   const compareStorageKey = 'compareList';
-  const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+  const bookmarkedSet = (() => {
+    try {
+      return new Set(parseStoredBookmarks());
+    } catch (e) {
+      try {
+        return new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+      } catch (_) {
+        return new Set();
+      }
+    }
+  })();
   const selectedLanguages = new Set();
   let matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)

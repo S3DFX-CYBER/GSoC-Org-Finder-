@@ -7,6 +7,7 @@ const CACHE_MAX_SIZE = 1000;
 const RATE_LIMIT = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; 
 const RATE_LIMIT_MAX = 60; // requests per window per IP (best-effort)
+const RATE_LIMIT_MAX_SIZE = 10000;
 
 function getClientIp(req) {
   const candidates = [
@@ -38,12 +39,19 @@ function rateLimitCheck(ip) {
   const entry = RATE_LIMIT.get(ip);
 
   if (!entry) {
+    if (RATE_LIMIT.size >= RATE_LIMIT_MAX_SIZE) {
+      const firstKey = RATE_LIMIT.keys().next().value;
+      RATE_LIMIT.delete(firstKey);
+    }
     RATE_LIMIT.set(ip, { timestamps: [now] });
     return { allowed: true, remaining: RATE_LIMIT_MAX - 1, resetMs: now + RATE_LIMIT_WINDOW_MS };
   }
 
   const timestamps = entry.timestamps || [];
   const threshold = now - RATE_LIMIT_WINDOW_MS;
+  if (timestamps.length && timestamps[timestamps.length - 1] < threshold) {
+    timestamps.length = 0;
+  }
   while (timestamps.length && timestamps[0] < threshold) timestamps.shift();
 
   if (timestamps.length >= RATE_LIMIT_MAX) {

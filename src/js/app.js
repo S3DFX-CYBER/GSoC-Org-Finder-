@@ -1247,3 +1247,146 @@ const syncScrollTopBtn = () => {
 
 globalThis.addEventListener('scroll', syncScrollTopBtn, { passive: true });
 syncScrollTopBtn();
+/* ── Winners Tab ──────────────────────────────────────────────────────────── */
+
+let _winnersAll = [];
+
+async function loadWinners() {
+  const loading = document.getElementById('winners-loading');
+  const error   = document.getElementById('winners-error');
+  const grid    = document.getElementById('winners-grid');
+
+  try {
+    const res = await fetch('data/winners.json');
+    if (!res.ok) throw new Error('cache miss');
+    const raw = await res.json();
+    _winnersAll = Array.isArray(raw) && raw.length ? raw : await _fetchArchiveLive();
+  } catch (_) {
+    try { _winnersAll = await _fetchArchiveLive(); }
+    catch (_) {
+      if (loading) loading.classList.add('hidden');
+      if (error)   error.classList.remove('hidden');
+      return;
+    }
+  }
+
+  if (loading) loading.classList.add('hidden');
+  _populateOrgFilter();
+  filterWinners();
+  _badgeOrgCards();
+}
+
+async function _fetchArchiveLive() {
+  const res = await fetch(
+    'https://api.github.com/repos/satwiksps/GSoC_archive_2026/git/trees/main?recursive=1'
+  );
+  if (!res.ok) throw new Error('api error');
+  const json = await res.json();
+  return _parseTree(json.tree || []);
+}
+
+function _parseTree(tree) {
+  return tree
+    .filter(f => f.type === 'blob' && f.path.endsWith('.pdf'))
+    .map(f => {
+      const parts    = f.path.split('/');
+      const org      = parts[0] || 'Unknown';
+      const filename = parts[parts.length - 1].replace('.pdf', '');
+      const segs     = filename.split('_');
+      const username = segs[segs.length - 1] || 'unknown';
+      const rawTitle = segs.slice(0, -1).join(' ').replace(/-/g, ' ');
+      const title    = rawTitle.replace(/\b\w/g, c => c.toUpperCase()) || filename;
+      return {
+        org,
+        title,
+        username,
+        avatar:  `https://github.com/${username}.png?size=64`,
+        profile: `https://github.com/${username}`,
+        pdfUrl:  `https://raw.githubusercontent.com/satwiksps/GSoC_archive_2026/main/${f.path}`,
+      };
+    });
+}
+
+function _populateOrgFilter() {
+  const sel  = document.getElementById('winners-org-filter');
+  if (!sel) return;
+  const orgs = [...new Set(_winnersAll.map(w => w.org))].sort();
+  orgs.forEach(org => {
+    const opt   = document.createElement('option');
+    opt.value   = org;
+    opt.textContent = org;
+    sel.appendChild(opt);
+  });
+}
+
+function filterWinners() {
+  const query  = (document.getElementById('winners-search')?.value || '').toLowerCase();
+  const orgVal =  document.getElementById('winners-org-filter')?.value || '';
+  const list   = _winnersAll.filter(w =>
+    (!orgVal || w.org === orgVal) &&
+    (!query  || w.username.toLowerCase().includes(query) ||
+                w.title.toLowerCase().includes(query)    ||
+                w.org.toLowerCase().includes(query))
+  );
+  _renderWinners(list);
+}
+
+function _renderWinners(list) {
+  const grid = document.getElementById('winners-grid');
+  if (!grid) return;
+  if (!list.length) {
+    grid.innerHTML = '<p class="state-msg">No results found.</p>';
+    return;
+  }
+  grid.innerHTML = list.map(w => `
+    <article class="winner-card" role="listitem">
+      <div class="winner-header">
+        <img class="winner-avatar"
+             src="${w.avatar}"
+             alt="${w.username} avatar"
+             onerror="this.src='https://github.com/identicons/${w.username}.png'">
+        <div class="winner-meta">
+          <span class="winner-handle">@${w.username}</span>
+          <span class="winner-badge">✦ ACCEPTED</span>
+        </div>
+      </div>
+      <p class="winner-org">${w.org}</p>
+      <p class="winner-title">${w.title}</p>
+      <div class="winner-actions">
+        <a class="btn-proposal" href="${w.pdfUrl}" target="_blank" rel="noopener">📄 Open Proposal</a>
+        <a class="btn-gh"       href="${w.profile}" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </article>
+  `).join('');
+}
+
+function _badgeOrgCards() {
+  const count = {};
+  _winnersAll.forEach(w => { count[w.org] = (count[w.org] || 0) + 1; });
+  document.querySelectorAll('[data-org-name]').forEach(card => {
+    const org = card.dataset.orgName;
+    if (!org || !count[org] || card.querySelector('.winners-pill')) return;
+    const pill        = document.createElement('span');
+    pill.className    = 'winners-pill';
+    pill.textContent  = `${count[org]} accepted`;
+    pill.title        = 'View accepted proposals';
+    pill.style.cursor = 'pointer';
+    pill.addEventListener('click', e => {
+      e.stopPropagation();
+      showTab('winners');
+      const sel = document.getElementById('winners-org-filter');
+      if (sel) { sel.value = org; filterWinners(); }
+    });
+    card.appendChild(pill);
+  });
+}
+
+/* Lazy-load winners only on first tab visit */
+(function patchShowTab() {
+  const _orig = window.showTab;
+  if (typeof _orig !== 'function') return;
+  window.showTab = function(name) {
+    _orig(name);
+    if (name === 'winners' && !_winnersAll.length) loadWinners();
+  };
+})();

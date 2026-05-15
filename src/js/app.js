@@ -518,50 +518,88 @@ function orgMatchesLanguages(org, selectedLanguages) {
 }
 
 function applyFilters(){
-  const search=document.getElementById('searchInput').value.trim().toLowerCase();
-  const cat=document.getElementById('catFilter').value;
-  const lang=document.getElementById('langFilter').value.toLowerCase();
-  const yearsF=document.getElementById('yearsFilter').value;
-  const compF=document.getElementById('compFilter').value;
-  const sort=document.getElementById('sortSelect').value;
+  const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const categoryValue = document.getElementById('categoryFilter')?.value || '';
+  const cat = categoryValue === 'all' ? '' : categoryValue;
+  const lang = document.getElementById('langFilter')?.value?.toLowerCase() || '';
+  const compF = document.getElementById('complexityFilter')?.value || '';
+  const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
   if(search!==lastSearch&&search.length>1){AN.trackSearch(search);lastSearch=search;}
   if(cat)AN.trackCat(cat);
 
   const res=ORGS.filter(o=>{
-    const txt=(o.name+' '+o.tags.join(' ')+' '+o.desc).toLowerCase();
-    if(cat&&o.cat!==cat)return false;
-    if(lang&&!txt.includes(lang))return false;
-    if(search&&!txt.includes(search))return false;
-    if(yearsF){const yc=yCls(o.years);if(yearsF!==yc)return false;}
-    if(compF&&o.competition!==compF)return false;
+    // Search only organization names
+    const orgName=o.name.toLowerCase();
+    
+    // Category Filter
+    if(cat && o.cat !== cat) return false;
 
-    if(pills.size>0){let m=false;pills.forEach(p=>{if(txt.includes(p))m=true;});if(!m)return false;}
+    // Complexity Filter (if it exists in data, otherwise skip)
+    // Note: Complexity is currently a display-only field in the card UI 
+    // based on competition/years, but the filter select exists in HTML.
+    if(compF && compF !== 'all') {
+       if(o.codebase !== compF) return false;
+    }
 
-    // Use proper language matching with LANGUAGE_MAP
-    if(pills.size>0&&!orgMatchesLanguages(o,pills))return false;
+    // Language Filter
+    if(lang){
+      const langLabel=Object.keys(LANGUAGE_MAP).find(label=>label.toLowerCase()===lang)||lang;
+      if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
+    }
+
+    // Search input (synchronized from hero-search)
+    if(search && !orgName.includes(search)) return false;
+
+    // Language pills (multi-select)
+    if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
  
-    if(chips.has('veteran')&&yCls(o.years)!=='veteran')return false;
-    if(chips.has('newcomer')&&yCls(o.years)!=='newcomer')return false;
-    if(chips.has('hot')&&o.competition!=='hot')return false;
-    if(chips.has('chill')&&o.competition!=='chill')return false;
-    if(chips.has('active')&&(!o._gh||o._gh.activity!=='active'))return false;
-    if(chips.has('bookmarked')&&!isBookmarked(o.name))return false;
+    // Filter chips
+    if(chips.has('veteran') && yCls(o.years) !== 'veteran') return false;
+    if(chips.has('newcomer') && yCls(o.years) !== 'newcomer') return false;
+    if(chips.has('hot') && o.competition !== 'hot') return false;
+    if(chips.has('chill') && o.competition !== 'chill') return false;
+    if(chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
+    if(chips.has('bookmarked') && !isBookmarked(o.name)) return false;
+    
     return true;
   });
 
-  if(sort==='alpha')res.sort((a,b)=>a.name.localeCompare(b.name));
-  else if(sort==='years-desc')res.sort((a,b)=>b.years-a.years);
-  else if(sort==='years-asc')res.sort((a,b)=>a.years-b.years);
-  else if(sort==='comp-low')res.sort((a,b)=>['chill','moderate','hot'].indexOf(a.competition)-['chill','moderate','hot'].indexOf(b.competition));
-  else if(sort==='stars')res.sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0));
-  else if(sort==='gfi')res.sort((a,b)=>(b._gh?.gfi||0)-(a._gh?.gfi||0));
+  // Improved search ranking: exact matches first, then startsWith, then partial
+  if(search){
+    res.sort((a,b)=>{
+      const nameA=a.name.toLowerCase();
+      const nameB=b.name.toLowerCase();
+      
+      // Exact match gets highest priority
+      if(nameA===search && nameB!==search) return -1;
+      if(nameB===search && nameA!==search) return 1;
+      
+      // Starts with gets second priority  
+      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
+      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
+      
+      // Both start with search, sort by selected sort option or alphabetically
+      if(nameA.startsWith(search) && nameB.startsWith(search)) {
+        return applySecondarySort(a, b, sort);
+      }
+      
+      // Neither starts with, sort by selected sort option or alphabetically
+      return applySecondarySort(a, b, sort);
+    });
+  }
+
+
+
+  // Apply other sorting if no search
+  if(!search){
+    res.sort((a,b) => applySecondarySort(a, b, sort));
+  }
 
   filteredOrgs=res;
   focusedIdx=-1;
   renderGrid(res);
-  document.getElementById('countDisplay').textContent=res.length;
-  document.getElementById('filteredStat').textContent=res.length;
+  document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
   const params = new URLSearchParams();
@@ -571,6 +609,15 @@ function applyFilters(){
   if (selectedLangs.length)    params.set('lang', selectedLangs.join(','));
   if (sort && sort !== 'alpha')    params.set('sort',sort);
   history.replaceState(null,'',params.toString()?'?'+params.toString():location.pathname);
+}
+
+function applySecondarySort(a, b, sortType) {
+  if(sortType==='years-desc') return b.years - a.years;
+  if(sortType==='years-asc') return a.years - b.years;
+  if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
+  if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
+  if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  return a.name.localeCompare(b.name);
 }
 
 // Umbrella orgs: link goes to org page, not a single example repo
@@ -870,12 +917,25 @@ globalThis.clearAllLanguages = clearAllLanguages;
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
-  if(chips.has(k)){chips.delete(k);el.className='chip';}
-  else{chips.add(k);el.className='chip '+chipCls[k];}
+  if(!el) return;
+  
+  const isActive = !chips.has(k);
+  if(isActive){
+    chips.add(k);
+    el.classList.add('bg-orange-600', 'text-white');
+    el.classList.remove('bg-surface-container-highest');
+  } else {
+    chips.delete(k);
+    el.classList.remove('bg-orange-600', 'text-white');
+    el.classList.add('bg-surface-container-highest');
+  }
   applyFilters();
 }
 function resetFilters(){
-  ['searchInput','catFilter','langFilter','yearsFilter','compFilter'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['searchInput', 'hero-search', 'categoryFilter', 'complexityFilter', 'langFilter'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.value = (id === 'categoryFilter' || id === 'complexityFilter') ? 'all' : '';
+  });
   document.getElementById('sortSelect').value='alpha';
   pills.clear();chips.clear();
 
@@ -883,7 +943,13 @@ function resetFilters(){
   Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
 
   document.querySelectorAll('.pill.active').forEach(p=>{p.classList.remove('active');p.setAttribute('aria-pressed','false');});
-  Object.keys(chipCls).forEach(k=>{const e=document.getElementById('chip-'+k);if(e)e.className='chip';});
+  Object.keys(chipCls).forEach(k=>{
+    const e=document.getElementById('chip-'+k);
+    if(e) {
+      e.classList.remove('bg-orange-600', 'text-white');
+      e.classList.add('bg-surface-container-highest');
+    }
+  });
   renderSelectedLanguages();
  
   applyFilters();
@@ -1216,7 +1282,7 @@ document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (
 requestAnimationFrame(()=>{
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
-  if (params.get('cat'))    document.getElementById('catFilter').value = params.get('cat');
+  if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');
   const langParam = params.get('lang');
   if (langParam) {
     const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
@@ -1240,10 +1306,21 @@ requestAnimationFrame(()=>{
   checkAPI();
 });
 
-const scrollTopBtn = document.getElementById('scrollTopBtn');
-const syncScrollTopBtn = () => {
-  scrollTopBtn?.classList.toggle('visible', globalThis.scrollY > 400);
-};
+// Sync hero search with hidden search input and initialize on load
+const heroSearch = document.getElementById('hero-search');
+if (heroSearch) {
+  heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+  heroSearch.addEventListener('input', (e) => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.value = e.target.value;
+      applyFilters();
+    }
+  });
+}
 
-globalThis.addEventListener('scroll', syncScrollTopBtn, { passive: true });
-syncScrollTopBtn();
+// Event listeners for selects
+['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => applyFilters());
+});
+

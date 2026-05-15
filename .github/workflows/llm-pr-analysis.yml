@@ -1,0 +1,191 @@
+name: 🤖 LLM PR Context Analysis
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: read
+  contents: read
+
+concurrency:
+  group: llm-pr-analysis-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: AI-powered PR validation and context analysis
+        uses: actions/github-script@v8
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+            const author = pr.user.login;
+
+            if (pr.user.type === 'Bot') return;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 50
+            });
+            const MARKER = '<!-- llm-pr-analysis -->';
+            if (comments.some(c => (c.body || '').includes(MARKER))) {
+              core.info('Analysis already posted — skipping.');
+              return;
+            }
+
+            const prTitle = pr.title || '';
+            const prBody = (pr.body || '').slice(0, 2000);
+            const prBranch = pr.head.ref || '';
+
+            const linkedIssueMatch = prBody.match(
+              /(?:closes|fixes|resolves)\s*#(\d+)/i
+            );
+            let linkedIssueContext = '';
+            if (linkedIssueMatch) {
+              try {
+                const { data: linkedIssue } = await github.rest.issues.get({
+                  owner, repo, issue_number: parseInt(linkedIssueMatch[1], 10)
+                });
+                linkedIssueContext = `\nLINKED ISSUE #${linkedIssue.number}:\nTitle: ${linkedIssue.title}\nBody: ${(linkedIssue.body || '').slice(0, 1000)}\nLabels: ${(linkedIssue.labels || []).map(l => l.name).join(', ')}`;
+              } catch (e) {
+                core.info(`Could not fetch linked issue: ${e.message}`);
+              }
+            }
+
+            let filesChanged = '';
+            try {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner, repo, pull_number: prNumber, per_page: 30
+              });
+              filesChanged = files.map(f => `${f.status}: ${f.filename} (+${f.additions}/-${f.deletions})`).join('\n');
+            } catch (e) {
+              core.info(`Could not fetch PR files: ${e.message}`);
+            }
+
+            const prompt = [
+              'You are a PR review assistant for an open-source GSoC Org Finder tool repository.',
+              '',
+              'Analyze this pull request in context and determine:',
+              '1. Whether the PR is linked to a valid issue and actually addresses it',
+              '2. Whether the PR scope matches the linked issue (no out-of-scope changes)',
+              '3. Whether the PR appears to be meaningful or low-effort/spam',
+              '4. The program context (GSSoC or NSoC) if detectable',
+              '',
+              'PR DETAILS:',
+              `Title: ${prTitle}`,
+              `Branch: ${prBranch}`,
+              `Body: ${prBody}`,
+              linkedIssueContext,
+              '',
+              'FILES CHANGED:',
+              filesChanged,
+              '',
+              'Return ONLY valid JSON (no markdown, no code fences):',
+              '{"has_linked_issue":true/false,"addresses_issue":true/false/null,"scope_appropriate":true/false/null,"quality":"good"|"needs-work"|"spam","program":"gssoc"|"nsoc"|"general","concerns":["list of concerns or empty"],"summary":"one-sentence summary"}'
+            ].join('\n');
+
+            let result;
+            try {
+              const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                }
+              );
+
+              if (!res.ok) {
+                core.warning(`Gemini API returned ${res.status}`);
+                return;
+              }
+
+              const data = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              const cleaned = text.replace(/```json|```/g, '').trim();
+              result = JSON.parse(cleaned);
+            } catch (e) {
+              core.warning(`LLM PR analysis failed: ${e.message}`);
+              return;
+            }
+
+            const statusIcon = result.quality === 'good' ? '✅' :
+                               result.quality === 'needs-work' ? '⚠️' : '🚫';
+
+            const lines = [
+              MARKER,
+              `## 🤖 PR Context Analysis`,
+              ``,
+              `| Check | Status |`,
+              `|-------|--------|`,
+              `| Linked Issue | ${result.has_linked_issue ? '✅ Found' : '❌ Missing'} |`,
+            ];
+
+            if (result.has_linked_issue) {
+              lines.push(`| Addresses Issue | ${result.addresses_issue ? '✅ Yes' : '⚠️ Unclear'} |`);
+              lines.push(`| Scope Appropriate | ${result.scope_appropriate ? '✅ Yes' : '⚠️ Out of scope changes detected'} |`);
+            }
+
+            lines.push(`| Quality | ${statusIcon} ${result.quality} |`);
+            lines.push(`| Program | ${result.program} |`);
+            lines.push(``);
+            lines.push(`**Summary:** ${result.summary}`);
+
+            if (result.concerns && result.concerns.length > 0) {
+              lines.push(``);
+              lines.push(`### ⚠️ Concerns`);
+              for (const concern of result.concerns) {
+                lines.push(`- ${concern}`);
+              }
+            }
+
+            if (!result.has_linked_issue) {
+              lines.push(``);
+              lines.push(`---`);
+              lines.push(`❌ **No linked issue found.** Please add \`Closes #issue-number\` to your PR description.`);
+            }
+
+            if (result.quality === 'spam') {
+              lines.push(``);
+              lines.push(`---`);
+              lines.push(`🚫 This PR has been flagged for review. A maintainer will assess it.`);
+            }
+
+            lines.push(``);
+            lines.push(`---`);
+            lines.push(`*This is an automated analysis. A human reviewer will make the final decision.*`);
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: prNumber,
+              body: lines.join('\n')
+            });
+
+            if (result.quality === 'spam') {
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: prNumber, labels: ['needs-review', 'low-quality-pr']
+                });
+              } catch (e) {
+                core.warning(`Failed adding labels: ${e.message}`);
+              }
+            }
+
+            if (!result.has_linked_issue) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: prNumber, labels: ['missing-issue-link']
+                });
+              } catch (e) {
+                core.warning(`Failed adding label: ${e.message}`);
+              }
+            }
+
+            core.info(`PR #${prNumber} analyzed: quality=${result.quality}, linked=${result.has_linked_issue}`);

@@ -166,13 +166,22 @@ Before opening a PR, ask yourself:
 
 ---
 
-## Review Process
+## Review Process (3-Stage Pipeline)
 
-1. Your PR enters the automated validation pipeline
-2. A maintainer or reviewer is assigned
-3. They may request changes — address them promptly
-4. Once approved, your PR is merged
-5. You're added to the Contributors section in the README
+Your PR goes through an automated 3-stage pipeline:
+
+| Stage | What Happens |
+|-------|-------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** |
+| **Stage 2** — Human Review | Maintainer or reviewer checks code quality |
+| **Stage 3** — Maintainer Gate | Final approval and merge |
+
+The **LLM PR Analysis** bot will automatically verify that your PR:
+- Links to a valid issue
+- Actually addresses the linked issue
+- Does not include out-of-scope changes
+
+Once merged, you're added to the Contributors section in the README.
 
 ### Expected Review Times
 

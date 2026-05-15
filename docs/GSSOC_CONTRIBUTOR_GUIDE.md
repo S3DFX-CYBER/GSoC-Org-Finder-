@@ -19,30 +19,36 @@ GirlScript Summer of Code (GSSoC) is a 3-month open-source program conducted by 
 Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter by:
 
 - `gssoc26` label for GSSoC-specific issues
-- `level-1` for beginner-friendly tasks
-- `level-2` for intermediate tasks
-- `level-3` for advanced tasks
+- `level:beginner` for beginner-friendly tasks
+- `level:intermediate` for intermediate tasks
+- `level:advanced` for advanced tasks
+- `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement` for specific types
+
+New issues are **automatically triaged by our AI bot** which applies difficulty and type labels. You can filter by these labels to find issues that match your skill level.
 
 ### Step 2 — Request Assignment
 
 Comment on the issue with:
 
 ```
-/assign
+/assign gssoc
 ```
 
-**You MUST mention GSSoC in your comment.** Example:
+You **must** include `gssoc` in your assignment command.
 
-> I would like to work on this issue under GSSoC.
+### Step 3 — Assignment Processing
 
-### Step 3 — Wait for Bot Validation
+The automated system validates:
 
-The automated system will validate:
+- Your GitHub account is at least **7 days old**
+- The issue is available (not already assigned)
+- Your active assignment count is under the maximum (**2 issues** for GSSoC)
+- No recent spam/AI-slop flags on your account
+- GSSoC assignments are open (opened **15 May 2026, 12:00 AM IST**)
 
-- Your eligibility as a GSSoC contributor
-- Whether the issue is available
-- Your current active assignment count (max 3)
-- Whether GSSoC assignments are open (opens **15 May 2026, 12:00 AM IST**)
+**Auto-assignment for verified issues:**
+- If the issue has a `verified`, `ready-for-assignment`, or `approved` label AND your account is >30 days old, you are assigned immediately
+- Otherwise, a maintainer will review and approve via `/approve-assignment`
 
 Do **NOT** start working until the bot confirms your assignment.
 
@@ -63,13 +69,15 @@ NSoC contributors are unaffected by this restriction.
 
 GSSoC uses a level-based points system:
 
-| Level | Difficulty | Points | Examples |
-|-------|-----------|--------|----------|
-| Level 1 | Beginner | 10 pts | UI tweaks, docs, small bug fixes |
-| Level 2 | Intermediate | 25 pts | Filter logic, caching, API improvements |
-| Level 3 | Advanced | 45 pts | Architecture changes, performance, security |
+| Level | Label | Points | Examples |
+|-------|-------|--------|----------|
+| Beginner | `level:beginner` | 10 pts | UI tweaks, docs, small bug fixes |
+| Intermediate | `level:intermediate` | 25 pts | Filter logic, caching, API improvements |
+| Advanced | `level:advanced` | 45 pts | Architecture changes, performance, security |
 
-Points are tracked on the GSSoC leaderboard throughout the program.
+Points are tracked on the GSSoC leaderboard throughout the program. The leaderboard only updates when PRs are **merged**.
+
+**Advanced issues** require at least 1 previously merged PR in this repository.
 
 ---
 
@@ -161,13 +169,20 @@ When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMP
 
 ---
 
-## Review Process
+## Review Process (3-Stage Pipeline)
 
-1. Your PR enters the automated validation pipeline
-2. A GSSoC mentor is assigned for review
-3. The mentor may request changes — address them promptly
-4. Once approved, a maintainer merges the PR
-5. Points are awarded based on the issue level
+Your PR goes through an automated 3-stage pipeline:
+
+| Stage | What Happens |
+|-------|-------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** |
+| **Stage 2** — Human Review | A GSSoC mentor reviews code quality |
+| **Stage 3** — Maintainer Gate | Final approval and merge |
+
+The **LLM PR Analysis** bot will automatically verify that your PR:
+- Links to a valid issue
+- Actually addresses the linked issue
+- Does not include out-of-scope changes
 
 ### Expected Review Times
 
@@ -178,8 +193,11 @@ When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMP
 
 ## Inactivity Policy
 
-- Assigned issues with no progress for **2–3 days** may be unassigned
-- If you cannot complete an issue, comment `/unassign` to release it
+- Assigned issues with no progress for **7 days** will be auto-unassigned
+- "Progress" means posting a comment OR opening a non-draft PR linked to the issue
+- Maintainers and collaborators with write access are exempt
+- After being unassigned, you must wait **24 hours** before re-requesting
+- If you cannot complete an issue, comment `/unassign` to release it for others
 
 ---
 

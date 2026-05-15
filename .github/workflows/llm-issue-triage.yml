@@ -1,0 +1,173 @@
+name: 🤖 LLM Issue Triage & Validation
+
+on:
+  issues:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: llm-issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: AI-powered issue classification and duplicate detection
+        uses: actions/github-script@v8
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issueNumber = issue.number;
+            const username = issue.user.login;
+
+            if (issue.user.type === 'Bot') return;
+
+            const existingLabels = (issue.labels || []).map(l => l.name);
+            const alreadyTriaged = existingLabels.some(l =>
+              l.startsWith('level:') || l.startsWith('type:') || l === 'spam' || l === 'duplicate'
+            );
+            if (alreadyTriaged) {
+              core.info('Issue already triaged — skipping.');
+              return;
+            }
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100
+            });
+
+            const otherIssues = openIssues
+              .filter(i => !i.pull_request && i.number !== issueNumber)
+              .slice(0, 50)
+              .map(i => `#${i.number}: ${i.title}`)
+              .join('\n');
+
+            const issueTitle = issue.title || '';
+            const issueBody = (issue.body || '').slice(0, 2000);
+
+            const prompt = [
+              'You are a GitHub issue triage bot for an open-source GSoC Org Finder tool.',
+              '',
+              'Analyze this new issue and provide classification. Also check if it is a duplicate of any existing open issues listed below.',
+              '',
+              'NEW ISSUE:',
+              `Title: ${issueTitle}`,
+              `Body: ${issueBody}`,
+              '',
+              'EXISTING OPEN ISSUES (check for duplicates):',
+              otherIssues,
+              '',
+              'CLASSIFICATION RULES:',
+              '- program: "gssoc" if mentions GSSoC/gssoc, "nsoc" if mentions NSoC/nsoc, "general" otherwise',
+              '- difficulty: "level:beginner" for simple UI/docs/typo, "level:intermediate" for logic/features, "level:advanced" for architecture/security/performance',
+              '- type: "type:bug" for bugs, "type:enhancement" for features, "type:ui" for visual, "type:docs" for documentation, "type:api" for backend/API',
+              '- quality: "good" if well-written, "needs-info" if missing details, "spam" if clearly spam/gibberish',
+              '- valid: true if legitimate issue, false if spam/gibberish/not-actionable',
+              '- duplicate_of: issue number if clearly a duplicate (just the number), or null',
+              '',
+              'Return ONLY valid JSON (no markdown, no code fences):',
+              '{"program":"...","difficulty":"...","type":"...","quality":"...","valid":true/false,"duplicate_of":null or number}'
+            ].join('\n');
+
+            let result;
+            try {
+              const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                }
+              );
+
+              if (!res.ok) {
+                core.warning(`Gemini API returned ${res.status}`);
+                return;
+              }
+
+              const data = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              const cleaned = text.replace(/```json|```/g, '').trim();
+              result = JSON.parse(cleaned);
+            } catch (e) {
+              core.warning(`LLM triage failed: ${e.message}`);
+              return;
+            }
+
+            if (!result.valid || result.quality === 'spam') {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: issueNumber, labels: ['spam', 'invalid']
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issueNumber,
+                body: `🤖 **Auto-Triage:** This issue has been flagged as low-quality or spam.\n\n` +
+                      `If this is a mistake, please edit your issue with a clear description and a maintainer will review it.`
+              });
+              return;
+            }
+
+            if (result.duplicate_of) {
+              const dupNum = parseInt(result.duplicate_of, 10);
+              if (dupNum && dupNum !== issueNumber) {
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: issueNumber, labels: ['possible-duplicate']
+                });
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issueNumber,
+                  body: `🤖 **Possible Duplicate Detected**\n\n` +
+                        `This issue appears similar to #${dupNum}.\n\n` +
+                        `Please check if your issue is already covered there. If not, explain how this differs and a maintainer will remove the duplicate label.`
+                });
+              }
+            }
+
+            const labels = [];
+
+            if (result.difficulty) labels.push(result.difficulty);
+            if (result.type) labels.push(result.type);
+            if (result.program && result.program !== 'general') {
+              labels.push(`program:${result.program}`);
+            }
+            if (result.quality === 'needs-info') {
+              labels.push('status:needs-info');
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: issueNumber, labels
+              });
+            }
+
+            const triageNote = [
+              `🤖 **Auto-Triaged**`,
+              ``,
+              `| Field | Value |`,
+              `|-------|-------|`,
+              `| Difficulty | \`${result.difficulty}\` |`,
+              `| Type | \`${result.type}\` |`,
+              `| Program | \`${result.program}\` |`,
+              result.quality === 'needs-info' ? `| Status | ⚠️ Needs more information |` : null,
+              ``,
+              `---`,
+              ``,
+              `**To claim this issue**, comment:`,
+              `- \`/assign gssoc\` (for GSSoC contributors)`,
+              `- \`/assign nsoc\` (for NSoC contributors)`,
+              ``,
+              `A maintainer may adjust the labels. Classification is automated and approximate.`
+            ].filter(Boolean).join('\n');
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: issueNumber,
+              body: triageNote
+            });
+
+            core.info(`Triaged issue #${issueNumber}: ${result.difficulty}, ${result.type}, program=${result.program}`);

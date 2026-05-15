@@ -56,6 +56,8 @@ jobs:
             let mentionsGSSOC = commentBody.includes('gssoc');
             let mentionsNSOC = commentBody.includes('nsoc');
             let isMaintainerApprovedAssignment = false;
+            let isAutoApproved = false;
+            let maintainerApprover = null;
 
             if (isApproveAssignment) {
               if (!isMaintainer) {
@@ -147,6 +149,7 @@ jobs:
               mentionsGSSOC = targetRequest.program === 'gssoc';
               mentionsNSOC = targetRequest.program === 'nsoc';
               isMaintainerApprovedAssignment = true;
+              maintainerApprover = sender.login;
 
               core.info(`Maintainer ${sender.login} approved assignment for ${targetUser}`);
             }
@@ -193,7 +196,7 @@ jobs:
               const { data: profile } = await github.rest.users.getByUsername({ username });
               const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
               if (acctAgeDays >= 30) {
-                isMaintainerApprovedAssignment = true;
+                isAutoApproved = true;
               } else {
                 await github.rest.issues.createComment({
                   owner, repo, issue_number,
@@ -380,7 +383,11 @@ jobs:
               difficultyNote = `\n\n🏷️ Auto-detected difficulty: \`${nsocLevel}\`. A maintainer may update this.`;
             }
 
-            const approvalNote = isMaintainerApprovedAssignment ? `\n\n✅ **Approved by maintainer:** @${sender.login}` : '';
+            const approvalNote = maintainerApprover
+              ? `\n\n✅ **Approved by maintainer:** @${maintainerApprover}`
+              : isAutoApproved
+                ? `\n\n✅ **Auto-approved** (verified issue, trusted account)`
+                : '';
 
             await github.rest.issues.createComment({
               owner, repo, issue_number,

@@ -66,13 +66,12 @@ jobs:
                   c.user && c.user.login === assignee && new Date(c.created_at) > assignedAt
                 );
 
-                const prs = await github.paginate(
-                  github.rest.pulls.list,
-                  { owner, repo, state: 'all', per_page: 100 }
-                );
+                const searchQuery = `repo:${owner}/${repo} is:pr author:${assignee} ${issue.number} in:body`;
+                const { data: searchResult } = await github.rest.search.issuesAndPullRequests({
+                  q: searchQuery, per_page: 20
+                });
 
-                const linkedPR = prs.find(pr => {
-                  if (!pr.user || pr.user.login !== assignee) return false;
+                const linkedPR = (searchResult.items || []).find(pr => {
                   if (pr.draft) return false;
                   const body = (pr.body || '').toLowerCase();
                   return (

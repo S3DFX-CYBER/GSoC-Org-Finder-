@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: pr-stage-manager-${{ github.event.pull_request.number || github.event.review.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   stage-manager:
@@ -37,7 +37,7 @@ jobs:
               : context.payload.review.pull_request.number;
 
             if (['opened', 'synchronize'].includes(context.payload.action)) {
-              await new Promise(r => setTimeout(r, 10000));
+              await new Promise(r => setTimeout(r, 20000));
             }
 
             const { data: labelData } = await github.rest.issues.listLabelsOnIssue({

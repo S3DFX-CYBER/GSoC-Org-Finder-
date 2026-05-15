@@ -190,19 +190,19 @@ jobs:
             }
 
             if (!isMaintainerApprovedAssignment && isVerified && !isMaintainer) {
-              await github.rest.issues.createComment({
-                owner, repo, issue_number,
-                body: `✅ **Assignment Request Recorded**\n\n` +
-                      `Hi @${username}! Your request has been queued.\n\n` +
-                      `⏰ **Requested at:** ${new Date().toISOString()}\n\n` +
-                      `A maintainer will review all requests and approve the assignment soon.\n\n` +
-                      `Selection criteria:\n` +
-                      `- ⏱️ First come, first served (by timestamp)\n` +
-                      `- 📊 Current workload (users with fewer active issues get priority)\n` +
-                      `- ✅ Contribution history\n\n` +
-                      `Thank you for your interest! 🚀`
-              });
-              return;
+              const { data: profile } = await github.rest.users.getByUsername({ username });
+              const acctAgeDays = (new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24);
+              if (acctAgeDays >= 30) {
+                isMaintainerApprovedAssignment = true;
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⏳ **Assignment Request Queued**\n\n` +
+                        `Hi @${username}! Your account is less than 30 days old, so a maintainer must approve your assignment on verified issues.\n\n` +
+                        `A maintainer will review and approve using \`/approve-assignment\`.`
+                });
+                return;
+              }
             }
 
             if (mentionsGSSOC) {

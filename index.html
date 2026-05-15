@@ -438,7 +438,7 @@
   .pill {
     font-size: 13px;
     padding: 6px 12px;
-    min-height: 36px;
+    min-height: 44px;
     touch-action: manipulation;
   }
 
@@ -446,29 +446,14 @@
   .filter-chip {
     font-size: 13px;
     padding: 8px 14px;
-    min-height: 40px;
+    min-height: 44px;
     touch-action: manipulation;
     flex: 1 1 calc(50% - 10px);
     justify-content: center;
     text-align: center;
   }
 
-  /* Fix section padding */
-  .px-6 {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-
-  /* Fix chip row gaps */
-  .flex.flex-wrap {
-    gap: 8px;
-  }
-
-  .gap-2 {
-    gap: 10px !important;
-  }
-
-  /* Stack dropdowns vertically */
+  /* Stack dropdowns vertically - scoped to filter row only */
   div.flex.items-center.gap-4 {
     flex-direction: column;
     align-items: stretch !important;
@@ -481,23 +466,23 @@
     width: 100% !important;
     min-width: unset !important;
     font-size: 14px !important;
-    min-height: 42px;
+    min-height: 44px;
     padding: 8px 12px;
   }
 }
 
 @media (max-width: 480px) {
 
-  /* Smaller phones */
   .pill {
     font-size: 12px;
     padding: 5px 10px;
+    min-height: 44px;
   }
 
   .filter-chip {
     font-size: 12px;
     padding: 6px 10px;
-    min-height: 38px;
+    min-height: 44px;
   }
 }
 

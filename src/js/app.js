@@ -761,7 +761,7 @@ function renderGrid(orgs){
           </a>`:''}
         </div>
       </div>
-      <div class="org-desc">${o.desc}</div>
+      <div class="org-desc">${escapeHtml(o.desc)}</div>
       <div class="badges">
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>

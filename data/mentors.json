@@ -451,12 +451,18 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
+        "label": "#cncf-mentoring Slack"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "CRIU": {
     "org": "CRIU",

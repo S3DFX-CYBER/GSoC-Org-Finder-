@@ -2206,35 +2206,40 @@
   "ideasUrl": "https://github.com/RocketChat/google-summer-of-code/blob/main/google-summer-of-code-2026.md",
   "channels": [
     {
-      "type": "rocket.chat",
-      "name": "opensource2026 (24x7 community channel)",
-      "url": "https://open.rocket.chat/channel/opensource2026"
+      "type": "chat",
+      "url": "https://open.rocket.chat/channel/opensource2026",
+      "label": "opensource2026"
     },
     {
       "type": "forum",
-      "name": "Rocket.Chat GSoC 2026 Forum",
-      "url": "https://forums.rocket.chat/c/gsoc/gsoc2026/112"
+      "url": "https://forums.rocket.chat/c/gsoc/gsoc2026/112",
+      "label": "Rocket.Chat GSoC 2026 Forum"
     }
   ],
   "mentors": [
     {
-      "github": "Sing-Li",
       "name": "Sing Li",
-      "note": "GSoC org admin, confirmed active on forum and community server"
+      "github": "Sing-Li",
+      "githubUrl": "https://github.com/Sing-Li"
     },
     {
+      "name": "",
       "github": "geekgonecrazy",
-      "name": "Aaron Ogle"
+      "githubUrl": "https://github.com/geekgonecrazy"
     },
     {
-      "github": "debdutdeb"
+      "name": "",
+      "github": "debdutdeb",
+      "githubUrl": "https://github.com/debdutdeb"
     },
     {
-      "github": "Dnouv"
+      "name": "",
+      "github": "Dnouv",
+      "githubUrl": "https://github.com/Dnouv"
     }
   ],
   "mailingLists": [],
-  "tip": "Rocket.Chat does NOT use email/mailing lists. Join the 24x7 Rocket.Chat community server at https://open.rocket.chat/channel/opensource2026 and introduce yourself. Attend weekly Friday tea time to meet mentors directly. Check the ideas page on GitHub for project-specific mentor handles.",
+  "tip": "Join the 24x7 community server at https://open.rocket.chat/channel/opensource2026 and introduce yourself. Attend weekly Friday tea time to meet mentors directly.",
   "status": "ok",
   "lastFetched": "2026-05-09T16:09:12.548Z"
 },

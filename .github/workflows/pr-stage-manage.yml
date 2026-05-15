@@ -37,7 +37,7 @@ jobs:
               : context.payload.review.pull_request.number;
 
             if (['opened', 'synchronize'].includes(context.payload.action)) {
-              await new Promise(r => setTimeout(r, 10000));
+              await new Promise(r => setTimeout(r, 20000));
             }
 
             const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
@@ -57,6 +57,17 @@ jobs:
 
             const stage1Passed = dcoVerified && !dcoMissing && !aiSlop && !gssocSpam && !gssocInvalid;
 
+            const mentorApproved = labels.includes('gssoc-mentor-approved') || labels.includes('mentor-approved');
+            const reviewerApproved = labels.includes('review-approved');
+            const gssocApproved = labels.includes('gssoc:approved');
+            const stage2Passed = isNSOC
+              ? stage1Passed
+              : isGSSOC
+                ? mentorApproved
+                : (mentorApproved || reviewerApproved);
+            const paApproved = labels.includes('pa-approved') || gssocApproved;
+            const mergeReady = labels.includes('merge-ready');
+
             async function addLabel(name) {
               try { await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [name] }); } catch (e) { core.warning(`Failed adding label '${name}': ${e?.message || e}`); }
             }
@@ -67,17 +78,16 @@ jobs:
             if (stage1Passed) {
               await addLabel('stage-1-approved');
               await removeLabel('needs-stage-1-fixes');
+              if (!mentorApproved && !reviewerApproved && isGSSOC) {
+                await addLabel('needs-mentor-review');
+                await addLabel('mentor-review-requested');
+              }
             } else {
               await removeLabel('stage-1-approved');
               await addLabel('needs-stage-1-fixes');
+              await removeLabel('needs-mentor-review');
+              await removeLabel('mentor-review-requested');
             }
-
-            const mentorApproved = labels.includes('gssoc-mentor-approved') || labels.includes('mentor-approved');
-            const reviewerApproved = labels.includes('review-approved');
-            const gssocApproved = labels.includes('gssoc:approved');
-            const stage2Passed = isNSOC ? stage1Passed : (mentorApproved || reviewerApproved);
-            const paApproved = labels.includes('pa-approved') || gssocApproved;
-            const mergeReady = labels.includes('merge-ready');
 
             let s1Icon = '⏳', s1Text = 'Waiting for automated checks';
             if (stage1Passed) {

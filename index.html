@@ -576,7 +576,13 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input 
+  id="hero-search"
+  type="text"
+  aria-label="Search organizations by language, technology, or name"
+  placeholder="Search organization names..."
+  class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50"
+/>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -660,7 +666,11 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+     <select 
+  id="categoryFilter"
+  aria-label="Filter organizations by category"
+  class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600"
+>
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
         <option value="programming">Programming</option>
@@ -672,7 +682,11 @@
         <option value="media">Media</option>
         <option value="other">Other</option>
       </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select 
+  id="complexityFilter"
+  aria-label="Filter organizations by complexity level"
+  class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600"
+>
         <option value="all">Complexity: All</option>
         <option value="beginner">Beginner</option>
         <option value="intermediate">Intermediate</option>

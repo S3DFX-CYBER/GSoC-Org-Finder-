@@ -714,47 +714,43 @@ footer a:hover{text-decoration:underline}
 
 /* ── FIXED 3D ORG CARD  ── */
 
-.org-card {
-  position: relative;
+.org-card-3d {
   transform-style: preserve-3d;
   perspective: 1200px;
   will-change: transform;
-
   transition: transform 0.25s cubic-bezier(.2,.8,.2,1),
-              box-shadow 0.25s ease,
-              border-color 0.25s ease;
+              box-shadow 0.25s ease;
 }
 
-/* Hover 3D effect */
-.org-card:hover {
+/* Hover effect */
+.org-card-3d:hover {
   transform: translateY(-10px) rotateX(10deg) rotateY(-10deg) scale(1.02);
   box-shadow:
-  0 25px 60px rgb(0 0 0 / 0.18),
-  0 10px 25px rgb(244 107 14 / 0.15);
-  border-color: var(--orange-border);
+    0 25px 60px rgba(0, 0, 0, 0.18),
+    0 10px 25px rgba(244, 107, 14, 0.15);
 }
 
 /* Floating glow layer */
-.org-card::before {
+.org-card-3d::before {
   content: "";
   position: absolute;
   inset: 0;
   background: radial-gradient(
-  circle at var(--x, 50%) var(--y, 50%),
-  rgb(244 107 14 / 0.25),
-  transparent 40%
-);
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(244, 107, 14, 0.25),
+    transparent 40%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-.org-card:hover::before {
+.org-card-3d:hover::before {
   opacity: 1;
 }
 
 /* TOP EDGE GRADIENT BAR (single source of truth) */
-.org-card::after {
+.org-card-3d::after {
   content: "";
   position: absolute;
   top: 0;
@@ -767,8 +763,7 @@ footer a:hover{text-decoration:underline}
   transition: transform 0.3s ease;
 }
 
-/* hover state */
-.org-card:hover::after {
+.org-card-3d:hover::after {
   transform: scaleX(1);
 }
 

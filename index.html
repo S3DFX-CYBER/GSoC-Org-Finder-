@@ -429,6 +429,72 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Dark mode - Recently Viewed */
+    .dark #recently-viewed-section h3 { color: #f4f4f5; }
+    .dark #recently-viewed-section #recently-viewed-count { background: rgba(249,115,22,0.15); border-color: rgba(249,115,22,0.3); color: #fb923c; }
+    .dark #clearRecentBtn { border-color: #3f3f46; color: #a1a1aa; }
+    .dark #clearRecentBtn:hover { border-color: #f87171; color: #f87171; background: rgba(248,113,113,0.1); }
+
+    /* ── RECENTLY VIEWED CARDS ── */
+    .recent-card {
+      flex-shrink: 0;
+      min-width: 140px;
+      max-width: 180px;
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all .2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .recent-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2.5px;
+      background: linear-gradient(90deg, #f97316, #fbbc04);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .recent-card:hover {
+      border-color: #fed7aa;
+      box-shadow: 0 6px 24px rgba(249, 115, 22, .12);
+      transform: translateY(-3px);
+    }
+    .recent-card:hover::before { opacity: 1; }
+    
+    .recent-card-top { display: flex; align-items: center; flex-shrink: 0; }
+    .recent-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; border: 1.5px solid #e5e7eb; background: #fff; flex-shrink: 0; }
+    .recent-logo-placeholder { width: 28px; height: 28px; border-radius: 6px; background: #fff7ed; color: #f97316; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1.5px solid #fed7aa; }
+    
+    .recent-card-name { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #1a1c1c; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .2s; width: 100%; }
+    .recent-card:hover .recent-card-name { color: #f97316; }
+    
+    .recent-card-meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 8px; }
+    .recent-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .recent-tag { font-size: 10px; padding: 2px 6px; border-radius: 6px; border: 1px solid #e5e7eb; color: #6b7280; background: #f3f4f6; font-family: 'Fira Code', monospace; transition: all .3s; }
+
+    /* Dark mode - Recently Viewed Cards */
+    .dark .recent-card { background: #18181b; border-color: #3f3f46; }
+    .dark .recent-card:hover { border-color: rgba(249, 115, 22, 0.4); box-shadow: 0 6px 24px rgba(0, 0, 0, .4); }
+    .dark .recent-logo { border-color: #3f3f46; background: #27272a; }
+    .dark .recent-logo-placeholder { background: rgba(249,115,22,0.15); border-color: rgba(249,115,22,0.3); }
+    .dark .recent-card-name { color: #f4f4f5; }
+    .dark .recent-card:hover .recent-card-name { color: #f97316; }
+    .dark .recent-card-meta { color: #a1a1aa; }
+    .dark .recent-tag { border-color: #3f3f46; color: #a1a1aa; background: #27272a; }
+
+    @media (max-width: 640px) {
+      .recent-card { min-width: 170px; max-width: 200px; padding: 10px 12px; }
+      .recent-logo, .recent-logo-placeholder { width: 28px; height: 28px; font-size: 13px; }
+      .recent-card-name { font-size: 12px; }
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -618,6 +684,22 @@
       </div>
     </div>
   </div>
+</section>
+
+<!-- ═══════════════════ RECENTLY VIEWED ═══════════════════ -->
+<section id="recently-viewed-section" class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="display:none;animation-delay:.25s">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-lg">history</span>
+      <h3 class="font-headline font-extrabold text-base sm:text-lg tracking-tight">Recently Viewed</h3>
+      <span id="recently-viewed-count" class="px-2 py-0.5 bg-orange-50 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider border border-orange-100"></span>
+    </div>
+    <button id="clearRecentBtn" onclick="clearRecentlyViewed()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 text-xs font-medium text-zinc-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition-all duration-200" title="Clear viewing history">
+      <span class="material-symbols-outlined text-sm">delete_sweep</span>
+      Clear
+    </button>
+  </div>
+  <div id="recently-viewed-list" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar"></div>
 </section>
 
 <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
@@ -2264,6 +2346,9 @@
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
 
+    saveRecentlyViewed(org);
+
+
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <h2>${escapeHtml(org.name)}</h2>
@@ -2625,6 +2710,63 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
+  // ══════════════════════════════════════════════
+  // RECENTLY VIEWED
+  // ══════════════════════════════════════════════
+  const RECENT_KEY = 'recentOrgs';
+  const RECENT_MAX = 5;
+
+  function saveRecentlyViewed(org) {
+    try {
+      let recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+      recent = recent.filter(item => item.name !== org.name);
+      recent.unshift({
+        name: org.name,
+        cat: org.cat,
+        github: org.github || '',
+        tags: (org.tags || []).slice(0, 3),
+        competition: org.competition,
+        years: org.years
+      });
+      if (recent.length > RECENT_MAX) {
+        recent = recent.slice(0, RECENT_MAX);
+      }
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to save recently viewed:', e);
+    }
+  }
+
+  function renderRecentlyViewed() {
+    const section = document.getElementById('recently-viewed-section');
+    const container = document.getElementById('recently-viewed-list');
+    const countBadge = document.getElementById('recently-viewed-count');
+    if (!section || !container) return;
+    let recent = [];
+    try { recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch { recent = []; }
+    if (!recent.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    if (countBadge) countBadge.textContent = recent.length;
+    container.innerHTML = recent.map(org => {
+      const githubOwner = org.github ? org.github.split('/')[0] : '';
+      const logo = githubOwner ? 'https://github.com/' + githubOwner + '.png?size=80' : '';
+      const tagsHtml = (org.tags || []).map(t => `<span class="recent-tag">${escapeHtml(t)}</span>`).join('');
+      const compIcon = org.competition === 'hot' ? '🔥' : org.competition === 'moderate' ? '🟡' : '😎';
+      return `<div class="recent-card" onclick="openModal(this.getAttribute('data-org'))" data-org="${escapeHtml(org.name)}" tabindex="0" role="button" aria-label="Open ${escapeHtml(org.name)}">
+        <div class="recent-card-top">
+          ${logo ? `<img class="recent-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((org.name||'')[0]||'')}" loading="lazy" onerror="this.style.display='none';">` : `<div class="recent-logo-placeholder">${escapeHtml((org.name||'?')[0])}</div>`}
+        </div>
+        <div class="recent-card-name" title="${escapeHtml(org.name)}" style="margin-bottom: 0;">${escapeHtml(org.name)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  window.clearRecentlyViewed = function() {
+    localStorage.removeItem(RECENT_KEY);
+    renderRecentlyViewed();
+  };
+
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -2632,6 +2774,7 @@ if(org.ideas){
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
   renderOrgs();
+  renderRecentlyViewed();
   renderWatchlist();
   loadMentorData();
   renderGoodFirstIssues();

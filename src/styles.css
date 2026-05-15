@@ -707,3 +707,130 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* ── RECENTLY VIEWED CARDS ── */
+.recent-card {
+  flex-shrink: 0;
+  min-width: 200px;
+  max-width: 240px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .2s ease;
+}
+.recent-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--orange), #FBBC04);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.recent-card:hover {
+  border-color: var(--orange-border);
+  box-shadow: 0 6px 24px rgba(244, 107, 14, .12);
+  transform: translateY(-3px);
+}
+.recent-card:hover::before {
+  opacity: 1;
+}
+.recent-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.recent-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1.5px solid var(--border2);
+  background: #fff;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .recent-logo {
+  border-color: rgba(255,255,255,.12);
+}
+.recent-logo-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--orange-pale);
+  color: var(--orange);
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid var(--orange-border);
+}
+.recent-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .2s;
+}
+.recent-card:hover .recent-card-name {
+  color: var(--orange);
+}
+.recent-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.recent-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.recent-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  background: var(--tag-bg);
+  font-family: 'Fira Code', monospace;
+  transition: background .3s, border-color .3s, color .3s;
+}
+
+/* Recently Viewed — Mobile */
+@media (max-width: 640px) {
+  .recent-card {
+    min-width: 170px;
+    max-width: 200px;
+    padding: 10px 12px;
+  }
+  .recent-logo {
+    width: 28px;
+    height: 28px;
+  }
+  .recent-logo-placeholder {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+  .recent-card-name {
+    font-size: 11px;
+  }
+}

@@ -81,7 +81,7 @@ jobs:
             }
 
             // 6. Diff size and change quality analysis
-            const { data: prFiles } = await github.rest.pulls.listFiles({
+            const prFiles = await github.paginate(github.rest.pulls.listFiles, {
               owner, repo, pull_number: prNumber, per_page: 100
             });
 

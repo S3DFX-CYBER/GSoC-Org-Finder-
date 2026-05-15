@@ -35,6 +35,12 @@ jobs:
             // Ignore bots
             if (sender.type === 'Bot') return;
 
+            // Check if the issue/PR has been inactive
+            const lastActiveDate = new Date(issue.updated_at);
+            const now = new Date();
+            const daysInactive = (now - lastActiveDate) / (1000 * 60 * 60 * 24);
+            const isInactive = daysInactive > 7;
+
             // Ignore maintainers and collaborators
             const association = comment.author_association || '';
             if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
@@ -81,7 +87,16 @@ jobs:
               'please assign this'
             ];
 
-            const isSpamPing = spamPatterns.some(pattern => body.includes(pattern));
+            const isSpamPing = spamPatterns.some(pattern => {
+              const matches = body.includes(pattern);
+              if (matches) {
+                // If it's a reasonable follow-up phrase, only count as spam if NOT inactive
+                const isSoftPing = ['any update on this', 'is anyone reviewing', 'any updates'].includes(pattern);
+                if (isSoftPing && isInactive) return false;
+                return true;
+              }
+              return false;
+            });
 
             if (!isSpamPing) return;
 

@@ -41,9 +41,7 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet" />
+  <link href="src/assets/fonts.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
   <script>
@@ -467,7 +465,7 @@
 
     .timeline-grid span.current-year {
       background: #fffbeb;
-      color: #d97706;
+      color: #92400e;
       border-color: #fef3c7;
       font-weight: 700;
     }
@@ -689,8 +687,8 @@
     .dark .pill.active,
     .dark section .flex.flex-wrap.gap-2>button.pill.active {
       background: rgba(251, 146, 60, 0.2) !important;
-      border-color: #fb923c !important;
-      color: #fb923c !important;
+      border-color: #fdba74 !important;
+      color: #fdba74 !important;
     }
 
     /* Dark mode - Issue card badges */
@@ -1127,9 +1125,9 @@
   <!-- Mobile Menu Overlay -->
   <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"
-      onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button"
-      aria-label="Close menu"></div>
+    <button class="absolute inset-0 bg-black/60 backdrop-blur-sm w-full h-full border-none p-0 cursor-default" 
+      onclick="toggleMenu()"
+      aria-label="Close menu"></button>
 
     <!-- Menu Panel -->
     <nav

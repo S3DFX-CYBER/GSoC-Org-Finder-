@@ -122,13 +122,13 @@ Go to the repository **Issues** tab and filter using labels:
 
 Comment with your program:
 
-```
+```text
 /assign gssoc
 ```
 
 or
 
-```
+```text
 /assign nsoc
 ```
 

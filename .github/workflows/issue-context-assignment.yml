@@ -69,7 +69,7 @@ jobs:
               const mentionMatch = comment.body.match(/@([a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?)/);
               let targetUser = mentionMatch ? mentionMatch[1] : null;
 
-              const { data: allComments } = await github.rest.issues.listComments({
+              const allComments = await github.paginate(github.rest.issues.listComments, {
                 owner, repo, issue_number, per_page: 100
               });
 

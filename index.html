@@ -40,6 +40,74 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
+
+/* ══════════════════════════════════════════════
+   THEME — Enhanced with animations
+══════════════════════════════════════════════ */
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.classList.toggle('dark', saved === 'dark');
+  updateThemeIcon();
+})();
+
+// Create overlay element once
+const _overlay = document.createElement('div');
+_overlay.className = 'theme-transition-overlay';
+document.body.appendChild(_overlay);
+
+window.toggleTheme = function(event){
+  const btn = document.getElementById('themeToggleBtn');
+
+  // 1. Ripple burst
+  btn.classList.remove('ripple');
+  void btn.offsetWidth; // reflow
+  btn.classList.add('ripple');
+
+  // 2. Icon spin animation
+  btn.classList.remove('switching');
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    btn.classList.add('switching');
+  });
+});
+
+  // 3. Overlay flash — origin from button position
+  if(event){
+    const rect = btn.getBoundingClientRect();
+    const ox = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(1) + '%';
+    const oy = ((rect.top  + rect.height / 2) / window.innerHeight * 100).toFixed(1) + '%';
+    _overlay.style.setProperty('--ox', ox);
+    _overlay.style.setProperty('--oy', oy);
+  }
+  _overlay.classList.remove('flash');
+  void _overlay.offsetWidth;
+  _overlay.classList.add('flash');
+
+  // 4. Toggle theme mid-animation (at icon disappear point ~160ms)
+  setTimeout(() => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+  }, 160);
+
+  // 5. Cleanup classes
+  setTimeout(() => {
+    btn.classList.remove('switching', 'ripple');
+    _overlay.classList.remove('flash');
+  }, 600);
+};
+
+function updateThemeIcon(){
+  const btn = document.getElementById('themeToggleBtn');
+  const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+  if(!icon) return;
+  const isDark = document.documentElement.classList.contains('dark');
+  icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+  btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  btn.setAttribute('title',      isDark ? 'Switch to light theme' : 'Switch to dark theme');
+}
+
     // Theme restoration - runs early to prevent FOUC
     (function(){
       try {
@@ -103,6 +171,140 @@
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
+
+
+    /* ══════════════════════════════════════════════
+   THEME TOGGLE ANIMATIONS
+══════════════════════════════════════════════ */
+
+#themeToggleBtn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: 
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  overflow: hidden;
+}
+
+#themeToggleBtn:hover {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: #f97316;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.3);
+  transform: scale(1.1);
+}
+
+#themeToggleBtn:active {
+  transform: scale(0.92);
+}
+
+/* Icon inside toggle */
+#themeToggleBtn .material-symbols-outlined {
+  transition: 
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.25s ease,
+    color 0.3s ease;
+  display: block;
+}
+
+/* Spin-out animation when switching */
+/* Add this instead */
+#themeToggleBtn .material-symbols-outlined {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              opacity 0.25s ease, 
+              color 0.3s ease;
+}
+
+#themeToggleBtn.switching .material-symbols-outlined {
+  animation: iconSwitch 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+@keyframes iconSwitch {
+  0%   { transform: rotate(0deg)   scale(1);   opacity: 1; }
+  45%  { transform: rotate(200deg) scale(0.2); opacity: 0; }
+  55%  { transform: rotate(200deg) scale(0.2); opacity: 0; }
+  100% { transform: rotate(360deg) scale(1);   opacity: 1; }
+}
+
+@keyframes iconSwitch {
+  0%   { transform: rotate(0deg)    scale(1);    opacity: 1; }
+  40%  { transform: rotate(180deg)  scale(0.3);  opacity: 0; }
+  60%  { transform: rotate(180deg)  scale(0.3);  opacity: 0; }
+  100% { transform: rotate(360deg)  scale(1);    opacity: 1; }
+}
+
+/* Ripple burst on click */
+#themeToggleBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(249, 115, 22, 0.25);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+}
+
+#themeToggleBtn.ripple::after {
+  animation: rippleBurst 0.5s ease forwards;
+}
+
+@keyframes rippleBurst {
+  0%   { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Dark mode glow */
+.dark #themeToggleBtn:hover {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: #fbbf24;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+}
+
+/* Full page theme transition overlay */
+.theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--ox, 50%) var(--oy, 50%), 
+    rgba(249,115,22,0.15) 0%, 
+    transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.theme-transition-overlay.flash {
+  animation: overlayFlash 0.5s ease forwards;
+}
+
+@keyframes overlayFlash {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Smooth all theme-sensitive elements */
+*, *::before, *::after {
+  transition: 
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.25s ease,
+    box-shadow 0.35s ease !important;
+}
+
+/* Sun icon color in dark mode */
+.dark #themeToggleBtn .material-symbols-outlined {
+  color: #fbbf24;
+}
 
     /* Modal Styles */
     .modal-bg {
@@ -475,7 +677,9 @@
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
     
-      <button id="themeToggleBtn" onclick="toggleTheme()"
+      <!-- AFTER -->
+      <button id="themeToggleBtn" onclick="toggleTheme(event)"
+
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
     

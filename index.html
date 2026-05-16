@@ -1172,7 +1172,7 @@
 </div>
 
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
-<div class="modal-bg compare-bg" id="compareModal" onclick="cloaseCompareEv()">
+<div class="modal-bg compare-bg" id="compareModal" onclick="if (event.target === this) closeCompareModal()">
   <div class="modal w-full max-w-5xl">
    <div class="modal-sticky-header">
     <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>

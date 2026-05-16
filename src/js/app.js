@@ -1038,8 +1038,8 @@ function openModal(idx){
     });
   }
 }
-function closeModalEv(e){if(e.target===document.getElementById('orgModal'))closeModal();}
-function closeModal(){document.getElementById('orgModal').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
+function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
 
 // ══════════════════════════════════════════════
 // INIT

@@ -66,11 +66,11 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
     score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
     score += calculateActivityScore(githubProfile, org, matchReasons);
     score += calculateExperienceScore(githubProfile, org, matchReasons);
-  // Personalized recommendation boost
+    // Personalized recommendation boost
     if (matchedSkills.length >= 3) {
       score += 15;
       matchReasons.push('Highly personalized recommendation');
-   }
+    }
     // Cap and mix-in deterministic tiebreak
     score = Math.min(score, 100);
     score += (org.name.length % 100) / 100;
@@ -101,7 +101,7 @@ function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, m
     });
     
     let delta = 0;
-    if (matches >=4) delta = 70;
+    if (matches >= 4) delta = 70;
     else if (matches >= 2) delta = 50;
     else if (matches === 1) delta = 25;
     
@@ -154,8 +154,7 @@ function calculateActivityScore(profile, org, matchReasons) {
 function calculateExperienceScore(profile, org, matchReasons) {
   let delta = 0;
   const beginnerTags = ['good first issue', 'beginner', 'easy', 'first-timers'];
-  const orgTags = (org.tags || []).map(tag => tag.toLowerCase());
-
+  const orgTags = new Set((org.tags || []).map(t => t.toLowerCase()));
   const beginnerFriendly = beginnerTags.some(tag =>
     orgTags.includes(tag)
   );

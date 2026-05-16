@@ -91,23 +91,24 @@ jobs:
             let selected = [reviewerPool[idx1]];
             if (poolSize > 1) selected.push(reviewerPool[idx2]);
 
-            try {
-              await github.rest.pulls.requestReviewers({
-                owner, repo, pull_number: prNumber, reviewers: selected
-              });
-              core.info(`Requested reviewers: ${selected.join(', ')}`);
-            } catch (err) {
-              core.warning(`Failed to request reviewers: ${err?.message || err}`);
+            const successfulReviewers = [];
+            for (const reviewer of selected) {
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner, repo, pull_number: prNumber, reviewers: [reviewer]
+                });
+                successfulReviewers.push(reviewer);
+              } catch (err) {
+                core.warning(`Failed to request review from @${reviewer} (may not be a collaborator): ${err?.message || err}`);
+              }
             }
 
-            try {
-              await github.rest.issues.addAssignees({
-                owner, repo, issue_number: prNumber, assignees: selected
-              });
-              core.info(`Assigned mentors to PR: ${selected.join(', ')}`);
-            } catch (err) {
-              core.warning(`Failed to assign mentors: ${err?.message || err}`);
+            if (successfulReviewers.length === 0) {
+              core.warning('No mentors could be requested as reviewers. They may not be collaborators.');
+              return;
             }
+
+            core.info(`Requested reviewers: ${successfulReviewers.join(', ')}`);
 
             try {
               await github.rest.issues.addLabels({
@@ -121,8 +122,8 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo, issue_number: prNumber,
                 body: `## 👥 Stage 2 — Mentor Review\n\n` +
-                  `Two GSSOC mentors have been assigned and requested to review this PR:\n\n` +
-                  selected.map(s => `- @${s}`).join('\n') + '\n\n' +
+                  `GSSOC mentors have been requested to review this PR:\n\n` +
+                  successfulReviewers.map(s => `- @${s}`).join('\n') + '\n\n' +
                   `At least **1 mentor approval** is required to proceed to Stage 3.\n\n` +
                   `Mentors: please review and approve if the contribution meets quality standards.`
               });

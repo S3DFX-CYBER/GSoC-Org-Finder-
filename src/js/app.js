@@ -1,5 +1,43 @@
 /* global ORGS */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, getSimilarOrgs */
+
+function getSimilarOrgs(currentOrg, n) {
+  if (!currentOrg || typeof ORGS === 'undefined' || !Array.isArray(ORGS)) {
+    return [];
+  }
+
+  const limit = n > 0 ? n : 3;
+  const lower = (t) => String(t).toLowerCase();
+  const myTags = new Set((currentOrg.tags || []).map(lower));
+
+  const scored = [];
+  for (const o of ORGS) {
+    if (!o || o.name === currentOrg.name) continue;
+
+    let overlap = 0;
+    for (const t of (o.tags || [])) {
+      if (myTags.has(lower(t))) overlap++;
+    }
+
+    let score = overlap * 2;
+    if (o.cat && currentOrg.cat && o.cat === currentOrg.cat) {
+      score += 3; // same category — bump it up
+    }
+
+    if (score > 0) scored.push({ org: o, score });
+  }
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.org.name.localeCompare(b.org.name);
+  });
+
+  return scored.slice(0, limit).map(x => x.org);
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.getSimilarOrgs = getSimilarOrgs;
+}
 
 // ══════════════════════════════════════════════
 // THEME

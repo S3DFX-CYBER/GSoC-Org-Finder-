@@ -117,46 +117,40 @@
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
-      overflow: hidden;
     }
     .modal-bg.open {
       opacity: 1;
       pointer-events: auto;
     }
     .modal {
-     background: white;
-     width: 90%;
-     max-width: 700px;
-     max-height: 90vh;
-     border-radius: 2rem;
-     position: relative;
-     overflow: hidden;
-
-     display: flex;
-     flex-direction: column;
-     padding-top: 1px;
-     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-     transform: scale(0.9);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: white;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      border-radius: 2rem;
+      position: relative;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .modal-bg.open .modal {
       transform: scale(1);
     }
     .close-btn {
-     position: absolute;
-     top: 1.5rem;
-     right: 1.5rem;
-     z-index: 1000;
-     width: 2.5rem;
-     height: 2.5rem;
-     border-radius: 99px;
-     background: #f3f3f3;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     color: #555;
-     font-size: 1.2rem;
-    transition: all 0.2s;
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 99px;
+      background: #f3f3f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 1.2rem;
+      transition: all 0.2s;
     }
     .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
     
@@ -175,7 +169,7 @@
     .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
     .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
 
-    .modal-body {padding: 0 3rem 3rem; overflow-y: auto; flex: 1;}
+    .modal-body { padding: 0 3rem 3rem; }
     .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
     
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
@@ -247,7 +241,6 @@
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
- 
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -324,6 +317,28 @@
     .dark #compareModalBody .text-zinc-700 { color: #e5e7eb !important; }
     .dark #compareModalBody .text-zinc-500 { color: #a1a1aa !important; }
     .dark #compareModalBody .text-zinc-400 { color: #d4d4d8 !important; }
+
+    /* Similar Organizations */
+    .similar-orgs-container { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+    .similar-orgs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+    .similar-org-card {
+      display: flex; flex-direction: column; gap: 0.25rem; padding: 0.85rem 1rem;
+      background: #f9f9f9; border: 1px solid #eee; border-radius: 0.75rem;
+      text-align: left; cursor: pointer; font-family: inherit;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .similar-org-card:hover, .similar-org-card:focus-visible {
+      transform: translateY(-2px); border-color: #9d4300;
+      box-shadow: 0 4px 12px rgba(157, 67, 0, 0.12); outline: none;
+    }
+    .similar-org-name { font-weight: 700; font-size: 0.9rem; color: #1a1c1c; }
+    .similar-org-meta { font-size: 0.72rem; color: #6b6b6b; text-transform: capitalize; }
+    @media (max-width: 640px) { .similar-orgs-list { grid-template-columns: 1fr; } }
+    .dark .similar-orgs-container { border-top-color: #27272a; }
+    .dark .similar-org-card { background: #27272a; border-color: #3f3f46; }
+    .dark .similar-org-card:hover, .dark .similar-org-card:focus-visible { border-color: #fb923c; box-shadow: 0 4px 12px rgba(251, 146, 60, 0.18); }
+    .dark .similar-org-name { color: #f4f4f5; }
+    .dark .similar-org-meta { color: #a1a1aa; }
 
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
@@ -1170,6 +1185,12 @@
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+      </div>
+
+      <!-- Similar Organizations -->
+      <div id="mSimilarSection" class="similar-orgs-container" hidden>
+        <div class="section-title">You Might Also Like</div>
+        <div id="mSimilarList" class="similar-orgs-list"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -2651,18 +2672,70 @@ if(org.ideas){
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
     renderMentorContactSection(org);
+    renderSimilarOrgs(org);
      
     document.getElementById('orgModal').classList.add('open');
-    document.body.classList.add('modal-open');
-    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+  }
+
+  // Similar Organizations renderer.
+  // Canonical scoring helper lives in src/js/app.js as `getSimilarOrgs`;
+  // mirrored locally here because src/js/app.js is not currently <script>-
+  // included by index.html (it has unrelated runtime dependencies on IDs
+  // that don't exist on this page).
+  function getSimilarOrgsLocal(currentOrg, n) {
+    if (!currentOrg || !Array.isArray(ORGS)) return [];
+    const limit = Number.isInteger(n) && n > 0 ? n : 3;
+    const curTags = new Set((currentOrg.tags || []).map(t => String(t).toLowerCase()));
+    return ORGS
+      .filter(o => o && o.name !== currentOrg.name)
+      .map(o => {
+        const oTags = (o.tags || []).map(t => String(t).toLowerCase());
+        let tagOverlap = 0;
+        for (const t of oTags) if (curTags.has(t)) tagOverlap++;
+        // Only count a category match when both sides have a non-empty
+        // category, so two orgs missing `cat` are not treated as similar.
+        const catMatch = (o.cat && currentOrg.cat && o.cat === currentOrg.cat) ? 1 : 0;
+        return { org: o, score: catMatch * 3 + tagOverlap * 2 };
+      })
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score || a.org.name.localeCompare(b.org.name))
+      .slice(0, limit)
+      .map(x => x.org);
+  }
+
+  function renderSimilarOrgs(org) {
+    const section = document.getElementById('mSimilarSection');
+    const list = document.getElementById('mSimilarList');
+    if (!section || !list) return;
+    const similar = getSimilarOrgsLocal(org, 3);
+    if (!similar.length) {
+      section.hidden = true;
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = similar.map(s => {
+      const meta = [s.cat, (s.tags || []).slice(0, 2).join(', ')].filter(Boolean).join(' • ');
+      return `<button type="button" class="similar-org-card" data-org-name="${escapeHtml(s.name)}">
+        <span class="similar-org-name">${escapeHtml(s.name)}</span>
+        <span class="similar-org-meta">${escapeHtml(meta)}</span>
+      </button>`;
+    }).join('');
+    list.querySelectorAll('.similar-org-card').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Reset modal scroll so the user lands at the new org's header,
+        // not stuck at the bottom where the similar section lives.
+        const modalEl = document.querySelector('#orgModal .modal');
+        if (modalEl) modalEl.scrollTop = 0;
+        openModal(btn.dataset.orgName);
+      });
+    });
+    section.hidden = false;
   }
 
   function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
-    document.body.classList.remove('modal-open');
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
+    document.body.style.overflow = 'auto';
   }
 
   function openRandomOrg() {

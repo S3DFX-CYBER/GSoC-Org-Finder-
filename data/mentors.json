@@ -2526,16 +2526,58 @@
     "status": "fetch-failed",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "Submitty": {
-    "org": "Submitty",
-    "ideasUrl": "https://github.com/Submitty/Submitty/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+"Submitty": {
+  "org": "Submitty",
+  "ideasUrl": "https://github.com/Submitty/Submitty/wiki/Google-Summer-of-Code",
+  "channels": [
+  {
+    "type": "Zulip",
+    "url": "https://submitty.zulipchat.com/",
+    "label": "Submitty Zulip"
+  }
+],
+  "mentors": [
+  {
+    "name": "JManion32",
+    "github": "JManion32",
+    "githubUrl": "https://github.com/JManion32"
   },
+  {
+    "name": "williamjallen",
+    "github": "williamjallen",
+    "githubUrl": "https://github.com/williamjallen"
+  },
+  {
+    "name": "cjreed121",
+    "github": "cjreed121",
+    "githubUrl": "https://github.com/cjreed121"
+  },
+  {
+    "name": "bmcutler",
+    "github": "bmcutler",
+    "githubUrl": "https://github.com/bmcutler"
+  },
+  {
+    "name": "IDzyre",
+    "github": "IDzyre",
+    "githubUrl": "https://github.com/IDzyre"
+  },
+  {
+    "name": "shailpatels",
+    "github": "shailpatels",
+    "githubUrl": "https://github.com/shailpatels"
+  },
+  {
+    "name": "MasterOdin",
+    "github": "MasterOdin",
+    "githubUrl": "https://github.com/MasterOdin"
+  }
+],
+  "mailingLists": [],
+  "tip": "Join the Submitty Zulip server to communicate with mentors and contributors.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Sugar Labs": {
     "org": "Sugar Labs",
     "ideasUrl": "https://github.com/sugarlabs/GSoC/blob/master/Ideas-2026.md",

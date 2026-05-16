@@ -69,8 +69,9 @@ function updateCountdown(){
   sub.textContent=subText;
   banner.querySelector('.countdown-label').textContent=label;
 }
+let cdTimer;
 updateCountdown();
-const cdTimer=setInterval(updateCountdown,1000);
+cdTimer=setInterval(updateCountdown,1000);
 
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
@@ -107,6 +108,11 @@ const AN={
   topTerms(){const f={};this.g('sterms',[]).forEach(t=>{f[t]=(f[t]||0)+1;});return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,12);}
 };
 AN.trackVisit();
+
+// Fix: Add fonts-loaded class once font is ready - prevents FOUI
+globalThis.document.fonts.ready.then(() => {
+  globalThis.document.documentElement.classList.add('fonts-loaded');
+});
 
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION

@@ -2508,16 +2508,68 @@
     });
   }
 
-  // ── exportWatchlistAsMarkdown ────────────────────────────────────────────────
-  function exportWatchlistAsMarkdown() {
+  // ── Watchlist Export Helpers ────────────────────────────────────────────────
+  // Category label mapping for consistent display across export formats
+  const CATEGORY_LABELS = {
+    science: 'Science',
+    programming: 'Programming',
+    data: 'Data',
+    web: 'Web',
+    os: 'OS / Systems',
+    security: 'Security',
+    media: 'Media',
+    infra: 'Infrastructure',
+    ai: 'AI / ML',
+    dev: 'Dev Tools',
+    other: 'Other'
+  };
+
+  /**
+   * Retrieves bookmarked organizations and validates watchlist is not empty.
+   * Alerts user and returns null if watchlist is empty.
+   * @returns {Array|null} Array of bookmarked org objects or null if empty
+   */
+  function getWatchlistOrAlertEmpty() {
     const bookmarks = [...bookmarkedSet]
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
     if (bookmarks.length === 0) {
       alert('Your watchlist is empty. Add some organizations first!');
-      return;
+      return null;
     }
+
+    return bookmarks;
+  }
+
+  /**
+   * Escapes Markdown special characters to prevent formatting injection.
+   * Protects against potential content injection in generated Markdown files.
+   * @param {string} text - Raw text to escape
+   * @returns {string} Escaped text safe for Markdown
+   */
+  function escapeMarkdown(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/\\/g, '\\\\')      // Escape backslashes first
+      .replace(/[[\]()#*+\-_.!`]/g, '\\$&');  // Escape Markdown special chars
+  }
+
+  /**
+   * Escapes text for safe inclusion in CSV format.
+   * Wraps in quotes and escapes internal quotes.
+   * @param {string} text - Raw text to escape
+   * @returns {string} CSV-escaped text
+   */
+  function escapeCsv(text) {
+    const str = (text || '').toString();
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+
+  // ── exportWatchlistAsMarkdown ────────────────────────────────────────────────
+  function exportWatchlistAsMarkdown() {
+    const bookmarks = getWatchlistOrAlertEmpty();
+    if (!bookmarks) return;
 
     let markdown = '# GSoC 2026 Watchlist\n\n';
     markdown += `*Exported from [FindMyGSoC](https://findmygsoc.vercel.app/) on ${new Date().toLocaleDateString()}*\n\n`;
@@ -2527,19 +2579,16 @@
     bookmarks.forEach((org, idx) => {
       const repoUrl = org.github ? `https://github.com/${org.github}` : '#';
       const tags = (org.tags || []).slice(0, 5).join(', ');
-      const category = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const categoryLabel = CATEGORY_LABELS[org.cat] || org.cat;
 
-      markdown += `## ${idx + 1}. ${org.name}\n\n`;
-      markdown += `**Category:** ${category}\n\n`;
-      markdown += `**Description:** ${org.desc || 'N/A'}\n\n`;
-      markdown += `**GSoC History:** ${org.years} years\n\n`;
-      markdown += `**Competition Level:** ${org.competition || 'N/A'}\n\n`;
-      markdown += `**Tech Stack:** ${tags || 'N/A'}\n\n`;
-      markdown += `**GitHub Repository:** [${org.github}](${repoUrl})\n\n`;
+      // Escape dynamic content for Markdown security
+      markdown += `## ${idx + 1}. ${escapeMarkdown(org.name)}\n\n`;
+      markdown += `**Category:** ${escapeMarkdown(categoryLabel)}\n\n`;
+      markdown += `**Description:** ${escapeMarkdown(org.desc || 'N/A')}\n\n`;
+      markdown += `**GSoC History:** ${escapeMarkdown(String(org.years))} years\n\n`;
+      markdown += `**Competition Level:** ${escapeMarkdown(org.competition || 'N/A')}\n\n`;
+      markdown += `**Tech Stack:** ${escapeMarkdown(tags || 'N/A')}\n\n`;
+      markdown += `**GitHub Repository:** [${escapeMarkdown(org.github || '')}](${escapeMarkdown(repoUrl)})\n\n`;
       markdown += '---\n\n';
     });
 
@@ -2547,7 +2596,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0,10)}.md`;
+    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0, 10)}.md`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -2556,36 +2605,26 @@
 
   // ── exportWatchlistAsCsv ─────────────────────────────────────────────────────
   function exportWatchlistAsCsv() {
-    const bookmarks = [...bookmarkedSet]
-      .map(name => ORGS.find(o => o.name === name))
-      .filter(Boolean);
-
-    if (bookmarks.length === 0) {
-      alert('Your watchlist is empty. Add some organizations first!');
-      return;
-    }
+    const bookmarks = getWatchlistOrAlertEmpty();
+    if (!bookmarks) return;
 
     // CSV Header
     const headers = ['Organization', 'Category', 'Description', 'GSoC Years', 'Competition Level', 'Tech Stack', 'GitHub Repository'];
     const rows = [headers];
 
     bookmarks.forEach(org => {
-      const category = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const categoryLabel = CATEGORY_LABELS[org.cat] || org.cat;
       const tags = (org.tags || []).slice(0, 5).join('; ');
       const repoUrl = org.github ? `https://github.com/${org.github}` : '';
 
       const row = [
-        `"${(org.name || '').replace(/"/g, '""')}"`,
-        `"${(category || '').replace(/"/g, '""')}"`,
-        `"${(org.desc || '').replace(/"/g, '""')}"`,
-        `"${(org.years || '').toString()}"`,
-        `"${(org.competition || '').replace(/"/g, '""')}"`,
-        `"${(tags || '').replace(/"/g, '""')}"`,
-        `"${(repoUrl || '').replace(/"/g, '""')}"`
+        escapeCsv(org.name),
+        escapeCsv(categoryLabel),
+        escapeCsv(org.desc || 'N/A'),
+        escapeCsv(String(org.years || '')),
+        escapeCsv(org.competition || 'N/A'),
+        escapeCsv(tags || 'N/A'),
+        escapeCsv(repoUrl)
       ];
       rows.push(row);
     });
@@ -2595,7 +2634,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0,10)}.csv`;
+    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

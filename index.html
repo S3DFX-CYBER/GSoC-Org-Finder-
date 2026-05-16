@@ -2096,6 +2096,9 @@
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
             <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+            <button class="share-btn text-zinc-300 hover:text-primary transition-colors animate-fade-in" data-share-org="${escapeHtml(org.name)}" data-share-url="${escapeHtml(org.ideas || githubUrlFromValue(org.github) || '')}" title="Share organization">
+              <span class="material-symbols-outlined text-lg">share</span>
+            </button>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
@@ -3114,6 +3117,12 @@ document.addEventListener('DOMContentLoaded', () => {
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
+<!-- Toast Notification -->
+<div id="shareToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface-container text-on-surface px-6 py-3 rounded-full shadow-xl flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300 translate-y-4 z-[60]">
+  <span class="material-symbols-outlined text-primary">check_circle</span>
+  <span class="font-medium text-sm">Organization link copied!</span>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const scrollToTopBtn = document.getElementById('scrollToTopBtn');
@@ -3132,6 +3141,80 @@ document.addEventListener('DOMContentLoaded', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
+
+  // Share button logic
+  const shareToast = document.getElementById('shareToast');
+  let toastTimeout;
+
+  async function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (err) {
+      console.warn('Clipboard API failed, trying fallback...', err);
+    }
+
+    // Fallback for non-secure contexts (http, mobile, local IP testing)
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed"; // Keep offscreen
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return successful;
+    } catch (err) {
+      console.error('Fallback copy failed:', err);
+      return false;
+    }
+  }
+
+  document.addEventListener('click', async (e) => {
+    const shareBtn = e.target.closest('.share-btn');
+    if (shareBtn) {
+      const orgName = shareBtn.getAttribute('data-share-org');
+      const orgUrl = shareBtn.getAttribute('data-share-url');
+      const shareText = `Check out ${orgName} for GSoC 2026: ${orgUrl}`;
+
+      const success = await copyToClipboard(shareText);
+      
+      if (success) {
+        // Find icon inside button
+        const icon = shareBtn.querySelector('.material-symbols-outlined');
+        
+        if (icon && icon.textContent !== 'check_circle') {
+          const originalIcon = icon.textContent;
+          icon.textContent = 'check_circle';
+          shareBtn.classList.remove('text-zinc-300');
+          shareBtn.classList.add('text-green-500');
+          
+          // Revert icon and color after 3 seconds independently
+          setTimeout(() => {
+            icon.textContent = originalIcon;
+            shareBtn.classList.add('text-zinc-300');
+            shareBtn.classList.remove('text-green-500');
+          }, 3000);
+        }
+
+        // Show toast
+        if (shareToast) {
+          clearTimeout(toastTimeout);
+          shareToast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+          shareToast.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+          
+          toastTimeout = setTimeout(() => {
+            shareToast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            shareToast.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+          }, 3000);
+        }
+      }
+    }
+  });
 });
 </script>
 </body>

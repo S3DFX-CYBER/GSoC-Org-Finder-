@@ -1,3 +1,5 @@
+// @ts-check
+/* eslint-env node */
 // Computes community activity scores for all GSoC orgs
 // Run via GitHub Actions daily
 
@@ -7,6 +9,11 @@ const path = require('path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OUTPUT_FILE = path.join(__dirname, '../../data/community_activity.json');
 const ORG_STATS_FILE = path.join(__dirname, '../../data/org-stats.json');
+
+if (!GITHUB_TOKEN) {
+  console.error('❌ GITHUB_TOKEN is required');
+  process.exit(1);
+}
 
 const headers = {
   'Authorization': `token ${GITHUB_TOKEN}`,
@@ -79,16 +86,15 @@ async function analyzeOrg({ name, repo }) {
     let issueResponseDays = 14; // default
     if (Array.isArray(issues) && issues.length > 0) {
       const responseTimes = issues
-        .filter(i => i.created_at && i.closed_at)
-        .map(i => (new Date(i.closed_at) - new Date(i.created_at)) / 86400000);
-      if (responseTimes.length > 0) {
+        .filter(i => i.created_at && i.closed_at && !i.pull_request)
+        .map(i => (+new Date(i.closed_at) - +new Date(i.created_at)) / 86400000);      if (responseTimes.length > 0) {
         issueResponseDays = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       }
     }
 
     // Fetch PRs
     const prs = await fetchJSON(
-      `https://api.github.com/repos/${repo}/pulls?state=closed&per_page=30`
+      `https://api.github.com/repos/${repo}/pulls?state=closed&since=${since}&per_page=30`
     );
     let prMergeRate = 0.5; // default
     if (Array.isArray(prs) && prs.length > 0) {

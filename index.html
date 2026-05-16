@@ -463,12 +463,12 @@
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -532,9 +532,13 @@
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
+      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Timeline
+      </a>
+      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        AI Recommender
       </a>
       <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
@@ -548,13 +552,9 @@
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
+      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+        <span class="material-symbols-outlined text-lg">menu_book</span>
+        Guide
       </a>
     </div>
     
@@ -568,7 +568,7 @@
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -3105,7 +3105,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-<script src="src/js/app.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

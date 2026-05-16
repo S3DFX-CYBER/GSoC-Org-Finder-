@@ -70,23 +70,34 @@ Once Stage 1 passes, the PR is routed to you via the automated reviewer assignme
 **Your workflow:**
 
 1. You receive a GitHub review request notification
-2. Review the code for quality, correctness, and project fit (see checklist below)
-3. Either **Approve** (adds `gssoc-mentor-approved` label automatically) or **Request Changes**
-4. If you request changes, wait for the contributor to push fixes, then re-review
-5. Once you approve, the PR advances to Stage 3
+2. You have **24 hours** to begin your review — after that, the bot will reassign the PR to another mentor
+3. Review the code for quality, correctness, and project fit (see checklist below)
+4. Either **Approve** via GitHub review (adds `mentor-approved` + `pa-review-required` labels automatically) or **Request Changes**
+5. You can also comment `/approve-pr` or `/lgtm` to approve via comment (must be the first word in the comment)
+6. If you request changes, wait for the contributor to push fixes, then re-review
+7. Once you approve, the PR advances to Stage 3
 
 **Labels you'll see:**
 
 | Label | Meaning |
 |-------|---------|
+| `needs-mentor-review` | PR is waiting for mentor review |
 | `mentor-review-requested` | PR assigned to you for review |
-| `gssoc-mentor-approved` | You (or another mentor) approved — advances to Stage 3 |
+| `mentor-approved` | You (or another mentor) approved |
+| `gssoc-mentor-approved` | GSSOC-specific mentor approval |
+| `pa-review-required` | Advances to Stage 3 — PA/Maintainer review needed |
 | `needs-stage-1-fixes` | Stage 1 checks failed — not ready for your review yet |
+
+**24-Hour Timeout:**
+- If you do not respond within 24 hours, the automated system will remove you from the review and assign another active mentor
+- This ensures PRs are not blocked waiting for inactive reviewers
+- If you are unavailable, please dismiss yourself from the review so the rotation happens faster
 
 ### Stage 3 — Maintainer / PA Review
 
 After your approval, the project admin (@S3DFX-CYBER) performs the final merge decision:
 
+- The `pa-review-required` label is automatically applied when you approve
 - Confirms the PR aligns with project direction and architecture
 - Checks for security or performance concerns you may have flagged
 - Merges the PR and awards points
@@ -158,6 +169,7 @@ Action: Close the duplicate, direct to the original.
 - Provide educational feedback
 - Focus on whether the change works correctly
 - Guide contributors toward improvement
+- **Assignment:** No restrictions — anyone can self-assign beginner issues
 
 ### Level 2 (25 pts) — Intermediate
 
@@ -165,6 +177,7 @@ Action: Close the duplicate, direct to the original.
 - Verify logic correctness
 - Check edge cases
 - Ensure proper error handling where appropriate
+- **Assignment:** Requires account age ≥30 days for auto-assignment
 
 ### Level 3 (45 pts) — Advanced
 
@@ -173,6 +186,7 @@ Action: Close the duplicate, direct to the original.
 - Check security considerations
 - Ensure architectural consistency
 - Require thorough testing evidence
+- **Assignment:** Requires at least 1 merged PR in this repository
 
 ---
 
@@ -180,7 +194,7 @@ Action: Close the duplicate, direct to the original.
 
 ### Do
 
-- Review PRs within 24–72 hours
+- Review PRs within **24 hours** (you will be auto-rotated if you miss this window)
 - Provide specific line-by-line feedback
 - Suggest improvements with code examples when possible
 - Acknowledge good work and effort

@@ -3,8 +3,6 @@ name: 📊 Contributor Leaderboard
 on:
   pull_request_target:
     types:
-      - opened
-      - reopened
       - closed
 
 permissions:
@@ -18,6 +16,7 @@ concurrency:
 
 jobs:
   leaderboard:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

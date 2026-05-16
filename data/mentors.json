@@ -116,11 +116,34 @@
   "AnkiDroid": {
     "org": "AnkiDroid",
     "ideasUrl": "https://github.com/ankidroid/Anki-Android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/qjzcRTx",
+        "label": "#ankidroid-gsoc"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Arthur Milchior",
+        "github": "Arthur-Milchior",
+        "githubUrl": "https://github.com/Arthur-Milchior"
+      },
+      {
+        "name": "Sanjay Sargam",
+        "github": "SanjaySargam",
+        "githubUrl": "https://github.com/SanjaySargam"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/anki-android",
+        "label": "AnkiDroid Google Group"
+      }
+    ],
+    "tip": "Join the Discord server and go to #ankidroid-gsoc channel for GSoC updates and mentor communication.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "AOSSIE": {
@@ -285,24 +308,21 @@
   "BRL-CAD": {
     "org": "BRL-CAD",
     "ideasUrl": "https://brlcad.org/wiki/Google_Summer_of_Code",
-    "channels": [
-      {
-        "type": "Zulip",
-        "url": "https://brlcad.zulipchat.com",
-        "label": "BRL-CAD Zulip"
-      }
-    ],
-    "mentors": [],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "mailto:devs@brlcad.org",
-        "label": "BRL-CAD Developer Mailing List"
-      }
-    ],
-    "tip": "BRL-CAD uses group mentorship. Contact the community via Zulip at https://brlcad.zulipchat.com or email devs@brlcad.org.",
-    "status": "ok",
-    "lastFetched": "2026-05-15T00:00:00.000Z"
+    "channels": [],
+    "mentors": [
+  {"name": "pca006132", "github": "", "githubUrl": ""},
+  {"name": "Torsten Paul", "github": "", "githubUrl": ""},
+  {"name": "Himanshu Sekhar Nayak", "github": "", "githubUrl": ""},
+  {"name": "Divyanshu Garg", "github": "", "githubUrl": ""},
+  {"name": "Moult", "github": "", "githubUrl": ""},
+  {"name": "Morrison", "github": "", "githubUrl": ""},
+  {"name": "Thomas Krijnen", "github": "", "githubUrl": ""},
+  {"name": "Daniel Rossberg", "github": "", "githubUrl": ""}
+],
+    "mailingLists": [],
+    "tip": "",
+    "status": "no-contact-found",
+    "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "C2SI": {
     "org": "C2SI",
@@ -463,12 +483,18 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
+        "label": "#cncf-mentoring Slack"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "CRIU": {
     "org": "CRIU",

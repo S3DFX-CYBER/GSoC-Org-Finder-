@@ -804,8 +804,23 @@
       </button>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
-        <!-- Watchlist items will be rendered here -->
+      <div class="lg:col-span-2 space-y-6">
+        <div id="recentlyViewedSection" class="space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
+              <h3 class="text-lg font-bold text-zinc-900">Recently Viewed Organizations</h3>
+              <span id="recentlyViewedOverflowBadge" class="hidden rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-zinc-500">+0</span>
+            </div>
+            <button id="clearRecentlyViewedBtn" class="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-500 transition-colors">Clear All</button>
+          </div>
+          <div id="recentlyViewedContainer" class="space-y-3">
+            <!-- Recently viewed items will be rendered here -->
+          </div>
+        </div>
+
+        <div class="space-y-4" id="watchlistContainer">
+          <!-- Watchlist items will be rendered here -->
+        </div>
       </div>
       <!-- Sidebar -->
       <div class="space-y-6">
@@ -1414,6 +1429,20 @@
   let compareList = [];
   const bookmarkedSet = (() => {
     return new Set(parseStoredBookmarks());
+  })();
+
+  // Recently Viewed Organizations
+  const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
+  const RECENTLY_VIEWED_LIMIT = 8;
+  let recentlyViewed = (() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+      if (!Array.isArray(parsed)) return [];
+      const orgNames = new Set(ORGS.map(org => org.name));
+      return parsed.filter(name => typeof name === 'string' && orgNames.has(name));
+    } catch {
+      return [];
+    }
   })();
 
   const selectedLanguages = new Set();
@@ -2596,9 +2625,127 @@
       </div>`;
   }
 
+  function addRecentlyViewed(name) {
+    if (!name) return;
+    try {
+      // Remove if already exists, then add to front
+      recentlyViewed = recentlyViewed.filter(n => n !== name);
+      recentlyViewed.unshift(name);
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to add to recently viewed:', e);
+    }
+  }
+
+  function persistRecentlyViewed() {
+    try {
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
+    } catch (error) {
+      console.warn('Recently viewed persistence failed:', error);
+    }
+  }
+
+  function removeRecentlyViewed(name) {
+    try {
+      recentlyViewed = recentlyViewed.filter(n => n !== name);
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to remove from recently viewed:', e);
+    }
+  }
+
+  function clearRecentlyViewed() {
+    try {
+      recentlyViewed = [];
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to clear recently viewed:', e);
+    }
+  }
+
+  function renderRecentlyViewed() {
+    const section = document.getElementById('recentlyViewedSection');
+    const container = document.getElementById('recentlyViewedContainer');
+    const clearBtn = document.getElementById('clearRecentlyViewedBtn');
+    const overflowBadge = document.getElementById('recentlyViewedOverflowBadge');
+    if (!section || !container) return;
+
+    // Hide section if empty
+    if (recentlyViewed.length === 0) {
+      section.classList.add('hidden');
+      overflowBadge?.classList.add('hidden');
+      return;
+    }
+
+    section.classList.remove('hidden');
+    container.innerHTML = '';
+
+    const overflowCount = Math.max(recentlyViewed.length - RECENTLY_VIEWED_LIMIT, 0);
+    if (overflowBadge) {
+      overflowBadge.textContent = overflowCount > 0 ? `+${overflowCount}` : '';
+      overflowBadge.classList.toggle('hidden', overflowCount === 0);
+    }
+
+    recentlyViewed.slice(0, RECENTLY_VIEWED_LIMIT).forEach(name => {
+      const org = ORGS.find(o => o.name === name);
+      if (!org) return;
+
+      const CAT_COLOURS = {
+        science: 'bg-blue-100 text-blue-700',
+        programming: 'bg-violet-100 text-violet-700',
+        data: 'bg-cyan-100 text-cyan-700',
+        web: 'bg-green-100 text-green-700',
+        os: 'bg-orange-100 text-orange-700',
+        security: 'bg-red-100 text-red-700',
+        media: 'bg-pink-100 text-pink-700',
+        infra: 'bg-yellow-100 text-yellow-700',
+        ai: 'bg-purple-100 text-purple-700',
+        dev: 'bg-teal-100 text-teal-700',
+        other: 'bg-zinc-100 text-zinc-600',
+      };
+      const catClass = CAT_COLOURS[org.cat] || CAT_COLOURS.other;
+      const catLabel = {
+        science:'Science', programming:'Programming', data:'Data', web:'Web',
+        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+        ai:'AI / ML', dev:'Dev Tools', other:'Other',
+      }[org.cat] || org.cat;
+
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-lg p-4 border border-zinc-100 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
+      card.innerHTML = `
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm mb-1">${escapeHtml(org.name)}</h4>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="${catClass} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${escapeHtml(catLabel)}</span>
+            <span class="text-[10px] text-zinc-500">${escapeHtml(String(org.years))} years</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 ml-2 flex-shrink-0">
+          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${escapeHtml(name)}" title="Remove from recently viewed">
+            <span class="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      `;
+      card.onclick = () => openModal(org.name);
+      container.appendChild(card);
+    });
+
+    // Wire up remove buttons
+    container.querySelectorAll('[data-remove-recent]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeRecentlyViewed(btn.dataset.removeRecent);
+      });
+    });
+  }
+
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
+    addRecentlyViewed(name);
 
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
@@ -3037,10 +3184,13 @@ if(org.ideas){
   })();
   renderOrgs();
   renderWatchlist();
+  renderRecentlyViewed();
   updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
+  // Wire up Recently Viewed clear button
+  document.getElementById('clearRecentlyViewedBtn')?.addEventListener('click', clearRecentlyViewed);
 
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;

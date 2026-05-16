@@ -2,6 +2,15 @@
 export const config = { runtime: 'edge' };
 const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const CACHE_MAX_SIZE = 1000;
+
+function safeCacheSet(key, value) {
+  if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
+    const firstKey = CACHE.keys().next().value;
+    CACHE.delete(firstKey);
+  }
+  CACHE.set(key, value);
+}
 
 export default async function handler(req) {
   const headers = {
@@ -17,11 +26,20 @@ export default async function handler(req) {
 
   const { searchParams } = new URL(req.url);
   const repo = searchParams.get('repo');
+  const user = searchParams.get('user');
   const gfiMode = searchParams.get('gfi') === '1';
   const issuesMode = searchParams.get('issues') === '1';
 
-  if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+  if (!repo && !user) {
+    return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
+  }
+
+  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
+  }
+
+  if (user && !/^[\w.-]+$/.test(user)) {
+    return new Response(JSON.stringify({ error: 'Invalid user' }), { status: 400, headers });
   }
 
   const token = process.env.GITHUB_TOKEN;
@@ -34,6 +52,84 @@ export default async function handler(req) {
     Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'gsoc-org-finder',
   };
+
+  // MODE: ?user=username → return user profile analysis for AI recommender
+  if (user) {
+    const cacheKey = 'user__' + user;
+    const cached = CACHE.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+    }
+
+    try {
+      let page = 1;
+      let repos = [];
+      while (page <= 3) {
+        try {
+          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
+            headers: ghHeaders,
+            signal: AbortSignal.timeout(5000)
+          });
+          if (!res.ok) {
+            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            break;
+          }
+          const pageRepos = await res.json();
+          repos = repos.concat(pageRepos);
+          if (pageRepos.length < 100) break;
+          page++;
+        } catch (e) {
+          // Gracefully break loop on timeout/err for pages 2-3, allowing partial results
+          if (page === 1) throw e; 
+          break;
+        }
+      }
+      
+      let totalStars = 0;
+      const languageCounts = {};
+      const topicCounts = {};
+      let activeDays = 9999;
+      
+      repos.forEach(r => {
+        if (r.fork) return; // Skip forks for skill analysis
+        totalStars += r.stargazers_count;
+        if (r.language) {
+          languageCounts[r.language] = (languageCounts[r.language] || 0) + 1;
+        }
+        if (r.topics) {
+          r.topics.forEach(t => {
+            topicCounts[t] = (topicCounts[t] || 0) + 1;
+          });
+        }
+        if (r.pushed_at) {
+          const d = new Date(r.pushed_at);
+          const days = Math.floor((Date.now() - d) / 86400000);
+          if (days < activeDays) activeDays = days;
+        }
+      });
+
+      const languages = Object.entries(languageCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+      const topics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+      
+      let activity = 'low';
+      if (activeDays < 30) activity = 'high';
+      else if (activeDays < 90) activity = 'medium';
+
+      const result = {
+        languages,
+        topics,
+        stars: totalStars,
+        activity,
+        ts: Date.now()
+      };
+      
+      safeCacheSet(cacheKey, result);
+      return new Response(JSON.stringify(result), { status: 200, headers });
+
+    } catch (err) {
+      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
+    }
+  }
 
   // MODE: ?gfi=1&issues=1 → return actual issue items
   if (gfiMode && issuesMode) {
@@ -60,8 +156,8 @@ export default async function handler(req) {
         comments: i.comments,
         labels: (i.labels || []).map(l => ({ name: l.name, color: l.color })),
       }));
-      CACHE.set(cacheKey, { total, items, ts: Date.now() });
-      CACHE.set(repo + '__gfi', { gfi: total, ts: Date.now() });
+      safeCacheSet(cacheKey, { total, items, ts: Date.now() });
+      safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
       return new Response(JSON.stringify({ total, items }), { status: 200, headers });
     } catch (err) {
       return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
@@ -86,7 +182,7 @@ export default async function handler(req) {
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
-      if (gfi !== null) CACHE.set(cacheKey, { gfi, ts: Date.now() });
+      if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
       return new Response(JSON.stringify({ gfi }), { status: 200, headers });
     } catch (err) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
@@ -141,7 +237,7 @@ export default async function handler(req) {
       ts: Date.now(),
     };
 
-    CACHE.set(repo, result);
+    safeCacheSet(repo, result);
     return new Response(JSON.stringify(result), { status: 200, headers });
 
   } catch (err) {

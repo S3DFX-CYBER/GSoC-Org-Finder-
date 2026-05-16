@@ -3110,14 +3110,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
-+<button id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to top">↑</button>
+<button id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to top">↑</button>
 
 <style>
   #scrollTopBtn {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 9999;
+    z-index: 1000;
 
     width: 65px;
     height: 65px;
@@ -3165,6 +3165,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   #scrollTopBtn:hover {
+    animation-play-state: paused;
     background: linear-gradient(135deg, #c45c00, #ff8c33);
 
     box-shadow:
@@ -3176,15 +3177,21 @@ document.addEventListener('DOMContentLoaded', () => {
 </style>
 
 <script>
-  const btn = document.getElementById("scrollTopBtn");
-
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 100) {
-      btn.style.display = "flex";
-    } else {
-      btn.style.display = "none";
-    }
-  });
+   const btn = document.getElementById("scrollTopBtn");
+   let scrollTimeout;
+ 
+   window.addEventListener("scroll", () => {
+     if (scrollTimeout) return;
+     
+     scrollTimeout = setTimeout(() => {
+       if (window.scrollY > 100) {
+         btn.style.display = "flex";
+       } else {
+         btn.style.display = "none";
+       }
+       scrollTimeout = null;
+     }, 150);
+   });
 
   btn.addEventListener("click", () => {
     window.scrollTo({

@@ -22,7 +22,6 @@ jobs:
     name: Validate DCO Sign-offs
     runs-on: ubuntu-latest
 
-    # Skip draft PRs entirely
     if: |
       github.event.pull_request.draft == false &&
       github.actor != 'github-actions[bot]'
@@ -30,16 +29,23 @@ jobs:
     steps:
       - name: Check DCO Sign-offs
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const pr = context.payload.pull_request;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+
             const prNumber = pr.number;
             const username = pr.user.login;
 
-            // Ignore bot accounts
+            // --------------------------------------------------
+            // BOT CHECK
+            // --------------------------------------------------
+
             if (
               pr.user.type === 'Bot' ||
               username.endsWith('[bot]')
@@ -48,7 +54,26 @@ jobs:
               return;
             }
 
-            // Fetch commits
+            // --------------------------------------------------
+            // OUTDATED RUN PROTECTION
+            // --------------------------------------------------
+
+            const currentHeadSha = pr.head.sha;
+            const eventHeadSha =
+              context.payload.pull_request.head.sha;
+
+            if (currentHeadSha !== eventHeadSha) {
+              core.info(
+                'Outdated workflow run detected'
+              );
+
+              return;
+            }
+
+            // --------------------------------------------------
+            // FETCH COMMITS
+            // --------------------------------------------------
+
             const commits = await github.paginate(
               github.rest.pulls.listCommits,
               {
@@ -64,54 +89,153 @@ jobs:
               return;
             }
 
-            // Strict DCO regex
+            // --------------------------------------------------
+            // STRICT DCO VALIDATION
+            // --------------------------------------------------
+
             const signoffRegex =
               /^Signed-off-by:\s+.+\s+<[^<>\s@]+@[^<>\s@]+>\s*$/mi;
 
             const invalidCommits = [];
 
             for (const commit of commits) {
-              const message = commit.commit.message || '';
+
+              const message =
+                commit.commit.message || '';
 
               if (!signoffRegex.test(message)) {
-                invalidCommits.push(commit.sha.substring(0, 7));
+
+                invalidCommits.push(
+                  commit.sha.substring(0, 7)
+                );
               }
             }
 
-            const missingDCO = invalidCommits.length > 0;
+            const missingDCO =
+              invalidCommits.length > 0;
 
-            // Labels
-            const VERIFIED_LABEL = 'dco-verified';
-            const MISSING_LABEL = 'dco-missing';
+            // --------------------------------------------------
+            // LABELS
+            // --------------------------------------------------
 
-            // Sticky comment identifier
-            const MARKER = '<!-- dco-helper-comment -->';
+            const VERIFIED_LABEL =
+              'dco-verified';
 
-            // Build comment body
+            const MISSING_LABEL =
+              'dco-missing';
+
+            async function safeRemoveLabel(name) {
+
+              try {
+
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  name
+                });
+
+                core.info(
+                  `Removed label: ${name}`
+                );
+
+              } catch (e) {
+
+                core.info(
+                  `Label ${name} not present`
+                );
+              }
+            }
+
+            async function safeAddLabel(name) {
+
+              try {
+
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  labels: [name]
+                });
+
+                core.info(
+                  `Added label: ${name}`
+                );
+
+              } catch (e) {
+
+                core.warning(
+                  `Failed adding label ${name}: ${e.message}`
+                );
+              }
+            }
+
+            // Always reset state first
+            await safeRemoveLabel(
+              VERIFIED_LABEL
+            );
+
+            await safeRemoveLabel(
+              MISSING_LABEL
+            );
+
+            // Apply ONLY one final label
+            if (missingDCO) {
+
+              await safeAddLabel(
+                MISSING_LABEL
+              );
+
+            } else {
+
+              await safeAddLabel(
+                VERIFIED_LABEL
+              );
+            }
+
+            // --------------------------------------------------
+            // STICKY COMMENT
+            // --------------------------------------------------
+
+            const MARKER =
+              '<!-- dco-helper-comment -->';
+
             let body = '';
 
             if (missingDCO) {
+
               body =
                 `${MARKER}\n` +
                 `## ⚠️ DCO Sign-off Missing\n\n` +
                 `Hi @${username} 👋\n\n` +
                 `Some commits in this PR are missing a valid \`Signed-off-by\` line.\n\n` +
+
                 `### Invalid Commits\n\n` +
-                invalidCommits.map(sha => `- \`${sha}\``).join('\n') +
+
+                invalidCommits
+                  .map(sha => `- \`${sha}\``)
+                  .join('\n') +
+
                 `\n\n` +
+
                 `### Fix Single Commit\n\n` +
+
                 '```bash\n' +
                 'git commit --amend --signoff\n' +
                 'git push --force-with-lease\n' +
                 '```\n\n' +
+
                 `### Fix Multiple Commits\n\n` +
+
                 '```bash\n' +
                 'git rebase --signoff HEAD~N\n' +
                 'git push --force-with-lease\n' +
                 '```\n\n' +
+
                 `This comment updates automatically after fixes are pushed.`;
 
             } else {
+
               body =
                 `${MARKER}\n` +
                 `## ✅ DCO Sign-off Verified\n\n` +
@@ -120,67 +244,46 @@ jobs:
                 `Thank you for following the DCO requirements 🚀`;
             }
 
-            // Fetch comments
-            const comments = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner,
-                repo,
-                issue_number: prNumber,
-                per_page: 100
-              }
-            );
+            // --------------------------------------------------
+            // FIND EXISTING COMMENT
+            // --------------------------------------------------
 
-            // Find sticky bot comment
-            const existing = comments.find(comment =>
-              comment.user.type === 'Bot' &&
-              comment.body.includes(MARKER)
-            );
-
-            // Helper functions
-            async function safeAddLabel(name) {
-              try {
-                await github.rest.issues.addLabels({
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
                   owner,
                   repo,
                   issue_number: prNumber,
-                  labels: [name]
-                });
-              } catch (e) {
-                core.warning(`Failed adding label ${name}: ${e.message}`);
-              }
-            }
+                  per_page: 100
+                }
+              );
 
-            async function safeRemoveLabel(name) {
-              try {
-                await github.rest.issues.removeLabel({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  name
-                });
-              } catch (e) {
-                core.info(`Label ${name} not present`);
-              }
-            }
+            const existing =
+              comments.find(comment =>
+                comment.user.type === 'Bot' &&
+                comment.body.includes(MARKER)
+              );
 
-            // Update labels only if needed
-            if (missingDCO) {
-              await safeRemoveLabel(VERIFIED_LABEL);
-              await safeAddLabel(MISSING_LABEL);
-            } else {
-              await safeRemoveLabel(MISSING_LABEL);
-              await safeAddLabel(VERIFIED_LABEL);
-            }
+            // Avoid unnecessary updates
+            if (
+              existing &&
+              existing.body.trim() === body.trim()
+            ) {
 
-            // Avoid unnecessary comment updates
-            if (existing && existing.body.trim() === body.trim()) {
-              core.info('Comment already up-to-date');
+              core.info(
+                'Comment already up-to-date'
+              );
+
               return;
             }
 
-            // Update or create sticky comment
+            // --------------------------------------------------
+            // UPDATE COMMENT
+            // --------------------------------------------------
+
             if (existing) {
+
               await github.rest.issues.updateComment({
                 owner,
                 repo,
@@ -188,8 +291,12 @@ jobs:
                 body
               });
 
-              core.info('Updated sticky DCO comment');
+              core.info(
+                'Updated sticky DCO comment'
+              );
+
             } else {
+
               await github.rest.issues.createComment({
                 owner,
                 repo,
@@ -197,12 +304,19 @@ jobs:
                 body
               });
 
-              core.info('Created sticky DCO comment');
+              core.info(
+                'Created sticky DCO comment'
+              );
             }
 
-            // Optional status summary
+            // --------------------------------------------------
+            // SUMMARY
+            // --------------------------------------------------
+
             core.summary
-              .addHeading('DCO Validation Result')
+              .addHeading(
+                'DCO Validation Result'
+              )
               .addRaw(
                 missingDCO
                   ? '❌ Missing sign-offs detected'

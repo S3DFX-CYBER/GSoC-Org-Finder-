@@ -175,12 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
     errorState.classList.remove('hidden');
     resultsContainer.innerHTML = '';
     const retryBtn=document.getElementById('aiRetryBtn');
+    if(retryBtn){
+      retryBtn.style.display='none';
+      retryBtn.onclick=null;
+    }
     if(retryBtn&&retryFunc){
       retryBtn.style.display='inline-flex';
       retryBtn.onclick =()=>{
           errorState.classList.add('hidden');
-          document.getElementById('github-username').value='';
-        retryFunc();
+          const ghInput = document.getElementById('aiGhUsername');
+          if(ghInput) ghInput.value='';
+          retryFunc();
         };
     }
   }

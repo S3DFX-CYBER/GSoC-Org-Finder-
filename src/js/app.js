@@ -40,7 +40,7 @@ function updateThemeIcon(){
 const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
 const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
 const CODING_START=new Date('2026-05-15T00:00:00Z');
-const CODING_END=new Date('2026-08-31T00:00:00Z');
+const CODING_END=new Date('2026-09-01T00:00:00Z');
 function updateCountdown(){
   const now=Date.now();
   const banner=document.getElementById('countdownBanner');
@@ -61,6 +61,9 @@ function updateCountdown(){
 target=CODING_START.getTime();
 label='Selection Period — Coding Starts In';
 subText='Mentors are reviewing applications right now!';
+banner.style.background='linear-gradient(135deg,rgba(249,115,22,.07),rgba(249,115,22,.12))';
+banner.borderBottomColor='rgba(249,115,22,.3)';
+banner.style.color='var(--orange)';
   }else if(now<CODING_END.getTime()){
     target=CODING_END.getTime();
     label='GSoC 2026 Coding Period — Ends In';
@@ -1369,12 +1372,5 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 document.getElementById('surpriseBtn')?.addEventListener('click', () => {
-  const pool = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
-if(!pool.length){
-    showCompareToast('No orgs match your current filters!');
-return;
-}
-const pick = pool[Math.floor(Math.random() * pool.length)];
-const idx  = ORGS.indexOf(pick);
-if(idx >= 0) openModal(idx);
+globalThis.surpriseMe();
 });

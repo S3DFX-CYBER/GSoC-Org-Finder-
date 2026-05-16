@@ -10,7 +10,6 @@ permissions:
 jobs:
   backfill-contributors:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,56 +19,33 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-
           touch contributors.txt
-
           PAGE=1
-
           while true; do
             RESPONSE=$(gh api \
               -H "Accept: application/vnd.github+json" \
               "/repos/${GITHUB_REPOSITORY}/pulls?state=closed&per_page=100&page=${PAGE}")
-
             COUNT=$(echo "$RESPONSE" | jq length)
-
-            if [ "$COUNT" -eq 0 ]; then
-              break
-            fi
-
+            if [ "$COUNT" -eq 0 ]; then break; fi
             echo "$RESPONSE" | jq -r '
-              .[]
-              | select(.merged_at != null)
-              | select(.user.type != "Bot")
-              | .user.login
+              .[] | select(.merged_at != null) | select(.user.type != "Bot") | .user.login
             ' >> contributors.txt
-
             PAGE=$((PAGE + 1))
           done
-
           sort -u contributors.txt -o contributors.txt
-
-          echo "Found contributors:"
-          cat contributors.txt
 
       - name: Update README contributors section
         run: |
           set -euo pipefail
-
           TMP_FILE=$(mktemp)
-
           while read -r USERNAME; do
             if [[ ! "$USERNAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$ ]]; then
-              echo "Skipping invalid username: $USERNAME"
               continue
             fi
-
             PROFILE_URL="https://github.com/${USERNAME}"
             AVATAR_URL="https://github.com/${USERNAME}.png"
-
             echo "<a href=\"${PROFILE_URL}\"><img src=\"${AVATAR_URL}\" width=\"50px\" alt=\"${USERNAME}\" /></a>" >> "$TMP_FILE"
-
           done < contributors.txt
-
           awk '
             BEGIN { inside=0 }
             /<!-- CONTRIBUTORS_START -->/ {
@@ -83,7 +59,6 @@ jobs:
             }
             !inside
           ' README.md > README.new
-
           mv README.new README.md
 
       - name: Create Pull Request

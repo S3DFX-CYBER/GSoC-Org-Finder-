@@ -296,14 +296,31 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 @keyframes su{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .modal-top{padding:26px 26px 0}
-.modal-top-actions{position:absolute;top:14px;right:14px;display:flex;gap:6px}
-.close-btn,.modal-compare-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .18s}
+
+.close-btn,.modal-compare-btn{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:1.5px solid var(--border);
+  background:var(--bg);
+  color:var(--ink3);
+  cursor:pointer;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .18s
+}
 .close-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
 .modal-compare-btn:hover,.modal-compare-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(26,86,219,.06)}
 .m-cat{margin-bottom:8px}
 .m-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:900;color:var(--ink);line-height:1.2;padding-right:80px;margin-bottom:4px;transition:color .3s}
 .m-desc{font-size:13px;color:var(--ink3);line-height:1.7;padding:0 26px 16px}
-.modal-body{padding:0 26px 26px}
+.modal-body{
+  padding:0 26px 26px;
+  max-height:75vh;
+  overflow-y:auto;
+}
 .ms-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
 .m-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
 .mc{background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center;transition:background .3s,border-color .3s}
@@ -706,4 +723,41 @@ footer a:hover{text-decoration:underline}
   border-color: var(--orange);
   color: var(--orange-deep);
   background: var(--orange-pale);
+}
+
+/* =========================
+   MODAL FIXES
+========================= */
+.modal{
+  background:var(--modal-bg);
+  border-radius:20px;
+  width:100%;
+  max-width:560px;
+  max-height:90vh;
+  overflow:hidden;
+  position:relative;
+  animation:su .22s ease;
+  box-shadow:var(--shadow-lg);
+  border:1.5px solid var(--border);
+  transition:background .3s,border-color .3s;
+  display:flex;
+  flex-direction:column;
+}
+
+.modal-body{
+  padding:0 26px 26px;
+  overflow-y:auto;
+  max-height:calc(90vh - 80px);
+}
+.modal-sticky-header{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  padding:12px 16px;
+  background:var(--modal-bg);
+  border-bottom:1px solid var(--border2);
+  flex-shrink:0;
 }

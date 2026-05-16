@@ -103,7 +103,7 @@ function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, m
     let delta = 0;
     if (matches >=4) delta = 70;
     else if (matches >= 2) delta = 50;
-    else if (matches == 1) delta = 25;
+    else if (matches === 1) delta = 25;
     
     if (delta > 0) matchReasons.push(`Strong skill match with ${matches} technologies`);
     return delta;

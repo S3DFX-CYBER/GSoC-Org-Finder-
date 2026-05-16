@@ -1116,12 +1116,15 @@
 </footer>
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+<div class="modal-bg" id="orgModal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <!-- Sticky Header -->
+    <div class="modal-sticky-header">
+      <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
+  </div>
     <div class="modal-body">
       <div class="metrics-grid mb-8" id="mMetrics">
         <!-- Injected: Years, Competition, First Year, etc. -->
@@ -1169,9 +1172,11 @@
 </div>
 
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
-<div class="modal-bg compare-bg" id="compareModal">
+<div class="modal-bg compare-bg" id="compareModal" onclick="cloaseCompareEv(event)">
   <div class="modal w-full max-w-5xl">
+   <div class="modal-sticky-header">
     <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+   </div> 
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
       <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>

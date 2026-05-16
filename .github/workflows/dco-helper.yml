@@ -58,9 +58,14 @@ jobs:
             // OUTDATED RUN PROTECTION
             // --------------------------------------------------
 
-            const currentHeadSha = pr.head.sha;
-            const eventHeadSha =
-              context.payload.pull_request.head.sha;
+            const { data: currentPr } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: prNumber
+            });
+
+            const currentHeadSha = currentPr.head.sha;
+            const eventHeadSha = pr.head.sha;
 
             if (currentHeadSha !== eventHeadSha) {
               core.info(

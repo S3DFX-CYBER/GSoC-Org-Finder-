@@ -65,18 +65,16 @@ jobs:
             const MARKER =
               '<!-- pr-welcome-v2 -->';
 
-            const { data: comments } =
-              await github.rest.issues.listComments({
-                owner,
-                repo,
-                issue_number: number,
-                per_page: 100
-              });
-
-            const alreadyPosted =
-              comments.some(c =>
-                (c.body || '').includes(MARKER)
-              );
+            let alreadyPosted = false;
+            for await (const page of github.paginate.iterator(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number: number, per_page: 100 }
+            )) {
+              if (page.data.some(c => (c.body || '').includes(MARKER))) {
+                alreadyPosted = true;
+                break;
+              }
+            }
 
             if (alreadyPosted) {
               core.info(
@@ -91,17 +89,9 @@ jobs:
 
             let programNote = '';
 
-            if (isGssoc) {
-
-              programNote =
-                `> 🟢 **GSSOC PR detected** — your PR will be routed through the GSSOC mentor review pipeline.`;
-
-            } else if (isNsoc) {
-
-              programNote =
-                `> 🔵 **NSOC PR detected** — your PR will follow the NSOC review pipeline.`;
-
-            } else {
+            if (isGssoc) labelsToAdd.push('gssoc-review');
+            else if (isNsoc) labelsToAdd.push('nsoc-review'); 
+            else {
 
               programNote =
                 `> ⚪ **Standard PR detected** — your PR will follow the standard repository review pipeline.`;

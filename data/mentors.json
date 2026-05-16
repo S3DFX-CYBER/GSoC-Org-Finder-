@@ -966,8 +966,9 @@
   "ideasUrl": "https://www.incf.org/incf-gsoc-2026-projects",
   "channels": [
   {
-    "name": "Neurostars",
-    "url": "https://neurostars.org/"
+    "type": "Forum",
+    "url": "https://neurostars.org/",
+    "label": "Neurostars forum"
   }
 ],
   "mentors": [
@@ -988,10 +989,11 @@
     }
    
   ],
-  "mailingLists": [
+ "mailingLists": [
   {
-    "name": "INCF GSoC",
-    "email": "gsoc@incf.org"
+    "type": "Mailing list",
+    "url": "mailto:gsoc@incf.org",
+    "label": "INCF GSoC email"
   }
 ],
   "tip": "Use Neurostars forum and email for mentor communication.",

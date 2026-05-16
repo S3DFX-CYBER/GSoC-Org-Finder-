@@ -116,34 +116,11 @@
   "AnkiDroid": {
     "org": "AnkiDroid",
     "ideasUrl": "https://github.com/ankidroid/Anki-Android/wiki/Google-Summer-of-Code-2026",
-    "channels": [
-      {
-        "type": "Discord",
-        "url": "https://discord.com/invite/qjzcRTx",
-        "label": "#ankidroid-gsoc"
-      }
-    ],
-    "mentors": [
-      {
-        "name": "Arthur Milchior",
-        "github": "Arthur-Milchior",
-        "githubUrl": "https://github.com/Arthur-Milchior"
-      },
-      {
-        "name": "Sanjay Sargam",
-        "github": "SanjaySargam",
-        "githubUrl": "https://github.com/SanjaySargam"
-      }
-    ],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/anki-android",
-        "label": "AnkiDroid Google Group"
-      }
-    ],
-    "tip": "Join the Discord server and go to #ankidroid-gsoc channel for GSoC updates and mentor communication.",
-    "status": "ok",
+    "channels": [],
+    "mentors": [],
+    "mailingLists": [],
+    "tip": "",
+    "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "AOSSIE": {
@@ -474,18 +451,12 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [
-      {
-        "type": "Slack",
-        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
-        "label": "#cncf-mentoring Slack"
-      }
-    ],
+    "channels": [],
     "mentors": [],
     "mailingLists": [],
-    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
-    "status": "ok",
-    "lastFetched": "2026-05-14T20:00:00.000Z"
+    "tip": "",
+    "status": "fetch-failed",
+    "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "CRIU": {
     "org": "CRIU",
@@ -2159,26 +2130,43 @@
   "SageMath": {
     "org": "SageMath",
     "ideasUrl": "https://wiki.sagemath.org/GSoC/2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Zulip",
+        "label": "SageMath Zulip",
+        "url": "https://sagemath.zulipchat.com/"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Travis Scrimshaw",
+        "github": "tscrim",
+        "githubUrl": "https://github.com/tscrim"
+      },
+      {
+        "name": "Martin Rubey",
+        "github": "mantepse",
+        "githubUrl": "https://github.com/mantepse"
+      },
+      {
+        "name": "David Coudert",
+        "github": "dcoudert",
+        "githubUrl": "https://github.com/dcoudert"
+      },
+      {
+        "name": "Rocky Bernstein",
+        "github": "rocky",
+        "githubUrl": "https://github.com/rocky"
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://groups.google.com/forum/",
+        "url": "https://groups.google.com/g/sage-gsoc",
         "label": "sage-gsoc"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/qYzrY-92Q2A/m/P49CneVKAQAJ",
-        "label": "SageMath Mailing list"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/ds7aqEd-lj4/m/IvUXk3ZCAgAJ",
-        "label": "SageMath Mailing list"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Send a short intro email with your background and the idea you're interested in. Direct mentor contact: tcscrims@gmail.com",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

@@ -110,9 +110,8 @@ const AN={
 AN.trackVisit();
 
 // Fix: Add fonts-loaded class once font is ready - prevents FOUI
-globalThis.document.fonts.ready.then(() => {
-  globalThis.document.documentElement.classList.add('fonts-loaded');
-});
+document.documentElement.classList.remove('no-js');
+if(document.fonts){document.fonts.ready.then(()=>{document.documentElement.classList.add('fonts-loaded');});}
 
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION

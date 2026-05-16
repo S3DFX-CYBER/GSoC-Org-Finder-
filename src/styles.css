@@ -2,7 +2,8 @@
   opacity: 0;
   transition: opacity 0.15s ease;
 }
-.fonts-loaded .material-symbols-outlined {
+.fonts-loaded .material-symbols-outlined,
+.no-js .material-symbols-outlined {
   opacity: 1;
 }
 

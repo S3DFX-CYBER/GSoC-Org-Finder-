@@ -9,8 +9,8 @@
         "github": "52north",
         "githubUrl": "https://github.com/52north"
       }
-    ], 
-    "mailingLists": [], 
+    ],
+    "mailingLists": [],
     "tip": "",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -2062,7 +2062,7 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-"preCICE": {
+  "preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
     "channels": [
@@ -2162,15 +2162,48 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "QEMU": {
-    "org": "QEMU",
-    "ideasUrl": "https://wiki.qemu.org/Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "QEMU",
+  "ideasUrl": "https://wiki.qemu.org/Google_Summer_of_Code_2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#qemu-gsoc",
+      "label": "#qemu-gsoc on OFTC"
+    },
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#qemu",
+      "label": "#qemu on OFTC"
+    },
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#kvm",
+      "label": "#kvm on OFTC"
+    }
+  ],
+  "mentors": [
+    { "name": "Peter Xu", "github": "", "githubUrl": "" },
+    { "name": "Marc-André Lureau", "github": "", "githubUrl": "" },
+    { "name": "Stefan Hajnoczi", "github": "", "githubUrl": "" },
+    { "name": "Tyler Fanelli", "github": "", "githubUrl": "" },
+    { "name": "Hanna Czenczek", "github": "", "githubUrl": "" },
+    { "name": "Matias Ezequiel Vara Larsen", "github": "", "githubUrl": "" },
+    { "name": "Francesco Valla", "github": "", "githubUrl": "" },
+    { "name": "Stefano Garzarella", "github": "", "githubUrl": "" },
+    { "name": "Joerg Roedel", "github": "", "githubUrl": "" },
+    { "name": "Luigi Leonardi", "github": "", "githubUrl": "" },
+    { "name": "Gerd Hoffmann", "github": "", "githubUrl": "" },
+    { "name": "Helge Deller", "github": "", "githubUrl": "" }
+  ],
+  "mailingLists": [
+    { "type": "Mailing list", "url": "https://lists.nongnu.org/mailman/listinfo/qemu-devel", "label": "qemu-devel" },
+    { "type": "Mailing list", "url": "https://lists.linux.dev/linux-kvm", "label": "linux-kvm" }
+  ],
+  "tip": "Join #qemu-gsoc on OFTC IRC and introduce yourself before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-16T00:00:00.000Z"
+},
+
   "Qubes OS": {
     "org": "Qubes OS",
     "ideasUrl": "https://www.qubes-os.org/gsoc/",

@@ -2692,14 +2692,8 @@ if(org.ideas){
     ai: 'AI', dev: 'Dev Tools', other: 'Other'
   };
 
-  // Capture the inline name-based openModal so it survives src/js/app.js
-  // redeclaring `openModal(idx)` later in page load.
   const openModalByName = openModal;
 
-  // Similarity scorer: same shape as src/js/app.js getSimilarOrgs.
-  // Defined inline so the modal doesn't depend on app.js loading
-  // (app.js currently fails to parse due to an unrelated duplicate
-  // `matchAllLanguages` declaration, which would suppress the global).
   function scoreSimilarOrgs(currentOrg, n) {
     if (!currentOrg || typeof ORGS === 'undefined' || !Array.isArray(ORGS)) return [];
     const limit = n > 0 ? n : 3;

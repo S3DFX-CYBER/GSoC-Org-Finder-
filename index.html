@@ -811,7 +811,7 @@
               <h3 class="text-lg font-bold text-zinc-900">Recently Viewed Organizations</h3>
               <span id="recentlyViewedOverflowBadge" class="hidden rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-zinc-500">+0</span>
             </div>
-            <button id="clearRecentlyViewedBtn" class="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-500 transition-colors">Clear All</button>
+            <button id="clearRecentlyViewedBtn" class="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-500 transition-colors" aria-label="Clear All recently viewed organizations">Clear All</button>
           </div>
           <div id="recentlyViewedContainer" class="space-y-3">
             <!-- Recently viewed items will be rendered here -->
@@ -1457,7 +1457,12 @@
       const parsed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
       if (!Array.isArray(parsed)) return [];
       const orgNames = new Set(ORGS.map(org => org.name));
-      return parsed.filter(name => typeof name === 'string' && orgNames.has(name));
+      const seen = new Set();
+      return parsed.filter(name => {
+        if (typeof name !== 'string' || !orgNames.has(name) || seen.has(name)) return false;
+        seen.add(name);
+        return true;
+      });
     } catch {
       return [];
     }
@@ -2702,7 +2707,7 @@
           </div>
         </div>
         <div class="flex items-center gap-2 ml-2 flex-shrink-0">
-          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${escapeHtml(name)}" title="Remove from recently viewed">
+          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${escapeHtml(name)}" title="Remove from recently viewed" aria-label="Remove ${escapeHtml(name)} from recently viewed">
             <span class="material-symbols-outlined text-base">close</span>
           </button>
         </div>

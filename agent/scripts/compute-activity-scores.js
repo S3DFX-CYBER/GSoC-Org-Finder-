@@ -45,12 +45,11 @@ async function fetchJSON(url) {
 }
 
 function computeScore({ issueResponseDays, commitFrequency, prMergeRate, ideasFreshnessDays, starsGrowth }) {
-  // Each signal scored 0-100, then weighted
-  const issueScore = Math.max(0, 100 - (issueResponseDays * 5));      // 30%
-  const commitScore = Math.min(100, commitFrequency * 10);             // 20%
-  const prScore = Math.min(100, prMergeRate * 100);                    // 15%
-  const ideasScore = Math.max(0, 100 - (ideasFreshnessDays * 0.5));   // 20%
-  const growthScore = Math.min(100, starsGrowth * 2);                  // 15%
+  const issueScore = Math.max(0, 100 - (issueResponseDays * 5));      
+  const commitScore = Math.min(100, commitFrequency * 10);             
+  const prScore = Math.min(100, prMergeRate * 100);                    
+  const ideasScore = Math.max(0, 100 - (ideasFreshnessDays * 0.5));  
+  const growthScore = Math.min(100, starsGrowth * 2);                  
 
   return Math.round(
     issueScore * 0.3 +
@@ -72,17 +71,15 @@ async function analyzeOrg({ name, repo }) {
   try {
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
 
-    // Fetch commits (last 90 days)
     const commits = await fetchJSON(
       `https://api.github.com/repos/${repo}/commits?since=${since}&per_page=100`
     );
     const commitFrequency = Array.isArray(commits) ? commits.length / 90 : 0;
 
-    // Fetch issues (last 90 days)
     const issues = await fetchJSON(
       `https://api.github.com/repos/${repo}/issues?state=closed&since=${since}&per_page=30`
     );
-    let issueResponseDays = 14; // default
+    let issueResponseDays = 14; 
     if (Array.isArray(issues) && issues.length > 0) {
       const responseTimes = issues
         .filter(i => i.created_at && i.closed_at && !i.pull_request)
@@ -95,17 +92,15 @@ async function analyzeOrg({ name, repo }) {
     const prs = await fetchJSON(
       `https://api.github.com/repos/${repo}/pulls?state=closed&since=${since}&per_page=30`
     );
-    let prMergeRate = 0.5; // default
+    let prMergeRate = 0.5; 
     if (Array.isArray(prs) && prs.length > 0) {
       const merged = prs.filter(p => p.merged_at).length;
       prMergeRate = merged / prs.length;
     }
 
-    // Fetch repo info for stars growth estimate
     const repoData = await fetchJSON(`https://api.github.com/repos/${repo}`);
     const starsGrowth = repoData ? Math.min(50, repoData.stargazers_count / 1000) : 0;
 
-    // Ideas page freshness (use repo push date as proxy)
     const ideasFreshnessDays = repoData?.pushed_at
       ? (Date.now() - new Date(repoData.pushed_at)) / 86400000
       : 60;
@@ -147,7 +142,6 @@ async function main() {
     console.log(`Processing: ${org.name}`);
     const data = await analyzeOrg(org);
     if (data) results[org.name] = data;
-    // Small delay to avoid rate limiting
     await new Promise(r => setTimeout(r, 500));
   }
 

@@ -2678,44 +2678,25 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function findSimilarOrgs(current, count) {
-    if (!current || !Array.isArray(ORGS)) return [];
-    count = count > 0 ? count : 3;
+  const SIMILAR_ORG_CAT_LABELS = {
+    science: 'Science', programming: 'Programming', data: 'Data', web: 'Web',
+    os: 'OS', security: 'Security', media: 'Media', infra: 'Infra',
+    ai: 'AI', dev: 'Dev Tools', other: 'Other'
+  };
 
-    const norm = (t) => String(t).toLowerCase();
-    const myTags = new Set((current.tags || []).map(norm));
-    const results = [];
-
-    for (const org of ORGS) {
-      if (!org || org.name === current.name) continue;
-
-      let shared = 0;
-      for (const tag of (org.tags || [])) {
-        if (myTags.has(norm(tag))) shared++;
-      }
-
-      let score = shared * 2;
-      if (org.cat && current.cat && org.cat === current.cat) {
-        score += 3;
-      }
-
-      if (score > 0) results.push({ org, score });
-    }
-
-    results.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return a.org.name.localeCompare(b.org.name);
-    });
-
-    return results.slice(0, count).map(r => r.org);
-  }
+  // Capture the inline name-based openModal so it survives src/js/app.js
+  // redeclaring `openModal(idx)` later in page load.
+  const openModalByName = openModal;
 
   function renderSimilarOrgs(org) {
     const section = document.getElementById('mSimilarSection');
     const list = document.getElementById('mSimilarList');
     if (!section || !list) return;
 
-    const matches = findSimilarOrgs(org, 3);
+    const scorer = (typeof globalThis.getSimilarOrgs === 'function')
+      ? globalThis.getSimilarOrgs
+      : null;
+    const matches = scorer ? scorer(org, 3) : [];
 
     if (matches.length === 0) {
       list.innerHTML = '';
@@ -2725,8 +2706,9 @@ if(org.ideas){
 
     let html = '';
     for (const match of matches) {
+      const catLabel = SIMILAR_ORG_CAT_LABELS[match.cat] || match.cat || '';
       const tagPreview = (match.tags || []).slice(0, 2).join(', ');
-      const metaParts = [match.cat, tagPreview].filter(Boolean);
+      const metaParts = [catLabel, tagPreview].filter(Boolean);
       const meta = metaParts.join(' • ');
 
       html += `<button type="button" class="similar-org-card" data-org-name="${escapeHtml(match.name)}">
@@ -2740,7 +2722,7 @@ if(org.ideas){
       btn.addEventListener('click', () => {
         const modal = document.querySelector('#orgModal .modal');
         if (modal) modal.scrollTop = 0;
-        openModal(btn.dataset.orgName);
+        openModalByName(btn.dataset.orgName);
       });
     });
 

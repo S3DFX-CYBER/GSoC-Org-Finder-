@@ -842,8 +842,8 @@ document.addEventListener('keydown',e=>{
   const cols=GRID_COLS();
   if(e.key==='ArrowRight'){
     e.preventDefault();
-    focusedIdx=Math.min(focusedIdx+1,n-1);
-    if(focusedIdx<0)focusedIdx=0;
+    if(focusedIdx<0) focusedIdx=0;
+    else focusedIdx=Math.min(focusedIdx+1,n-1);
     scrollToFocused();renderGrid(filteredOrgs);
   } else if(e.key==='ArrowLeft'){
     e.preventDefault();

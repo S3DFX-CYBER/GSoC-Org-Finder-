@@ -1400,6 +1400,7 @@
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
+  let focusedIdx = -1;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2074,8 +2075,19 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
+      const filteredIdx = filteredOrgs.indexOf(org);
       card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
       card.dataset.org = org.name;
+      card.dataset.filteredIdx = String(filteredIdx);
+      card.tabIndex = 0;
+
+      card.addEventListener('mouseenter', () => {
+      focusedIdx = filteredIdx;
+      });
+
+      card.addEventListener('focus', () => {
+      focusedIdx = filteredIdx;
+      });
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
@@ -2280,13 +2292,65 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
+  if (e.key === 'Escape') {
     if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
-    } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-      closeModal();
+      return;
     }
-  });
+
+    if (document.getElementById('orgModal')?.classList.contains('open')) {
+      closeModal();
+      return;
+    }
+  }
+
+  const activeTag = document.activeElement?.tagName;
+  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(activeTag)) return;
+
+  const n = filteredOrgs.length;
+  if (!n) return;
+
+ const cols = window.innerWidth >= 1280 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+
+if (e.key === 'ArrowRight') {
+  e.preventDefault();
+  focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + 1, n - 1);
+  renderOrgs(true);
+  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
+}
+
+if (e.key === 'ArrowLeft') {
+  e.preventDefault();
+  focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - 1, 0);
+  renderOrgs(true);
+  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
+}
+
+if (e.key === 'ArrowDown') {
+  e.preventDefault();
+  focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + cols, n - 1);
+  renderOrgs(true);
+  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
+}
+
+if (e.key === 'ArrowUp') {
+  e.preventDefault();
+  focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - cols, 0);
+  renderOrgs(true);
+  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
+}
+
+  if (e.key === 'Enter' && focusedIdx >= 0) {
+    e.preventDefault();
+    openModal(filteredOrgs[focusedIdx].name);
+  }
+
+  if ((e.key === 'c' || e.key === 'C') && focusedIdx >= 0) {
+    e.preventDefault();
+    toggleCompare(null, filteredOrgs[focusedIdx].name);
+  }
+});
+
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
@@ -2962,30 +3026,15 @@ if(org.ideas){
 const helpBtn = document.getElementById('helpBtn');
 
 function openHelpModal() {
-  helpModal.classList.add('open');
+  helpModal?.classList.add('open');
 }
 
 function closeHelpModal() {
-  helpModal.classList.remove('open');
+  helpModal?.classList.remove('open');
 }
 
 helpBtn.addEventListener('click', openHelpModal);
 
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'c' || e.key === 'C') {
-  openCompareModal();
-}
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
@@ -3068,13 +3117,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openHelpModal() {
     if (helpModal) {
-      helpModal.classList.add('open');
+      helpModal?.classList.add('open');
     }
   }
 
   function closeHelpModal() {
     if (helpModal) {
-      helpModal.classList.remove('open');
+      helpModal?.classList.remove('open');
     }
   }
 
@@ -3082,17 +3131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     helpBtn.addEventListener('click', openHelpModal);
   }
 
-  document.addEventListener('keydown', (e) => {
 
-    if (e.key === '?') {
-      openHelpModal();
-    }
-
-    if (e.key === 'Escape') {
-      closeHelpModal();
-    }
-
-  });
 
   window.closeHelpModal = closeHelpModal;
 

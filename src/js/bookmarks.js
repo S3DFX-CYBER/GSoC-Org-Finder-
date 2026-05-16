@@ -7,7 +7,9 @@
       localStorage.setItem("gsoc_bookmarks_v2", old);
       localStorage.removeItem("bookmarks");
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("[BookmarkManager] migration failed:", e);
+  }
 })();
 
 // ─── BookmarkManager ───
@@ -116,6 +118,7 @@ function updateFavCount() {
   if (!badge) return;
   badge.textContent = BookmarkManager.getCount();
   badge.classList.remove("bump");
+  // Force layout reflow so the animation can restart.
   void badge.offsetWidth;
   badge.classList.add("bump");
 }

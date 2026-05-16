@@ -3158,7 +3158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  window.addEventListener('scroll', toggleScrollButton);
+  window.addEventListener('scroll', toggleScrollButton, { passive: true });
   toggleScrollButton();
   scrollTopBtn.addEventListener('click', () => {
     window.scrollTo({

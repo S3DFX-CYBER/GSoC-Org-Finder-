@@ -323,7 +323,96 @@ function aLbl(a){return a==='active'?'⚡ Active':a==='moderate'?'📊 Moderate'
 function aBdg(a){return a==='active'?'bac':a==='moderate'?'bam':a==='low'?'bal':'bna';}
 function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c;}
 function catBdg(c){return'cb-'+(c||'other');}
+// Difficulty data from data/difficulty.json (loaded async)
+let difficultyData = {};
+(async function loadDifficultyData() {
+  try {
+    const res = await fetch('/data/difficulty.json');
+    if (res.ok) {
+      const arr = await res.json();
+      if (Array.isArray(arr)) {
+        arr.forEach(d => {
+          // Match by slug or org_name
+          difficultyData[d.slug?.toLowerCase()] = d;
+          difficultyData[d.org_name?.toLowerCase()] = d;
+        });
+      }
+      // Re-render cards once difficulty data is loaded
+      if (filteredOrgs.length) applyFilters();
+    }
+  } catch (e) {
+    console.warn('Could not load difficulty.json:', e);
+  }
+})();
 
+function getDifficultyEntry(org) {
+  if (!org) return null;
+  const owner = githubOwnerFromValue(org.github);
+  return difficultyData[owner?.toLowerCase()] ||
+         difficultyData[org.name?.toLowerCase()] || null;
+}
+
+function analyzeOrg(org){
+  let score = 0;
+  const reasons = [];
+
+  // Check enriched difficulty data first
+  const dd = getDifficultyEntry(org);
+  if (dd && dd.difficulty) {
+    // Use pre-calculated difficulty from data/difficulty.json
+    score = dd.difficulty;
+    const bd = dd.breakdown || {};
+    if (bd.code_complexity >= 7) reasons.push('Complex codebase (' + bd.code_complexity + '/10)');
+    else if (bd.code_complexity >= 4) reasons.push('Moderate code complexity (' + bd.code_complexity + '/10)');
+    else reasons.push('Beginner-friendly codebase (' + bd.code_complexity + '/10)');
+
+    if (bd.community_friction >= 6) reasons.push('Higher community friction (' + bd.community_friction + '/10)');
+    else reasons.push('Responsive community (' + bd.community_friction + '/10)');
+
+    if (bd.entry_barrier >= 7) reasons.push('Significant entry barrier (' + bd.entry_barrier + '/10)');
+    else if (bd.entry_barrier >= 5) reasons.push('Moderate entry barrier (' + bd.entry_barrier + '/10)');
+    else reasons.push('Low entry barrier (' + bd.entry_barrier + '/10)');
+
+    const m = dd.metrics || {};
+    if (m.total_repositories >= 50) reasons.push(m.total_repositories + ' repositories');
+    if (m.total_stars >= 10000) reasons.push(fmt(m.total_stars) + ' total stars');
+  } else {
+    // Fallback: compute from org fields
+    if (org.competition === 'hot') { score += 3; reasons.push('Highly competitive organization'); }
+    else if (org.competition === 'moderate') { score += 2; reasons.push('Moderately competitive'); }
+    else { score += 1; reasons.push('Lower competition'); }
+
+    if (org.codebase === 'advanced') { score += 3; reasons.push('Advanced codebase'); }
+    else if (org.codebase === 'intermediate') { score += 2; reasons.push('Intermediate codebase'); }
+    else { score += 1; reasons.push('Beginner friendly codebase'); }
+
+    if (org.years >= 8) { score += 2; reasons.push('Long-running mature organization'); }
+    else if (org.years >= 4) { score += 1; }
+
+    if (org.tags?.length > 5) { score += 2; reasons.push('Wide technology stack'); }
+  }
+
+  let level = 'Beginner Friendly';
+  if (score >= 7) level = 'Advanced';
+  else if (score >= 4) level = 'Intermediate';
+
+  return { score, level, reasons };
+}
+
+function diffBadgeStyle(level) {
+  if (level === 'Advanced') {
+    return 'background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:1px solid #ef4444;';
+  } else if (level === 'Intermediate') {
+    return 'background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:1px solid #f59e0b;';
+  }
+  return 'background:linear-gradient(135deg,#059669,#047857);color:#fff;border:1px solid #10b981;';
+}
+
+function diffEmoji(level) {
+  if (level === 'Advanced') return '🔴';
+  if (level === 'Intermediate') return '🟡';
+  return '🟢';
+}
 // ══════════════════════════════════════════════
 // COMPARE
 // ══════════════════════════════════════════════
@@ -617,6 +706,8 @@ function applySecondarySort(a, b, sortType) {
   if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
   if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
   if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  if(sortType==='diff-easy') return analyzeOrg(a).score - analyzeOrg(b).score;
+  if(sortType==='diff-hard') return analyzeOrg(b).score - analyzeOrg(a).score;
   return a.name.localeCompare(b.name);
 }
 
@@ -745,6 +836,7 @@ function renderGrid(orgs){
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
     const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+    const analysis = analyzeOrg(o);
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
@@ -795,12 +887,18 @@ function renderGrid(orgs){
       </div>
       <div class="org-desc">${o.desc}</div>
       <div class="badges">
+        <span style="${diffBadgeStyle(analysis.level)}padding:5px 12px;border-radius:999px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.15);letter-spacing:.02em;white-space:nowrap;">
+          ${diffEmoji(analysis.level)} ${escapeHtml(analysis.level)} • ${analysis.score}/10
+        </span>
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
         <span class="b ${aBdg(act)}">${aLbl(act)}</span>
-        ${o._gh?.gfi>0?`<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>`:''}
+        ${o._gh?.gfi>0 ? `<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>` : ''}
       </div>
       <div class="tags">${tags}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">
+        ${analysis.reasons.slice(0,3).map(r => `<span style="font-size:10px;color:var(--muted);background:var(--tag-bg);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;display:inline-flex;align-items:center;gap:3px;">📌 ${escapeHtml(r)}</span>`).join('')}
+      </div>
       ${ghm}
     </div>`;
   }).join('');

@@ -2539,11 +2539,23 @@
   "The ns-3 Network Simulator Project": {
     "org": "The ns-3 Network Simulator Project",
     "ideasUrl": "https://www.nsnam.org/wiki/GSOC2026Projects",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://ns-3.zulipchat.com/",
+        "label": "Chat"
+      }
+    ],
     "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/ns-developers",
+        "label": "ns-developers"
+      }
+    ],
+    "tip": "Contact developers through the mailing list or Zulip chat before refining proposals.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The OpenROAD Initiative": {

@@ -481,6 +481,7 @@ These mentors help guide and review contributions for the GSSoC program:
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.
+⭐ If you found this project helpful, consider giving it a star!
 Share it with anyone applying! Applications open **March 16, 2026**. 🙌
 <center>
   

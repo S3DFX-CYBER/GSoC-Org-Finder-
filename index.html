@@ -685,6 +685,8 @@
         <option value="comp-low">Competition (Chill First)</option>
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
+        <option value="diff-easy">Difficulty: Easiest First</option>
+        <option value="diff-hard">Difficulty: Hardest First</option>
       </select>
     </div>
   </div>
@@ -1397,6 +1399,86 @@
   // we must also escape quotes. Prefer removing inline handlers.
 
   // ══════════════════════════════════════════════
+  // DIFFICULTY ANALYSIS SYSTEM
+  // ══════════════════════════════════════════════
+  let difficultyData = {};
+  (async function loadDifficultyData() {
+    try {
+      const res = await fetch('data/difficulty.json');
+      if (res.ok) {
+        const arr = await res.json();
+        if (Array.isArray(arr)) {
+          arr.forEach(d => {
+            if (d.slug) difficultyData[d.slug.toLowerCase()] = d;
+            if (d.org_name) difficultyData[d.org_name.toLowerCase()] = d;
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Could not load difficulty.json:', e);
+    }
+  })();
+
+  function getDifficultyEntry(org) {
+    if (!org) return null;
+    const owner = githubOwnerFromValue(org.github);
+    return difficultyData[owner?.toLowerCase()] ||
+           difficultyData[org.name?.toLowerCase()] || null;
+  }
+
+  function analyzeOrg(org) {
+    let score = 0;
+    const reasons = [];
+
+    const dd = getDifficultyEntry(org);
+    if (dd && dd.difficulty) {
+      score = dd.difficulty;
+      const bd = dd.breakdown || {};
+      if (bd.code_complexity >= 7) reasons.push('Complex codebase (' + bd.code_complexity + '/10)');
+      else if (bd.code_complexity >= 4) reasons.push('Moderate code complexity (' + bd.code_complexity + '/10)');
+      else reasons.push('Beginner-friendly codebase (' + bd.code_complexity + '/10)');
+
+      if (bd.community_friction >= 6) reasons.push('Higher community friction (' + bd.community_friction + '/10)');
+      else reasons.push('Responsive community (' + bd.community_friction + '/10)');
+
+      if (bd.entry_barrier >= 7) reasons.push('High entry barrier (' + bd.entry_barrier + '/10)');
+      else if (bd.entry_barrier >= 5) reasons.push('Moderate entry barrier (' + bd.entry_barrier + '/10)');
+      else reasons.push('Low entry barrier (' + bd.entry_barrier + '/10)');
+    } else {
+      if (org.competition === 'hot') { score += 3; reasons.push('Highly competitive'); }
+      else if (org.competition === 'moderate') { score += 2; reasons.push('Moderately competitive'); }
+      else { score += 1; reasons.push('Lower competition'); }
+
+      if (org.codebase === 'advanced') { score += 3; reasons.push('Advanced codebase'); }
+      else if (org.codebase === 'intermediate') { score += 2; reasons.push('Intermediate codebase'); }
+      else { score += 1; reasons.push('Beginner friendly codebase'); }
+
+      if (org.years >= 8) { score += 2; reasons.push('Mature organization'); }
+      else if (org.years >= 4) { score += 1; }
+
+      if (org.tags && org.tags.length > 5) { score += 2; reasons.push('Wide tech stack'); }
+    }
+
+    let level = 'Beginner Friendly';
+    if (score >= 7) level = 'Advanced';
+    else if (score >= 4) level = 'Intermediate';
+
+    return { score, level, reasons };
+  }
+
+  function diffBadgeStyle(level) {
+    if (level === 'Advanced') return 'background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:1px solid #ef4444;';
+    if (level === 'Intermediate') return 'background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:1px solid #f59e0b;';
+    return 'background:linear-gradient(135deg,#059669,#047857);color:#fff;border:1px solid #10b981;';
+  }
+
+  function diffEmoji(level) {
+    if (level === 'Advanced') return '🔴';
+    if (level === 'Intermediate') return '🟡';
+    return '🟢';
+  }
+
+  // ══════════════════════════════════════════════
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
@@ -2079,6 +2161,11 @@
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
+
+      // Difficulty analysis
+      const analysis = (typeof analyzeOrg === 'function') ? analyzeOrg(org) : { score: 0, level: 'Unknown', reasons: [] };
+      const diffStyle = (typeof diffBadgeStyle === 'function') ? diffBadgeStyle(analysis.level) : 'background:#6b7280;color:#fff;';
+      const diffIcon = (typeof diffEmoji === 'function') ? diffEmoji(analysis.level) : '⚪';
       
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
@@ -2086,9 +2173,9 @@
             <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
-            <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+          <div class="flex items-center gap-2 flex-wrap justify-end">
+            <span style="${diffStyle}padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);letter-spacing:.02em;white-space:nowrap;">${diffIcon} ${escapeHtml(analysis.level)} • ${analysis.score}/10</span>
+            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y</span>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
@@ -2096,10 +2183,13 @@
         </div>
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
-        <div class="flex flex-wrap gap-1.5 mb-4">
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-3 line-clamp-2">${escapeHtml(org.desc)}</p>
+        <div class="flex flex-wrap gap-1.5 mb-2">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+        </div>
+        <div class="flex flex-wrap gap-1 mb-4">
+          ${analysis.reasons.slice(0, 3).map(r => `<span style="font-size:10px;color:#6b7280;background:#f4f4f5;border:1px solid #e4e4e7;border-radius:4px;padding:2px 7px;display:inline-flex;align-items:center;gap:3px;">📌 ${escapeHtml(r)}</span>`).join('')}
         </div>
 
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
@@ -2719,6 +2809,8 @@ if(org.ideas){
     if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
     if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
     if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+    if(sortType==='diff-easy') return analyzeOrg(a).score - analyzeOrg(b).score;
+    if(sortType==='diff-hard') return analyzeOrg(b).score - analyzeOrg(a).score;
     return a.name.localeCompare(b.name);
   }
 

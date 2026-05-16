@@ -117,40 +117,46 @@
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
+      overflow: hidden;
     }
     .modal-bg.open {
       opacity: 1;
       pointer-events: auto;
     }
     .modal {
-      background: white;
-      width: 90%;
-      max-width: 700px;
-      max-height: 90vh;
-      border-radius: 2rem;
-      position: relative;
-      overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      transform: scale(0.9);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+     background: white;
+     width: 90%;
+     max-width: 700px;
+     max-height: 90vh;
+     border-radius: 2rem;
+     position: relative;
+     overflow: hidden;
+
+     display: flex;
+     flex-direction: column;
+     padding-top: 1px;
+     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+     transform: scale(0.9);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .modal-bg.open .modal {
       transform: scale(1);
     }
     .close-btn {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 99px;
-      background: #f3f3f3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555;
-      font-size: 1.2rem;
-      transition: all 0.2s;
+     position: absolute;
+     top: 1.5rem;
+     right: 1.5rem;
+     z-index: 1000;
+     width: 2.5rem;
+     height: 2.5rem;
+     border-radius: 99px;
+     background: #f3f3f3;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: #555;
+     font-size: 1.2rem;
+    transition: all 0.2s;
     }
     .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
     
@@ -169,7 +175,7 @@
     .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
     .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
 
-    .modal-body { padding: 0 3rem 3rem; }
+    .modal-body {padding: 0 3rem 3rem; overflow-y: auto; flex: 1;}
     .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
     
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
@@ -241,6 +247,7 @@
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+ 
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -2646,12 +2653,16 @@ if(org.ideas){
     renderMentorContactSection(org);
      
     document.getElementById('orgModal').classList.add('open');
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
-    document.body.style.overflow = 'auto';
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
   function openRandomOrg() {

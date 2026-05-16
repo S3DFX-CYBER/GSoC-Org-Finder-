@@ -219,6 +219,49 @@
     .complexity-badge.intermediate { background: #fef9c3; color: #854d0e; }
     .complexity-badge.advanced { background: #fee2e2; color: #991b1b; }
 
+    /* Hidden tech-stack tags tooltip on the "+n" badge */
+    .tag-more { position: relative; cursor: help; outline: none; }
+    .tag-more .tag-more-tip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: #1a1c1c;
+      color: #fff;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      line-height: 1.45;
+      font-weight: 500;
+      text-align: center;
+      white-space: normal;
+      width: max-content;
+      max-width: 220px;
+      padding: 0.45rem 0.65rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 30;
+    }
+    .tag-more .tag-more-tip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #1a1c1c;
+    }
+    .tag-more:hover .tag-more-tip,
+    .tag-more:focus .tag-more-tip,
+    .tag-more:focus-visible .tag-more-tip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
     /* Bookmark Button */
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
     .bookmark-btn.active { color: #f59e0b; }
@@ -2106,7 +2149,7 @@
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+          ${org.tags.length > 3 ? `<span class="tag-more px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded" tabindex="0" aria-label="${escapeHtml((org.tags.length - 3) + ' more technologies: ' + org.tags.slice(3).join(', '))}">+${escapeHtml(String(org.tags.length - 3))}<span class="tag-more-tip" role="tooltip">${escapeHtml(org.tags.slice(3).join(', '))}</span></span>` : ''}
         </div>
 
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">

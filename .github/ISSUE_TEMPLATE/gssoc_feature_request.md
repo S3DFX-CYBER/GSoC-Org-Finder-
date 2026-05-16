@@ -1,8 +1,8 @@
 ---
-name: Feature Request
+name: GSSoC Feature Request
 about: Suggest a new feature or improvement for the GSoC Org Finder
 title: 'feat: '
-labels: 'enhancement'
+labels: 'gssoc, enhancement'
 assignees: ''
 ---
 
@@ -28,3 +28,10 @@ assignees: ''
 
 ## 📋 Additional Context
 <!-- Any other context about the feature request -->
+
+## 🌱 Contributor Checklist
+- [ ] I am participating via GSSoC
+- [ ] I have read the contribution guidelines
+- [ ] I checked for existing issues before creating this
+
+

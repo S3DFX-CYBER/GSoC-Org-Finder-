@@ -273,7 +273,7 @@
       color: #fb923c !important;
     }
     
-    .group:hover {border-color: rgba(251, 186, 116, 0.45) !important;box-shadow: 0 0 0 1px rgba(251, 186, 116, 0.10),0 12px 28px rgba(251, 146, 60, 0.10), 0 18px 40px rgba(0, 0, 0, 0.08) !important;transform: translateY(-4px);transition:box-shadow 0.25s ease,transform 0.25s ease, border-color 0.25s ease;}
+    .org-card:hover {border-color: rgba(251, 186, 116, 0.45) !important;box-shadow: 0 0 0 1px rgba(251, 186, 116, 0.10),0 12px 28px rgba(251, 146, 60, 0.10), 0 18px 40px rgba(0, 0, 0, 0.08) !important;transform: translateY(-4px);transition:box-shadow 0.25s ease,transform 0.25s ease, border-color 0.25s ease;}
 
     /* Dark mode - Issue card badges */
     .dark .bg-green-100 { background: #14532d !important; }
@@ -284,9 +284,9 @@
     .dark .text-zinc-600 { color: #a1a1aa !important; }
     
     /* Dark mode - Card hover effects */
-    .dark .group:hover {  background: #1f1f23 !important;border-color: rgba(251, 186, 116, 0.5) !important;box-shadow:0 0 0 1px rgba(251, 186, 116, 0.15),0 12px 32px rgba(251, 186, 116, 0.12),0 20px 45px rgba(0, 0, 0, 0.5),0 0 25px rgba(251, 186, 116, 0.08) !important;transform: translateY(-4px);}
-    .dark .group:hover .text-on-surface { color: #FED7AA !important; }
-    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #FDBA74 !important; }
+    .dark .org-card:hover {  background: #1f1f23 !important;border-color: rgba(251, 186, 116, 0.5) !important;box-shadow:0 0 0 1px rgba(251, 186, 116, 0.15),0 12px 32px rgba(251, 186, 116, 0.12),0 20px 45px rgba(0, 0, 0, 0.5),0 0 25px rgba(251, 186, 116, 0.08) !important;transform: translateY(-4px);}
+    .dark .org-card:hover .text-on-surface {color: #FED7AA !important;}
+.dark .org-card:hover .group-hover\:text-primary {color: #FDBA74 !important;}
     
     /* Dark mode - Tech tags */
     .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
@@ -728,9 +728,8 @@
   </div>
 
   <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 text-white bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] text-black hover:bg-[#FDBA74] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
+    <button id="loadMoreBtn" class="px-10 py-4 text-black bg-[#FB923C] font-headline font-bold rounded-full text-sm hover:scale-[1.02] hover:bg-[#FDBA74] active:scale-[0.98] transition-all shadow-lg shadow-orange-200/40 flex items-center gap-2">View More Organizations
+  <span class="material-symbols-outlined text-lg">expand_more</span></button>
   </div>
 </section>
 
@@ -2092,7 +2091,7 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group org-card bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);

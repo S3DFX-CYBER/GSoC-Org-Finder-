@@ -5,7 +5,7 @@ const MAX_ISSUES_PER_ORG = 3;
 
 // Parallel batching configuration
 const BATCH_SIZE = 5;
-const BATCH_DELAY_MS = 2500;
+const BATCH_DELAY_MS = 12000;
 
 // Optional request timeout
 const REQUEST_TIMEOUT_MS = 15000;

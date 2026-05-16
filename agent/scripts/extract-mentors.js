@@ -24,7 +24,7 @@ const CHANNEL_MATCHERS = [
 
 const REQUEST_TIMEOUT_MS = 15000;
 const BATCH_SIZE = 5;
-const BATCH_DELAY_MS = 1200;
+const BATCH_DELAY_MS = 3000;
 const OUTPUT_PATH = path.resolve(__dirname, '../../data/mentors.json');
 const DEFAULT_HEADERS = {
   Accept: 'text/html,application/xhtml+xml',

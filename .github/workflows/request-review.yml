@@ -111,6 +111,15 @@ jobs:
             core.info(`Requested reviewers: ${successfulReviewers.join(', ')}`);
 
             try {
+              await github.rest.issues.addAssignees({
+                owner, repo, issue_number: prNumber, assignees: selected
+              });
+              core.info(`Assigned mentors to PR: ${selected.join(', ')}`);
+            } catch (err) {
+              core.warning(`Failed to assign mentors: ${err?.message || err}`);
+            }
+
+            try {
               await github.rest.issues.addLabels({
                 owner, repo, issue_number: prNumber, labels: ['mentor-review-requested']
               });
@@ -122,8 +131,13 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo, issue_number: prNumber,
                 body: `## 👥 Stage 2 — Mentor Review\n\n` +
+<<<<<<< HEAD
                   `GSSOC mentors have been requested to review this PR:\n\n` +
                   successfulReviewers.map(s => `- @${s}`).join('\n') + '\n\n' +
+=======
+                  `Two GSSOC mentors have been assigned and requested to review this PR:\n\n` +
+                  selected.map(s => `- @${s}`).join('\n') + '\n\n' +
+>>>>>>> a7fd2aa (docs(data): verify Typelevel metadata and update mentor names for 2026)
                   `At least **1 mentor approval** is required to proceed to Stage 3.\n\n` +
                   `Mentors: please review and approve if the contribution meets quality standards.`
               });

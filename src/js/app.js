@@ -39,6 +39,7 @@ function updateThemeIcon(){
 // ══════════════════════════════════════════════
 const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
 const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+
 function updateCountdown(){
   const now=Date.now();
   const banner=document.getElementById('countdownBanner');

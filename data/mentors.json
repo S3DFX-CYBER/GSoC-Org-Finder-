@@ -2349,13 +2349,35 @@
         "label": "Slack Channel"
       },
       {
-        "type": "Slack",
-        "url": "https://join.slack.com/t/sw360chat/shared_invite/enQtNzg5NDQxMTQyNjA5LThiMjBlNTRmOWI0ZjJhYjc0OTk3ODM4MjBmOGRhMWRmN2QzOGVmMzQwYzAzN2JkMmVkZTI1ZjRhNmJlNTY4ZGI",
-        "label": "Slack Invitation link"
+        "type": "Matrix",
+        "url": "https://app.element.io/#/room/#technology.sw360-general:matrix.eclipse.org",
+        "label": "SW360 Matrix Room"
       }
     ],
-    "mentors": [],
-    "mailingLists": [],
+    "mentors": [
+        {
+          "name": "Gaurav Mishra",
+          "github": "GMishx",
+          "githubUrl": "https://github.com/GMishx"
+        },
+        {
+          "name": "Amrit Kumar Verma",
+          "github": "amritkv",
+          "githubUrl": "https://github.com/amritkv"
+        },
+        {
+          "name": "Farooq Fateh Aftab",
+          "github": "Farooq-Fateh-Aftab",
+          "githubUrl": "https://github.com/Farooq-Fateh-Aftab"
+        }
+    ],
+    "mailingLists": [
+        {
+          "type": "Mailing List",
+          "url": "sw360-dev@eclipse.org",
+          "label": "SW360 Developer Mailing List"
+        }
+    ],
     "tip": "Join and say hi in the GSoC channel before DMing mentors.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"

@@ -324,12 +324,24 @@
   },
   "Ceph": {
     "org": "Ceph",
-    "ideasUrl": "https://github.com/ceph/ceph/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "ideasUrl": "https://ceph.io/en/developers/google-summer-of-code/",
+    "channels": [
+      {
+        "type": "slack",
+        "url": "https://ceph.io/en/community/",
+        "name": "Ceph Slack"
+      }
+    ],
+    "mentors": [
+      "afreen23",
+      "abhishekdesai",
+      "dnyanee1997"
+    ],
+    "mailingLists": [
+      "vallari.agrawal@ibm.com"
+    ],
+    "tip": "Join Ceph Slack from https://ceph.io/en/community/ and reach out to @Afreen @Abhishek Desai @Dnyaneshwari Talwekar. For any questions contact Vallari Agrawal at vallari.agrawal@ibm.com",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "CERN-HSF": {

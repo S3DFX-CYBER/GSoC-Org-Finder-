@@ -27,6 +27,7 @@ No sign-up. No install. No build step. Just open and explore.
 - [Deploy Your Own](#-deploy-your-own)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+- [Project Admin](#-project-admin)
 - [GSSoC Mentors](#-gssoc-mentors)
 - [Key Dates](#-gsoc-2026-key-dates)
 - [Tips for Users](#-tips-for-users)
@@ -243,6 +244,17 @@ Found a missing org, wrong category, or incorrect tags? PRs are very welcome!
 
 For the full contributing reference (architecture, rules, PR workflow), see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+### Assignment Process
+
+This repo uses a **maintainer-verified** assignment system:
+
+1. Find an issue and comment `/assign gssoc` or `/assign nsoc`
+2. Your request is **queued** (not immediately assigned)
+3. A maintainer verifies the issue and runs `/approve-assignment`
+4. You get notified and can begin work
+
+**Do not start working before you are assigned.**
+
 ### Quick Start
 
 1. Fork the repo
@@ -277,6 +289,18 @@ Each org entry looks like this:
 - `moderate` — good balance of applicants and slots
 - `chill` — fewer applicants, easier to stand out
 
+### PR Review Pipeline
+
+All PRs pass through a 3-stage pipeline:
+
+| Stage | What | Who |
+|-------|------|-----|
+| Stage 1 | DCO, format, AI/slop, diff size | Automated |
+| Stage 2 | Code review, quality | Mentor |
+| Stage 3 | Final merge decision | Project Admin |
+
+Stage 2 unlocks only after Stage 1 passes. The pipeline status comment on your PR updates only when the stage actually changes (no spam).
+
 ---
 
 ## 📅 GSoC 2026 Key Dates
@@ -306,6 +330,14 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 <img width="400" height="300" alt="Gemini_Generated_Image_1eyond1eyond1eyo" src="https://github.com/user-attachments/assets/0cfe15fe-2d4a-4389-9a0b-8cf8d0cfd8cd" />
 
 
+
+## 🔑 Project Admin
+
+<a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="80px" alt="S3DFX-CYBER" /></a>
+
+**[@S3DFX-CYBER](https://github.com/S3DFX-CYBER)** — Project Admin (PA) for GSSoC'26 and NSoC'26. Responsible for final merge decisions, mentor coordination, repository maintenance, and ensuring contribution quality across all programs.
+
+---
 
 ## 👥 GSSoC Mentors
 
@@ -421,6 +453,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/HarshaVardhan31012007"><img src="https://github.com/HarshaVardhan31012007.png" width="50px" alt="HarshaVardhan31012007" /></a>
 <a href="https://github.com/Harshith1702"><img src="https://github.com/Harshith1702.png" width="50px" alt="Harshith1702" /></a>
 <a href="https://github.com/Itheshjs"><img src="https://github.com/Itheshjs.png" width="50px" alt="Itheshjs" /></a>
+<a href="https://github.com/Itzzavdheshh"><img src="https://github.com/Itzzavdheshh.png" width="50px" alt="Itzzavdheshh" /></a>
 <a href="https://github.com/Kuldeeps1505"><img src="https://github.com/Kuldeeps1505.png" width="50px" alt="Kuldeeps1505" /></a>
 <a href="https://github.com/Manasa-2303"><img src="https://github.com/Manasa-2303.png" width="50px" alt="Manasa-2303" /></a>
 <a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="50px" alt="S3DFX-CYBER" /></a>
@@ -429,8 +462,10 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/VaibhavMP"><img src="https://github.com/VaibhavMP.png" width="50px" alt="VaibhavMP" /></a>
 <a href="https://github.com/a638011"><img src="https://github.com/a638011.png" width="50px" alt="a638011" /></a>
 <a href="https://github.com/abdussamad567"><img src="https://github.com/abdussamad567.png" width="50px" alt="abdussamad567" /></a>
+<a href="https://github.com/angelina-2206"><img src="https://github.com/angelina-2206.png" width="50px" alt="angelina-2206" /></a>
 <a href="https://github.com/anirudh645"><img src="https://github.com/anirudh645.png" width="50px" alt="anirudh645" /></a>
 <a href="https://github.com/bhaktiyadav08"><img src="https://github.com/bhaktiyadav08.png" width="50px" alt="bhaktiyadav08" /></a>
+<a href="https://github.com/bhavyanjain3004"><img src="https://github.com/bhavyanjain3004.png" width="50px" alt="bhavyanjain3004" /></a>
 <a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
 <a href="https://github.com/diksha78dev"><img src="https://github.com/diksha78dev.png" width="50px" alt="diksha78dev" /></a>
 <a href="https://github.com/gloooomed"><img src="https://github.com/gloooomed.png" width="50px" alt="gloooomed" /></a>
@@ -440,6 +475,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/pranav-pachn"><img src="https://github.com/pranav-pachn.png" width="50px" alt="pranav-pachn" /></a>
 <a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>
+<a href="https://github.com/syedrazamd"><img src="https://github.com/syedrazamd.png" width="50px" alt="syedrazamd" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
 ## 📄 License

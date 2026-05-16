@@ -10,7 +10,7 @@
         "githubUrl": "https://github.com/52north"
       }
     ],
-    "mailingLists": [],
+    "mailingLists": [], 
     "tip": "",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -116,11 +116,34 @@
   "AnkiDroid": {
     "org": "AnkiDroid",
     "ideasUrl": "https://github.com/ankidroid/Anki-Android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/qjzcRTx",
+        "label": "#ankidroid-gsoc"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Arthur Milchior",
+        "github": "Arthur-Milchior",
+        "githubUrl": "https://github.com/Arthur-Milchior"
+      },
+      {
+        "name": "Sanjay Sargam",
+        "github": "SanjaySargam",
+        "githubUrl": "https://github.com/SanjaySargam"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/anki-android",
+        "label": "AnkiDroid Google Group"
+      }
+    ],
+    "tip": "Join the Discord server and go to #ankidroid-gsoc channel for GSoC updates and mentor communication.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "AOSSIE": {
@@ -451,12 +474,18 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
+        "label": "#cncf-mentoring Slack"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "CRIU": {
     "org": "CRIU",
@@ -1941,14 +1970,31 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "preCICE": {
+"preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://precice.discourse.group/c/gsoc/15",
+        "label": "preCICE GSoC Discourse Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gerasimos Chourdakis",
+        "github": "MakisH",
+        "githubUrl": "https://github.com/MakisH"
+      },
+      {
+        "name": "Frédéric Simonis",
+        "github": "fsimonis",
+        "githubUrl": "https://github.com/fsimonis"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Post in the GSoC category on the preCICE Discourse forum to introduce yourself and ask questions.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Processing Foundation": {

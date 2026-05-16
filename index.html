@@ -796,12 +796,26 @@
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="hidden mt-8 flex-shrink-0 flex items-center gap-2" id="watchlistActions">
+        <button id="exportMarkdownBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-600 border border-green-200 rounded-full px-4 py-2 hover:bg-green-50 transition-colors"
+          title="Export watchlist as Markdown">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export MD
+        </button>
+        <button id="exportCsvBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600 border border-blue-200 rounded-full px-4 py-2 hover:bg-blue-50 transition-colors"
+          title="Export watchlist as CSV">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export CSV
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
@@ -2370,6 +2384,10 @@
   // Wire up "Clear All" button
   document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
 
+  // Wire up export buttons
+  document.getElementById('exportMarkdownBtn')?.addEventListener('click', exportWatchlistAsMarkdown);
+  document.getElementById('exportCsvBtn')?.addEventListener('click', exportWatchlistAsCsv);
+
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
@@ -2384,6 +2402,7 @@
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
     const clearBtn  = document.getElementById('clearAllBookmarksBtn');
+    const actionsDiv = document.getElementById('watchlistActions');
     if (!container) return;
 
     container.innerHTML = '';
@@ -2392,7 +2411,8 @@
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
-    // Show / hide "Clear All" button
+    // Show / hide action buttons (Clear All, Export)
+    if (actionsDiv) actionsDiv.classList.toggle('hidden', bookmarks.length === 0);
     if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
 
     // ── Empty state ───────────────────────────────────────────────────────────
@@ -2486,6 +2506,100 @@
       container.appendChild(item);
       attachOrgCardListeners(item);
     });
+  }
+
+  // ── exportWatchlistAsMarkdown ────────────────────────────────────────────────
+  function exportWatchlistAsMarkdown() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (bookmarks.length === 0) {
+      alert('Your watchlist is empty. Add some organizations first!');
+      return;
+    }
+
+    let markdown = '# GSoC 2026 Watchlist\n\n';
+    markdown += `*Exported from [FindMyGSoC](https://findmygsoc.vercel.app/) on ${new Date().toLocaleDateString()}*\n\n`;
+    markdown += `**Total Organizations:** ${bookmarks.length}\n\n`;
+    markdown += '---\n\n';
+
+    bookmarks.forEach((org, idx) => {
+      const repoUrl = org.github ? `https://github.com/${org.github}` : '#';
+      const tags = (org.tags || []).slice(0, 5).join(', ');
+      const category = {
+        science:'Science', programming:'Programming', data:'Data', web:'Web',
+        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+        ai:'AI / ML', dev:'Dev Tools', other:'Other',
+      }[org.cat] || org.cat;
+
+      markdown += `## ${idx + 1}. ${org.name}\n\n`;
+      markdown += `**Category:** ${category}\n\n`;
+      markdown += `**Description:** ${org.desc || 'N/A'}\n\n`;
+      markdown += `**GSoC History:** ${org.years} years\n\n`;
+      markdown += `**Competition Level:** ${org.competition || 'N/A'}\n\n`;
+      markdown += `**Tech Stack:** ${tags || 'N/A'}\n\n`;
+      markdown += `**GitHub Repository:** [${org.github}](${repoUrl})\n\n`;
+      markdown += '---\n\n';
+    });
+
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0,10)}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // ── exportWatchlistAsCsv ─────────────────────────────────────────────────────
+  function exportWatchlistAsCsv() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (bookmarks.length === 0) {
+      alert('Your watchlist is empty. Add some organizations first!');
+      return;
+    }
+
+    // CSV Header
+    const headers = ['Organization', 'Category', 'Description', 'GSoC Years', 'Competition Level', 'Tech Stack', 'GitHub Repository'];
+    const rows = [headers];
+
+    bookmarks.forEach(org => {
+      const category = {
+        science:'Science', programming:'Programming', data:'Data', web:'Web',
+        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+        ai:'AI / ML', dev:'Dev Tools', other:'Other',
+      }[org.cat] || org.cat;
+      const tags = (org.tags || []).slice(0, 5).join('; ');
+      const repoUrl = org.github ? `https://github.com/${org.github}` : '';
+
+      const row = [
+        `"${(org.name || '').replace(/"/g, '""')}"`,
+        `"${(category || '').replace(/"/g, '""')}"`,
+        `"${(org.desc || '').replace(/"/g, '""')}"`,
+        `"${(org.years || '').toString()}"`,
+        `"${(org.competition || '').replace(/"/g, '""')}"`,
+        `"${(tags || '').replace(/"/g, '""')}"`,
+        `"${(repoUrl || '').replace(/"/g, '""')}"`
+      ];
+      rows.push(row);
+    });
+
+    const csv = rows.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `GSoC-2026-Watchlist-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   // ── updateAIInsights ─────────────────────────────────────────────────────────

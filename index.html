@@ -436,6 +436,31 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Scroll Area Styles */
+    .scroll-area {
+      max-height: min(70vh, 800px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+      scrollbar-gutter: stable;
+    }
+    .dark .scroll-area {
+      scrollbar-color: #475569 transparent;
+    }
+    .scroll-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scroll-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scroll-area::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 20px;
+    }
+    .dark .scroll-area::-webkit-scrollbar-thumb {
+      background-color: #475569;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -699,10 +724,12 @@
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+  <div class="scroll-area pr-2 mb-8">
+    <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
+      <!-- Organizations will be rendered here dynamically -->
+      <div class="col-span-full py-20 text-center animate-pulse">
+        <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+      </div>
     </div>
   </div>
 
@@ -938,9 +965,11 @@
       </div>
     </div>
 
-    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+    <div class="scroll-area pr-2">
+      <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
+          <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+        </div>
       </div>
     </div>
   </div>

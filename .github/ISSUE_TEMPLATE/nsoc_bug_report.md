@@ -1,8 +1,8 @@
 ---
-name: Bug Report
+name: NSOC Bug Report
 about: Report a bug or unexpected behavior
 title: "[BUG] "
-labels: bug
+labels: nsoc, bug
 ---
 
 ## 🐛 Describe the bug
@@ -31,6 +31,13 @@ What actually happens instead.
 
 ## 📸 Screenshots
 If applicable, add screenshots to help explain your problem.
+
+---
+
+## 🌱 Contributor Checklist
+- [ ] I am participating via NSOC
+- [ ] I have read the contribution guidelines
+- [ ] I checked for existing issues before creating this
 
 ---
 

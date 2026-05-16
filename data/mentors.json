@@ -1059,15 +1059,38 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Jenkins": {
-    "org": "Jenkins",
-    "ideasUrl": "https://www.jenkins.io/projects/gsoc/2026/project-ideas/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "Jenkins",
+  "ideasUrl": "https://www.jenkins.io/projects/gsoc/2026/project-ideas/",
+  "channels": [
+    {
+      "type": "Forum",
+      "url": "https://community.jenkins.io/",
+      "label": "Jenkins Community Forum"
+    },
+    {
+      "type": "Gitter",
+      "url": "https://app.gitter.im/#/room/#jenkinsci_jenkins:lobby",
+      "label": "Jenkins Gitter Lobby"
+    }
+  ],
+  "mentors": [
+    {
+      "github": "krisstern"
+    },
+    {
+      "github": "shivay-lamba"
+    }
+  ],
+  "mailingLists": [
+    {
+      "name": "Jenkins Mailing Lists",
+      "url": "https://www.jenkins.io/mailing-lists/"
+    }
+  ],
+  "tip": "Join the Jenkins community channels and introduce yourself before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-16T00:00:00.000Z"
+},
   "Jitsi": {
     "org": "Jitsi",
     "ideasUrl": "https://github.com/jitsi/jitsi-meet/wiki/GSoC-2026",
@@ -1078,6 +1101,7 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
+
   "Joomla!": {
     "org": "Joomla!",
     "ideasUrl": "https://docs.joomla.org/JGSOC:Google_Summer_of_Code_2026",

@@ -4,6 +4,8 @@ on:
   pull_request_review:
     types:
       - submitted
+  issue_comment:
+    types: [created]
 
 permissions:
   pull-requests: write
@@ -11,13 +13,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: stage2-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: stage2-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
 
 jobs:
   handle-review-approval:
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved'
+    if: |
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request)
 
     steps:
       - name: Process Stage 2 Approval
@@ -27,13 +31,35 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const pr = context.payload.pull_request;
-            const reviewer = context.payload.review.user.login;
-            const prNumber = pr.number;
 
-            if (reviewer.toLowerCase() === pr.user.login.toLowerCase()) {
-              core.info('Self-approval ignored.');
-              return;
+            let reviewer, prNumber;
+
+            if (context.eventName === 'pull_request_review') {
+              const pr = context.payload.pull_request;
+              reviewer = context.payload.review.user.login;
+              prNumber = pr.number;
+
+              if (reviewer.toLowerCase() === pr.user.login.toLowerCase()) {
+                core.info('Self-approval ignored.');
+                return;
+              }
+            } else {
+              const comment = context.payload.comment;
+              const commentBody = (comment.body || '').trim().toLowerCase();
+
+              const isExplicitApproval = /^\/(approve-pr|lgtm)\b/.test(commentBody);
+              if (!isExplicitApproval) return;
+
+              reviewer = comment.user.login;
+              prNumber = context.payload.issue.number;
+
+              const { data: prData } = await github.rest.pulls.get({
+                owner, repo, pull_number: prNumber
+              });
+              if (reviewer.toLowerCase() === prData.user.login.toLowerCase()) {
+                core.info('Self-approval via comment ignored.');
+                return;
+              }
             }
 
             const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
@@ -92,10 +118,36 @@ jobs:
               }
             }
 
+            if (context.eventName === 'issue_comment' && mentorList.includes(reviewer.toLowerCase())) {
+              mentorApprovals.add(reviewer.toLowerCase());
+            }
+
             core.info(`GSSOC mentor approvals: ${mentorApprovals.size} (${Array.from(mentorApprovals).join(', ')})`);
 
             if (mentorApprovals.size >= 1) {
               await addLabel('gssoc-mentor-approved');
+              await addLabel('mentor-approved');
+              await addLabel('pa-review-required');
               await addLabel(`mentor:${reviewer}`);
-              core.info('Stage 2 complete: GSSOC mentor approved.');
+
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: prNumber, name: 'needs-mentor-review'
+                });
+              } catch (e) {}
+              try {
+                await github.rest.issues.removeLabel({
+                  owner, repo, issue_number: prNumber, name: 'mentor-review-requested'
+                });
+              } catch (e) {}
+
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber,
+                body: `## ✅ Stage 2 Complete — Mentor Approved\n\n` +
+                  `@${reviewer} has approved this PR.\n\n` +
+                  `**Next:** PA/Maintainer review required. Label \`pa-review-required\` has been applied.\n\n` +
+                  `@S3DFX-CYBER — this PR is ready for your final review.`
+              });
+
+              core.info('Stage 2 complete: GSSOC mentor approved. PA review requested.');
             }

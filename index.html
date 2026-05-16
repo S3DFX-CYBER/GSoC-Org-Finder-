@@ -185,7 +185,7 @@
     .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
-    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
+    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#FB923C; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
     .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
     .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
     .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
@@ -273,6 +273,8 @@
       color: #fb923c !important;
     }
     
+    .group:hover {border-color: rgba(251, 186, 116, 0.45) !important;box-shadow: 0 0 0 1px rgba(251, 186, 116, 0.10),0 12px 28px rgba(251, 146, 60, 0.10), 0 18px 40px rgba(0, 0, 0, 0.08) !important;transform: translateY(-4px);transition:box-shadow 0.25s ease,transform 0.25s ease, border-color 0.25s ease;}
+
     /* Dark mode - Issue card badges */
     .dark .bg-green-100 { background: #14532d !important; }
     .dark .bg-zinc-100 { background: #27272a !important; }
@@ -282,14 +284,14 @@
     .dark .text-zinc-600 { color: #a1a1aa !important; }
     
     /* Dark mode - Card hover effects */
-    .dark .group:hover { background: #1f1f23 !important; border-color: rgba(249, 115, 22, 0.3) !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important; }
-    .dark .group:hover .text-on-surface { color: #f97316 !important; }
-    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #f97316 !important; }
+    .dark .group:hover {  background: #1f1f23 !important;border-color: rgba(251, 186, 116, 0.5) !important;box-shadow:0 0 0 1px rgba(251, 186, 116, 0.15),0 12px 32px rgba(251, 186, 116, 0.12),0 20px 45px rgba(0, 0, 0, 0.5),0 0 25px rgba(251, 186, 116, 0.08) !important;transform: translateY(-4px);}
+    .dark .group:hover .text-on-surface { color: #FED7AA !important; }
+    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #FDBA74 !important; }
     
     /* Dark mode - Tech tags */
     .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
-    .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
+    .dark .mentor-link-chip {background: rgba(124,45,18,0.72);color: #fff7ed;border-color: rgba(251,146,60,0.45);}
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
 
@@ -429,6 +431,22 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Small dark mode UI improvements */
+
+.dark .issue-fallback-card {
+  background: #0F172A !important;
+  border-color: #1E293B !important;
+}
+
+.dark .bg-zinc-50 {
+  background-color: #111827 !important;
+}
+
+.dark .text-zinc-600 {
+  color: #CBD5E1 !important;
+}
+
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -452,10 +470,10 @@
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
-        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
+        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-[#FB923C] italic">Org Finder</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
+        <a class="desktop-nav-link text-[#FB923C] font-bold border-b-2 border-[#FB923C] transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
@@ -568,7 +586,7 @@
         <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
       </div>
       <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
-        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
+        Find Your<br/><span class="text-[#FB923C] italic">Perfect GSoC Org</span>
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
@@ -576,11 +594,11 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-md shadow-zinc-900/10"/>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FB923C] to-[#FDBA74] text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
           <span class="material-symbols-outlined text-sm">casino</span>
           🎲 Surprise Me!
         </button>
@@ -603,7 +621,7 @@
     </div>
     <!-- Timeline Card -->
     <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
+      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-md shadow-zinc-900/5 border border-zinc-100">
         <div class="flex items-center justify-between mb-6 sm:mb-8">
           <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
           <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
@@ -710,7 +728,7 @@
   </div>
 
   <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+    <button id="loadMoreBtn" class="px-10 py-4 text-white bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] text-black hover:bg-[#FDBA74] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
       View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
     </button>
   </div>
@@ -802,7 +820,7 @@
       </div>
       <!-- Sidebar -->
       <div class="space-y-6">
-        <div class="bg-white rounded-2xl p-6 border border-zinc-100">
+        <div class="bg-white dark:bg-[#0F172A] rounded-2xl p-6 border border-zinc-100 dark:border-[#1E293B]" >
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
           <div class="space-y-4">
             <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
@@ -828,7 +846,7 @@
     <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
   </div>
   <!-- Status Banner -->
-  <div id="issuesBanner" class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+  <div id="issuesBanner" class="bg-green-50 border border-green-200 dark:bg-[#0F172A] dark:border-[#1E293B] rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
     <div class="flex items-center gap-3">
       <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot" id="issuesBannerDot"></div>
       <div>
@@ -843,7 +861,7 @@
   </div>
   <!-- Issue Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
+    <div class="bg-white dark:bg-[#0F172A] rounded-xl p-5 border border-zinc-100 dark:border-[#1E293B] hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
       <div class="flex items-start justify-between mb-3">
         <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
         <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
@@ -854,7 +872,7 @@
         <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
       </div>
     </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/django/django/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
+    <div class="bg-white dark:bg-[#0F172A] rounded-xl p-5 border border-zinc-100 dark:border-[#1E293B] hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/django/django/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
       <div class="flex items-start justify-between mb-3">
         <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
         <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
@@ -865,7 +883,7 @@
         <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
       </div>
     </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
+    <div class="bg-white dark:bg-[#0F172A] rounded-xl p-5 border border-zinc-100 dark:border-[#1E293B] hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
       <div class="flex items-start justify-between mb-3">
         <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
         <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
@@ -876,7 +894,7 @@
         <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
       </div>
     </div>
-    <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/kubernetes/kubernetes/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
+    <div class="bg-white dark:bg-[#0F172A] rounded-xl p-5 border border-zinc-100 dark:border-[#1E293B] hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/kubernetes/kubernetes/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
       <div class="flex items-start justify-between mb-3">
         <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
         <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
@@ -973,7 +991,7 @@
     <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
       <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
+        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-[#FFF7ED]/30 transition-colors">
           <p class="font-bold mb-1">Open Source Guide</p>
           <p class="text-zinc-600">Practical guide for first-time and returning contributors.</p>
         </a>
@@ -1025,7 +1043,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-[#FB923C] group-hover:scale-110 transition-transform">1</div>
         <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
         <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>

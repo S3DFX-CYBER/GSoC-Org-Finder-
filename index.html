@@ -783,10 +783,18 @@
 <!-- ═══════════════════ WATCHLIST ═══════════════════ -->
 <section id="watchlist" class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="mb-12">
-      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
-      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
-      <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
+    <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
+        <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
+      </div>
+      <button id="clearAllBookmarksBtn"
+        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
+        title="Remove all bookmarks">
+        <span class="material-symbols-outlined text-sm">delete_sweep</span>
+        Clear All
+      </button>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
@@ -1346,6 +1354,45 @@
     return null;
   }
 
+  function parseStoredBookmarks() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function trimGitHubPathSlashes(path) {
+    let start = 0;
+    let end = path.length;
+    while (start < end && path[start] === '/') start += 1;
+    while (end > start && path[end - 1] === '/') end -= 1;
+    return path.slice(start, end);
+  }
+
+  function githubPathFromValue(value) {
+    const github = String(value || '').trim();
+    if (!github) return '';
+    try {
+      const url = new URL(github);
+      const hostname = url.hostname.toLowerCase();
+      if (hostname !== 'github.com' && hostname !== 'www.github.com') return '';
+      return trimGitHubPathSlashes(url.pathname);
+    } catch {
+      return trimGitHubPathSlashes(github);
+    }
+  }
+
+  function githubOwnerFromValue(value) {
+    return githubPathFromValue(value).split('/')[0] || '';
+  }
+
+  function githubUrlFromValue(value) {
+    const path = githubPathFromValue(value);
+    return path ? `https://github.com/${path}` : null;
+  }
+
   // NOTE: For JS-string contexts inside inline event handlers,
   // we must also escape quotes. Prefer removing inline handlers.
 
@@ -1358,7 +1405,10 @@
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
   let compareList = [];
-  const bookmarkedSet = new Set(JSON.parse(localStorage.getItem('bookmarks') || '[]'));
+  const bookmarkedSet = (() => {
+    return new Set(parseStoredBookmarks());
+  })();
+
   const selectedLanguages = new Set();
   let matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
@@ -1788,7 +1838,7 @@
         bodyHtml = '<p class="text-sm text-zinc-600">Mentor data unavailable right now.</p>';
       }
 
-      const contactHref = primary?.url || org.ideas || `https://github.com/${org.github}`;
+      const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);
       const safeContactHref = sanitizeHrefUrl(contactHref);
 
       return `
@@ -2027,8 +2077,8 @@
       card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
       card.dataset.org = org.name;
       
-      const githubOwner = org.github.split('/')[0];
-      const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+      const githubOwner = githubOwnerFromValue(org.github);
+      const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
@@ -2130,8 +2180,8 @@
     
     compareList.forEach(name => {
       const org = ORGS.find(o => o.name === name);
-      const githubOwner = org.github.split('/')[0];
-      const logoUrl = `https://github.com/${githubOwner}.png?size=80`;
+      const githubOwner = githubOwnerFromValue(org.github);
+      const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
       const item = document.createElement('div');
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
@@ -2238,82 +2288,296 @@
     }
   });
 
-  function refreshOrgGridPreservingVisibleCount() {
+  function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
     const grid = document.getElementById('orgGrid');
     if (!grid) return;
-    // renderOrgs(true) clears the grid and resets visibleCount to 12, rendering
-    // the first page. We then keep appending subsequent pages until we reach
-    // the count the user had previously scrolled to, so no cards are lost.
-    renderOrgs(true);
+    // applyFilters() updates the filteredOrgs list and calls renderOrgs(true)
+    // which resets visibleCount to 12. We then keep appending subsequent pages
+    // until we reach the count the user had previously scrolled to.
+    applyFilters();
     while (visibleCount < savedCount && visibleCount < filteredOrgs.length) {
       visibleCount += 12;
       renderOrgs(false);
     }
   }
 
-  function toggleBookmark(e, name) {
-    if (e) e.stopPropagation();
-    if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
-    else bookmarkedSet.add(name);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-    refreshOrgGridPreservingVisibleCount();
-    renderWatchlist();
+  // ══════════════════════════════════════════════
+  // WATCHLIST — centralised bookmark sync helper
+  // ══════════════════════════════════════════════
+  function refreshVisibleBookmarkButtons() {
+    document.querySelectorAll('#orgGrid .bookmark-btn[data-bookmark-org]').forEach(btn => {
+      const isBookmarked = bookmarkedSet.has(btn.dataset.bookmarkOrg);
+      btn.classList.toggle('active', isBookmarked);
+      btn.classList.toggle('text-zinc-300', !isBookmarked);
+      btn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
+      btn.querySelector('.material-symbols-outlined')?.classList.toggle('icon-fill', isBookmarked);
+    });
   }
 
+  function refreshOrgGridAfterBookmarkChange() {
+    if (activeChip === 'bookmarked') {
+      applyFiltersPreservingVisibleCount();
+      return;
+    }
+    refreshVisibleBookmarkButtons();
+  }
+
+  /**
+   * Single source-of-truth writer for bookmarks.
+   * Always keeps bookmarkedSet (in-memory) + localStorage in lock-step.
+   * Re-filters only when the active filter depends on bookmark state.
+   */
+  function syncBookmark(name, shouldAdd) {
+    const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
+    if (!orgName) return;
+    if (shouldAdd) bookmarkedSet.add(orgName);
+    else           bookmarkedSet.delete(orgName);
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    refreshOrgGridAfterBookmarkChange();
+    renderWatchlist();
+    updateAIInsights();
+  }
+
+  function toggleBookmark(e, name) {
+    if (e) e.stopPropagation();
+    const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
+    if (!orgName) return;
+    syncBookmark(orgName, !bookmarkedSet.has(orgName));
+  }
+
+  // Listen for bookmarks toggled by app.js (the other org-grid script).
+  // When app.js fires 'bookmarkChanged', we re-read localStorage so
+  // bookmarkedSet stays in sync, then refresh the Watchlist panel.
+  document.addEventListener('bookmarkChanged', () => {
+    const fresh = new Set(parseStoredBookmarks());
+    // Diff: add new entries, remove stale ones — no full replacement so
+    // any in-memory state from index.html toggles is also preserved.
+    fresh.forEach(n => bookmarkedSet.add(n));
+    [...bookmarkedSet].forEach(n => { if (!fresh.has(n)) bookmarkedSet.delete(n); });
+    refreshOrgGridAfterBookmarkChange();
+    renderWatchlist();
+    updateAIInsights();
+  });
+
+  // Wire up "Clear All" button
+  document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
+
+  function clearAllBookmarks() {
+    if (!bookmarkedSet.size) return;
+    if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
+    bookmarkedSet.clear();
+    localStorage.setItem('bookmarks', JSON.stringify([]));
+    applyFilters();
+    renderWatchlist();
+    updateAIInsights();
+  }
+
+  // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
+    const clearBtn  = document.getElementById('clearAllBookmarksBtn');
     if (!container) return;
+
     container.innerHTML = '';
-    
-    const bookmarks = Array.from(bookmarkedSet).map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-    
+
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    // Show / hide "Clear All" button
+    if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
+
+    // ── Empty state ───────────────────────────────────────────────────────────
     if (bookmarks.length === 0) {
       container.innerHTML = `
-        <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
-          <p class="text-zinc-400 italic">Your watchlist is empty. Star organizations to track them here.</p>
-        </div>
-      `;
-      document.getElementById('aiInsightText').textContent = 'Star organizations to get personalized contribution advice.';
+        <div class="py-16 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
+          <span class="material-symbols-outlined text-4xl text-zinc-300 mb-4 block">bookmark_border</span>
+          <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
+          <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
+        </div>`;
       return;
     }
 
+    // ── Render one card per bookmarked org ────────────────────────────────────
     bookmarks.forEach(org => {
+      const githubOwner = githubOwnerFromValue(org.github);
+      const logoUrl     = githubOwner
+        ? `https://github.com/${githubOwner}.png?size=80`
+        : '';
+
+      // Category colour mapping (mirrors the existing badge system)
+      const CAT_COLOURS = {
+        science: 'bg-blue-100 text-blue-700',
+        programming: 'bg-violet-100 text-violet-700',
+        data: 'bg-cyan-100 text-cyan-700',
+        web: 'bg-green-100 text-green-700',
+        os: 'bg-orange-100 text-orange-700',
+        security: 'bg-red-100 text-red-700',
+        media: 'bg-pink-100 text-pink-700',
+        infra: 'bg-yellow-100 text-yellow-700',
+        ai: 'bg-purple-100 text-purple-700',
+        dev: 'bg-teal-100 text-teal-700',
+        other: 'bg-zinc-100 text-zinc-600',
+      };
+      const catClass = CAT_COLOURS[org.cat] || CAT_COLOURS.other;
+      const catLabel = {
+        science:'Science', programming:'Programming', data:'Data', web:'Web',
+        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+        ai:'AI / ML', dev:'Dev Tools', other:'Other',
+      }[org.cat] || org.cat;
+
+      const topTags = (org.tags || []).slice(0, 4)
+        .map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded text-zinc-600">${escapeHtml(t)}</span>`)
+        .join('');
+
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-6 border border-zinc-100 flex flex-col sm:flex-row gap-4 items-start hover:shadow-lg transition-all animate-fade-up';
+      item.className = 'bg-white rounded-2xl p-5 border border-zinc-100 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
+      item.dataset.watchlistOrg = org.name;
+
       item.innerHTML = `
-        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-orange-600">psychology</span>
+        <!-- Logo -->
+        <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100">
+          ${logoUrl
+            ? `<img src="${escapeHtml(logoUrl)}"
+                    data-org-name="${escapeHtml(org.name)}"
+                    alt="${escapeHtml(org.name)} logo"
+                    class="w-full h-full object-contain">`
+            : `<span class="material-symbols-outlined text-primary text-xl">corporate_fare</span>`
+          }
         </div>
-        <div class="flex-1 w-full">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${escapeHtml(org.name)}</h4>
-            <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
+        <!-- Body -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
+            <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${catClass}">${escapeHtml(catLabel)}</span>
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
+            </div>
           </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
-          <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
-            <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+          <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${escapeHtml(org.desc || '')}</p>
+          <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
+          <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
+            <div class="flex items-center gap-3 text-xs text-zinc-400">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">calendar_today</span>
+                ${escapeHtml(String(org.years))}y in GSoC
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">bar_chart</span>
+                ${escapeHtml(org.competition || '—')}
+              </span>
+            </div>
+            <button data-bookmark-org="${escapeHtml(org.name)}"
+                    class="bookmark-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
+              <span class="material-symbols-outlined text-xs">bookmark_remove</span>
+              Remove
+            </button>
           </div>
-        </div>
-      `;
+        </div>`;
+
       container.appendChild(item);
       attachOrgCardListeners(item);
     });
+  }
 
-    // Data-driven AI Insight
-    const allTags = bookmarks.flatMap(o => o.tags);
-    const topTag = [...new Set(allTags)].sort((a,b) => allTags.filter(t => t===b).length - allTags.filter(t => t===a).length)[0];
-    const skillFocus = topTag ? `Focus on mastering **${escapeHtml(topTag)}**` : "Start contributing to Good First Issues";
-    const safeTopTag = topTag ? escapeHtml(topTag) : null;
+  // ── updateAIInsights ─────────────────────────────────────────────────────────
+  /**
+   * Analyses the bookmarked orgs across three dimensions:
+   *   1. Most frequent category  → domain-specific advice
+   *   2. Top 3 tags (tech stack) → technology-specific tool recommendations
+   *   3. Competition level blend → acceptance-strategy advice
+   *
+   * Updates #aiInsightText with a rich, personalised HTML message.
+   */
+  function updateAIInsights() {
+    const el = document.getElementById('aiInsightText');
+    if (!el) return;
 
-    document.getElementById('aiInsightText').innerHTML = `
-      <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-sm">sparkles</span>
-        <span>Insight: Your watchlist highlights a strong interest in <strong>${safeTopTag || 'diverse stacks'}</strong>. ${skillFocus} to increase your acceptance odds for GSoC 2026.</span>
-      </span>
-    `;
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (bookmarks.length === 0) {
+      el.textContent = 'Star organizations to get personalized contribution advice.';
+      return;
+    }
+
+    // ── 1. Category frequency ────────────────────────────────────────────────
+    const catCount = {};
+    bookmarks.forEach(o => { catCount[o.cat] = (catCount[o.cat] || 0) + 1; });
+    const topCat = Object.entries(catCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'other';
+
+    // ── 2. Tag frequency (top 3) ─────────────────────────────────────────────
+    const tagCount = {};
+    bookmarks.flatMap(o => o.tags || []).forEach(t => {
+      const key = t.toLowerCase().trim();
+      tagCount[key] = (tagCount[key] || 0) + 1;
+    });
+    const topTags = Object.entries(tagCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([t]) => t);
+
+    // ── 3. Competition blend ─────────────────────────────────────────────────
+    const compCount = { hot: 0, moderate: 0, chill: 0 };
+    bookmarks.forEach(o => { if (compCount[o.competition] !== undefined) compCount[o.competition]++; });
+    const highComp    = compCount.hot   >= bookmarks.length * 0.5;
+    const lowComp     = compCount.chill >= bookmarks.length * 0.5;
+
+    // ── Domain-specific tool recommendations ─────────────────────────────────
+    const DOMAIN_ADVICE = {
+      ai:          { tools: 'PyTorch, TensorFlow, Hugging Face, or scikit-learn',        action: 'contribute to model training pipelines or evaluation utilities' },
+      data:        { tools: 'Pandas, Apache Spark, DuckDB, or dbt',                      action: 'look for data pipeline, ETL, or visualisation issues' },
+      science:     { tools: 'NumPy, SciPy, Astropy, or ROOT',                            action: 'explore numerical computation or simulation-related tickets' },
+      security:    { tools: 'Metasploit, Wireshark, OpenSSL, or OWASP tooling',          action: 'hunt for documentation or testing improvements in security repos' },
+      infra:       { tools: 'Kubernetes, Terraform, Prometheus, or Ansible',             action: 'target CI/CD configuration, observability, or deployment issues' },
+      web:         { tools: 'React, Vue, Svelte, or Node.js ecosystem libraries',        action: 'focus on accessibility fixes, UI components, or API improvements' },
+      programming: { tools: 'LLVM, GCC, rustc, or language toolchain packages',          action: 'dive into compiler warnings, test coverage, or RFC implementations' },
+      os:          { tools: 'Linux kernel toolchain, QEMU, or POSIX libraries',          action: 'start with documentation, porting, or driver-level good-first issues' },
+      dev:         { tools: 'LSP plugins, tree-sitter grammars, or CLI tooling',         action: 'pick up linter rules, editor extensions, or test-suite tasks' },
+      media:       { tools: 'FFmpeg, GStreamer, VLC plugin SDK, or libav',               action: 'explore codec, subtitle, or format compatibility tickets' },
+      other:       { tools: 'the project\'s primary language ecosystem',                 action: 'read the CONTRIBUTING guide and tackle labelled good-first issues' },
+    };
+    const advice = DOMAIN_ADVICE[topCat] || DOMAIN_ADVICE.other;
+
+    // ── Competition strategy ──────────────────────────────────────────────────
+    const strategyMsg = highComp
+      ? '⚠️ Your watchlist skews towards <strong>high-competition</strong> orgs — consider adding a few <em>Chill</em> orgs to diversify your odds.'
+      : lowComp
+        ? '✅ Smart move — your watchlist is weighted towards <strong>lower-competition</strong> orgs, which improves acceptance probability.'
+        : '📊 Your watchlist has a <strong>balanced mix</strong> of competition levels — a solid hedging strategy.';
+
+    // ── Stack summary line ────────────────────────────────────────────────────
+    const stackLine = topTags.length
+      ? `Your saved orgs centre on <strong>${topTags.map(t => escapeHtml(t)).join(', ')}</strong>.`
+      : 'Your saved orgs span a diverse set of technologies.';
+
+    // ── Category label ────────────────────────────────────────────────────────
+    const CAT_LABELS = {
+      ai:'AI / ML', data:'Data Science', science:'Scientific Computing',
+      security:'Security', infra:'Infrastructure', web:'Web Development',
+      programming:'Programming Languages', os:'OS / Systems', dev:'Dev Tools',
+      media:'Media / Multimedia', other:'Open Source',
+    };
+    const catLabel = CAT_LABELS[topCat] || 'Open Source';
+
+    el.innerHTML = `
+      <div class="space-y-3 text-sm leading-relaxed">
+        <p>
+          <span class="font-bold">📌 Stack Focus:</span>
+          ${stackLine}
+          Highlight experience with <strong>${escapeHtml(advice.tools)}</strong> in your proposals.
+        </p>
+        <p>
+          <span class="font-bold">🎯 Domain Strategy (${escapeHtml(catLabel)}):</span>
+          Before submitting, ${escapeHtml(advice.action)} to demonstrate early commitment to mentors.
+        </p>
+        <p>${strategyMsg}</p>
+        <p class="text-orange-200 text-[10px] font-label uppercase tracking-widest pt-1 border-t border-white/20">
+          Based on ${bookmarks.length} saved org${bookmarks.length !== 1 ? 's' : ''} · Automated insight
+        </p>
+      </div>`;
   }
 
   function openModal(name) {
@@ -2347,7 +2611,7 @@
 
     // Sanitize and set idea/repo links
     const ideasUrl = sanitizeHrefUrl(org.ideas);
-    const repoUrl = sanitizeHrefUrl(`https://github.com/${org.github}`);
+    const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));
     const ideasBtn = document.getElementById('mIdeasBtn');
     const repoBtn = document.getElementById('mRepoBtn');
     if (ideasBtn) {
@@ -2690,6 +2954,7 @@ if(org.ideas){
   renderSelectedLanguages();
   renderOrgs();
   renderWatchlist();
+  updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
@@ -2829,6 +3094,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+<script src="src/js/app.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

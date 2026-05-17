@@ -372,11 +372,14 @@ function openCompare(){
 
 function closeCompare(){
   document.getElementById('compareModal').classList.remove('open');
+  document.documentElement.style.overflow='';
   document.body.style.overflow='';
 }
 
 function closeCompareEv(e){
-  closeCompare();
+  // Only close when the click landed on the backdrop itself,
+  // not on content inside the modal panel.
+  if(e.target===document.getElementById('compareModal'))closeCompare();
 }
 
 function renderCompareSlots(){
@@ -1075,13 +1078,16 @@ function openModal(idx){
 }
 
 function closeModalEv(e){
-  closeModal();
+  // Only close when the click landed on the backdrop itself,
+  // not on content inside the modal panel.
+  if(e.target===document.getElementById('orgModal'))closeModal();
 }
 
 function closeModal(){
   document.getElementById('orgModal').classList.remove('open');
-  document.body.style.overflow = '';
-  modalIdx = -1;
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  modalIdx=-1;
 }
 
 

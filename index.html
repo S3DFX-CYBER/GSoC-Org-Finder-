@@ -1242,16 +1242,10 @@
   (function(){
     const offlineIndicator = document.getElementById('offlineIndicator');
     function updateOnlineStatus() {
-      if (!navigator.onLine) {
-        offlineIndicator.classList.remove('hidden');
-        offlineIndicator.style.display = 'block';
-      } else {
-        offlineIndicator.classList.add('hidden');
-        offlineIndicator.style.display = 'none';
-      }
+      offlineIndicator.classList.toggle('hidden', !navigator.onLine);
     }
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    globalThis.addEventListener('online', updateOnlineStatus);
+    globalThis.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
   })();
 

@@ -10,23 +10,6 @@
   updateThemeIcon();
 })();
 
-// ══════════════════════════════════════════════
-// NETWORK STATUS
-// ══════════════════════════════════════════════
-(function(){
-  const offlineIndicator = document.getElementById('offlineIndicator');
-  function updateOnlineStatus() {
-    if (!navigator.onLine) {
-      offlineIndicator.classList.remove('hidden');
-    } else {
-      offlineIndicator.classList.add('hidden');
-    }
-  }
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
-  updateOnlineStatus();
-})();
-
 // Shared escaping helper for this script (prevents HTML injection)
 function escapeHtml(value) {
   return String(value)

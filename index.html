@@ -229,8 +229,8 @@
     html { scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
-      scroll-margin-top: 80px;
+    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact, #compare-organizations {
+      scroll-margin-top: 70px;
     }
 
     /* Minimal dark-mode support */
@@ -469,6 +469,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#compare-organizations" data-section="compare">Compare</a>
       </nav>
     </div>
     
@@ -535,6 +536,10 @@
       <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
+      </a>
+      <a href="#compare-organizations" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="compare">
+        <span class="material-symbols-outlined text-lg">compare</span>
+        Compare
       </a>
       <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
@@ -1051,7 +1056,7 @@
 </section>
 
 <!-- ═══════════════════ COMPARE ═══════════════════ -->
-<section class="py-20 px-6 max-w-7xl mx-auto">
+<section id = 'compare-organizations' class="py-20 px-6 max-w-7xl mx-auto">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
     <div>
       <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Decision Tool</span>
@@ -1286,7 +1291,7 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    const sections = ['orgs', 'timeline', 'compare-organizations', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide'];
     const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
     let currentSection = 'orgs'; // Default

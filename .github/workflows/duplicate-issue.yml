@@ -4,11 +4,9 @@ on:
   issues:
     types:
       - opened
-      - edited
 
 permissions:
   issues: write
-  contents: read
 
 concurrency:
   group: duplicate-issue-${{ github.event.issue.number }}
@@ -16,84 +14,200 @@ concurrency:
 
 jobs:
   detect-duplicate:
+    name: Detect Duplicate Issues
     runs-on: ubuntu-latest
+
+    if: |
+      github.actor != 'github-actions[bot]'
+
     steps:
-      - name: Detect duplicate issues
-        uses: actions/github-script@v7
+      - name: Analyze Issue
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+
             const issue_number = issue.number;
             const username = issue.user.login;
+
+            // Ignore bots
+            if (
+              issue.user.type === 'Bot' ||
+              username.endsWith('[bot]')
+            ) {
+              core.info('Skipping bot issue');
+              return;
+            }
+
+            // Ignore PRs
+            if (issue.pull_request) {
+              core.info('Skipping pull request');
+              return;
+            }
+
+            const labels = (issue.labels || [])
+              .map(l => l.name.toLowerCase());
+
+            // Ignore research/meta issues
+            if (
+              labels.includes('research') ||
+              labels.includes('meta')
+            ) {
+              core.info('Skipping exempt issue');
+              return;
+            }
+
             const title = (issue.title || '').trim();
 
-            if (issue.user.type === 'Bot') return;
-            
-            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
-            if (labels.includes('research')) return;
-            
-            if (title.length < 8) return;
+            // Ignore very short titles
+            if (title.length < 10) {
+              core.info('Title too short');
+              return;
+            }
 
-            const normalize = str => 
-              str.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-            
+            // Normalize helper
+            const normalize = str =>
+              str
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
             const currentTitle = normalize(title);
 
-            const existingIssues = await github.paginate(github.rest.issues.listForRepo, {
-              owner, 
-              repo, 
-              state: 'open', 
-              per_page: 100
-            });
+            // Fetch RECENT issues only
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              {
+                owner,
+                repo,
+                state: 'open',
+                sort: 'created',
+                direction: 'desc',
+                per_page: 50
+              }
+            );
 
-            let duplicateIssue = null;
-            for (const existing of existingIssues) {
-              if (existing.number === issue_number || existing.pull_request) continue;
-              if ((existing.labels || []).some(l => l.name.toLowerCase() === 'research')) continue;
+            let duplicate = null;
 
-              if (normalize(existing.title || '') === currentTitle) {
-                duplicateIssue = existing;
+            for (const existing of issues) {
+
+              if (
+                existing.number === issue_number ||
+                existing.pull_request
+              ) {
+                continue;
+              }
+
+              const existingLabels = (
+                existing.labels || []
+              ).map(l => l.name.toLowerCase());
+
+              if (
+                existingLabels.includes('research') ||
+                existingLabels.includes('meta')
+              ) {
+                continue;
+              }
+
+              const existingTitle = normalize(
+                existing.title || ''
+              );
+
+              // Exact match
+              if (existingTitle === currentTitle) {
+                duplicate = existing;
+                break;
+              }
+
+              // Strong partial overlap
+              if (
+                existingTitle.includes(currentTitle) ||
+                currentTitle.includes(existingTitle)
+              ) {
+                duplicate = existing;
                 break;
               }
             }
 
-            if (duplicateIssue) {
-              const bodyText = `## 🔁 Duplicate Issue Detected\n\n` +
-                `Hi @${username}, this issue appears to be a duplicate of:\n\n` +
-                `➡️ #${duplicateIssue.number}\n\n` +
-                `Maintainers may close this issue to keep discussion in one place.\n\n` +
-                `If this is not a duplicate, please explain the difference.`;
+            if (!duplicate) {
+              core.info('No duplicate detected');
+              return;
+            }
 
-              const { data: comments } = await github.rest.issues.listComments({
-                owner, repo, issue_number, per_page: 100
-              });
+            const MARKER =
+              '<!-- duplicate-detector -->';
 
-              const marker = '<!-- duplicate-detector -->';
-              const existingComment = comments.find(c => c.body.includes(marker));
+            const body =
+              `${MARKER}\n` +
+              `## 🔁 Possible Duplicate Issue\n\n` +
+              `Hi @${username}, this issue appears similar to:\n\n` +
+              `➡️ #${duplicate.number}\n\n` +
+              `Please review the existing discussion before continuing.\n\n` +
+              `If this issue is substantially different, feel free to clarify the distinction.`;
 
-              if (existingComment) {
-                await github.rest.issues.updateComment({
-                  owner, 
-                  repo, 
-                  comment_id: existingComment.id, 
-                  body: bodyText
-                });
-              } else {
-                await github.rest.issues.createComment({
-                  owner, 
-                  repo, 
-                  issue_number, 
-                  body: bodyText
-                });
+            // Existing sticky comment?
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number,
+                per_page: 50
+              }
+            );
+
+            const existingComment = comments.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes(MARKER)
+            );
+
+            // Update or create comment
+            if (existingComment) {
+
+              if (
+                existingComment.body.trim() === body.trim()
+              ) {
+                core.info('Comment already current');
+                return;
               }
 
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body
+              });
+
+              core.info('Updated duplicate comment');
+
+            } else {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+
+              core.info('Created duplicate comment');
+            }
+
+            // Add label quietly
+            try {
               await github.rest.issues.addLabels({
-                owner, 
-                repo, 
-                issue_number, 
-                labels: ['duplicate']
-              }).catch(() => {});
+                owner,
+                repo,
+                issue_number,
+                labels: ['possible-duplicate']
+              });
+
+            } catch (e) {
+              core.info(
+                `Label may already exist: ${e.message}`
+              );
             }

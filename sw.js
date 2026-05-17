@@ -12,10 +12,10 @@ const STATIC_ASSETS = [
   'src/js/skillExtractor.js',
   'src/js/recommender.js',
   'src/js/recommendation-ui.js',
+  'src/assets/og-image.jpeg',
+  'src/assets/icon-192.png',
   'src/assets/icon-512.png',
-  'src/assets/og-image.jpeg'
 ];
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))

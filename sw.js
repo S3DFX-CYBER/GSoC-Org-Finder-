@@ -67,23 +67,13 @@ self.addEventListener('activate', (event) => {
 async function isCacheExpired(cache, request) {
   const cachedResponse = await cache.match(request);
   if (!cachedResponse) return true;
-
-  try {
-    const data = await cachedResponse.clone().json();
-    if (data._cachedAt) {
-      const age = Date.now() - data._cachedAt;
-      return age > MAX_AGE_MS;
-    }
-  } catch (e) {
-    // Not JSON, check Date header as fallback
-    const dateHeader = cachedResponse.headers.get('date');
-    if (dateHeader) {
-      const cachedTime = new Date(dateHeader).getTime();
-      const age = Date.now() - cachedTime;
-      return age > MAX_AGE_MS;
-    }
-  }
-  return false;
+  
+  const dateHeader = cachedResponse.headers.get('date');
+  if(!dateHeader) return true;
+  
+  const cachedTime = new Date(dateHeader).getTime();
+  const age = Date.now() - cachedTime;
+  return age > MAX_AGE_MS;
 }
 
 // Stale-while-revalidate: serve cached immediately, update in background

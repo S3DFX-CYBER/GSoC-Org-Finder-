@@ -101,6 +101,9 @@ async function analyzeGitHubUser(username) {
     if (message.includes("GitHub 403")) {
       throw new Error("GitHub API rate limit reached. Please try again later.");
     }
+    if (message.includes("GitHub 401") || message.includes("401")) {
+      throw new Error("GitHub API authorization failed. Please check the API token configuration or try again.");
+    }
     if (message === "Invalid user") {
       throw new Error(`The username '${username}' is not in a valid GitHub format.`);
     }

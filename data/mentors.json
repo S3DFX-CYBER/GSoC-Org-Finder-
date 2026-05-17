@@ -2322,14 +2322,34 @@
   },
   "Stichting SU2": {
     "org": "Stichting SU2",
-    "ideasUrl": "https://su2code.github.io/gsoc.html",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://su2code.github.io/gsoc/Introduction/",
+    "channels": [
+      {
+        "type": "forum",
+        "url": "http://www.cfd-online.com/Forums/su2/"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/su2code/SU2/issues"
+      }
+    ],
+    "mentors": [
+      "Nitish Anand",
+      "Edwin van der Weide",
+      "Pedro Gomes",
+      "Ole Burghardt",
+      "Nijso Beishuizen",
+      "Joshua A. Kelly",
+      "Harsh Mishra",
+      "Evert Bunschoten",
+      "Huseyin Ozdemir"
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Check the ideas page for specific project skill requirements. Mentors are assigned per project. Use GitHub Issues or CFD Online Forum for questions.",
+    "status": "ok",
+    "lastFetched": "2026-05-17T00:00:00.000Z"
   },
+  
   "Submitty": {
     "org": "Submitty",
     "ideasUrl": "https://github.com/Submitty/Submitty/wiki/Google-Summer-of-Code",

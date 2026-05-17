@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark, ORGS */
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
@@ -99,7 +99,11 @@ function handleCompareAction(e, btn, card) {
 function handleCardActivation(card) {
   const name = card.dataset.orgName;
   if (typeof openModal === 'function' && name) {
-    openModal(name);
+    const idx = ORGS.findIndex(o => o.name === name);
+
+    if (idx !== -1) {
+      openModal(idx);
+    }
   }
 }
 

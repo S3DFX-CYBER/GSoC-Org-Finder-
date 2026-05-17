@@ -2715,16 +2715,42 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "The FreeBSD Project": {
-    "org": "The FreeBSD Project",
-    "ideasUrl": "https://wiki.freebsd.org/SummerOfCode",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+ "The FreeBSD Project": {
+  "org": "The FreeBSD Project",
+  "ideasUrl": "https://wiki.freebsd.org/SummerOfCode2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://libera.chat/",
+      "label": "#freebsd-soc on Libera.Chat"
+    }
+  ],
+  "mentors": [
+  "Jose Luis Duran",
+  "Abbe",
+  "Warner Losh",
+  "Moin",
+  "Kristof Provost",
+  "Aymeric Wibo",
+  "Bruce Simpson",
+  "Alex Chernikov",
+  "Ken Merry"
+],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://lists.freebsd.org/",
+      "label": "freebsd-hackers@FreeBSD.org"
+    },
+    {
+      "type": "Mailing list",
+      "url": "https://lists.freebsd.org/",
+      "label": "soc-admins@FreeBSD.org"
+    }
+  ],
+"tip": "Start the conversation with a short introduction about who you are and why you’re reaching out. Be patient with responses, as people may be in different time zones.",  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "The Honeynet Project": {
     "org": "The Honeynet Project",
     "ideasUrl": "https://www.honeynet.org/gsoc/gsoc-2026/",

@@ -2222,10 +2222,19 @@
     const text = `Check out ${name} for GSoC 2026: ${githubUrl}`;
     navigator.clipboard.writeText(text).then(() => {
       const toast = document.getElementById('shareToast');
-      if (!toast) return;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }).catch(() => {
+    if (toast) {
+
+  // clear previous timeout if user clicks repeatedly
+    if (window.shareToastTimeout) {
+    clearTimeout(window.shareToastTimeout);
+    }
+
+    toast.classList.add('show');
+
+    window.shareToastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+      }}).catch(() => {
       const ta = document.createElement('textarea');
       ta.value = text;
       ta.style.position = 'fixed';

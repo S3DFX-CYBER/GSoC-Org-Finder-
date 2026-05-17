@@ -57,9 +57,9 @@ export default async function handler(req) {
   const fetchWithFallback = async (url, options) => {
     let res = await fetch(url, options);
     if (res.status === 401 && options.headers?.Authorization) {
-      const fallbackHeaders = { ...options.headers };
-      delete fallbackHeaders.Authorization;
-      res = await fetch(url, { ...options, headers: fallbackHeaders });
+      // Remove authorization for this retry and all future requests in this invocation
+      delete options.headers.Authorization;
+      res = await fetch(url, options);
     }
     return res;
   };

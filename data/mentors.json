@@ -947,12 +947,60 @@
   },
   "GNOME Foundation": {
     "org": "GNOME Foundation",
-    "ideasUrl": "https://wiki.gnome.org/Outreach/SummerOfCode/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "ideasUrl": "https://gsoc.gnome.org/2026/",
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#gnome:gnome.org",
+        "label": "GNOME Matrix"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#gnome",
+        "label": "IRC (Libera.Chat)"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Philip Chimento",
+        "github": "ptomato",
+        "githubUrl": "https://github.com/ptomato"
+      },
+      {
+        "name": "Alex Băluț",
+        "github": "aleb",
+        "githubUrl": "https://github.com/aleb"
+      },
+      {
+        "name": "Alberto Fanjul",
+        "github": "albfan",
+        "githubUrl": "https://github.com/albfan"
+      },
+      {
+        "name": "Adrian Vovk",
+        "github": "AdrianVovk",
+        "githubUrl": "https://github.com/AdrianVovk"
+      },
+      {
+        "name": "Jonas Ådahl",
+        "github": "jadahl",
+        "githubUrl": "https://github.com/jadahl"
+      },
+      {
+        "name": "rmader",
+        "github": "rmader",
+        "githubUrl": "https://github.com/rmader"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.gnome.org/",
+        "label": "GNOME Discourse Forum"
+      }
+    ],
+    "tip": "Check the GNOME wiki for mentors and project ideas. Contact via Matrix or IRC for the most responsive communication.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "GNU Compiler Collection (GCC)": {

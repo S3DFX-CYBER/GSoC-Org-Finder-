@@ -1,15 +1,15 @@
 {
   "name": "FindMyGSoC — GSoC 2026 Org Finder",
   "short_name": "FindMyGSoC",
+  "description": "Find your perfect GSoC 2026 organization — filtered by tech stack, domain & competition level.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#FAFAFA",
+  "background_color": "#0B1026",
   "theme_color": "#F46B0E",
-  "description": "Find your perfect GSoC 2026 organization.",
   "icons": [
     {
       "src": "src/assets/icon-512.png",
-      "sizes": "512x512",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
@@ -17,7 +17,7 @@
       "src": "src/assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

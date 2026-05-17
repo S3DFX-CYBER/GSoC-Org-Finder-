@@ -429,36 +429,10 @@
       color: #fb923c;
       background: #1c0f05;
     }
-    /* Scroll to Top FAB */
-#scrollTopBtn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: white;
-  border: 1.5px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.15s ease;
-  z-index: 999;
-}
-#scrollTopBtn.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-#scrollTopBtn:hover { transform: scale(1.1); }
-.dark #scrollTopBtn {
-  background: #18181b;
-  border-color: #3f3f46;
-  color: #f4f4f5;
-}
+#scrollTopBtn{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:white;border:1.5px solid #e5e7eb;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.25s ease,transform 0.15s ease;z-index:999;}
+#scrollTopBtn.visible{opacity:1;pointer-events:auto;}
+#scrollTopBtn:hover{transform:scale(1.1);}
+.dark #scrollTopBtn{background:#18181b;border-color:#3f3f46;color:#f4f4f5;}
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -2551,16 +2525,8 @@ if(org.ideas){
   renderTimeline();        // populate #timeline-milestones on first load
   updateCountdown();
   setInterval(updateCountdown, 60000);
-  // Scroll to Top FAB
-(function(){
-  const btn = document.getElementById('scrollTopBtn');
-  window.addEventListener('scroll', () => {
-    btn.classList.toggle('visible', window.scrollY > 300);
-  });
-  btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-})();
+  
+(function(){const btn=document.getElementById('scrollTopBtn');window.addEventListener('scroll',()=>{btn.classList.toggle('visible',window.scrollY>300);});btn.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'});});})();
   renderSelectedLanguages();
   renderOrgs();
   renderWatchlist();

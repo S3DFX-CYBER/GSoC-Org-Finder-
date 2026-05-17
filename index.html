@@ -667,32 +667,41 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Categories: All</option>
-        <option value="web">Web</option>
-        <option value="programming">Programming</option>
-        <option value="science">Science</option>
-        <option value="os">OS</option>
-        <option value="infra">Infra</option>
-        <option value="security">Security</option>
-        <option value="data">Data</option>
-        <option value="media">Media</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Complexity: All</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
-      <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="alpha">Sort: A-Z</option>
-        <option value="years-desc">Years (High-Low)</option>
-        <option value="years-asc">Years (Low-High)</option>
-        <option value="comp-low">Competition (Chill First)</option>
-        <option value="stars">GitHub Stars</option>
-        <option value="gfi">Good First Issues</option>
-      </select>
+      <div class="flex flex-col">
+        <label for="categoryFilter" class="sr-only">Filter by category</label>
+        <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+          <option value="all">Categories: All</option>
+          <option value="web">Web</option>
+          <option value="programming">Programming</option>
+          <option value="science">Science</option>
+          <option value="os">OS</option>
+          <option value="infra">Infra</option>
+          <option value="security">Security</option>
+          <option value="data">Data</option>
+          <option value="media">Media</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="flex flex-col">
+        <label for="complexityFilter" class="sr-only">Filter by complexity</label>
+        <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+          <option value="all">Complexity: All</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      <div class="flex flex-col">
+        <label for="sortSelect" class="sr-only">Sort organizations</label>
+        <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+          <option value="alpha">Sort: A-Z</option>
+          <option value="years-desc">Years (High-Low)</option>
+          <option value="years-asc">Years (Low-High)</option>
+          <option value="comp-low">Competition (Chill First)</option>
+          <option value="stars">GitHub Stars</option>
+          <option value="gfi">Good First Issues</option>
+        </select>
+      </div>
     </div>
   </div>
   
@@ -810,7 +819,7 @@
       <!-- Sidebar -->
       <div class="space-y-6">
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
-          <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
+          <h3 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h3>
           <div class="space-y-4">
             <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
             <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
@@ -818,7 +827,7 @@
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
-          <h4 class="font-bold mb-3">AI Application Insight</h4>
+          <h3 class="font-bold mb-3">AI Application Insight</h3>
           <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">Select organizations to get personalized contribution advice.</p>
           <span class="text-[10px] font-label uppercase tracking-widest text-orange-200">Automated System Advice</span>
         </div>
@@ -1004,7 +1013,7 @@
     </article>
 
     <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
-      <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
+      <h2 class="text-xl font-bold mb-4">4) FAQ</h2>
       <div class="space-y-3 text-sm">
         <details class="group border border-zinc-200 rounded-xl p-4">
           <summary class="font-semibold cursor-pointer">Do I need prior GSoC experience to contribute?</summary>
@@ -1207,6 +1216,31 @@
     const saved = localStorage.getItem('theme') || 'light';
     document.documentElement.classList.toggle('dark', saved === 'dark');
     updateThemeIcon();
+  })();
+
+  // ══════════════════════════════════════════════
+  // OFFLINE INDICATOR ELEMENT
+  // ══════════════════════════════════════════════
+  const offlineIndicatorHtml = '<div id="offlineIndicator" class="fixed bottom-4 left-4 z-50 hidden" style="display: none; background: linear-gradient(135deg, #F46B0E 0%, #EA580C 100%); box-shadow: 0 4px 20px rgba(244, 107, 14, 0.4);"><div class="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium"><span class="material-symbols-outlined text-lg" style="font-size: 20px;">wifi_off</span><span>You are offline — showing cached data</span></div></div>';
+  document.body.insertAdjacentHTML('beforeend', offlineIndicatorHtml);
+
+  // ══════════════════════════════════════════════
+  // NETWORK STATUS
+  // ══════════════════════════════════════════════
+  (function(){
+    const offlineIndicator = document.getElementById('offlineIndicator');
+    function updateOnlineStatus() {
+      if (!navigator.onLine) {
+        offlineIndicator.classList.remove('hidden');
+        offlineIndicator.style.display = 'block';
+      } else {
+        offlineIndicator.classList.add('hidden');
+        offlineIndicator.style.display = 'none';
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
   })();
 
   window.toggleTheme = function(){
@@ -2890,7 +2924,7 @@ if(org.ideas){
         const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
         card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
-            <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
+            <h3 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h3>
             <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
           </div>
           <p class="text-xs text-zinc-500 mb-3 font-mono">${safeRepo}</p>
@@ -3102,7 +3136,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.closeHelpModal = closeHelpModal;
-
 });
 </script>
 <script src="src/js/githubAnalyzer.js"></script>

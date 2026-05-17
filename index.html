@@ -98,9 +98,9 @@
     .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     .fade-up{animation:fadeUp .6s ease-out both}
-    @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
     .pulse-dot{animation:pulse-dot 2s infinite}
-    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @ke    yframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
@@ -1286,49 +1286,51 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
-    
-    let currentSection = 'orgs'; // Default
-    
-    sections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = sectionId;
-        }
-      }
-    });
+  const sections = document.querySelectorAll('section[id]');
+  const scrollPosition = window.scrollY + 120; // better offset for fixed navbar
+
+  let currentSection = null;
+
+  sections.forEach((section) => {
+    const top = section.offsetTop;
+    const height = section.offsetHeight;
+
+    if (scrollPosition >= top && scrollPosition < top + height) {
+      currentSection = section.id;
+    }
+  });
+
+  if (!currentSection) return;
     
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-      }
-    });
+    allMobileLinks.forEach((link) => {
+    const match = link.getAttribute('data-section') === currentSection;
+
+    link.classList.toggle('text-orange-600', match);
+    link.classList.toggle('bg-orange-50', match);
+    link.classList.toggle('font-bold', match);
+
+    link.classList.toggle('text-zinc-700', !match);
+    link.classList.toggle('hover:bg-zinc-100', !match);
+    link.classList.toggle('font-medium', !match);
+  });
+
 
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
-    allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-      } else {
-        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-        link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-      }
-    });
-  }
+  allDesktopLinks.forEach((link) => {
+    const match = link.getAttribute('data-section') === currentSection;
+
+    link.classList.toggle('text-orange-600', match);
+    link.classList.toggle('font-bold', match);
+    link.classList.toggle('border-b-2', match);
+    link.classList.toggle('border-orange-600', match);
+
+    link.classList.toggle('text-zinc-600', !match);
+    link.classList.toggle('hover:text-zinc-900', !match);
+  });
+}
 
   // Listen for scroll events
   window.addEventListener('scroll', updateActiveSection);

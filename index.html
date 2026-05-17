@@ -2722,6 +2722,16 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+
+    // Persist filter state to URL so it survives page refresh
+    const params = new URLSearchParams();
+    if (query)                              params.set('q', query);
+    if (cat)                               params.set('cat', cat);
+    if (comp && comp !== 'all')            params.set('comp', comp);
+    if (sort && sort !== 'alpha')          params.set('sort', sort);
+    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
+    if (activeChip)                        params.set('chip', activeChip);
+    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2740,7 +2750,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -2963,6 +2973,59 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+
+  // Restore filter state from URL params on page load/refresh
+  (function restoreFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+
+    function setElValue(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.value = value;
+    }
+
+    function getChipKey(text) {
+      if (text.includes('bookmarked'))            return 'bookmarked';
+      if (text.includes('veteran'))               return 'veterans';
+      if (text.includes('newcomer'))              return 'newcomers';
+      if (text.includes('low competition'))       return 'low-competition';
+      if (text.includes('high competition'))      return 'high-competition';
+      if (text.includes('actively'))              return 'active';
+      return null;
+    }
+
+    setElValue('searchInput', params.get('q'));
+    setElValue('hero-search', params.get('q'));
+    setElValue('categoryFilter', params.get('cat'));
+    setElValue('complexityFilter', params.get('comp'));
+    setElValue('sortSelect', params.get('sort'));
+
+    const lang = params.get('lang');
+    if (lang) {
+      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
+        }
+      });
+      renderSelectedLanguages();
+    }
+
+    const chip = params.get('chip');
+    if (chip) {
+      activeChip = chip;
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        const key = getChipKey(el.textContent.trim().toLowerCase());
+        if (key === chip) {
+          el.classList.add('bg-orange-600', 'text-white');
+          el.classList.remove('bg-surface-container-highest');
+        }
+      });
+    }
+
+    applyFilters();
+  })();
   renderOrgs();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load

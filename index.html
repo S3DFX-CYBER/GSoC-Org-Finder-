@@ -1216,7 +1216,7 @@
   let communityActivity = {};
   fetch('data/community_activity.json?v=' + Date.now())
     .then(r => r.json())
-    .then(data => { communityActivity = data; renderOrgs(true); })
+    .then(data => { communityActivity = data; renderOrgs(false); })
     .catch(() => { communityActivity = {}; });
 
   function getActivityBadge(orgName) {
@@ -2619,6 +2619,7 @@
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <h2>${escapeHtml(org.name)}</h2>
       <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+      ${getActivityBadge(org.name)}
     `;
 
     document.getElementById('mMetrics').innerHTML = `

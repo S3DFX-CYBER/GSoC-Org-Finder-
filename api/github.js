@@ -12,6 +12,34 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+async function fetchAllUserRepos(username, ghHeaders) {
+  let page = 1;
+  let repos = [];
+  let isComplete = true;
+  while (page <= 3) {
+    try {
+      const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated&page=${page}`, { 
+        headers: ghHeaders,
+        signal: AbortSignal.timeout(5000)
+      });
+      if (!res.ok) {
+        if (page === 1) throw new Error(`GitHub ${res.status}`);
+        isComplete = false;
+        break;
+      }
+      const pageRepos = await res.json();
+      repos = repos.concat(pageRepos);
+      if (pageRepos.length < 100) break;
+      page++;
+    } catch (e) {
+      if (page === 1) throw e; 
+      isComplete = false;
+      break;
+    }
+  }
+  return { repos, isComplete };
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -34,7 +62,7 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
-  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+  if (repo && !/^[\w.-]+(\/[\w.-]+)?$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
 
@@ -62,28 +90,7 @@ export default async function handler(req) {
     }
 
     try {
-      let page = 1;
-      let repos = [];
-      while (page <= 3) {
-        try {
-          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
-            headers: ghHeaders,
-            signal: AbortSignal.timeout(5000)
-          });
-          if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
-            break;
-          }
-          const pageRepos = await res.json();
-          repos = repos.concat(pageRepos);
-          if (pageRepos.length < 100) break;
-          page++;
-        } catch (e) {
-          // Gracefully break loop on timeout/err for pages 2-3, allowing partial results
-          if (page === 1) throw e; 
-          break;
-        }
-      }
+      const { repos, isComplete } = await fetchAllUserRepos(user, ghHeaders);
       
       let totalStars = 0;
       const languageCounts = {};
@@ -123,7 +130,9 @@ export default async function handler(req) {
         ts: Date.now()
       };
       
-      safeCacheSet(cacheKey, result);
+      if (isComplete) {
+        safeCacheSet(cacheKey, result);
+      }
       return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (err) {
@@ -139,7 +148,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const query = repo.includes('/') ? `repo:${repo}` : `user:${repo}`;
+      const q = encodeURIComponent(`${query} label:"good first issue" state:open`);
       const res = await fetch(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
@@ -172,7 +182,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const query = repo.includes('/') ? `repo:${repo}` : `user:${repo}`;
+      const q = encodeURIComponent(`${query} label:"good first issue" state:open`);
       const res = await fetch(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
@@ -193,6 +204,59 @@ export default async function handler(req) {
   const cached = CACHE.get(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+  }
+
+  if (!repo.includes('/')) {
+    try {
+      const { repos, isComplete } = await fetchAllUserRepos(repo, ghHeaders);
+      
+      let totalStars = 0;
+      let totalForks = 0;
+      let totalIssues = 0;
+      let activeDays = 9999;
+      
+      repos.forEach(r => {
+        if (r.fork) return; 
+        totalStars += r.stargazers_count;
+        totalForks += r.forks_count;
+        totalIssues += r.open_issues_count;
+        if (r.pushed_at) {
+          const d = new Date(r.pushed_at);
+          const days = Math.floor((Date.now() - d) / 86400000);
+          if (days < activeDays) activeDays = days;
+        }
+      });
+
+      let lastCommit = '—';
+      if (activeDays !== 9999) {
+        if (activeDays === 0) lastCommit = 'Today';
+        else if (activeDays === 1) lastCommit = '1d ago';
+        else if (activeDays < 30) lastCommit = `${activeDays}d ago`;
+        else if (activeDays < 365) lastCommit = `${Math.floor(activeDays / 30)}mo ago`;
+        else lastCommit = `${Math.floor(activeDays / 365)}y ago`;
+      }
+
+      const activity = activeDays < 14 ? 'active' : activeDays < 60 ? 'moderate' : 'low';
+
+      const result = {
+        stars: totalStars,
+        forks: totalForks,
+        issues: totalIssues,
+        watchers: 0,
+        lastCommit,
+        activity,
+        language: null,
+        gfi: null,  
+        ts: Date.now(),
+      };
+      
+      if (isComplete) {
+        safeCacheSet(repo, result);
+      }
+      return new Response(JSON.stringify(result), { status: 200, headers });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
+    }
   }
 
   try {

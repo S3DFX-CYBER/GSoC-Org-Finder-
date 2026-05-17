@@ -54,9 +54,12 @@ self.addEventListener('fetch', (event) => {
         if (!response || response.status !== 200 || response.type === 'opaque') {
           return response;
         }
-        const cloned = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-        return response;
+       const cloned = response.clone();
+       const url = new URL(event.request.url);
+       if (!url.search) {
+         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
+}
+return response;
       });
     }).catch(() => {
       // Offline fallback: serve index.html for navigation requests

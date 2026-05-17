@@ -246,11 +246,11 @@ For the full contributing reference (architecture, rules, PR workflow), see [CON
 
 ### Assignment Process
 
-This repo uses a **maintainer-verified** assignment system:
+This repo uses a **tiered auto-assignment** system on verified issues:
 
 1. Find an issue and comment `/assign gssoc` or `/assign nsoc`
-2. Your request is **queued** (not immediately assigned)
-3. A maintainer verifies the issue and runs `/approve-assignment`
+2. If it's a `level:beginner` issue, you are **instantly assigned** (no restrictions)
+3. For intermediate/advanced or unverified issues, your request is **queued** for maintainer approval (`/approve-assignment`)
 4. You get notified and can begin work
 
 **Do not start working before you are assigned.**

@@ -910,9 +910,18 @@ document.addEventListener('keydown',e=>{
   } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
     e.preventDefault();
     toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+  } else if ((e.key==='r'||e.key==='R') && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    const list = filteredOrgs && filteredOrgs.length>0 ? filteredOrgs :ORGS;
+    if (list && list.length > 0) {
+      const array =new Uint32Array(1);
+      globalThis.crypto.getRandomValues(array);
+      const randomIdx = array[0]%list.length;
+      openModal(ORGS.indexOf(list[randomIdx]));
+    }
   } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
     e.preventDefault();
-    document.getElementById('searchInput').focus();
+    document.getElementById('hero-search')?.focus();
   }
 });
 
@@ -1385,15 +1394,45 @@ requestAnimationFrame(()=>{
 });
 
 // Sync hero search with hidden search input and initialize on load
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+const debouncedApplyFilters = debounce(applyFilters, 250);
 const heroSearch = document.getElementById('hero-search');
+const clearSearchBtn = document.getElementById('clear-search-btn');
+
 if (heroSearch) {
   heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+  
+  if (clearSearchBtn) {
+    clearSearchBtn.style.display = heroSearch.value ? 'flex' : 'none';
+    clearSearchBtn.addEventListener('click', () => {
+      heroSearch.value = '';
+      clearSearchBtn.style.display = 'none';
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.value = '';
+      applyFilters();
+    });
+  }
+
   heroSearch.addEventListener('input', (e) => {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
       searchInput.value = e.target.value;
-      applyFilters();
     }
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = e.target.value ? 'flex' : 'none';
+    }
+    debouncedApplyFilters();
   });
 }
 

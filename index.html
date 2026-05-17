@@ -484,12 +484,12 @@
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -553,9 +553,13 @@
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
+      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Timeline
+      </a>
+      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        AI Recommender
       </a>
       <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
@@ -569,13 +573,9 @@
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
+      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+        <span class="material-symbols-outlined text-lg">menu_book</span>
+        Guide
       </a>
     </div>
     
@@ -589,7 +589,7 @@
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -2817,6 +2817,16 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+
+    // Persist filter state to URL so it survives page refresh
+    const params = new URLSearchParams();
+    if (query)                              params.set('q', query);
+    if (cat)                               params.set('cat', cat);
+    if (comp && comp !== 'all')            params.set('comp', comp);
+    if (sort && sort !== 'alpha')          params.set('sort', sort);
+    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
+    if (activeChip)                        params.set('chip', activeChip);
+    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2835,7 +2845,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -3058,6 +3068,59 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+
+  // Restore filter state from URL params on page load/refresh
+  (function restoreFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+
+    function setElValue(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.value = value;
+    }
+
+    function getChipKey(text) {
+      if (text.includes('bookmarked'))            return 'bookmarked';
+      if (text.includes('veteran'))               return 'veterans';
+      if (text.includes('newcomer'))              return 'newcomers';
+      if (text.includes('low competition'))       return 'low-competition';
+      if (text.includes('high competition'))      return 'high-competition';
+      if (text.includes('actively'))              return 'active';
+      return null;
+    }
+
+    setElValue('searchInput', params.get('q'));
+    setElValue('hero-search', params.get('q'));
+    setElValue('categoryFilter', params.get('cat'));
+    setElValue('complexityFilter', params.get('comp'));
+    setElValue('sortSelect', params.get('sort'));
+
+    const lang = params.get('lang');
+    if (lang) {
+      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
+        }
+      });
+      renderSelectedLanguages();
+    }
+
+    const chip = params.get('chip');
+    if (chip) {
+      activeChip = chip;
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        const key = getChipKey(el.textContent.trim().toLowerCase());
+        if (key === chip) {
+          el.classList.add('bg-orange-600', 'text-white');
+          el.classList.remove('bg-surface-container-highest');
+        }
+      });
+    }
+
+    applyFilters();
+  })();
   renderOrgs();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load
@@ -3200,7 +3263,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-<script src="src/js/app.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

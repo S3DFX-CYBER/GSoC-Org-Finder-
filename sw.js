@@ -1,4 +1,4 @@
-const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,8).replace(/-/g, '');
+const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,8).replaceAll('-', '');
 
 // Cache naming
 const STATIC_CACHE_NAME = `gsoc-finder-static-${CACHE_VERSION}`;
@@ -27,16 +27,15 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME).then(async (cache) => {
-      const results = await Promise.allSettled(
+      await Promise.allSettled(
         STATIC_ASSETS.map(url =>
           fetch(url).then(response => {
             if (response.ok) {
               return cache.put(url, response);
             }
-            return Promise.reject(new Error(`Failed: ${url}`));
+            throw new Error(`Failed: ${url}`);
           }).catch(err => {
             console.warn('Precache failed for:', url, err.message);
-            return Promise.resolve();
           })
         )
       );
@@ -59,7 +58,7 @@ self.addEventListener('activate', (event) => {
           return Promise.resolve();
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => globalThis.clients.claim())
   );
 });
 
@@ -67,10 +66,10 @@ self.addEventListener('activate', (event) => {
 async function isCacheExpired(cache, request) {
   const cachedResponse = await cache.match(request);
   if (!cachedResponse) return true;
-  
+
   const dateHeader = cachedResponse.headers.get('date');
-  if(!dateHeader) return true;
-  
+  if (!dateHeader) return true;
+
   const cachedTime = new Date(dateHeader).getTime();
   const age = Date.now() - cachedTime;
   return age > MAX_AGE_MS;
@@ -88,7 +87,7 @@ async function staleWhileRevalidate(request) {
         cache.put(request, networkResponse.clone());
       }
       return networkResponse;
-    } catch (e) {
+    } catch (_) {
       // Return cached if available
       if (cachedResponse) return cachedResponse;
       // For navigation requests without cache, show offline page
@@ -125,7 +124,7 @@ async function cacheFirst(request) {
         cache.put(request, networkResponse.clone());
         return networkResponse;
       }
-    } catch (e) {
+    } catch (_) {
       // Return stale cache if network fails
       return cachedResponse;
     }

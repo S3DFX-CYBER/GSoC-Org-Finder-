@@ -29,7 +29,7 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE_NAME).then(async (cache) => {
       const results = await Promise.allSettled(
         STATIC_ASSETS.map(url =>
-          fetch(url, { mode: 'no-cors' }).then(response => {
+          fetch(url).then(response => {
             if (response.ok) {
               return cache.put(url, response);
             }

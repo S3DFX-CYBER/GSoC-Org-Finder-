@@ -583,7 +583,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search orgs, skills, tech, categories..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -709,8 +709,8 @@
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
-    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
-    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
+    <h3 id="emptyStateTitle" class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
+    <p id="emptyStateText" class="text-zinc-500 dark:text-zinc-400 mb-8">Try searching by organization, skill, tech stack, category, difficulty, or repository name.</p>
     <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
       Clear All Filters
     </button>
@@ -1398,6 +1398,170 @@
   function githubUrlFromValue(value) {
     const path = githubPathFromValue(value);
     return path ? `https://github.com/${path}` : null;
+  }
+
+  const CATEGORY_LABELS = {
+    science: 'Science',
+    programming: 'Programming',
+    data: 'Data',
+    web: 'Web',
+    os: 'OS Systems Operating System',
+    security: 'Security',
+    media: 'Media',
+    infra: 'Infrastructure DevOps Cloud Native',
+    ai: 'AI ML Machine Learning',
+    dev: 'Developer Tools Dev Tools',
+    other: 'Other'
+  };
+
+  const CODEBASE_LABELS = {
+    beginner: 'Beginner Easy Newcomer Friendly',
+    intermediate: 'Intermediate Medium',
+    advanced: 'Advanced Hard'
+  };
+
+  const COMPETITION_LABELS = {
+    chill: 'Low Competition Chill',
+    moderate: 'Moderate Competition',
+    hot: 'High Competition Competitive'
+  };
+
+  const SEARCH_INDEX_BY_ORG = new WeakMap();
+
+  function normalizeSearchText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9+#.]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function tokenizeSearchText(value) {
+    return normalizeSearchText(value).split(' ').filter(Boolean);
+  }
+
+  function searchPartsForOrg(org) {
+    const githubPath = githubPathFromValue(org.github);
+    const githubPieces = githubPath.split(/[/-]+/);
+
+    return [
+      org.name,
+      org.desc,
+      org.cat,
+      CATEGORY_LABELS[org.cat],
+      org.codebase,
+      CODEBASE_LABELS[org.codebase],
+      org.competition,
+      COMPETITION_LABELS[org.competition],
+      org.github,
+      githubPath,
+      githubPieces.join(' '),
+      ...(org.tags || []),
+      ...(org.fit || [])
+    ];
+  }
+
+  // Build one normalized search document per organization. This keeps filtering fast
+  // while users type and lets search cover names, descriptions, skills, categories,
+  // difficulty labels, competition labels, fit text, and GitHub repository names.
+  function buildOrgSearchIndex(org) {
+    const searchableText = normalizeSearchText(searchPartsForOrg(org).filter(Boolean).join(' '));
+    const tokens = [...new Set(searchableText.split(' ').filter(Boolean))];
+    const tokenSet = new Set(tokens);
+
+    return { text: searchableText, tokens, tokenSet };
+  }
+
+  function getOrgSearchIndex(org) {
+    if (!SEARCH_INDEX_BY_ORG.has(org)) {
+      SEARCH_INDEX_BY_ORG.set(org, buildOrgSearchIndex(org));
+    }
+    return SEARCH_INDEX_BY_ORG.get(org);
+  }
+
+  function boundedEditDistance(a, b, maxDistance) {
+    if (Math.abs(a.length - b.length) > maxDistance) return maxDistance + 1;
+
+    let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const current = [i];
+      let rowMin = current[0];
+
+      for (let j = 1; j <= b.length; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        const value = Math.min(
+          previous[j] + 1,
+          current[j - 1] + 1,
+          previous[j - 1] + cost
+        );
+        current[j] = value;
+        rowMin = Math.min(rowMin, value);
+      }
+
+      if (rowMin > maxDistance) return maxDistance + 1;
+      previous = current;
+    }
+
+    return previous[b.length];
+  }
+
+  function fuzzyTokenMatches(term, tokens) {
+    if (term.length < 4) return false;
+    const maxDistance = term.length >= 7 ? 2 : 1;
+    return tokens.some(token => {
+      if (token.length < 4) return false;
+      return boundedEditDistance(term, token, maxDistance) <= maxDistance;
+    });
+  }
+
+  function orgSearchScore(org, rawQuery) {
+    const query = normalizeSearchText(rawQuery);
+    if (!query) return 1;
+
+    const index = getOrgSearchIndex(org);
+    const terms = tokenizeSearchText(query);
+    if (!terms.length) return 1;
+
+    const normalizedName = normalizeSearchText(org.name);
+    const normalizedRepo = normalizeSearchText(githubPathFromValue(org.github));
+    let score = 0;
+
+    if (normalizedName === query) score += 120;
+    else if (normalizedName.startsWith(query)) score += 90;
+    else if (normalizedName.includes(query)) score += 70;
+
+    if (normalizedRepo.includes(query)) score += 45;
+    if (index.text.includes(query)) score += 35;
+
+    for (const term of terms) {
+      if (index.tokenSet.has(term)) {
+        score += 12;
+      } else if (index.text.includes(term)) {
+        score += 8;
+      } else if (fuzzyTokenMatches(term, index.tokens)) {
+        score += 4;
+      } else {
+        return 0;
+      }
+    }
+
+    return score;
+  }
+
+  function updateSearchEmptyState(query) {
+    const title = document.getElementById('emptyStateTitle');
+    const text = document.getElementById('emptyStateText');
+    if (!title || !text) return;
+
+    if (query) {
+      title.textContent = `No organizations found for "${query}".`;
+      text.textContent = 'Try a related skill, technology, category, difficulty level, or repository name.';
+    } else {
+      title.textContent = 'No organizations match your current filters.';
+      text.textContent = 'Try searching by organization, skill, tech stack, category, difficulty, or repository name.';
+    }
   }
 
   // NOTE: For JS-string contexts inside inline event handlers,
@@ -2681,14 +2845,16 @@ if(org.ideas){
 
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
   function applyFilters() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const query = (document.getElementById('searchInput')?.value || '').trim();
     const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
     const cat = categoryValue === 'all' ? '' : categoryValue;
     const comp = document.getElementById('complexityFilter').value;
     const sort = document.getElementById('sortSelect')?.value || 'alpha';
+    const searchScores = new WeakMap();
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query);
+      const searchScore = orgSearchScore(o, query);
+      const matchSearch = !query || searchScore > 0;
       const matchCat = !cat || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
       const tags = (o.tags || []).map(t => String(t).toLowerCase());
@@ -2704,23 +2870,21 @@ if(org.ideas){
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
 
+      searchScores.set(o, searchScore);
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
 
     if(query){
       filteredOrgs.sort((a,b)=>{
-        const nameA=a.name.toLowerCase();
-        const nameB=b.name.toLowerCase();
-        if(nameA===query && nameB!==query) return -1;
-        if(nameB===query && nameA!==query) return 1;
-        if(nameA.startsWith(query) && !nameB.startsWith(query)) return -1;
-        if(nameB.startsWith(query) && !nameA.startsWith(query)) return 1;
+        const scoreDiff = (searchScores.get(b) || 0) - (searchScores.get(a) || 0);
+        if(scoreDiff) return scoreDiff;
         return applySecondarySort(a, b, sort);
       });
     } else {
       filteredOrgs.sort((a, b) => applySecondarySort(a, b, sort));
     }
 
+    updateSearchEmptyState(query);
     renderOrgs(true);
   }
 

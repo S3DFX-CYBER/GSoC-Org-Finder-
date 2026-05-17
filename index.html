@@ -1221,9 +1221,21 @@
   // ══════════════════════════════════════════════
   // OFFLINE INDICATOR ELEMENT
   // ══════════════════════════════════════════════
-  const offlineIndicatorHtml = '<div id="offlineIndicator" class="fixed bottom-4 left-4 z-50 hidden" style="display: none; background: linear-gradient(135deg, #F46B0E 0%, #EA580C 100%); box-shadow: 0 4px 20px rgba(244, 107, 14, 0.4);"><div class="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium"><span class="material-symbols-outlined text-lg" style="font-size: 20px;">wifi_off</span><span>You are offline — showing cached data</span></div></div>';
-  document.body.insertAdjacentHTML('beforeend', offlineIndicatorHtml);
-
+  const offlineIndicatorHtml = `
+  <div
+    id="offlineIndicator"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="fixed bottom-4 left-4 z-50 hidden"
+    style="display: none; background: linear-gradient(135deg, #F46B0E 0%, #EA580C 100%); box-shadow: 0 4px 20px rgba(244, 107, 14, 0.4);"
+  >
+    <div class="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium">
+      <span class="material-symbols-outlined text-lg" style="font-size: 20px;">wifi_off</span>
+      <span>You are offline — showing cached data</span>
+    </div>
+  </div>`;
+  
   // ══════════════════════════════════════════════
   // NETWORK STATUS
   // ══════════════════════════════════════════════

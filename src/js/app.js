@@ -744,14 +744,15 @@ function renderGrid(orgs){
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
+    const orgTags = o.tags || [];
     let tags = '';
-    if (o.tags.length > 3) {
-      const visible = o.tags.slice(0, 3);
-      const hidden = o.tags.slice(3);
+    if (orgTags.length > 3) {
+      const visible = orgTags.slice(0, 3);
+      const hidden = orgTags.slice(3);
       tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
              `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
     } else {
-      tags = o.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
     }
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>

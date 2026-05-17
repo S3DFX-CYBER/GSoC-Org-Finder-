@@ -12,6 +12,17 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+function countFromLinkHeader(linkHeader) {
+  if (!linkHeader) return null;
+  const lastLink = linkHeader
+    .split(',')
+    .map(part => part.trim())
+    .find(part => part.includes('rel="last"'));
+  if (!lastLink) return null;
+  const match = lastLink.match(/[?&]page=(\d+)/);
+  return match ? Number(match[1]) : null;
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -196,9 +207,19 @@ export default async function handler(req) {
   }
 
   try {
-    const [repoRes, commitsRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+    const [repoRes, commitsRes, contributorsRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${repo}`, {
+        headers: ghHeaders,
+        signal: AbortSignal.timeout(8000),
+      }),
+      fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, {
+        headers: ghHeaders,
+        signal: AbortSignal.timeout(8000),
+      }),
+      fetch(`https://api.github.com/repos/${repo}/contributors?per_page=1&anon=false`, {
+        headers: ghHeaders,
+        signal: AbortSignal.timeout(8000),
+      }).catch(() => null),
     ]);
 
     if (!repoRes.ok) {
@@ -224,15 +245,30 @@ export default async function handler(req) {
     }
 
     const activity = activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low';
+    let contributors = null;
+    if (contributorsRes?.ok) {
+      contributors = countFromLinkHeader(contributorsRes.headers.get('link'));
+      if (contributors === null) {
+        const contributorItems = await contributorsRes.json().catch(() => []);
+        contributors = Array.isArray(contributorItems) ? contributorItems.length : null;
+      }
+    }
 
     const result = {
+      repo,
+      fullName: repoData.full_name,
+      htmlUrl: repoData.html_url,
+      description: repoData.description,
       stars: repoData.stargazers_count,
       forks: repoData.forks_count,
       issues: repoData.open_issues_count,
       watchers: repoData.watchers_count,
+      contributors,
       lastCommit,
       activity,
       language: repoData.language,
+      updatedAt: repoData.updated_at,
+      pushedAt: repoData.pushed_at,
       gfi: null,  // fetched separately via ?gfi=1 to avoid rate limiting
       ts: Date.now(),
     };

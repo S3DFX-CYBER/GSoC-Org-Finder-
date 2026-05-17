@@ -1147,6 +1147,9 @@
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">visibility</span> <span id="mWatchers">---</span></div>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">group</span> <span id="mContributors">---</span></div>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">update</span> <span id="mUpdated">---</span></div>
         <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
       </div>
 
@@ -1398,6 +1401,126 @@
   function githubUrlFromValue(value) {
     const path = githubPathFromValue(value);
     return path ? `https://github.com/${path}` : null;
+  }
+
+  const GITHUB_STATS_API = '/api/github';
+  const GITHUB_STATS_CACHE_KEY = 'gaf_live_repo_stats';
+  const GITHUB_STATS_TTL_MS = 60 * 60 * 1000;
+
+  function formatCompactNumber(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return '---';
+    if (number >= 1000000) return `${(number / 1000000).toFixed(1)}m`;
+    if (number >= 1000) return `${(number / 1000).toFixed(1)}k`;
+    return String(number);
+  }
+
+  function formatRepoDate(value) {
+    const timestamp = new Date(value).getTime();
+    if (Number.isNaN(timestamp)) return 'Updated: ---';
+    const days = Math.floor((Date.now() - timestamp) / 86400000);
+    if (days <= 0) return 'Updated: today';
+    if (days === 1) return 'Updated: 1d ago';
+    if (days < 30) return `Updated: ${days}d ago`;
+    if (days < 365) return `Updated: ${Math.floor(days / 30)}mo ago`;
+    return `Updated: ${Math.floor(days / 365)}y ago`;
+  }
+
+  function readRepoStatsCache() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(GITHUB_STATS_CACHE_KEY) || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeRepoStatsCache(cache) {
+    try {
+      localStorage.setItem(GITHUB_STATS_CACHE_KEY, JSON.stringify(cache));
+    } catch (err) {
+      console.warn('Could not cache GitHub stats:', err);
+    }
+  }
+
+  function cachedRepoStats(repo) {
+    const cache = readRepoStatsCache();
+    const hit = cache[repo];
+    if (hit && Date.now() - hit.ts < GITHUB_STATS_TTL_MS) return hit.data;
+    return null;
+  }
+
+  function cacheRepoStats(repo, data) {
+    const cache = readRepoStatsCache();
+    cache[repo] = { ts: Date.now(), data };
+    writeRepoStatsCache(cache);
+  }
+
+  async function fetchGitHubRepoStats(repo, { force = false } = {}) {
+    if (!repo) throw new Error('No GitHub repository configured.');
+
+    const cached = !force ? cachedRepoStats(repo) : null;
+    if (cached) return cached;
+
+    const response = await fetch(`${GITHUB_STATS_API}?repo=${encodeURIComponent(repo)}`);
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      // The UI below handles an empty/invalid response as a normal failure state.
+    }
+
+    if (!response.ok || !data || data.error) {
+      throw new Error(data?.error || `GitHub API request failed (${response.status})`);
+    }
+
+    cacheRepoStats(repo, data);
+    return data;
+  }
+
+  function setGitHubStatsLoading(isLoading) {
+    const btn = document.getElementById('mFetchBtn');
+    if (!btn) return;
+    btn.disabled = isLoading;
+    btn.textContent = isLoading ? 'Fetching...' : 'Refresh Stats';
+  }
+
+  function renderGitHubStats(data, org) {
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText('mStars', formatCompactNumber(data?.stars));
+    setText('mForks', formatCompactNumber(data?.forks));
+    setText('mIssues', formatCompactNumber(data?.issues));
+    setText('mWatchers', formatCompactNumber(data?.watchers));
+    setText('mContributors', data?.contributors === null || data?.contributors === undefined ? '---' : formatCompactNumber(data.contributors));
+    setText('mUpdated', formatRepoDate(data?.updatedAt || data?.pushedAt));
+
+    const activityEl = document.getElementById('mActivity');
+    if (activityEl) {
+      const activity = data?.activity || 'unavailable';
+      activityEl.textContent = activity.charAt(0).toUpperCase() + activity.slice(1);
+      activityEl.parentElement.className = `gh-stat-item ${
+        activity === 'active' ? 'text-green-400' : activity === 'moderate' ? 'text-blue-400' : 'text-zinc-400'
+      }`;
+    }
+
+    if (data?.description) {
+      document.getElementById('mDesc').textContent = data.description;
+    } else if (org?.desc) {
+      document.getElementById('mDesc').textContent = org.desc;
+    }
+  }
+
+  function renderGitHubStatsFallback(org, message = 'Live stats unavailable') {
+    renderGitHubStats(null, org);
+    const activityEl = document.getElementById('mActivity');
+    if (activityEl) {
+      activityEl.textContent = message;
+      activityEl.parentElement.className = 'gh-stat-item text-zinc-400';
+    }
   }
 
   // NOTE: For JS-string contexts inside inline event handlers,
@@ -2607,6 +2730,16 @@
     document.getElementById('mDesc').textContent = org.desc;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+    renderGitHubStatsFallback(org, org.github ? 'Not loaded' : 'No repository');
+    document.getElementById('mFetchBtn').textContent = org.github ? 'Fetch Live Stats' : 'No Repository';
+    document.getElementById('mFetchBtn').disabled = !org.github;
+
+    const cachedStats = org.github ? cachedRepoStats(org.github) : null;
+    if (cachedStats) {
+      org._gh = cachedStats;
+      renderGitHubStats(cachedStats, org);
+      document.getElementById('mFetchBtn').textContent = 'Refresh Stats';
+    }
 
     // Timeline
     let timelineHtml = '';
@@ -2656,6 +2789,10 @@ if(org.ideas){
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+
+    if (org.github && !cachedStats) {
+      fetchStats({ force: false });
+    }
   }
 
   function closeModal() {
@@ -2918,43 +3055,42 @@ if(org.ideas){
     }
   }
 
-  // Live GitHub Stats Mock/Fetch
-  async function fetchStats() {
+  // Live GitHub repository stats. Uses the existing Vercel proxy so the client
+  // never talks to GitHub with a token and can reuse server-side caching.
+  async function fetchStats(options = {}) {
+    const { force = true } = options;
     const btn = document.getElementById('mFetchBtn');
-    const orgName = document.querySelector('#mHeader h2').textContent;
+    const orgName = document.querySelector('#mHeader h2')?.textContent;
     const org = ORGS.find(o => o.name === orgName);
-    if (!org) return;
+    if (!org || !org.github) {
+      renderGitHubStatsFallback(org, 'No repository');
+      return;
+    }
 
-    btn.textContent = 'Fetching...';
-    btn.disabled = true;
+    setGitHubStatsLoading(true);
 
     try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
-      document.getElementById('mForks').textContent = forks;
-      document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
-      btn.textContent = 'Stats Updated!';
+      const data = await fetchGitHubRepoStats(org.github, { force });
+      const activeOrgName = document.querySelector('#mHeader h2')?.textContent;
+      if (activeOrgName !== org.name) return;
+      org._gh = data;
+      renderGitHubStats(data, org);
+      renderOrgs(true);
+      renderCompare();
+      btn.textContent = 'Stats Updated';
     } catch (e) {
-      btn.textContent = 'Error';
+      console.warn('GitHub stats unavailable for', org.github, e);
+      renderGitHubStatsFallback(org, 'Unavailable');
+      btn.textContent = 'Retry Stats';
     } finally {
       setTimeout(() => {
-        btn.textContent = 'Fetch Live Stats';
+        if (btn.textContent !== 'Retry Stats') btn.textContent = 'Refresh Stats';
         btn.disabled = false;
-      }, 3000);
+      }, 1200);
     }
   }
 
-  document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
+  document.getElementById('mFetchBtn').addEventListener('click', () => fetchStats({ force: true }));
 
   // Initialize
   updateLanguageModeHint();

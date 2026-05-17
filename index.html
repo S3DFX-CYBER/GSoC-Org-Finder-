@@ -436,6 +436,18 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    #scrollToTopBtn {
+    position: fixed;
+    bottom: 28px; right: 24px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f46b0e, #fb923c); /* project ka orange color */
+    opacity: 0; visibility: hidden;       /* initially hidden */
+    transform: translateY(12px);
+    transition: opacity 0.3s, transform 0.3s; /* fade effect */
+    }
+    #scrollToTopBtn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+    #scrollToTopBtn:hover   { transform: translateY(-2px); } /* hover lift effect */
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -3109,6 +3121,19 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+<!-- Button -->
+<button id="scrollToTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
 
+<!-- Scroll listener -->
+<script>
+  window.addEventListener('scroll', function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    window.scrollY > 300
+      ? btn.classList.add('visible')
+      : btn.classList.remove('visible');
+  }, { passive: true });
+</script>
 </body>
 </html>

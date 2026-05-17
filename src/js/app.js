@@ -738,8 +738,10 @@ function renderGrid(orgs){
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
-      </div>`;
+        <button onclick="resetFilters()" class="btn-clear-filters" title="Reset all selected filters">
+  Clear All Filters
+</button>     
+ </div>`;
     return;
   }
   g.innerHTML=orgs.map((o,i)=>{

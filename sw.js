@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v20260517';
+const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,8).replace(/-/g, '');
 
 // Cache naming
 const STATIC_CACHE_NAME = `gsoc-finder-static-${CACHE_VERSION}`;

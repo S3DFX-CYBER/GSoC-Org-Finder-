@@ -1131,8 +1131,8 @@
 </footer>
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal">
-  <div class="modal">
+<div class="modal-bg" id="orgModal" onclick="closeModalEv(event)">
+  <div class="modal" onclick="event.stopPropagation()">
     <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
@@ -1184,8 +1184,8 @@
 </div>
 
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
-<div class="modal-bg compare-bg" id="compareModal">
-  <div class="modal w-full max-w-5xl">
+<div class="modal-bg compare-bg" id="compareModal" onclick="closeCompareEv(event)">
+  <div class="modal w-full max-w-5xl" onclick="event.stopPropagation()">
     <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
@@ -2279,12 +2279,29 @@
 
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
-    document.body.style.overflow = 'auto';
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
-  document.getElementById('compareModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'compareModal') closeCompareModal();
-  });
+  // Overlay-click handlers — only close when the backdrop itself is clicked,
+  // NOT when a click inside the inner .modal panel bubbles up.
+  function closeModalEv(e) {
+    if (e.target === document.getElementById('orgModal')) {
+      closeModal();
+    }
+  }
+
+  function closeCompareEv(e) {
+    if (e.target === document.getElementById('compareModal')) {
+      closeCompareModal();
+    }
+  }
+
+  // Expose to global scope so HTML onclick="closeModalEv(event)" / onclick="closeCompareEv(event)" resolve correctly
+  globalThis.closeModalEv    = closeModalEv;
+  globalThis.closeCompareEv  = closeCompareEv;
+  globalThis.closeCompareModal = closeCompareModal;
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -2994,9 +3011,11 @@ document.addEventListener('keydown', (e) => {
 
 });
   // Export helpers to global scope
-  globalThis.toggleCompare = toggleCompare;
+  globalThis.toggleCompare  = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
-  globalThis.openModal = openModal;
+  globalThis.openModal      = openModal;
+  globalThis.closeModal     = closeModal;
+  globalThis.openCompareModal = openCompareModal;
 </script>
 
 <!-- Vercel Speed Insights -->

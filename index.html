@@ -2317,48 +2317,6 @@
   const n = filteredOrgs.length;
   if (!n) return;
 
- const cols = window.innerWidth >= 1280 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-
-if (e.key === 'ArrowRight') {
-  e.preventDefault();
-  focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + 1, n - 1);
-  renderOrgs(true);
-  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
-}
-
-if (e.key === 'ArrowLeft') {
-  e.preventDefault();
-  focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - 1, 0);
-  renderOrgs(true);
-  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
-}
-
-if (e.key === 'ArrowDown') {
-  e.preventDefault();
-  focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + cols, n - 1);
-  renderOrgs(true);
-  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
-}
-
-if (e.key === 'ArrowUp') {
-  e.preventDefault();
-  focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - cols, 0);
-  renderOrgs(true);
-  document.querySelector(`[data-filtered-idx="${focusedIdx}"]`)?.focus();
-}
-
-  if (e.key === 'Enter' && focusedIdx >= 0) {
-    e.preventDefault();
-    openModal(filteredOrgs[focusedIdx].name);
-  }
-
-  if ((e.key === 'c' || e.key === 'C') && focusedIdx >= 0) {
-    e.preventDefault();
-    toggleCompare(null, filteredOrgs[focusedIdx].name);
-  }
-});
-
-
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
     const grid = document.getElementById('orgGrid');

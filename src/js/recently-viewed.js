@@ -10,6 +10,57 @@
     getOrgs
   } = deps;
 
+  function getLogoInitials(orgName) {
+    return orgName
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  function renderTag(tag) {
+    return `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`;
+  }
+
+  function handleRecentlyViewedClick(event) {
+    const favoriteBtn = event.target.closest('.recently-viewed-btn.favorite-toggle');
+    if (favoriteBtn) {
+      const card = favoriteBtn.closest('.recently-viewed-card');
+      const orgName = card?.dataset.org;
+      if (!orgName) return;
+      toggleBookmark(event, orgName);
+      return;
+    }
+
+    const openBtn = event.target.closest('.recently-viewed-btn');
+    if (openBtn) {
+      const card = openBtn.closest('.recently-viewed-card');
+      const orgName = card?.dataset.org;
+      if (!orgName) return;
+      event.stopPropagation();
+      openModal(orgName);
+      return;
+    }
+
+    const card = event.target.closest('.recently-viewed-card');
+    const orgName = card?.dataset.org;
+    if (orgName) openModal(orgName);
+  }
+
+  function handleLogoImageError(img) {
+    const orgName = img.dataset.logoName || img.closest('.recently-viewed-logo')?.dataset.logoName || '';
+    const initials = getLogoInitials(orgName);
+    const logo = img.closest('.recently-viewed-logo');
+    if (!logo) return;
+    img.remove();
+    const fallback = document.createElement('span');
+    fallback.textContent = initials;
+    logo.textContent = '';
+    logo.appendChild(fallback);
+  }
+
   const RV = {
     maxItems: 10,
     storageKey: 'gsoc_recently_viewed',
@@ -47,7 +98,7 @@
     },
 
     render() {
-      const container = document.getElementById('recentlyViewedScroll');
+      const container = document.getElementById('recently-viewed-scroll');
       const clearBtn = document.getElementById('clearRecentlyViewedBtn');
       const list = this.get();
 
@@ -79,6 +130,8 @@
         const logoUrl = `https://github.com/${githubOwner}.png?size=64`;
         const descSafe = String(org.desc || '');
         const tagsSafe = Array.isArray(org.tags) ? org.tags : [];
+        const catSafe = org.cat || '';
+        const yearsSafe = org.years != null ? `${escapeHtml(String(org.years))}y` : '';
         const timeAgo = this.getTimeAgo(item.timestamp);
         const isBookmarked = bookmarkedSet.has(org.name);
 
@@ -90,8 +143,8 @@
                 <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(org.name)}" data-logo-name="${escapeHtml(org.name)}" />
               </div>
               <div class="recently-viewed-badges">
-                <span class="category-tag">${escapeHtml(org.cat)}</span>
-                <span class="recently-viewed-badge">${escapeHtml(String(org.years))}y</span>
+                <span class="category-tag">${escapeHtml(catSafe)}</span>
+                <span class="recently-viewed-badge">${yearsSafe}</span>
               </div>
             </div>
             <div>
@@ -99,7 +152,7 @@
               <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(descSafe.substring(0, 50))}${descSafe.length > 50 ? '...' : ''}</p>
             </div>
             <div class="flex flex-wrap gap-1.5 mb-4">
-              ${tagsSafe.map((tag) => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`).join('')}
+              ${tagsSafe.map(renderTag).join('')}
             </div>
             <div class="recently-viewed-actions">
               <button class="recently-viewed-btn" type="button" data-rv-action="open" title="View details">
@@ -120,52 +173,13 @@
       if (!container) return;
 
       if (!container.__rvClickListenerAttached) {
-        container.addEventListener('click', (event) => {
-          const favoriteBtn = event.target.closest('.recently-viewed-btn.favorite-toggle');
-          if (favoriteBtn) {
-            const card = favoriteBtn.closest('.recently-viewed-card');
-            const orgName = card?.dataset.org;
-            if (!orgName) return;
-            toggleBookmark(event, orgName);
-            return;
-          }
-
-          const openBtn = event.target.closest('.recently-viewed-btn');
-          if (openBtn) {
-            const card = openBtn.closest('.recently-viewed-card');
-            const orgName = card?.dataset.org;
-            if (!orgName) return;
-            event.stopPropagation();
-            openModal(orgName);
-            return;
-          }
-
-          const card = event.target.closest('.recently-viewed-card');
-          const orgName = card?.dataset.org;
-          if (orgName) openModal(orgName);
-        });
+        container.addEventListener('click', handleRecentlyViewedClick);
         container.__rvClickListenerAttached = true;
       }
 
       container.querySelectorAll('.recently-viewed-logo img[data-logo-name]').forEach((img) => {
         if (img.__rvErrorAttached) return;
-        img.addEventListener('error', () => {
-          const orgName = img.dataset.logoName || img.closest('.recently-viewed-logo')?.dataset.logoName || '';
-          const initials = orgName
-            .split(/\s+/)
-            .filter(Boolean)
-            .map((part) => part[0])
-            .join('')
-            .slice(0, 2)
-            .toUpperCase();
-          const logo = img.closest('.recently-viewed-logo');
-          if (!logo) return;
-          img.remove();
-          const fallback = document.createElement('span');
-          fallback.textContent = initials;
-          logo.textContent = '';
-          logo.appendChild(fallback);
-        });
+        img.addEventListener('error', () => handleLogoImageError(img));
         img.__rvErrorAttached = true;
       });
     },

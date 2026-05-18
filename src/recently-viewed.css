@@ -245,19 +245,19 @@
   color: var(--muted);
 }
 
-#recentlyViewedScroll::-webkit-scrollbar {
+#recently-viewed-scroll::-webkit-scrollbar {
   height: 4px;
 }
 
-#recentlyViewedScroll::-webkit-scrollbar-track {
+#recently-viewed-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-#recentlyViewedScroll::-webkit-scrollbar-thumb {
+#recently-viewed-scroll::-webkit-scrollbar-thumb {
   background: var(--orange-border);
   border-radius: 2px;
 }
 
-#recentlyViewedScroll::-webkit-scrollbar-thumb:hover {
+#recently-viewed-scroll::-webkit-scrollbar-thumb:hover {
   background: var(--orange);
 }

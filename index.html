@@ -2444,9 +2444,7 @@
     lines.push('');
 
     bookmarks.forEach((org, idx) => {
-      const ghUrl = org.github
-        ? (org.github.startsWith('http') ? org.github : `https://github.com/${org.github}`)
-        : 'N/A';
+      const ghUrl = org.github ? githubUrlFromValue(org.github) : 'N/A';
 
       lines.push(`## ${idx + 1}. ${org.name}`);
       lines.push('');
@@ -2494,9 +2492,7 @@
     const rows = [header.join(',')];
 
     bookmarks.forEach(org => {
-      const ghUrl = org.github
-        ? (org.github.startsWith('http') ? org.github : `https://github.com/${org.github}`)
-        : '';
+      const ghUrl = org.github ? githubUrlFromValue(org.github) : '';
 
       rows.push([
         csvEscape(org.name),

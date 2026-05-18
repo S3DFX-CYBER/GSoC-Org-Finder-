@@ -1493,6 +1493,34 @@
   // ══════════════════════════════════════════════
   let visibleCount = 12;
 
+  const CAT_THEMES = {
+    science: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
+    programming: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30',
+    data: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
+    web: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30',
+    os: 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30',
+    security: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30',
+    media: 'bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30',
+    infra: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30',
+    ai: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30',
+    dev: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 border border-teal-100 dark:border-teal-900/30',
+    other: 'bg-zinc-50 text-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/30',
+  };
+
+  const CAT_NAMES = {
+    science: 'Science',
+    programming: 'Programming',
+    data: 'Data',
+    web: 'Web',
+    os: 'OS / Systems',
+    security: 'Security',
+    media: 'Media',
+    infra: 'Infrastructure',
+    ai: 'AI / ML',
+    dev: 'Dev Tools',
+    other: 'Other'
+  };
+
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
@@ -2318,24 +2346,7 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       
-      const CAT_THEMES = {
-        science: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
-        programming: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30',
-        data: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
-        web: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30',
-        os: 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30',
-        security: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30',
-        media: 'bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30',
-        infra: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30',
-        ai: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30',
-        dev: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 border border-teal-100 dark:border-teal-900/30',
-        other: 'bg-zinc-50 text-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/30',
-      };
-      const catText = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const catText = CAT_NAMES[org.cat] || org.cat;
       const catClass = CAT_THEMES[org.cat] || CAT_THEMES.other;
       const yearsLabel = org.years >= 8 ? 'Veteran' : org.years >= 4 ? 'Experienced' : 'Newcomer';
       const diffScoreObj = getDifficultyScore(org);
@@ -2678,26 +2689,8 @@
         ? `https://github.com/${githubOwner}.png?size=80`
         : '';
 
-      // Category colour mapping (mirrors the existing badge system)
-      const CAT_THEMES = {
-        science: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
-        programming: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30',
-        data: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
-        web: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30',
-        os: 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30',
-        security: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30',
-        media: 'bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30',
-        infra: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30',
-        ai: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30',
-        dev: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 border border-teal-100 dark:border-teal-900/30',
-        other: 'bg-zinc-50 text-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/30',
-      };
       const catClass = CAT_THEMES[org.cat] || CAT_THEMES.other;
-      const catLabel = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const catLabel = CAT_NAMES[org.cat] || org.cat;
 
       const topTags = (org.tags || []).slice(0, 4)
         .map(t => `<span class="px-2 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[9.5px] font-mono rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400 transition-colors duration-200">${escapeHtml(t)}</span>`)

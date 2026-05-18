@@ -462,8 +462,8 @@
         <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
@@ -1286,10 +1286,19 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    //const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    const sections = [
+  'timeline',
+  'orgs',
+  'ai-recommender',
+  'watchlist',
+  'issues',
+  'mentors',
+  'guide'
+];
     const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
-    let currentSection = 'orgs'; // Default
+    let currentSection = 'timeline'; // Default
     
     sections.forEach(sectionId => {
       const section = document.getElementById(sectionId);

@@ -430,254 +430,8 @@
       background: #1c0f05;
     }
 
-    /* ─ RECENTLY VIEWED ORGANIZATIONS ─ */
-    .recently-viewed-card {
-      width: 100%;
-      min-height: 100%;
-      background: var(--bg);
-      border: 1px solid transparent;
-      border-radius: 16px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .recently-viewed-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 1px solid #f4f4f5;
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .recently-viewed-card:hover {
-      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
-    }
-
-    .recently-viewed-card:hover::after {
-      border-color: rgba(157, 67, 0, 0.2);
-    }
-
-    .recently-viewed-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .recently-viewed-logo {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: var(--orange-pale);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-      border: 1px solid var(--orange-border);
-    }
-
-    .recently-viewed-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 14px;
-    }
-
-    .recently-viewed-badges {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-end;
-      padding-top: 20px;
-    }
-
-    .recently-viewed-card h4 {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ink);
-      line-height: 1.3;
-      margin: 0;
-      word-break: break-word;
-    }
-
-    .recently-viewed-card p {
-      font-size: 14px;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .recently-viewed-badge {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--orange);
-      background: var(--orange-pale);
-      border: 1px solid var(--orange-border);
-      padding: 2px 6px;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    .recently-viewed-actions {
-      display: flex;
-      gap: 8px;
-      padding-top: 16px;
-      border-top: 1px solid #f4f4f5;
-      margin-top: auto;
-    }
-
-    .recently-viewed-btn {
-      flex: 1;
-      padding: 10px 12px;
-      border: 1px solid #f4f4f5;
-      background: transparent;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink3);
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    .recently-viewed-btn:hover {
-      border-color: rgba(157, 67, 0, 0.2);
-      color: var(--orange);
-      background: var(--orange-pale);
-    }
-
-    .recently-viewed-btn.favorite-toggle {
-      flex: 0 0 48px;
-      padding: 10px;
-      color: #d4d4d8;
-    }
-
-    .recently-viewed-btn.favorite-toggle.active {
-      color: #f59e0b;
-      background: transparent;
-      border-color: #f4f4f5;
-      box-shadow: none;
-    }
-
-    .recently-viewed-btn.favorite-toggle:hover {
-      color: #9d4300;
-      background: #fff7ed;
-      border-color: #fed7aa;
-    }
-
-    .recently-viewed-time {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      font-size: 8px;
-      color: var(--muted);
-      background: var(--border2);
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-weight: 600;
-      line-height: 1;
-      z-index: 0;
-    }
-
-    /* Dark mode - Recently viewed cards */
-    .dark .recently-viewed-card,
-    [data-theme="dark"] .recently-viewed-card {
-      background: var(--bg);
-      border-color: transparent;
-    }
-
-    .dark .recently-viewed-card::after,
-    [data-theme="dark"] .recently-viewed-card::after {
-      border-color: #3f3f46;
-    }
-
-    .dark .recently-viewed-card:hover,
-    [data-theme="dark"] .recently-viewed-card:hover {
-      box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
-    }
-
-    .dark .recently-viewed-card:hover::after,
-    [data-theme="dark"] .recently-viewed-card:hover::after {
-      border-color: var(--orange);
-    }
-
-    .dark .recently-viewed-card h4,
-    [data-theme="dark"] .recently-viewed-card h4 {
-      color: var(--ink);
-    }
-
-    .dark .recently-viewed-card p,
-    [data-theme="dark"] .recently-viewed-card p {
-      color: var(--ink3);
-    }
-
-    .dark .recently-viewed-logo,
-    [data-theme="dark"] .recently-viewed-logo {
-      background: var(--orange-pale);
-      border-color: var(--orange-border);
-    }
-
-    .dark .recently-viewed-btn,
-    [data-theme="dark"] .recently-viewed-btn {
-      border-color: #3f3f46;
-      color: var(--ink3);
-    }
-
-    .dark .recently-viewed-btn:hover,
-    [data-theme="dark"] .recently-viewed-btn:hover {
-      border-color: var(--orange);
-      color: var(--orange);
-      background: var(--orange-pale);
-    }
-
-    .dark .recently-viewed-btn.favorite-toggle,
-    [data-theme="dark"] .recently-viewed-btn.favorite-toggle {
-      color: #71717a;
-    }
-
-    .dark .recently-viewed-btn.favorite-toggle.active,
-    [data-theme="dark"] .recently-viewed-btn.favorite-toggle.active {
-      color: #f59e0b;
-      background: transparent;
-      border-color: #3f3f46;
-      box-shadow: none;
-    }
-
-    .dark .recently-viewed-btn.favorite-toggle:hover,
-    [data-theme="dark"] .recently-viewed-btn.favorite-toggle:hover {
-      color: #fed7aa;
-      background: rgba(124, 45, 18, 0.75);
-      border-color: rgba(251, 146, 60, 0.45);
-    }
-
-    @media (min-width: 768px) {
-      .recently-viewed-card {
-        flex: 0 0 320px;
-        width: 320px;
-        min-height: 320px;
-      }
-    }
-
-    .dark .recently-viewed-time,
-    [data-theme="dark"] .recently-viewed-time {
-      background: var(--border2);
-      color: var(--muted);
-    }
   </style>
+  <link rel="stylesheet" href="src/recently-viewed.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -897,23 +651,6 @@
       </div>
     </div>
   </div>
-
-  <!-- CSS for smooth scrolling -->
-  <style>
-    #recentlyViewedScroll::-webkit-scrollbar {
-      height: 4px;
-    }
-    #recentlyViewedScroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    #recentlyViewedScroll::-webkit-scrollbar-thumb {
-      background: var(--orange-border);
-      border-radius: 2px;
-    }
-    #recentlyViewedScroll::-webkit-scrollbar-thumb:hover {
-      background: var(--orange);
-    }
-  </style>
 </section>
 
 <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
@@ -1653,182 +1390,6 @@
   let matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
   
-  // ══════════════════════════════════════════════
-  // RECENTLY VIEWED ORGANIZATIONS MANAGER
-  // ══════════════════════════════════════════════
-  const RV = {
-    maxItems: 10,
-    storageKey: 'gsoc_recently_viewed',
-    
-    get() {
-      try {
-        return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-      } catch {
-        return [];
-      }
-    },
-    
-    set(list) {
-      try {
-        localStorage.setItem(this.storageKey, JSON.stringify(list));
-      } catch(err) {
-        console.warn('Recently viewed storage write failed:', err);
-      }
-    },
-    
-    add(orgName) {
-      const list = this.get();
-      // Remove if already exists (to move it to the front)
-      const filtered = list.filter(item => item.name !== orgName);
-      // Add at the beginning with timestamp
-      filtered.unshift({
-        name: orgName,
-        timestamp: Date.now()
-      });
-      // Keep only the most recent items
-      this.set(filtered.slice(0, this.maxItems));
-      RV.render();
-    },
-    
-    clear() {
-      this.set([]);
-      RV.render();
-    },
-    
-    render() {
-      const container = document.getElementById('recentlyViewedScroll');
-      const clearBtn = document.getElementById('clearRecentlyViewedBtn');
-      const list = this.get();
-      
-      if (!container) return;
-      
-      // Show/hide based on list length
-      clearBtn.style.display = list.length > 0 ? 'block' : 'none';
-      
-      if (list.length === 0) {
-        container.innerHTML = `
-          <div class="flex-shrink-0 w-80 bg-white rounded-2xl p-5 border border-dashed border-zinc-200 flex items-center justify-center text-center">
-            <div>
-              <span class="material-symbols-outlined text-4xl text-zinc-300 mb-2 inline-block">bookmark_border</span>
-              <p class="text-sm font-medium text-zinc-500">Start exploring organizations to see them here</p>
-              <p class="text-xs text-zinc-400 mt-1">They'll appear in chronological order of your views</p>
-            </div>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = list.map(item => {
-        const org = ORGS.find(o => o.name === item.name);
-        if (!org) return '';
-        
-        const githubOwner = org.github.split('/')[0];
-        const logoUrl = `https://github.com/${githubOwner}.png?size=64`;
-        const timeAgo = RV.getTimeAgo(item.timestamp);
-        const isBookmarked = bookmarkedSet.has(org.name);
-        
-        return `
-          <article class="recently-viewed-card group bg-white animate-fade-up" data-org="${escapeHtml(org.name)}">
-            <div class="recently-viewed-time">${escapeHtml(timeAgo)}</div>
-            <div class="recently-viewed-card-header">
-              <div class="recently-viewed-logo" data-logo-name="${escapeHtml(org.name)}">
-                <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(org.name)}" data-logo-name="${escapeHtml(org.name)}" />
-              </div>
-              <div class="recently-viewed-badges">
-                <span class="category-tag">${escapeHtml(org.cat)}</span>
-                <span class="recently-viewed-badge">${escapeHtml(String(org.years))}y</span>
-              </div>
-            </div>
-            <div>
-              <h4 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h4>
-              <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc.substring(0, 50))}${org.desc.length > 50 ? '...' : ''}</p>
-            </div>
-            <div class="flex flex-wrap gap-1.5 mb-4">
-              ${org.tags.map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-            </div>
-            <div class="recently-viewed-actions">
-              <button class="recently-viewed-btn" type="button" data-rv-action="open" title="View details">
-                <span class="material-symbols-outlined" style="font-size:12px;">open_in_full</span> View
-              </button>
-              <button class="recently-viewed-btn favorite-toggle ${isBookmarked ? 'active' : ''}" type="button" data-rv-action="favorite" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarked ? 'true' : 'false'}">
-                <span class="material-symbols-outlined ${isBookmarked ? 'icon-fill' : ''}" style="font-size:12px;">star</span>
-              </button>
-            </div>
-          </article>
-        `;
-      }).join('');
-      this.attachListeners(container);
-    },
-
-    attachListeners(container) {
-      if (!container) return;
-
-      if (!container.__rvClickListenerAttached) {
-        container.addEventListener('click', (event) => {
-          const favoriteBtn = event.target.closest('.recently-viewed-btn.favorite-toggle');
-          if (favoriteBtn) {
-            const card = favoriteBtn.closest('.recently-viewed-card');
-            const orgName = card?.dataset.org;
-            if (!orgName) return;
-            toggleBookmark(event, orgName);
-            return;
-          }
-
-          const openBtn = event.target.closest('.recently-viewed-btn');
-          if (openBtn) {
-            const card = openBtn.closest('.recently-viewed-card');
-            const orgName = card?.dataset.org;
-            if (!orgName) return;
-            event.stopPropagation();
-            openModal(orgName);
-            return;
-          }
-
-          const card = event.target.closest('.recently-viewed-card');
-          const orgName = card?.dataset.org;
-          if (orgName) openModal(orgName);
-        });
-        container.__rvClickListenerAttached = true;
-      }
-
-      container.querySelectorAll('.recently-viewed-logo img[data-logo-name]').forEach((img) => {
-        if (img.__rvErrorAttached) return;
-        img.addEventListener('error', () => {
-          const orgName = img.dataset.logoName || img.closest('.recently-viewed-logo')?.dataset.logoName || '';
-          const initials = orgName
-            .split(/\s+/)
-            .filter(Boolean)
-            .map((part) => part[0])
-            .join('')
-            .slice(0, 2)
-            .toUpperCase();
-          const logo = img.closest('.recently-viewed-logo');
-          if (!logo) return;
-          img.remove();
-          const fallback = document.createElement('span');
-          fallback.textContent = initials;
-          logo.textContent = '';
-          logo.appendChild(fallback);
-        });
-        img.__rvErrorAttached = true;
-      });
-    },
-    
-    getTimeAgo(timestamp) {
-      const now = Date.now();
-      const diff = now - timestamp;
-      const minutes = Math.floor(diff / 60000);
-      const hours = Math.floor(diff / 3600000);
-      const days = Math.floor(diff / 86400000);
-      
-      if (minutes < 1) return 'just now';
-      if (minutes < 60) return `${minutes}m ago`;
-      if (hours < 24) return `${hours}h ago`;
-      if (days === 1) return 'yesterday';
-      return `${days}d ago`;
-    }
-  };
-  
   const CHANNEL_ICONS = {
     Slack: '💬',
     Zulip: '💬',
@@ -1884,6 +1445,14 @@
     Object.keys(LANGUAGE_ALIASES).forEach(k => { LANG_MAP[k] = LANGUAGE_ALIASES[k]; });
     globalThis.LANGUAGE_MAP = globalThis.LANGUAGE_MAP || LANG_MAP;
   })();
+
+  globalThis.recentlyViewedDeps = {
+    getOrgs: () => ORGS,
+    getBookmarkedSet: () => bookmarkedSet,
+    escapeHtml,
+    openModal,
+    toggleBookmark
+  };
 
   function updateLanguageModeHint() {
     const hint = document.getElementById('languageLogicHint');
@@ -2675,7 +2244,7 @@
     else bookmarkedSet.add(name);
     localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
     refreshOrgGridPreservingVisibleCount();
-    RV.render();
+    globalThis.RV?.render();
     renderWatchlist();
   }
 
@@ -2800,7 +2369,7 @@ if(org.ideas){
     renderMentorContactSection(org);
     
     // Track this organization as recently viewed
-    RV.add(org.name);
+    globalThis.RV?.add(org.name);
     
     document.getElementById('orgModal').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -3102,13 +2671,6 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
-  // Clear Recently Viewed button
-  document.getElementById('clearRecentlyViewedBtn').addEventListener('click', (e) => {
-    if (confirm('Clear all recently viewed organizations?')) {
-      RV.clear();
-    }
-  });
-
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -3116,7 +2678,6 @@ if(org.ideas){
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
   renderOrgs();
-  RV.render();             // initialize recently viewed section
   renderWatchlist();
   loadMentorData();
   renderGoodFirstIssues();
@@ -3257,6 +2818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+<script src="src/js/recently-viewed.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

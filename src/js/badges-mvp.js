@@ -46,7 +46,26 @@ const BadgeSystem = (function() {
           unlockedBadges: []
         };
       }
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+
+      // Bug 2 fix: Schema validation — ensure expected fields are present and valid
+      const isValid =
+        parsed !== null &&
+        typeof parsed === 'object' &&
+        typeof parsed.explorer === 'number' &&
+        typeof parsed.comparator === 'number' &&
+        Array.isArray(parsed.unlockedBadges);
+
+      if (!isValid) {
+        console.warn('Badge data schema mismatch — resetting to defaults.');
+        return {
+          explorer: 0,
+          comparator: 0,
+          unlockedBadges: []
+        };
+      }
+
+      return parsed;
     } catch (e) {
       console.warn('Failed to parse badge data:', e);
       return {
@@ -196,7 +215,13 @@ const BadgeSystem = (function() {
   // Reset all badge progress
   function resetProgress() {
     if (confirm('Are you sure you want to reset all badge progress? This cannot be undone.\n\nNote: Badges are stored locally in your browser. Clearing browser data will also reset progress.')) {
-      localStorage.removeItem(STORAGE_KEY);
+      // Bug 3 fix: Wrap in try/catch for incognito/high-security environments
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {
+        console.warn('Failed to reset badge progress — localStorage unavailable:', e);
+        return false;
+      }
       // Dispatch event to update UI
       document.dispatchEvent(new CustomEvent('badgesReset'));
       return true;

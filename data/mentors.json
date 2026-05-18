@@ -116,11 +116,34 @@
   "AnkiDroid": {
     "org": "AnkiDroid",
     "ideasUrl": "https://github.com/ankidroid/Anki-Android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/qjzcRTx",
+        "label": "#ankidroid-gsoc"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Arthur Milchior",
+        "github": "Arthur-Milchior",
+        "githubUrl": "https://github.com/Arthur-Milchior"
+      },
+      {
+        "name": "Sanjay Sargam",
+        "github": "SanjaySargam",
+        "githubUrl": "https://github.com/SanjaySargam"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/anki-android",
+        "label": "AnkiDroid Google Group"
+      }
+    ],
+    "tip": "Join the Discord server and go to #ankidroid-gsoc channel for GSoC updates and mentor communication.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "AOSSIE": {
@@ -285,12 +308,65 @@
   "BRL-CAD": {
     "org": "BRL-CAD",
     "ideasUrl": "https://brlcad.org/wiki/Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://brlcad.zulipchat.com",
+        "label": "BRL-CAD Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "pca006132",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Torsten Paul",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Himanshu Sekhar Nayak",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Divyanshu Garg",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Moult",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Morrison",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Thomas Krijnen",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Daniel Rossberg",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:devs@brlcad.org",
+        "label": "BRL-CAD Developer Mailing List"
+      }
+    ],
+    "tip": "BRL-CAD uses group mentorship. Contact via Zulip at https://brlcad.zulipchat.com or email devs@brlcad.org.",
+    "status": "ok",
+    "lastFetched": "2026-05-16T00:00:00.000Z"
   },
   "C2SI": {
     "org": "C2SI",
@@ -451,12 +527,18 @@
   "CNCF": {
     "org": "CNCF",
     "ideasUrl": "https://github.com/cncf/mentoring/blob/main/summerofcode/2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://cloud-native.slack.com/archives/C01712M9L3Q",
+        "label": "#cncf-mentoring Slack"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Do not use direct email. Use the upstream issues listed in each project's description to engage with mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "CRIU": {
     "org": "CRIU",
@@ -1244,15 +1326,48 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "libssh": {
-    "org": "libssh",
-    "ideasUrl": "https://gitlab.com/libssh/libssh-mirror/-/wikis/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "libssh",
+  "ideasUrl": "https://www.libssh.org/development/google-summer-of-code/",
+  "channels": [
+    {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#libssh:matrix.org",
+      "label": "libssh Matrix"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Jakub Jelen",
+      "github": "jakuje",
+      "githubUrl": "https://github.com/jakuje"
+    },
+    {
+      "name": "Sahana Prasad",
+      "github": "saprasad",
+      "githubUrl": "https://github.com/saprasad"
+    },
+    {
+      "name": "Eshan Kelkar",
+      "github": "galorithm",
+      "githubUrl": "https://github.com/galorithm"
+    },
+    {
+      "name": "Andreas Schneider",
+      "github": "asn",
+      "githubUrl": "https://github.com/asn"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://www.libssh.org/communication/",
+      "label": "libssh Communication"
+    }
+  ],
+  "tip": "Join the libssh mailing list and interact before applying. A non-trivial merge request on GitLab is required before proposals are considered.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Liquid Galaxy project": {
     "org": "Liquid Galaxy project",
     "ideasUrl": "https://github.com/LiquidGalaxyLAB/liquid-galaxy/wiki/Google-Summer-of-Code-2026",
@@ -1915,9 +2030,15 @@
         "label": "PEcAn Project Slack"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Rob Kooper",
+        "github": "robkooper",
+        "githubUrl": "https://github.com/robkooper"
+      }
+    ],
     "mailingLists": [],
-    "tip": "Join and say hi in the GSoC channel before DMing mentors.",
+    "tip": "Slack signup is disabled — email kooper@illinois.edu for an invite.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

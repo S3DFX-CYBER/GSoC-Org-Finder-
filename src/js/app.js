@@ -804,6 +804,15 @@ function renderGrid(orgs){
       ${ghm}
     </div>`;
   }).join('');
+  g.querySelectorAll('[data-filtered-idx]').forEach(card => {
+    const idx = Number(card.dataset.filteredIdx);
+    card.addEventListener('mouseenter', () => {
+      focusedIdx = idx;
+    });
+    card.addEventListener('focus', () => {
+      focusedIdx = idx;
+    });
+  });
 }
 
 function updateStats(){
@@ -813,6 +822,77 @@ function updateStats(){
   document.getElementById('visitorStat').textContent=AN.todayVisits();
 }
 
+<<<<<<< HEAD
+=======
+// ══════════════════════════════════════════════
+// KEYBOARD NAVIGATION
+// ══════════════════════════════════════════════
+const GRID_COLS=()=>{
+  const g=document.getElementById('orgGrid');
+  if(!g||!g.children.length)return 3;
+  const firstRect=g.children[0].getBoundingClientRect();
+  let cols=1;
+  for(let i=1;i<g.children.length;i++){
+    if(Math.abs(g.children[i].getBoundingClientRect().top-firstRect.top)<5)cols++;
+    else break;
+  }
+  return cols;
+};
+
+document.addEventListener('keydown',e=>{
+  // Close modals first
+  if(e.key==='Escape'){
+    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
+    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
+    if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
+  }
+  // Don't hijack when typing in inputs
+  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
+  const n=filteredOrgs.length;
+  if(!n)return;
+  const cols=GRID_COLS();
+  if(e.key==='ArrowRight'){
+    e.preventDefault();
+    focusedIdx=Math.min(focusedIdx+1,n-1);
+    if(focusedIdx<0)focusedIdx=0;
+    renderGrid(filteredOrgs);scrollToFocused();
+  } else if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    focusedIdx=Math.max(focusedIdx-1,0);
+    if(focusedIdx<0)focusedIdx=0;
+    renderGrid(filteredOrgs);scrollToFocused();
+  } else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    if(focusedIdx<0)focusedIdx=0;
+    else focusedIdx=Math.min(focusedIdx+cols,n-1);
+    renderGrid(filteredOrgs);scrollToFocused();
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    if(focusedIdx<0)focusedIdx=0;
+    else focusedIdx=Math.max(focusedIdx-cols,0);
+    renderGrid(filteredOrgs);scrollToFocused();
+  } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
+    openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
+  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
+    e.preventDefault();
+    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+  } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+});
+
+function scrollToFocused(){
+  setTimeout(()=>{
+    const g=document.getElementById('orgGrid');
+    const card=g?.querySelector(`[data-filtered-idx="${focusedIdx}"]`);
+    if(card){
+      card.focus({ preventScroll: true });
+    if(card)card.scrollIntoView({block:'nearest',behavior:'smooth'});
+    }
+  },30);
+}
+>>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
 
 // ══════════════════════════════════════════════
 // PILLS & CHIPS

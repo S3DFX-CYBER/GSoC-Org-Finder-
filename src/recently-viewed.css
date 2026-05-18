@@ -26,11 +26,11 @@
 }
 
 .recently-viewed-card:hover {
-  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 25px -5px rgb(15 23 42 / 0.08), 0 8px 10px -6px rgb(15 23 42 / 0.08);
 }
 
 .recently-viewed-card:hover::after {
-  border-color: rgba(157, 67, 0, 0.2);
+  border-color: rgb(157 67 0 / 0.2);
 }
 
 .recently-viewed-card-header {
@@ -123,7 +123,7 @@
 }
 
 .recently-viewed-btn:hover {
-  border-color: rgba(157, 67, 0, 0.2);
+  border-color: rgb(157 67 0 / 0.2);
   color: var(--orange);
   background: var(--orange-pale);
 }
@@ -174,7 +174,7 @@
 
 .dark .recently-viewed-card:hover,
 [data-theme="dark"] .recently-viewed-card:hover {
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
+  box-shadow: 0 8px 24px rgb(249 115 22 / 0.2);
 }
 
 .dark .recently-viewed-card:hover::after,
@@ -227,8 +227,8 @@
 .dark .recently-viewed-btn.favorite-toggle:hover,
 [data-theme="dark"] .recently-viewed-btn.favorite-toggle:hover {
   color: #fed7aa;
-  background: rgba(124, 45, 18, 0.75);
-  border-color: rgba(251, 146, 60, 0.45);
+  background: rgb(124 45 18 / 0.75);
+  border-color: rgb(251 146 60 / 0.45);
 }
 
 @media (min-width: 768px) {

@@ -24,6 +24,11 @@
     return `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`;
   }
 
+  function getYearsLabel(years) {
+    if (years === null || years === undefined) return '';
+    return `${escapeHtml(String(years))}y`;
+  }
+
   function handleRecentlyViewedClick(event) {
     const favoriteBtn = event.target.closest('.recently-viewed-btn.favorite-toggle');
     if (favoriteBtn) {
@@ -131,7 +136,7 @@
         const descSafe = String(org.desc || '');
         const tagsSafe = Array.isArray(org.tags) ? org.tags : [];
         const catSafe = org.cat || '';
-        const yearsSafe = org.years != null ? `${escapeHtml(String(org.years))}y` : '';
+        const yearsSafe = getYearsLabel(org.years);
         const timeAgo = this.getTimeAgo(item.timestamp);
         const isBookmarked = bookmarkedSet.has(org.name);
 

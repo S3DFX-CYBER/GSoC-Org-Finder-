@@ -2478,9 +2478,13 @@
       return;
     }
 
-    /** Wraps a value in double-quotes and escapes inner quotes per RFC 4180. */
+    /** Wraps a value in double-quotes, escapes inner quotes per RFC 4180, and neutralizes formula injection. */
     function csvEscape(value) {
-      const str = String(value ?? '');
+      let str = String(value ?? '');
+      // Neutralize spreadsheet formula injection
+      if (/^[=+\-@]/.test(str)) {
+        str = "'" + str;
+      }
       // Quote field if it contains comma, double-quote, or newline
       if (str.includes(',') || str.includes('"') || str.includes('\n')) {
         return '"' + str.replace(/"/g, '""') + '"';

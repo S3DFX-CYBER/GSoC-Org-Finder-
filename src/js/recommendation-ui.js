@@ -226,6 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
          matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
       }
 
+      const yearsLabel = o.years >= 8 ? 'Veteran' : o.years >= 4 ? 'Experienced' : 'Newcomer';
+      const diffScoreObj = typeof getDifficultyScore === 'function' ? getDifficultyScore(o) : { total: 5 };
+      const diffLabelObj = typeof getDifficultyLabel === 'function' ? getDifficultyLabel(diffScoreObj.total) : { label: 'Medium', cls: 'difficulty-medium' };
+
 
       // Defined explicitly outside string to eliminate linting issues with nested template literals
       const logoHtml = logoUrl 
@@ -235,38 +239,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       return `
-      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
+      <article class="group relative bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800/80 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:border-orange-500/30 dark:hover:border-orange-500/30 flex flex-col justify-between overflow-hidden cursor-pointer ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
                data-org-name="${safeEscapeHtml(o.name)}">
         
         <!-- Match Score Badge -->
-        <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
-          <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+        <!-- Match Score Badge -->
+        <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 dark:from-emerald-600 dark:to-teal-600 text-white px-3.5 py-1.5 rounded-bl-2xl rounded-tr-2xl font-headline font-bold text-[10px] uppercase tracking-wider shadow-sm flex items-center gap-1.5 z-10 transition-transform duration-200 group-hover:scale-102">
+          <span class="material-symbols-outlined text-[13px]">target</span> ${rec.score}% Match
         </div>
 
         <!-- Header: Logo & Bookmarking -->
-        <div class="flex justify-between items-start mb-4 pt-2">
-          <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden">
+        <div class="flex justify-between items-start mb-4 pt-2 relative z-10">
+          <div class="w-14 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100/80 dark:border-zinc-700/50 flex items-center justify-center p-2.5 overflow-hidden shadow-inner transition-transform duration-300 group-hover:scale-105">
             ${logoHtml}
           </div>
-          
-          <div class="flex items-center gap-2 mt-2">
-             <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
-                     title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
-                <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
-             </button>
-          </div>
+          <button class="bookmark-btn w-9 h-9 rounded-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-150/60 dark:border-zinc-700/50 flex items-center justify-center text-zinc-300 dark:text-zinc-650 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:border-orange-200/50 dark:hover:border-orange-900/30 transition-all duration-200 ${isBookmarked ? 'active text-orange-500' : ''}" 
+                  data-bookmark-org="${safeEscapeHtml(o.name)}" 
+                  title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
+             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
+          </button>
         </div>
 
         <!-- Body Text & Category -->
-        <div class="flex-1">
-          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
-          <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
+        <div class="flex-1 relative z-10 flex flex-col">
+          <h3 class="font-headline text-lg font-extrabold text-zinc-900 dark:text-zinc-50 mb-1.5 group-hover:text-primary dark:group-hover:text-orange-400 transition-colors duration-250 leading-snug line-clamp-1" title="${safeEscapeHtml(o.name)}">${safeEscapeHtml(o.name)}</h3>
+          
+          <div class="mb-3">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-wider bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
+          </div>
           
           <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
 
+          <!-- 3-Column Metrics Dashboard Grid -->
+          <div class="grid grid-cols-3 gap-2 mb-4 mt-3">
+            <!-- Presence Card Cell -->
+            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 hover:bg-orange-50/20 dark:hover:bg-orange-950/10 hover:border-orange-100/50 dark:hover:border-orange-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Presence</span>
+              <span class="text-[10px] font-headline font-extrabold text-orange-700 dark:text-orange-400 flex items-center gap-0.5" title="${safeEscapeHtml(String(o.years))} years in GSoC — ${yearsLabel}">
+                <span class="material-symbols-outlined text-[10px] icon-fill">history</span>
+                ${safeEscapeHtml(String(o.years))}y
+              </span>
+            </div>
+            <!-- Codebase Card Cell -->
+            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Codebase</span>
+              <span class="text-[9.5px] font-headline font-extrabold uppercase tracking-wider ${o.codebase === 'beginner' ? 'text-emerald-600 dark:text-emerald-400' : o.codebase === 'intermediate' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">
+                ${safeEscapeHtml(o.codebase || '—')}
+              </span>
+            </div>
+            <!-- Difficulty Card Cell -->
+            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" title="Difficulty score: ${diffScoreObj.total}/10">
+              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Difficulty</span>
+              <span class="text-[9.5px] font-headline font-extrabold flex items-center gap-0.5 ${diffLabelObj.cls === 'difficulty-easy' ? 'text-emerald-600 dark:text-emerald-400' : diffLabelObj.cls === 'difficulty-medium' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">
+                ⚡ ${diffScoreObj.total}/10
+              </span>
+            </div>
+          </div>
+
           <!-- Insights Box -->
-          <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+          <div class="mt-auto pt-3 border-t border-zinc-100 dark:border-zinc-800/60">
             <ul class="space-y-1.5 mb-3">
               ${reasonsHtml}
             </ul>
@@ -275,13 +308,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- Bottom: Action Bar -->
-        <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
-            <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
+        <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/60 relative z-10">
+          <button data-compare-org="${safeEscapeHtml(o.name)}" class="text-[10px] font-headline font-extrabold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300'} flex items-center gap-1.5 transition-colors duration-200">
+            <span class="material-symbols-outlined text-sm transition-transform duration-200 group-hover:rotate-12">${inCompare ? 'check_circle' : 'compare_arrows'}</span> 
+            ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           
-          <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-            View <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          <button class="text-primary hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-headline font-extrabold text-xs uppercase tracking-widest flex items-center gap-1 transition-all duration-200 group-hover:gap-2">
+            View <span class="material-symbols-outlined text-sm transition-transform duration-200 group-hover:translate-x-0.5">arrow_forward</span>
           </button>
         </div>
       </article>

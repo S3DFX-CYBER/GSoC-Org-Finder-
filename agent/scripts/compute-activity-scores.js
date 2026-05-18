@@ -84,7 +84,8 @@ async function analyzeOrg({ name, repo }) {
       const responseTimes = issues
         .filter(i => i.created_at && i.closed_at && !i.pull_request)
         .map(i => (+new Date(i.closed_at) - +new Date(i.created_at)) / 86400000);
-      if (responseTimes.length > 0) {        issueResponseDays = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      if (responseTimes.length > 0) {
+        issueResponseDays = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       }
     }
 

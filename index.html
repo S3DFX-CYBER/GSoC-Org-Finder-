@@ -2698,11 +2698,12 @@ if(org.ideas){
           : [...selectedLanguages].some(lang => languageMatchesSelection(tags, lang)));
 
       let matchChip = true;
-      if (activeChip === 'bookmarked')  matchChip = bookmarkedSet.has(o.name);
-      else if (activeChip === 'veterans')         matchChip = o.years >= 10;
-      else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
-      else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
-      else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
+      if (activeChip === 'bookmarked')           matchChip = bookmarkedSet.has(o.name);
+      else if (activeChip === 'veterans')        matchChip = o.years >= 10;
+      else if (activeChip === 'newcomers')       matchChip = o.years <= 3;
+      else if (activeChip === 'low-competition') matchChip = o.competition === 'chill';
+      else if (activeChip === 'high-competition')matchChip = o.competition === 'hot';
+      else if (activeChip === 'active')          matchChip = !o._gh || o._gh.activity === 'active';
 
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
@@ -2946,6 +2947,13 @@ if(org.ideas){
       const stars = (Math.random() * 5000 + 1000).toFixed(0);
       const forks = (stars * 0.2).toFixed(0);
       const issues = (Math.random() * 50 + 10).toFixed(0);
+      
+      // Persist data on org for filter chips (e.g. "Actively Maintained")
+      if (!org._gh) org._gh = {};
+      org._gh.stars = parseInt(stars);
+      org._gh.forks = parseInt(forks);
+      org._gh.issues = parseInt(issues);
+      org._gh.activity = 'active';
       
       document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
       document.getElementById('mForks').textContent = forks;

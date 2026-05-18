@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-check
 /* eslint-env node */
 // Computes community activity scores for all GSoC orgs
 // Run via GitHub Actions daily
@@ -7,7 +7,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OUTPUT_FILE = path.join(__dirname, '../../data/community_activity.json');
-const ORG_STATS_FILE = path.join(__dirname, '../../data/org-stats.json');
 
 if (!GITHUB_TOKEN) {
   console.error('❌ GITHUB_TOKEN is required');
@@ -27,14 +26,12 @@ const orgDataRaw = fs.readFileSync(
 
 // Extract github field from each org
 const githubRepos = [];
-const orgMap = {};
 const orgMatches = orgDataRaw.matchAll(/name:\s*"([^"]+)"[^}]+github:\s*"([^"]+)"/g);
 for (const m of orgMatches) {
   const name = m[1];
   const repo = m[2];
-  if (repo && repo.includes('/')) {
+  if (repo?.includes('/')) {
     githubRepos.push({ name, repo });
-    orgMap[name] = repo;
   }
 }
 

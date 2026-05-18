@@ -1743,9 +1743,22 @@
   "Open HealthCare Network": {
     "org": "Open HealthCare Network",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/open-healthcare-network",
-    "channels": ["https://slack.ohc.network/"],
-    "mentors": ["nihal467", "amjithtitus09"],
-    "mailingLists": ["Info@ohc.network"],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://slack.ohc.network",
+        "label": "Open HealthCare Network Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "github": "nihal467"
+      },
+      {
+        "github": "amijithitus09"
+      }
+    ],
+    "mailingLists": [],
     "tip": "",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"

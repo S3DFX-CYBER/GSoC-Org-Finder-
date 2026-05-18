@@ -7,6 +7,11 @@ on:
 
 permissions:
   issues: write
+  contents: read
+
+concurrency:
+  group: issue-welcome-${{ github.event.issue.number }}
+  cancel-in-progress: true
 
 jobs:
   welcome:
@@ -14,86 +19,117 @@ jobs:
     steps:
       - name: Welcome contributor
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const issue = context.payload.issue;
-            const username = issue.user.login;
 
+
+            if (!issue) return;
+            if (issue.pull_request) return;
             if (issue.user.type === 'Bot') return;
 
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issue_number = issue.number;
+            const username = issue.user.login;
+
+            const MARKER =
+              '<!-- issue-welcome-bot -->';
+
+            // Prevent duplicate welcome comments
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number,
+                  per_page: 100
+                }
+              );
+
+            const alreadyWelcomed =
+              comments.some(c =>
+                c.body &&
+                c.body.includes(MARKER)
+              );
+
+            if (alreadyWelcomed) {
+              core.info('Welcome already posted');
+              return;
+            }
+
             const body = [
-              `## 👋 Thanks for opening an issue, @${username}!`,
+              MARKER,
               ``,
-              `Our maintainers will review this issue shortly 🚀`,
+              `# 👋 Welcome @${username}`,
               ``,
-              `---`,
+              `Thanks for opening an issue in **${repo}** 🚀`,
               ``,
-              `## 📘 Before Contributing`,
+              `Our automation system will now:`,
               ``,
-              `Please read the contribution guide carefully before requesting assignment:`,
-              ``,
-              `👉 https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md`,
-              ``,
-              `---`,
-              ``,
-              `## 🧭 New Assignment System`,
-              ``,
-              `This repository uses a **maintainer-verified assignment system**:`,
-              ``,
-              `### For Contributors:`,
-              `1. Request assignment: \`/assign gssoc\` or \`/assign nsoc\``,
-              `2. Your request will be **queued** (not immediately assigned)`,
-              `3. A maintainer will verify the issue and approve assignments`,
-              `4. You'll be notified when assigned`,
-              ``,
-              `### Smart Selection:`,
-              `Maintainers can use \`/approve-assignment\` to auto-select based on:`,
-              `- ⏱️ Request timestamp (first come, first served)`,
-              `- 📊 Current workload (users with fewer active issues prioritized)`,
-              `- ✅ Contribution history`,
+              `- classify the issue`,
+              `- apply labels`,
+              `- check issue quality`,
+              `- detect duplicates`,
+              `- prepare assignment eligibility`,
               ``,
               `---`,
               ``,
-              `## 🏷️ NSoC'26 / GSSoC'26 Requirement`,
+              `# 📘 Contributor Guides`,
               ``,
-              `Please clearly mention whether you are contributing via:`,
-              `- \`NSoC'26\``,
-              `- \`GSSoC'26\``,
-              `- or as a regular contributor`,
-              ``,
-              `Example: \`I am contributing under GSSoC'26\``,
-              ``,
-              `⚠️ Assignment requests without this information may be rejected automatically.`,
+              `| Program | Guide |`,
+              `|---|---|`,
+              `| GSSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
+              `| NSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md |`,
+              `| General | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
               ``,
               `---`,
               ``,
-              `## ⏳ GSSoC Assignment Restriction`,
+              `# 🧭 Assignment Flow`,
               ``,
-              `GSSoC contributors will only be allowed to take issue assignments after:`,
-              `### 🗓️ May 15th, 12:00 AM IST`,
+              `After triage completes, request assignment using:`,
               ``,
-              `Before that date, assignment requests from GSSoC contributors will be automatically blocked.`,
+              '```',
+              `/assign gssoc`,
+              `/assign nsoc`,
+              '```',
+              ``,
+              `Depending on issue difficulty and verification status,`,
+              `assignment may be:`,
+              ``,
+              `- automatic`,
+              `- mentor-approved`,
+              `- maintainer-reviewed`,
+              ``,
+              `Two mentors may be requested automatically for validation.`,
               ``,
               `---`,
               ``,
-              `## ⚠️ Important Repository Rules`,
+              `# ⚠️ Important`,
               ``,
-              `- **Do not start working before assignment**`,
-              `- Maximum active assignments:`,
-              `  - GSSOC: 2 issues`,
-              `  - NSOC: 3 issues`,
-              `- Contributors are encouraged to combine related fixes into 1–2 quality PRs instead of many small PRs`,
-              `- PRs without assignment may be closed`,
-              `- Spam or low-quality PRs may be rejected`,
-              `- Follow the zero-build, zero-dependency philosophy`,
+              `- Do NOT start work before assignment confirmation`,
+              `- Maximum active assignments: 3`,
+              `- Low-quality or AI-spam PRs may be rejected`,
+              `- Inactive assignments may be automatically removed`,
+              `- Follow repository contribution guidelines carefully`,
               ``,
-              `Happy contributing 🎉`
+              `Happy contributing 💙`
+
             ].join('\n');
 
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
+              owner,
+              repo,
+              issue_number,
               body
             });
+
+            core.info(
+              `Posted welcome message on issue #${issue_number}`
+            );
+

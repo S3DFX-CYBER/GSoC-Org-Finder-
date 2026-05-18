@@ -2486,7 +2486,7 @@
         str = "'" + str;
       }
       // Quote field if it contains comma, double-quote, or newline
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
         return '"' + str.replace(/"/g, '""') + '"';
       }
       return str;
@@ -2510,7 +2510,7 @@
     });
 
     const filename = `GSoC-2026-Watchlist-${todayStamp()}.csv`;
-    downloadFile(rows.join('\n'), filename, 'text/csv;charset=utf-8');
+    downloadFile(rows.join('\r\n'), filename, 'text/csv;charset=utf-8');
   }
 
   // Wire up export buttons

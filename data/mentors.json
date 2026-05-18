@@ -9,7 +9,7 @@
         "github": "52north",
         "githubUrl": "https://github.com/52north"
       }
-    ], 
+    ],
     "mailingLists": [], 
     "tip": "",
     "status": "ok",
@@ -2062,7 +2062,7 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-"preCICE": {
+  "preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
     "channels": [
@@ -2176,38 +2176,49 @@
   "ideasUrl": "https://www.qubes-os.org/gsoc/",
   "channels": [
     {
-      "type": "mailing-list",
-      "name": "qubes-devel",
-      "url": "https://groups.google.com/g/qubes-devel"
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/qubes-devel",
+      "label": "qubes-devel"
     },
     {
       "type": "forum",
-      "name": "Qubes OS Forum",
-      "url": "https://forum.qubes-os.org"
+      "url": "https://forum.qubes-os.org",
+      "label": "Qubes OS Forum"
     }
   ],
   "mentors": [
     {
+      "name": "Marek Marczykowski-Górecki",
       "github": "marmarek",
-      "name": "Marek Marczykowski-Górecki"
+      "githubUrl": "https://github.com/marmarek"
     },
     {
+      "name": "Marta Marczykowska-Górecka",
       "github": "marmarta",
-      "name": "Marta Marczykowska-Górecka"
+      "githubUrl": "https://github.com/marmarta"
     },
     {
+      "name": "Piotr Bartman-Szwarc",
       "github": "piotrbartman",
-      "name": "Piotr Bartman-Szwarc"
+      "githubUrl": "https://github.com/piotrbartman"
     },
     {
-      "github": "unman"
+      "name": "",
+      "github": "unman",
+      "githubUrl": "https://github.com/unman"
     },
     {
-      "github": "ben-grande"
+      "name": "",
+      "github": "ben-grande",
+      "githubUrl": "https://github.com/ben-grande"
     }
   ],
   "mailingLists": [
-    "qubes-devel@googlegroups.com"
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/qubes-devel",
+      "label": "qubes-devel"
+    }
   ],
   "tip": "Post to qubes-devel@googlegroups.com to introduce yourself. Subscribe first by sending a blank email to qubes-devel+subscribe@googlegroups.com. Ideas page lists 'Mentor: Inquire on qubes-devel' for all projects.",
   "status": "ok",
@@ -2234,47 +2245,47 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "rocket.chat": {
-  "org": "rocket.chat",
-  "ideasUrl": "https://github.com/RocketChat/google-summer-of-code/blob/main/google-summer-of-code-2026.md",
-  "channels": [
-    {
-      "type": "chat",
-      "url": "https://open.rocket.chat/channel/opensource2026",
-      "label": "opensource2026"
-    },
-    {
-      "type": "forum",
-      "url": "https://forums.rocket.chat/c/gsoc/gsoc2026/112",
-      "label": "Rocket.Chat GSoC 2026 Forum"
-    }
-  ],
-  "mentors": [
-    {
-      "name": "Sing Li",
-      "github": "Sing-Li",
-      "githubUrl": "https://github.com/Sing-Li"
-    },
-    {
-      "name": "",
-      "github": "geekgonecrazy",
-      "githubUrl": "https://github.com/geekgonecrazy"
-    },
-    {
-      "name": "",
-      "github": "debdutdeb",
-      "githubUrl": "https://github.com/debdutdeb"
-    },
-    {
-      "name": "",
-      "github": "Dnouv",
-      "githubUrl": "https://github.com/Dnouv"
-    }
-  ],
-  "mailingLists": [],
-  "tip": "Join the 24x7 community server at https://open.rocket.chat/channel/opensource2026 and introduce yourself. Attend weekly Friday tea time to meet mentors directly.",
-  "status": "ok",
-  "lastFetched": "2026-05-09T16:09:12.548Z"
-},
+    "org": "rocket.chat",
+    "ideasUrl": "https://github.com/RocketChat/google-summer-of-code/blob/main/google-summer-of-code-2026.md",
+    "channels": [
+      {
+        "type": "chat",
+        "url": "https://open.rocket.chat/channel/opensource2026",
+        "label": "opensource2026"
+      },
+      {
+        "type": "forum",
+        "url": "https://forums.rocket.chat/c/gsoc/gsoc2026/112",
+        "label": "Rocket.Chat GSoC 2026 Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Sing Li",
+        "github": "Sing-Li",
+        "githubUrl": "https://github.com/Sing-Li"
+      },
+      {
+        "name": "",
+        "github": "geekgonecrazy",
+        "githubUrl": "https://github.com/geekgonecrazy"
+      },
+      {
+        "name": "",
+        "github": "debdutdeb",
+        "githubUrl": "https://github.com/debdutdeb"
+      },
+      {
+        "name": "",
+        "github": "Dnouv",
+        "githubUrl": "https://github.com/Dnouv"
+      }
+    ],
+    "mailingLists": [],
+    "tip": "Join the 24x7 community server at https://open.rocket.chat/channel/opensource2026 and introduce yourself. Attend weekly Friday tea time to meet mentors directly.",
+    "status": "ok",
+    "lastFetched": "2026-05-09T16:09:12.548Z"
+  },
   "RTEMS Project": {
     "org": "RTEMS Project",
     "ideasUrl": "https://projects.rtems.org/gsoc/",

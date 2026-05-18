@@ -75,8 +75,10 @@
         const org = orgs.find((entry) => entry.name === item.name);
         if (!org) return '';
 
-        const githubOwner = org.github.split('/')[0];
+        const githubOwner = org.github ? org.github.split('/')[0] : 'unknown';
         const logoUrl = `https://github.com/${githubOwner}.png?size=64`;
+        const descSafe = String(org.desc || '');
+        const tagsSafe = Array.isArray(org.tags) ? org.tags : [];
         const timeAgo = this.getTimeAgo(item.timestamp);
         const isBookmarked = bookmarkedSet.has(org.name);
 
@@ -94,10 +96,10 @@
             </div>
             <div>
               <h4 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h4>
-              <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc.substring(0, 50))}${org.desc.length > 50 ? '...' : ''}</p>
+              <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(descSafe.substring(0, 50))}${descSafe.length > 50 ? '...' : ''}</p>
             </div>
             <div class="flex flex-wrap gap-1.5 mb-4">
-              ${org.tags.map((tag) => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`).join('')}
+              ${tagsSafe.map((tag) => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`).join('')}
             </div>
             <div class="recently-viewed-actions">
               <button class="recently-viewed-btn" type="button" data-rv-action="open" title="View details">

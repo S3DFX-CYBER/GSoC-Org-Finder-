@@ -2202,6 +2202,44 @@
     return `<span class="difficulty-badge ${cls}" title="Difficulty: ${total}/10 — click card for breakdown">⚡ ${total}/10 ${label}</span>`;
   }
 
+  globalThis.getOrgMetricsDashboardHTML = function(years, codebase, diffScore, diffLabelCls, isRecommendation = false) {
+    const esc = isRecommendation ? (typeof safeEscapeHtml === 'function' ? safeEscapeHtml : s => s) : (typeof escapeHtml === 'function' ? escapeHtml : s => s);
+    const yearsText = esc(String(years));
+    const codebaseText = esc(codebase || '—');
+    const codebaseCls = codebase === 'beginner' ? 'text-emerald-600 dark:text-emerald-400' : codebase === 'intermediate' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
+    const diffCls = diffLabelCls === 'difficulty-easy' ? 'text-emerald-600 dark:text-emerald-400' : diffLabelCls === 'difficulty-medium' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
+    const yearsLabel = years >= 10 ? 'Veteran' : years <= 3 ? 'Newcomer' : 'Established';
+    const cellClass = "flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]";
+    const hoverClass = " hover:bg-orange-50/20 dark:hover:bg-orange-950/10 hover:border-orange-100/50 dark:hover:border-orange-900/30";
+    
+    return `
+      <div class="grid grid-cols-3 gap-2 mb-4 mt-auto relative z-10">
+        <!-- Presence Card Cell -->
+        <div class="${cellClass}${hoverClass}">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Presence</span>
+          <span class="text-[10px] font-headline font-extrabold text-orange-700 dark:text-orange-400 flex items-center gap-0.5" title="${yearsText} years in GSoC — ${yearsLabel}">
+            <span class="material-symbols-outlined text-[10px] icon-fill">history</span>
+            ${yearsText}y
+          </span>
+        </div>
+        <!-- Codebase Card Cell -->
+        <div class="${cellClass}">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Codebase</span>
+          <span class="text-[9.5px] font-headline font-extrabold uppercase tracking-wider ${codebaseCls}">
+            ${codebaseText}
+          </span>
+        </div>
+        <!-- Difficulty Card Cell -->
+        <div class="${cellClass}" title="Difficulty score: ${diffScore}/10">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Difficulty</span>
+          <span class="text-[9.5px] font-headline font-extrabold flex items-center gap-0.5 ${diffCls}">
+            ⚡ ${diffScore}/10
+          </span>
+        </div>
+      </div>
+    `;
+  };
+
   const quizState = { exp: null, lang: null, active: false };
 
   function renderSkillQuiz() {
@@ -2327,30 +2365,7 @@
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-wider ${catClass}">${escapeHtml(catText)}</span>
           </div>
           <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
-          <div class="grid grid-cols-3 gap-2 mb-4 mt-auto relative z-10">
-            <!-- Presence Card Cell -->
-            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 hover:bg-orange-50/20 dark:hover:bg-orange-950/10 hover:border-orange-100/50 dark:hover:border-orange-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Presence</span>
-              <span class="text-[10px] font-headline font-extrabold text-orange-700 dark:text-orange-400 flex items-center gap-0.5" title="${escapeHtml(String(org.years))} years in GSoC — ${yearsLabel}">
-                <span class="material-symbols-outlined text-[10px] icon-fill">history</span>
-                ${escapeHtml(String(org.years))}y
-              </span>
-            </div>
-            <!-- Codebase Card Cell -->
-            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Codebase</span>
-              <span class="text-[9.5px] font-headline font-extrabold uppercase tracking-wider ${org.codebase === 'beginner' ? 'text-emerald-600 dark:text-emerald-400' : org.codebase === 'intermediate' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">
-                ${escapeHtml(org.codebase)}
-              </span>
-            </div>
-            <!-- Difficulty Card Cell -->
-            <div class="flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]" title="Difficulty score: ${diffScoreObj.total}/10 — click card for breakdown">
-              <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Difficulty</span>
-              <span class="text-[9.5px] font-headline font-extrabold flex items-center gap-0.5 ${diffLabelObj.cls === 'difficulty-easy' ? 'text-emerald-600 dark:text-emerald-400' : diffLabelObj.cls === 'difficulty-medium' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">
-                ⚡ ${diffScoreObj.total}/10
-              </span>
-            </div>
-          </div>
+          ${getOrgMetricsDashboardHTML(org.years, org.codebase, diffScoreObj.total, diffLabelObj.cls, false)}
           <div class="flex flex-wrap gap-1.5 mb-5">
             ${org.tags.slice(0, 3).map(t => `<span class="px-2.5 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[10px] font-mono font-medium rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400 transition-colors duration-200 group-hover:border-zinc-200 dark:group-hover:border-zinc-600">${escapeHtml(t)}</span>`).join('')}
             ${org.tags.length > 3 ? `<span class="px-2.5 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[10px] font-mono font-medium rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}

@@ -1228,7 +1228,7 @@
     aria-live="polite"
     aria-atomic="true"
     class="fixed bottom-4 left-4 z-50 hidden"
-    style="display: none; background: linear-gradient(135deg, #F46B0E 0%, #EA580C 100%); box-shadow: 0 4px 20px rgba(244, 107, 14, 0.4);"
+    style="background: linear-gradient(135deg, #F46B0E 0%, #EA580C 100%); box-shadow: 0 4px 20px rgba(244, 107, 14, 0.4);"
   >
     <div class="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium">
       <span class="material-symbols-outlined text-lg" style="font-size: 20px;">wifi_off</span>
@@ -1242,7 +1242,7 @@
   (function(){
     const offlineIndicator = document.getElementById('offlineIndicator');
     function updateOnlineStatus() {
-      offlineIndicator.classList.toggle('hidden', !navigator.onLine);
+      offlineIndicator.classList.toggle('hidden', navigator.onLine);
     }
     globalThis.addEventListener('online', updateOnlineStatus);
     globalThis.addEventListener('offline', updateOnlineStatus);
@@ -2790,15 +2790,26 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-  
+
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
 
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    // Reset internal filter state
+    selectedLanguages.clear();
+    activeChip = null;
+    query = '';
+    cat = 'all';
+    comp = 'all';
+    sort = 'alpha';
+
+    // Clear URL params
+    history.replaceState(null, '', location.pathname);
+
+    // Apply filters and render
+    applyFilters();
   };
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
@@ -3039,14 +3050,18 @@ if(org.ideas){
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
 
+    const VALID_LANGUAGES = new Set(['Python', 'JavaScript', 'TypeScript', 'C/C++', 'Java', 'Rust', 'Go', 'Ruby', 'Haskell', 'Scala', 'ML/AI', 'Robotics']);
     const lang = params.get('lang');
     if (lang) {
       lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        selectedLanguages.add(l);
-        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
-        if (pillBtn) {
-          pillBtn.classList.add('active');
-          pillBtn.setAttribute('aria-pressed', 'true');
+        const normalized = l.replace(/[^\w+/]/g, '');
+        if (VALID_LANGUAGES.has(normalized)) {
+          selectedLanguages.add(normalized);
+          const pillBtn = document.querySelector(`.pill[data-lang="${normalized}"]`);
+          if (pillBtn) {
+            pillBtn.classList.add('active');
+            pillBtn.setAttribute('aria-pressed', 'true');
+          }
         }
       });
       renderSelectedLanguages();

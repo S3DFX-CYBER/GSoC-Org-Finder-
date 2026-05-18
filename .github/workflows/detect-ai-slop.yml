@@ -87,8 +87,8 @@ jobs:
             dependabot[bot]
 
           failure-add-pr-labels: |
-            suspected-ai-slop
-            needs-human-review
+            ai-slop
+            gssoc:ai-slop
 
           failure-pr-message: |
             ## ⚠️ PR Needs Maintainer Review
@@ -113,12 +113,15 @@ jobs:
             const repo = context.repo.repo;
             const pr = context.payload.pull_request.number;
 
-            const { data: files } = await github.rest.pulls.listFiles({
-              owner,
-              repo,
-              pull_number: pr,
-              per_page: 100
-            });
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner,
+                repo,
+                pull_number: pr,
+                per_page: 100
+              }
+            );
 
             let suspiciousScore = 0;
             const reasons = [];
@@ -207,8 +210,8 @@ jobs:
                 repo,
                 issue_number: pr,
                 labels: [
-                  'suspected-ai-slop',
-                  'needs-human-review'
+                  'ai-slop',
+                  'gssoc:ai-slop'
                 ]
               });
             } catch (e) {}

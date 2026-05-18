@@ -1,3 +1,4 @@
+/* global BUILD_CACHE_VERSION */
 const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,8).replaceAll('-', '');
 
 // Cache naming
@@ -131,11 +132,15 @@ async function cacheFirst(request) {
   }
 
   // No cache or expired - fetch from network
-  const networkResponse = await fetch(request);
-  if (networkResponse.ok && request.method === 'GET') {
-    cache.put(request, networkResponse.clone());
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok && request.method === 'GET') {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (e) {
+    return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
   }
-  return networkResponse;
 }
 
 // Handle all fetch requests

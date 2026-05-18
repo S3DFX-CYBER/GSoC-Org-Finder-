@@ -24,6 +24,10 @@
     return `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(tag)}</span>`;
   }
 
+  function getDescriptionPreview(desc) {
+    return `${escapeHtml(desc.substring(0, 50))}${desc.length > 50 ? '...' : ''}`;
+  }
+
   function getYearsLabel(years) {
     if (years === null || years === undefined) return '';
     return `${escapeHtml(String(years))}y`;
@@ -64,6 +68,12 @@
     fallback.textContent = initials;
     logo.textContent = '';
     logo.appendChild(fallback);
+  }
+
+  function bindLogoImageError(img) {
+    if (img.__rvErrorAttached) return;
+    img.addEventListener('error', () => handleLogoImageError(img));
+    img.__rvErrorAttached = true;
   }
 
   const RV = {
@@ -151,11 +161,11 @@
                 <span class="category-tag">${escapeHtml(catSafe)}</span>
                 <span class="recently-viewed-badge">${yearsSafe}</span>
               </div>
-            </div>
-            <div>
-              <h4 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h4>
-              <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(descSafe.substring(0, 50))}${descSafe.length > 50 ? '...' : ''}</p>
-            </div>
+              </div>
+              <div>
+                <h4 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h4>
+              <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${getDescriptionPreview(descSafe)}</p>
+              </div>
             <div class="flex flex-wrap gap-1.5 mb-4">
               ${tagsSafe.map(renderTag).join('')}
             </div>
@@ -183,9 +193,7 @@
       }
 
       container.querySelectorAll('.recently-viewed-logo img[data-logo-name]').forEach((img) => {
-        if (img.__rvErrorAttached) return;
-        img.addEventListener('error', () => handleLogoImageError(img));
-        img.__rvErrorAttached = true;
+        bindLogoImageError(img);
       });
     },
 

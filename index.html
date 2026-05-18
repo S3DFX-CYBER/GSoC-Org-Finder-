@@ -238,14 +238,59 @@
     .dark .diff-bar-wrap { background:#27272a; }
 
     /* Match My Skills quiz panel */
-    #skillQuiz { border:1px solid #e5e7eb; border-radius:1.5rem; padding:1.5rem; margin-top:1.5rem; }
-    .dark #skillQuiz { border-color:#3f3f46; background:#18181b; }
-    .quiz-option { display:inline-block; padding:0.35rem 0.9rem; border-radius:99px; border:1.5px solid #e5e7eb; font-size:0.72rem; font-weight:700; cursor:pointer; transition:all 0.2s; margin:0.2rem; }
-    .quiz-option:hover { border-color:#9d4300; color:#9d4300; }
-    .quiz-option.selected { background:#9d4300; color:#fff; border-color:#9d4300; }
-    .dark .quiz-option { border-color:#3f3f46; color:#d4d4d8; }
-    .dark .quiz-option:hover { border-color:#fb923c; color:#fb923c; }
-    .dark .quiz-option.selected { background:#f97316; color:#fff; border-color:#f97316; }
+    #skillQuiz { 
+      border: 1px solid #f4f4f5; 
+      border-radius: 1.5rem; 
+      padding: 1.5rem; 
+      margin-top: 1.5rem; 
+      margin-bottom: 2rem; 
+      background: #fafafa; 
+      transition: all 0.3s ease; 
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .dark #skillQuiz { 
+      border-color: rgba(63, 63, 70, 0.5); 
+      background: rgba(24, 24, 27, 0.4); 
+      box-shadow: none;
+    }
+    .quiz-option { 
+      display: inline-block; 
+      padding: 0.35rem 0.9rem; 
+      border-radius: 99px; 
+      border: 1.5px solid #e4e4e7; 
+      font-size: 0.72rem; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+      margin: 0.2rem; 
+      background: #fff;
+    }
+    .quiz-option:hover { 
+      border-color: #f97316; 
+      color: #ea580c; 
+      transform: translateY(-1px);
+    }
+    .quiz-option.selected { 
+      background: #f97316; 
+      color: #fff; 
+      border-color: #f97316; 
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.2);
+    }
+    .dark .quiz-option { 
+      border-color: rgba(63, 63, 70, 0.8); 
+      color: #d4d4d8; 
+      background: rgba(39, 39, 42, 0.3);
+    }
+    .dark .quiz-option:hover { 
+      border-color: #fb923c; 
+      color: #fb923c; 
+    }
+    .dark .quiz-option.selected { 
+      background: #f97316; 
+      color: #fff; 
+      border-color: #f97316; 
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
 
     /* Bookmark Button */
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
@@ -732,7 +777,7 @@
   <!-- Skill match banner -->
   <div id="skillMatchBanner" class="hidden mb-4 px-4 py-2 bg-primary/10 text-primary text-xs font-bold rounded-xl flex items-center justify-between">
     <span></span>
-    <button onclick="document.getElementById('skillMatchBanner').classList.add('hidden');filteredOrgs=ORGS.slice();visibleCount=12;renderOrgs(true);" class="ml-4 underline">Clear</button>
+    <button onclick="clearSkillMatch()" class="ml-4 underline hover:text-orange-700 transition-colors">Clear</button>
   </div>
 
   <!-- Match My Skills Quiz -->
@@ -2157,10 +2202,7 @@
     return `<span class="difficulty-badge ${cls}" title="Difficulty: ${total}/10 — click card for breakdown">⚡ ${total}/10 ${label}</span>`;
   }
 
-  // ══════════════════════════════════════════
-  // MATCH MY SKILLS — quiz state
-  // ══════════════════════════════════════════
-  const quizState = { exp: null, lang: null };
+  const quizState = { exp: null, lang: null, active: false };
 
   function renderSkillQuiz() {
     const el = document.getElementById('skillQuiz');
@@ -2173,7 +2215,7 @@
       <div>${expOptions.map(o => `<span class="quiz-option ${quizState.exp===o?'selected':''}" data-quiz-exp="${o}">${o}</span>`).join('')}</div>
       <p class="text-xs text-zinc-500 mt-3 mb-2">Your primary language:</p>
       <div>${langOptions.map(o => `<span class="quiz-option ${quizState.lang===o?'selected':''}" data-quiz-lang="${o}">${o}</span>`).join('')}</div>
-      ${(quizState.exp && quizState.lang) ? `<button onclick="applySkillMatch()" class="mt-4 px-4 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-orange-700 transition-colors">Show Matching Orgs</button>` : ''}
+      ${(quizState.exp && quizState.lang) ? `<button onclick="applySkillMatch()" class="mt-4 px-4 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-orange-700 transition-colors shadow-md shadow-primary/20">Show Matching Orgs</button>` : ''}
     `;
     el.querySelectorAll('[data-quiz-exp]').forEach(btn => {
       btn.addEventListener('click', () => { quizState.exp = btn.dataset.quizExp; renderSkillQuiz(); });
@@ -2185,20 +2227,10 @@
 
   globalThis.applySkillMatch = function() {
     if (!quizState.exp || !quizState.lang) return;
-    const maxDiff = quizState.exp === 'Beginner' ? 3 : quizState.exp === 'Intermediate' ? 6 : 10;
-    const minDiff = quizState.exp === 'Beginner' ? 1 : quizState.exp === 'Intermediate' ? 4 : 7;
-    const langLower = quizState.lang.toLowerCase();
+    quizState.active = true;
 
-    filteredOrgs = ORGS.filter(o => {
-      const { total } = getDifficultyScore(o);
-      if (total < minDiff || total > maxDiff) return false;
-      if (quizState.lang === 'Other') return true;
-      return o.tags.some(t => t.toLowerCase().includes(langLower) || langLower.includes(t.toLowerCase()));
-    });
-
-    visibleCount = 12;
-    renderOrgs(true);
-    document.getElementById('orgCount').textContent = filteredOrgs.length;
+    // Call the unified applyFilters pipeline so all filter states work in harmony
+    applyFilters();
 
     // Scroll to results
     document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
@@ -2209,6 +2241,18 @@
       banner.querySelector('span').textContent = `Showing ${filteredOrgs.length} orgs matching: ${quizState.exp} · ${quizState.lang}`;
       banner.classList.remove('hidden');
     }
+  };
+
+  globalThis.clearSkillMatch = function() {
+    quizState.active = false;
+    quizState.exp = null;
+    quizState.lang = null;
+
+    const banner = document.getElementById('skillMatchBanner');
+    if (banner) banner.classList.add('hidden');
+
+    renderSkillQuiz();
+    applyFilters();
   };
 
   function renderOrgs(reset = true) {
@@ -2940,7 +2984,18 @@ if(org.ideas){
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
 
-      return matchSearch && matchCat && matchComp && matchLang && matchChip;
+      let matchSkill = true;
+      if (quizState.active && quizState.exp && quizState.lang) {
+        const maxDiff = quizState.exp === 'Beginner' ? 3 : quizState.exp === 'Intermediate' ? 6 : 10;
+        const minDiff = quizState.exp === 'Beginner' ? 1 : quizState.exp === 'Intermediate' ? 4 : 7;
+        const langLower = quizState.lang.toLowerCase();
+        const { total } = getDifficultyScore(o);
+        const diffMatch = total >= minDiff && total <= maxDiff;
+        const langMatch = quizState.lang === 'Other' || tags.some(t => t.includes(langLower) || langLower.includes(t));
+        matchSkill = diffMatch && langMatch;
+      }
+
+      return matchSearch && matchCat && matchComp && matchLang && matchChip && matchSkill;
     });
 
     if(query){

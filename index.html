@@ -477,21 +477,6 @@
   .cd-item:hover { background: rgba(249,115,22,0.1); color: #f97316; }
   .cd-item.cd-active { background: rgba(249,115,22,0.12); color: #f97316; }
 
-  .cd-count {
-    background: #f3f4f6; color: #6b7280;
-    font-size: 11px; font-weight: 700;
-    padding: 2px 8px; border-radius: 99px;
-    min-width: 28px; text-align: center;
-  }
-  .cd-item.cd-active .cd-count { background: #ffedd5; color: #f97316; }
-
-                  /* ── DARK MODE TRIGGER ── */
-  .dark .cd-trigger {
-    background: #27272a; color: #d4d4d8;
-    border-color: #3f3f46;
-  }
-  .dark .cd-trigger:hover { border-color: #f97316; color: #f97316; }
-
     /* ── DARK MODE PANEL ── */
   .dark .cd-panel {
     background: #16213e; border-color: #2e2e4a;
@@ -501,8 +486,8 @@
   .dark .cd-item { color: #c9c9d0; }
   .dark .cd-item:hover { background: rgba(249,115,22,0.12); color: #f97316; }
   .dark .cd-item.cd-active { background: #7c2900; color: #f97316; }
-  .dark .cd-count { background: #1e2a3a; color: #8899aa; }
-  .dark .cd-item.cd-active .cd-count { background: #5c1e00; color: #f97316; }
+  .dark  { background: #1e2a3a; color: #8899aa; }
+  .dark .cd-item.cd-active  { background: #5c1e00; color: #f97316; }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -3268,126 +3253,98 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeHelpModal = closeHelpModal;
 
 });
-(function(){
-  function initDropdown({ wrapperId, triggerId, labelId, hiddenId, labelPrefix, onSelect }) {
-    const wrapper = document.getElementById(wrapperId);
-    const trigger = document.getElementById(triggerId);
-    const label   = document.getElementById(labelId);
-    const hidden  = document.getElementById(hiddenId);
-    if (!wrapper || !trigger || !label || !hidden) return;
-    const items = Array.from(wrapper.querySelectorAll('.cd-item'));
+function initDropdown({ wrapperId, triggerId, labelId, hiddenId, labelPrefix, onSelect }) {
+  const wrapper = document.getElementById(wrapperId);
+  const trigger = document.getElementById(triggerId);
+  const label   = document.getElementById(labelId);
+  const hidden  = document.getElementById(hiddenId);
+  if (!wrapper || !trigger || !label || !hidden) return;
 
-    // open / close
-    function openDropdown() {
-      document.querySelectorAll('.cd-wrapper').forEach(w => {
-        if (w !== wrapper) w.classList.remove('open');
-      });
-      wrapper.classList.add('open');
-      const active = wrapper.querySelector('.cd-item.cd-active');
-      if (active) active.focus();
-    }
+  const items = Array.from(wrapper.querySelectorAll('.cd-item'));
 
-    function closeDropdown() {
-      wrapper.classList.remove('open');
-      trigger.focus();
-    }
+  // FIX 3 — panel role + id
+  const panel = wrapper.querySelector('.cd-panel');
+  const panelId = wrapperId + '-panel';
+  panel.setAttribute('id', panelId);
+  panel.setAttribute('role', 'listbox');
 
-    function isOpen() {
-      return wrapper.classList.contains('open');
-    }
+  // FIX 3 — complete trigger ARIA
+  trigger.setAttribute('tabindex', '0');
+  trigger.setAttribute('role', 'combobox');
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-controls', panelId);
 
-    function selectItem(item) {
-      items.forEach(i => i.classList.remove('cd-active'));
-      item.classList.add('cd-active');
-      // robust text extraction using data-label
-      const text = item.dataset.label || item.textContent.trim();
-      label.textContent = labelPrefix ? labelPrefix + text : text;
-      hidden.value = item.dataset.value;
-      closeDropdown();
-      if (onSelect) onSelect(item.dataset.value);
-    }
+  // FIX 3 — seed aria-selected
+  items.forEach(item => {
+    item.setAttribute('tabindex', '-1');
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', item.classList.contains('cd-active') ? 'true' : 'false');
+  });
 
-    // make items focusable
-    items.forEach(item => {
-      item.setAttribute('tabindex', '-1');
-      item.setAttribute('role', 'option');
-
-      item.addEventListener('click', () => selectItem(item));
-
-      item.addEventListener('keydown', e => {
-        const idx = items.indexOf(item);
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          items[Math.min(idx + 1, items.length - 1)].focus();
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          items[Math.max(idx - 1, 0)].focus();
-        } else if (e.key === 'Home') {
-          e.preventDefault();
-          items[0].focus();
-        } else if (e.key === 'End') {
-          e.preventDefault();
-          items[items.length - 1].focus();
-        } else if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectItem(item);
-        } else if (e.key === 'Escape' || e.key === 'Tab') {
-          closeDropdown();
-        }
-      });
+  function openDropdown() {
+    document.querySelectorAll('.cd-wrapper').forEach(w => {
+      if (w !== wrapper) w.classList.remove('open');
     });
-
-    // trigger button keyboard
-    trigger.setAttribute('tabindex', '0');
-    trigger.setAttribute('role', 'button');
-    trigger.setAttribute('aria-haspopup', 'listbox');
-
-    trigger.addEventListener('click', e => {
-      e.stopPropagation();
-      isOpen() ? closeDropdown() : openDropdown();
-    });
-
-    trigger.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        openDropdown();
-      } else if (e.key === 'Escape') {
-        closeDropdown();
-      }
-    });
+    wrapper.classList.add('open');
+    trigger.setAttribute('aria-expanded', 'true');      // FIX 3
+    const active = wrapper.querySelector('.cd-item.cd-active');
+    if (active) active.focus();
   }
 
-  // Category
-  initDropdown({
-    wrapperId: 'catDropdown', triggerId: 'catTrigger',
-    labelId: 'catLabel', hiddenId: 'categoryFilter',
-    labelPrefix: '',
-    onSelect: () => applyFilters()
+  // FIX 2 — returnFocus param; never true on Tab
+  function closeDropdown(returnFocus = false) {
+    wrapper.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');     // FIX 3
+    if (returnFocus) trigger.focus();
+  }
+
+  function isOpen() {
+    return wrapper.classList.contains('open');
+  }
+
+  function selectItem(item) {
+    items.forEach(i => {
+      i.classList.remove('cd-active');
+      i.setAttribute('aria-selected', 'false');         // FIX 3
+    });
+    item.classList.add('cd-active');
+    item.setAttribute('aria-selected', 'true');         // FIX 3
+    const text = item.dataset.label || item.textContent.trim();
+    label.textContent = labelPrefix ? labelPrefix + text : text;
+    hidden.value = item.dataset.value;
+    closeDropdown(true);                                 // FIX 2
+    if (onSelect) onSelect(item.dataset.value);
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => selectItem(item));
+    item.addEventListener('keydown', e => {
+      const idx = items.indexOf(item);
+      if      (e.key === 'ArrowDown') { e.preventDefault(); items[Math.min(idx + 1, items.length - 1)].focus(); }
+      else if (e.key === 'ArrowUp')   { e.preventDefault(); items[Math.max(idx - 1, 0)].focus(); }
+      else if (e.key === 'Home')      { e.preventDefault(); items[0].focus(); }
+      else if (e.key === 'End')       { e.preventDefault(); items[items.length - 1].focus(); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectItem(item); }
+      else if (e.key === 'Escape')    { closeDropdown(true); }   // FIX 2
+      else if (e.key === 'Tab')       { closeDropdown(false); }  // FIX 2
+    });
   });
 
-  // Complexity
-  initDropdown({
-    wrapperId: 'compDropdown', triggerId: 'compTrigger',
-    labelId: 'compLabel', hiddenId: 'complexityFilter',
-    labelPrefix: 'Complexity: ',
-    onSelect: () => applyFilters()
+  trigger.addEventListener('click', e => {
+    e.stopPropagation();
+    isOpen() ? closeDropdown(true) : openDropdown();
   });
 
-  // Sort
-  initDropdown({
-    wrapperId: 'sortDropdown', triggerId: 'sortTrigger',
-    labelId: 'sortLabel', hiddenId: 'sortSelect',
-    labelPrefix: 'Sort: ',
-    onSelect: () => applyFilters()
-  });
-
-  // close on outside click
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.cd-wrapper')) {
-      document.querySelectorAll('.cd-wrapper').forEach(w => w.classList.remove('open'));
+  trigger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      openDropdown();
+    } else if (e.key === 'Escape') {
+      closeDropdown(true);
     }
   });
-})();
+}
 </script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

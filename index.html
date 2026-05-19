@@ -3041,30 +3041,7 @@ if(org.ideas){
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
-  const helpModal = document.getElementById('helpModal');
-const helpBtn = document.getElementById('helpBtn');
 
-function openHelpModal() {
-  helpModal.classList.add('open');
-}
-
-function closeHelpModal() {
-  helpModal.classList.remove('open');
-}
-
-helpBtn.addEventListener('click', openHelpModal);
-
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;

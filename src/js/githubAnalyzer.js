@@ -112,3 +112,19 @@ async function analyzeGitHubUser(username) {
 
 // Export for global usage
 globalThis.analyzeGitHubUser = analyzeGitHubUser;
+
+//Update Pending Refresh
+fetch(`/api/github?repo=${repo}`)
+    .then((res) => res.json())
+    .then((data) => {
+
+        renderIssues(data);
+
+        const lastUpdated =
+            document.getElementById("lastUpdated");
+
+        const now = new Date();
+
+        lastUpdated.innerText =
+            "Updated: " + now.toLocaleString();
+    });

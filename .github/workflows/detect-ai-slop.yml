@@ -113,15 +113,12 @@ jobs:
             const repo = context.repo.repo;
             const pr = context.payload.pull_request.number;
 
-            const files = await github.paginate(
-              github.rest.pulls.listFiles,
-              {
-                owner,
-                repo,
-                pull_number: pr,
-                per_page: 100
-              }
-            );
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner,
+              repo,
+              pull_number: pr,
+              per_page: 100
+            });
 
             let suspiciousScore = 0;
             const reasons = [];
@@ -210,8 +207,8 @@ jobs:
                 repo,
                 issue_number: pr,
                 labels: [
-                  'ai-slop',
-                  'gssoc:ai-slop'
+                  'suspected-ai-slop',
+                  'needs-human-review'
                 ]
               });
             } catch (e) {}

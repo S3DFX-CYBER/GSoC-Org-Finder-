@@ -210,12 +210,20 @@ jobs:
                         (pr.body || '')
                           .toLowerCase();
 
-                      const issueRefPattern = new RegExp(
-                        `(#${issue.number}|${owner}/${repo}#${issue.number}|https://github\\.com/${owner}/${repo}/(?:issues|pull)/${issue.number})`,
-                        'i'
+                      return (
+                        body.includes(
+                          `#${issue.number}`
+                        ) ||
+                        body.includes(
+                          `closes #${issue.number}`
+                        ) ||
+                        body.includes(
+                          `fixes #${issue.number}`
+                        ) ||
+                        body.includes(
+                          `resolves #${issue.number}`
+                        )
                       );
-
-                      return issueRefPattern.test(body);
                     });
 
                 if (linkedPR) {

@@ -2790,7 +2790,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -3050,18 +3050,14 @@ if(org.ideas){
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
 
-    const VALID_LANGUAGES = new Set(['Python', 'JavaScript', 'TypeScript', 'C/C++', 'Java', 'Rust', 'Go', 'Ruby', 'Haskell', 'Scala', 'ML/AI', 'Robotics']);
     const lang = params.get('lang');
     if (lang) {
       lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        const normalized = l.replace(/[^\w+/]/g, '');
-        if (VALID_LANGUAGES.has(normalized)) {
-          selectedLanguages.add(normalized);
-          const pillBtn = document.querySelector(`.pill[data-lang="${normalized}"]`);
-          if (pillBtn) {
-            pillBtn.classList.add('active');
-            pillBtn.setAttribute('aria-pressed', 'true');
-          }
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
         }
       });
       renderSelectedLanguages();

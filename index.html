@@ -1969,7 +1969,15 @@
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); 
+    { date: new Date('2026-05-25T00:00:00Z'), label: 'Coding Officially Begins', note: 'Start working on your GSoC project!' },
+    { date: new Date('2026-07-06T18:00:00Z'), label: 'Midterm Evaluations Begin', note: 'Mentors and contributors submit midterm evaluations.' },
+    { date: new Date('2026-07-10T18:00:00Z'), label: 'Midterm Evaluation Deadline', note: null },
+    { date: new Date('2026-08-17T00:00:00Z'), label: 'Final Submissions Begin', note: 'Submit your final work product and evaluation.' },
+    { date: new Date('2026-08-24T18:00:00Z'), label: 'Final Submission Deadline (Standard)', note: 'Standard 12-week projects: submit final work product and evaluation.' },
+    { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
+    { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
+    { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
+  ].filter(m => !isNaN(m.date.getTime()));
 
   function renderTimeline() {
     const container = document.getElementById('timeline-milestones');
@@ -2308,6 +2316,7 @@
       closeModal();
     }
   });
+  
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;

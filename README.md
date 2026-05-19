@@ -9,6 +9,34 @@ Join our Channel for community-related questions and feedback
 **Discord → [https://discord.gg/mgWV3xSV7](https://discord.gg/mgWV3xSV7)**
 
 ---
+## 🚀 Beginner Quick Start
+
+Follow these steps to run the project locally:
+
+1. Fork this repository
+2. Clone your fork:
+   ```bash
+   git clone https://github.com/your-username/GSoC-Org-Finder-.git
+   ```
+
+3. Move into the project folder:
+   ```bash
+   cd GSoC-Org-Finder-
+   ```
+
+4. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+6. Open the local server link in your browser.
+
+---
 
 ## ✨ What is this?
 

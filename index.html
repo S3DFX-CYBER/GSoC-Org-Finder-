@@ -3071,12 +3071,18 @@ document.addEventListener('keydown', (e) => {
     const cards = g?.querySelectorAll('article[data-org]');
     const card = cards?.[nextIdx];
     if (card) {
-      card.classList.add('ring-2', 'ring-primary');
-      card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
+    card.classList.add('ring-2', 'ring-primary');
+    card.focus({ preventScroll: true });
+    card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
   }
 
   document.addEventListener('keydown', e => {
+    const overlayOpen = document.getElementById('modalBg')?.classList.contains('open') ||
+      document.getElementById('compareBg')?.classList.contains('open') ||
+      document.getElementById('anBg')?.classList.contains('open');
+    if (overlayOpen) return;
+
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     if (document.activeElement?.isContentEditable) return;
@@ -3120,6 +3126,10 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key === 'Enter' && focusedIdx >= 0 && focusedIdx < n) {
       const orgName = cards[focusedIdx].dataset.org;
       if (orgName) openModal(orgName);
+    } else if ((e.key === 'c' || e.key === 'C') && focusedIdx >= 0 && focusedIdx < n) {
+      e.preventDefault();
+      const orgName = cards[focusedIdx].dataset.org;
+      if (orgName) toggleCompare(null, orgName);
     } else if (e.key === '/') {
       e.preventDefault();
       document.getElementById('hero-search')?.focus();

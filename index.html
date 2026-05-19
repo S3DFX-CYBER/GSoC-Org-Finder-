@@ -1955,7 +1955,15 @@
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); 
+    { date: new Date('2026-05-25T00:00:00Z'), label: 'Coding Officially Begins', note: 'Start working on your GSoC project!' },
+    { date: new Date('2026-07-06T18:00:00Z'), label: 'Midterm Evaluations Begin', note: 'Mentors and contributors submit midterm evaluations.' },
+    { date: new Date('2026-07-10T18:00:00Z'), label: 'Midterm Evaluation Deadline', note: null },
+    { date: new Date('2026-08-17T00:00:00Z'), label: 'Final Submissions Begin', note: 'Submit your final work product and evaluation.' },
+    { date: new Date('2026-08-24T18:00:00Z'), label: 'Final Submission Deadline (Standard)', note: 'Standard 12-week projects: submit final work product and evaluation.' },
+    { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
+    { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
+    { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
+  ].filter(m => !isNaN(m.date.getTime()));
 
   function renderTimeline() {
     const container = document.getElementById('timeline-milestones');
@@ -2294,6 +2302,7 @@
       closeModal();
     }
   });
+  
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
@@ -2722,6 +2731,16 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+
+    // Persist filter state to URL so it survives page refresh
+    const params = new URLSearchParams();
+    if (query)                              params.set('q', query);
+    if (cat)                               params.set('cat', cat);
+    if (comp && comp !== 'all')            params.set('comp', comp);
+    if (sort && sort !== 'alpha')          params.set('sort', sort);
+    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
+    if (activeChip)                        params.set('chip', activeChip);
+    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2740,7 +2759,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -2963,36 +2982,66 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+
+  // Restore filter state from URL params on page load/refresh
+  (function restoreFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+
+    function setElValue(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.value = value;
+    }
+
+    function getChipKey(text) {
+      if (text.includes('bookmarked'))            return 'bookmarked';
+      if (text.includes('veteran'))               return 'veterans';
+      if (text.includes('newcomer'))              return 'newcomers';
+      if (text.includes('low competition'))       return 'low-competition';
+      if (text.includes('high competition'))      return 'high-competition';
+      if (text.includes('actively'))              return 'active';
+      return null;
+    }
+
+    setElValue('searchInput', params.get('q'));
+    setElValue('hero-search', params.get('q'));
+    setElValue('categoryFilter', params.get('cat'));
+    setElValue('complexityFilter', params.get('comp'));
+    setElValue('sortSelect', params.get('sort'));
+
+    const lang = params.get('lang');
+    if (lang) {
+      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
+        }
+      });
+      renderSelectedLanguages();
+    }
+
+    const chip = params.get('chip');
+    if (chip) {
+      activeChip = chip;
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        const key = getChipKey(el.textContent.trim().toLowerCase());
+        if (key === chip) {
+          el.classList.add('bg-orange-600', 'text-white');
+          el.classList.remove('bg-surface-container-highest');
+        }
+      });
+    }
+
+    applyFilters();
+  })();
   renderOrgs();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
-  const helpModal = document.getElementById('helpModal');
-const helpBtn = document.getElementById('helpBtn');
 
-function openHelpModal() {
-  helpModal.classList.add('open');
-}
-
-function closeHelpModal() {
-  helpModal.classList.remove('open');
-}
-
-helpBtn.addEventListener('click', openHelpModal);
-
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;

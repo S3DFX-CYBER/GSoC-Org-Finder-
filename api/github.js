@@ -4,6 +4,14 @@ const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_SIZE = 1000;
 
+const VALID_TOKEN_PREFIXES = ['ghp_', 'gho_', 'ghs_', 'ghr_', 'github_pat_'];
+
+export function isTokenValid(token) {
+  return typeof token === 'string' &&
+    token.length > 0 &&
+    VALID_TOKEN_PREFIXES.some(prefix => token.startsWith(prefix));
+}
+
 function safeCacheSet(key, value) {
   if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
     const firstKey = CACHE.keys().next().value;
@@ -12,16 +20,61 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
-export default async function handler(req) {
+export function buildGitHubHeaders(token = process.env.GITHUB_TOKEN) {
+
+  if (token && !isTokenValid(token)) {
+    console.warn(
+      '[api/github] GITHUB_TOKEN present but invalid format - using unauthenticated fallback'
+    );
+  }
+
   const headers = {
+    Accept: 'application/vnd.github.v3+json',
+    'User-Agent': 'gsoc-org-finder',
+  };
+
+  if (isTokenValid(token)) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  return headers;
+}
+
+export async function fetchWithFallback(url, headers, init = {}, fetchImpl = fetch) {
+  let response = await fetchImpl(url, { ...init, headers });
+
+  if (response.status === 401 && headers['Authorization']) {
+    console.warn(
+      '[api/github] Token returned 401 - retrying as unauthenticated request'
+    );
+    const unauthHeaders = { ...headers };
+    delete unauthHeaders['Authorization'];
+    response = await fetchImpl(url, { ...init, headers: unauthHeaders });
+  }
+
+  return response;
+}
+
+function corsHeaders(extra = {}) {
+  return {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
+    ...extra,
   };
+}
 
+function errorResponse(status, message) {
+  return new Response(
+    JSON.stringify({ error: true, status, message }),
+    { status, headers: corsHeaders() }
+  );
+}
+
+export default async function handler(req) {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers });
+    return new Response(null, { status: 204, headers: corsHeaders() });
   }
 
   const { searchParams } = new URL(req.url);
@@ -31,34 +84,25 @@ export default async function handler(req) {
   const issuesMode = searchParams.get('issues') === '1';
 
   if (!repo && !user) {
-    return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
+    return errorResponse(400, 'Missing repo or user parameter');
   }
 
   if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
-    return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
+    return errorResponse(400, 'Invalid repo');
   }
 
   if (user && !/^[\w.-]+$/.test(user)) {
-    return new Response(JSON.stringify({ error: 'Invalid user' }), { status: 400, headers });
+    return errorResponse(400, 'Invalid user');
   }
 
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    return new Response(JSON.stringify({ error: 'No token' }), { status: 500, headers });
-  }
-
-  const ghHeaders = {
-    Authorization: `token ${token}`,
-    Accept: 'application/vnd.github.v3+json',
-    'User-Agent': 'gsoc-org-finder',
-  };
+  const ghHeaders = buildGitHubHeaders();
 
   // MODE: ?user=username → return user profile analysis for AI recommender
   if (user) {
     const cacheKey = 'user__' + user;
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+      return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers: corsHeaders() });
     }
 
     try {
@@ -66,12 +110,30 @@ export default async function handler(req) {
       let repos = [];
       while (page <= 3) {
         try {
-          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
-            headers: ghHeaders,
-            signal: AbortSignal.timeout(5000)
-          });
+          const res = await fetchWithFallback(
+            `https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`,
+            ghHeaders,
+            { signal: AbortSignal.timeout(5000) }
+          );
           if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            if (page === 1) {
+              const status = res.status;
+              let message;
+              if (status === 401) {
+                message = 'GitHub token is misconfigured and unauthenticated fallback also failed.';
+              } else if (status === 403) {
+                const resetHeader = res.headers.get('x-ratelimit-reset');
+                const resetTime = resetHeader
+                  ? new Date(parseInt(resetHeader, 10) * 1000).toUTCString()
+                  : 'unknown';
+                message = `GitHub rate limit exceeded. Resets at: ${resetTime}.`;
+              } else if (status === 404) {
+                message = 'GitHub user not found. Check the username for typos.';
+              } else {
+                message = `GitHub API returned HTTP ${status}.`;
+              }
+              return errorResponse(status, message);
+            }
             break;
           }
           const pageRepos = await res.json();
@@ -124,10 +186,10 @@ export default async function handler(req) {
       };
       
       safeCacheSet(cacheKey, result);
-      return new Response(JSON.stringify(result), { status: 200, headers });
+      return new Response(JSON.stringify(result), { status: 200, headers: corsHeaders() });
 
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
+      return errorResponse(500, err.message);
     }
   }
 
@@ -136,16 +198,16 @@ export default async function handler(req) {
     const cacheKey = repo + '__issues';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers: corsHeaders() });
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
+      const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
-        { headers: ghHeaders }
+        ghHeaders
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
+        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers: corsHeaders() });
       }
       const data = await res.json();
       const total = data.total_count ?? 0;
@@ -158,9 +220,9 @@ export default async function handler(req) {
       }));
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
-      return new Response(JSON.stringify({ total, items }), { status: 200, headers });
+      return new Response(JSON.stringify({ total, items }), { status: 200, headers: corsHeaders() });
     } catch (err) {
-      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
+      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers: corsHeaders() });
     }
   }
 
@@ -169,41 +231,41 @@ export default async function handler(req) {
     const cacheKey = repo + '__gfi';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers: corsHeaders() });
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
+      const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
-        { headers: ghHeaders }
+        ghHeaders
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
+        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers: corsHeaders() });
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
-      return new Response(JSON.stringify({ gfi }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi }), { status: 200, headers: corsHeaders() });
     } catch (err) {
-      return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers: corsHeaders() });
     }
   }
 
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
   const cached = CACHE.get(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
-    return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+    return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers: corsHeaders() });
   }
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}`, ghHeaders),
+      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, ghHeaders),
     ]);
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
+      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers: corsHeaders() });
     }
 
     const repoData = await repoRes.json();
@@ -238,9 +300,9 @@ export default async function handler(req) {
     };
 
     safeCacheSet(repo, result);
-    return new Response(JSON.stringify(result), { status: 200, headers });
+    return new Response(JSON.stringify(result), { status: 200, headers: corsHeaders() });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers: corsHeaders() });
   }
 }

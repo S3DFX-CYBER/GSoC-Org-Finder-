@@ -64,7 +64,8 @@ async function analyzeGitHubUser(username) {
     }
 
     if (!response.ok) {
-      throw new Error(data?.error || `Failed to fetch user data: ${response.status}`);
+      const msg = data?.message || data?.error || `Failed to fetch user data: ${response.status}`;
+      throw new Error(msg);
     }
 
     if (!data) {
@@ -72,7 +73,7 @@ async function analyzeGitHubUser(username) {
     }
 
     if (data.error) {
-      throw new Error(data.error);
+      throw new Error(data.message || data.error || 'GitHub API error');
     }
 
     // Structure the result

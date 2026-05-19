@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+  const recommendHint = document.getElementById('recommend-hint');
 
   // Handle file upload
   if (fileUpload) {
@@ -161,16 +162,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const recommendations = await analyzeProfile(username, resume);
       renderRecommendations(recommendations);
     } catch (err) {
-      showError(err.message || "An unexpected error occurred during analysis.");
+      const msg = err.message || "An unexpected error occurred during analysis.";
+      let hint = '';
+      if (msg.includes('token') || msg.includes('401') || msg.includes('misconfigured')) {
+        hint = 'The server\'s GitHub token is invalid. Public profile analysis is unavailable right now. You can still enter your skills manually in the Resume field.';
+      } else if (msg.includes('rate limit') || msg.includes('403')) {
+        hint = 'Too many requests to GitHub. Please wait a few minutes and try again.';
+      } else if (msg.includes('not found') || msg.includes('404')) {
+        const username = ghInput?.value?.trim() || '';
+        hint = username ? `Username "${username}" was not found on GitHub. Check for typos.` : 'The GitHub username was not found. Check for typos.';
+      }
+      showError(msg, hint);
     } finally {
       setAnalysisStateUI(false);
     }
   });
 
-  function showError(msg) {
+  function showError(msg, hint) {
     errorMsg.textContent = msg;
     errorState.classList.remove('hidden');
     resultsContainer.innerHTML = '';
+    if (recommendHint) {
+      if (hint) {
+        recommendHint.textContent = hint;
+        recommendHint.style.display = 'block';
+      } else {
+        recommendHint.style.display = 'none';
+      }
+    }
   }
 
 

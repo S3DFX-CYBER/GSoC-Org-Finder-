@@ -1842,14 +1842,25 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "OpenMRS": {
+ "OpenMRS": {
     "org": "OpenMRS",
-    "ideasUrl": "https://wiki.openmrs.org/display/projects/Google+Summer+of+Code+2026",
-    "channels": [],
+    "ideasUrl": "https://openmrs.atlassian.net/wiki/spaces/RES/pages/752844801/Summer+of+Code+2026",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://openmrs.slack.com",
+        "label": "OpenMRS Slack (#gsoc channel)"
+      },
+      {
+        "type": "Forum",
+        "url": "https://talk.openmrs.org/c/community/gsoc/9",
+        "label": "OpenMRS Talk GSoC Forum"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Join OpenMRS Slack and ask questions in the #gsoc channel. Also engage on OpenMRS Talk forum at talk.openmrs.org",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "OpenMS Inc": {

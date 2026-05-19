@@ -35,6 +35,12 @@ function setLocalCache(cache) {
   }
 }
 
+function createGitHubError(message, status) {
+  const error = new Error(message);
+  if (status) error.status = status;
+  return error;
+}
+
 /**
  * Analyzes a GitHub username and returns a standardized UserProfile object.
  * 
@@ -64,8 +70,9 @@ async function analyzeGitHubUser(username) {
     }
 
     if (!response.ok) {
-      const msg = data?.message || data?.error || `Failed to fetch user data: ${response.status}`;
-      throw new Error(msg);
+      const status = data?.status || response.status;
+      const msg = data?.message || data?.error || `Failed to fetch user data: ${status}`;
+      throw createGitHubError(msg, status);
     }
 
     if (!data) {
@@ -73,7 +80,7 @@ async function analyzeGitHubUser(username) {
     }
 
     if (data.error) {
-      throw new Error(data.message || data.error || 'GitHub API error');
+      throw createGitHubError(data.message || data.error || 'GitHub API error', data.status);
     }
 
     // Structure the result
@@ -96,18 +103,24 @@ async function analyzeGitHubUser(username) {
     console.error("GitHub Analyzer Error:", err);
 
     const message = err.message || "";
-    if (message.includes("GitHub 404")) {
-      throw new Error(`GitHub user '${username}' not found. Please ensure the username is correct.`);
+    if (err.status === 404 || message.includes("GitHub 404")) {
+      throw createGitHubError(
+        `GitHub user '${username}' not found. Please ensure the username is correct.`,
+        404
+      );
     }
-    if (message.includes("GitHub 403")) {
-      throw new Error("GitHub API rate limit reached. Please try again later.");
+    if (err.status === 403 || message.includes("GitHub 403")) {
+      throw createGitHubError("GitHub API rate limit reached. Please try again later.", 403);
     }
     if (message === "Invalid user") {
-      throw new Error(`The username '${username}' is not in a valid GitHub format.`);
+      throw createGitHubError(`The username '${username}' is not in a valid GitHub format.`, 400);
     }
 
     // Propagate operational errors directly instead of masking them
-    throw new Error(message || `Could not analyze GitHub profile for '${username}'.`);
+    throw createGitHubError(
+      message || `Could not analyze GitHub profile for '${username}'.`,
+      err.status
+    );
   }
 }
 

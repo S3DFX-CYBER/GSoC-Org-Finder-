@@ -163,12 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
       renderRecommendations(recommendations);
     } catch (err) {
       const msg = err.message || "An unexpected error occurred during analysis.";
+      const status = err.status;
       let hint = '';
-      if (msg.includes('token') || msg.includes('401') || msg.includes('misconfigured')) {
+      if (status === 401) {
         hint = 'The server\'s GitHub token is invalid. Public profile analysis is unavailable right now. You can still enter your skills manually in the Resume field.';
-      } else if (msg.includes('rate limit') || msg.includes('403')) {
+      } else if (status === 403) {
         hint = 'Too many requests to GitHub. Please wait a few minutes and try again.';
-      } else if (msg.includes('not found') || msg.includes('404')) {
+      } else if (status === 404) {
         const username = ghInput?.value?.trim() || '';
         hint = username ? `Username "${username}" was not found on GitHub. Check for typos.` : 'The GitHub username was not found. Check for typos.';
       }

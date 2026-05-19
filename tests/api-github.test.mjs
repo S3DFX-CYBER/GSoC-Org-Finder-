@@ -115,6 +115,32 @@ describe('fetchWithFallback()', () => {
     assert.equal(callCount, 1);
     assert.equal(response.status, 403);
   });
+
+  it('creates a fresh timeout signal for the unauthenticated retry', async () => {
+    const signals = [];
+    const mockFetch = async (url, opts) => {
+      signals.push(opts.signal);
+
+      if (signals.length === 1) {
+        return jsonResponse({ message: 'Bad credentials' }, { status: 401 });
+      }
+
+      return jsonResponse({ ok: true });
+    };
+
+    const response = await fetchWithFallback(
+      'https://api.github.com/users/testuser',
+      buildGitHubHeaders('ghp_expiredtoken12345'),
+      { timeoutMs: 5000 },
+      mockFetch
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(signals.length, 2);
+    assert.ok(signals[0] instanceof AbortSignal);
+    assert.ok(signals[1] instanceof AbortSignal);
+    assert.notEqual(signals[0], signals[1]);
+  });
 });
 
 describe('github API handler user mode', () => {
@@ -180,5 +206,17 @@ describe('github API handler user mode', () => {
     assert.equal(calls[0].hasAuth, true);
     assert.equal(calls[1].hasAuth, false);
     assert.deepEqual(body.languages, []);
+  });
+
+  it('returns structured errors when GitHub rejects the public user lookup', async () => {
+    globalThis.fetch = async () => jsonResponse({ message: 'Not Found' }, { status: 404 });
+
+    const response = await handler(new Request('https://findmygsoc.test/api/github?user=missing-user'));
+    const body = await response.json();
+
+    assert.equal(response.status, 404);
+    assert.equal(body.error, true);
+    assert.equal(body.status, 404);
+    assert.equal(body.message, 'GitHub user not found. Check the username for typos.');
   });
 });

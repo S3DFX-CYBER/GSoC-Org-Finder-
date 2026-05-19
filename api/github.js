@@ -40,8 +40,16 @@ export function buildGitHubHeaders(token = process.env.GITHUB_TOKEN) {
   return headers;
 }
 
+function buildFetchOptions(init, headers) {
+  const { timeoutMs, ...fetchInit } = init;
+  if (timeoutMs) {
+    fetchInit.signal = AbortSignal.timeout(timeoutMs);
+  }
+  return { ...fetchInit, headers };
+}
+
 export async function fetchWithFallback(url, headers, init = {}, fetchImpl = fetch) {
-  let response = await fetchImpl(url, { ...init, headers });
+  let response = await fetchImpl(url, buildFetchOptions(init, headers));
 
   if (response.status === 401 && headers['Authorization']) {
     console.warn(
@@ -49,7 +57,7 @@ export async function fetchWithFallback(url, headers, init = {}, fetchImpl = fet
     );
     const unauthHeaders = { ...headers };
     delete unauthHeaders['Authorization'];
-    response = await fetchImpl(url, { ...init, headers: unauthHeaders });
+    response = await fetchImpl(url, buildFetchOptions(init, unauthHeaders));
   }
 
   return response;
@@ -70,6 +78,10 @@ function errorResponse(status, message) {
     JSON.stringify({ error: true, status, message }),
     { status, headers: corsHeaders() }
   );
+}
+
+function partialErrorPayload(status, message, extra = {}) {
+  return { ...extra, error: true, status, message };
 }
 
 export default async function handler(req) {
@@ -113,7 +125,7 @@ export default async function handler(req) {
           const res = await fetchWithFallback(
             `https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`,
             ghHeaders,
-            { signal: AbortSignal.timeout(5000) }
+            { timeoutMs: 5000 }
           );
           if (!res.ok) {
             if (page === 1) {
@@ -207,7 +219,14 @@ export default async function handler(req) {
         ghHeaders
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers: corsHeaders() });
+        return new Response(
+          JSON.stringify(partialErrorPayload(
+            res.status,
+            `GitHub API returned HTTP ${res.status}.`,
+            { total: 0, items: [] }
+          )),
+          { status: 200, headers: corsHeaders() }
+        );
       }
       const data = await res.json();
       const total = data.total_count ?? 0;
@@ -222,7 +241,14 @@ export default async function handler(req) {
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
       return new Response(JSON.stringify({ total, items }), { status: 200, headers: corsHeaders() });
     } catch (err) {
-      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers: corsHeaders() });
+      return new Response(
+        JSON.stringify(partialErrorPayload(
+          500,
+          err.message,
+          { total: 0, items: [] }
+        )),
+        { status: 200, headers: corsHeaders() }
+      );
     }
   }
 
@@ -240,14 +266,28 @@ export default async function handler(req) {
         ghHeaders
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers: corsHeaders() });
+        return new Response(
+          JSON.stringify(partialErrorPayload(
+            res.status,
+            `GitHub API returned HTTP ${res.status}.`,
+            { gfi: null }
+          )),
+          { status: 200, headers: corsHeaders() }
+        );
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
       return new Response(JSON.stringify({ gfi }), { status: 200, headers: corsHeaders() });
     } catch (err) {
-      return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers: corsHeaders() });
+      return new Response(
+        JSON.stringify(partialErrorPayload(
+          500,
+          err.message,
+          { gfi: null }
+        )),
+        { status: 200, headers: corsHeaders() }
+      );
     }
   }
 
@@ -265,7 +305,7 @@ export default async function handler(req) {
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers: corsHeaders() });
+      return errorResponse(repoRes.status, err.message || 'Repo not found');
     }
 
     const repoData = await repoRes.json();
@@ -303,6 +343,6 @@ export default async function handler(req) {
     return new Response(JSON.stringify(result), { status: 200, headers: corsHeaders() });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers: corsHeaders() });
+    return errorResponse(500, 'Fetch failed: ' + err.message);
   }
 }

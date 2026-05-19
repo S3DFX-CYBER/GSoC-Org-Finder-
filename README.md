@@ -476,6 +476,14 @@ All responses are cached in-memory for **1 hour** on the Edge runtime.
 
 ---
 
+## 🔑 Project Admin
+
+<a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="80px" alt="S3DFX-CYBER" /></a>
+
+**[@S3DFX-CYBER](https://github.com/S3DFX-CYBER)** — Project Admin (PA) for GSSoC'26 and NSoC'26. Responsible for final merge decisions, mentor coordination, repository maintenance, and ensuring contribution quality across all programs.
+
+---
+
 ## 👥 GSSoC Mentors
 
 These mentors help guide and review contributions for the GSSoC program:
@@ -620,6 +628,17 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/syedrazamd"><img src="https://github.com/syedrazamd.png" width="50px" alt="syedrazamd" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=S3DFX-CYBER%2FGSoC-Org-Finder-&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

@@ -10,7 +10,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: mentor-review-${{ github.event.pull_request.number }}
+  group: mentor-review
   cancel-in-progress: false
 
 jobs:

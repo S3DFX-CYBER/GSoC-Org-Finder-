@@ -3,14 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <title>Page Not Found — FindMyGSoC</title>
-  <meta http-equiv="refresh" content="3;url=/" />
   <style>
-    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 12px; }
+    body { 
+      font-family: sans-serif; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+      gap: 12px; 
+    }
   </style>
 </head>
 <body>
   <h1>404 — Page Not Found</h1>
   <p>Redirecting you back to the home page in 3 seconds…</p>
   <a href="/">Go Home Now →</a>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 3000);
+  </script>
 </body>
 </html>

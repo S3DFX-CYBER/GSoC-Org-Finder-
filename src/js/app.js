@@ -111,7 +111,7 @@ AN.trackVisit();
 
 // Fix: Add fonts-loaded class once font is ready - prevents FOUI
 document.documentElement.classList.remove('no-js');
-if(document.fonts){document.fonts.ready.then(()=>{document.documentElement.classList.add('fonts-loaded');});}
+if(document.fonts){document.fonts?.ready.then(()=>{document.documentElement.classList.add('fonts-loaded');});}
 
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION

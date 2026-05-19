@@ -3,9 +3,7 @@ let CACHE_VERSION;
 if (typeof BUILD_CACHE_VERSION !== 'undefined') {
   CACHE_VERSION = BUILD_CACHE_VERSION;
 } else {
-  const today = new Date().toISOString().slice(0,10).replaceAll('-', '');
-  CACHE_VERSION = localStorage.getItem('cache-version') || today;
-  localStorage.setItem('cache-version', CACHE_VERSION);
+  CACHE_VERSION = 'v' + new Date().toISOString().slice(0,10).replaceAll('-', '');
 }
 
 // Cache naming

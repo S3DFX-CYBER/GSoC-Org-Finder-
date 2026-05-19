@@ -2398,6 +2398,12 @@
   // WATCHLIST EXPORT — Markdown & CSV
   // ══════════════════════════════════════════════
 
+  const CATEGORY_MAP = {
+    science:'Science', programming:'Programming', data:'Data', web:'Web',
+    os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+    ai:'AI / ML', dev:'Dev Tools', other:'Other',
+  };
+
   /**
    * Triggers a browser-native file download using Blob + URL.createObjectURL.
    * Zero dependencies — no file-saver, no jsPDF.
@@ -2448,7 +2454,7 @@
 
       lines.push(`## ${idx + 1}. ${org.name}`);
       lines.push('');
-      lines.push(`- **Category:** ${org.cat || 'N/A'}`);
+      lines.push(`- **Category:** ${CATEGORY_MAP[org.cat] || org.cat || 'N/A'}`);
       lines.push(`- **Description:** ${org.desc || 'N/A'}`);
       lines.push(`- **GSoC Years:** ${org.years || 'N/A'}`);
       lines.push(`- **Competition:** ${org.competition || 'N/A'}`);
@@ -2500,7 +2506,7 @@
 
       rows.push([
         csvEscape(org.name),
-        csvEscape(org.cat),
+        csvEscape(CATEGORY_MAP[org.cat] || org.cat),
         csvEscape(org.desc),
         csvEscape(org.years),
         csvEscape(org.competition),
@@ -2510,7 +2516,7 @@
     });
 
     const filename = `GSoC-2026-Watchlist-${todayStamp()}.csv`;
-    downloadFile(rows.join('\r\n'), filename, 'text/csv;charset=utf-8');
+    downloadFile('\uFEFF' + rows.join('\r\n'), filename, 'text/csv;charset=utf-8');
   }
 
   // Wire up export buttons

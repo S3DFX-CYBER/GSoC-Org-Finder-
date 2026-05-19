@@ -1,5 +1,12 @@
 /* global BUILD_CACHE_VERSION */
-const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v1';
+let CACHE_VERSION;
+if (typeof BUILD_CACHE_VERSION !== 'undefined') {
+  CACHE_VERSION = BUILD_CACHE_VERSION;
+} else {
+  const today = new Date().toISOString().slice(0,10).replaceAll('-', '');
+  CACHE_VERSION = localStorage.getItem('cache-version') || today;
+  localStorage.setItem('cache-version', CACHE_VERSION);
+}
 
 // Cache naming
 const STATIC_CACHE_NAME = `gsoc-finder-static-${CACHE_VERSION}`;

@@ -563,6 +563,24 @@ function orgMatchesLanguages(org, selectedLanguages) {
   }
 }
 
+// returns a relevance score for o against query q; 0 = no match
+function searchScore(o,q){
+  const name=o.name.toLowerCase();
+  const desc=(o.desc||'').toLowerCase();
+  const tags=(o.tags||[]).map(t=>t.toLowerCase());
+  const fit=(o.fit||[]).map(f=>f.toLowerCase());
+  const cat=(o.cat||'').toLowerCase();
+  let s=0;
+  if(name===q)s+=100;
+  else if(name.startsWith(q))s+=80;
+  else if(name.includes(q))s+=60;
+  if(tags.some(t=>t.includes(q)))s+=40;
+  if(cat.includes(q)||catLabel(o.cat||'').toLowerCase().includes(q))s+=30;
+  if(desc.includes(q))s+=20;
+  if(fit.some(f=>f.includes(q)))s+=15;
+  return s;
+}
+
 function applyFilters(){
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || '';
@@ -575,9 +593,6 @@ function applyFilters(){
   if(cat)AN.trackCat(cat);
 
   const res=ORGS.filter(o=>{
-    // Search only organization names
-    const orgName=o.name.toLowerCase();
-    
     // Category Filter
     if(cat && o.cat !== cat) return false;
 
@@ -594,8 +609,8 @@ function applyFilters(){
       if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
     }
 
-    // Search input (synchronized from hero-search)
-    if(search && !orgName.includes(search)) return false;
+    // search across name, tags, category, description and fit (not just name)
+    if(search && searchScore(o,search)===0) return false;
 
     // Language pills (multi-select)
     if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
@@ -611,27 +626,10 @@ function applyFilters(){
     return true;
   });
 
-  // Improved search ranking: exact matches first, then startsWith, then partial
   if(search){
     res.sort((a,b)=>{
-      const nameA=a.name.toLowerCase();
-      const nameB=b.name.toLowerCase();
-      
-      // Exact match gets highest priority
-      if(nameA===search && nameB!==search) return -1;
-      if(nameB===search && nameA!==search) return 1;
-      
-      // Starts with gets second priority  
-      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
-      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
-      
-      // Both start with search, sort by selected sort option or alphabetically
-      if(nameA.startsWith(search) && nameB.startsWith(search)) {
-        return applySecondarySort(a, b, sort);
-      }
-      
-      // Neither starts with, sort by selected sort option or alphabetically
-      return applySecondarySort(a, b, sort);
+      const d=searchScore(b,search)-searchScore(a,search);
+      return d!==0?d:applySecondarySort(a,b,sort);
     });
   }
 

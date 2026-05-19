@@ -3173,5 +3173,18 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
+<button id="scrollToTopBtn" class="scroll-top-button" aria-label="Scroll to top" title="Scroll to top" type="button">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+<script>
+(function(){
+  const btn = document.getElementById('scrollToTopBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.blur();
+  });
+})();
+</script>
 </body>
 </html>

@@ -1271,8 +1271,8 @@ function renderIssueCard(iss){
   const gfiNames=['good first issue','good-first-issue'];
   const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
     .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
-  const safeHref = validateIdeasUrl(iss.url);
-  const imgSrc = validateIdeasUrl(iss.logo);
+  const safeHref = validateUrl(iss.url);
+  const imgSrc = validateUrl(iss.logo);
   const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
   const hrefEnd = safeHref ? '</a>' : '</div>';
   return `${hrefStart}

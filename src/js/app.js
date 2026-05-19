@@ -4,6 +4,7 @@
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
+console.log("APP JS LOADED");
 (function(){
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
@@ -253,7 +254,7 @@ cleanCache();
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
-let matchAllLanguages=false; // false = OR (any), true = AND (all)
+let matchAllLanguages=true; // false = OR (any), true = AND (all)
 
 // Expose to global scope for HTML onclick handlers and debugging
 globalThis.pills = pills;
@@ -874,47 +875,252 @@ const GRID_COLS=()=>{
   return cols;
 };
 
-document.addEventListener('keydown',e=>{
+const defaultShortcuts = {
+  moveRight: 'ArrowRight',
+  moveLeft: 'ArrowLeft',
+  moveDown: 'ArrowDown',
+  moveUp: 'ArrowUp',
+  open: 'Enter',
+  compare: 'c',
+  search: '/',
+  close: 'Escape'
+};
+
+const shortcuts =
+JSON.parse(localStorage.getItem('shortcuts'))
+|| defaultShortcuts;
+
+document.addEventListener('keydown', e => {
+   console.log("Key pressed:", e.key);
   // Close modals first
-  if(e.key==='Escape'){
-    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
-    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
-    if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
+  if(e.key===shortcuts.close){
+    if(document.getElementById('modalBg').classList.contains('open')){
+      closeModal();
+      return;
+    }
+
+    if(document.getElementById('compareBg').classList.contains('open')){
+      closeCompare();
+      return;
+    }
+
+    if(document.getElementById('anBg').classList.contains('open')){
+      closeAn();
+      return;
+    }
   }
-  // Don't hijack when typing in inputs
-  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
-  const n=filteredOrgs.length;
-  if(!n)return;
-  const cols=GRID_COLS();
-  if(e.key==='ArrowRight'){
+
+  // Don't hijack typing in forms
+  if(
+    document.activeElement &&
+    ['INPUT','SELECT','TEXTAREA']
+    .includes(document.activeElement.tagName)
+  ) return;
+
+
+  // Global shortcuts (always work)
+
+if(e.key.toLowerCase()==='a'){
     e.preventDefault();
-    focusedIdx=Math.min(focusedIdx+1,n-1);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowLeft'){
+
+    document
+      .getElementById('ai-recommender')
+      ?.scrollIntoView({
+          behavior:'smooth'
+      });
+
+    return;
+}
+
+if(e.key.toLowerCase()==='h'){
     e.preventDefault();
-    focusedIdx=Math.max(focusedIdx-1,0);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowDown'){
+
+    window.scrollTo({
+        top:0,
+        behavior:'smooth'
+    });
+
+    return;
+}
+
+if(e.key.toLowerCase()==='r'){
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.min(focusedIdx+cols,n-1);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowUp'){
+
+    pills.clear();
+
+    document.getElementById(
+      'searchInput'
+    ).value='';
+
+    applyFilters();
+
+    return;
+}
+
+
+// Existing org navigation logic
+const n = filteredOrgs.length;
+if(!n) return;
+
+const cols = GRID_COLS();
+ 
+  // Navigation
+  if(e.key===shortcuts.moveRight){
+
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.max(focusedIdx-cols,0);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
-    openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
-  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
-    e.preventDefault();
-    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
-  } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
-    e.preventDefault();
-    document.getElementById('searchInput').focus();
+
+    focusedIdx=Math.min(
+      focusedIdx+1,
+      n-1
+    );
+
+    if(focusedIdx<0)
+      focusedIdx=0;
+
+    scrollToFocused();
+    renderGrid(filteredOrgs);
+
   }
+
+  else if(e.key===shortcuts.moveLeft){
+
+    e.preventDefault();
+
+    focusedIdx=Math.max(
+      focusedIdx-1,
+      0
+    );
+
+    if(focusedIdx<0)
+      focusedIdx=0;
+
+    scrollToFocused();
+    renderGrid(filteredOrgs);
+
+  }
+
+  else if(e.key===shortcuts.moveDown){
+
+    e.preventDefault();
+
+    if(focusedIdx<0)
+      focusedIdx=0;
+    else
+      focusedIdx=Math.min(
+        focusedIdx+cols,
+        n-1
+      );
+
+    scrollToFocused();
+    renderGrid(filteredOrgs);
+
+  }
+
+  else if(e.key===shortcuts.moveUp){
+
+    e.preventDefault();
+
+    if(focusedIdx<0)
+      focusedIdx=0;
+    else
+      focusedIdx=Math.max(
+        focusedIdx-cols,
+        0
+      );
+
+    scrollToFocused();
+    renderGrid(filteredOrgs);
+
+  }
+
+  // Open card
+  else if(
+    e.key===shortcuts.open &&
+    focusedIdx>=0 &&
+    focusedIdx<n
+  ){
+
+    openModal(
+      ORGS.indexOf(
+        filteredOrgs[focusedIdx]
+      )
+    );
+  }
+
+  // Compare
+  else if(
+    e.key.toLowerCase()===
+    shortcuts.compare.toLowerCase()
+    &&
+    focusedIdx>=0 &&
+    focusedIdx<n
+  ){
+
+    e.preventDefault();
+
+    toggleCompare(
+      ORGS.indexOf(
+        filteredOrgs[focusedIdx]
+      ),
+      null
+    );
+  }
+
+  // Focus search
+  else if(
+    e.key===shortcuts.search
+  ){
+
+    e.preventDefault();
+
+    document
+      .getElementById('searchInput')
+      ?.focus();
+  }
+
+  // AI recommender shortcut
+  else if(
+    e.key.toLowerCase()==='a'
+  ){
+
+    e.preventDefault();
+
+    document
+      .getElementById('ai-recommender')
+      ?.scrollIntoView({
+        behavior:'smooth'
+      });
+  }
+
+  // Go to top/home
+  else if(
+    e.key.toLowerCase()==='h'
+  ){
+
+    e.preventDefault();
+
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+  }
+
+  // Reset filters
+  else if(
+    e.key.toLowerCase()==='r'
+  ){
+
+    e.preventDefault();
+
+    pills.clear();
+
+    document.getElementById(
+      'searchInput'
+    ).value='';
+
+    applyFilters();
+  }
+
 });
 
 function scrollToFocused(){

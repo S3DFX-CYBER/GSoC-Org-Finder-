@@ -1137,9 +1137,8 @@
   <!-- Mobile Menu Overlay -->
   <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"
-      onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button"
-      aria-label="Close menu"></div>
+    <button type="button" class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"
+      aria-label="Close menu"></button>
 
     <!-- Menu Panel -->
     <nav

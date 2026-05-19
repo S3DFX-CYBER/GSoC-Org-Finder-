@@ -3173,5 +3173,28 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
+<button id="scrollToTopBtn" class="scroll-top-button" aria-label="Scroll to top" title="Scroll to top" type="button">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+<script>
+(function(){
+  const btn = document.getElementById('scrollToTopBtn');
+  if (!btn) return;
+
+  const SCROLL_THRESHOLD = 320;
+  const updateVisibility = () => {
+    const visible = window.scrollY > SCROLL_THRESHOLD;
+    btn.classList.toggle('visible', visible);
+    btn.setAttribute('aria-hidden', visible ? 'false' : 'true');
+  };
+
+  window.addEventListener('scroll', updateVisibility, { passive: true });
+  updateVisibility();
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
 </body>
 </html>

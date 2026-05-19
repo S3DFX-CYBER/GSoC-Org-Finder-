@@ -403,6 +403,46 @@ footer a{color:var(--orange);text-decoration:none;font-weight:600}
 footer a:hover{text-decoration:underline}
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
 
+.scroll-top-button{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:none;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#ff8a00,#ffb347);
+  color:#ffffff;
+  box-shadow:0 14px 28px rgb(0 0 0 / 0.18);
+  cursor:pointer;
+  z-index:1000;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:transform .2s ease,filter .2s ease,box-shadow .2s ease,opacity .2s ease;
+}
+.scroll-top-button.visible{
+  display:flex;
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+.scroll-top-button:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.05);
+}
+.scroll-top-button:focus-visible{
+  outline:3px solid rgb(255 255 255 / 0.95);
+  outline-offset:3px;
+}
+.scroll-top-button .material-symbols-outlined{font-size:22px;}
+@media(max-width:640px){
+  .scroll-top-button{right:16px;bottom:16px;width:44px;height:44px;}
+}
+
 /* ── SKELETON CARDS ── */
 .skeleton-card{background:var(--card-bg);border-radius:12px;padding:20px;height:220px;}
 .skeleton-head{display:flex;gap:12px;margin-bottom:16px;}
@@ -559,31 +599,6 @@ footer a:hover{text-decoration:underline}
   .org-card{padding:12px}
   .org-logo{width:34px;height:34px}
   .org-name{font-size:12px}
-}
-
-/* Style of scroll-to-top button */
-.scroll-top-btn {
-  position: fixed;
-  bottom: 28px;
-  right: 24px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--orange);
-  color: white;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  display: none;
-  z-index: 50;
-  box-shadow: 0 3px 10px rgba(244,107,14,.35);
-  transition: opacity .2s;
-}
-
-.scroll-top-btn.visible {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* ═══════════════════════════════════════════

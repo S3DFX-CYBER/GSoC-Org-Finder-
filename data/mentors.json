@@ -2324,15 +2324,17 @@
     "org": "Stichting SU2",
     "ideasUrl": "https://su2code.github.io/gsoc/Introduction/",
     "channels": [
-      {
-        "type": "forum",
-        "url": "http://www.cfd-online.com/Forums/su2/"
-      },
-      {
-        "type": "github",
-        "url": "https://github.com/su2code/SU2/issues"
-      }
-    ],
+  {
+    "type": "Forum",
+    "url": "https://www.cfd-online.com/Forums/su2/",
+    "label": "SU2 CFD Online Forum"
+  },
+  {
+    "type": "GitHub Issues",
+    "url": "https://github.com/su2code/SU2/issues",
+    "label": "SU2 Issues"
+  }
+],
     "mentors": [
       "Nitish Anand",
       "Edwin van der Weide",
@@ -2349,7 +2351,7 @@
     "status": "ok",
     "lastFetched": "2026-05-17T00:00:00.000Z"
   },
-  
+
   "Submitty": {
     "org": "Submitty",
     "ideasUrl": "https://github.com/Submitty/Submitty/wiki/Google-Summer-of-Code",

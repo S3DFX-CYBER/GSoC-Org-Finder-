@@ -1,8 +1,6 @@
 /* global ORGS */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
-
-let focusedCardIndex = -1;
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
@@ -646,13 +644,8 @@ function applyFilters(){
 
   filteredOrgs=res;
   focusedIdx=-1;
-  focusedCardIndex=-1;
-  document.querySelectorAll('.keyboard-focus').forEach(el=>{
-    el.classList.remove('keyboard-focus');
-    el.removeAttribute('aria-current');
-  });
   renderGrid(res);
-
+  document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
   const params = new URLSearchParams();
@@ -881,93 +874,46 @@ const GRID_COLS=()=>{
   return cols;
 };
 
-function getVisibleCards() {
-  return Array.from(
-    document.querySelectorAll('#orgGrid .org-card:not([hidden]):not(.hidden)') 
-  );
-}
-
-function moveFocusToCard(newIndex) {
-  const cards = getVisibleCards();
-  if (!cards.length) return;
-
-  newIndex = Math.max(0, Math.min(newIndex, cards.length - 1));
-
-  if (focusedCardIndex >= 0 && cards[focusedCardIndex]) {
-    cards[focusedCardIndex].classList.remove('keyboard-focus');
-    cards[focusedCardIndex].removeAttribute('aria-current');
-  }
-
-  focusedCardIndex = newIndex;
-  const card = cards[focusedCardIndex];
-  card.classList.add('keyboard-focus');
-  card.setAttribute('aria-current', 'true');
-  card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-}
-
 document.addEventListener('keydown',e=>{
-  // Don't fire shortcuts when user is typing
-  const tag = document.activeElement?.tagName?.toLowerCase();
-  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-  if (document.activeElement?.isContentEditable) return;
-
-  const cards = getVisibleCards();
-
-  switch (e.key) {
-    case 'ArrowDown':
-    case 'ArrowRight': {
-      e.preventDefault(); // prevent page scroll
-      if (!cards.length) break;
-      const next = focusedCardIndex < 0 ? 0 : Math.min(focusedCardIndex + 1, cards.length - 1);
-      moveFocusToCard(next);
-      break;
-    }
-
-    case 'ArrowUp':
-    case 'ArrowLeft': {
-      e.preventDefault();
-      if (!cards.length) break;
-      const prev = focusedCardIndex <= 0 ? 0 : focusedCardIndex - 1;
-      moveFocusToCard(prev);
-      break;
-    }
-
-    case 'Enter': {
-      if (focusedCardIndex >= 0 && cards[focusedCardIndex]) {
-        cards[focusedCardIndex].click();
-      }
-      break;
-    }
-
-    case 'c':
-    case 'C': {
-      if (focusedCardIndex < 0 || !cards[focusedCardIndex]) break;
-      const compareBtn = cards[focusedCardIndex].querySelector('.btn-card-compare');
-      if (compareBtn) compareBtn.click();
-      break;
-    }
-
-    case 'Escape': {
-      const closeBtn = document.querySelector(
-        '.modal.active .close-btn, #detail-modal .close, #compare-panel .close, #help-dialog .close'
-      );
-      if (closeBtn) closeBtn.click();
-      break;
-    }
-
-    case '?': {
-      const helpDialog = document.getElementById('help-dialog') ||
-                         document.querySelector('.keyboard-shortcuts-dialog');
-      if (helpDialog) {
-        const isOpen = helpDialog.classList.contains('active') || helpDialog.classList.contains('open');
-        helpDialog.classList.toggle('active', !isOpen);
-        helpDialog.classList.toggle('open', !isOpen);
-      }
-      break;
-    }
-
-    default:
-      return;
+  // Close modals first
+  if(e.key==='Escape'){
+    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
+    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
+    if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
+  }
+  // Don't hijack when typing in inputs
+  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
+  const n=filteredOrgs.length;
+  if(!n)return;
+  const cols=GRID_COLS();
+  if(e.key==='ArrowRight'){
+    e.preventDefault();
+    focusedIdx=Math.min(focusedIdx+1,n-1);
+    if(focusedIdx<0)focusedIdx=0;
+    scrollToFocused();renderGrid(filteredOrgs);
+  } else if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    focusedIdx=Math.max(focusedIdx-1,0);
+    if(focusedIdx<0)focusedIdx=0;
+    scrollToFocused();renderGrid(filteredOrgs);
+  } else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    if(focusedIdx<0)focusedIdx=0;
+    else focusedIdx=Math.min(focusedIdx+cols,n-1);
+    scrollToFocused();renderGrid(filteredOrgs);
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    if(focusedIdx<0)focusedIdx=0;
+    else focusedIdx=Math.max(focusedIdx-cols,0);
+    scrollToFocused();renderGrid(filteredOrgs);
+  } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
+    openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
+  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
+    e.preventDefault();
+    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
+  } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
   }
 });
 

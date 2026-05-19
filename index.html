@@ -3138,18 +3138,82 @@ document.addEventListener('DOMContentLoaded', () => {
     helpBtn.addEventListener('click', openHelpModal);
   }
 
+  // document.addEventListener('keydown', (e) => {
+
+  //   if (e.key === '?') {
+  //     openHelpModal();
+  //   }
+
+  //   if (e.key === 'Escape') {
+  //     closeHelpModal();
+  //   }
+
+  // });
+  let _focusedCardIndex = -1;
+  
+  function _getCards() {
+    return Array.from(document.querySelectorAll('#orgGrid article[data-org]'));
+  }
+  
+  function _moveFocus(newIndex) {
+    const cards = _getCards();
+    if (!cards.length) return;
+    newIndex = Math.max(0, Math.min(newIndex, cards.length - 1));
+    if (_focusedCardIndex >= 0 && cards[_focusedCardIndex]) {
+      cards[_focusedCardIndex].style.outline = '';
+      cards[_focusedCardIndex].style.outlineOffset = '';
+      cards[_focusedCardIndex].removeAttribute('aria-current');
+    }
+    _focusedCardIndex = newIndex;
+    cards[_focusedCardIndex].style.outline = '2px solid #F46B0E';
+    cards[_focusedCardIndex].style.outlineOffset = '3px';
+    cards[_focusedCardIndex].setAttribute('aria-current', 'true');
+    cards[_focusedCardIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  
+  // Reset focus when grid re-renders
+  const _gridObserver = new MutationObserver(() => { _focusedCardIndex = -1; });
+  const _grid = document.getElementById('orgGrid');
+  if (_grid) _gridObserver.observe(_grid, { childList: true });
+  
   document.addEventListener('keydown', (e) => {
-
-    if (e.key === '?') {
-      openHelpModal();
+    const tag = document.activeElement?.tagName?.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  
+    const cards = _getCards();
+  
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        e.preventDefault();
+        _moveFocus(_focusedCardIndex < 0 ? 0 : _focusedCardIndex + 1);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        e.preventDefault();
+        _moveFocus(_focusedCardIndex <= 0 ? 0 : _focusedCardIndex - 1);
+        break;
+      case 'Enter':
+        if (_focusedCardIndex >= 0 && cards[_focusedCardIndex]) {
+          const openBtn = cards[_focusedCardIndex].querySelector('[data-open-org]');
+          if (openBtn) openBtn.click();
+        }
+        break;
+      case 'c':
+      case 'C':
+        if (_focusedCardIndex >= 0 && cards[_focusedCardIndex]) {
+          const compareBtn = cards[_focusedCardIndex].querySelector('[data-compare-org]');
+          if (compareBtn) compareBtn.click();
+        }
+        break;
+      case '?':
+        openHelpModal();
+        break;
+      case 'Escape':
+        closeHelpModal();
+        break;
     }
-
-    if (e.key === 'Escape') {
-      closeHelpModal();
-    }
-
   });
-
   window.closeHelpModal = closeHelpModal;
 
 });

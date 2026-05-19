@@ -32,8 +32,9 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
   }
   
   resumeSkills.forEach(s => {
-    userLanguages.add(s.toLowerCase());
-    userTopics.add(s.toLowerCase()); // Resume skills can act as topics/domains too
+    const skill = s.toLowerCase();
+    userLanguages.add(skill);
+    userTopics.add(skill); 
   });
 
   const scoredOrgs = ORGS.map((org, index) => 
@@ -43,17 +44,18 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
   // Sort by rawScore descending
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
 
-  // Return Top 5
-  return scoredOrgs.slice(0, 5);
+  // Return Top 6 (slightly more to give choice)
+  return scoredOrgs.slice(0, 6);
 }
 
 /**
- * Core engine logic extracted to achieve manageable cyclomatic & cognitive complexity.
- * Optimizes string list lookups with Set semantics and reduces nested conditionals.
- */
-/**
  * Core engine orchestrator. Sums metrics derived from specialized scoring primitives.
- * Extremely low cognitive cyclomatic path threshold for superior auditability and evolution.
+ * Balanced weights (Total max ~120, then normalized to 100):
+ * - Languages: 40%
+ * - Topics/Domains: 30%
+ * - Activity Fit: 15%
+ * - Experience/Complexity: 25%
+ * - Stability/Veteran: 10%
  */
 function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile) {
     const matchReasons = [];
@@ -62,26 +64,41 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
     const orgCat = org.cat ? org.cat.toLowerCase() : '';
 
     let score = 0;
+    
+    // 1. Language Matching (Up to 40 points)
     score += calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
+    
+    // 2. Topic & Domain Matching (Up to 30 points)
     score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
+    
+    // 3. Activity Fit (Up to 15 points)
     score += calculateActivityScore(githubProfile, org, matchReasons);
+    
+    // 4. Experience & Complexity Matching (Up to 25 points)
     score += calculateExperienceScore(githubProfile, org, matchReasons);
 
-    // Cap and mix-in deterministic tiebreak
-    score = Math.min(score, 100);
-    score += (org.name.length % 100) / 100;
+    // 5. Stability/Veteran Bonus (Up to 10 points)
+    score += calculateStabilityBonus(org, matchReasons);
 
-    // Safeguard: Provide a contextually relevant fallback explanation if array empty
+    // Normalize and deterministic tiebreak
+    // rawScore is used for sorting, score is for display
+    const rawScore = score;
+    const normalizedScore = Math.min(Math.round(score), 99); // Save 100 for absolute perfect (rare)
+    
+    // Add tie-breaker based on name length and index to keep results stable
+    const tieBreaker = (org.name.length % 10) / 100 + (index % 100) / 10000;
+    const finalRawScore = rawScore + tieBreaker;
+
+    // Safeguard: Provide fallback
     if (matchReasons.length === 0) {
-      const categoryLabel = orgCat || 'open source ecosystem';
-      matchReasons.push(`Relevant fit within ${categoryLabel}`);
+      matchReasons.push("Matches your general developer profile");
     }
 
     return {
       orgIndex: index,
       org: org,
-      score: Math.floor(score), 
-      rawScore: score,
+      score: normalizedScore, 
+      rawScore: finalRawScore,
       matchedSkills: [...new Set(matchedSkills)],
       reasons: matchReasons
     };
@@ -89,82 +106,119 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
 
 function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons) {
     let matches = 0;
+    const primaryMatches = [];
+    
     userLanguages.forEach(lang => {
       if (orgTags.has(lang) || orgCat === lang) {
         matches++;
         matchedSkills.push(lang);
+        primaryMatches.push(lang);
       }
     });
     
-    let delta = 0;
-    if (matches === 1) delta = 20;
-    else if (matches >= 2) delta = 40;
+    if (matches === 0) return 0;
     
-    if (delta > 0) matchReasons.push(`Uses your languages (${matches} matched)`);
-    return delta;
+    // Weighted points: 15 for first, 12 for second, 8 for third, 5 for rest
+    let delta = 0;
+    if (matches >= 1) delta += 15;
+    if (matches >= 2) delta += 12;
+    if (matches >= 3) delta += 8;
+    if (matches >= 4) delta += 5;
+    
+    const displayLangs = primaryMatches.slice(0, 2).join(", ");
+    matchReasons.push(`Strong stack match: ${displayLangs}${primaryMatches.length > 2 ? '...' : ''}`);
+    
+    return Math.min(delta, 40);
 }
 
 function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons) {
     let matches = 0;
+    const matchedTopics = [];
+    
     userTopics.forEach(topic => {
+      // Don't double count if already matched in languages
       if (!matchedSkills.includes(topic) && (orgTags.has(topic) || orgCat === topic)) {
         matches++;
+        matchedTopics.push(topic);
         matchedSkills.push(topic);
       }
     });
     
-    let delta = 0;
-    if (matches === 1) delta = 15;
-    else if (matches >= 2) delta = 30;
+    if (matches === 0) return 0;
     
-    if (delta > 0) matchReasons.push(`Aligns with your domain interests`);
-    return delta;
+    let delta = 0;
+    if (matches >= 1) delta += 12;
+    if (matches >= 2) delta += 10;
+    if (matches >= 3) delta += 8;
+    
+    matchReasons.push(`Fits your interests in ${matchedTopics[0]}`);
+    return Math.min(delta, 30);
 }
 
 function calculateActivityScore(profile, org, matchReasons) {
-    if (!profile) return 5; // Baseline score with no specific reasons
+    if (!profile) return 8; // Neutral score
 
     const userAct = (profile.activity || 'low').toLowerCase();
-    const orgAct = (org._gh?.activity || org.activity || 'low').toLowerCase();
+    const orgAct = (org._gh?.activity || org.activity || org.competition || 'low').toLowerCase();
     
-    if (userAct === 'high' && (orgAct === 'active' || orgAct === 'high')) {
-      matchReasons.push(`Both you and this org are highly active`);
+    // Mapping org activity/competition to levels
+    const isHigh = orgAct === 'active' || orgAct === 'high' || orgAct === 'hot';
+    const isMed = orgAct === 'moderate' || orgAct === 'medium';
+    const isLow = orgAct === 'low' || orgAct === 'chill';
+
+    if (userAct === 'high' && isHigh) {
+      matchReasons.push(`Matches your high activity pace`);
       return 15;
     } 
     
-    if (userAct === 'medium' && (orgAct === 'moderate' || orgAct === 'medium')) {
-      matchReasons.push(`Good match for moderate activity levels`);
-      return 15;
+    if (userAct === 'medium' && (isMed || isHigh)) {
+      matchReasons.push(`Sustainable pace for your activity level`);
+      return 12;
     }
     
-    if (userAct === 'low' && orgAct === 'low') {
-      matchReasons.push(`Pacing matches your recent activity`);
-      return 10;
+    if (userAct === 'low' && isLow) {
+      matchReasons.push(`Good entry point with manageable pacing`);
+      return 15;
     }
 
     return 5;
 }
 
-
 function calculateExperienceScore(profile, org, matchReasons) {
     let delta = 0;
-    const hasWeakProfile = !profile || (profile.stars < 10 && (profile.languages?.length || 0) < 3);
+    const userStars = profile?.stars || 0;
+    const userLangCount = profile?.languages?.length || 0;
     
-    if (hasWeakProfile) {
-      if (org.codebase === 'beginner') {
-        matchReasons.push(`Great for newcomers (beginner-friendly codebase)`);
-        delta = 15;
-      } else if (org.codebase === 'intermediate') {
-        delta = 5;
-      }
-    } else if (org.codebase === 'advanced') {
-      matchReasons.push(`Challenging, fits your experience level`);
+    const isExperienced = userStars > 50 || userLangCount > 5;
+    const isBeginner = !profile || (userStars < 10 && userLangCount < 3);
+    
+    const orgCodebase = (org.codebase || 'intermediate').toLowerCase();
+
+    if (isBeginner && orgCodebase === 'beginner') {
+      matchReasons.push(`Very beginner-friendly codebase`);
+      delta = 25;
+    } else if (isExperienced && orgCodebase === 'advanced') {
+      matchReasons.push(`Challenging project for your experience`);
+      delta = 20;
+    } else if (orgCodebase === 'intermediate') {
       delta = 15;
-    } else if (org.codebase === 'intermediate') {
-      delta = 10;
+    } else {
+      delta = 10; // Default fit
     }
     
     return delta;
+}
+
+function calculateStabilityBonus(org, matchReasons) {
+  const years = org.years || 0;
+  if (years >= 10) {
+    matchReasons.push(`GSoC Veteran (${years} years)`);
+    return 10;
+  }
+  if (years >= 5) {
+    return 5;
+  }
+  return 0;
 }
 
 // Export for global usage

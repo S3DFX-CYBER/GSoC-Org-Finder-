@@ -1,5 +1,5 @@
 /* global BUILD_CACHE_VERSION */
-const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,8).replaceAll('-', '');
+const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v' + new Date().toISOString().slice(0,10).replaceAll('-', '');
 
 // Cache naming
 const STATIC_CACHE_NAME = `gsoc-finder-static-${CACHE_VERSION}`;
@@ -125,6 +125,7 @@ async function cacheFirst(request) {
         cache.put(request, networkResponse.clone());
         return networkResponse;
       }
+      return cachedResponse;
     } catch (_) {
       // Return stale cache if network fails
       return cachedResponse;

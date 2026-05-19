@@ -2799,11 +2799,11 @@ if(org.ideas){
 
     // Reset internal filter state
     selectedLanguages.clear();
+    clearSelectedLanguagePills();
+    matchAllLanguages = false;
+    const matchAllToggle = document.getElementById('matchAllLanguagesToggle');
+    if (matchAllToggle) matchAllToggle.checked = false;
     activeChip = null;
-    query = '';
-    cat = 'all';
-    comp = 'all';
-    sort = 'alpha';
 
     // Clear URL params
     history.replaceState(null, '', location.pathname);

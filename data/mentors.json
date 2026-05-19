@@ -684,12 +684,50 @@
   },
   "EROFS filesystem": {
     "org": "EROFS filesystem",
-    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/erofs-filesystem",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "ideasUrl": "https://erofs.docs.kernel.org/en/latest/gsoc.html",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "linux-erofs@lists.ozlabs.org",
+        "label": "EROFS filesystem Email"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gao Xiang",
+        "github": "hsiangkao",
+        "githubUrl": "https://github.com/hsiangkao"
+      },
+      {
+        "name": "Hongbo Li",
+        "github": "hb-lee",
+        "githubUrl": "https://github.com/hb-lee"
+      },
+      {
+        "name": "Yifan Zhao",
+        "github": "SToPire",
+        "githubUrl": "https://github.com/SToPire"
+      },
+      {
+        "name": "Chunhai Guo",
+        "github": "speedan1",
+        "githubUrl": "https://github.com/speedan1"
+      },
+      {
+        "name": "Dreamacro",
+        "github": "Dreamacro",
+        "githubUrl": "https://github.com/Dreamacro"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.ozlabs.org/listinfo/linux-erofs",
+        "label": "EROFS filesystem Mailing list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FFmpeg": {
@@ -2102,12 +2140,18 @@
   },
   "Pharo Consortium": {
     "org": "Pharo Consortium",
-    "ideasUrl": "https://github.com/pharo-project/pharo/wiki/GSoC-2026-Ideas",
-    "channels": [],
+    "ideasUrl": "https://gsoc.pharo.org/ideas",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/QewZMZa",
+        "label": "Pharo Discord — #gsoc-students channel"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Join Pharo Discord and go to the #gsoc-students channel to introduce yourself and discuss project ideas with mentors.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "PostgreSQL": {

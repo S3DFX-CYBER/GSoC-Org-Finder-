@@ -45,7 +45,7 @@ Designed to help students discover and contribute to open-source organizations m
 ## 📚 Table of Contents
 
 - [Features](#-features)
-- [Tech Stack](#-tech-stack)
+- [Tech Stack](#tech-stack)
 - [Project Structure](#-project-structure)
 - [Quick Start](#-quick-start)
 - [Main Functionalities](#-main-functionalities)
@@ -119,7 +119,7 @@ Track real-time repository activity including:
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|

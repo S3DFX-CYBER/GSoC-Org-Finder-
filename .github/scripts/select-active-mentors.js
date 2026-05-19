@@ -52,6 +52,6 @@ if (require.main === module) {
   const fs = require('fs');
   const mentorsData = JSON.parse(fs.readFileSync('.github/reviewers/gssoc-mentors.json', 'utf8'));
   const mentorStats = JSON.parse(fs.readFileSync('.github/reviewers/mentor-stats.json', 'utf8'));
-  const selected = selectActiveMentors({ mentors: mentorsData.reviewers || [], stats: mentorStats, count: Number(process.env.MAX_MENTORS || '5') });
+  const selected = selectActiveMentors({ mentors: mentorsData.reviewers || [], stats: mentorStats, count: Number(process.env.MAX_MENTORS || '5') }).map((username) => ({ username }));
   process.stdout.write(JSON.stringify({ selected }, null, 2));
 }

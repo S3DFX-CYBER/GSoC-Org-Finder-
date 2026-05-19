@@ -1,10 +1,5 @@
 /* global BUILD_CACHE_VERSION */
-let CACHE_VERSION;
-if (typeof BUILD_CACHE_VERSION !== 'undefined') {
-  CACHE_VERSION = BUILD_CACHE_VERSION;
-} else {
-  CACHE_VERSION = 'v' + new Date().toISOString().slice(0,10).replaceAll('-', '');
-}
+const CACHE_VERSION = (typeof BUILD_CACHE_VERSION !== 'undefined') ? BUILD_CACHE_VERSION : 'v1';
 
 // Cache naming
 const STATIC_CACHE_NAME = `gsoc-finder-static-${CACHE_VERSION}`;
@@ -14,7 +9,6 @@ const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Critical assets to precache (loaded in index.html order)
 const STATIC_ASSETS = [
-  './',
   'index.html',
   'manifest.json',
   'offline.html',
@@ -64,13 +58,12 @@ self.addEventListener('activate', (event) => {
           return Promise.resolve();
         })
       );
-    }).then(() => globalThis.clients.claim())
+    }).then(() => self.clients.claim())
   );
 });
 
 // Check if cache is expired
-async function isCacheExpired(cache, request) {
-  const cachedResponse = await cache.match(request);
+function isCacheExpired(cachedResponse) {
   if (!cachedResponse) return true;
 
   const dateHeader = cachedResponse.headers.get('date');
@@ -107,7 +100,7 @@ async function staleWhileRevalidate(request) {
 
   if (cachedResponse) {
     // Immediately return cached, then update in background
-    fetchAndCache();
+    fetchAndCache().catch(() => {});
     return cachedResponse;
   }
 
@@ -120,7 +113,7 @@ async function cacheFirst(request) {
   const cachedResponse = await cache.match(request);
 
   if (cachedResponse) {
-    if (!(await isCacheExpired(cache, request))) {
+    if (!(isCacheExpired(cachedResponse))) {
       return cachedResponse;
     }
     // Expired - try to update in background
@@ -157,7 +150,7 @@ self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // Skip cross-origin (except API)
+  // Only handle same-origin or API requests
   if (url.origin !== location.origin && !url.pathname.startsWith('/api/')) return;
 
   // API: stale-while-revalidate for instant feel with background updates

@@ -139,12 +139,19 @@ function validateIdeasUrl(ideasUrl) {
     
     // Security: Only allow http and https protocols
     // This prevents javascript:, data:, file:, and other potentially dangerous schemes
-    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
-      return url;
+    if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+      console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
+      return null;
+    }
+
+    // Require a valid domain with a TLD (must contain at least one dot)
+    // to prevent local-network routing or weird URI structures
+    if (!urlObj.hostname.includes('.') && urlObj.hostname !== 'localhost') {
+      console.warn('Rejected URL without valid domain:', ideasUrl);
+      return null;
     }
     
-    console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
-    return null;
+    return url;
   } catch (e) {
     // Invalid URL format
     console.warn('Invalid ideas URL format:', ideasUrl, e);
@@ -793,7 +800,7 @@ function renderGrid(orgs){
           </a>`:''}
         </div>
       </div>
-      <div class="org-desc">${o.desc}</div>
+      <div class="org-desc">${escapeHtml(o.desc)}</div>
       <div class="badges">
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>

@@ -12,6 +12,42 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+// IP-based Rate Limiter (in-memory per isolate)
+const RATE_LIMIT_MAP = new Map();
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 60; // 60 requests per minute per IP
+
+function checkRateLimit(ip) {
+  const targetIp = ip || 'unknown';
+  const now = Date.now();
+  const record = RATE_LIMIT_MAP.get(targetIp) || { count: 0, startTime: now };
+  
+  if (now - record.startTime > RATE_LIMIT_WINDOW_MS) {
+    record.count = 1;
+    record.startTime = now;
+  } else {
+    record.count++;
+  }
+  
+  if (RATE_LIMIT_MAP.size > 2000) {
+    let deleted = false;
+    for (const [key, val] of RATE_LIMIT_MAP.entries()) {
+      if (now - val.startTime > RATE_LIMIT_WINDOW_MS) {
+        RATE_LIMIT_MAP.delete(key);
+        deleted = true;
+        break;
+      }
+    }
+    if (!deleted) {
+      const firstKey = RATE_LIMIT_MAP.keys().next().value;
+      RATE_LIMIT_MAP.delete(firstKey);
+    }
+  }
+  
+  RATE_LIMIT_MAP.set(targetIp, record);
+  return record.count <= MAX_REQUESTS_PER_WINDOW;
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -22,6 +58,21 @@ export default async function handler(req) {
 
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers });
+  }
+
+  const forwarded = req.headers.get('x-forwarded-for');
+  let ip = 'unknown';
+  if (forwarded) {
+    const parts = forwarded.split(',');
+    ip = parts[0].trim() || 'unknown';
+  } else if (req.socket?.remoteAddress) {
+    ip = req.socket.remoteAddress;
+  } else if (req.connection?.remoteAddress) {
+    ip = req.connection.remoteAddress;
+  }
+
+  if (!checkRateLimit(ip)) {
+    return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }), { status: 429, headers });
   }
 
   const { searchParams } = new URL(req.url);

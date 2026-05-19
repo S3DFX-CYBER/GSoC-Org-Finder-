@@ -796,12 +796,26 @@
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div id="watchlistActions" class="hidden mt-8 flex-shrink-0 flex items-center gap-2 flex-wrap">
+        <button id="exportMdBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary border border-orange-200 rounded-full px-4 py-2 hover:bg-orange-50 transition-colors"
+          title="Export watchlist as Markdown">
+          <span class="material-symbols-outlined text-sm">description</span>
+          Export MD
+        </button>
+        <button id="exportCsvBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary border border-orange-200 rounded-full px-4 py-2 hover:bg-orange-50 transition-colors"
+          title="Export watchlist as CSV">
+          <span class="material-symbols-outlined text-sm">table_chart</span>
+          Export CSV
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
@@ -2389,6 +2403,135 @@
     updateAIInsights();
   }
 
+  // ══════════════════════════════════════════════
+  // WATCHLIST EXPORT — Markdown & CSV
+  // ══════════════════════════════════════════════
+
+  const CATEGORY_MAP = {
+    science:'Science', programming:'Programming', data:'Data', web:'Web',
+    os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
+    ai:'AI / ML', dev:'Dev Tools', other:'Other',
+  };
+
+  /**
+   * Triggers a browser-native file download using Blob + URL.createObjectURL.
+   * Zero dependencies — no file-saver, no jsPDF.
+   */
+  function downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /** Returns a local YYYY-MM-DD date string for timestamped filenames. */
+  function todayStamp() {
+    return new Date().toLocaleDateString('en-CA');
+  }
+
+  /**
+   * Exports the current watchlist as a well-formatted Markdown file.
+   * Includes: org name, category, description, GSoC years, competition,
+   * tech stack, and GitHub repository link.
+   */
+  function exportWatchlistAsMarkdown() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (!bookmarks.length) {
+      alert('Your watchlist is empty. Bookmark some organizations first!');
+      return;
+    }
+
+    const lines = [];
+    lines.push('# GSoC 2026 — My Watchlist');
+    lines.push('');
+    lines.push(`> Exported on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`);
+    lines.push(`> Total organizations: ${bookmarks.length}`);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    bookmarks.forEach((org, idx) => {
+      const ghUrl = org.github ? githubUrlFromValue(org.github) : 'N/A';
+
+      lines.push(`## ${idx + 1}. ${org.name}`);
+      lines.push('');
+      lines.push(`- **Category:** ${CATEGORY_MAP[org.cat] || org.cat || 'N/A'}`);
+      lines.push(`- **Description:** ${org.desc || 'N/A'}`);
+      lines.push(`- **GSoC Years:** ${org.years || 'N/A'}`);
+      lines.push(`- **Competition:** ${org.competition || 'N/A'}`);
+      lines.push(`- **Tech Stack:** ${(org.tags || []).join(', ') || 'N/A'}`);
+      lines.push(`- **GitHub:** ${ghUrl}`);
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    });
+
+    const filename = `GSoC-2026-Watchlist-${todayStamp()}.md`;
+    downloadFile(lines.join('\n'), filename, 'text/markdown;charset=utf-8');
+  }
+
+  /**
+   * Exports the current watchlist as a CSV file.
+   * Handles special characters by quoting fields that contain commas,
+   * double-quotes, or newlines.
+   */
+  function exportWatchlistAsCsv() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (!bookmarks.length) {
+      alert('Your watchlist is empty. Bookmark some organizations first!');
+      return;
+    }
+
+    /** Wraps a value in double-quotes, escapes inner quotes per RFC 4180, and neutralizes formula injection. */
+    function csvEscape(value) {
+      let str = String(value ?? '');
+      // Neutralize spreadsheet formula injection
+      if (/^[=+\-@]/.test(str)) {
+        str = "'" + str;
+      }
+      // Quote field if it contains comma, double-quote, or newline
+      if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    const header = ['Organization', 'Category', 'Description', 'GSoC Years', 'Competition Level', 'Tech Stack', 'GitHub Repository'];
+    const rows = [header.join(',')];
+
+    bookmarks.forEach(org => {
+      const ghUrl = org.github ? githubUrlFromValue(org.github) : '';
+
+      rows.push([
+        csvEscape(org.name),
+        csvEscape(CATEGORY_MAP[org.cat] || org.cat),
+        csvEscape(org.desc),
+        csvEscape(org.years),
+        csvEscape(org.competition),
+        csvEscape((org.tags || []).join(', ')),
+        csvEscape(ghUrl),
+      ].join(','));
+    });
+
+    const filename = `GSoC-2026-Watchlist-${todayStamp()}.csv`;
+    downloadFile('\uFEFF' + rows.join('\r\n'), filename, 'text/csv;charset=utf-8');
+  }
+
+  // Wire up export buttons
+  document.getElementById('exportMdBtn')?.addEventListener('click', exportWatchlistAsMarkdown);
+  document.getElementById('exportCsvBtn')?.addEventListener('click', exportWatchlistAsCsv);
+
   // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
@@ -2401,7 +2544,9 @@
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
-    // Show / hide "Clear All" button
+    // Show / hide the actions toolbar (Export MD, Export CSV, Clear All)
+    const actionsBar = document.getElementById('watchlistActions');
+    if (actionsBar) actionsBar.classList.toggle('hidden', bookmarks.length === 0);
     if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
 
     // ── Empty state ───────────────────────────────────────────────────────────

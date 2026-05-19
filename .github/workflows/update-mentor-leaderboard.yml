@@ -35,7 +35,7 @@ jobs:
             // ------------------------------------------------
 
             const mentorFile =
-              'reviewers/gssoc-mentors.json';
+              '.github/reviewers/gssoc-mentors.json';
 
             const mentorData = JSON.parse(
               fs.readFileSync(mentorFile, 'utf8')
@@ -94,11 +94,19 @@ jobs:
                 const reviewer =
                   review.user?.login;
 
-                if (
-                  !reviewer ||
-                  !stats[reviewer]
-                ) {
+                if (!reviewer) {
                   continue;
+                }
+                
+                if (!stats[reviewer]) {
+                  stats[reviewer] = {
+                    username: reviewer,
+                    reviews: 0,
+                    approvals: 0,
+                    comments: 0,
+                    score: 0,
+                    last_active: null
+                  };
                 }
 
                 stats[reviewer].reviews++;
@@ -112,7 +120,9 @@ jobs:
                   stats[reviewer].score += 2;
                 }
 
-                stats[reviewer].comments++;
+                if (review.state === 'COMMENTED') {
+                  stats[reviewer].comments++;
+                }
 
                 const submittedAt =
                   new Date(review.submitted_at);
@@ -151,7 +161,7 @@ jobs:
             // ------------------------------------------------
 
             fs.writeFileSync(
-              'reviewers/mentor-leaderboard.json',
+              '.github/reviewers/mentor-leaderboard.json',
               JSON.stringify(
                 leaderboard,
                 null,
@@ -168,7 +178,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add reviewers/mentor-leaderboard.json
+          git add .github/reviewers/mentor-leaderboard.json
 
           git diff --cached --quiet || git commit -m "chore: update mentor leaderboard"
 

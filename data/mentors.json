@@ -684,12 +684,50 @@
   },
   "EROFS filesystem": {
     "org": "EROFS filesystem",
-    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/erofs-filesystem",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "ideasUrl": "https://erofs.docs.kernel.org/en/latest/gsoc.html",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "linux-erofs@lists.ozlabs.org",
+        "label": "EROFS filesystem Email"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gao Xiang",
+        "github": "hsiangkao",
+        "githubUrl": "https://github.com/hsiangkao"
+      },
+      {
+        "name": "Hongbo Li",
+        "github": "hb-lee",
+        "githubUrl": "https://github.com/hb-lee"
+      },
+      {
+        "name": "Yifan Zhao",
+        "github": "SToPire",
+        "githubUrl": "https://github.com/SToPire"
+      },
+      {
+        "name": "Chunhai Guo",
+        "github": "speedan1",
+        "githubUrl": "https://github.com/speedan1"
+      },
+      {
+        "name": "Dreamacro",
+        "github": "Dreamacro",
+        "githubUrl": "https://github.com/Dreamacro"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.ozlabs.org/listinfo/linux-erofs",
+        "label": "EROFS filesystem Mailing list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FFmpeg": {
@@ -1046,12 +1084,70 @@
   },
   "Invesalius": {
     "org": "Invesalius",
-    "ideasUrl": "https://github.com/invesalius/invesalius3/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "ideasUrl": "https://github.com/invesalius/gsoc/blob/main/gsoc_2026_ideas.md",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "mailto:invesalius@cti.gov.br",
+        "label": "Invesalius Email"
+      }
+    ],
+    "mentors": [
+       {
+        "name": "Paulo Henrique Junqueira Amorim",
+        "github": "paulojamorim",
+        "githubUrl": "https://github.com/paulojamorim"
+      },
+      {
+        "name": "Thiago Franco de Moraes",
+        "github": "tfmoraes",
+        "githubUrl": "https://github.com/tfmoraes"
+      },
+      {
+        "name": "Renan Matsuda",
+        "github": "rmatsuda",
+        "githubUrl": "https://github.com/rmatsuda"
+      },
+      {
+        "name": "Thais Marchetti",
+        "github": "thaismarchetti",
+        "githubUrl": "https://github.com/thaismarchetti"
+      },
+      {
+        "name": "Lucas Betioli",
+        "github": "LucasBetioli123",
+        "githubUrl": "https://github.com/LucasBetioli123"
+      },
+      {
+        "name": "Kirsten Petras",
+        "github": "kpetras",
+        "githubUrl": "https://github.com/kpetras"
+      },
+      {
+        "name": "Marcio Campos",
+        "github": "MarcioCamposJr",
+        "githubUrl": "https://github.com/MarcioCamposJr"
+      },
+      {
+        "name": "Victor H. Souza",
+        "github": "vhosouza",
+        "githubUrl": "https://github.com/vhosouza"
+      },
+      {
+        "name": "Sotodela",
+        "github": "sotodela",
+        "githubUrl": "https://github.com/sotodela"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://github.com/invesalius/invesalius3/discussions",
+        "label": "Invesalius Mailing list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "IOOS": {
@@ -2044,12 +2140,18 @@
   },
   "Pharo Consortium": {
     "org": "Pharo Consortium",
-    "ideasUrl": "https://github.com/pharo-project/pharo/wiki/GSoC-2026-Ideas",
-    "channels": [],
+    "ideasUrl": "https://gsoc.pharo.org/ideas",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/QewZMZa",
+        "label": "Pharo Discord — #gsoc-students channel"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Join Pharo Discord and go to the #gsoc-students channel to introduce yourself and discuss project ideas with mentors.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "PostgreSQL": {

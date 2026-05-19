@@ -1,3 +1,13 @@
+function stripHtmlComments(input) {
+  let previous;
+  let output = input;
+  do {
+    previous = output;
+    output = output.replace(/<!--[\s\S]*?-->/g, '');
+  } while (output !== previous);
+  return output;
+}
+
 function analyzeIssue(issue) {
   const title = (issue.title || '').trim();
   const body = (issue.body || '').trim();
@@ -5,7 +15,7 @@ function analyzeIssue(issue) {
   const problems = [];
 
   if (title.length < 12) problems.push('Use a more descriptive title (at least 12 characters).');
-  if (body.replace(/<!--[\s\S]*?-->/g, '').trim().length < 80) problems.push('Add more detail so maintainers can reproduce and validate.');
+  if (stripHtmlComments(body).trim().length < 80) problems.push('Add more detail so maintainers can reproduce and validate.');
   if (!/step|reproduce/i.test(lower)) problems.push('Include reproduction steps.');
   if (!/expected/i.test(lower)) problems.push('Include expected behavior.');
   if (!/actual|happen|observed/i.test(lower)) problems.push('Include actual behavior.');

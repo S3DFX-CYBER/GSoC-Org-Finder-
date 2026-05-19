@@ -2429,9 +2429,9 @@
     URL.revokeObjectURL(url);
   }
 
-  /** Returns a YYYY-MM-DD date string for timestamped filenames. */
+  /** Returns a local YYYY-MM-DD date string for timestamped filenames. */
   function todayStamp() {
-    return new Date().toISOString().slice(0, 10);
+    return new Date().toLocaleDateString('en-CA');
   }
 
   /**

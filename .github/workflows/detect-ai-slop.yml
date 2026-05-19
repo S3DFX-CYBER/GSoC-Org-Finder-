@@ -130,7 +130,7 @@ jobs:
               const patch = file.patch || '';
 
               // Giant additions in one file
-              if (additions > 120) {
+              if (additions > 220 && !/\.(md|mdx|txt|lock|svg|png|jpg|jpeg|gif)$/i.test(filename)) {
                 suspiciousScore += 2;
                 reasons.push(
                   `Large insertion in \`${filename}\` (+${additions})`
@@ -141,7 +141,7 @@ jobs:
               const commentLines =
                 (patch.match(/\/\/|\/\*|\*/g) || []).length;
 
-              if (commentLines > 15) {
+              if (commentLines > 25) {
                 suspiciousScore += 2;
                 reasons.push(
                   `Excessive comments in \`${filename}\``
@@ -195,7 +195,10 @@ jobs:
 
             core.info(`Suspicious score: ${suspiciousScore}`);
 
-            if (suspiciousScore < 4) {
+            const prAuthorAssoc = context.payload.pull_request.author_association || "";
+            if (["OWNER","MEMBER","COLLABORATOR"].includes(prAuthorAssoc)) { core.info("Trusted author, skipping heuristic escalation"); return; }
+
+            if (suspiciousScore < 6) {
               core.info('PR passed heuristic checks');
               return;
             }

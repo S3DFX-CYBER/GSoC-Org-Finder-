@@ -1,0 +1,45 @@
+name: 🏆 Mentor Leaderboard
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate leaderboard markdown
+        run: node .github/scripts/generate-mentor-leaderboard.js
+
+      - name: Inject leaderboard into README
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const readmePath = 'README.md';
+          const leaderboard = fs.readFileSync('.github/reviewers/mentor-leaderboard.md', 'utf8').trim();
+          const start = '<!-- mentor-leaderboard:start -->';
+          const end = '<!-- mentor-leaderboard:end -->';
+          const readme = fs.readFileSync(readmePath, 'utf8');
+          const block = `${start}\n${leaderboard}\n${end}`;
+          const regex = new RegExp(`${start}[\\s\\S]*?${end}`, 'm');
+          const updated = regex.test(readme) ? readme.replace(regex, block) : `${readme.trim()}\n\n${block}\n`;
+          fs.writeFileSync(readmePath, updated);
+          NODE
+
+      - name: Commit updates if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md .github/reviewers/mentor-leaderboard.md
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: refresh mentor leaderboard [skip ci]"
+          git push

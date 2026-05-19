@@ -2,11 +2,7 @@ name: 👥 Request Reviewers (Stage 2)
 
 on:
   pull_request_target:
-    types:
-      - opened
-      - reopened
-      - labeled
-      - ready_for_review
+    types: [opened, reopened, labeled, ready_for_review]
 
 permissions:
   pull-requests: write
@@ -22,111 +18,61 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       !github.event.pull_request.draft &&
-      contains(github.event.pull_request.labels.*.name, 'stage-1-approved')
-
+      contains(github.event.pull_request.labels.*.name, 'stage-1-approved') &&
+      !contains(github.event.pull_request.labels.*.name, 'missing-program-classification') &&
+      !contains(github.event.pull_request.labels.*.name, 'invalid-program-classification')
     steps:
-      - name: Stage 2 - Request Reviewers
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Stage 2 - Request active mentors
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const { execSync } = require('child_process');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const pr = context.payload.pull_request;
             const prNumber = pr.number;
 
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());
-            const isGssoc = labels.includes('gssoc26');
+            if (!labels.includes('gssoc26')) return;
 
-            if (!isGssoc) {
-              core.info('PR is not GSSOC. Skipping Stage 2 reviewer assignment.');
-              return;
-            }
+            const { data: requested } = await github.rest.pulls.listRequestedReviewers({ owner, repo, pull_number: prNumber });
+            const alreadyRequested = new Set((requested.users || []).map(u => u.login.toLowerCase()));
 
-            const { data: requested } = await github.rest.pulls.listRequestedReviewers({
-              owner, repo, pull_number: prNumber
-            });
-            const alreadyRequested = (requested.users || []).map(u => u.login.toLowerCase());
+            const out = execSync('node .github/scripts/select-active-mentors.js', { encoding: 'utf8' });
+            const selected = JSON.parse(out).selected || [];
+            let pool = selected
+              .map(s => s.username)
+              .filter(u => u.toLowerCase() !== pr.user.login.toLowerCase() && !alreadyRequested.has(u.toLowerCase()));
 
-            if (alreadyRequested.length >= 2) {
-              core.info('Enough reviewers already requested. Skipping.');
-              return;
-            }
+            if (!pool.length) return;
+            pool = pool.sort(() => Math.random() - 0.5).slice(0, 2);
 
-            let reviewerPool = [];
-            const validUsername = /^[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?$/;
-
-            try {
-              const { data: file } = await github.rest.repos.getContent({
-                owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
-              });
-              const content = Buffer.from(file.content, 'base64').toString('utf8');
-              const parsed = JSON.parse(content);
-              reviewerPool = (parsed.reviewers || []).filter(r => validUsername.test(r));
-            } catch (e) {
-              core.warning(`Failed to load GSSOC mentors: ${e?.message || e}`);
-              return;
-            }
-
-            if (reviewerPool.length === 0) {
-              core.info('No reviewers available. Skipping.');
-              return;
-            }
-
-            reviewerPool = reviewerPool.filter(reviewer =>
-              reviewer.toLowerCase() !== pr.user.login.toLowerCase() &&
-              !alreadyRequested.includes(reviewer.toLowerCase())
-            );
-
-            if (reviewerPool.length === 0) {
-              core.info('No eligible reviewers after filtering. Skipping.');
-              return;
-            }
-
-            const seed = prNumber;
-            const poolSize = reviewerPool.length;
-            const idx1 = seed % poolSize;
-            let idx2 = (seed * 7 + 3) % poolSize;
-            if (idx2 === idx1) idx2 = (idx1 + 1) % poolSize;
-            let selected = [reviewerPool[idx1]];
-            if (poolSize > 1) selected.push(reviewerPool[idx2]);
-
-            const successfulReviewers = [];
-            for (const reviewer of selected) {
+            const successful = [];
+            for (const reviewer of pool) {
               try {
-                await github.rest.pulls.requestReviewers({
-                  owner, repo, pull_number: prNumber, reviewers: [reviewer]
-                });
-                successfulReviewers.push(reviewer);
-              } catch (err) {
-                core.warning(`Failed to request review from @${reviewer} (may not be a collaborator): ${err?.message || err}`);
+                await github.rest.pulls.requestReviewers({ owner, repo, pull_number: prNumber, reviewers: [reviewer] });
+                successful.push(reviewer);
+              } catch (e) {
+                core.warning(`Failed reviewer ${reviewer}: ${e.message}`);
               }
             }
 
-            if (successfulReviewers.length === 0) {
-              core.warning('No mentors could be requested as reviewers. They may not be collaborators.');
-              return;
-            }
+            if (!successful.length) return;
+            await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['mentor-review-requested'] }).catch(() => {});
 
-            core.info(`Requested reviewers: ${successfulReviewers.join(', ')}`);
-
-            try {
-              await github.rest.issues.addLabels({
-                owner, repo, issue_number: prNumber, labels: ['mentor-review-requested']
-              });
-            } catch (e) {
-              core.warning(`Failed to add mentor-review-requested label: ${e?.message || e}`);
-            }
-
-            try {
-              await github.rest.issues.createComment({
-                owner, repo, issue_number: prNumber,
-                body: `## 👥 Stage 2 — Mentor Review\n\n` +
-                  `GSSOC mentors have been requested to review this PR:\n\n` +
-                  successfulReviewers.map(s => `- @${s}`).join('\n') + '\n\n' +
-                  `At least **1 mentor approval** is required to proceed to Stage 3.\n\n` +
-                  `Mentors: please review and approve if the contribution meets quality standards.`
-              });
-            } catch (e) {
-              core.warning(`Failed to post Stage 2 comment: ${e?.message || e}`);
+            const marker = '<!-- mentor-routing -->';
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number: prNumber, per_page: 100 });
+            const body = `${marker}\n## 👥 Stage 2 — Mentor Review\n\nRequested active mentors:\n${successful.map(s => `- @${s}`).join('\n')}`;
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              if (existing.body.trim() !== body.trim()) {
+                await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              }
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
             }

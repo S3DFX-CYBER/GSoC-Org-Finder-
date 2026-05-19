@@ -124,11 +124,11 @@ jobs:
                 break;
               }
 
-              // Strong partial overlap
-              if (
-                existingTitle.includes(currentTitle) ||
-                currentTitle.includes(existingTitle)
-              ) {
+              const a = new Set(currentTitle.split(' ').filter(w => w.length > 3));
+              const b = new Set(existingTitle.split(' ').filter(w => w.length > 3));
+              const overlap = [...a].filter(w => b.has(w)).length;
+              const ratio = overlap / Math.max(1, Math.min(a.size, b.size));
+              if (ratio >= 0.7) {
                 duplicate = existing;
                 break;
               }

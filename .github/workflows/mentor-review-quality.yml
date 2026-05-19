@@ -1,0 +1,46 @@
+name: 🧪 Mentor Review Quality
+on:
+  pull_request_review:
+    types: [submitted]
+permissions:
+  contents: write
+  pull-requests: read
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { detectLowEffortReview } = require('./.github/scripts/detect-low-effort-review');
+            const review = context.payload.review;
+            const pr = context.payload.pull_request;
+            const result = detectLowEffortReview(review.body || '');
+            const priorityAssigned = /\bP[0-4]\b/i.test(review.body || '');
+            const { execSync } = require('child_process');
+            execSync('node .github/scripts/update-mentor-stats.js', {
+              env: {
+                ...process.env,
+                ACTION_TYPE: 'review',
+                REVIEWER: review.user.login,
+                REVIEWER_TYPE: review.user.type,
+                REVIEW_STATE: review.state,
+                REVIEW_ID: String(review.id),
+                REVIEW_SUBMITTED_AT: review.submitted_at,
+                PR_AUTHOR: pr.user.login,
+                REVIEW_WEIGHT: String(result.weight),
+                PRIORITY_ASSIGNED: priorityAssigned ? 'true' : 'false'
+              },
+              stdio: 'inherit'
+            });
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/reviewers/mentor-stats.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update mentor review quality stats [skip ci]"
+          git push

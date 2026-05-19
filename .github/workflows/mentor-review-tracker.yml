@@ -2,30 +2,28 @@ name: 📈 Mentor Review Tracker
 
 on:
   pull_request_review:
-    types:
-      - submitted
+    types: [submitted]
 
 permissions:
   contents: write
   pull-requests: read
 
 concurrency:
-  group: mentor-review-${{ github.event.pull_request.number }}
+  group: mentor-review-tracker
   cancel-in-progress: false
 
 jobs:
   track-review:
     runs-on: ubuntu-latest
-
     if: |
-      github.event.review.user.type != 'Bot' &&
-      github.actor != 'github-actions[bot]'
-
+      github.event.review.state == 'approved' ||
+      github.event.review.state == 'changes_requested' ||
+      github.event.review.state == 'commented'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -35,21 +33,18 @@ jobs:
       - name: Update mentor statistics
         env:
           REVIEWER: ${{ github.event.review.user.login }}
+          REVIEWER_TYPE: ${{ github.event.review.user.type }}
           REVIEW_STATE: ${{ github.event.review.state }}
           REVIEW_ID: ${{ github.event.review.id }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          node .github/scripts/update-mentor-stats.js
+          REVIEW_SUBMITTED_AT: ${{ github.event.review.submitted_at }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: node .github/scripts/update-mentor-stats.js
 
-      - name: Commit updated stats
+      - name: Commit updated stats when changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add .github/reviewers/mentor-stats.json
-
           git diff --cached --quiet && exit 0
-
-          git commit -m "chore: update mentor review stats"
-
+          git commit -m "chore: update mentor review stats [skip ci]"
           git push

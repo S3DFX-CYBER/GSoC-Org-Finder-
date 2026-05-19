@@ -1,0 +1,30 @@
+name: 🏷️ Priority Label Manager
+on:
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+jobs:
+  manage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { parsePriority, allPriorityLabels } = require('./.github/scripts/manage-priority-labels');
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const prNumber = context.payload.pull_request?.number || context.payload.issue?.number;
+            if (!prNumber || !context.payload.issue?.pull_request && !context.payload.pull_request) return;
+            const text = context.payload.review?.body || context.payload.comment?.body || '';
+            const priority = parsePriority(text);
+            if (!priority) return;
+            for (const l of allPriorityLabels()) {
+              if (l !== priority) await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: l }).catch(()=>{});
+            }
+            await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [priority] }).catch(()=>{});

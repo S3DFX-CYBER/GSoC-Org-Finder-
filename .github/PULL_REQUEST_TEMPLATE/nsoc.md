@@ -1,34 +1,30 @@
-## 🚀 Program
-NSOC
+## Program Type
+- [ ] GSSOC
+- [ ] NSOC
+- [ ] General Contribution
 
-## 📝 Description
-<!-- Describe what this PR does and why -->
+program: 
 
-## 🔗 Related Issue
+## Description
+<!-- What changed and why? -->
+
+## Related Issue
 Closes #<!-- issue number -->
 
-## 🔄 Type of Change
-<!-- Check all that apply -->
-- [ ] 🐛 Bug fix
-- [ ] ✨ New feature
-- [ ] 🔍 SEO improvement
-- [ ] 🎨 Style / UI improvement
-- [ ] ♿ Accessibility improvement
-- [ ] 📝 Documentation
-- [ ] ⚙️ CI / configuration
-- [ ] 🧹 Refactor / cleanup
+## Type of Change
+- [ ] Bug fix
+- [ ] Feature
+- [ ] Docs
+- [ ] Refactor
+- [ ] UI/UX
+- [ ] Test/CI
 
-## 🧪 How to Test
-<!-- Steps to verify your change works correctly -->
-1. Open `index.html` in a browser
-2. ...
+## Validation
+- [ ] I tested locally
+- [ ] I followed existing architecture
+- [ ] I used DCO sign-off (`git commit -s`)
+- [ ] I linked a valid issue
+- [ ] I selected exactly one program type
 
-## 📸 Screenshots (if applicable)
-<!-- Before and after screenshots for UI changes -->
-
-## ✅ Checklist
-- [ ] I am contributing under NSOC
-- [ ] My code follows the project's existing style
-- [ ] I have tested my changes in a browser
-- [ ] I have linked the related issue above
-- [ ] My PR title follows Conventional Commits format (e.g. `feat: add scroll button`)
+## Notes for Reviewers
+<!-- optional context, screenshots, tradeoffs -->

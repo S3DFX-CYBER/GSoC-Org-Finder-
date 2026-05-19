@@ -1,0 +1,74 @@
+name: 🧭 Program Classification Validator
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: program-classification-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { detectPrograms } = require('./.github/scripts/validate-program-classification');
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const prNumber = pr.number;
+            const marker = '<!-- program-classification-validator -->';
+
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number: prNumber, per_page: 100 });
+            const existing = comments.find(c => c.user?.type === 'Bot' && (c.body || '').includes(marker));
+            const upsert = async (body) => {
+              const final = `${marker}\n${body}`;
+              if (existing) {
+                if (existing.body.trim() !== final.trim()) await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body: final });
+              } else await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: final });
+            };
+
+            const labels = (pr.labels || []).map(l => l.name);
+            const issueRefs = [...(pr.body || '').matchAll(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)/gi)].map(m => Number(m[1]));
+            let issueLabels = [];
+            if (issueRefs[0]) {
+              const issue = await github.rest.issues.get({ owner, repo, issue_number: issueRefs[0] }).catch(() => null);
+              issueLabels = (issue?.data?.labels || []).map(l => (l.name || '').toLowerCase());
+            }
+
+            const programs = detectPrograms({ body: pr.body || '', labels, headRef: pr.head.ref || '', issueLabels });
+
+            const remove = ['missing-program-classification','invalid-program-classification'];
+            for (const r of remove) await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: r }).catch(() => {});
+
+            if (programs.length === 0) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['missing-program-classification'] }).catch(() => {});
+              await upsert('## ⚠️ Program classification required\n\nPlease update your PR to specify exactly one program: **GSSOC**, **NSOC**, or **GENERAL**.\n\nUse the Program Type section in the template or add `program: gssoc|nsoc|general`.');
+              return;
+            }
+
+            if (programs.length > 1) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['invalid-program-classification'] }).catch(() => {});
+              await upsert(`## ⚠️ Program classification conflict\n\nDetected multiple program claims: ${programs.join(', ')}. Please keep exactly one.`);
+              return;
+            }
+
+            const program = programs[0];
+            await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'gssoc26' }).catch(() => {});
+            await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'nsoc26' }).catch(() => {});
+            await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: 'general-contribution' }).catch(() => {});
+            const labelMap = { gssoc: 'gssoc26', nsoc: 'nsoc26', general: 'general-contribution' };
+            await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: [labelMap[program]] }).catch(() => {});
+            await upsert(`## ✅ Program classification set\n\nDetected program: **${program.toUpperCase()}**.`);

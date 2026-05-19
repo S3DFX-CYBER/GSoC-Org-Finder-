@@ -2,12 +2,10 @@ name: 👋 Issue Welcome Bot
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
 
 permissions:
   issues: write
-  contents: read
 
 concurrency:
   group: issue-welcome-${{ github.event.issue.number }}
@@ -16,118 +14,41 @@ concurrency:
 jobs:
   welcome:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Welcome contributor
-        uses: actions/github-script@v8
-
+      - uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
           script: |
             const issue = context.payload.issue;
-
-            if (!issue) return;
-            if (issue.pull_request) return;
-            if (issue.user.type === 'Bot') return;
+            if (!issue || issue.pull_request || issue.user.type === 'Bot') return;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
             const issue_number = issue.number;
             const username = issue.user.login;
+            const MARKER = '<!-- issue-welcome-bot -->';
 
-            const MARKER =
-              '<!-- issue-welcome-bot -->';
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.find(c => (c.body || '').includes(MARKER));
+            if (existing) return;
 
-            // Prevent duplicate welcome comments
-            const comments =
-              await github.paginate(
-                github.rest.issues.listComments,
-                {
-                  owner,
-                  repo,
-                  issue_number,
-                  per_page: 100
-                }
-              );
+            const body = `${MARKER}
+# 👋 Welcome @${username}
 
-            const alreadyWelcomed =
-              comments.some(c =>
-                c.body &&
-                c.body.includes(MARKER)
-              );
+Thanks for opening an issue! We’ll run quick quality + duplicate checks and keep you updated.
 
-            if (alreadyWelcomed) {
-              core.info('Welcome already posted');
-              return;
-            }
+**Want to work on an issue?** Use:
+- \`/assign gssoc\`
+- \`/assign nsoc\`
+- \`/assign\` (general)
 
-            const body = [
-              MARKER,
-              ``,
-              `# 👋 Welcome @${username}`,
-              ``,
-              `Thanks for opening an issue in **${repo}** 🚀`,
-              ``,
-              `Our automation system will now:`,
-              ``,
-              `- classify the issue`,
-              `- apply labels`,
-              `- check issue quality`,
-              `- detect duplicates`,
-              `- prepare assignment eligibility`,
-              ``,
-              `---`,
-              ``,
-              `# 📘 Contributor Guides`,
-              ``,
-              `| Program | Guide |`,
-              `|---|---|`,
-              `| GSSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
-              `| NSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md |`,
-              `| General | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
-              ``,
-              `---`,
-              ``,
-              `# 🧭 Assignment Flow`,
-              ``,
-              `After triage completes, request assignment using:`,
-              ``,
-              '```',
-              `/assign gssoc`,
-              `/assign nsoc`,
-              '```',
-              ``,
-              `Depending on issue difficulty and verification status,`,
-              `assignment may be:`,
-              ``,
-              `- automatic`,
-              `- mentor-approved`,
-              `- maintainer-reviewed`,
-              ``,
-              `Two mentors may be requested automatically for validation.`,
-              ``,
-              `---`,
-              ``,
-              `# ⚠️ Important`,
-              ``,
-              `- Do NOT start work before assignment confirmation`,
-              `- Maximum active assignments: 3`,
-              `- Low-quality or AI-spam PRs may be rejected`,
-              `- Inactive assignments may be automatically removed`,
-              `- Follow repository contribution guidelines carefully`,
-              ``,
-              `Happy contributing 💙`
-            ].join('\n');
+Please wait for assignment confirmation before starting work. Inactive assignments may be released so others can contribute.
 
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body
-            });
+Helpful guides:
+- GSSOC: https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md
+- NSOC: https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md
+- General: https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md
 
-            core.info(
-              `Posted welcome message on issue #${issue_number}`
-            );
+Our active mentor routing system helps keep reviews moving 🚀`;
+
+            await github.rest.issues.createComment({ owner, repo, issue_number, body });

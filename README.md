@@ -1,37 +1,72 @@
+<div align="center">
+
 # 🚀 GSoC 2026 Org Finder
 
-> **Find your perfect Google Summer of Code 2026 organization — filtered by tech stack, domain, competition level, and live GitHub activity.**
-<img width="1896" height="800" alt="image" src="https://github.com/user-attachments/assets/414e4b55-ec50-4290-97a6-678f23e7c96e" />
+## Find your perfect Google Summer of Code 2026 organization
 
-**Live site → [https://findmygsoc.vercel.app/](https://findmygsoc.vercel.app/)**
+Discover organizations based on **tech stack, domains, competition level, GitHub activity, and beginner-friendly issues** — all in one place.
 
-Join our Channel for community-related questions and feedback
-**Discord → [https://discord.gg/mgWV3xSV7](https://discord.gg/mgWV3xSV7)**
+<p align="center">
+  <a href="https://findmygsoc.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Project-blue?style=for-the-badge" alt="Live Demo badge">
+  </a>
+  
+  <a href="https://discord.gg/mgWV3xSV7">
+    <img src="https://img.shields.io/badge/💬_Discord-Join_Community-5865F2?style=for-the-badge" alt = "Discord badge">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Stars"/>
+  <img src="https://img.shields.io/github/forks/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Forks"/>
+  <img src="https://img.shields.io/github/issues/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Issues"/>
+  <img src="https://img.shields.io/github/license/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub License"/>
+
+</p>
+
+<img width="100%" alt="Project Banner" src="https://github.com/user-attachments/assets/414e4b55-ec50-4290-97a6-678f23e7c96e" />
+
+</div>
 
 ---
-
 ## ✨ What is this?
 
-A fast, beautiful, single-page tool that helps GSoC 2026 applicants cut through all **184 selected organizations** and instantly find the ones that match *their* skills and interests.
+GSoC 2026 Org Finder is a fast, modern, and beginner-friendly platform for exploring Google Summer of Code organizations based on tech stack, domains, interests, and contribution goals.
 
-No sign-up. No install. No build step. Just open and explore.
+Instead of manually browsing through **184+ organizations**, users can:
+
+- 🔍 Search by technology, domain, or keyword  
+- 🏷️ Filter by languages, categories, and competition level  
+- ⚖️ Compare organizations side-by-side  
+- 🟢 Discover beginner-friendly Good First Issues  
+- 📈 Track live GitHub activity and project insights  
+
+Built with a responsive and lightweight architecture, the platform delivers a seamless experience across desktop and mobile devices.
+
+> No sign-up. No setup. Just explore, compare, and begin your open-source journey 🚀
 
 ---
 
+<div align="center">
+
 ## 📖 Table of Contents
-- [What is this?](#-what-is-this)
-- [Features](#-features)
-- [Flowchart](#-flowchart)
-- [Project Structure](#-project-structure)
-- [URL Validation](#-url-validation)
-- [Deploy Your Own](#-deploy-your-own)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [Project Admin](#-project-admin)
-- [GSSoC Mentors](#-gssoc-mentors)
-- [Key Dates](#-gsoc-2026-key-dates)
-- [Tips for Users](#-tips-for-users)
-- [License](#-license)
+
+| Section | Description |
+|----------|-------------|
+| [✨ What is this?](#-what-is-this) | Overview of the project |
+| [🎯 Features](#-features) | Core functionalities and highlights |
+| [📈 Flowchart](#-flowchart) | Visual representation of project workflow |
+| [📁 Project Structure](#-project-structure) | Repository folder structure |
+| [🔍 URL Validation](#-url-validation) | URL validation system and checks |
+| [🚀 Deploy Your Own](#-deploy-your-own) | Deployment and setup guide |
+| [🐛 Troubleshooting](#-troubleshooting) | Common issues and fixes |
+| [🤝 Contributing](#-contributing) | Contribution guidelines and workflow |
+| [👥 GSSoC Mentors](#-gssoc-mentors) | Mentors supporting the project |
+| [📅 Key Dates](#-gsoc-2026-key-dates) | Important GSoC 2026 timeline |
+| [💡 Tips for Users](#-tips-for-users) | Helpful usage tips and shortcuts |
+| [📄 License](#-license) | Project license information |
+
+</div>
 
 ---
 
@@ -41,81 +76,168 @@ No sign-up. No install. No build step. Just open and explore.
 
 ---
 
-## 🎯 Features
+# 🚀 Features
 
-### Features at a glance
+<div align="center">
 
-| Feature | Details |
-|---------|---------|
-| 🔍 Search | Full-text across 184 orgs |
-| 🏷️ Filters | 15+ domains, 30+ languages |
-| ⚖️ Compare | Up to 3 organizations side-by-side |
-| 🟢 Good Issues | Browse beginner-friendly issues |
-| ⌨️ Keyboard Nav | Full accessibility support |
-| 🌙 Dark Mode | Fully themed |
-| 📱 Responsive | Mobile to desktop |
+## 🚀 Features at a Glance
 
-### 🔍 Discovery & Filtering
-- 🔎 **Full-text search** by org name, technology, or topic
-- 🏷️ **Domain filter** — Science, Web, Security, AI, OS, Media, Infrastructure, and more
-- 💻 **Language filter** — Python, Rust, Go, C++, Java, JavaScript, Haskell, Julia, and more
-- 🎯 **Multi-select language pills** — stack multiple languages for combined matching
-- ⚡ **Quick chips** — one-tap filters for Veterans only, Newcomers, High/Low competition, Actively Maintained
-- 📊 **Sort by** — Alphabetical, Most Experienced, Newcomers First, Least Competitive, Most Stars, Good First Issues
+| ✨ Feature | 📖 Description |
+|-----------|----------------|
+| 🔍 Smart Search | Search across 184+ organizations |
+| 🏷️ Advanced Filters | Filter by domains and languages |
+| ⚖️ Organization Compare | Compare up to 3 organizations |
+| 🟢 Good First Issues | Find beginner-friendly issues |
+| ⌨️ Keyboard Navigation | Full accessibility support |
+| 🌙 Dark Mode | Clean dark/light interface |
+| 📱 Fully Responsive | Works on all screen sizes |
 
-### 📊 Live GitHub Data
-- 🌟 **Live GitHub stats** — Stars , Forks , Open Issues , Last Commit  — fetched via a serverless proxy 
-- 🟢 **Good First Issues count** — shown on every card and sortable, perfect for finding beginner-friendly orgs 
-- 🎖️ **Activity badge** — Active  / Moderate  / Low  based on last commit date
-- 🔗 **Smart repo links** — single-project orgs link directly to their repo ; umbrella orgs (Apache, OWASP, KDE…) link to their GitHub org page 
+</div>
 
-### 📋 Organization Detail Modal
-- 📖 Full description, tech stack tags,  "Best Fit For" profiles
-- 📅 GSoC participation timeline (every year the org has participated)
-- 📈 Key metrics: years in GSoC, competition level, first year, Good First Issues count
-- 💡 **Project Ideas Link** — direct link to organization's ideas page (with security-hardened 🔒 URL validation)
-- ⚠️ Fallback message when no ideas link is available
-- ➕ One-click add to comparison
+---
 
-### ⚖️ Comparison Mode
-- 🏆 Select up to **3 organizations** side-by-side
-- 📊 Compares: category, GSoC years, competition, stars, forks, open issues, last commit, 🟢 Good First Issues, languages
-- 🟢 Green/🔴 red highlighting for best and worst values across each metric
+## 🔎 Discovery & Filtering
 
-### 🟢 Good First Issues Page
-- 📄 Dedicated full-screen page listing **Good First Issues from all 184 orgs** 
-- ⚡ Fetched live via the GitHub API proxy (uses your token , respects rate limits )
-- 🔎 Filter by category , language , or free-text search 
-- 🔗 Each issue links directly to GitHub — sorted newest first 
-- 🖼️ Shows org logo, issue title, labels , comment count , and relative date 
+Easily explore organizations using powerful and beginner-friendly filtering tools designed to simplify the GSoC organization discovery process.
 
-### ⏱ Deadline Countdown
-- ⏰ Live countdown banner to application open date (March 16, 2026)
-- 🔄 Automatically switches to "Applications Closing In" during the open window (Mar 16 – Apr 8)
+| Feature | Description |
+|---------|-------------|
+| 🔍 Full-text Search | Search organizations by name, tech stack, or topic |
+| 🏷️ Language Filters | Filter using multiple programming languages |
+| 📊 Competition Filter | Explore high, medium, or low competition orgs |
+| 🟢 Activity Badges | Identify actively maintained organizations |
+| ⚡ Quick Category Chips | Instantly filter by domains and interests |
+| 🌱 Beginner Recommendations | Discover newcomer-friendly organizations |
 
-### 🔥 Trending Section
-- 📈 Shows the most-viewed organizations based on your own browsing history 👀
-- 💾 Powered by localStorage analytics — zero data sent to any server (100% private)
+---
 
-### ⌨️ Keyboard Navigation
-- `↑ ↓ ← →` — move focus between cards
-- `Enter` — open focused card's modal
-- `C` — toggle compare for focused card
-- `Esc` — close any open panel
+## 📊 Live GitHub Integration
 
-### 📊 Usage Analytics Panel
-- Tracks your own session: visits, searches, org views, filters used, session time
-- Top categories browsed, most-viewed orgs, popular search terms
-- All stored locally in your browser — nothing leaves your device
+| Feature | Description |
+|----------|-------------|
+| 🌟 **Live GitHub Stats** | View Stars, Forks, Issues, and Last Commit data |
+| 🟢 **Good First Issues** | Track beginner-friendly issues on every org card |
+| 🎖️ **Activity Badge** | Shows Active, Moderate, or Low repository activity |
+| 🔗 **Smart Repo Links** | Redirects to project repos or GitHub org pages |
+| 📈 **Project Insights** | Analyze repository health and activity |
+| ⚡ **Fast Fetching** | Lightweight and optimized GitHub integration |
 
-### 🌙 Dark / Light Mode
-- Fully themed dark mode with warm ink/cream palette
-- Preference persisted across sessions
+---
 
-### 📱 Fully Responsive
-- Works on mobile, tablet, and desktop
-- Three breakpoints: 900px (tablet), 640px (phone), 380px (small phone)
-- Stats bar scrolls horizontally on mobile instead of stacking
+```mermaid
+flowchart TD
+    A([🏢 Organization Card])
+
+    A --> B[📖 Tech Stack]
+    A --> C[📅 GSoC Timeline]
+    A --> D[📈 Competition Metrics]
+    A --> E[🟢 Good First Issues]
+    A --> F[💡 Ideas Page]
+    A --> G[⚖️ Compare System]
+
+    D --> H[⭐ Stars & Forks]
+    D --> I[🔥 Activity Badge]
+
+    style A fill:#d4af37,color:#000,stroke:#2c2420,stroke-width:3px
+    style B fill:#1f2937,color:#fff
+    style C fill:#5d4037,color:#fff
+    style D fill:#0f766e,color:#fff
+    style E fill:#166534,color:#fff
+    style F fill:#7c3aed,color:#fff
+    style G fill:#b45309,color:#fff
+    style H fill:#374151,color:#fff
+    style I fill:#991b1b,color:#fff
+```
+---
+
+## ⚖️ Comparison System
+
+Easily compare up to **3 organizations side-by-side** to identify the best fit for your skills and contribution goals.
+
+| Metric | Comparison |
+|--------|-------------|
+| 📊 Competition | High, medium, or low competition |
+| 📅 GSoC Experience | Years participating in GSoC |
+| ⭐ GitHub Stats | Stars, forks, and activity |
+| 🟢 Good First Issues | Beginner-friendly opportunities |
+| 💻 Tech Stack | Languages and domains |
+| 🔥 Repository Health | Activity and maintenance status |
+
+---
+
+# ✨ User Experience Features
+
+<table>
+<tr>
+
+<td align="center" width="25%">
+
+### ⌨️ Smart Navigation
+
+```text
+┌─────────────────┐
+│ ↑ ↓ ← → Navigate│
+│ Enter → Open    │
+│ C → Compare     │
+│ Esc → Close     │
+└─────────────────┘
+```
+
+⚡ Fast keyboard-first browsing
+
+</td>
+
+<td align="center" width="25%">
+
+### 📊 Local Analytics
+
+```text
+┌─────────────────┐
+│ 👀 Org Views    │
+│ 🔎 Searches     │
+│ ⏱ Session Time  │
+│ 📈 Trends       │
+└─────────────────┘
+```
+
+🔒 100% private browser storage
+
+</td>
+
+<td align="center" width="25%">
+
+### 🌙 Theme Engine
+
+```text
+┌─────────────────┐
+│ ☀️ Light Mode   │
+│        ⇅        │
+│ 🌙 Dark Mode    │
+└─────────────────┘
+```
+
+💾 Preferences saved automatically
+
+</td>
+
+<td align="center" width="25%">
+
+### 📱 Responsive UI
+
+```text
+┌─────────────────┐
+│ 💻 Desktop      │
+│ 📟 Tablet       │
+│ 📱 Mobile       │
+└─────────────────┘
+```
+
+⚡ Optimized for all screen sizes
+
+</td>
+
+</tr>
+</table>
 
 ---
 
@@ -326,10 +448,25 @@ The Edge Function proxies GitHub API calls so your token never hits the client.
 | `GET /api/github?repo=owner/repo&gfi=1&issues=1` | Full list of up to 30 open Good First Issues |
 
 All responses are cached in-memory for **1 hour** on the Edge runtime.
-## We are officially a Project for Nexus Spring of Code 2026 and GirlScript Summer of Code 2026
-<img width="400" height="300" alt="Gemini_Generated_Image_1eyond1eyond1eyo" src="https://github.com/user-attachments/assets/0cfe15fe-2d4a-4389-9a0b-8cf8d0cfd8cd" />
+# 🚀 Official Open Source Program Project
 
+<div align="center">
 
+## 🌟 Proudly Participating In
+
+## Nexus Spring of Code 2026 (NSoC'26)  
+## GirlScript Summer of Code 2026 (GSSoC'26)
+
+<img 
+  width="420"
+  alt="GSSoC & NSoC Banner"
+  src="https://github.com/user-attachments/assets/0cfe15fe-2d4a-4389-9a0b-8cf8d0cfd8cd"
+  style="border:4px solid #d4af37; border-radius:18px; padding:6px;"
+/>
+
+--- 
+
+</div>
 
 ## 🔑 Project Admin
 
@@ -488,17 +625,6 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/syedrazamd"><img src="https://github.com/syedrazamd.png" width="50px" alt="syedrazamd" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=S3DFX-CYBER%2FGSoC-Org-Finder-&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
- </picture>
-</a>
-
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

@@ -3060,6 +3060,71 @@ document.addEventListener('keydown', (e) => {
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+
+ let focusedIdx = -1;
+
+  function moveFocus(prevIdx, nextIdx) {
+    const g = document.getElementById('orgGrid');
+    if (prevIdx >= 0) {
+      g?.querySelectorAll('article[data-org]')[prevIdx]?.classList.remove('ring-2', 'ring-primary');
+    }
+    const cards = g?.querySelectorAll('article[data-org]');
+    const card = cards?.[nextIdx];
+    if (card) {
+      card.classList.add('ring-2', 'ring-primary');
+      card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (document.activeElement?.isContentEditable) return;
+
+    const cards = document.getElementById('orgGrid')?.querySelectorAll('article[data-org]');
+    const n = cards?.length || 0;
+    if (!n) return;
+
+    const cols = (() => {
+      const g = document.getElementById('orgGrid');
+      if (!g || !g.children.length) return 3;
+      const firstRect = g.children[0].getBoundingClientRect();
+      let c = 1;
+      for (let i = 1; i < g.children.length; i++) {
+        if (Math.abs(g.children[i].getBoundingClientRect().top - firstRect.top) < 5) c++;
+        else break;
+      }
+      return c;
+    })();
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const prev = focusedIdx;
+      focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + 1, n - 1);
+      moveFocus(prev, focusedIdx);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prev = focusedIdx;
+      focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - 1, 0);
+      moveFocus(prev, focusedIdx);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const prev = focusedIdx;
+      focusedIdx = focusedIdx < 0 ? 0 : Math.min(focusedIdx + cols, n - 1);
+      moveFocus(prev, focusedIdx);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = focusedIdx;
+      focusedIdx = focusedIdx < 0 ? 0 : Math.max(focusedIdx - cols, 0);
+      moveFocus(prev, focusedIdx);
+    } else if (e.key === 'Enter' && focusedIdx >= 0 && focusedIdx < n) {
+      const orgName = cards[focusedIdx].dataset.org;
+      if (orgName) openModal(orgName);
+    } else if (e.key === '/') {
+      e.preventDefault();
+      document.getElementById('hero-search')?.focus();
+    }
+  });
 </script>
 
 <!-- Vercel Speed Insights -->

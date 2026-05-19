@@ -596,9 +596,14 @@ function applyFilters(){
     res.sort((a,b) => applySecondarySort(a, b, sort));
   }
 
-  filteredOrgs=res;
-  focusedIdx=-1;
-  renderGrid(res);
+filteredOrgs = res;
+
+// Only reset focus if current index is invalid
+if (focusedIdx >= filteredOrgs.length) {
+  focusedIdx = filteredOrgs.length - 1;
+}
+
+renderGrid(res);
   document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
@@ -806,6 +811,20 @@ function renderGrid(orgs){
   }).join('');
 }
 
+
+
+
+
+document.addEventListener('keydown', e => {
+  console.log(
+    'key:',
+    e.key,
+    'active:',
+    document.activeElement?.tagName,
+    document.activeElement?.className
+  );
+});
+
 function updateStats(){
   document.getElementById('totalStat').textContent=ORGS.length;
   document.getElementById('veteranStat').textContent=ORGS.filter(o=>o.years>=8).length;
@@ -828,74 +847,142 @@ const GRID_COLS=()=>{
   return cols;
 };
 
-document.addEventListener('keydown',e=>{
-  // Close modals first
-  if(e.key==='Escape'){
-    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
-    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
-    if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
+document.addEventListener('keydown', (e) => {
+
+  // Ignore typing fields ONLY
+  const tag = document.activeElement?.tagName;
+  const isTyping =
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    tag === 'SELECT' ||
+    document.activeElement?.isContentEditable;
+
+  if (isTyping) return;
+
+  // ESC closes modals
+  if (e.key === 'Escape') {
+    if (document.getElementById('modalBg')?.classList.contains('open')) {
+      closeModal();
+      return;
+    }
+
+    if (document.getElementById('compareBg')?.classList.contains('open')) {
+      closeCompare();
+      return;
+    }
+
+    if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
+      return;
+    }
   }
-  // Don't hijack when typing in inputs
-  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
-  const n=filteredOrgs.length;
-  if(!n)return;
-  const cols=GRID_COLS();
-  if(e.key==='ArrowRight'){
+
+  const n = filteredOrgs.length;
+  if (!n) return;
+
+  const cols = GRID_COLS();
+
+  // RIGHT
+  if (e.key === 'ArrowRight') {
     e.preventDefault();
-    focusedIdx=Math.min(focusedIdx+1,n-1);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowLeft'){
+
+    const prev = focusedIdx;
+
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.min(focusedIdx + 1, n - 1);
+
+    moveFocus(prev, focusedIdx);
+  }
+
+  // LEFT
+  else if (e.key === 'ArrowLeft') {
     e.preventDefault();
-    focusedIdx=Math.max(focusedIdx-1,0);
-    if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowDown'){
+
+    const prev = focusedIdx;
+
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.max(focusedIdx - 1, 0);
+
+    moveFocus(prev, focusedIdx);
+  }
+
+  // DOWN
+  else if (e.key === 'ArrowDown') {
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.min(focusedIdx+cols,n-1);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='ArrowUp'){
+
+    const prev = focusedIdx;
+
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.min(focusedIdx + cols, n - 1);
+
+    moveFocus(prev, focusedIdx);
+  }
+
+  // UP
+  else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    if(focusedIdx<0)focusedIdx=0;
-    else focusedIdx=Math.max(focusedIdx-cols,0);
-    scrollToFocused();renderGrid(filteredOrgs);
-  } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
-    openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
-  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
+
+    const prev = focusedIdx;
+
+    if (focusedIdx < 0) focusedIdx = 0;
+    else focusedIdx = Math.max(focusedIdx - cols, 0);
+
+    moveFocus(prev, focusedIdx);
+  }
+
+  // ENTER
+  else if (e.key === 'Enter') {
+    if (focusedIdx >= 0 && focusedIdx < n) {
+      openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
+    }
+  }
+
+  // C
+  else if (e.key.toLowerCase() === 'c') {
     e.preventDefault();
-    toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
-  } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+
+    if (focusedIdx >= 0 && focusedIdx < n) {
+      toggleCompare(
+        ORGS.indexOf(filteredOrgs[focusedIdx]),
+        null
+      );
+    }
+  }
+
+  // /
+  else if (e.key === '/') {
     e.preventDefault();
-    document.getElementById('searchInput').focus();
+    document.getElementById('searchInput')?.focus();
   }
 });
 
-function scrollToFocused(){
-  setTimeout(()=>{
-    const g=document.getElementById('orgGrid');
-    const card=g?.querySelector(`[data-filtered-idx="${focusedIdx}"]`);
-    if(card)card.scrollIntoView({block:'nearest',behavior:'smooth'});
-  },30);
+function moveFocus(prevIdx, nextIdx) {
+  const g = document.getElementById('orgGrid');
+  if (prevIdx >= 0) {
+    g?.querySelector(`[data-filtered-idx="${prevIdx}"]`)?.classList.remove('focused');
+  }
+  const card = g?.querySelector(`[data-filtered-idx="${nextIdx}"]`);
+  if (card) {
+    card.classList.add('focused');
+
+card.focus();
+
+card.scrollIntoView({
+  block: 'nearest',
+  behavior: 'smooth'
+});
+  }
 }
 
 // ══════════════════════════════════════════════
 // PILLS & CHIPS
 // ══════════════════════════════════════════════
-function togglePill(el){
-  const l=el.dataset.lang;
-  const isActive = el.classList.toggle('active');
-  el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-  if(isActive)pills.add(l);else pills.delete(l);
-  renderSelectedLanguages();
-  applyFilters();
-}
 
 // ══════════════════════════════════════════════
 // SELECTED LANGUAGES STRIP
 // ══════════════════════════════════════════════
 // Expose to global scope for HTML onclick handlers
-globalThis.togglePill = togglePill;
+//globalThis.togglePill = togglePill;
 
 globalThis.renderSelectedLanguages = renderSelectedLanguages;
 function renderSelectedLanguages(){
@@ -1334,9 +1421,19 @@ requestAnimationFrame(()=>{
     }
   }
   applyFilters();
-  renderTrending();
-  loadCachedIssues();
-  checkAPI();
+
+// Initialize keyboard focus
+if (filteredOrgs.length > 0) {
+  focusedIdx = 0;
+
+  requestAnimationFrame(() => {
+    moveFocus(-1, 0);
+  });
+}
+
+renderTrending();
+loadCachedIssues();
+checkAPI();
 });
 
 // Sync hero search with hidden search input and initialize on load

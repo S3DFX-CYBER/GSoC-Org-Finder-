@@ -4,6 +4,11 @@ const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_SIZE = 1000;
 
+/**
+ * Safely adds an item to the cache, evicting the oldest item if the maximum size is reached.
+ * @param {string} key - The cache key.
+ * @param {any} value - The data to cache.
+ */
 function safeCacheSet(key, value) {
   if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
     const firstKey = CACHE.keys().next().value;
@@ -12,6 +17,12 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+/**
+ * Main Vercel Edge Function handler for GitHub API proxy requests.
+ * Parses incoming requests and routes them to the appropriate GitHub API endpoints.
+ * @param {Request} req - The incoming HTTP request.
+ * @returns {Promise<Response>} The HTTP response containing GitHub data or an error.
+ */
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -43,14 +54,58 @@ export default async function handler(req) {
   }
 
   const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    return new Response(JSON.stringify({ error: 'No token' }), { status: 500, headers });
-  }
 
   const ghHeaders = {
-    Authorization: `token ${token}`,
     Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'gsoc-org-finder',
+  };
+
+  if (token) {
+    ghHeaders.Authorization = `token ${token}`;
+  }
+
+  // GitHub uses 403 for both rate-limiting and access/abuse blocks.
+  // Inspect headers to return the correct status to callers.
+  /**
+   * Classifies a 403 Forbidden response from GitHub to determine if it is a rate limit or an access restriction.
+   * @param {Response} res - The fetch Response object from GitHub.
+   * @returns {{status: number, error: string}} An object containing the appropriate HTTP status code and error message.
+   */
+  const classify403 = (res) => {
+    const remaining = res.headers.get('X-RateLimit-Remaining');
+    const retryAfter = res.headers.get('Retry-After');
+    const isRateLimit = remaining === '0' || retryAfter !== null;
+    return isRateLimit
+      ? { status: 429, error: 'GitHub API rate limit exceeded. Please try again later.' }
+      : { status: 403, error: 'GitHub API access restricted for this resource.' };
+  };
+
+  /**
+   * Helper function to fetch data from GitHub with a default timeout and 401 Unauthorized fallback.
+   * If a 401 is received, it retries the request without the Authorization header for public access.
+   * @param {string} url - The GitHub API URL to fetch.
+   * @param {RequestInit} [options={}] - Optional fetch options.
+   * @returns {Promise<Response>} The fetch Response object.
+   */
+  const fetchGitHub = async (url, options = {}) => {
+    // Apply a default 10s timeout when the caller hasn't provided one
+    const controller = options.signal ? null : new AbortController();
+    const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
+    const composedOptions = controller
+      ? { ...options, signal: controller.signal }
+      : options;
+
+    try {
+      let res = await fetch(url, composedOptions);
+      if (res.status === 401 && composedOptions.headers?.Authorization) {
+        const fallbackHeaders = { ...composedOptions.headers };
+        delete fallbackHeaders.Authorization;
+        res = await fetch(url, { ...composedOptions, headers: fallbackHeaders });
+      }
+      return res;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
   };
 
   // MODE: ?user=username → return user profile analysis for AI recommender
@@ -66,12 +121,16 @@ export default async function handler(req) {
       let repos = [];
       while (page <= 3) {
         try {
-          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
+          const res = await fetchGitHub(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
           if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            if (page === 1) {
+              if (res.status === 404) return new Response(JSON.stringify({ error: 'GitHub user not found' }), { status: 404, headers });
+              if (res.status === 403) { const { status, error } = classify403(res); return new Response(JSON.stringify({ error }), { status, headers }); }
+              return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            }
             break;
           }
           const pageRepos = await res.json();
@@ -140,7 +199,7 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
+      const res = await fetchGitHub(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
       );
@@ -173,7 +232,7 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
+      const res = await fetchGitHub(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
       );
@@ -197,8 +256,8 @@ export default async function handler(req) {
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+      fetchGitHub(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
+      fetchGitHub(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
     ]);
 
     if (!repoRes.ok) {

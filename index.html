@@ -1351,7 +1351,8 @@
   function updateScrollTopButton() {
     if (!scrollTopBtn) return;
 
-    const shouldShow = window.scrollY > SCROLL_TOP_THRESHOLD;
+    const currentScrollY = window.pageYOffset || document.documentElement.scrollTop || window.scrollY;
+    const shouldShow = currentScrollY > SCROLL_TOP_THRESHOLD;
     if (shouldShow === isScrollTopVisible) return;
     isScrollTopVisible = shouldShow;
 

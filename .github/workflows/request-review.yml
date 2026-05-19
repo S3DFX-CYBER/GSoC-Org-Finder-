@@ -54,13 +54,15 @@ jobs:
             }
 
             let reviewerPool = [];
+            const validUsername = /^[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?$/;
 
             try {
               const { data: file } = await github.rest.repos.getContent({
                 owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
               });
               const content = Buffer.from(file.content, 'base64').toString('utf8');
-              reviewerPool = JSON.parse(content).reviewers || [];
+              const parsed = JSON.parse(content);
+              reviewerPool = (parsed.reviewers || []).filter(r => validUsername.test(r));
             } catch (e) {
               core.warning(`Failed to load GSSOC mentors: ${e?.message || e}`);
               return;
@@ -89,14 +91,24 @@ jobs:
             let selected = [reviewerPool[idx1]];
             if (poolSize > 1) selected.push(reviewerPool[idx2]);
 
-            try {
-              await github.rest.pulls.requestReviewers({
-                owner, repo, pull_number: prNumber, reviewers: selected
-              });
-              core.info(`Requested reviewers: ${selected.join(', ')}`);
-            } catch (err) {
-              core.warning(`Failed to request reviewers: ${err?.message || err}`);
+            const successfulReviewers = [];
+            for (const reviewer of selected) {
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner, repo, pull_number: prNumber, reviewers: [reviewer]
+                });
+                successfulReviewers.push(reviewer);
+              } catch (err) {
+                core.warning(`Failed to request review from @${reviewer} (may not be a collaborator): ${err?.message || err}`);
+              }
             }
+
+            if (successfulReviewers.length === 0) {
+              core.warning('No mentors could be requested as reviewers. They may not be collaborators.');
+              return;
+            }
+
+            core.info(`Requested reviewers: ${successfulReviewers.join(', ')}`);
 
             try {
               await github.rest.issues.addLabels({
@@ -104,4 +116,17 @@ jobs:
               });
             } catch (e) {
               core.warning(`Failed to add mentor-review-requested label: ${e?.message || e}`);
+            }
+
+            try {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber,
+                body: `## 👥 Stage 2 — Mentor Review\n\n` +
+                  `GSSOC mentors have been requested to review this PR:\n\n` +
+                  successfulReviewers.map(s => `- @${s}`).join('\n') + '\n\n' +
+                  `At least **1 mentor approval** is required to proceed to Stage 3.\n\n` +
+                  `Mentors: please review and approve if the contribution meets quality standards.`
+              });
+            } catch (e) {
+              core.warning(`Failed to post Stage 2 comment: ${e?.message || e}`);
             }

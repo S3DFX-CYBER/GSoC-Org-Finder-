@@ -1,51 +1,25 @@
+import { ipAddress } from '@vercel/functions';
+import { kv } from '@vercel/kv';
+
 // api/github.js — Vercel Edge Function
 export const config = { runtime: 'edge' };
-const CACHE = new Map();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
-const CACHE_MAX_SIZE = 1000;
+const CACHE_TTL_SECONDS = 3600; // 1 hour
 
-function safeCacheSet(key, value) {
-  if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
-    const firstKey = CACHE.keys().next().value;
-    CACHE.delete(firstKey);
-  }
-  CACHE.set(key, value);
-}
-
-// IP-based Rate Limiter (in-memory per isolate)
-const RATE_LIMIT_MAP = new Map();
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 60; // 60 requests per minute per IP
 
-function checkRateLimit(ip) {
+async function checkRateLimit(ip) {
   const targetIp = ip || 'unknown';
-  const now = Date.now();
-  const record = RATE_LIMIT_MAP.get(targetIp) || { count: 0, startTime: now };
-  
-  if (now - record.startTime > RATE_LIMIT_WINDOW_MS) {
-    record.count = 1;
-    record.startTime = now;
-  } else {
-    record.count++;
-  }
-  
-  if (RATE_LIMIT_MAP.size > 2000) {
-    let deleted = false;
-    for (const [key, val] of RATE_LIMIT_MAP.entries()) {
-      if (now - val.startTime > RATE_LIMIT_WINDOW_MS) {
-        RATE_LIMIT_MAP.delete(key);
-        deleted = true;
-        break;
-      }
+  const key = `rl_${targetIp}`;
+  try {
+    const current = await kv.incr(key);
+    if (current === 1) {
+      await kv.expire(key, 60);
     }
-    if (!deleted) {
-      const firstKey = RATE_LIMIT_MAP.keys().next().value;
-      RATE_LIMIT_MAP.delete(firstKey);
-    }
+    return current <= MAX_REQUESTS_PER_WINDOW;
+  } catch (e) {
+    console.warn('KV rate limit fallback', e);
+    return true; // Allow if KV is not configured
   }
-  
-  RATE_LIMIT_MAP.set(targetIp, record);
-  return record.count <= MAX_REQUESTS_PER_WINDOW;
 }
 
 export default async function handler(req) {
@@ -60,18 +34,9 @@ export default async function handler(req) {
     return new Response(null, { status: 204, headers });
   }
 
-  const forwarded = req.headers.get('x-forwarded-for');
-  let ip = 'unknown';
-  if (forwarded) {
-    const parts = forwarded.split(',');
-    ip = parts[0].trim() || 'unknown';
-  } else if (req.socket?.remoteAddress) {
-    ip = req.socket.remoteAddress;
-  } else if (req.connection?.remoteAddress) {
-    ip = req.connection.remoteAddress;
-  }
-
-  if (!checkRateLimit(ip)) {
+  const ip = ipAddress(req) || 'unknown';
+  const allowed = await checkRateLimit(ip);
+  if (!allowed) {
     return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }), { status: 429, headers });
   }
 
@@ -107,10 +72,10 @@ export default async function handler(req) {
   // MODE: ?user=username → return user profile analysis for AI recommender
   if (user) {
     const cacheKey = 'user__' + user;
-    const cached = CACHE.get(cacheKey);
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
-    }
+    try {
+      const cached = await kv.get(cacheKey);
+      if (cached) return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+    } catch (e) { /* ignore */ }
 
     try {
       let page = 1;
@@ -174,7 +139,7 @@ export default async function handler(req) {
         ts: Date.now()
       };
       
-      safeCacheSet(cacheKey, result);
+      try { await kv.set(cacheKey, result, { ex: CACHE_TTL_SECONDS }); } catch (e) { /* ignore */ }
       return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (err) {
@@ -185,10 +150,11 @@ export default async function handler(req) {
   // MODE: ?gfi=1&issues=1 → return actual issue items
   if (gfiMode && issuesMode) {
     const cacheKey = repo + '__issues';
-    const cached = CACHE.get(cacheKey);
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
-    }
+    try {
+      const cached = await kv.get(cacheKey);
+      if (cached) return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+    } catch (e) { /* ignore */ }
+    
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetch(
@@ -207,8 +173,11 @@ export default async function handler(req) {
         comments: i.comments,
         labels: (i.labels || []).map(l => ({ name: l.name, color: l.color })),
       }));
-      safeCacheSet(cacheKey, { total, items, ts: Date.now() });
-      safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
+      
+      try { 
+        await kv.set(cacheKey, { total, items, ts: Date.now() }, { ex: CACHE_TTL_SECONDS });
+        await kv.set(repo + '__gfi', { gfi: total, ts: Date.now() }, { ex: CACHE_TTL_SECONDS });
+      } catch (e) { /* ignore */ }
       return new Response(JSON.stringify({ total, items }), { status: 200, headers });
     } catch (err) {
       return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
@@ -218,10 +187,11 @@ export default async function handler(req) {
   // MODE: ?gfi=1 → return count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
-    const cached = CACHE.get(cacheKey);
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
-    }
+    try {
+      const cached = await kv.get(cacheKey);
+      if (cached) return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
+    } catch (e) { /* ignore */ }
+
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetch(
@@ -233,7 +203,9 @@ export default async function handler(req) {
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
-      if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
+      if (gfi !== null) {
+        try { await kv.set(cacheKey, { gfi, ts: Date.now() }, { ex: CACHE_TTL_SECONDS }); } catch (e) { /* ignore */ }
+      }
       return new Response(JSON.stringify({ gfi }), { status: 200, headers });
     } catch (err) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
@@ -241,10 +213,10 @@ export default async function handler(req) {
   }
 
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
-  const cached = CACHE.get(repo);
-  if (cached && Date.now() - cached.ts < CACHE_TTL) {
-    return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
-  }
+  try {
+    const cached = await kv.get(repo);
+    if (cached) return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+  } catch (e) { /* ignore */ }
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
@@ -288,7 +260,7 @@ export default async function handler(req) {
       ts: Date.now(),
     };
 
-    safeCacheSet(repo, result);
+    try { await kv.set(repo, result, { ex: CACHE_TTL_SECONDS }); } catch (e) { /* ignore */ }
     return new Response(JSON.stringify(result), { status: 200, headers });
 
   } catch (err) {

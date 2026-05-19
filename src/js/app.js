@@ -144,9 +144,23 @@ function validateIdeasUrl(ideasUrl) {
       return null;
     }
 
+    const hostname = urlObj.hostname;
+
+    // Reject URLs with embedded credentials to prevent phishing via userinfo (P2)
+    if (urlObj.username || urlObj.password) {
+      console.warn('Rejected URL with embedded credentials:', ideasUrl);
+      return null;
+    }
+
+    // Reject localhost and IP addresses to prevent local-network routing (P1)
+    // IPv4 check and IPv6 check (URL parses IPv6 with brackets)
+    if (hostname === 'localhost' || /^(?:\d{1,3}\.){3}\d{1,3}$/.test(hostname) || hostname.startsWith('[')) {
+      console.warn('Rejected local or IP-based hostname:', ideasUrl);
+      return null;
+    }
+
     // Require a valid domain with a TLD (must contain at least one dot)
-    // to prevent local-network routing or weird URI structures
-    if (!urlObj.hostname.includes('.') && urlObj.hostname !== 'localhost') {
+    if (!hostname.includes('.')) {
       console.warn('Rejected URL without valid domain:', ideasUrl);
       return null;
     }

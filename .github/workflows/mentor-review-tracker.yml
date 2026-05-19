@@ -1,0 +1,55 @@
+name: 📈 Mentor Review Tracker
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: mentor-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  track-review:
+    runs-on: ubuntu-latest
+
+    if: |
+      github.event.review.user.type != 'Bot' &&
+      github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Update mentor statistics
+        env:
+          REVIEWER: ${{ github.event.review.user.login }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          REVIEW_ID: ${{ github.event.review.id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node .github/scripts/update-mentor-stats.js
+
+      - name: Commit updated stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .github/reviewers/mentor-stats.json
+
+          git diff --cached --quiet && exit 0
+
+          git commit -m "chore: update mentor review stats"
+
+          git push

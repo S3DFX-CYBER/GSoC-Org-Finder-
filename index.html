@@ -45,15 +45,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-  /> 
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" />
 
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-  /> 
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function () {
@@ -207,20 +203,20 @@
     }
 
     .modal {
-     background: white;
-     width: 90%;
-     max-width: 700px;
-     max-height: 90vh;
-     border-radius: 2rem;
-     position: relative;
-     overflow: hidden;
+      background: white;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      border-radius: 2rem;
+      position: relative;
+      overflow: hidden;
 
-     display: flex;
-     flex-direction: column;
-     padding-top: 1px;
-     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-     transform: scale(0.9);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      padding-top: 1px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .modal-bg.open .modal {
@@ -228,20 +224,20 @@
     }
 
     .close-btn {
-     position: absolute;
-     top: 1.5rem;
-     right: 1.5rem;
-     z-index: 1000;
-     width: 2.5rem;
-     height: 2.5rem;
-     border-radius: 99px;
-     background: #f3f3f3;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     color: #555;
-     font-size: 1.2rem;
-    transition: all 0.2s;
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 99px;
+      background: #f3f3f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 1.2rem;
+      transition: all 0.2s;
     }
 
     .close-btn:hover {
@@ -278,13 +274,49 @@
       line-height: 1.5;
     }
 
-    .modal-body { padding: 0 3rem 3rem; }
-    .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
-    
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
-    .metric-card { background: #f9f9f9; padding: 1.2rem; border-radius: 1.2rem; border: 1px solid #eee; text-align: center; }
-    .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
-    .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
+    .modal-body {
+      padding: 0 3rem 3rem;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #aaa;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+      border-bottom: 1px solid #f3f3f3;
+      padding-bottom: 0.5rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .metric-card {
+      background: #f9f9f9;
+      padding: 1.2rem;
+      border-radius: 1.2rem;
+      border: 1px solid #eee;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #1a1c1c;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #888;
+    }
 
     .github-stats-container {
       background: #1a1a1a;
@@ -539,19 +571,61 @@
     }
 
     /* Minimal dark-mode support */
-    .dark body { background: #0f0f10; color: #e5e7eb; }
-    .dark .glass { background: rgba(24, 24, 27, 0.85); }
-    .dark .bg-white { background: #18181b !important; }
-    .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
-    .dark .text-zinc-300 { color: #a1a1aa !important; }
-    .dark .text-on-surface { color: #f4f4f5 !important; }
-    .dark .text-on-surface-variant { color: #a1a1aa !important; }
-    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
-    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
-    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+    .dark body {
+      background: #0f0f10;
+      color: #e5e7eb;
+    }
+
+    .dark .glass {
+      background: rgba(24, 24, 27, 0.85);
+    }
+
+    .dark .bg-white {
+      background: #18181b !important;
+    }
+
+    .dark .bg-surface-container-low {
+      background: #27272a !important;
+      color: #d4d4d8 !important;
+    }
+
+    .dark .text-zinc-900 {
+      color: #f4f4f5 !important;
+    }
+
+    .dark .text-zinc-600,
+    .dark .text-zinc-500,
+    .dark .text-zinc-400 {
+      color: #a1a1aa !important;
+    }
+
+    .dark .text-zinc-300 {
+      color: #a1a1aa !important;
+    }
+
+    .dark .text-on-surface {
+      color: #f4f4f5 !important;
+    }
+
+    .dark .text-on-surface-variant {
+      color: #a1a1aa !important;
+    }
+
+    .dark .border-zinc-100 {
+      border-color: #3f3f46 !important;
+    }
+
+    .dark .border-zinc-200 {
+      border-color: #3f3f46 !important;
+    }
+
+    .dark #timeline-milestones .bg-zinc-200 {
+      background-color: #3f3f46 !important;
+    }
+
+    .dark .hover\:bg-zinc-100\/50:hover {
+      background: rgba(63, 63, 70, 0.45) !important;
+    }
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -987,186 +1061,235 @@
 
 <body class="bg-background text-on-surface font-body antialiased">
 
-<!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
-      <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span class="material-symbols-outlined text-zinc-600">menu</span>
-      </button>
-      
-      <a href="#" class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
-          <span class="text-white font-bold text-sm">G</span>
-        </div>
-        <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
-      </nav>
-    </div>
-    
-    <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
-    <div class="flex items-center gap-2 sm:gap-3">
-    
-      <button id="themeToggleBtn" onclick="toggleTheme()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          dark_mode
-        </span>
-      </button>
-    
-      <!-- HELP BUTTON -->
-      <button id="helpBtn"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        title="Keyboard shortcuts (?)">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          help
-        </span>
-      </button>
-    
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
-        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-    
-        <span class="material-symbols-outlined text-sm">
-          star
-        </span>
-    
-        Star & Contribute
-      </a>
-    
-    </div>
-  </div>
-</header>
+  <!-- ═══════════════════ NAVBAR ═══════════════════ -->
+  <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+    <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+      <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+        <!-- Hamburger menu button (mobile only) -->
+        <button id="menuBtn" onclick="toggleMenu()"
+          class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors"
+          aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="material-symbols-outlined text-zinc-600">menu</span>
+        </button>
 
-<!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-  <!-- Backdrop -->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
-  
-  <!-- Menu Panel -->
-  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
-    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
-          <span class="text-white font-bold text-sm">G</span>
-        </div>
-        <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
+        <a href="#" class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold text-sm">G</span>
+          </div>
+          <span class="text-base sm:text-lg font-extrabold tracking-tighter text-zinc-900 font-headline"><span
+              class="hidden xs:inline">GSoC 2026 </span><span class="text-primary italic">Org Finder</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline"
+            data-section="timeline">Timeline</a>
+          <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors"
+            href="#orgs" data-section="orgs">Organizations</a>
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender"
+            data-section="ai-recommender">AI Recommender</a>
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist"
+            data-section="watchlist">Watchlist</a>
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues"
+            data-section="issues">Issues</a>
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors"
+            data-section="mentors">Mentors</a>
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide"
+            data-section="guide">Guide</a>
+        </nav>
       </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
-        <span class="material-symbols-outlined text-zinc-600">close</span>
-      </button>
-    </div>
-    
-    <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
-        <span class="material-symbols-outlined text-lg">business</span>
-        Organizations
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
-      </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
-        <span class="material-symbols-outlined text-lg">bookmark</span>
-        Watchlist
-      </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
-        <span class="material-symbols-outlined text-lg">bug_report</span>
-        Issues
-      </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
-        <span class="material-symbols-outlined text-lg">group</span>
-        Mentors
-      </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
-      </a>
-    </div>
-    
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
-      </a>
-    </div>
-  </nav>
-</div>
 
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
-        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
-        <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
+      <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
+      <div class="flex items-center gap-2 sm:gap-3">
+
+        <button id="themeToggleBtn" onclick="toggleTheme()"
+          class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+          aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+
+          <span class="material-symbols-outlined text-zinc-600">
+            dark_mode
+          </span>
+        </button>
+
+        <!-- HELP BUTTON -->
+        <button id="helpBtn"
+          class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+          title="Keyboard shortcuts (?)">
+
+          <span class="material-symbols-outlined text-zinc-600">
+            help
+          </span>
+        </button>
+
+        <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+          class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+
+          <span class="material-symbols-outlined text-sm">
+            star
+          </span>
+
+          Star & Contribute
+        </a>
+
       </div>
-      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
-        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
-      </h1>
-      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
-      </p>
-      <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
-      </div>
-      <!-- Surprise Button -->
-      <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
+    </div>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"
+      onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button"
+      aria-label="Close menu"></div>
+
+    <!-- Menu Panel -->
+    <nav
+      class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full"
+      id="menuPanel" aria-label="Main navigation">
+      <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+            <span class="text-white font-bold text-sm">G</span>
+          </div>
+          <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
+        </div>
+        <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-zinc-600">close</span>
         </button>
       </div>
-      <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+
+      <div class="p-4 space-y-1">
+        <a href="#timeline" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="timeline">
+          <span class="material-symbols-outlined text-lg">schedule</span>
+          Timeline
+        </a>
+        <a href="#orgs" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="orgs">
+          <span class="material-symbols-outlined text-lg">business</span>
+          Organizations
+        </a>
+        <a href="#ai-recommender" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="ai-recommender">
+          <span class="material-symbols-outlined text-lg">auto_awesome</span>
+          AI Recommender
+        </a>
+        <a href="#watchlist" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="watchlist">
+          <span class="material-symbols-outlined text-lg">bookmark</span>
+          Watchlist
+        </a>
+        <a href="#issues" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="issues">
+          <span class="material-symbols-outlined text-lg">bug_report</span>
+          Issues
+        </a>
+        <a href="#mentors" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="mentors">
+          <span class="material-symbols-outlined text-lg">group</span>
+          Mentors
+        </a>
+        <a href="#guide" onclick="setActiveMenu(this)"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          data-section="guide">
+          <span class="material-symbols-outlined text-lg">menu_book</span>
+          Guide
+        </a>
+      </div>
+
+      <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+        <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+          class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+          <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+      <div class="lg:col-span-7">
+        <div
+          class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
+          <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
+          <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code
+            2026</span>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
+        <h1
+          class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
+          Find Your<br /><span class="text-primary italic">Perfect GSoC Org</span>
+        </h1>
+        <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
+          Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub
+          activity. Land your summer internship.
+        </p>
+        <!-- Search Bar -->
+        <div class="relative max-w-xl mb-6 sm:mb-8">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+          <input id="hero-search" type="text" placeholder="Search organization names..."
+            class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
+        <!-- Surprise Button -->
+        <div class="mb-8 sm:mb-10">
+          <button id="surpriseBtn"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2"
+            aria-label="🎲 Surprise Me! - Open a random organization">
+            <span class="material-symbols-outlined text-sm">casino</span>
+            🎲 Surprise Me!
+          </button>
+        </div>
+        <!-- Stat Badges -->
+        <div class="flex flex-wrap gap-3 sm:gap-4">
+          <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+            <span class="material-symbols-outlined text-primary text-lg">groups</span>
+            <div>
+              <p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p>
+              <p class="font-bold text-sm">184</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-lg">code</span>
+            <div>
+              <p class="text-[10px] sm:text-xs text-zinc-500">Languages</p>
+              <p class="font-bold text-sm">30+</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+            <span class="material-symbols-outlined text-primary-container text-lg">category</span>
+            <div>
+              <p class="text-[10px] sm:text-xs text-zinc-500">Domains</p>
+              <p class="font-bold text-sm">15+</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+      <!-- Timeline Card -->
+      <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
+        <div
+          class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
+          <div class="flex items-center justify-between mb-6 sm:mb-8">
+            <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
+            <span
+              class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+          </div>
+          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
+              <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
   <section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
@@ -3313,38 +3436,38 @@
         if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href');
       }
 
-// Copy link button
-const oldCopy = document.getElementById('mIdeasCopyBtn');
-if(oldCopy) oldCopy.remove();
-if(org.ideas){
-  const copyBtn = document.createElement('button');
-  copyBtn.id = 'mIdeasCopyBtn';
-  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-  copyBtn.onclick = function(){
-    navigator.clipboard.writeText(org.ideas).then(()=>{
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-      copyBtn.style.background = '#dcfce7';
-      copyBtn.style.color = '#166534';
-      setTimeout(()=>{
+      // Copy link button
+      const oldCopy = document.getElementById('mIdeasCopyBtn');
+      if (oldCopy) oldCopy.remove();
+      if (org.ideas) {
+        const copyBtn = document.createElement('button');
+        copyBtn.id = 'mIdeasCopyBtn';
         copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-        copyBtn.style.background = '';
-        copyBtn.style.color = '';
-      }, 2000);
-    });
-  };
-  document.getElementById('mIdeasBtn').after(copyBtn);
-}
-    renderMentorContactSection(org);
-     
-    document.getElementById('orgModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+        copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+        copyBtn.onclick = function () {
+          navigator.clipboard.writeText(org.ideas).then(() => {
+            copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+            copyBtn.style.background = '#dcfce7';
+            copyBtn.style.color = '#166534';
+            setTimeout(() => {
+              copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+              copyBtn.style.background = '';
+              copyBtn.style.color = '';
+            }, 2000);
+          });
+        };
+        document.getElementById('mIdeasBtn').after(copyBtn);
+      }
+      renderMentorContactSection(org);
 
-  function closeModal() {
-    document.getElementById('orgModal').classList.remove('open');
-    document.body.style.overflow = 'auto';
-  }
+      document.getElementById('orgModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('orgModal').classList.remove('open');
+      document.body.style.overflow = 'auto';
+    }
 
     function openRandomOrg() {
       const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
@@ -3402,8 +3525,8 @@ if(org.ideas){
         filteredOrgs.sort((a, b) => applySecondarySort(a, b, sort));
       }
 
-    renderOrgs(true);
-  }
+      renderOrgs(true);
+    }
 
     function applySecondarySort(a, b, sortType) {
       if (sortType === 'years-desc') return b.years - a.years;
@@ -3414,19 +3537,19 @@ if(org.ideas){
       return a.name.localeCompare(b.name);
     }
 
-  window.clearAllFilters = function() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('categoryFilter').value = 'all';
-    document.getElementById('complexityFilter').value = 'all';
-    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
-    const heroSearch = document.getElementById('hero-search');
-    if (heroSearch) heroSearch.value = '';
-    
-    // Reset chips
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.classList.remove('bg-orange-600', 'text-white');
-      chip.classList.add('bg-surface-container-highest');
-    });
+    window.clearAllFilters = function () {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = 'all';
+      document.getElementById('complexityFilter').value = 'all';
+      if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
+      const heroSearch = document.getElementById('hero-search');
+      if (heroSearch) heroSearch.value = '';
+
+      // Reset chips
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.remove('bg-orange-600', 'text-white');
+        chip.classList.add('bg-surface-container-highest');
+      });
 
       filteredOrgs = [...ORGS];
       renderOrgs(true);
@@ -3659,21 +3782,21 @@ if(org.ideas){
 
     document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
-  // Initialize
-  updateLanguageModeHint();
-  renderTimeline();        // populate #timeline-milestones on first load
-  applyStaleDataNotice(); // show post-selection message if GSoC selection is complete
-  updateCountdown();
-  setInterval(updateCountdown, 60000);
-  renderSelectedLanguages();
-  renderOrgs();
-  renderWatchlist();
-  updateAIInsights();   // populate AI insight panel on page load
-  loadMentorData();
-  renderGoodFirstIssues();
-  renderCompare();
-  const helpModal = document.getElementById('helpModal');
-const helpBtn = document.getElementById('helpBtn');
+    // Initialize
+    updateLanguageModeHint();
+    renderTimeline();        // populate #timeline-milestones on first load
+    applyStaleDataNotice(); // show post-selection message if GSoC selection is complete
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+    renderSelectedLanguages();
+    renderOrgs();
+    renderWatchlist();
+    updateAIInsights();   // populate AI insight panel on page load
+    loadMentorData();
+    renderGoodFirstIssues();
+    renderCompare();
+    const helpModal = document.getElementById('helpModal');
+    const helpBtn = document.getElementById('helpBtn');
 
     function openHelpModal() {
       helpModal.classList.add('open');
@@ -3806,13 +3929,13 @@ const helpBtn = document.getElementById('helpBtn');
 
       window.closeHelpModal = closeHelpModal;
 
-});
-</script>
-<script src="src/js/app.js"></script>
-<script src="src/js/githubAnalyzer.js"></script>
-<script src="src/js/skillExtractor.js"></script>
-<script src="src/js/recommender.js"></script>
-<script src="src/js/recommendation-ui.js"></script>
+    });
+  </script>
+  <script src="src/js/app.js"></script>
+  <script src="src/js/githubAnalyzer.js"></script>
+  <script src="src/js/skillExtractor.js"></script>
+  <script src="src/js/recommender.js"></script>
+  <script src="src/js/recommendation-ui.js"></script>
 
 </body>
 

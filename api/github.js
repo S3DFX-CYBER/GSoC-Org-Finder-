@@ -20,9 +20,10 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
-export function buildGitHubHeaders(token = process.env.GITHUB_TOKEN) {
+export function buildGitHubHeaders(token) {
+  const resolvedToken = arguments.length === 0 ? process.env.GITHUB_TOKEN : token;
 
-  if (token && !isTokenValid(token)) {
+  if (resolvedToken && !isTokenValid(resolvedToken)) {
     console.warn(
       '[api/github] GITHUB_TOKEN present but invalid format - using unauthenticated fallback'
     );
@@ -30,11 +31,12 @@ export function buildGitHubHeaders(token = process.env.GITHUB_TOKEN) {
 
   const headers = {
     Accept: 'application/vnd.github.v3+json',
+    'X-GitHub-Api-Version': '2022-11-28',
     'User-Agent': 'gsoc-org-finder',
   };
 
-  if (isTokenValid(token)) {
-    headers['Authorization'] = `token ${token}`;
+  if (isTokenValid(resolvedToken)) {
+    headers['Authorization'] = `token ${resolvedToken}`;
   }
 
   return headers;

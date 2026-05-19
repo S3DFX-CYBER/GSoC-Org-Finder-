@@ -1,21 +1,12 @@
 // src/js/skillExtractor.js
 
-/**
- * skillExtractor.js
- * 
- * A lightweight heuristic NLP module to extract technical skills, programming languages, 
- * frameworks, and domains from unstructured text (e.g., a resume).
- */
-
 const TECH_DICTIONARY = [
-  // Languages
   "python", "javascript", "java", "c++", "c", "c#", "ruby", "rust", "golang", "go",
   "typescript", "swift", "kotlin", "php", "scala", "haskell", "lua", "perl", "r", 
   "julia", "matlab", "dart", "shell", "bash", "assembly", "sql", "elixir", "erlang", "clojure",
   "fortran", "ocaml", "smalltalk", "pharo", "d lang", "verilog", "verilog-a", "vhdl", "fasm", "tcl", "scheme",
   "lisp", "prolog", "solidity", "assembly", "asm", "x86", "arm", "mips", "risc-v",
   
-  // Web & Frameworks
   "react", "angular", "vue", "django", "flask", "spring", "spring boot", "node.js", "nodejs",
   "express", "ruby on rails", "laravel", "asp.net", "svelte", "next.js", "nextjs", "tailwind",
   "bootstrap", "jquery", "html", "css", "graphql", "rest", "soap", "fastapi", "gin",
@@ -23,22 +14,18 @@ const TECH_DICTIONARY = [
   "vuejs", "reactjs", "hibernate", "jakarta ee", "webrtc", "electron", "meteor",
   "html5 canvas", "canvas", "wasm", "webassembly", "ecmascript", "mediawiki",
   
-  // Mobile
   "android", "ios", "flutter", "react native", "xamarin", "ionic", "swiftui", "jetpack compose",
 
-  // Databases & Storage
   "mysql", "postgresql", "mongodb", "sqlite", "redis", "cassandra", "oracle", 
   "elasticsearch", "mariadb", "firebase", "supabase", "appwrite", "dynamodb", "couchdb",
   "postgis", "big data", "distributed storage", "couchdb", "mariadb",
   
-  // Cloud & DevOps
   "aws", "azure", "gcp", "google cloud", "docker", "kubernetes", "jenkins", "gitlab ci", 
   "github actions", "terraform", "ansible", "linux", "unix", "ubuntu", "centos", "debian",
   "nginx", "apache", "prometheus", "grafana", "istio", "helm", "tekton", "ci/cd", "unikernels",
   "kvm", "xen", "qemu", "virtualization", "serverless", "ebpf", "containerd", "sdet", "devops",
   "kernel", "posix", "bsd", "unix", "real-time os", "rtos",
 
-  // Domains & Fields
   "machine learning", "ml", "artificial intelligence", "ai", "deep learning", 
   "data science", "data analysis", "computer vision", "nlp", "natural language processing",
   "robotics", "ros", "blockchain", "cryptography", "security", "cybersecurity",
@@ -53,7 +40,6 @@ const TECH_DICTIONARY = [
   "mass spectrometry", "meteorology", "climate science", "fluid dynamics", "cfd", "aerospace",
   "graphics", "animation", "audio", "video", "multimedia", "codecs", "ffmpeg",
 
-  // Tools & Libraries
   "tensorflow", "pytorch", "keras", "scikit-learn", "numpy", "pandas", "scipy", "matplotlib",
   "opencv", "qt", "gtk", "cmake", "make", "git", "vim", "emacs", "zsh", "ninja", "bazel",
   "latex", "markdown", "d3.js", "three.js", "ffmpeg", "gstreamer", "vlc", "ghidra", "ida-pro",
@@ -61,15 +47,10 @@ const TECH_DICTIONARY = [
   "mlir", "qemu", "vulkan", "opengl", "directx", "vulkan", "webgl"
 ];
 
-// Sort dictionary by length descending to match longer multi-word skills first
 const SORTED_TECH_DICTIONARY = [...new Set(TECH_DICTIONARY)].sort((a, b) => b.length - a.length);
 
-/**
- * Normalizes extracted skill to match common tags in ORGS data.
- */
 function normalizeSkill(skill) {
   const mapping = {
-    // Frameworks & Runtimes
     'nodejs': 'node.js',
     'node.js': 'node.js',
     'next.js': 'nextjs',
@@ -86,7 +67,6 @@ function normalizeSkill(skill) {
     'angular': 'angularjs',
     'angularjs': 'angularjs',
     
-    // Languages
     'go': 'go',
     'golang': 'go',
     'c#': 'csharp',
@@ -98,7 +78,6 @@ function normalizeSkill(skill) {
     'bash': 'shell script',
     'shell script': 'shell script',
     
-    // Domains & Fields
     'ml': 'machine learning',
     'machine learning': 'machine learning',
     'ai': 'ai',
@@ -117,7 +96,6 @@ function normalizeSkill(skill) {
     'graphics': '3d',
     'computational geometry': 'geometry',
     
-    // Specialized
     'html5 canvas': 'html5 canvas',
     'canvas': 'html5 canvas',
     'llvm': 'llvm',
@@ -126,74 +104,56 @@ function normalizeSkill(skill) {
   return mapping[skill] || skill;
 }
 
-/**
- * Extracts recognized skills from the provided text.
- */
 function extractSkills(text) {
   if (!text || typeof text !== 'string') return [];
   
   const normalizedText = text.toLowerCase();
   const matchedSkills = new Set();
   
-  // 1. Match from dictionary
   SORTED_TECH_DICTIONARY.forEach(skill => {
-    // Escape special characters (e.g. C++, Node.js)
     const escapedSkill = skill.replace(/[-/\\^$*+?.()|[\]{}]/g, String.raw`\$&`);
-    
     let regexStr = '';
     const isSingleChar = skill.length === 1;
     const hasSpecialChar = skill.includes('+') || skill.includes('#') || skill.includes('.');
     
-    if (isSingleChar) {
-      // 1-char tokens need strict boundaries to avoid false positives (e.g. "C" in "Python")
-      regexStr = String.raw`(?<=^|\s|[(\[,/])` + escapedSkill + String.raw`(?=$|\s|[.,:;!)/])`;
-    } else if (hasSpecialChar) {
-      // Special chars need careful boundary logic
+    if (isSingleChar || hasSpecialChar) {
       regexStr = String.raw`(?<=^|\s|[(\[,/])` + escapedSkill + String.raw`(?=$|\s|[.,:;!)/])`;
     } else {
-      // Standard word boundary
       regexStr = String.raw`\b` + escapedSkill + String.raw`\b`;
     }
     
-    const regex = new RegExp(regexStr, 'i');
-    
-    if (regex.test(normalizedText)) {
+    if (new RegExp(regexStr, 'i').test(normalizedText)) {
       matchedSkills.add(normalizeSkill(skill));
     }
   });
   
-  // 2. Custom detector for "Go" (the language)
-  // Higher confidence needed for common English words
-  if (!matchedSkills.has('golang')) {
+  if (!matchedSkills.has('go')) {
     const goLangKeywords = ['programming', 'language', 'developer', 'backend', 'distributed', 'concurrency', 'goroutines', 'go1.'];
     const hasGoTechContext = goLangKeywords.some(kw => normalizedText.includes(kw));
     const goRegex = /\bgo\b(?!\s+(to|into|for|ahead|back|on|through|with|away|around|up|down|off|out))/i;
     
     if ((matchedSkills.size > 2 || hasGoTechContext) && goRegex.test(normalizedText)) {
-      matchedSkills.add("golang");
+      matchedSkills.add('go');
     }
   }
 
-  // 3. Custom detector for "C" (the language)
   if (!matchedSkills.has('c')) {
     const cContextRegex = /\b(c programming|c language|proficient in c|knowledge of c)\b/i;
     const cListRegex = /\b(python|java|c\+\+|rust|javascript|assembly)\s*,\s*c\b/i;
     if (cContextRegex.test(normalizedText) || cListRegex.test(normalizedText)) {
-      matchedSkills.add("c");
+      matchedSkills.add('c');
     }
   }
 
-  // 4. Custom detector for "R" (the language)
   if (!matchedSkills.has('r')) {
     const rContextRegex = /\b(r programming|r language|r statistics|r studio)\b/i;
     const rListRegex = /\b(python|julia|matlab|statistics)\s*,\s*r\b/i;
     if (rContextRegex.test(normalizedText) || rListRegex.test(normalizedText)) {
-      matchedSkills.add("r");
+      matchedSkills.add('r');
     }
   }
   
   return Array.from(matchedSkills);
 }
 
-// Export for global usage
 globalThis.extractSkills = extractSkills;

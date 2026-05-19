@@ -3198,10 +3198,19 @@ document.addEventListener('DOMContentLoaded', () => {
     button.title = label;
     button.innerHTML = '<span class="material-symbols-outlined">' + icon + '</span>';
     button.addEventListener('click', () => {
-      const target = direction === 'top'
+      // Determine current direction (the button's dataset may be updated dynamically)
+      const dir = button.dataset.direction || direction;
+      const target = dir === 'top'
         ? 0
         : Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      window.scrollTo({ top: target, behavior: 'smooth' });
+
+      // Respect user's reduced motion preference
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        window.scrollTo(0, target);
+      } else {
+        window.scrollTo({ top: target, behavior: 'smooth' });
+      }
     });
     return button;
   };
@@ -3210,23 +3219,42 @@ document.addEventListener('DOMContentLoaded', () => {
   scrollControls.append(scrollToggleBtn);
   document.body.appendChild(scrollControls);
 
+  // previous state guards to avoid unnecessary DOM writes on scroll
+  let _prevCanScroll = null;
+  let _prevShowTopAction = null;
+  let _prevIsAtEdge = null;
+
   const updateScrollControls = () => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
     const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const edgeThreshold = 180;
     const canScroll = maxScroll > 4;
     const showTopAction = scrollTop > maxScroll / 2;
+    const isAtEdge = showTopAction ? (scrollTop <= edgeThreshold) : (maxScroll - scrollTop <= edgeThreshold);
 
-    scrollControls.classList.toggle('hidden', !canScroll);
-    scrollToggleBtn.dataset.direction = showTopAction ? 'top' : 'bottom';
-    scrollToggleBtn.setAttribute('aria-label', showTopAction ? 'Scroll to top' : 'Scroll to bottom');
-    scrollToggleBtn.title = showTopAction ? 'Scroll to top' : 'Scroll to bottom';
-    scrollToggleBtn.innerHTML = showTopAction
-      ? '<span class="material-symbols-outlined">arrow_upward</span>'
-      : '<span class="material-symbols-outlined">arrow_downward</span>';
-    scrollToggleBtn.classList.toggle('is-at-edge', showTopAction
-      ? scrollTop <= edgeThreshold
-      : maxScroll - scrollTop <= edgeThreshold);
+    // Only update visibility when it actually changes
+    if (canScroll !== _prevCanScroll) {
+      scrollControls.classList.toggle('hidden', !canScroll);
+      _prevCanScroll = canScroll;
+    }
+
+    // Only update direction (icon/labels) when it changes
+    if (showTopAction !== _prevShowTopAction) {
+      const label = showTopAction ? 'Scroll to top' : 'Scroll to bottom';
+      scrollToggleBtn.dataset.direction = showTopAction ? 'top' : 'bottom';
+      scrollToggleBtn.setAttribute('aria-label', label);
+      scrollToggleBtn.title = label;
+      scrollToggleBtn.innerHTML = showTopAction
+        ? '<span class="material-symbols-outlined">arrow_upward</span>'
+        : '<span class="material-symbols-outlined">arrow_downward</span>';
+      _prevShowTopAction = showTopAction;
+    }
+
+    // Only update edge styling when it changes
+    if (isAtEdge !== _prevIsAtEdge) {
+      scrollToggleBtn.classList.toggle('is-at-edge', isAtEdge);
+      _prevIsAtEdge = isAtEdge;
+    }
   };
 
   function openHelpModal() {

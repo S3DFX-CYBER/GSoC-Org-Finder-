@@ -494,7 +494,7 @@
         </span>
       </button>
     
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
         class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
     
         <span class="material-symbols-outlined text-sm">
@@ -559,7 +559,7 @@
     </div>
     
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-base">star</span> Star & Contribute
       </a>
     </div>
@@ -1121,10 +1121,10 @@
       </div>
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
-    <nav class="flex flex-wrap gap-6">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
@@ -1173,10 +1173,10 @@
       </div>
     </div>
     <div class="modal-footer">
-      <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
-      <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
     </div>
@@ -1955,7 +1955,15 @@
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); 
+    { date: new Date('2026-05-25T00:00:00Z'), label: 'Coding Officially Begins', note: 'Start working on your GSoC project!' },
+    { date: new Date('2026-07-06T18:00:00Z'), label: 'Midterm Evaluations Begin', note: 'Mentors and contributors submit midterm evaluations.' },
+    { date: new Date('2026-07-10T18:00:00Z'), label: 'Midterm Evaluation Deadline', note: null },
+    { date: new Date('2026-08-17T00:00:00Z'), label: 'Final Submissions Begin', note: 'Submit your final work product and evaluation.' },
+    { date: new Date('2026-08-24T18:00:00Z'), label: 'Final Submission Deadline (Standard)', note: 'Standard 12-week projects: submit final work product and evaluation.' },
+    { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
+    { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
+    { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
+  ].filter(m => !isNaN(m.date.getTime()));
 
   function renderTimeline() {
     const container = document.getElementById('timeline-milestones');
@@ -2294,6 +2302,7 @@
       closeModal();
     }
   });
+  
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
@@ -3032,30 +3041,7 @@ if(org.ideas){
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
-  const helpModal = document.getElementById('helpModal');
-const helpBtn = document.getElementById('helpBtn');
 
-function openHelpModal() {
-  helpModal.classList.add('open');
-}
-
-function closeHelpModal() {
-  helpModal.classList.remove('open');
-}
-
-helpBtn.addEventListener('click', openHelpModal);
-
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;

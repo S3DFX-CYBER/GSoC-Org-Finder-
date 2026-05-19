@@ -41,6 +41,7 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Note: Not using Subresource Integrity (SRI) is safe and required here because Google Fonts dynamically generates stylesheets based on the requesting browser's User-Agent -->
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
     rel="stylesheet" />
@@ -407,7 +408,7 @@
 
     .timeline-grid span.current-year {
       background: #fffbeb;
-      color: #d97706;
+      color: #b45309;
       border-color: #fef3c7;
       font-weight: 700;
     }
@@ -567,7 +568,7 @@
 
     .dark .filter-chip:not(.bg-orange-600):hover {
       background: #fb923c !important;
-      color: #ffffff !important;
+      color: #18181b !important;
       border-color: #fb923c !important;
     }
 
@@ -925,7 +926,7 @@
 
     .dark .unselect-lang-btn:hover {
       background: #fb923c;
-      color: white;
+      color: #18181b;
     }
 
     .dark .clear-all-langs-btn {

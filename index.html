@@ -2801,6 +2801,7 @@ if(org.ideas){
     selectedLanguages.clear();
     clearSelectedLanguagePills();
     matchAllLanguages = false;
+    globalThis.matchAllLanguages = matchAllLanguages;
     const matchAllToggle = document.getElementById('matchAllLanguagesToggle');
     if (matchAllToggle) matchAllToggle.checked = false;
     activeChip = null;

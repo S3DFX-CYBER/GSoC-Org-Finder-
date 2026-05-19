@@ -35,7 +35,7 @@ jobs:
             // ------------------------------------------------
 
             const mentorFile =
-              'reviewers/gssoc-mentors.json';
+              '.github/reviewers/gssoc-mentors.json';
 
             const mentorData = JSON.parse(
               fs.readFileSync(mentorFile, 'utf8')
@@ -161,7 +161,7 @@ jobs:
             // ------------------------------------------------
 
             fs.writeFileSync(
-              'reviewers/mentor-leaderboard.json',
+              '.github/reviewers/mentor-leaderboard.json',
               JSON.stringify(
                 leaderboard,
                 null,
@@ -178,7 +178,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add reviewers/mentor-leaderboard.json
+          git add .github/reviewers/mentor-leaderboard.json
 
           git diff --cached --quiet || git commit -m "chore: update mentor leaderboard"
 

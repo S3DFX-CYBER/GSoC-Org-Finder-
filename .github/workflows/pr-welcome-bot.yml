@@ -2,11 +2,13 @@ name: 👋 PR Welcome
 
 on:
   pull_request_target:
-    types: [opened]
+    types:
+      - opened
 
 permissions:
   pull-requests: write
   issues: write
+  contents: read
 
 concurrency:
   group: pr-welcome-${{ github.event.pull_request.number }}
@@ -15,99 +17,214 @@ concurrency:
 jobs:
   welcome:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Post welcome comment + apply routing label
+      - name: Post welcome comment + apply routing labels
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const pr = context.payload.pull_request;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+
             const number = pr.number;
             const author = pr.user.login;
 
-            // GSSOC / NSOC Detection
-            const branch = (pr.head.ref || '').toLowerCase();
-            const body = (pr.body || '').toLowerCase();
-            const labels = (pr.labels || []).map(l => l.name.toLowerCase());
-            
-            const isGssoc = 
-              labels.includes('gssoc26') ||
+            // --------------------------------------------------
+            // DETECTION
+            // --------------------------------------------------
+
+            const branch =
+              (pr.head.ref || '').toLowerCase();
+
+            const body =
+              (pr.body || '').toLowerCase();
+
+            const existingLabels =
+              (pr.labels || [])
+                .map(l => l.name.toLowerCase());
+
+            const isGssoc =
+              existingLabels.includes('gssoc26') ||
               branch.includes('gssoc') ||
               body.includes('gssoc');
 
-            // Idempotency - Don't post multiple times
-            const { data: existing } = await github.rest.issues.listComments({
-              owner, repo, issue_number: number, per_page: 100
-            });
+            const isNsoc =
+              existingLabels.includes('nsoc26') ||
+              branch.includes('nsoc') ||
+              body.includes('nsoc');
 
-            const MARKER = '<!-- pr-welcome-v1 -->';
-            if (existing.some(c => c.body.includes(MARKER))) {
-              core.info('Welcome comment already posted — skipping.');
+            // --------------------------------------------------
+            // IDEMPOTENCY
+            // --------------------------------------------------
+
+            const MARKER =
+              '<!-- pr-welcome-v2 -->';
+
+            const { data: comments } =
+              await github.rest.issues.listComments({
+                owner,
+                repo,
+                issue_number: number,
+                per_page: 100
+              });
+
+            const alreadyPosted =
+              comments.some(c =>
+                (c.body || '').includes(MARKER)
+              );
+
+            if (alreadyPosted) {
+              core.info(
+                'Welcome comment already exists'
+              );
               return;
             }
 
-            const isNsoc = labels.includes('nsoc26');
+            // --------------------------------------------------
+            // PROGRAM NOTE
+            // --------------------------------------------------
 
-            const programNote = isGssoc
-              ? `> 🟢 **GSSOC PR detected** — your PR will be routed to an approved GSSOC mentor for Stage 2 review.`
-              : isNsoc
-                ? `> 🔵 **NSOC PR detected** — your PR will follow the standard review pipeline.`
-                : `> ⚪ **Standard PR detected** — your PR will follow the standard review pipeline.`;
+            let programNote = '';
+
+            if (isGssoc) {
+
+              programNote =
+                `> 🟢 **GSSOC PR detected** — your PR will be routed through the GSSOC mentor review pipeline.`;
+
+            } else if (isNsoc) {
+
+              programNote =
+                `> 🔵 **NSOC PR detected** — your PR will follow the NSOC review pipeline.`;
+
+            } else {
+
+              programNote =
+                `> ⚪ **Standard PR detected** — your PR will follow the standard repository review pipeline.`;
+            }
+
+            // --------------------------------------------------
+            // COMMENT
+            // --------------------------------------------------
 
             const comment = [
               MARKER,
+
               `## 👋 Thanks for opening a PR, @${author}!`,
               '',
+
               `Your PR has entered the **🚦 PR Review Pipeline**.`,
               '',
+
               programNote,
               '',
+
               '---',
               '',
-              '### What happens next',
+
+              '## 🔄 Review Flow',
               '',
-              '| Stage | Reviewer | Checks |',
-              '|-------|----------|--------|',
-              '| **Stage 1** — Automated Validation | 🤖 Bot | DCO · Format · AI/Slop · Duplicate · LLM Analysis |',
-              `| **Stage 2** — Human Review | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : isNsoc ? '⏭️ Auto (Stage 1 pass)' : '👥 Reviewer'} | Code + Quality Review |`,
-              '| **Stage 3** — PA / Maintainer Review | 🔑 Project Admin | Final Merge Decision |',
+
+              '| Stage | Reviewer | Purpose |',
+              '|-------|----------|---------|',
+              '| **Stage 1** | 🤖 Automation | Validation · Duplicate Detection · AI/Slop Checks · Formatting · PR Analysis |',
+              `| **Stage 2** | ${isGssoc ? '🧑‍🏫 GSSOC Mentor' : isNsoc ? '👥 NSOC Reviewer' : '👥 Repository Reviewer'} | Code Review · Scope Validation · Quality Check |`,
+              '| **Stage 3** | 🔑 Project Admin / Maintainer | Final Approval & Merge Decision |',
               '',
-              '> The **LLM PR Analysis** bot will verify your PR links to a valid issue and that changes match the issue scope.',
+
+              '> The automated PR analysis system will verify issue linkage, PR relevance, and contribution quality.',
               '',
-              'A **pipeline status comment** will appear below and update automatically as your PR progresses.',
+
+              'A pipeline status comment may appear automatically as your PR progresses.',
               '',
+
               '---',
               '',
-              '### Checklist before review',
+
+              '## ✅ Contributor Checklist',
               '',
-              '- [ ] Sign all commits (`git commit -s`)',
-              '- [ ] Link your issue (`Closes #123`)',
-              '- [ ] Use a feature branch (not `main`)',
-              '- [ ] No unrelated changes',
-              '- [ ] Read the contributor guide for your program:',
+
+              '- [ ] Sign commits using `git commit -s`',
+              '- [ ] Link a valid issue (`Closes #123`)',
+              '- [ ] Keep changes focused and relevant',
+              '- [ ] Do not include unrelated modifications',
+              '- [ ] Ensure workflows/build/tests are passing',
+              '- [ ] Read the appropriate contributor guide:',
               `  - [GSSoC Guide](https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md)`,
               `  - [NSoC Guide](https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md)`,
               `  - [General Guide](https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md)`,
               '',
-              '*This comment is posted only once.*'
+
+              '---',
+              '',
+
+              '## ⚠️ Important Notes',
+              '',
+
+              '- Low-quality, spammy, or AI-generated PRs may be closed',
+              '- PRs without linked issues may fail automated checks',
+              '- Large unrelated PRs are likely to be rejected',
+              '- Review times may vary depending on mentor/reviewer availability',
+              '',
+
+              `Happy contributing 🚀`,
+              '',
+              '*This message is posted automatically and only once.*'
+
             ].join('\n');
 
+            // --------------------------------------------------
+            // CREATE COMMENT
+            // --------------------------------------------------
+
             await github.rest.issues.createComment({
-              owner, repo, issue_number: number, body: comment
+              owner,
+              repo,
+              issue_number: number,
+              body: comment
             });
 
-            core.info(`Welcome comment posted for PR #${number}`);
+            core.info(
+              `Welcome comment posted for PR #${number}`
+            );
 
-            // Apply routing label for GSSOC
+            // --------------------------------------------------
+            // ROUTING LABELS
+            // --------------------------------------------------
+
+            const labelsToAdd = [];
+
             if (isGssoc) {
+              labelsToAdd.push('gssoc-review');
+            }
+
+            if (isNsoc) {
+              labelsToAdd.push('nsoc-review');
+            }
+
+            if (labelsToAdd.length > 0) {
+
               try {
+
                 await github.rest.issues.addLabels({
-                  owner, repo, issue_number: number, labels: ['gssoc-review']
+                  owner,
+                  repo,
+                  issue_number: number,
+                  labels: labelsToAdd
                 });
-                core.info('Added gssoc-review label');
+
+                core.info(
+                  `Added labels: ${labelsToAdd.join(', ')}`
+                );
+
               } catch (e) {
-                core.warning(`Failed adding gssoc-review label: ${e?.message || e}`);
+
+                core.warning(
+                  `Failed adding labels: ${e?.message || e}`
+                );
               }
             }

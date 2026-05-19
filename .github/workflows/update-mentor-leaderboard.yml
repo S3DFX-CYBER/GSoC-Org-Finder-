@@ -94,11 +94,19 @@ jobs:
                 const reviewer =
                   review.user?.login;
 
-                if (
-                  !reviewer ||
-                  !stats[reviewer]
-                ) {
+                if (!reviewer) {
                   continue;
+                }
+                
+                if (!stats[reviewer]) {
+                  stats[reviewer] = {
+                    username: reviewer,
+                    reviews: 0,
+                    approvals: 0,
+                    comments: 0,
+                    score: 0,
+                    last_active: null
+                  };
                 }
 
                 stats[reviewer].reviews++;
@@ -112,7 +120,9 @@ jobs:
                   stats[reviewer].score += 2;
                 }
 
-                stats[reviewer].comments++;
+                if (review.state === 'COMMENTED') {
+                  stats[reviewer].comments++;
+                }
 
                 const submittedAt =
                   new Date(review.submitted_at);

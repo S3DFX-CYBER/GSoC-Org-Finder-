@@ -815,15 +815,6 @@ function renderGrid(orgs){
 
 
 
-document.addEventListener('keydown', e => {
-  console.log(
-    'key:',
-    e.key,
-    'active:',
-    document.activeElement?.tagName,
-    document.activeElement?.className
-  );
-});
 
 function updateStats(){
   document.getElementById('totalStat').textContent=ORGS.length;

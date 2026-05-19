@@ -822,8 +822,6 @@ function updateStats(){
   document.getElementById('visitorStat').textContent=AN.todayVisits();
 }
 
-<<<<<<< HEAD
-=======
 // ══════════════════════════════════════════════
 // KEYBOARD NAVIGATION
 // ══════════════════════════════════════════════
@@ -892,7 +890,6 @@ function scrollToFocused(){
     }
   },30);
 }
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
 
 // ══════════════════════════════════════════════
 // PILLS & CHIPS

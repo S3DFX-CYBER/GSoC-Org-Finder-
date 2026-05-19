@@ -2087,21 +2087,11 @@
       card.dataset.org = org.name;
       card.dataset.filteredIdx = String(filteredIdx);
       card.tabIndex = 0;
-<<<<<<< HEAD
-
-      card.addEventListener('mouseenter', () => {
-      focusedIdx = filteredIdx;
-      });
-
-      card.addEventListener('focus', () => {
-      focusedIdx = filteredIdx;
-=======
       card.addEventListener('mouseenter', () => {
         focusedIdx = filteredIdx;
       });
       card.addEventListener('focus', () => {
         focusedIdx = filteredIdx;
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
       });
       
       const githubOwner = githubOwnerFromValue(org.github);
@@ -2307,41 +2297,16 @@
   });
 
   document.addEventListener('keydown', (e) => {
-<<<<<<< HEAD
-  if (e.key === 'Escape') {
-=======
     if (e.key === 'Escape') {
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
     if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
       return;
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
     if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
       return;
     }
   }
-<<<<<<< HEAD
-
-  const activeTag = document.activeElement?.tagName;
-  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(activeTag)) return;
-
-  const n = filteredOrgs.length;
-  if (!n) return;
-
-  function applyFiltersPreservingVisibleCount() {
-    const savedCount = visibleCount;
-    const grid = document.getElementById('orgGrid');
-    if (!grid) return;
-    // applyFilters() updates the filteredOrgs list and calls renderOrgs(true)
-    // which resets visibleCount to 12. We then keep appending subsequent pages
-    // until we reach the count the user had previously scrolled to.
-    applyFilters();
-=======
   const activeTag = document.activeElement?.tagName;
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(activeTag)) return;
   const n = filteredOrgs.length;
@@ -2385,26 +2350,11 @@
     const grid = document.getElementById('orgGrid');
     if (!grid) return;
     renderOrgs(true);
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
     while (visibleCount < savedCount && visibleCount < filteredOrgs.length) {
       visibleCount += 12;
       renderOrgs(false);
     }
   }
-<<<<<<< HEAD
-
-  // ══════════════════════════════════════════════
-  // WATCHLIST — centralised bookmark sync helper
-  // ══════════════════════════════════════════════
-  function refreshVisibleBookmarkButtons() {
-    document.querySelectorAll('#orgGrid .bookmark-btn[data-bookmark-org]').forEach(btn => {
-      const isBookmarked = bookmarkedSet.has(btn.dataset.bookmarkOrg);
-      btn.classList.toggle('active', isBookmarked);
-      btn.classList.toggle('text-zinc-300', !isBookmarked);
-      btn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
-      btn.querySelector('.material-symbols-outlined')?.classList.toggle('icon-fill', isBookmarked);
-    });
-=======
   function toggleBookmark(e, name) {
     if (e) e.stopPropagation();
     if (bookmarkedSet.has(name)) bookmarkedSet.delete(name);
@@ -2412,7 +2362,6 @@
     localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
     refreshOrgGridPreservingVisibleCount();
     renderWatchlist();
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
   }
 
   function refreshOrgGridAfterBookmarkChange() {
@@ -3233,12 +3182,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (helpBtn) {
     helpBtn.addEventListener('click', openHelpModal);
   }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> ec052a5 (fix: resolve org rendering and keyboard navigation issues)
   window.closeHelpModal = closeHelpModal;
 });
 </script>

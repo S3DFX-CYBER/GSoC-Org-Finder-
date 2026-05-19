@@ -708,3 +708,9 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+.org-card.keyboard-focus {
+  outline: 2px solid var(--accent, #F46B0E);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(244, 107, 14, 0.18);
+}

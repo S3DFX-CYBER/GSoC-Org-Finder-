@@ -2703,6 +2703,9 @@ if(org.ideas){
       else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
+      // Previously 'active' chip had no filter condition, showing all 184 orgs instead of filtering.
+      // Fixed: orgs with 5+ GSoC years are considered actively maintained.
+      else if (activeChip === 'active') matchChip = o.years >= 5;  
 
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });

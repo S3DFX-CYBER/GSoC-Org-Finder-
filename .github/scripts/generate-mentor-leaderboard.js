@@ -43,9 +43,12 @@ const mentors =
     readJson(mentorsPath, {
       reviewers: []
     }).reviewers || []
-  ).map((m) =>
-    String(m).trim().toLowerCase()
-  );
+  )
+    .map((m) =>
+      String(m).trim().toLowerCase()
+    )
+    .filter((m) => m.length > 0)
+    .filter((m, i, arr) => arr.indexOf(m) === i);
 
 const rawStats =
   readJson(statsPath, {

@@ -1412,7 +1412,7 @@
 
       <!-- Badges Section -->
       <div style="margin-bottom:24px">
-        <div style="display:flex;align-items:center;justify-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">🏆 Achievement Badges</h3>
           <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.background='rgba(197,48,48,.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
             Reset Progress
@@ -2623,6 +2623,8 @@
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
+    } else if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
     }
   });
   

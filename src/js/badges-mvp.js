@@ -1,4 +1,4 @@
-/* global localStorage */
+/* eslint-env browser */
 /* exported BadgeSystem */
 
 // ══════════════════════════════════════════════
@@ -174,6 +174,20 @@ const BadgeSystem = (function() {
     saveBadgeData(data);
   }
 
+  // Helper function to compute badge progress percentage
+  function computeProgress(count, level, def) {
+    if (!level) {
+      // No level yet - progress toward first threshold
+      return Math.round((count / def.thresholds[0]) * 100);
+    }
+    if (!level.nextThreshold) {
+      // Max level reached
+      return 100;
+    }
+    // Progress toward next level
+    return Math.round(((count - level.threshold) / (level.nextThreshold - level.threshold)) * 100);
+  }
+
   // Get badge statistics for display
   function getBadgeStats() {
     const data = getBadgeData();
@@ -190,11 +204,7 @@ const BadgeSystem = (function() {
         count: count,
         level: level,
         nextThreshold: level ? level.nextThreshold : def.thresholds[0],
-        progress: level ? 
-          (level.nextThreshold ? 
-            Math.round(((count - level.threshold) / (level.nextThreshold - level.threshold)) * 100) : 
-            100) : 
-          Math.round((count / def.thresholds[0]) * 100)
+        progress: computeProgress(count, level, def)
       };
     });
 

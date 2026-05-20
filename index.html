@@ -2089,9 +2089,9 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
-      card.dataset.org = org.name;
-      
+   card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer';
+card.dataset.org = org.name;
+card.dataset.openOrg = org.name; 
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
@@ -2127,8 +2127,13 @@
         </div>
       `;
       grid.appendChild(card);
-        // Attach per-card listeners for non-bubbling events and data-driven actions
-        attachOrgCardListeners(card);
+      card.addEventListener('click', (e) => {
+  if (!e.target.closest('button')) {
+    openModal(org.name);
+  }
+});
+// Attach per-card listeners for non-bubbling events and data-driven actions
+attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;

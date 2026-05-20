@@ -3227,12 +3227,13 @@ document.addEventListener('DOMContentLoaded', () => {
     element.addEventListener('mouseenter', () => showTooltip(element));
     element.addEventListener('mouseleave', hideTooltip);
 
-    if (hoverCapable) {
-      // Keyboard users on desktop: focus/blur for keyboard navigation
-      element.addEventListener('focus', () => showTooltip(element));
-      element.addEventListener('blur', hideTooltip);
-    } else {
-      // Touch/mobile devices: click handler for tap interaction
+    // Always enable keyboard navigation (focus/blur) for WCAG compliance
+    // Works on desktop, tablets with external keyboards, hybrid devices, and assistive tech
+    element.addEventListener('focus', () => showTooltip(element));
+    element.addEventListener('blur', hideTooltip);
+
+    // For touch-only devices without hover capability, add click toggle as fallback
+    if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
         if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {

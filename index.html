@@ -51,16 +51,20 @@
 })();
 
 // Create overlay element once
-const _overlay = document.createElement('div');
-_overlay.className = 'theme-transition-overlay';
-document.body.appendChild(_overlay);
+// Create overlay element once — after DOM is ready
+let _overlay;
+document.addEventListener('DOMContentLoaded', () => {
+  _overlay = document.createElement('div');
+  _overlay.className = 'theme-transition-overlay';
+  document.body.appendChild(_overlay);
+});
 
 window.toggleTheme = function(event){
   const btn = document.getElementById('themeToggleBtn');
 
   // 1. Ripple burst
   btn.classList.remove('ripple');
-  void btn.offsetWidth; // reflow
+  btn.offsetWidth; // reflow
   btn.classList.add('ripple');
 
   // 2. Icon spin animation
@@ -80,7 +84,7 @@ requestAnimationFrame(() => {
     _overlay.style.setProperty('--oy', oy);
   }
   _overlay.classList.remove('flash');
-  void _overlay.offsetWidth;
+  _overlay.offsetWidth;
   _overlay.classList.add('flash');
 
   // 4. Toggle theme mid-animation (at icon disappear point ~160ms)
@@ -204,33 +208,18 @@ function updateThemeIcon(){
   transform: scale(0.92);
 }
 
-/* Icon inside toggle */
-#themeToggleBtn .material-symbols-outlined {
-  transition: 
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 0.25s ease,
-    color 0.3s ease;
-  display: block;
-}
 
 /* Spin-out animation when switching */
-/* Add this instead */
-#themeToggleBtn .material-symbols-outlined {
+
+/* #themeToggleBtn .material-symbols-outlined {
   display: inline-block;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
               opacity 0.25s ease, 
               color 0.3s ease;
-}
+} */
 
 #themeToggleBtn.switching .material-symbols-outlined {
   animation: iconSwitch 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-}
-
-@keyframes iconSwitch {
-  0%   { transform: rotate(0deg)   scale(1);   opacity: 1; }
-  45%  { transform: rotate(200deg) scale(0.2); opacity: 0; }
-  55%  { transform: rotate(200deg) scale(0.2); opacity: 0; }
-  100% { transform: rotate(360deg) scale(1);   opacity: 1; }
 }
 
 @keyframes iconSwitch {
@@ -293,12 +282,12 @@ function updateThemeIcon(){
 }
 
 /* Smooth all theme-sensitive elements */
-*, *::before, *::after {
+body, body *:not(#themeToggleBtn):not(#themeToggleBtn *) {
   transition: 
     background-color 0.35s ease,
     border-color 0.35s ease,
     color 0.25s ease,
-    box-shadow 0.35s ease !important;
+    box-shadow 0.35s ease;
 }
 
 /* Sun icon color in dark mode */
@@ -1413,23 +1402,6 @@ function updateThemeIcon(){
     updateThemeIcon();
   })();
 
-  window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
-
-  function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
-  }
 
   // ══════════════════════════════════════════════
   // MOBILE MENU

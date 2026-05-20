@@ -141,8 +141,9 @@ function calculateStabilityBonus(org, matchReasons) {
 function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile) {
   const matchReasons = [];
   const matchedSkills = [];
-  const orgTags = new Set((org.tags || []).map(t => t.toLowerCase()));
-  const orgCat = org.cat ? org.cat.toLowerCase() : '';
+  const normalize = globalThis.normalizeSkill || (s => s);
+  const orgTags = new Set((org.tags || []).map(t => normalize(t.toLowerCase())));
+  const orgCat = org.cat ? normalize(org.cat.toLowerCase()) : '';
 
   let score = 0;
   
@@ -152,7 +153,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   score += calculateExperienceScore(githubProfile, org, matchReasons);
   score += calculateStabilityBonus(org, matchReasons);
 
-  const normalizedScore = Math.min(Math.round(score), 99);
+  const cappedScore = Math.min(Math.round(score), 99);
   const tieBreaker = (org.name.length % 10) / 100 + (index % 100) / 10000;
   const finalRawScore = score + tieBreaker;
 
@@ -163,7 +164,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   return {
     orgIndex: index,
     org: org,
-    score: normalizedScore, 
+    score: cappedScore, 
     rawScore: finalRawScore,
     matchedSkills: [...new Set(matchedSkills)],
     reasons: matchReasons

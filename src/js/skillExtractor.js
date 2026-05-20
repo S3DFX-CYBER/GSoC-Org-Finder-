@@ -1,8 +1,8 @@
 // src/js/skillExtractor.js
 
 const TECH_DICTIONARY = [
-  "python", "javascript", "java", "c++", "c", "c#", "ruby", "rust", "golang", "go",
-  "typescript", "swift", "kotlin", "php", "scala", "haskell", "lua", "perl", "r", 
+  "python", "javascript", "java", "c++", "c#", "ruby", "rust", "golang",
+  "typescript", "swift", "kotlin", "php", "scala", "haskell", "lua", "perl", 
   "julia", "matlab", "dart", "shell", "bash", "assembly", "sql", "elixir", "erlang", "clojure",
   "fortran", "ocaml", "smalltalk", "pharo", "d lang", "verilog", "verilog-a", "vhdl", "fasm", "tcl", "scheme",
   "lisp", "prolog", "solidity", "assembly", "asm", "x86", "arm", "mips", "risc-v",
@@ -156,4 +156,5 @@ function extractSkills(text) {
   return Array.from(matchedSkills);
 }
 
+globalThis.normalizeSkill = normalizeSkill;
 globalThis.extractSkills = extractSkills;

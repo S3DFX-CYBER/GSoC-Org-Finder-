@@ -91,7 +91,7 @@ class PriorityQueue {
 const CONCURRENCY = 3;   // max simultaneous GitHub requests
 let _active = 0;
 const _queue = new PriorityQueue();
-const _inFlight = new Set();
+const _inFlight = new Map();
 
 /**
  * Core fetch with retry + rate-limit awareness.
@@ -202,8 +202,13 @@ export function fetchGH(repo, priority = 1) {
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'stats';
-    if (_inFlight.has(jobKey)) return;   // already queued
-    _inFlight.add(jobKey);
+    if (_inFlight.has(jobKey)) {
+      _inFlight.get(jobKey).push({ resolve, reject });
+      return;
+    }
+    _inFlight.set(jobKey, [{ resolve, reject }]);
+    const _resolve = (d) => { (_inFlight.get(jobKey)||[]).forEach(w=>w.resolve(d)); _inFlight.delete(jobKey); };
+    const _reject  = (e) => { (_inFlight.get(jobKey)||[]).forEach(w=>w.reject(e));  _inFlight.delete(jobKey); };
 
     // Return stale immediately and revalidate in background
     if (hit && hit.stale) {
@@ -297,6 +302,7 @@ export function fetchIssues(repo, priority = 2) {
  */
 export function fetchAllStats(orgs, onProgress, onDone) {
   const withGithub = orgs.filter(o => o.github);
+  if (withGithub.length === 0) { onDone?.(); return; }
   let completed = 0;
 
   for (const org of withGithub) {
@@ -322,5 +328,10 @@ export function queueStatus() {
  * Cancel all pending background (priority 2) jobs — e.g. when user navigates away.
  */
 export function cancelBulk() {
+  const removed = _queue._q.filter(j => j.priority >= 2).map(j => `${j.repo}__${j.mode}`);
   _queue._q = _queue._q.filter(j => j.priority < 2);
+  removed.forEach(key => {
+    (_inFlight.get(key) || []).forEach(w => w.resolve(null));
+    _inFlight.delete(key);
+  });
 }

@@ -7,7 +7,7 @@ permissions:
   pull-requests: read
   contents: read
 concurrency:
-  group: mentor-review-quality-${{ github.event.pull_request.number }}-${{ github.event.review.id }}
+  group: mentor-review-quality-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 jobs:
   quality:

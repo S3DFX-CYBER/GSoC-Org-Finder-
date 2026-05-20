@@ -6,7 +6,7 @@ with imports from the new queue module.
 ## 1. Add import at the top of app.js
 
 ```js
-import { fetchGH, fetchGFI, fetchIssues, fetchAllStats, queueStatus, cancelBulk } from './githubQueue.js';
+import { fetchGH, fetchGFI, fetchIssues, fetchAllStats, queueStatus, cancelBulk, invalidateCache } from './githubQueue.js';
 ```
 
 ## 2. Remove these functions entirely from app.js
@@ -45,6 +45,18 @@ function fetchAll(){
   let done=0;
   const total=ORGS.filter(o=>o.github).length;
 
+  // FIX (P1): Safety net timer — if onDone never fires due to silent errors,
+  // unlock the UI after 60s so it never stays permanently frozen.
+  const safetyTimer = setTimeout(() => {
+    if (!fetching) return;           // already cleaned up normally — skip
+    spin.style.display='none';
+    btn.disabled=false;
+    txt.textContent='⚠ Timed out';
+    fetching=false;
+    applyFilters();
+    updateStats();
+  }, 60_000);
+
   fetchAllStats(
     ORGS,
     // onProgress — called per org as data arrives (non-blocking)
@@ -52,11 +64,12 @@ function fetchAll(){
       org._gh = data;
       done++;
       txt.textContent=`${done}/${total}…`;
-      applyFilters();   // re-render incrementally
+      applyFilters();
       updateStats();
     },
     // onDone — called when all fetches complete
     () => {
+      clearTimeout(safetyTimer);     // cancel safety net — normal clean finish
       spin.style.display='none';
       btn.disabled=false;
       txt.textContent='✓ Done';
@@ -87,6 +100,10 @@ async function fetchModalGH(){
 async function fetchModalGH(){
   const o=ORGS[modalIdx];if(!o?.github)return;
   document.getElementById('mFetchBtn').textContent='Loading…';
+
+  // FIX (P2): Bust cache before fetching so "Refresh" always gets fresh data
+  // instead of returning the same stale cached result.
+  invalidateCache(o.github);
 
   // Priority 0 = urgent, bypasses queue delay
   const d = await fetchGH(o.github, 0);
@@ -153,13 +170,16 @@ async function checkAPI(){
     const data = await r.json();
     const banner=document.getElementById('apiBanner');
     if(data.ok){
-      const rem = data.core?.remaining;
-      const pct = rem !== undefined ? Math.round(rem / data.core.limit * 100) : null;
+      const rem   = data.core?.remaining;
+      const limit = data.core?.limit;
+      // FIX (P3): Guard limit > 0 before dividing to prevent NaN% or Infinity%
+      // when limit is 0 or undefined (e.g. token not configured or API degraded).
+      const pct = (rem !== undefined && limit) ? Math.round(rem / limit * 100) : null;
       banner.className='api-banner api-ok';
       document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
       document.getElementById('apiText').textContent=
         pct !== null
-          ? `Live stats available. API quota: ${rem} / ${data.core.limit} requests remaining (${pct}%).`
+          ? `Live stats available. API quota: ${rem} / ${limit} requests remaining (${pct}%).`
           : 'Live stats available for all visitors.';
       document.getElementById('fetchBtn').style.display='flex';
     } else {

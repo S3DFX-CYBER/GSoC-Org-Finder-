@@ -483,6 +483,17 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/syedrazamd"><img src="https://github.com/syedrazamd.png" width="50px" alt="syedrazamd" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=S3DFX-CYBER%2FGSoC-Org-Finder-&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

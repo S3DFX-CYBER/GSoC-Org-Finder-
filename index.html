@@ -3226,6 +3226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     element.addEventListener('mouseenter', () => showTooltip(element));
     element.addEventListener('mouseleave', hideTooltip);
+    element.addEventListener('focus', () => showTooltip(element));
+    element.addEventListener('blur', hideTooltip);
 
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {

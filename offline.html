@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - FindMyGSoC</title>
+  <meta name="theme-color" content="#F46B0E">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #FAFAFA;
+      color: #18181B;
+      padding: 2rem;
+      text-align: center;
+    }
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #71717A;
+      margin-bottom: 1.5rem;
+      max-width: 400px;
+    }
+    button {
+      background: #EA580C;
+      color: #18181B;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #EA580C; }
+    .cached-info {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #FEF3C7;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: #92400E;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #18181B; color: #FAFAFA; }
+      p { color: #A1A1AA; }
+      .cached-info { background: #78350F; color: #FEF3C7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>You're Offline</h1>
+  <p>It looks like you've lost your internet connection. Some content may still be available from your previous visits.</p>
+  <button onclick="location.reload()">Try Again</button>
+  <div class="cached-info">
+    Tip: Visit the site while online to build your offline cache for next time.
+  </div>
+</body>
+</html>

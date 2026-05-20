@@ -87,8 +87,8 @@ jobs:
             dependabot[bot]
 
           failure-add-pr-labels: |
-            suspected-ai-slop
-            needs-human-review
+            ai-slop
+            gssoc:ai-slop
 
           failure-pr-message: |
             ## ⚠️ PR Needs Maintainer Review

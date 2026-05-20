@@ -91,7 +91,7 @@ class PriorityQueue {
 const CONCURRENCY = 3;   // max simultaneous GitHub requests
 let _active = 0;
 const _queue = new PriorityQueue();
-const _inFlight = new Map();
+const _inFlight = new Map();   // Map<jobKey, {resolve, reject}[]>
 
 /**
  * Core fetch with retry + rate-limit awareness.
@@ -202,27 +202,41 @@ export function fetchGH(repo, priority = 1) {
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'stats';
+
+    // FIX: if already in-flight, attach to existing waiters instead of duplicating
     if (_inFlight.has(jobKey)) {
       _inFlight.get(jobKey).push({ resolve, reject });
       return;
     }
+
     _inFlight.set(jobKey, [{ resolve, reject }]);
-    const _resolve = (d) => { (_inFlight.get(jobKey)||[]).forEach(w=>w.resolve(d)); _inFlight.delete(jobKey); };
-    const _reject  = (e) => { (_inFlight.get(jobKey)||[]).forEach(w=>w.reject(e));  _inFlight.delete(jobKey); };
+
+    const _resolve = (d) => {
+      (_inFlight.get(jobKey) || []).forEach(w => w.resolve(d));
+      _inFlight.delete(jobKey);
+    };
+    const _reject = (e) => {
+      (_inFlight.get(jobKey) || []).forEach(w => w.reject(e));
+      _inFlight.delete(jobKey);
+    };
 
     // Return stale immediately and revalidate in background
     if (hit && hit.stale) {
       resolve(hit.data);
-      // Still enqueue revalidation but with lower priority
-      _queue.enqueue({ repo, mode: 'stats', resolve: (fresh) => {
-        // Caller already got stale; this update is for the next render cycle
-        if (fresh) setCache(repo, fresh);
-      }, reject }, Math.max(priority, 2));
+      _queue.enqueue({
+        repo,
+        mode: 'stats',
+        resolve: (fresh) => {
+          if (fresh) setCache(repo, fresh);
+          _inFlight.delete(jobKey);
+        },
+        reject: () => { _inFlight.delete(jobKey); },
+      }, Math.max(priority, 2));
       tick();
       return;
     }
 
-    _queue.enqueue({ repo, mode: 'stats', resolve, reject }, priority);
+    _queue.enqueue({ repo, mode: 'stats', resolve: _resolve, reject: _reject }, priority);
     tick();
   });
 }
@@ -242,22 +256,37 @@ export function fetchGFI(repo, priority = 1) {
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'gfi';
-    if (_inFlight.has(jobKey)) return;
-    _inFlight.add(jobKey);
+
+    // FIX: was _inFlight.add(jobKey) — Map has no .add(). Also attach waiter properly.
+    if (_inFlight.has(jobKey)) {
+      _inFlight.get(jobKey).push({ resolve, reject });
+      return;
+    }
+    _inFlight.set(jobKey, [{ resolve, reject }]);
+
+    const _resolve = (d) => {
+      const val = d?.gfi ?? d?.count ?? null;
+      (_inFlight.get(jobKey) || []).forEach(w => w.resolve(val));
+      _inFlight.delete(jobKey);
+    };
+    const _reject = (e) => {
+      (_inFlight.get(jobKey) || []).forEach(w => w.reject(e));
+      _inFlight.delete(jobKey);
+    };
 
     if (hit && hit.stale) {
       resolve(hit.data.gfi ?? hit.data.count ?? null);
-      _queue.enqueue({ repo, mode: 'gfi', resolve: () => {}, reject }, 2);
+      _queue.enqueue({
+        repo,
+        mode: 'gfi',
+        resolve: () => { _inFlight.delete(jobKey); },
+        reject:  () => { _inFlight.delete(jobKey); },
+      }, 2);
       tick();
       return;
     }
 
-    _queue.enqueue({
-      repo,
-      mode: 'gfi',
-      resolve: (data) => resolve(data?.gfi ?? data?.count ?? null),
-      reject,
-    }, priority);
+    _queue.enqueue({ repo, mode: 'gfi', resolve: _resolve, reject: _reject }, priority);
     tick();
   });
 }
@@ -277,17 +306,36 @@ export function fetchIssues(repo, priority = 2) {
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'issues';
-    if (_inFlight.has(jobKey)) return;
-    _inFlight.add(jobKey);
+
+    // FIX: was _inFlight.add(jobKey) — Map has no .add(). Also attach waiter properly.
+    if (_inFlight.has(jobKey)) {
+      _inFlight.get(jobKey).push({ resolve, reject });
+      return;
+    }
+    _inFlight.set(jobKey, [{ resolve, reject }]);
+
+    const _resolve = (d) => {
+      (_inFlight.get(jobKey) || []).forEach(w => w.resolve(d));
+      _inFlight.delete(jobKey);
+    };
+    const _reject = (e) => {
+      (_inFlight.get(jobKey) || []).forEach(w => w.reject(e));
+      _inFlight.delete(jobKey);
+    };
 
     if (hit && hit.stale) {
       resolve(hit.data);
-      _queue.enqueue({ repo, mode: 'issues', resolve: () => {}, reject }, 2);
+      _queue.enqueue({
+        repo,
+        mode: 'issues',
+        resolve: () => { _inFlight.delete(jobKey); },
+        reject:  () => { _inFlight.delete(jobKey); },
+      }, 2);
       tick();
       return;
     }
 
-    _queue.enqueue({ repo, mode: 'issues', resolve, reject }, priority);
+    _queue.enqueue({ repo, mode: 'issues', resolve: _resolve, reject: _reject }, priority);
     tick();
   });
 }
@@ -306,32 +354,61 @@ export function fetchAllStats(orgs, onProgress, onDone) {
   let completed = 0;
 
   for (const org of withGithub) {
-    fetchGH(org.github, 2).then(data => {
-      if (data) { org._gh = data; onProgress?.(org, data); }
-      completed++;
-      if (completed === withGithub.length) onDone?.();
-    });
+    fetchGH(org.github, 2)
+      .then(data => {
+        if (data) { org._gh = data; onProgress?.(org, data); }
+      })
+      .catch(() => { /* swallow individual errors — still count as done */ })
+      .finally(() => {
+        // FIX: use .finally() so completed always increments even on rejection,
+        // preventing onDone from never being called (UI deadlock).
+        completed++;
+        if (completed === withGithub.length) onDone?.();
+      });
   }
 
-  // Kick off the queue
   tick();
+}
+
+/**
+ * Invalidate cached data for a specific repo, forcing a fresh fetch next call.
+ * Call this before a manual "Refresh" action so stale data isn't returned.
+ *
+ * @param {string} repo  e.g. "django/django"
+ */
+export function invalidateCache(repo) {
+  delete _cache[repo];
+  delete _cache[repo + '__gfi'];
+  delete _cache[repo + '__issues'];
+  saveCache();
 }
 
 /**
  * Returns current queue status — useful for progress UI.
  */
 export function queueStatus() {
-  return { queued: _queue.size, active: _active, rateLimited: isRateLimited(), resumesAt: _rateLimitedUntil };
+  return {
+    queued: _queue.size,
+    active: _active,
+    rateLimited: isRateLimited(),
+    resumesAt: _rateLimitedUntil,
+  };
 }
 
 /**
  * Cancel all pending background (priority 2) jobs — e.g. when user navigates away.
+ * FIX: also cleans up _inFlight entries so future requests aren't permanently blocked.
  */
 export function cancelBulk() {
-  const removed = _queue._q.filter(j => j.priority >= 2).map(j => `${j.repo}__${j.mode}`);
+  const toCancel = _queue._q.filter(j => j.priority >= 2);
   _queue._q = _queue._q.filter(j => j.priority < 2);
-  removed.forEach(key => {
-    (_inFlight.get(key) || []).forEach(w => w.resolve(null));
-    _inFlight.delete(key);
-  });
+
+  for (const job of toCancel) {
+    const key = job.repo + job.mode;
+    const waiters = _inFlight.get(key);
+    if (waiters) {
+      waiters.forEach(w => w.resolve(null));
+      _inFlight.delete(key);
+    }
+  }
 }

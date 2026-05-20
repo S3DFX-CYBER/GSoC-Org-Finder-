@@ -23,9 +23,9 @@
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
-html{
-  scroll-behavior:smooth;
-  transition:background-color 0.4s ease,color 0.4s ease;
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Smooth transitions for all theme-aware elements */
@@ -49,7 +49,7 @@ body,
 .istat,
 .modal,
 .modal-bg {
-  transition:background 0.4s ease,background-color 0.4s ease,color 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease
+  transition: background 0.4s ease, background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 /* Specific transitions for text and borders */
@@ -60,11 +60,21 @@ body,
 .empty h3,
 .issues-hero h2,
 .modal-header h2 {
-  transition:color 0.4s ease
+  transition: color 0.4s ease;
 }
 
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
+body.modal-open {
+  overflow: hidden;
+  height: 100vh;
+}
 /* ── NAV ── */
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
 .nav-inner{max-width:1340px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px}

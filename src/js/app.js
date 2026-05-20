@@ -993,6 +993,14 @@ function clearAllLanguages(){
 globalThis.clearAllLanguages = clearAllLanguages;
 
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+const CHIP_TOOLTIPS = {
+  veteran: 'Organizations that participated in GSoC for many years',
+  newcomer: 'Good for first-time contributors and beginners',
+  hot: 'Highly competitive organizations with many applicants',
+  chill: 'Organizations with relatively fewer applicants',
+  active: 'Organizations with recent GitHub activity',
+  bookmarked: 'Organizations you saved for later'
+};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
@@ -1402,4 +1410,3 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

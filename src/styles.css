@@ -121,6 +121,55 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .chip.cc{border-color:var(--green);background:rgba(0,135,90,.06);color:var(--green)}
 .chip.ca{border-color:var(--orange);background:var(--orange-pale);color:var(--orange)}
 .chip.cb{border-color:#0891B2;background:rgba(8,145,178,.06);color:#0891B2}
+/* ── TOOLTIP ── */
+.tooltip{
+  position:fixed;
+  background:#1f2937;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.5;
+  max-width:220px;
+  z-index:9999;
+
+  opacity:0;
+  visibility:hidden;
+
+  transform:translateY(6px);
+  transition:
+    opacity .18s ease,
+    transform .18s ease,
+    visibility .18s;
+
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+
+  pointer-events:none;
+}
+
+/* visible state */
+.tooltip.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+
+/* arrow */
+.tooltip::after{
+  content:'';
+  position:absolute;
+
+  top:-6px;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:12px;
+  height:12px;
+
+  background:#1f2937;
+
+  rotate:45deg;
+}
 .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
 .pill{padding:4px 11px;border-radius:100px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;font-weight:600}
 .pill:hover{border-color:var(--orange);color:var(--orange)}

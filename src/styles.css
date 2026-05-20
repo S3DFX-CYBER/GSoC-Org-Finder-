@@ -23,8 +23,47 @@
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+html{
+  scroll-behavior:smooth;
+  transition:background-color 0.4s ease,color 0.4s ease;
+}
+
+/* Smooth transitions for all theme-aware elements */
+body,
+.nav,
+.countdown-banner,
+.hero,
+.filter-card,
+.stats-inner,
+.org-card,
+.issue-card,
+.trend-card,
+.theme-toggle,
+.toggle-track,
+.btn-reset,
+.btn-analytics,
+.btn-compare-nav,
+.btn-clear-filters,
+.btn-load-more,
+.api-banner,
+.istat,
+.modal,
+.modal-bg {
+  transition:background 0.4s ease,background-color 0.4s ease,color 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease
+}
+
+/* Specific transitions for text and borders */
+.nav-title,
+.org-name,
+.issue-title,
+.hero h1,
+.empty h3,
+.issues-hero h2,
+.modal-header h2 {
+  transition:color 0.4s ease
+}
+
+body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 
 /* ── NAV ── */
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
@@ -36,7 +75,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 
 /* ── COUNTDOWN BANNER ── */
-.countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;transition:background 0.4s ease,color 0.4s ease,border-color 0.4s ease}
 .countdown-units{display:inline-flex;gap:8px}
 .cu{display:inline-flex;flex-direction:column;align-items:center;background:var(--orange);color:white;border-radius:6px;padding:2px 8px;min-width:36px}
 .cu-n{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;line-height:1}
@@ -46,13 +85,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 /* ── THEME TOGGLE ── */
 .theme-toggle{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;flex-shrink:0}
 .theme-toggle:hover{border-color:var(--orange);background:var(--orange-pale)}
-.toggle-track{width:32px;height:18px;border-radius:100px;background:var(--toggle-bg);position:relative;transition:background .3s;border:1.5px solid var(--border);flex-shrink:0}
-.toggle-knob{width:12px;height:12px;border-radius:50%;background:var(--toggle-knob);position:absolute;top:1px;left:1px;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.theme-toggle:active{transform:scale(0.95)}
+.toggle-track{width:32px;height:18px;border-radius:100px;background:var(--toggle-bg);position:relative;transition:background .4s ease,border-color .4s ease;border:1.5px solid var(--border);flex-shrink:0}
+.toggle-knob{width:12px;height:12px;border-radius:50%;background:var(--toggle-knob);position:absolute;top:1px;left:1px;transition:transform .4s cubic-bezier(0.34,1.56,0.64,1),background .4s ease;box-shadow:0 1px 3px rgb(0 0 0 / .2)}
 [data-theme="dark"] .toggle-knob{transform:translateX(14px)}
-.toggle-label{font-size:11px;font-weight:700;color:var(--ink3);white-space:nowrap}
-.sun-icon,.moon-icon{font-size:12px;line-height:1}
-[data-theme="light"] .moon-icon{display:none}
-[data-theme="dark"] .sun-icon{display:none}
+.toggle-label{font-size:11px;font-weight:700;color:var(--ink3);white-space:nowrap;transition:color .4s ease}
+.sun-icon,.moon-icon{font-size:12px;line-height:1;transition:transform .4s cubic-bezier(0.34,1.56,0.64,1),opacity .4s ease}
+[data-theme="light"] .moon-icon{display:none;opacity:0;transform:rotate(-180deg)}
+[data-theme="dark"] .sun-icon{display:none;opacity:0;transform:rotate(180deg)}
+.theme-toggle.animating .sun-icon,
+.theme-toggle.animating .moon-icon{opacity:0.5;transform:rotate(180deg)}
 
 .btn-analytics,.btn-compare-nav{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--ink3);font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;white-space:nowrap}
 .btn-analytics:hover,.btn-compare-nav:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
@@ -706,4 +748,66 @@ footer a:hover{text-decoration:underline}
   border-color: var(--orange);
   color: var(--orange-deep);
   background: var(--orange-pale);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ACCESSIBILITY: PREFERS-REDUCED-MOTION SUPPORT */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all transitions and animations for users who prefer reduced motion */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Ensure theme toggle still works but without animation */
+  html {
+    transition: none !important;
+  }
+
+  body,
+  .nav,
+  .countdown-banner,
+  .hero,
+  .filter-card,
+  .stats-inner,
+  .org-card,
+  .issue-card,
+  .trend-card,
+  .theme-toggle,
+  .toggle-track,
+  .toggle-knob,
+  .btn-reset,
+  .btn-analytics,
+  .btn-compare-nav,
+  .btn-clear-filters,
+  .btn-load-more,
+  .api-banner,
+  .istat,
+  .modal,
+  .modal-bg,
+  .nav-title,
+  .org-name,
+  .issue-title,
+  .hero h1,
+  .empty h3,
+  .issues-hero h2,
+  .modal-header h2 {
+    transition: none !important;
+  }
+
+  /* Disable pulse animation */
+  .pulse {
+    animation: none;
+  }
+
+  /* Disable icon flip animation */
+  @keyframes themeIconFlip {
+    0%, 100% { opacity: 1; transform: rotate(0deg); }
+  }
 }

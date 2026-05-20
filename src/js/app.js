@@ -24,6 +24,18 @@ globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateThemeIcon();
+  
+  // Add animation to theme toggle button
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn){
+    clearTimeout(btn._animTimer);
+    btn.classList.add('animating');
+    // Remove animation class after animation completes
+    btn._animTimer = setTimeout(() => {
+      btn.classList.remove('animating');
+      delete btn._animTimer;
+    }, 400);
+  }
 };
 
 function updateThemeIcon(){

@@ -90,7 +90,11 @@ const mentors = (
   mentorData.reviewers || []
 )
   .filter(Boolean)
-  .map(username => String(username).trim());
+  .map(username => String(username).trim())
+  .filter(username => username.length > 0)
+  .filter((username, index, arr) =>
+    arr.findIndex(v => v.toLowerCase() === username.toLowerCase()) === index
+  );
 
 // --------------------------------------------------
 // LOAD + NORMALIZE STATS
@@ -139,12 +143,6 @@ const scored = mentors.map((username) => {
   if (neverReviewed) {
     inactivityPenalty = 0;
   } else {
-    inactivityPenalty =
-      Math.min(
-        40,
-        recencyDays * 0.8
-      );
-  }
     inactivityPenalty =
       Math.min(
         40,

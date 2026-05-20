@@ -817,6 +817,12 @@ function renderGrid(orgs){
             <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <button 
+                class="copy-org-btn" 
+                onclick="copyOrgName(event, '${escapeHtml(o.name)}')"
+                title="Copy organization name">
+                📋
+              </button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
               <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
@@ -1403,3 +1409,22 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 
+async function copyOrgName(event, orgName) {
+  event.stopPropagation();
+
+  try {
+    await navigator.clipboard.writeText(orgName);
+
+    const btn = event.currentTarget;
+    const original = btn.innerHTML;
+
+    btn.innerHTML = "✅";
+
+    setTimeout(() => {
+      btn.innerHTML = original;
+    }, 1500);
+
+  } catch (err) {
+    console.error("Copy failed:", err);
+  }
+}

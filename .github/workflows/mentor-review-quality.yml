@@ -1,0 +1,38 @@
+name: Mentor Review Quality
+on:
+  pull_request_review:
+    types: [submitted]
+permissions:
+  issues: write
+  pull-requests: read
+  contents: read
+concurrency:
+  group: mentor-review-quality-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+jobs:
+  quality:
+    if: github.event.review.user.type != 'Bot' && github.event.review.user.login != github.event.pull_request.user.login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: quality
+        env:
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+        run: echo "result=$(node .github/scripts/detect-low-effort-review.js)" >> "$GITHUB_OUTPUT"
+      - uses: actions/github-script@v8
+        env:
+          LOW: ${{ fromJson(steps.quality.outputs.result).lowEffort }}
+        with:
+          script: |
+            if (process.env.LOW !== 'true') return;
+            const owner = context.repo.owner, repo = context.repo.repo, issue_number = context.payload.pull_request.number;
+            const marker = '<!-- mentor-review-quality-warning -->';
+            const body = `${marker}\n⚠️ Low-effort mentor review detected. Please provide actionable feedback.`;
+            const {data: comments} = await github.rest.issues.listComments({owner, repo, issue_number, per_page:100});
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({owner, repo, comment_id: existing.id, body});
+            } else {
+              await github.rest.issues.createComment({owner, repo, issue_number, body});
+            }

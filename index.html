@@ -3226,10 +3226,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     element.addEventListener('mouseenter', () => showTooltip(element));
     element.addEventListener('mouseleave', hideTooltip);
-    element.addEventListener('focus', () => showTooltip(element));
-    element.addEventListener('blur', hideTooltip);
 
-    if (!hoverCapable) {
+    if (hoverCapable) {
+      // Keyboard users on desktop: focus/blur for keyboard navigation
+      element.addEventListener('focus', () => showTooltip(element));
+      element.addEventListener('blur', hideTooltip);
+    } else {
+      // Touch/mobile devices: click handler for tap interaction
       element.addEventListener('click', (event) => {
         event.stopPropagation();
         if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {

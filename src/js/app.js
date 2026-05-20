@@ -882,7 +882,14 @@ document.addEventListener('keydown',e=>{
     if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
   }
   // Don't hijack when typing in inputs
-  if(document.activeElement&&['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
+ const activeTag = document.activeElement?.tagName;
+
+if (
+  ['INPUT', 'SELECT', 'TEXTAREA'].includes(activeTag) &&
+  e.key !== 'Escape'
+) {
+  return;
+}
   const n=filteredOrgs.length;
   if(!n)return;
   const cols=GRID_COLS();
@@ -908,8 +915,9 @@ document.addEventListener('keydown',e=>{
     scrollToFocused();renderGrid(filteredOrgs);
   } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
     openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
-  } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
+  } else if(e.key==='c'||e.key==='C'){
     e.preventDefault();
+    if(focusedIdx < 0) focusedIdx = 0;
     toggleCompare(ORGS.indexOf(filteredOrgs[focusedIdx]),null);
   } else if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
     e.preventDefault();

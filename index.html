@@ -436,6 +436,63 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    /*---------Custom Dropdowns--------------*/
+.cd-wrapper { position: relative; display: inline-block; }
+
+.cd-trigger {
+  display: flex; align-items: center; gap: 8px;
+  background: #ffffff; color: #3f3f46;
+  border: 1.5px solid #e4e4e7; border-radius: 12px;
+  padding: 8px 14px; font-size: 12px; font-weight: 700;
+  cursor: pointer; user-select: none; min-width: 160px;
+  justify-content: space-between; transition: border-color 0.2s;
+}
+.cd-trigger:hover { border-color: #f97316; color: #f97316; }
+.cd-dot { width: 8px; height: 8px; border-radius: 50%; background: #f97316; flex-shrink: 0; }
+.cd-chevron { font-size: 14px; color: #f97316; transition: transform 0.2s; }
+.cd-wrapper.open .cd-chevron { transform: rotate(180deg); }
+
+/* ── LIGHT MODE PANEL ── */
+.cd-panel {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  background: #ffffff; border: 1.5px solid #e4e4e7;
+  border-radius: 14px; padding: 8px;
+  min-width: 210px; z-index: 999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: none;
+}
+.cd-wrapper.open .cd-panel { display: block; }
+
+.cd-section-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  color: #9ca3af; text-transform: uppercase; padding: 4px 8px 8px;
+}
+
+.cd-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px; border-radius: 10px;
+  font-size: 13px; font-weight: 600; color: #3f3f46;
+  cursor: pointer; transition: background 0.15s;
+}
+.cd-item:hover { background: rgba(249,115,22,0.1); color: #f97316; }
+.cd-item.cd-active { background: rgba(249,115,22,0.12); color: #f97316; }
+
+/* ── DARK MODE TRIGGER ── */
+.dark .cd-trigger {
+  background: #27272a; color: #d4d4d8;
+  border-color: #3f3f46;
+}
+.dark .cd-trigger:hover { border-color: #f97316; color: #f97316; }
+
+/* ── DARK MODE PANEL ── */
+.dark .cd-panel {
+  background: #27272a; border-color: #3f3f46;   /* FIXED: was #16213e / #2e2e4a */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.dark .cd-section-label { color: #6b7280; }
+.dark .cd-item { color: #c9c9d0; }
+.dark .cd-item:hover { background: rgba(249,115,22,0.12); color: #f97316; }
+.dark .cd-item.cd-active { background: #7c2900; color: #f97316; }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -667,35 +724,69 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Categories: All</option>
-        <option value="web">Web</option>
-        <option value="programming">Programming</option>
-        <option value="science">Science</option>
-        <option value="os">OS</option>
-        <option value="infra">Infra</option>
-        <option value="security">Security</option>
-        <option value="data">Data</option>
-        <option value="media">Media</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="all">Complexity: All</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
-      <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
-        <option value="alpha">Sort: A-Z</option>
-        <option value="years-desc">Years (High-Low)</option>
-        <option value="years-asc">Years (Low-High)</option>
-        <option value="comp-low">Competition (Chill First)</option>
-        <option value="stars">GitHub Stars</option>
-        <option value="gfi">Good First Issues</option>
-      </select>
+      <div class="cd-wrapper" id="catDropdown">
+  <div class="cd-trigger" id="catTrigger">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="cd-dot"></span>
+      <span id="catLabel">All categories</span>
     </div>
+    <span class="cd-chevron">▾</span>
   </div>
-  
+  <div class="cd-panel">
+    <div class="cd-section-label">Filter by category</div>
+    <div class="cd-item cd-active" data-value="all" data-label="All categories">All categories</div>
+    <div class="cd-item" data-value="web" data-label="Web">Web</div>
+    <div class="cd-item" data-value="programming" data-label="Programming">Programming</div>
+    <div class="cd-item" data-value="science" data-label="Science">Science</div>
+    <div class="cd-item" data-value="os" data-label="OS">OS</div>
+    <div class="cd-item" data-value="infra" data-label="Infra">Infra</div>
+    <div class="cd-item" data-value="security" data-label="Security">Security</div>
+    <div class="cd-item" data-value="data" data-label="Data">Data</div>
+    <div class="cd-item" data-value="media" data-label="Media">Media</div>
+    <div class="cd-item" data-value="other" data-label="Other">Other</div>
+  </div>
+  <input type="hidden" id="categoryFilter" value="all" />
+</div>
+
+<div class="cd-wrapper" id="compDropdown">
+  <div class="cd-trigger" id="compTrigger">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="cd-dot"></span>
+      <span id="compLabel">Complexity: All</span>
+    </div>
+    <span class="cd-chevron">▾</span>
+  </div>
+  <div class="cd-panel">
+    <div class="cd-section-label">Filter by complexity</div>
+    <div class="cd-item cd-active" data-value="all" data-label="All levels">All levels</div>
+    <div class="cd-item" data-value="beginner" data-label="Beginner">Beginner</div>
+    <div class="cd-item" data-value="intermediate" data-label="Intermediate">Intermediate</div>
+    <div class="cd-item" data-value="advanced" data-label="Advanced">Advanced</div>
+  </div>
+  <input type="hidden" id="complexityFilter" value="all" />
+</div>
+
+<div class="cd-wrapper" id="sortDropdown">
+  <div class="cd-trigger" id="sortTrigger">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="cd-dot"></span>
+      <span id="sortLabel">Sort: A-Z</span>
+    </div>
+    <span class="cd-chevron">▾</span>
+  </div>
+  <div class="cd-panel">
+    <div class="cd-section-label">Sort organizations</div>
+    <div class="cd-item cd-active" data-value="alpha" data-label="A – Z">A – Z</div>
+    <div class="cd-item" data-value="years-desc" data-label="Years (High → Low)">Years (High → Low)</div>
+    <div class="cd-item" data-value="years-asc" data-label="Years (Low → High)">Years (Low → High)</div>
+    <div class="cd-item" data-value="comp-low" data-label="Competition (Chill first)">Competition (Chill first)</div>
+    <div class="cd-item" data-value="stars" data-label="GitHub Stars">GitHub Stars</div>
+    <div class="cd-item" data-value="gfi" data-label="Good First Issues">Good First Issues</div>
+  </div>
+  <input type="hidden" id="sortSelect" value="alpha" />
+</div>
+  </div>
+  </div>
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
@@ -3153,6 +3244,76 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeHelpModal = closeHelpModal;
 
 });
+// ═══ Custom Dropdown Logic (category + complexity + sort) ═══
+(function(){
+  function initDropdown({ wrapperId, triggerId, labelId, hiddenId, labelPrefix, onSelect }) {
+    const wrapper = document.getElementById(wrapperId);
+    const trigger = document.getElementById(triggerId);
+    const label   = document.getElementById(labelId);
+    const hidden  = document.getElementById(hiddenId);
+    if (!wrapper || !trigger || !label || !hidden) return;
+    const items = wrapper.querySelectorAll('.cd-item');
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      // close all others first
+      document.querySelectorAll('.cd-wrapper').forEach(w => {
+        if (w !== wrapper) w.classList.remove('open');
+      });
+      wrapper.classList.toggle('open');
+    });
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        items.forEach(i => i.classList.remove('cd-active'));
+        item.classList.add('cd-active');
+        const text = item.firstChild.textContent.trim();
+        label.textContent = labelPrefix ? labelPrefix + text : text;
+        hidden.value = item.dataset.value;
+        wrapper.classList.remove('open');
+        if (onSelect) onSelect(item.dataset.value);
+      });
+    });
+  }
+
+  // Category
+  initDropdown({
+    wrapperId: 'catDropdown', triggerId: 'catTrigger',
+    labelId: 'catLabel', hiddenId: 'categoryFilter',
+    labelPrefix: '',
+    onSelect: () => applyFilters()
+  });
+
+  // Complexity
+  initDropdown({
+    wrapperId: 'compDropdown', triggerId: 'compTrigger',
+    labelId: 'compLabel', hiddenId: 'complexityFilter',
+    labelPrefix: 'Complexity: ',
+    onSelect: () => applyFilters()
+  });
+
+  // Sort
+  initDropdown({
+    wrapperId: 'sortDropdown', triggerId: 'sortTrigger',
+    labelId: 'sortLabel', hiddenId: 'sortSelect',
+    labelPrefix: 'Sort: ',
+    onSelect: () => applyFilters()
+  });
+
+  // Close all on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.cd-wrapper')) {
+      document.querySelectorAll('.cd-wrapper').forEach(w => w.classList.remove('open'));
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.cd-wrapper').forEach(w => w.classList.remove('open'));
+    }
+  });
+})();
 </script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

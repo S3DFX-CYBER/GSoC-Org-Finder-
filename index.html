@@ -39,6 +39,7 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
@@ -630,12 +631,12 @@
 <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
 <section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
   <div class="flex flex-wrap gap-2 mb-4">
-    <button id="chip-veteran" title="Organizations that participated in GSoC for many years" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-    <button id="chip-newcomer" title="Good for first-time contributors and beginners" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-    <button id="chip-hot" title="Highly competitive organizations with many applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-    <button id="chip-chill" title="Organizations with relatively fewer applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-    <button id="chip-active" title="Organizations with recent GitHub activity" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-    <button id="chip-bookmarked" title="Organizations you saved for later" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+    <button id="chip-veteran" data-tooltip="Organizations that participated in GSoC for many years" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
+    <button id="chip-newcomer" data-tooltip="Good for first-time contributors and beginners" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
+    <button id="chip-hot" data-tooltip="Highly competitive organizations with many applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
+    <button id="chip-chill" data-tooltip="Organizations with relatively fewer applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
+    <button id="chip-active" data-tooltip="Organizations with recent GitHub activity" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
+    <button id="chip-bookmarked" data-tooltip="Organizations you saved for later" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
   <div class="flex flex-wrap gap-2">
     <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
@@ -3164,34 +3165,64 @@ document.addEventListener('DOMContentLoaded', () => {
   const tooltip = document.getElementById('tooltip');
   if (!tooltip) return;
 
-  const hoverCapable = window.matchMedia('(hover: hover)').matches;
+  const hoverCapable = globalThis.matchMedia('(hover: hover)').matches;
+  let currentTooltipElement = null;
 
-  function showTooltip(element) {
-    const text = element.dataset.tooltip || element.title;
-    if (!text) return;
-
-    tooltip.textContent = text;
+  function repositionTooltip(element) {
+    if (!element || !tooltip.classList.contains('show')) return;
 
     const rect = element.getBoundingClientRect();
-    const maxWidth = Math.min(220, window.innerWidth - 24);
+    const maxWidth = Math.min(220, globalThis.innerWidth - 24);
     tooltip.style.width = `${maxWidth}px`;
 
     const left = Math.min(
       Math.max(rect.left + rect.width / 2 - maxWidth / 2, 12),
-      window.innerWidth - maxWidth - 12
+      globalThis.innerWidth - maxWidth - 12
     );
 
     tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${rect.bottom + window.scrollY + 10}px`;
+    tooltip.style.top = `${rect.bottom + 10}px`;
+  }
+
+  function showTooltip(element) {
+    const text = element.dataset.tooltip;
+    if (!text) return;
+
+    currentTooltipElement = element;
+    tooltip.textContent = text;
+
+    const rect = element.getBoundingClientRect();
+    const maxWidth = Math.min(220, globalThis.innerWidth - 24);
+    tooltip.style.width = `${maxWidth}px`;
+
+    const left = Math.min(
+      Math.max(rect.left + rect.width / 2 - maxWidth / 2, 12),
+      globalThis.innerWidth - maxWidth - 12
+    );
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${rect.bottom + 10}px`;
     tooltip.classList.add('show');
   }
 
   function hideTooltip() {
     tooltip.classList.remove('show');
+    currentTooltipElement = null;
+  }
+
+  function handleScrollResize() {
+    if (currentTooltipElement && tooltip.classList.contains('show')) {
+      repositionTooltip(currentTooltipElement);
+    }
   }
 
   document.querySelectorAll('.filter-chip').forEach((element) => {
-    if (!element.title && !element.dataset.tooltip) return;
+    if (element.title && !element.dataset.tooltip) {
+      element.dataset.tooltip = element.title;
+    }
+    element.removeAttribute('title');
+
+    if (!element.dataset.tooltip) return;
 
     element.addEventListener('mouseenter', () => showTooltip(element));
     element.addEventListener('mouseleave', hideTooltip);
@@ -3199,7 +3230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        if (tooltip.classList.contains('show') && tooltip.textContent === (element.dataset.tooltip || element.title)) {
+        if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {
           hideTooltip();
         } else {
           showTooltip(element);
@@ -3213,6 +3244,9 @@ document.addEventListener('DOMContentLoaded', () => {
       hideTooltip();
     }
   });
+
+  globalThis.addEventListener('scroll', handleScrollResize, { passive: true });
+  globalThis.addEventListener('resize', handleScrollResize, { passive: true });
 })();
 </script>
 </body>

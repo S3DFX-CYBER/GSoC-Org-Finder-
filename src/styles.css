@@ -132,22 +132,24 @@ body.modal-open{overflow:hidden;  height:100vh;}
   line-height:1.5;
   max-width:220px;
   z-index:9999;
-
   opacity:0;
   visibility:hidden;
-
   transform:translateY(6px);
   transition:
     opacity .18s ease,
     transform .18s ease,
     visibility .18s;
-
-  box-shadow:0 10px 25px rgba(0,0,0,.18);
-
+  box-shadow:0 10px 25px rgb(0 0 0 / 0.18);
   pointer-events:none;
 }
 
 /* visible state */
+@media (prefers-reduced-motion: reduce) {
+  .tooltip,
+  .tooltip.show {
+    transition: none;
+  }
+}
 .tooltip.show{
   opacity:1;
   visibility:visible;
@@ -158,16 +160,12 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .tooltip::after{
   content:'';
   position:absolute;
-
   top:-6px;
   left:50%;
   transform:translateX(-50%);
-
   width:12px;
   height:12px;
-
   background:#1f2937;
-
   rotate:45deg;
 }
 .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}

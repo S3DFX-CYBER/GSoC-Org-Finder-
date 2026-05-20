@@ -143,8 +143,8 @@ function extractSkills(text) {
   }
 
   if (!matchedSkills.has('c')) {
-    const cContextRegex = /\b(c programming|c language|proficient in c|knowledge of c|written in c|experience with c|using c|c developer|c code|c project)\b/i;
-    const cListRegex = /\b(python|java|c\+\+|rust|javascript|assembly|go|ruby)\s*[,/]\s*c\b|\bc\s*[,/]\s*(python|java|c\+\+|rust|javascript|assembly|go|ruby)\b/i;
+    const cContextRegex = /\b(c programming|c language|proficient in c|knowledge of c|written in c|experience with c|using c|c developer|c code|c project)(?![+#\w])/i;
+    const cListRegex = /\b(python|java|c\+\+|rust|javascript|assembly|go|ruby)\s*[,/]\s*c(?![+#\w])|\bc(?![+#\w])\s*[,/]\s*(python|java|c\+\+|rust|javascript|assembly|go|ruby)\b/i;
     if (cContextRegex.test(normalizedText) || cListRegex.test(normalizedText)) {
       matchedSkills.add('c');
     }

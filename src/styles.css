@@ -1,4 +1,11 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
 :root,[data-theme="light"]{
   --bg:#FAFAFA;--white:#FFFFFF;
   --orange:#F46B0E;--orange-deep:#D45800;--orange-pale:#FFF4EC;--orange-mid:#FFE0C8;--orange-border:#FECBA0;
@@ -442,13 +449,35 @@ footer a:hover{text-decoration:underline}
    RESPONSIVE — Phone (≤640px)
 ═══════════════════════════════════════════ */
 @media(max-width:640px){
+  /* Hero responsive improvements */
+.hero {
+  padding: 32px 16px 24px;
+}
+
+.hero h1 {
+  font-size: clamp(28px, 9vw, 42px);
+  line-height: 1.1;
+}
+
+.hero-sub {
+  font-size: 13px;
+  line-height: 1.6;
+}
   /* Nav */
   .nav-inner{padding:0 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto}
   .nav-logo{font-size:14px;flex-shrink:0}
   .nav-right{gap:4px;flex-shrink:0}
   .nav-right .btn-contribute span{display:none}
-  .compare-btn span:first-child,.analytics-btn span:first-child{display:none}
-  .compare-btn,.analytics-btn{padding:5px 10px;font-size:11px}
+.btn-compare-nav span:first-child,
+.btn-analytics span:first-child {
+  display: none;
+}
+
+.btn-analytics,
+.btn-compare-nav {
+  padding: 5px 10px;
+  font-size: 11px;
+}
 
   /* Stats bar */
   .stats-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 12px 6px;flex-wrap:nowrap;gap:6px;justify-content:flex-start}
@@ -552,7 +581,8 @@ footer a:hover{text-decoration:underline}
 ═══════════════════════════════════════════ */
 @media(max-width:380px){
   .nav-inner{padding:0 8px}
-  .compare-btn,.analytics-btn{display:none}
+  .btn-compare-nav,
+.btn-analytics{display:none}
   .cd-num{font-size:18px}
   .stat-num{font-size:15px}
   .stat-lbl{font-size:8px}

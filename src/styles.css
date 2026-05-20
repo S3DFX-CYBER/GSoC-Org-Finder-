@@ -164,12 +164,22 @@ body.modal-open{overflow:hidden;height:100vh;}
   position:relative;
   overflow:hidden;
   animation:fadeUp .25s ease forwards;
-  will-change:transform;
+  will-change:transform, box-shadow;
   transform:translateY(0);
+  
+  /* Genuine skeuomorphic 3D solid edge at rest + smooth ambient shadow */
+  box-shadow:
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 1px 4px rgb(28 16 8 / 0.06),
+    0 6px 20px rgb(28 16 8 / 0.04);
+    
   transition:
-    border-color .18s,
-    box-shadow .3s cubic-bezier(.23,1,.32,1),
-    transform .12s linear,
+    border-color .25s cubic-bezier(.25, .8, .25, 1),
+    box-shadow .25s cubic-bezier(.25, .8, .25, 1),
+    transform .25s cubic-bezier(.25, .8, .25, 1),
     background .3s;
 }
 .org-card::after{
@@ -181,14 +191,23 @@ body.modal-open{overflow:hidden;height:100vh;}
   opacity:0;
   transition:opacity .2s;
 }
-/* 3D active state — applied by JS on mousemove to org-card-3d elements */
-.org-card-3d.tilt-active{
+/* 3D active state — applied automatically on mousemove to org-card-3d elements or hover */
+.org-card-3d.tilt-active,
+.org-card:hover {
   border-color:var(--orange-border);
+  /* The depth edge compresses/extends gracefully, and casts a long, soft, responsive shadow to simulate physical height */
   box-shadow:
-    0 2px 4px rgb(28 16 8 / 0.04),
-    0 8px 16px rgb(244 107 14 / 0.10),
-    0 20px 40px rgb(244 107 14 / 0.13),
-    0 32px 56px rgb(28 16 8 / 0.10);
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 5px 0px var(--border2),
+    0 6px 0px var(--border2),
+    0 12px 24px rgb(28 16 8 / 0.12),
+    0 24px 48px rgb(244 107 14 / 0.16),
+    0 36px 72px rgb(28 16 8 / 0.08);
+  /* If Javascript mouse movement is not active, CSS fallback handles the 3D raise and scale */
+  transform: translateY(-8px) scale(1.05);
 }
 .org-card.tilt-active::after{opacity:1}
 /* glare overlay — child div injected by JS */
@@ -208,7 +227,12 @@ body.modal-open{overflow:hidden;height:100vh;}
   outline:2px solid var(--orange);
   outline-offset:2px;
   border-color:var(--orange-border);
-  box-shadow:0 4px 20px rgb(244 107 14 / 0.1);
+  box-shadow:
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 12px 24px rgb(244 107 14 / 0.12);
 }
 .org-card.focused::after{opacity:1}
 .org-card.in-compare{border-color:var(--blue);background:rgb(26 86 219 / 0.03)}

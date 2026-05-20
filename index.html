@@ -5,6 +5,7 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
   <meta name="description" content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time." />
+  <link rel="stylesheet" href="src/styles.css">
   <link rel="canonical" href="https://findmygsoc.vercel.app/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FindMyGSoC" />
@@ -666,7 +667,7 @@
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center filter-bar">
       <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>

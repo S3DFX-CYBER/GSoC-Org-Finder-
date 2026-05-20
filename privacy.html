@@ -6,10 +6,9 @@
   <title>Privacy Policy | FindMyGSoC</title>
   <meta name="description" content="Privacy Policy for FindMyGSoC." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/privacy.html" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" crossorigin="anonymous"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" integrity="sha384-9gQ8upeWZQ9/fPKaAGJuDpTMaZdwDhECBPX+H6i9vVTa3EllQ1skSXUr6bXADJRW" crossorigin="anonymous" />
-  <script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     // Tailwind Configuration
     tailwind.config = {
       darkMode: 'class',
@@ -91,6 +90,37 @@
     </nav>
   </div>
 </footer>
+<style>
+  :root {
+    --color-primary: #f97316;
+    --color-surface: #ffffff;
+    --color-surface-container-low: #f4f4f5;
+    --color-on-surface: #18181b;
+    --color-on-surface-variant: #71717a;
+  }
+
+  .dark {
+    --color-primary: #fb923c;
+    --color-surface: #18181b;
+    --color-surface-container-low: #27272a;
+    --color-on-surface: #fafafa;
+    --color-on-surface-variant: #a1a1aa;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+</style>
+<script>
+  (function() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
 
 </body>
 </html>

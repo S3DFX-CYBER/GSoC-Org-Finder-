@@ -56,7 +56,7 @@ function formatCountdownDate(date) {
 let cdTimer; // declared before use to avoid TDZ error
 
 function updateCountdown(){
-  const now = Date.now();
+  const cdTimer = Date.now() < GSOC_DATES.close.getTime() ? setInterval(updateCountdown, 1000) : null;
   const banner = document.getElementById('countdownBanner');
   const sub = document.getElementById('countdownSub');
   let target = GSOC_DATES.open.getTime();

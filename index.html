@@ -218,6 +218,79 @@
     .complexity-badge.beginner { background: #dcfce7; color: #166534; }
     .complexity-badge.intermediate { background: #fef9c3; color: #854d0e; }
     .complexity-badge.advanced { background: #fee2e2; color: #991b1b; }
+    .dark .complexity-badge.beginner { background: #14532d; color: #86efac; }
+    .dark .complexity-badge.intermediate { background: #422006; color: #fde68a; }
+    .dark .complexity-badge.advanced { background: #450a0a; color: #fca5a5; }
+
+    /* Difficulty Badge */
+    .difficulty-badge { display:inline-flex; align-items:center; gap:0.25rem; font-size:0.65rem; font-weight:800; padding:0.2rem 0.55rem; border-radius:99px; cursor:pointer; transition:all 0.2s; }
+    .difficulty-badge:hover { transform:scale(1.05); }
+    .difficulty-easy   { background:#dcfce7; color:#166534; }
+    .difficulty-medium { background:#fef9c3; color:#854d0e; }
+    .difficulty-hard   { background:#fee2e2; color:#991b1b; }
+    .dark .difficulty-easy   { background:#14532d; color:#86efac; }
+    .dark .difficulty-medium { background:#422006; color:#fde68a; }
+    .dark .difficulty-hard   { background:#450a0a; color:#fca5a5; }
+
+    /* Difficulty bar in modal */
+    .diff-bar-wrap { background:#f3f4f6; border-radius:99px; height:8px; flex:1; overflow:hidden; }
+    .diff-bar-fill { height:100%; border-radius:99px; transition:width 0.6s ease; }
+    .dark .diff-bar-wrap { background:#27272a; }
+
+    /* Match My Skills quiz panel */
+    #skillQuiz { 
+      border: 1px solid #f4f4f5; 
+      border-radius: 1.5rem; 
+      padding: 1.5rem; 
+      margin-top: 1.5rem; 
+      margin-bottom: 2rem; 
+      background: #fafafa; 
+      transition: all 0.3s ease; 
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .dark #skillQuiz { 
+      border-color: rgba(63, 63, 70, 0.5); 
+      background: rgba(24, 24, 27, 0.4); 
+      box-shadow: none;
+    }
+    .quiz-option { 
+      display: inline-block; 
+      padding: 0.35rem 0.9rem; 
+      border-radius: 99px; 
+      border: 1.5px solid #e4e4e7; 
+      font-size: 0.72rem; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+      margin: 0.2rem; 
+      background: #fff;
+    }
+    .quiz-option:hover { 
+      border-color: #f97316; 
+      color: #ea580c; 
+      transform: translateY(-1px);
+    }
+    .quiz-option.selected { 
+      background: #f97316; 
+      color: #fff; 
+      border-color: #f97316; 
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.2);
+    }
+    .dark .quiz-option { 
+      border-color: rgba(63, 63, 70, 0.8); 
+      color: #d4d4d8; 
+      background: rgba(39, 39, 42, 0.3);
+    }
+    .dark .quiz-option:hover { 
+      border-color: #fb923c; 
+      color: #fb923c; 
+    }
+    .dark .quiz-option.selected { 
+      background: #f97316; 
+      color: #fff; 
+      border-color: #f97316; 
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
 
     /* Bookmark Button */
     .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
@@ -686,6 +759,8 @@
         <option value="advanced">Advanced</option>
       </select>
       <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+        <option value="diff-asc">Difficulty (Easy First)</option>
+        <option value="diff-desc">Difficulty (Hard First)</option>
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -699,6 +774,16 @@
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
+  <!-- Skill match banner -->
+  <div id="skillMatchBanner" class="hidden mb-4 px-4 py-2 bg-primary/10 text-primary text-xs font-bold rounded-xl flex items-center justify-between">
+    <span></span>
+    <button onclick="clearSkillMatch()" class="ml-4 underline hover:text-orange-700 transition-colors">Clear</button>
+  </div>
+
+  <!-- Match My Skills Quiz -->
+  <div id="skillQuiz"></div>
+
+  <!-- Difficulty sort option injected -->
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
     <div class="col-span-full py-20 text-center animate-pulse">
@@ -1408,6 +1493,34 @@
   // ══════════════════════════════════════════════
   let visibleCount = 12;
 
+  const CAT_THEMES = {
+    science: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30',
+    programming: 'bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30',
+    data: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30',
+    web: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30',
+    os: 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400 border border-orange-100 dark:border-orange-900/30',
+    security: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30',
+    media: 'bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30',
+    infra: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30',
+    ai: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30',
+    dev: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-400 border border-teal-100 dark:border-teal-900/30',
+    other: 'bg-zinc-50 text-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/30',
+  };
+
+  const CAT_NAMES = {
+    science: 'Science',
+    programming: 'Programming',
+    data: 'Data',
+    web: 'Web',
+    os: 'OS / Systems',
+    security: 'Security',
+    media: 'Media',
+    infra: 'Infrastructure',
+    ai: 'AI / ML',
+    dev: 'Dev Tools',
+    other: 'Other'
+  };
+
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
@@ -2064,6 +2177,158 @@
     }
   };
 
+  // ══════════════════════════════════════════
+  // DIFFICULTY ESTIMATOR — scoring logic
+  // ══════════════════════════════════════════
+  function getDifficultyScore(org) {
+    // Code Complexity (0–10)
+    let codeScore = 0;
+    if (org.codebase === 'advanced')      codeScore = 8;
+    else if (org.codebase === 'intermediate') codeScore = 5;
+    else                                  codeScore = 2;
+
+    // Language difficulty weights
+    const hardLangs   = ['c','c++','assembly','rust','llvm','haskell','fortran'];
+    const mediumLangs = ['java','go','scala','ocaml','d lang'];
+    const tags = (org.tags || []).map(t => t.toLowerCase());
+    let langBonus = 0;
+    tags.forEach(t => {
+      if (hardLangs.includes(t))   langBonus = Math.max(langBonus, 2);
+      else if (mediumLangs.includes(t)) langBonus = Math.max(langBonus, 1);
+    });
+    codeScore = Math.min(10, codeScore + langBonus);
+
+    // Community Friction (0–10)
+    let communityScore = 0;
+    if (org.competition === 'hot')       communityScore = 8;
+    else if (org.competition === 'moderate') communityScore = 5;
+    else                                 communityScore = 2;
+
+    // Entry Barrier (0–10): GSoC veteran years = harder to stand out
+    let entryScore = 0;
+    if (org.years >= 10)       entryScore = 8;
+    else if (org.years >= 6)   entryScore = 5;
+    else if (org.years >= 3)   entryScore = 3;
+    else                       entryScore = 1;
+
+    const total = Math.round((codeScore + communityScore + entryScore) / 3);
+    return {
+      total: Math.min(10, Math.max(1, total)),
+      codeScore,
+      communityScore,
+      entryScore,
+    };
+  }
+
+  function getDifficultyLabel(score) {
+    if (score <= 3) return { label: 'Easy', cls: 'difficulty-easy' };
+    if (score <= 6) return { label: 'Medium', cls: 'difficulty-medium' };
+    return { label: 'Hard', cls: 'difficulty-hard' };
+  }
+
+  function getDifficultyBarColor(score) {
+    if (score <= 3) return '#22c55e';
+    if (score <= 6) return '#eab308';
+    return '#ef4444';
+  }
+
+  function renderDifficultyBadge(org) {
+    const { total } = getDifficultyScore(org);
+    const { label, cls } = getDifficultyLabel(total);
+    return `<span class="difficulty-badge ${cls}" title="Difficulty: ${total}/10 — click card for breakdown">⚡ ${total}/10 ${label}</span>`;
+  }
+
+  globalThis.getOrgMetricsDashboardHTML = function(years, codebase, diffScore, diffLabelCls, isRecommendation = false) {
+    const esc = isRecommendation ? (typeof safeEscapeHtml === 'function' ? safeEscapeHtml : s => s) : (typeof escapeHtml === 'function' ? escapeHtml : s => s);
+    const yearsText = esc(String(years));
+    const codebaseText = esc(codebase || '—');
+    const codebaseCls = codebase === 'beginner' ? 'text-emerald-600 dark:text-emerald-400' : codebase === 'intermediate' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
+    const diffCls = diffLabelCls === 'difficulty-easy' ? 'text-emerald-600 dark:text-emerald-400' : diffLabelCls === 'difficulty-medium' ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
+    const yearsLabel = years >= 10 ? 'Veteran' : years <= 3 ? 'Newcomer' : 'Established';
+    const cellClass = "flex flex-col items-center justify-center p-2 rounded-2xl bg-zinc-50/60 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60 transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]";
+    const hoverClass = " hover:bg-orange-50/20 dark:hover:bg-orange-950/10 hover:border-orange-100/50 dark:hover:border-orange-900/30";
+    
+    return `
+      <div class="grid grid-cols-3 gap-2 mb-4 mt-auto relative z-10">
+        <!-- Presence Card Cell -->
+        <div class="${cellClass}${hoverClass}">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Presence</span>
+          <span class="text-[10px] font-headline font-extrabold text-orange-700 dark:text-orange-400 flex items-center gap-0.5" title="${yearsText} years in GSoC — ${yearsLabel}">
+            <span class="material-symbols-outlined text-[10px] icon-fill">history</span>
+            ${yearsText}y
+          </span>
+        </div>
+        <!-- Codebase Card Cell -->
+        <div class="${cellClass}">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Codebase</span>
+          <span class="text-[9.5px] font-headline font-extrabold uppercase tracking-wider ${codebaseCls}">
+            ${codebaseText}
+          </span>
+        </div>
+        <!-- Difficulty Card Cell -->
+        <div class="${cellClass}" title="Difficulty score: ${diffScore}/10">
+          <span class="text-[8px] uppercase font-label font-bold tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5">Difficulty</span>
+          <span class="text-[9.5px] font-headline font-extrabold flex items-center gap-0.5 ${diffCls}">
+            ⚡ ${diffScore}/10
+          </span>
+        </div>
+      </div>
+    `;
+  };
+
+  const quizState = { exp: null, lang: null, active: false };
+
+  function renderSkillQuiz() {
+    const el = document.getElementById('skillQuiz');
+    if (!el) return;
+    const expOptions = ['Beginner','Intermediate','Advanced'];
+    const langOptions = ['Python','JavaScript','Java','C/C++','Rust','Go','Other'];
+    el.innerHTML = `
+      <p class="font-bold text-sm mb-3 text-on-surface">🎯 Match My Skills</p>
+      <p class="text-xs text-zinc-500 mb-2">Your experience level:</p>
+      <div>${expOptions.map(o => `<span class="quiz-option ${quizState.exp===o?'selected':''}" data-quiz-exp="${o}">${o}</span>`).join('')}</div>
+      <p class="text-xs text-zinc-500 mt-3 mb-2">Your primary language:</p>
+      <div>${langOptions.map(o => `<span class="quiz-option ${quizState.lang===o?'selected':''}" data-quiz-lang="${o}">${o}</span>`).join('')}</div>
+      ${(quizState.exp && quizState.lang) ? `<button onclick="applySkillMatch()" class="mt-4 px-4 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-orange-700 transition-colors shadow-md shadow-primary/20">Show Matching Orgs</button>` : ''}
+    `;
+    el.querySelectorAll('[data-quiz-exp]').forEach(btn => {
+      btn.addEventListener('click', () => { quizState.exp = btn.dataset.quizExp; renderSkillQuiz(); });
+    });
+    el.querySelectorAll('[data-quiz-lang]').forEach(btn => {
+      btn.addEventListener('click', () => { quizState.lang = btn.dataset.quizLang; renderSkillQuiz(); });
+    });
+  }
+
+  globalThis.applySkillMatch = function() {
+    if (!quizState.exp || !quizState.lang) return;
+    quizState.active = true;
+
+    // Call the unified applyFilters pipeline so all filter states work in harmony
+    applyFilters();
+
+    // Scroll to results
+    document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
+
+    // Show a banner
+    const banner = document.getElementById('skillMatchBanner');
+    if (banner) {
+      banner.querySelector('span').textContent = `Showing ${filteredOrgs.length} orgs matching: ${quizState.exp} · ${quizState.lang}`;
+      banner.classList.remove('hidden');
+    }
+  };
+
+  globalThis.clearSkillMatch = function() {
+    quizState.active = false;
+    quizState.exp = null;
+    quizState.lang = null;
+
+    const banner = document.getElementById('skillMatchBanner');
+    if (banner) banner.classList.add('hidden');
+
+    renderSkillQuiz();
+    applyFilters();
+  };
+
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
 
@@ -2088,42 +2353,53 @@
     slice.forEach(org => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
+      
+      const catText = CAT_NAMES[org.cat] || org.cat;
+      const catClass = CAT_THEMES[org.cat] || CAT_THEMES.other;
+      const yearsLabel = org.years >= 8 ? 'Veteran' : org.years >= 4 ? 'Experienced' : 'Newcomer';
+      const diffScoreObj = getDifficultyScore(org);
+      const diffLabelObj = getDifficultyLabel(diffScoreObj.total);
+
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group relative bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-100 dark:border-zinc-800/80 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:border-orange-500/30 dark:hover:border-orange-500/30 flex flex-col justify-between overflow-hidden';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
       card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-          <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        <div class="flex justify-between items-start mb-4 relative z-10">
+          <div class="w-14 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100/80 dark:border-zinc-700/50 flex items-center justify-center p-2.5 overflow-hidden shadow-inner transition-transform duration-300 group-hover:scale-105">
             <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
-            <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
-            <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
-              <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
-            </button>
-          </div>
+          <button class="bookmark-btn w-9 h-9 rounded-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-150/60 dark:border-zinc-700/50 flex items-center justify-center text-zinc-300 dark:text-zinc-650 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:border-orange-200/50 dark:hover:border-orange-900/30 transition-all duration-200 ${isBookmarked ? 'active text-orange-500' : ''}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
+            <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
+          </button>
         </div>
-        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
-        <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
-        <div class="flex flex-wrap gap-1.5 mb-4">
-          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+        <div class="relative z-10 flex-1 flex flex-col">
+          <h3 class="font-headline text-lg font-extrabold text-zinc-900 dark:text-zinc-50 mb-1.5 group-hover:text-primary dark:group-hover:text-orange-400 transition-colors duration-250 leading-snug line-clamp-1" title="${escapeHtml(org.name)}">${escapeHtml(org.name)}</h3>
+          <div class="mb-3">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-wider ${catClass}">${escapeHtml(catText)}</span>
+          </div>
+          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
+          ${getOrgMetricsDashboardHTML(org.years, org.codebase, diffScoreObj.total, diffLabelObj.cls, false)}
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            ${org.tags.slice(0, 3).map(t => `<span class="px-2.5 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[10px] font-mono font-medium rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400 transition-colors duration-200 group-hover:border-zinc-200 dark:group-hover:border-zinc-600">${escapeHtml(t)}</span>`).join('')}
+            ${org.tags.length > 3 ? `<span class="px-2.5 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[10px] font-mono font-medium rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+          </div>
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
-          <div class="flex items-center gap-3">
-             <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
-             </button>
-          </div>
-           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800/60 relative z-10 mt-auto">
+          <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-headline font-extrabold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300'} flex items-center gap-1.5 transition-colors duration-200">
+            <span class="material-symbols-outlined text-sm transition-transform duration-200 group-hover:rotate-12">${isComparing ? 'check_circle' : 'compare_arrows'}</span> 
+            ${isComparing ? 'Comparing' : 'Compare'}
+          </button>
+          <button data-open-org="${escapeHtml(org.name)}" class="text-primary hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-headline font-extrabold text-xs uppercase tracking-widest flex items-center gap-1 transition-all duration-200 group-hover:gap-2">
+            View 
+            <span class="material-symbols-outlined text-sm transition-transform duration-200 group-hover:translate-x-0.5">arrow_forward</span>
+          </button>
         </div>
       `;
       grid.appendChild(card);
@@ -2422,38 +2698,20 @@
         ? `https://github.com/${githubOwner}.png?size=80`
         : '';
 
-      // Category colour mapping (mirrors the existing badge system)
-      const CAT_COLOURS = {
-        science: 'bg-blue-100 text-blue-700',
-        programming: 'bg-violet-100 text-violet-700',
-        data: 'bg-cyan-100 text-cyan-700',
-        web: 'bg-green-100 text-green-700',
-        os: 'bg-orange-100 text-orange-700',
-        security: 'bg-red-100 text-red-700',
-        media: 'bg-pink-100 text-pink-700',
-        infra: 'bg-yellow-100 text-yellow-700',
-        ai: 'bg-purple-100 text-purple-700',
-        dev: 'bg-teal-100 text-teal-700',
-        other: 'bg-zinc-100 text-zinc-600',
-      };
-      const catClass = CAT_COLOURS[org.cat] || CAT_COLOURS.other;
-      const catLabel = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const catClass = CAT_THEMES[org.cat] || CAT_THEMES.other;
+      const catLabel = CAT_NAMES[org.cat] || org.cat;
 
       const topTags = (org.tags || []).slice(0, 4)
-        .map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded text-zinc-600">${escapeHtml(t)}</span>`)
+        .map(t => `<span class="px-2 py-0.5 bg-zinc-50 dark:bg-zinc-800/40 text-[9.5px] font-mono rounded-md border border-zinc-150/60 dark:border-zinc-700/40 text-zinc-500 dark:text-zinc-400 transition-colors duration-200">${escapeHtml(t)}</span>`)
         .join('');
 
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-5 border border-zinc-100 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
+      item.className = 'group relative bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-zinc-100 dark:border-zinc-800 flex gap-4 items-start hover:shadow-xl hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300';
       item.dataset.watchlistOrg = org.name;
 
       item.innerHTML = `
         <!-- Logo -->
-        <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100">
+        <div class="w-12 h-12 rounded-xl bg-zinc-50 dark:bg-zinc-850 flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100 dark:border-zinc-700/50 p-2 transition-transform duration-300 group-hover:scale-105 shadow-inner">
           ${logoUrl
             ? `<img src="${escapeHtml(logoUrl)}"
                     data-org-name="${escapeHtml(org.name)}"
@@ -2465,27 +2723,29 @@
         <!-- Body -->
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
-            <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
+            <h4 class="font-headline font-extrabold text-zinc-900 dark:text-zinc-50 leading-tight group-hover:text-primary dark:group-hover:text-orange-400 transition-colors duration-200 line-clamp-1">${escapeHtml(org.name)}</h4>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${catClass}">${escapeHtml(catLabel)}</span>
-              <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
+              <span class="text-[9px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${catClass}">${escapeHtml(catLabel)}</span>
+              <span class="text-[9px] font-label font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900/30 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[10px] icon-fill">star</span> Saved
+              </span>
             </div>
           </div>
-          <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${escapeHtml(org.desc || '')}</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1 leading-relaxed">${escapeHtml(org.desc || '')}</p>
           <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
-          <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
-            <div class="flex items-center gap-3 text-xs text-zinc-400">
-              <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-xs">calendar_today</span>
+          <div class="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800/60 mt-3">
+            <div class="flex items-center gap-3 text-xs text-zinc-400 dark:text-zinc-500">
+              <span class="flex items-center gap-1 font-label text-[10px] uppercase font-bold tracking-wider">
+                <span class="material-symbols-outlined text-[12px]">calendar_today</span>
                 ${escapeHtml(String(org.years))}y in GSoC
               </span>
-              <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-xs">bar_chart</span>
+              <span class="flex items-center gap-1 font-label text-[10px] uppercase font-bold tracking-wider">
+                <span class="material-symbols-outlined text-[12px]">bar_chart</span>
                 ${escapeHtml(org.competition || '—')}
               </span>
             </div>
             <button data-bookmark-org="${escapeHtml(org.name)}"
-                    class="bookmark-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
+                    class="bookmark-btn text-[9px] font-headline font-extrabold uppercase tracking-widest text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1 transition-colors duration-200">
               <span class="material-symbols-outlined text-xs">bookmark_remove</span>
               Remove
             </button>
@@ -2606,11 +2866,39 @@
       <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
     `;
 
+    const { total, codeScore, communityScore, entryScore } = getDifficultyScore(org);
+    const { label: diffLabel, cls: diffCls } = getDifficultyLabel(total);
+    const barColor = getDifficultyBarColor(total);
+
     document.getElementById('mMetrics').innerHTML = `
       <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
       <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+      <div class="metric-card col-span-2" style="text-align:left;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+          <p class="metric-value">${total}/10</p>
+          <span class="difficulty-badge ${diffCls}">${diffLabel}</span>
+        </div>
+        <p class="metric-label" style="margin-bottom:0.75rem;">Contribution Difficulty</p>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.7rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="width:90px;color:#888;font-weight:700;">Code</span>
+            <div class="diff-bar-wrap"><div class="diff-bar-fill" style="width:${codeScore*10}%;background:${barColor};"></div></div>
+            <span style="width:24px;text-align:right;font-weight:800;color:#555;">${codeScore}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="width:90px;color:#888;font-weight:700;">Community</span>
+            <div class="diff-bar-wrap"><div class="diff-bar-fill" style="width:${communityScore*10}%;background:${barColor};"></div></div>
+            <span style="width:24px;text-align:right;font-weight:800;color:#555;">${communityScore}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="width:90px;color:#888;font-weight:700;">Entry Barrier</span>
+            <div class="diff-bar-wrap"><div class="diff-bar-fill" style="width:${entryScore*10}%;background:${barColor};"></div></div>
+            <span style="width:24px;text-align:right;font-weight:800;color:#555;">${entryScore}</span>
+          </div>
+        </div>
+      </div>
     `;
 
     document.getElementById('mDesc').textContent = org.desc;
@@ -2713,7 +3001,18 @@ if(org.ideas){
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
 
-      return matchSearch && matchCat && matchComp && matchLang && matchChip;
+      let matchSkill = true;
+      if (quizState.active && quizState.exp && quizState.lang) {
+        const maxDiff = quizState.exp === 'Beginner' ? 3 : quizState.exp === 'Intermediate' ? 6 : 10;
+        const minDiff = quizState.exp === 'Beginner' ? 1 : quizState.exp === 'Intermediate' ? 4 : 7;
+        const langLower = quizState.lang.toLowerCase();
+        const { total } = getDifficultyScore(o);
+        const diffMatch = total >= minDiff && total <= maxDiff;
+        const langMatch = quizState.lang === 'Other' || tags.some(t => t.includes(langLower) || langLower.includes(t));
+        matchSkill = diffMatch && langMatch;
+      }
+
+      return matchSearch && matchCat && matchComp && matchLang && matchChip && matchSkill;
     });
 
     if(query){
@@ -2731,16 +3030,6 @@ if(org.ideas){
     }
 
     renderOrgs(true);
-
-    // Persist filter state to URL so it survives page refresh
-    const params = new URLSearchParams();
-    if (query)                              params.set('q', query);
-    if (cat)                               params.set('cat', cat);
-    if (comp && comp !== 'all')            params.set('comp', comp);
-    if (sort && sort !== 'alpha')          params.set('sort', sort);
-    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
-    if (activeChip)                        params.set('chip', activeChip);
-    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2749,6 +3038,8 @@ if(org.ideas){
     if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
     if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
     if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+    if(sortType==='diff-asc') return getDifficultyScore(a).total - getDifficultyScore(b).total;
+    if(sortType==='diff-desc') return getDifficultyScore(b).total - getDifficultyScore(a).total;
     return a.name.localeCompare(b.name);
   }
 
@@ -2759,7 +3050,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-  
+    
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -2982,60 +3273,8 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
-
-  // Restore filter state from URL params on page load/refresh
-  (function restoreFiltersFromURL() {
-    const params = new URLSearchParams(location.search);
-
-    function setElValue(id, value) {
-      const el = document.getElementById(id);
-      if (el && value) el.value = value;
-    }
-
-    function getChipKey(text) {
-      if (text.includes('bookmarked'))            return 'bookmarked';
-      if (text.includes('veteran'))               return 'veterans';
-      if (text.includes('newcomer'))              return 'newcomers';
-      if (text.includes('low competition'))       return 'low-competition';
-      if (text.includes('high competition'))      return 'high-competition';
-      if (text.includes('actively'))              return 'active';
-      return null;
-    }
-
-    setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
-    setElValue('categoryFilter', params.get('cat'));
-    setElValue('complexityFilter', params.get('comp'));
-    setElValue('sortSelect', params.get('sort'));
-
-    const lang = params.get('lang');
-    if (lang) {
-      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        selectedLanguages.add(l);
-        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
-        if (pillBtn) {
-          pillBtn.classList.add('active');
-          pillBtn.setAttribute('aria-pressed', 'true');
-        }
-      });
-      renderSelectedLanguages();
-    }
-
-    const chip = params.get('chip');
-    if (chip) {
-      activeChip = chip;
-      document.querySelectorAll('.filter-chip').forEach(el => {
-        const key = getChipKey(el.textContent.trim().toLowerCase());
-        if (key === chip) {
-          el.classList.add('bg-orange-600', 'text-white');
-          el.classList.remove('bg-surface-container-highest');
-        }
-      });
-    }
-
-    applyFilters();
-  })();
   renderOrgs();
+  renderSkillQuiz();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();

@@ -1,438 +1,200 @@
-name: 🧭 Smart Issue Assignment
+name: Issue Context Assignment
 
 on:
   issue_comment:
     types: [created]
 
 permissions:
-  contents: read
   issues: write
-  pull-requests: read
+  contents: write
 
 concurrency:
-  group: smart-issue-assignment-${{ github.event.issue.number }}
+  group: issue-assignment-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
-  handle-assignment:
-    if: github.event.issue.pull_request == null
-
+  assign:
+    if: |
+      github.event.issue.pull_request == null &&
+      github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Smart assignment validation
+      - name: Detect command
+        id: cmd
         uses: actions/github-script@v8
-
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
           script: |
-            const fs = require('fs');
+            const body = (context.payload.comment.body || '').trim();
+            const assignMatch  = /^\/assign$/i.test(body);
+            const approveMatch = body.match(/^\/approve-assignment\s+@?([\w-]+)/i);
+            core.setOutput('is_assign',   String(assignMatch));
+            core.setOutput('is_approve',  String(!!approveMatch));
+            core.setOutput('target_user', approveMatch ? approveMatch[1].toLowerCase() : '');
 
-            const issue = context.payload.issue;
-            const comment = context.payload.comment;
-            const sender = context.payload.sender;
+      # ── PATH A: /assign ────────────────────────────────────────────────────
 
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const issue_number = issue.number;
-
-            const username = sender.login;
-
-            // ─────────────────────────────────────────────
-            // Ignore bots
-            // ─────────────────────────────────────────────
-            if (sender.type === 'Bot') {
-              core.info('Ignoring bot user.');
+      - name: Validate issue (assign)
+        id: validate
+        if: steps.cmd.outputs.is_assign == 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number    = context.payload.issue.number;
+            const claimant        = context.payload.comment.user.login;
+            const issue = (await github.rest.issues.get({ owner, repo, issue_number })).data;
+            if (issue.state !== 'open' || issue.locked) {
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason', 'Issue is closed or locked.');
               return;
             }
-
-            // ─────────────────────────────────────────────
-            // Validate assignment command
-            // ─────────────────────────────────────────────
-            const commentBody = (comment.body || '').toLowerCase();
-
-            const wantsAssign =
-              commentBody.includes('/assign') ||
-              commentBody.includes('assign me');
-
-            const wantsUnassign =
-              commentBody.includes('/unassign') ||
-              commentBody.includes('unassign me');
-
-            if (!wantsAssign && !wantsUnassign) {
-              core.info('No assignment command detected.');
+            if ((issue.assignees || []).length > 0) {
+              core.setOutput('eligible', 'false');
+              core.setOutput('reason', 'Issue already has an assignee.');
               return;
             }
-
-            // ─────────────────────────────────────────────
-            // Detect contribution program
-            // ─────────────────────────────────────────────
-            const mentionsGSSOC =
-              commentBody.includes('gssoc');
-
-            const mentionsNSOC =
-              commentBody.includes('nsoc');
-
-            // ─────────────────────────────────────────────
-            // Reject old assignment format
-            // ─────────────────────────────────────────────
-            if (wantsAssign && !mentionsGSSOC && !mentionsNSOC) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `❌ Assignment request rejected.\n\n` +
-                  `Please mention which program you are contributing under.\n\n` +
-                  `Examples:\n` +
-                  `- \`assign me under gssoc\`\n` +
-                  `- \`/assign nsoc\`\n\n` +
-                  `This is required for contributor tracking and automatic label management.`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Restrict GSSoC assignments until
-            // May 15 12:00 AM IST
-            // ─────────────────────────────────────────────
-            if (mentionsGSSOC) {
-
-              const now = new Date();
-
-              // 12:00 AM IST on May 15
-              // = May 14 18:30 UTC
-
-              const currentYear = new Date().getUTCFullYear();
-
-              const unlockDate = new Date(
-                Date.UTC(currentYear, 4, 14, 18, 30, 0)
-              );
-
-              if (now < unlockDate) {
-
-                await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number,
-                  body:
-                    `⏳ GSSoC issue assignments are currently locked.\n\n` +
-                    `GSSoC contributions and issue assignments will officially open on:\n\n` +
-                    `📅 **15 May ${currentYear}**\n` +
-                    `🕛 **12:00 AM IST**\n\n` +
-                    `Please wait until the official contribution window begins before requesting assignment under GSSoC.\n\n` +
-                    `You may still contribute later once assignments are unlocked.`
-                });
-
-                return;
-              }
-            }
-
-            // ─────────────────────────────────────────────
-            // Handle unassignment
-            // ─────────────────────────────────────────────
-            if (wantsUnassign) {
-
-              const assignedUsers =
-                (issue.assignees || []).map(a => a.login);
-
-              if (!assignedUsers.includes(username)) {
-
-                await github.rest.issues.createComment({
-                  owner,
-                  repo,
-                  issue_number,
-                  body:
-                    `⚠️ @${username} is not assigned to this issue.`
-                });
-
-                return;
-              }
-
-              await github.rest.issues.removeAssignees({
-                owner,
-                repo,
-                issue_number,
-                assignees: [username]
-              });
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `✅ Unassigned @${username} from this issue.`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Validate issue quality
-            // ─────────────────────────────────────────────
-            const title = issue.title || '';
-            const body = issue.body || '';
-
-            if (title.trim().length < 8) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `❌ Issue title is too short.\n\n` +
-                  `Please provide a meaningful issue title before requesting assignment.`
-              });
-
-              return;
-            }
-
-            if (body.trim().length < 30) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `❌ Issue description is too short.\n\n` +
-                  `Please explain the issue clearly before requesting assignment.`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Prevent multiple assignees
-            // ─────────────────────────────────────────────
-            const existingAssignees =
-              (issue.assignees || []).map(a => a.login);
-
-            if (existingAssignees.length > 0) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `⚠️ This issue is already assigned to: ${existingAssignees.join(', ')}`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Prevent contributors from taking
-            // more than 3 issues
-            // ─────────────────────────────────────────────
-            const assignedIssues = await github.paginate(
-              github.rest.issues.listForRepo,
-              {
-                owner,
-                repo,
-                state: 'open',
-                assignee: username,
-                per_page: 100
-              }
-            );
-
-            const activeAssignedIssues =
-              assignedIssues.filter(i => !i.pull_request);
-
-            if (activeAssignedIssues.length >= 3) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `❌ @${username} already has ${activeAssignedIssues.length} assigned issue(s).\n\n` +
-                  `Maximum allowed active assignments: \`3\`\n\n` +
-                  `Please complete or unassign an existing issue before taking another one.`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Determine contribution level
-            // ─────────────────────────────────────────────
-            const text =
-              `${title}\n${body}`.toLowerCase();
-
-            let level = 'level-1';
-
-            const advancedKeywords = [
-              'architecture',
-              'optimization',
-              'security',
-              'performance',
-              'edge function',
-              'refactor',
-              'api',
-              'caching',
-              'core feature'
-            ];
-
-            const intermediateKeywords = [
-              'feature',
-              'logic',
-              'analytics',
-              'sorting',
-              'filter',
-              'enhancement',
-              'improvement'
-            ];
-
-            const hasAdvanced =
-              advancedKeywords.some(k => text.includes(k));
-
-            const hasIntermediate =
-              intermediateKeywords.some(k => text.includes(k));
-
-            if (hasAdvanced) {
-              level = 'level-3';
-            } else if (hasIntermediate) {
-              level = 'level-2';
-            }
-
-            // ─────────────────────────────────────────────
-            // Fetch contributor merged PR history
-            // ─────────────────────────────────────────────
-            const prs = await github.paginate(
-              github.rest.pulls.list,
-              {
-                owner,
-                repo,
-                state: 'closed',
-                per_page: 100
-              }
-            );
-
-            const mergedByUser = prs.filter(pr =>
-              pr.user &&
-              pr.user.login === username &&
-              pr.merged_at
-            );
-
-            const mergedCount = mergedByUser.length;
-
-            // ─────────────────────────────────────────────
-            // Restrict Level-3 issues
-            // ─────────────────────────────────────────────
-            if (level === 'level-3' && mergedCount < 1) {
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body:
-                  `❌ Level 3 issues require at least 1 merged PR in this repository.\n\n` +
-                  `You currently have ${mergedCount} merged PR(s).`
-              });
-
-              return;
-            }
-
-            // ─────────────────────────────────────────────
-            // Fix issue labels
-            // ─────────────────────────────────────────────
-            const currentLabels =
-              (issue.labels || []).map(l => l.name);
-
-            const levelLabels = [
-              'level-1',
-              'level-2',
-              'level-3'
-            ];
-
-            const labelsToRemove =
-              currentLabels.filter(
-                l => levelLabels.includes(l) && l !== level
-              );
-
-            for (const label of labelsToRemove) {
-
-              try {
-
-                await github.rest.issues.removeLabel({
-                  owner,
-                  repo,
-                  issue_number,
-                  name: label
-                });
-
-              } catch (err) {
-
-                core.warning(
-                  `Failed removing label ${label}: ${err.message}`
-                );
-              }
-            }
-
-            if (!currentLabels.includes(level)) {
-
-              await github.rest.issues.addLabels({
-                owner,
-                repo,
-                issue_number,
-                labels: [level]
-              });
-            }
-
-            // ─────────────────────────────────────────────
-            // Apply contributor program label
-            // ─────────────────────────────────────────────
-            let contributorProgramLabel = null;
-
-            if (mentionsGSSOC) {
-              contributorProgramLabel = 'gssoc26';
-            }
-
-            if (mentionsNSOC) {
-              contributorProgramLabel = 'nsoc26';
-            }
-
-            if (
-              contributorProgramLabel &&
-              !currentLabels.includes(contributorProgramLabel)
-            ) {
-
-              await github.rest.issues.addLabels({
-                owner,
-                repo,
-                issue_number,
-                labels: [contributorProgramLabel]
-              });
-            }
-
-            // ─────────────────────────────────────────────
-            // Assign contributor
-            // ─────────────────────────────────────────────
-            await github.rest.issues.addAssignees({
-              owner,
-              repo,
-              issue_number,
-              assignees: [username]
+            core.setOutput('eligible', 'true');
+            core.setOutput('claimant', claimant);
+            core.setOutput('issue_number', String(issue_number));
+
+      - name: Select active mentors for ping
+        id: select_mentors
+        if: steps.cmd.outputs.is_assign == 'true' && steps.validate.outputs.eligible == 'true'
+        env:
+          ISSUE_CLAIMANT:   ${{ steps.validate.outputs.claimant }}
+          EXCLUDED_MENTORS: '[]'
+          MAX_MENTORS:      '2'
+        run: |
+          RESULT=$(node .github/scripts/select-issue-mentors.js)
+          echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+          echo "Selected mentors: $RESULT"
+
+      - name: Queue assignment and ping mentors
+        if: steps.cmd.outputs.is_assign == 'true' && steps.validate.outputs.eligible == 'true'
+        uses: actions/github-script@v8
+        env:
+          ISSUE_NUMBER:     ${{ steps.validate.outputs.issue_number }}
+          CLAIMANT:         ${{ steps.validate.outputs.claimant }}
+          SELECTED_MENTORS_JSON: ${{ steps.select_mentors.outputs.result }}
+        with:
+          script: |
+            const { execSync }    = require('child_process');
+            const { owner, repo } = context.repo;
+            const issue_number    = parseInt(process.env.ISSUE_NUMBER, 10);
+            const claimant        = process.env.CLAIMANT;
+            let selected = [];
+            try {
+              selected = JSON.parse(process.env.SELECTED_MENTORS_JSON || '{}').selected || [];
+            } catch { selected = []; }
+
+            execSync('node .github/scripts/update-pending-assignments.js', {
+              env: { ...process.env, OPERATION: 'queue', ISSUE_NUMBER: String(issue_number),
+                     CLAIMANT: claimant, SELECTED_MENTORS: JSON.stringify(selected) }
             });
 
-            // ─────────────────────────────────────────────
-            // Success response
-            // ─────────────────────────────────────────────
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body:
-                `✅ Assigned @${username}\n\n` +
-                `🏷️ Program: \`${contributorProgramLabel}\`\n` +
-                `📊 Detected contribution level: \`${level}\`\n\n` +
-                `⚠️ Maximum active assignments allowed: \`3\`\n\n` +
-                `📌 Please avoid opening multiple tiny PRs.\n` +
-                `We encourage contributors to combine related improvements into 1–2 meaningful PRs whenever possible.`
-            });
+            const marker      = '<!-- assignment-status -->';
+            const mentionList = selected.length
+              ? selected.map(m => `@${m}`).join(' and ')
+              : '_no active mentors available — a maintainer will review manually_';
+
+            const body = [
+              marker, '',
+              '## ⏳ Assignment Queued — Awaiting Mentor Approval', '',
+              `@${claimant} your request has been **queued**.`, '',
+              `The following active mentor(s) have been notified and have **24 hours** to approve:`, '',
+              `> ${mentionList}`, '',
+              '**Mentors:** to approve, reply with:', '```',
+              `/approve-assignment @${claimant}`, '```', '',
+              '_If no mentor approves within 24 hours, fresh active mentors will be automatically selected._'
+            ].join('\n');
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 }
+            );
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+            core.info(`Assignment queued for ${claimant}, pinged: ${selected.join(', ')}`);
+
+      - name: Commit updated queue (assign)
+        if: steps.cmd.outputs.is_assign == 'true' && steps.validate.outputs.eligible == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]`@users.noreply.github.com`"
+          git add .github/reviewers/pending-assignments.json
+          git diff --cached --quiet || git commit -m "chore: queue assignment for ${{ steps.validate.outputs.claimant }} on issue #${{ steps.validate.outputs.issue_number }} [skip ci]"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
+
+      # ── PATH B: /approve-assignment `@username` ──────────────────────────────
+
+      - name: Process mentor approval
+        id: process_approval
+        if: steps.cmd.outputs.is_approve == 'true'
+        uses: actions/github-script@v8
+        env:
+          TARGET_USER: ${{ steps.cmd.outputs.target_user }}
+        with:
+          script: |
+            const { execSync }    = require('child_process');
+            const { owner, repo } = context.repo;
+            const issue_number    = context.payload.issue.number;
+            const approver        = context.payload.comment.user.login.toLowerCase();
+            const marker          = '<!-- assignment-status -->';
+            let result;
+            try {
+              const out = execSync('node .github/scripts/update-pending-assignments.js', {
+                env: { ...process.env, OPERATION: 'approve',
+                       ISSUE_NUMBER: String(issue_number), APPROVER: approver }
+              }).toString();
+              result = JSON.parse(out);
+            } catch (e) {
+              core.warning(`Approval script error: ${e.message}`);
+              return;
+            }
+            if (!result.ok) {
+              if (result.error === 'not_found') {
+                core.info('No pending assignment found for this issue — skipping.');
+              } else if (result.error === 'not_authorized') {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number,
+                  body: `⛔ @${approver} — you are not one of the currently pinged mentors. Only ${(result.authorized || []).map(m => `@${m}`).join(' or ')} can approve.`
+                });
+              }
+              return;
+            }
+            const claimant = result.claimant || process.env.TARGET_USER;
+            await github.rest.issues.addAssignees({ owner, repo, issue_number, assignees: [claimant] });
+            const comments = await github.paginate(
+              github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 }
+            );
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            const body = [
+              marker, '',
+              '## ✅ Issue Assigned', '',
+              `Assigned to @${claimant} — approved by @${approver}.`, '',
+              '_One active assignee; inactive assignments may be rotated._'
+            ].join('\n');
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+            core.info(`Issue #${issue_number} assigned to ${claimant} by mentor ${approver}`);
+            core.setOutput('assigned', 'true');
+
+      - name: Commit queue after approval
+        if: steps.cmd.outputs.is_approve == 'true' && steps.process_approval.outputs.assigned == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]`@users.noreply.github.com`"
+          git add .github/reviewers/pending-assignments.json
+          git diff --cached --quiet || git commit -m "chore: assignment approved for issue #${{ github.event.issue.number }} [skip ci]"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"

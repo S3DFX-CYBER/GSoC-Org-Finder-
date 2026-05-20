@@ -419,16 +419,7 @@ footer a:hover{text-decoration:underline}
   box-shadow:0 14px 28px rgb(0 0 0 / 0.18);
   cursor:pointer;
   z-index:1000;
-  opacity:0;
-  transform:translateY(10px);
-  pointer-events:none;
-  transition:transform .2s ease,filter .2s ease,box-shadow .2s ease,opacity .2s ease;
-}
-.scroll-top-button.visible{
-  display:flex;
-  opacity:1;
-  transform:translateY(0);
-  pointer-events:auto;
+  transition:transform .2s ease,filter .2s ease,box-shadow .2s ease;
 }
 .scroll-top-button:hover{
   transform:translateY(-2px);

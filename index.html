@@ -836,7 +836,7 @@
       <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
     </div>
     <div class="flex-shrink-0">
-      <select id="issueAgeFilter" onchange="renderGoodFirstIssues()" class="bg-surface-container-low border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary cursor-pointer text-zinc-700 py-3 px-4 shadow-sm transition-shadow hover:shadow-md">
+      <select id="issueAgeFilter" aria-label="Filter issues by maximum age" onchange="renderGoodFirstIssues()" class="bg-surface-container-low border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary cursor-pointer text-zinc-700 py-3 px-4 shadow-sm transition-shadow hover:shadow-md">
         <option value="any">Max Age: Any time</option>
         <option value="6m">Max Age: &lt; 6 months</option>
         <option value="1y">Max Age: &lt; 1 year</option>

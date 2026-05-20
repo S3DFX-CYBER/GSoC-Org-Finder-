@@ -110,57 +110,84 @@ GSoC-Org-Finder-
 
 Go to the repository **Issues** tab and filter using labels:
 
-- `level-1`
-- `level-2`
-- `level-3`
+- `level:beginner`
+- `level:intermediate`
+- `level:advanced`
 - `gssoc26`
 - `nsoc26`
+- `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement`
+
+New issues are **automatically triaged by our AI bot** which applies difficulty, type, and program labels. You can filter by these to find issues matching your skill level.
 
 ---
 
 ### Step 2 — Request Assignment
 
-Comment **ONE** of the following:
+Comment with your program:
 
 ```
-/assign
+/assign gssoc
 ```
 
 or
 
 ```
-assign me
+/assign nsoc
 ```
+
+Your request will be processed by the assignment bot.
 
 ---
 
-### Step 3 — Wait for Bot Validation
+### Step 3 — Assignment Processing
 
-The assignment bot automatically validates:
+This repository uses a **tiered auto-assignment system** on verified issues:
 
-- Issue quality
-- Duplicate/spam detection
-- Contributor eligibility
-- Active issue count
-- Contribution program
-- Level restrictions
+| Issue Level | Labels | Auto-Assignment Rule |
+|-------------|--------|---------------------|
+| **Beginner** | `level:beginner` | Anyone can self-assign immediately — no restrictions |
+| **Intermediate** | `level:intermediate` | Account must be at least **30 days old** |
+| **Advanced** | `level:advanced` | Must have at least **1 merged PR** in this repo |
 
-> **Do NOT start work before assignment.**
+- **Verified issues**: If you meet the level requirement, you are assigned instantly
+- **Unverified issues**: A maintainer approves via `/approve-assignment`
+- **If you don't meet the requirement**: Your request is queued for maintainer approval
+
+> **Do NOT start work before assignment is confirmed.**
 
 ---
 
 ## 🤖 Smart Assignment System
 
-This repository uses automated contributor management workflows.
+This repository uses a **tiered auto-assignment system** with maintainer fallback for unverified issues.
 
 ### Supported Commands
 
-| Command      | Action              |
-|--------------|---------------------|
-| `/assign`    | Request assignment  |
-| `assign me`  | Request assignment  |
-| `/unassign`  | Remove assignment   |
-| `unassign me`| Remove assignment   |
+| Command | Who | Action |
+|---------|-----|--------|
+| `/assign gssoc` | Contributors | Request assignment under GSSoC |
+| `/assign nsoc` | Contributors | Request assignment under NSoC |
+| `/unassign` | Contributors | Remove your assignment |
+| `unassign me` | Contributors | Remove your assignment |
+| `/approve-assignment` | Maintainers | Auto-select assignee by timestamp + workload |
+| `/approve-assignment @user` | Maintainers | Manually approve a specific user |
+
+### How Auto-Assignment Works
+
+On **verified issues** (labeled `verified` or `ready-for-assignment`):
+
+- If you meet the level eligibility requirement, you are assigned instantly
+- If you don't meet the requirement, your request is queued for maintainer approval
+
+On **unverified issues**, all requests go through maintainer approval.
+
+### How Smart Selection Works (Maintainer Approval)
+
+When a maintainer uses `/approve-assignment` without specifying a user, the system:
+
+1. Finds all assignment requests on the issue (sorted by timestamp)
+2. Checks each requester's current workload
+3. Assigns the first eligible user (fewest active issues, earliest request)
 
 ---
 
@@ -184,41 +211,27 @@ General contributors do not need to declare a program but must still follow the 
 
 ---
 
-## ⏳ GSSoC Assignment Restriction
+## ⏳ GSSoC Assignment Timeline
 
-> **Important**
+GSSoC issue assignments opened **15 May 2026, 12:00 AM IST**.
 
-GSSoC issue assignments are only allowed after:
-
-**15 May 2026 — 12:00 AM IST**
-
-Before that time:
-
-- GSSoC contributors cannot claim issues
-- The bot will automatically reject assignment attempts
-- Contributors will receive an automated reminder message
-
-NSoC contributors are unaffected.
+NSoC contributors are unaffected by this restriction.
 
 ---
 
-## 🧠 Automatic Issue Validation
+## 🧠 AI-Powered Issue Triage
 
-The repository automatically detects and blocks:
+Every new issue is automatically analyzed by the **LLM Issue Triage Bot** which:
 
-- Duplicate issues
-- AI-slop issues
-- Spam reports
-- Copied template spam
-- Prompt leakage
-- Meaningless low-quality issues
-- Bot-generated issue spam
+- Classifies difficulty: `level:beginner`, `level:intermediate`, `level:advanced`
+- Assigns type: `type:bug`, `type:enhancement`, `type:ui`, `type:docs`, `type:api`
+- Detects program context: `program:gssoc`, `program:nsoc`
+- Checks for **duplicates** against all open issues
+- Flags spam and low-quality issues
 
-Issues may be automatically:
+Existing untriaged issues are processed weekly (up to 20 per run).
 
-- Labeled
-- Closed
-- Redirected to original issues
+Issues flagged as spam or duplicates may be automatically labeled and closed.
 
 ---
 
@@ -234,11 +247,14 @@ Manual self-assignment may be removed automatically.
 
 ## 📌 Maximum Active Assignments
 
-To maintain fairness, contributors may only hold:
+To maintain fairness, contributors may only hold a limited number of issues:
 
-> **Maximum 3 assigned issues at once**
+| Program | Max Active Issues |
+|---------|-------------------|
+| GSSoC | 3 |
+| NSoC | 3 |
 
-The assignment bot automatically checks this. If you already have 3 active issues, new assignments will be rejected until progress is made.
+The assignment bot automatically checks this. If you've reached your limit, new assignments will be rejected until you complete or unassign existing issues.
 
 ---
 
@@ -293,16 +309,17 @@ Excessive pinging, spam comments, or DM requests may result in:
 Please allow reasonable review time before following up.
 
 Recommended wait times:
-- Issue assignment: 12–24 hours
-- PR review: 24–72 hours
+- Issue assignment: Instant (auto-assign) to 24 hours (manual approval)
+- Mentor review: **24 hours** (mentors auto-rotate if inactive)
+- Maintainer review: 24–72 hours
 
 ----
 
 ## Contribution Levels
 
-### 🟢 Level 1 — Beginner Friendly
+### 🟢 Beginner (`level:beginner`)
 
-Open to everyone.
+Open to everyone — no restrictions.
 
 **Examples:**
 
@@ -314,9 +331,9 @@ Open to everyone.
 
 ---
 
-### 🟡 Level 2 — Intermediate
+### 🟡 Intermediate (`level:intermediate`)
 
-Requires repository understanding.
+Requires a GitHub account at least **30 days old** for auto-assignment.
 
 **Examples:**
 
@@ -328,15 +345,9 @@ Requires repository understanding.
 
 ---
 
-### 🔴 Level 3 — Advanced
+### 🔴 Advanced (`level:advanced`)
 
-Restricted to experienced contributors.
-
-**Requirements:**
-
-- Minimum 1 merged PR in this repository
-- Strong understanding of architecture
-- Understanding of Edge Functions
+Requires at least **1 merged PR** in this repository.
 
 **Examples:**
 
@@ -345,7 +356,7 @@ Restricted to experienced contributors.
 - Security-sensitive logic
 - Major backend improvements
 
-The assignment bot automatically validates eligibility.
+The assignment bot automatically validates eligibility based on these rules.
 
 ---
 
@@ -522,15 +533,37 @@ Verify:
 
 ---
 
-## 🔍 Review Process
+## 🔍 Review Process (3-Stage Pipeline)
 
-PRs are reviewed based on:
+PRs go through a **3-stage pipeline**:
 
-- Code quality
-- Maintainability
-- Simplicity
-- Architectural consistency
-- Real project impact
+| Stage | Reviewer | Checks | Labels |
+|-------|----------|--------|--------|
+| **Stage 1** — Automated | Bot | DCO sign-off, format, AI/slop detection, duplicate, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Mentor Review | Mentor | Code quality, relevance, correctness | `needs-mentor-review` → `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Project Admin | Final merge decision | `pa-approved` |
+
+Stage 2 is blocked until Stage 1 passes. Stage 3 is blocked until Stage 2 passes.
+
+### LLM PR Analysis (Stage 1)
+
+The **LLM PR Analysis** bot automatically verifies that your PR:
+- Links to a valid issue
+- Actually addresses the linked issue
+- Does not include out-of-scope changes
+- Is not AI-generated spam (cross-checked with LLM verification)
+
+### Mentor Review (Stage 2)
+
+1. After Stage 1 passes, mentors are automatically assigned from the mentor pool
+2. Labels `needs-mentor-review` and `mentor-review-requested` are applied
+3. Mentors have **24 hours** to review — if they don't respond, they are automatically replaced with another active mentor
+4. Mentors approve via GitHub review approval or by commenting `/approve-pr` or `/lgtm`
+5. The bot then applies `mentor-approved` and `pa-review-required`, notifying the maintainer
+
+### Maintainer Gate (Stage 3)
+
+The maintainer reviews PRs labeled `pa-review-required` and merges when satisfied.
 
 Maintainers may:
 
@@ -545,23 +578,32 @@ Maintainers may:
 
 The repository includes automated workflows for:
 
-- Smart issue assignment
-- Duplicate issue detection
-- AI-slop filtering
-- PR validation
-- Unresolved review tracking
-- Automatic labeling
+- **LLM Issue Triage** — AI-powered classification, duplicate detection, spam filtering
+- **LLM PR Analysis** — Validates PR context, linked issue, scope
+- **AI Slop Detection** — Flags low-quality/AI-generated PRs with LLM cross-verification before auto-closing
+- **Tiered auto-assignment** — Level-based eligibility checks (beginner: open, intermediate: 30-day account, advanced: merged PR)
+- **Mentor review with 24h timeout** — Auto-rotation of inactive reviewers
+- **3-stage PR pipeline** — Automated → Mentor → Maintainer gate
+- DCO sign-off verification
+- PR format and diff size validation
+- PR size labeling (XS/S/M/L/XL)
+- Stale PR cleanup (auto-close after 14 days of inactivity with unresolved Stage 1 failures)
+- GSSoC/NSoC leaderboard (updates on merge only)
 - Contribution program validation
-- Project board automation
-- Cache/data refresh workflows
 
 ---
 
 ## 📌 Inactivity Policy
 
-Assigned issues with no meaningful progress for **2–3 days** may be automatically unassigned.
+Assigned issues with no meaningful progress for **7 days** will be automatically unassigned.
 
-This helps keep issues available for active contributors.
+"Progress" means:
+- Posting a comment on the issue, OR
+- Opening a non-draft PR linked to the issue (with `Closes #N` or `Fixes #N`)
+
+Maintainers and collaborators with write access are **exempt** from auto-unassignment.
+
+After being unassigned, you must wait **24 hours** before re-requesting the issue.
 
 ---
 

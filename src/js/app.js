@@ -37,40 +37,60 @@ function updateThemeIcon(){
 // ══════════════════════════════════════════════
 // COUNTDOWN
 // ══════════════════════════════════════════════
-const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
-const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
-function updateCountdown(){
-  const now=Date.now();
-  const banner=document.getElementById('countdownBanner');
-  const sub=document.getElementById('countdownSub');
-  let target=OPEN_DATE.getTime();
-  let label='📅 GSoC 2026 Applications Open In';
-  let subText='Until March 16, 2026';
-  if(now>=OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
-    target=CLOSE_DATE.getTime();
-    label='🚀 Applications Are Open — Closes In';
-    subText='Until April 8, 2026';
-    banner.style.background='linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
-    banner.style.borderBottomColor='rgba(0,135,90,.3)';
-    banner.style.color='var(--green)';
-  } else if(now>=CLOSE_DATE.getTime()){
-    banner.innerHTML='<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
-    clearInterval(cdTimer);return;
-  }
-  const diff=Math.max(0,target-now);
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  document.getElementById('cdDays').textContent=String(d).padStart(2,'0');
-  document.getElementById('cdHours').textContent=String(h).padStart(2,'0');
-  document.getElementById('cdMins').textContent=String(m).padStart(2,'0');
-  document.getElementById('cdSecs').textContent=String(s).padStart(2,'0');
-  sub.textContent=subText;
-  banner.querySelector('.countdown-label').textContent=label;
+// UPDATE THESE EACH YEAR
+const GSOC_DATES = {
+  open:  new Date('2026-03-16T00:00:00Z'),
+  close: new Date('2026-04-08T18:00:00Z'),
+  year:  2026
+};
+
+// Helper to format a date as "Month Day" (e.g. "March 16") in UTC
+function formatCountdownDate(date) {
+  const months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const d = date.getUTCDate();
+  const m = months[date.getUTCMonth()];
+  return `${m} ${d}`;
 }
+
+let cdTimer; // declared before use to avoid TDZ error
+
+function updateCountdown(){
+  const now = Date.now();
+  const banner = document.getElementById('countdownBanner');
+  const sub = document.getElementById('countdownSub');
+  let target = GSOC_DATES.open.getTime();
+  let label = `📅 GSoC ${GSOC_DATES.year} Applications Open In`;
+  let subText = `Until ${formatCountdownDate(GSOC_DATES.open)}, ${GSOC_DATES.year}`;
+  if(now >= GSOC_DATES.open.getTime() && now < GSOC_DATES.close.getTime()){
+    target = GSOC_DATES.close.getTime();
+    label = '🚀 Applications Are Open — Closes In';
+    subText = `Until ${formatCountdownDate(GSOC_DATES.close)}, ${GSOC_DATES.year}`;
+    banner.style.background = 'linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
+    banner.style.borderBottomColor = 'rgba(0,135,90,.3)';
+    banner.style.color = 'var(--green)';
+  } else if(now >= GSOC_DATES.close.getTime()){
+    banner.innerHTML = `<span>🎉 GSoC ${GSOC_DATES.year} applications have closed. Stay tuned for accepted orgs!</span>`;
+    if(cdTimer) clearInterval(cdTimer);
+    return;
+  }
+  const diff = Math.max(0, target - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cdDays').textContent = String(d).padStart(2, '0');
+  document.getElementById('cdHours').textContent = String(h).padStart(2, '0');
+  document.getElementById('cdMins').textContent = String(m).padStart(2, '0');
+  document.getElementById('cdSecs').textContent = String(s).padStart(2, '0');
+  sub.textContent = subText;
+  banner.querySelector('.countdown-label').textContent = label;
+}
+
 updateCountdown();
-const cdTimer=setInterval(updateCountdown,1000);
+if(Date.now() < GSOC_DATES.close.getTime()){
+  cdTimer = setInterval(updateCountdown, 1000);
+}
 
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
@@ -207,6 +227,49 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // ══════════════════════════════════════════════
 const API='/api/github';
 const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
+
+/**
+ * Saves cache to localStorage with quota exceeded error recovery.
+ * If quota is exceeded, clears the cache and retries.
+ * @param {string} key - Cache key to save
+ * @param {object} value - Value to cache
+ */
+function saveCache(key, value) {
+  try {
+    localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      console.warn('LocalStorage quota exceeded, clearing GitHub cache...');
+      for (const k in cache) delete cache[k];
+      if (key && value !== undefined) cache[key] = value;
+      try {
+        localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+      } catch (err) {
+        console.error('Failed to save even after clearing cache', err);
+      }
+    }
+  }
+}
+
+/**
+ * Garbage collects cache by removing entries older than 24 hours.
+ * Removes entries with missing or invalid timestamps as well.
+ */
+function cleanCache() {
+  const now = Date.now();
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  let changed = false;
+  for (const key in cache) {
+    const entry = cache[key];
+    if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
+      delete cache[key];
+      changed = true;
+    }
+  }
+  if (changed) saveCache();
+}
+cleanCache();
+
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
@@ -246,7 +309,10 @@ async function fetchGH(repo){
     if(!r.ok)return null;
     const d=await r.json();
     if(d.error)return null;
-    cache[repo]=d;localStorage.setItem('gaf_ghc',JSON.stringify(cache));return d;
+    d.ts=Date.now();
+    cache[repo]=d;
+    saveCache(repo, d);
+    return d;
   }catch{return null;}
 }
 
@@ -261,7 +327,7 @@ async function fetchGFI(repo){
     const d=await r.json();
     if(d.gfi===null||d.gfi===undefined)return null;
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
-    localStorage.setItem('gaf_ghc',JSON.stringify(cache));
+    saveCache(cacheKey, cache[cacheKey]);
     return d.gfi;
   }catch{return null;}
 }
@@ -1356,4 +1422,3 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

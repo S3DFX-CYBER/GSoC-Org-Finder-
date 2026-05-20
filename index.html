@@ -463,12 +463,12 @@
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -494,7 +494,7 @@
         </span>
       </button>
     
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank"
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
         class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
     
         <span class="material-symbols-outlined text-sm">
@@ -532,9 +532,13 @@
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
+      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Timeline
+      </a>
+      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        AI Recommender
       </a>
       <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
@@ -548,18 +552,14 @@
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
+      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+        <span class="material-symbols-outlined text-lg">menu_book</span>
+        Guide
       </a>
     </div>
     
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-base">star</span> Star & Contribute
       </a>
     </div>
@@ -568,7 +568,7 @@
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1121,10 +1121,10 @@
       </div>
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
-    <nav class="flex flex-wrap gap-6">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
@@ -1173,10 +1173,10 @@
       </div>
     </div>
     <div class="modal-footer">
-      <a href="#" target="_blank" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
-      <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
     </div>
@@ -1955,7 +1955,15 @@
     { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
     { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
     { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
-  ].filter(m => !isNaN(m.date.getTime())); 
+    { date: new Date('2026-05-25T00:00:00Z'), label: 'Coding Officially Begins', note: 'Start working on your GSoC project!' },
+    { date: new Date('2026-07-06T18:00:00Z'), label: 'Midterm Evaluations Begin', note: 'Mentors and contributors submit midterm evaluations.' },
+    { date: new Date('2026-07-10T18:00:00Z'), label: 'Midterm Evaluation Deadline', note: null },
+    { date: new Date('2026-08-17T00:00:00Z'), label: 'Final Submissions Begin', note: 'Submit your final work product and evaluation.' },
+    { date: new Date('2026-08-24T18:00:00Z'), label: 'Final Submission Deadline (Standard)', note: 'Standard 12-week projects: submit final work product and evaluation.' },
+    { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
+    { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
+    { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
+  ].filter(m => !isNaN(m.date.getTime()));
 
   function renderTimeline() {
     const container = document.getElementById('timeline-milestones');
@@ -2294,6 +2302,7 @@
       closeModal();
     }
   });
+  
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;
@@ -2722,6 +2731,16 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+
+    // Persist filter state to URL so it survives page refresh
+    const params = new URLSearchParams();
+    if (query)                              params.set('q', query);
+    if (cat)                               params.set('cat', cat);
+    if (comp && comp !== 'all')            params.set('comp', comp);
+    if (sort && sort !== 'alpha')          params.set('sort', sort);
+    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
+    if (activeChip)                        params.set('chip', activeChip);
+    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -2740,7 +2759,7 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
-    
+  
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -2963,36 +2982,66 @@ if(org.ideas){
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderSelectedLanguages();
+
+  // Restore filter state from URL params on page load/refresh
+  (function restoreFiltersFromURL() {
+    const params = new URLSearchParams(location.search);
+
+    function setElValue(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.value = value;
+    }
+
+    function getChipKey(text) {
+      if (text.includes('bookmarked'))            return 'bookmarked';
+      if (text.includes('veteran'))               return 'veterans';
+      if (text.includes('newcomer'))              return 'newcomers';
+      if (text.includes('low competition'))       return 'low-competition';
+      if (text.includes('high competition'))      return 'high-competition';
+      if (text.includes('actively'))              return 'active';
+      return null;
+    }
+
+    setElValue('searchInput', params.get('q'));
+    setElValue('hero-search', params.get('q'));
+    setElValue('categoryFilter', params.get('cat'));
+    setElValue('complexityFilter', params.get('comp'));
+    setElValue('sortSelect', params.get('sort'));
+
+    const lang = params.get('lang');
+    if (lang) {
+      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
+        selectedLanguages.add(l);
+        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
+        if (pillBtn) {
+          pillBtn.classList.add('active');
+          pillBtn.setAttribute('aria-pressed', 'true');
+        }
+      });
+      renderSelectedLanguages();
+    }
+
+    const chip = params.get('chip');
+    if (chip) {
+      activeChip = chip;
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        const key = getChipKey(el.textContent.trim().toLowerCase());
+        if (key === chip) {
+          el.classList.add('bg-orange-600', 'text-white');
+          el.classList.remove('bg-surface-container-highest');
+        }
+      });
+    }
+
+    applyFilters();
+  })();
   renderOrgs();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
-  const helpModal = document.getElementById('helpModal');
-const helpBtn = document.getElementById('helpBtn');
 
-function openHelpModal() {
-  helpModal.classList.add('open');
-}
-
-function closeHelpModal() {
-  helpModal.classList.remove('open');
-}
-
-helpBtn.addEventListener('click', openHelpModal);
-
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
@@ -3105,7 +3154,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-<script src="src/js/app.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

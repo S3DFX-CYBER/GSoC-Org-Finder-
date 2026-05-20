@@ -9,123 +9,201 @@ on:
 
 permissions:
   pull-requests: write
-  issues: write
-  contents: read
 
 concurrency:
-  group: label-sync-${{ github.event.pull_request.number }}
+  group: pr-label-sync-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   sync-labels:
+    name: Sync Safe Issue Labels
+
+    if: |
+      github.actor != 'github-actions[bot]'
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Propagate issue labels to PR
+      - name: Sync Labels
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
-            const pr = context.payload.pull_request;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const prNumber = pr.number;
-            const body = pr.body || '';
+            const pr =
+              context.payload.pull_request;
 
-            if (pr.user.type === 'Bot') return;
+            const owner =
+              context.repo.owner;
 
-            const issueRefs = body.match(/(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/gi);
-            if (!issueRefs || issueRefs.length === 0) {
-              core.info('No linked issues found in PR body.');
+            const repo =
+              context.repo.repo;
+
+            const prNumber =
+              pr.number;
+
+            // Ignore bots
+            if (
+              pr.user.type === 'Bot'
+            ) {
+              core.info('Skipping bot PR');
               return;
             }
 
-            const issueNumbers = issueRefs.map(ref => {
-              const match = ref.match(/#(\d+)/);
-              return match ? parseInt(match[1], 10) : null;
-            }).filter(Boolean);
+            const body =
+              pr.body || '';
 
-            const commonLabels = [
-              'bug', 'enhancement', 'feature', 'documentation', 'good first issue',
-              'help wanted', 'gssoc26', 'nsoc26',
-              'priority:high', 'priority:medium', 'priority:low',
-              'ui', 'backend', 'frontend', 'api', 'security', 'performance'
-            ];
+            //
+            // --------------------------------------------------
+            // EXTRACT LINKED ISSUES
+            // --------------------------------------------------
+            //
 
-            const nsocLabels = ['level1', 'level2', 'level3'];
+            const matches =
+              body.match(
+                /\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/gi
+              ) || [];
 
-            const gssocLabels = [
-              'level:beginner', 'level:intermediate', 'level:advanced', 'level:critical',
-              'quality:clean', 'quality:exceptional',
-              'type:docs', 'type:testing', 'type:accessibility', 'type:performance',
-              'type:security', 'type:design', 'type:refactor', 'type:devops',
-              'type:bug', 'type:feature',
-              'gssoc:approved', 'gssoc:invalid', 'gssoc:spam', 'gssoc:ai-slop'
-            ];
+            const issueNumbers =
+              [...new Set(
+                matches
+                  .map(m => {
+                    const found =
+                      m.match(/#(\d+)/);
 
-            const labelsToAdd = new Set();
-            let detectedGssoc = false;
-            let detectedNsoc = false;
+                    return found
+                      ? parseInt(found[1], 10)
+                      : null;
+                  })
+                  .filter(Boolean)
+              )];
 
-            for (const issueNum of issueNumbers) {
+            if (issueNumbers.length === 0) {
+
+              core.info(
+                'No linked issues found'
+              );
+
+              return;
+            }
+
+            //
+            // --------------------------------------------------
+            // SAFE LABELS ONLY
+            // --------------------------------------------------
+            //
+
+            const SAFE_LABELS = new Set([
+              'gssoc26',
+              'nsoc26',
+              'hacktoberfest',
+
+              'bug',
+              'enhancement',
+              'documentation',
+
+              'frontend',
+              'backend',
+              'api',
+              'security',
+              'performance',
+
+              'good first issue',
+              'help wanted',
+
+              'level1',
+              'level2',
+              'level3',
+
+              'level:beginner',
+              'level:intermediate',
+              'level:advanced'
+            ]);
+
+            const labelsToAdd =
+              new Set();
+
+            //
+            // --------------------------------------------------
+            // FETCH LINKED ISSUES
+            // --------------------------------------------------
+            //
+
+            for (const issue_number of issueNumbers) {
+
               try {
-                const { data: issue } = await github.rest.issues.get({
-                  owner, repo, issue_number: issueNum
-                });
 
-                if (issue.pull_request) continue;
+                const { data: issue } =
+                  await github.rest.issues.get({
+                    owner,
+                    repo,
+                    issue_number
+                  });
 
-                const issueLabels = (issue.labels || []).map(l => l.name);
-                for (const label of issueLabels) {
-                  const lower = label.toLowerCase();
-                  if (lower === 'gssoc26') detectedGssoc = true;
-                  if (lower === 'nsoc26') detectedNsoc = true;
+                // Ignore PR references
+                if (issue.pull_request) {
+                  continue;
                 }
 
+                const issueLabels =
+                  (issue.labels || [])
+                    .map(l => l.name);
+
                 for (const label of issueLabels) {
-                  const lower = label.toLowerCase();
-                  if (commonLabels.includes(lower)) {
+
+                  const lower =
+                    label.toLowerCase();
+
+                  if (
+                    SAFE_LABELS.has(lower)
+                  ) {
+
                     labelsToAdd.add(label);
                   }
                 }
+
               } catch (e) {
-                core.info(`Could not fetch issue #${issueNum}: ${e?.message || e}`);
+
+                core.info(
+                  `Failed fetching issue #${issue_number}: ${e.message}`
+                );
               }
             }
 
-            for (const issueNum of issueNumbers) {
-              try {
-                const { data: issue } = await github.rest.issues.get({
-                  owner, repo, issue_number: issueNum
-                });
-
-                if (issue.pull_request) continue;
-
-                const issueLabels = (issue.labels || []).map(l => l.name);
-                for (const label of issueLabels) {
-                  const lower = label.toLowerCase();
-                  if (detectedGssoc && (gssocLabels.includes(lower) || lower.startsWith('mentor:'))) {
-                    labelsToAdd.add(label);
-                  }
-                  if (detectedNsoc && nsocLabels.includes(lower)) {
-                    labelsToAdd.add(label);
-                  }
-                }
-              } catch (e) {
-                core.info(`Could not fetch issue #${issueNum}: ${e?.message || e}`);
-              }
-            }
+            //
+            // --------------------------------------------------
+            // APPLY LABELS
+            // --------------------------------------------------
+            //
 
             if (labelsToAdd.size === 0) {
-              core.info('No matching labels to sync from linked issues.');
+
+              core.info(
+                'No safe labels to sync'
+              );
+
               return;
             }
 
-            const labelsArray = Array.from(labelsToAdd);
+            const labels =
+              Array.from(labelsToAdd);
+
             try {
+
               await github.rest.issues.addLabels({
-                owner, repo, issue_number: prNumber, labels: labelsArray
+                owner,
+                repo,
+                issue_number: prNumber,
+                labels
               });
-              core.info(`Synced labels from linked issues: ${labelsArray.join(', ')}`);
+
+              core.info(
+                `Synced labels: ${labels.join(', ')}`
+              );
+
             } catch (e) {
-              core.warning(`Failed to sync labels: ${e?.message || e}`);
+
+              core.warning(
+                `Failed syncing labels: ${e.message}`
+              );
             }

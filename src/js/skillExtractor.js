@@ -128,26 +128,31 @@ function extractSkills(text) {
   });
   
   if (!matchedSkills.has('go')) {
-    const goLangKeywords = ['programming', 'language', 'developer', 'backend', 'distributed', 'concurrency', 'goroutines', 'go1.'];
+    const goLangKeywords = [
+      'programming', 'language', 'developer', 'backend',
+      'distributed', 'concurrency', 'goroutines', 'go1.',
+      'go developer', 'go programming', 'written in go', 'experience with go',
+      'using go', 'i use go', 'go lang', 'go application'
+    ];
     const hasGoTechContext = goLangKeywords.some(kw => normalizedText.includes(kw));
     const goRegex = /\bgo\b(?!\s+(to|into|for|ahead|back|on|through|with|away|around|up|down|off|out))/i;
-    
-    if ((matchedSkills.size > 2 || hasGoTechContext) && goRegex.test(normalizedText)) {
+
+    if ((matchedSkills.size > 0 || hasGoTechContext) && goRegex.test(normalizedText)) {
       matchedSkills.add('go');
     }
   }
 
   if (!matchedSkills.has('c')) {
-    const cContextRegex = /\b(c programming|c language|proficient in c|knowledge of c)\b/i;
-    const cListRegex = /\b(python|java|c\+\+|rust|javascript|assembly)\s*,\s*c\b/i;
+    const cContextRegex = /\b(c programming|c language|proficient in c|knowledge of c|written in c|experience with c|using c|c developer|c code|c project)\b/i;
+    const cListRegex = /\b(python|java|c\+\+|rust|javascript|assembly|go|ruby)\s*[,/]\s*c\b|\bc\s*[,/]\s*(python|java|c\+\+|rust|javascript|assembly|go|ruby)\b/i;
     if (cContextRegex.test(normalizedText) || cListRegex.test(normalizedText)) {
       matchedSkills.add('c');
     }
   }
 
   if (!matchedSkills.has('r')) {
-    const rContextRegex = /\b(r programming|r language|r statistics|r studio)\b/i;
-    const rListRegex = /\b(python|julia|matlab|statistics)\s*,\s*r\b/i;
+    const rContextRegex = /\b(r programming|r language|r statistics|rstudio|r studio|r package|r packages|r script|experience with r|using r|proficient in r)\b/i;
+    const rListRegex = /\b(python|julia|matlab|statistics|stata|sas)\s*[,/]\s*r\b|\br\s*[,/]\s*(python|julia|matlab|statistics|stata|sas)\b/i;
     if (rContextRegex.test(normalizedText) || rListRegex.test(normalizedText)) {
       matchedSkills.add('r');
     }

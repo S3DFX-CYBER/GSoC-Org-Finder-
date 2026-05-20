@@ -15,18 +15,19 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
     return [];
   }
 
+  const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();
   const userTopics = new Set();
-  
+
   if (githubProfile) {
-    (githubProfile.languages || []).forEach(l => userLanguages.add(l.toLowerCase()));
-    (githubProfile.topics || []).forEach(t => userTopics.add(t.toLowerCase()));
+    (githubProfile.languages || []).forEach(l => userLanguages.add(normalize(l.toLowerCase())));
+    (githubProfile.topics || []).forEach(t => userTopics.add(normalize(t.toLowerCase())));
   }
-  
+
   resumeSkills.forEach(s => {
-    const skill = s.toLowerCase();
+    const skill = normalize(s.toLowerCase());
     userLanguages.add(skill);
-    userTopics.add(skill); 
+    userTopics.add(skill);
   });
 
   const scoredOrgs = ORGS.map((org, index) => 
@@ -141,9 +142,9 @@ function calculateStabilityBonus(org, matchReasons) {
 function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile) {
   const matchReasons = [];
   const matchedSkills = [];
-  const normalize = globalThis.normalizeSkill || (s => s);
-  const orgTags = new Set((org.tags || []).map(t => normalize(t.toLowerCase())));
-  const orgCat = org.cat ? normalize(org.cat.toLowerCase()) : '';
+  const orgNormalize = globalThis.normalizeSkill || (s => s);
+  const orgTags = new Set((org.tags || []).map(t => orgNormalize(t.toLowerCase())));
+  const orgCat = org.cat ? orgNormalize(org.cat.toLowerCase()) : '';
 
   let score = 0;
   

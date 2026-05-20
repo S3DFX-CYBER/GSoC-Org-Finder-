@@ -12,6 +12,7 @@ export default async function handler(req) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Expose-Headers': 'X-RateLimit-Remaining, X-RateLimit-Reset, X-RateLimit-Limit, Retry-After',
     'Content-Type': 'application/json',
     // Stale-while-revalidate: serve cache for 1hr, allow stale for 4hrs in background
     'Cache-Control': 'public, max-age=3600, stale-while-revalidate=14400',
@@ -30,9 +31,10 @@ export default async function handler(req) {
   // ── Queue status endpoint: GET /api/github?status=1 ──────────────────────
   // Used by the frontend to check if the API is reachable and show rate limit state.
   if (statusMode) {
+    const noCache = { ...headers, 'Cache-Control': 'no-store' };
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
-      return new Response(JSON.stringify({ ok: false, error: 'No token configured' }), { status: 200, headers });
+      return new Response(JSON.stringify({ ok: false, error: 'No token configured' }), { status: 200, headers: noCache });
     }
     try {
       const res = await fetch('https://api.github.com/rate_limit', {
@@ -192,7 +194,7 @@ export default async function handler(req) {
       if (!res.ok) {
         return new Response(
           JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }),
-          { status: 200, headers: responseHeaders }
+          { status: res.status, headers: responseHeaders }
         );
       }
       const data = await res.json();

@@ -48,7 +48,7 @@ const BadgeSystem = (function() {
       }
       const parsed = JSON.parse(data);
 
-      // Bug 2 fix: Schema validation — ensure expected fields are present and valid
+      // Schema validation with normalization
       const isValid =
         parsed !== null &&
         typeof parsed === 'object' &&
@@ -65,7 +65,22 @@ const BadgeSystem = (function() {
         };
       }
 
-      return parsed;
+      // Normalize and sanitize values
+      const explorer = Math.max(0, Math.floor(parsed.explorer));
+      const comparator = Math.max(0, Math.floor(parsed.comparator));
+      
+      // Sanitize unlockedBadges: only allow valid badge IDs (badgeType_level)
+      const validBadgePattern = /^(explorer|comparator)_[0-3]$/;
+      const unlockedBadges = [...new Set(
+        parsed.unlockedBadges
+          .filter(id => typeof id === 'string' && id.length > 0 && validBadgePattern.test(id))
+      )];
+
+      return {
+        explorer,
+        comparator,
+        unlockedBadges
+      };
     } catch (e) {
       console.warn('Failed to parse badge data:', e);
       return {

@@ -634,7 +634,8 @@
       <!-- ANALYTICS BUTTON -->
       <button id="analyticsBtn" onclick="openAnalytics()"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        title="View Analytics & Badges">
+        title="View Analytics & Badges"
+        aria-label="View Analytics and Badges">
     
         <span class="material-symbols-outlined text-zinc-600">
           analytics
@@ -2545,19 +2546,37 @@
   // ══════════════════════════════════════════════
   // ANALYTICS PANEL
   // ══════════════════════════════════════════════
+  let prevFocusBeforeAnalytics = null;
+
   window.openAnalytics = function() {
+    // Save current focus
+    prevFocusBeforeAnalytics = document.activeElement;
+
     // Render badges if BadgeSystem is available
     if (typeof BadgeSystem !== 'undefined') {
       renderBadges();
     }
     
-    document.getElementById('anBg')?.classList.add('open');
+    const modal = document.getElementById('anBg');
+    modal?.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Focus the close button for keyboard accessibility
+    setTimeout(() => {
+      const closeBtn = modal?.querySelector('.close-btn');
+      closeBtn?.focus();
+    }, 100);
   };
 
   window.closeAn = function() {
     document.getElementById('anBg')?.classList.remove('open');
     document.body.style.overflow = 'auto';
+
+    // Restore focus to the element that opened the modal
+    if (prevFocusBeforeAnalytics && document.contains(prevFocusBeforeAnalytics)) {
+      prevFocusBeforeAnalytics.focus();
+    }
+    prevFocusBeforeAnalytics = null;
   };
 
   window.closeAnEvent = function(e) {

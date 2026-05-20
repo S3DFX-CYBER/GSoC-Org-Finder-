@@ -2,7 +2,7 @@
 
 > Dynamic mentor activity ranking based on approvals, merged reviews, quality scoring, assignment participation, and activity recency.
 
-Generated: 2026-05-21T02:52:27.952Z
+Generated: 2026-05-20T19:00:35.073Z
 
 | Rank | Mentor | Score | Approvals | Merged Reviews | Quality | Activity |
 |---:|---|---:|---:|---:|---:|---|

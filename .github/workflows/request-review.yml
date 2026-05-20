@@ -36,7 +36,13 @@ jobs:
           SELECTED: ${{ steps.pick.outputs.result }}
         with:
           script: |
-            const selected = JSON.parse(process.env.SELECTED || '{}').selected || [];
+            let selected = [];
+            try {
+              selected = JSON.parse(process.env.SELECTED || '{}').selected || [];
+            } catch (error) {
+              core.error(`Failed to parse mentor selection output: ${error.message}`);
+              return;
+            }
             if (!selected.length) return;
             const pr = context.payload.pull_request;
             const labels = (pr.labels || []).map(l => l.name.toLowerCase());

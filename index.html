@@ -3054,27 +3054,6 @@ if(org.ideas){
   renderGoodFirstIssues();
   renderCompare();
 
-function openHelpModal() {
-  helpModal.classList.add('open');
-}
-
-function closeHelpModal() {
-  helpModal.classList.remove('open');
-}
-
-helpBtn.addEventListener('click', openHelpModal);
-
-document.addEventListener('keydown', (e) => {
-
-  if (e.key === '?') {
-    openHelpModal();
-  }
-
-  if (e.key === 'Escape') {
-    closeHelpModal();
-  }
-
-});
   // ══════════════════════════════════════════════
   // EXPORT  (added for issue #697)
   // ══════════════════════════════════════════════

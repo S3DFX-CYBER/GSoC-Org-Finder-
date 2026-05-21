@@ -21,7 +21,6 @@ import { fetchGH, fetchGFI, fetchIssues, fetchAllStats, queueStatus, cancelBulk,
 ```js
 async function fetchAll(){
   if(fetching)return; fetching=true;
-  ...
   for(const o of ORGS){
     if(o.github){
       txt.textContent=`${++done}/${ORGS.length}…`;
@@ -29,7 +28,6 @@ async function fetchAll(){
       await new Promise(r=>setTimeout(r,85));
     }
   }
-  ...
 }
 ```
 
@@ -45,10 +43,8 @@ function fetchAll(){
   let done=0;
   const total=ORGS.filter(o=>o.github).length;
 
-  // FIX (P1): Safety net timer — if onDone never fires due to silent errors,
-  // unlock the UI after 60s so it never stays permanently frozen.
   const safetyTimer = setTimeout(() => {
-    if (!fetching) return;           // already cleaned up normally — skip
+    if (!fetching) return;
     spin.style.display='none';
     btn.disabled=false;
     txt.textContent='⚠ Timed out';
@@ -59,7 +55,6 @@ function fetchAll(){
 
   fetchAllStats(
     ORGS,
-    // onProgress — called per org as data arrives (non-blocking)
     (org, data) => {
       org._gh = data;
       done++;
@@ -67,9 +62,8 @@ function fetchAll(){
       applyFilters();
       updateStats();
     },
-    // onDone — called when all fetches complete
     () => {
-      clearTimeout(safetyTimer);     // cancel safety net — normal clean finish
+      clearTimeout(safetyTimer);
       spin.style.display='none';
       btn.disabled=false;
       txt.textContent='✓ Done';
@@ -91,7 +85,6 @@ async function fetchModalGH(){
   delete cache[o.github];
   delete cache[o.github+'__gfi'];
   const d=await fetchGH(o.github);
-  ...
 }
 ```
 
@@ -101,11 +94,8 @@ async function fetchModalGH(){
   const o=ORGS[modalIdx];if(!o?.github)return;
   document.getElementById('mFetchBtn').textContent='Loading…';
 
-  // FIX (P2): Bust cache before fetching so "Refresh" always gets fresh data
-  // instead of returning the same stale cached result.
   invalidateCache(o.github);
 
-  // Priority 0 = urgent, bypasses queue delay
   const d = await fetchGH(o.github, 0);
   if(d){
     o._gh=d;
@@ -134,20 +124,18 @@ async function fetchModalGH(){
 
 ## 5. Replace fetchAllIssues() batch with queue-based version
 
-**Before (in `fetchAllIssues`):**
+**Before:**
 ```js
 await Promise.all(batch.map(async o=>{
   const r=await fetch(`${API}?repo=...&gfi=1&issues=1`);
-  ...
 }));
 await new Promise(r=>setTimeout(r,60));
 ```
 
 **After:**
 ```js
-// In fetchAllIssues(), replace the inner loop with:
 await Promise.all(orgsWithGithub.map(async o => {
-  const data = await fetchIssues(o.github, 2);   // priority 2 = bulk
+  const data = await fetchIssues(o.github, 2);
   if (data?.items?.length) {
     const owner = o.github.split('/')[0];
     const logo  = `https://github.com/${owner}.png?size=64`;
@@ -157,7 +145,6 @@ await Promise.all(orgsWithGithub.map(async o => {
     found += data.items.length;
   }
   done++;
-  // update progress UI...
 }));
 ```
 
@@ -172,9 +159,7 @@ async function checkAPI(){
     if(data.ok){
       const rem   = data.core?.remaining;
       const limit = data.core?.limit;
-      // FIX (P3): Guard limit > 0 before dividing to prevent NaN% or Infinity%
-      // when limit is 0 or undefined (e.g. token not configured or API degraded).
-      const pct = (rem !== undefined && limit) ? Math.round(rem / limit * 100) : null;
+      const pct   = (rem !== undefined && limit) ? Math.round(rem / limit * 100) : null;
       banner.className='api-banner api-ok';
       document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
       document.getElementById('apiText').textContent=

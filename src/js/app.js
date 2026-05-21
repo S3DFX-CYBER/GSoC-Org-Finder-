@@ -1,5 +1,226 @@
 /* global ORGS */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, navigateTo */
+
+// ══════════════════════════════════════════════
+// CLIENT-SIDE ROUTER
+// ══════════════════════════════════════════════
+const Router = {
+  routes: {},
+  
+  register(path, handler) {
+    this.routes[path] = handler;
+  },
+  
+  navigate(path, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    // If privacy page is open and navigating to a section, close privacy first
+    const privacyContainer = document.getElementById('privacy-page');
+    if (privacyContainer && path.startsWith('/')) {
+      hidePrivacyPage();
+      const section = path.substring(1);
+      if (section && section !== 'privacy') {
+        const element = document.getElementById(section);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+            this.updateActiveNav(section);
+          }, 100);
+        }
+      }
+      history.pushState(null, '', path);
+      return;
+    }
+    
+    // Handle path-based navigation for sections
+    if (path.startsWith('/')) {
+      const section = path.substring(1);
+      if (section === 'privacy') {
+        if (this.routes[path]) {
+          this.routes[path]();
+          history.pushState(null, '', path);
+        }
+        return;
+      }
+      
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        history.pushState(null, '', path);
+        this.updateActiveNav(section);
+      }
+      return;
+    }
+    
+    // Handle other routes
+    if (this.routes[path]) {
+      this.routes[path]();
+      history.pushState(null, '', path);
+    }
+  },
+  
+  updateActiveNav(section) {
+    // Update desktop nav
+    document.querySelectorAll('.desktop-nav-link').forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if (linkSection === section) {
+        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+        link.classList.remove('text-zinc-600');
+      } else {
+        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+        link.classList.add('text-zinc-600');
+      }
+    });
+    
+    // Update mobile menu
+    document.querySelectorAll('.mobile-menu-link').forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if (linkSection === section) {
+        link.classList.add('bg-orange-50', 'text-primary');
+      } else {
+        link.classList.remove('bg-orange-50', 'text-primary');
+      }
+    });
+  },
+  
+  init() {
+    // Handle initial path or hash (for backward compatibility)
+    const initialPath = window.location.pathname;
+    const initialHash = window.location.hash;
+    
+    if (initialPath && initialPath !== '/') {
+      this.navigate(initialPath);
+    } else if (initialHash) {
+      this.navigate('/' + initialHash.substring(1));
+    } else {
+      this.navigate('/orgs');
+    }
+    
+    // Handle browser back/forward
+    window.addEventListener('popstate', () => {
+      const path = window.location.pathname;
+      if (path && path !== '/') {
+        const section = path.substring(1);
+        if (section === 'privacy') {
+          if (this.routes[path]) this.routes[path]();
+          return;
+        }
+        const element = document.getElementById(section);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          this.updateActiveNav(section);
+        }
+      } else {
+        const element = document.getElementById('orgs');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          this.updateActiveNav('orgs');
+        }
+      }
+    });
+  }
+};
+
+// Global navigation function
+globalThis.navigateTo = function(path, event) {
+  console.log('navigateTo called with:', path, event);
+  Router.navigate(path, event);
+};
+
+// Also expose to window for compatibility
+window.navigateTo = globalThis.navigateTo;
+
+console.log('Router initialized, navigateTo function available');
+
+// Privacy page content and handler
+const privacyContent = `
+  <div class="pt-32 pb-20 px-6 max-w-4xl mx-auto">
+    <button onclick="navigateTo('#timeline', event)" class="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 mb-6 bg-transparent border-none cursor-pointer">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back to Home
+    </button>
+    <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8">Privacy Policy</h1>
+    <div class="prose prose-zinc prose-orange max-w-none">
+      <p class="text-zinc-600 mb-6">Last updated: May 14, 2026</p>
+      
+      <h2 class="text-2xl font-bold mt-10 mb-4">1. Information We Collect</h2>
+      <p class="text-zinc-600 mb-4">FindMyGSoC is a static site built for the open-source community. We do not directly collect, store, or process any personal data. All search and filtering operations occur locally in your browser. However, please note that we use third-party Content Delivery Networks (CDNs) for assets like fonts and styling, which may receive standard network metadata (such as your IP address) when you load the page.</p>
+      
+      <h2 class="text-2xl font-bold mt-10 mb-4">2. Local Storage</h2>
+      <p class="text-zinc-600 mb-4">We use your browser's local storage solely to save your organization bookmarks (Watchlist) and your theme preference (Light/Dark mode). This data never leaves your device.</p>
+      
+      <h2 class="text-2xl font-bold mt-10 mb-4">3. External Links</h2>
+      <p class="text-zinc-600 mb-4">Our site contains links to external websites (e.g., GitHub, GSoC official site, organization pages). We are not responsible for the privacy practices of these external sites.</p>
+      
+      <h2 class="text-2xl font-bold mt-10 mb-4">4. Open Source and Transparency</h2>
+      <p class="text-zinc-600 mb-4">The entire source code of this project is public. You can review it on <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub</a> to verify how it operates.</p>
+      
+      <h2 class="text-2xl font-bold mt-10 mb-4">5. Changes to This Policy</h2>
+      <p class="text-zinc-600 mb-4">We may update this Privacy Policy from time to time. Any changes will be reflected on this page.</p>
+    </div>
+  </div>
+`;
+
+function showPrivacyPage() {
+  // Hide main content
+  const mainContent = document.querySelector('main') || document.body;
+  const existingPrivacy = document.getElementById('privacy-page');
+  
+  if (existingPrivacy) {
+    existingPrivacy.remove();
+  }
+  
+  // Create privacy page container
+  const privacyContainer = document.createElement('div');
+  privacyContainer.id = 'privacy-page';
+  privacyContainer.innerHTML = privacyContent;
+  
+  // Hide the main content sections
+  const sectionsToHide = document.querySelectorAll('section, #orgModal, #compareBg, #anBg, #mobileMenu');
+  sectionsToHide.forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Show privacy page
+  document.body.appendChild(privacyContainer);
+  window.scrollTo(0, 0);
+}
+
+function hidePrivacyPage() {
+  const privacyContainer = document.getElementById('privacy-page');
+  if (privacyContainer) {
+    privacyContainer.remove();
+  }
+  
+  // Show main content sections
+  const sectionsToShow = document.querySelectorAll('section, #orgModal, #compareBg, #anBg, #mobileMenu');
+  sectionsToShow.forEach(section => {
+    section.style.display = '';
+  });
+}
+
+// Register privacy route
+Router.register('/privacy', showPrivacyPage);
+
+// Handle back button from privacy page
+window.addEventListener('popstate', () => {
+  const privacyContainer = document.getElementById('privacy-page');
+  if (privacyContainer && !window.location.pathname.includes('privacy')) {
+    hidePrivacyPage();
+  }
+});
+
+// Initialize router when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    Router.init();
+  });
+} else {
+  Router.init();
+}
 
 // ══════════════════════════════════════════════
 // THEME

@@ -3,9 +3,10 @@
   "framework": null,
   "outputDirectory": ".",
   "buildCommand": "",
-  "devCommand": "npx serve . -l $PORT",
+  "devCommand": "npx serve -s . -l $PORT",
   "rewrites": [
-    { "source": "/api/github", "destination": "/api/github.js" }
+    { "source": "/api/github", "destination": "/api/github.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {

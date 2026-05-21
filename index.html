@@ -1772,7 +1772,7 @@
   ];
 
   function getRoadmapKey(orgName) {
-    return "roadmap__" + orgName.toLowerCase().replace(/\s+/g, "_");
+    return "roadmap::" + encodeURIComponent(orgName);
   }
 
   function loadRoadmapState(orgName) {

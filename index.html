@@ -678,7 +678,7 @@
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
-      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -2057,13 +2057,6 @@
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
-            <button
-              class="copy-name-btn text-zinc-400 hover:text-primary transition-colors p-1 rounded"
-              data-copy-name="${escapeHtml(org.name)}"
-              title="Copy name"
-              aria-label="Copy organization name to clipboard">
-              <span class="material-symbols-outlined text-sm">content_copy</span>
-            </button>
           </div>
            <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
@@ -2112,28 +2105,6 @@
       });
       btn.__orgListenerAttached = true;
     });
-    // add copy-name button listeners
-(root.querySelectorAll ? root.querySelectorAll('.copy-name-btn[data-copy-name]') : []).forEach(btn => {
-  if (btn.__orgListenerAttached) return;
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const name = btn.dataset.copyName;
-    navigator.clipboard.writeText(name).then(() => {
-      const icon = btn.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = 'check';
-      btn.title = 'Copied!';
-      btn.classList.add('text-green-500');
-      btn.classList.remove('text-zinc-400');
-      setTimeout(() => {
-        if (icon) icon.textContent = 'content_copy';
-        btn.title = 'Copy name';
-        btn.classList.remove('text-green-500');
-        btn.classList.add('text-zinc-400');
-      }, 2000);
-    }).catch(() => {});
-  });
-  btn.__orgListenerAttached = true;
-});
   }
 
   function toggleCompare(e, name) {

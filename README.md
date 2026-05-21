@@ -256,7 +256,13 @@ This repo uses a **maintainer-verified** assignment system:
 **Do not start working before you are assigned.**
 
 ### Quick Start
+### Prerequisites
 
+Before running the project locally, make sure you have:
+
+- A GitHub account
+- Git installed
+- A Vercel account (optional for deployment)
 1. Fork the repo
 2. Edit the `ORGS` array in `index.html`
 3. Open a pull request using the appropriate template

@@ -83,7 +83,8 @@
     get() {
       try {
         return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-      } catch {
+      } catch (err) {
+        console.warn('Recently viewed storage parse failed:', err);
         return [];
       }
     },
@@ -137,6 +138,11 @@
       const orgs = getOrgs();
       const bookmarkedSet = getBookmarkedSet();
 
+      if (!Array.isArray(orgs) || !bookmarkedSet) {
+        console.warn('Missing org data or bookmarked set');
+        return;
+      }
+
       container.innerHTML = list.map((item) => {
         const org = orgs.find((entry) => entry.name === item.name);
         if (!org) return '';
@@ -145,10 +151,10 @@
         const logoUrl = `https://github.com/${githubOwner}.png?size=64`;
         const descSafe = String(org.desc || '');
         const tagsSafe = Array.isArray(org.tags) ? org.tags : [];
-        const catSafe = org.cat || '';
+        const catSafe = String(org.cat || '');
         const yearsSafe = getYearsLabel(org.years);
         const timeAgo = this.getTimeAgo(item.timestamp);
-        const isBookmarked = bookmarkedSet.has(org.name);
+        const isBookmarked = bookmarkedSet instanceof Set ? bookmarkedSet.has(org.name) : false;
 
         return `
           <article class="recently-viewed-card group bg-white animate-fade-up" data-org="${escapeHtml(org.name)}">

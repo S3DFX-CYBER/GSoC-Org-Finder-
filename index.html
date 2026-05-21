@@ -2081,7 +2081,7 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-gradient-to-b from zinc-900 to zinc-950 rounded 2xl p-6 border border-zinc-800 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-orange-500/30 hover:shadow-[0_10px_40px_rgba(249,115,22,0.15)] animate-fade-up';
+      card.className = 'group rounded-2xl p-6 border transition-all duration-300 ease-out hover:-translate-y-1 hover:border-orange-500/30 hover:shadow-[0_10px_40px_rgba(249,115,22,0.15)] animate-fade-up dark:bg-gradient-to-b dark:from-zinc-900 dark:to-zinc-950 dark:border-zinc-800';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);

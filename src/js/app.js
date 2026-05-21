@@ -112,44 +112,43 @@ AN.trackVisit();
 // URL VALIDATION & SANITIZATION
 // ══════════════════════════════════════════════
 /**
- * Validates and sanitizes project ideas URLs for safe display
- * Ensures only http/https protocols are allowed to prevent XSS attacks
- * Automatically prepends https:// if no protocol is specified
- * 
+ * Generic URL validator — ensures only http/https protocols are allowed.
+ * Does NOT auto-prepend a protocol. The caller must pass a fully-formed URL.
+ *
+ * @param {string} url - A fully-formed URL string to validate
+ * @returns {string|null} - The trimmed URL if valid, null otherwise
+ */
+function validateUrl(url) {
+  if (!url || !url.trim()) return null;
+  try {
+    const trimmed = url.trim();
+    const urlObj = new URL(trimmed);
+    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+      return trimmed;
+    }
+    console.warn('Rejected non-HTTP(S) URL:', url);
+    return null;
+  } catch (e) {
+    console.warn('Invalid URL format:', url, e);
+    return null;
+  }
+}
+
+/**
+ * Validates and sanitizes project ideas URLs for safe display.
+ * Automatically prepends https:// if no protocol is specified.
+ * Delegates to validateUrl() for the actual protocol check.
+ *
  * @param {string} ideasUrl - The raw URL string from organization data
  * @returns {string|null} - Sanitized URL if valid, null otherwise
  */
 function validateIdeasUrl(ideasUrl) {
-  // Return null for empty or whitespace-only strings
-  if (!ideasUrl || !ideasUrl.trim()) {
-    return null;
+  if (!ideasUrl || !ideasUrl.trim()) return null;
+  let url = ideasUrl.trim();
+  if (!url.includes('://')) {
+    url = 'https://' + url;
   }
-  
-  try {
-    let url = ideasUrl.trim();
-    
-    // Prepend https:// only if no protocol scheme is present
-    // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
-    if (!url.includes('://')) {
-      url = 'https://' + url;
-    }
-    
-    // Parse and validate URL
-    const urlObj = new URL(url);
-    
-    // Security: Only allow http and https protocols
-    // This prevents javascript:, data:, file:, and other potentially dangerous schemes
-    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
-      return url;
-    }
-    
-    console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
-    return null;
-  } catch (e) {
-    // Invalid URL format
-    console.warn('Invalid ideas URL format:', ideasUrl, e);
-    return null;
-  }
+  return validateUrl(url);
 }
 
 // ══════════════════════════════════════════════

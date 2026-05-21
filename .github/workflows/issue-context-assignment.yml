@@ -133,8 +133,7 @@ jobs:
             git pull --rebase origin bot/state
           fi
           git push origin HEAD:bot/state
-          git push origin HEAD:bot/state
-
+          
       # ── PATH B: /approve-assignment `@username` ──────────────────────────────
 
       - name: Process mentor approval
@@ -203,4 +202,4 @@ jobs:
             git pull --rebase origin bot/state
           fi
           git push origin HEAD:bot/state
-          git push origin HEAD:bot/state
+          

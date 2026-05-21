@@ -3001,15 +3001,21 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "UC OSPO": {
-    "org": "UC OSPO",
-    "ideasUrl": "https://ucsc-ospo.github.io/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "UC OSPO",
+  "ideasUrl": "https://ucsc-ospo.github.io/gsoc/",
+  "channels": [
+    {
+      "type": "GitHub Discussions",
+      "url": "https://github.com/ucsc-ospo/ucsc-ospo.github.io/discussions",
+      "label": "UC OSPO GitHub Discussions"
+    }
+  ],
+  "mentors": [],
+  "mailingLists": [],
+  "tip": "Introduce yourself in GitHub Discussions before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Unikraft": {
     "org": "Unikraft",
     "ideasUrl": "https://github.com/unikraft/docs/tree/main/content/docs/contributing/gsoc",

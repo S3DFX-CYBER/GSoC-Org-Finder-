@@ -1,14 +1,12 @@
 /* global ORGS */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
-
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
-//To check whether app.js is wOrking or not.
-//console.log("APP JS LOADED");
+
 (function(){
   const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.classList.toggle('dark', saved === 'dark');
+  document.documentElement.classList.toggle('dark',saved === 'dark');
   updateThemeIcon();
 })();
 

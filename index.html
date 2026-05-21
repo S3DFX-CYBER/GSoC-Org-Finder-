@@ -104,6 +104,19 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+    /* Screen reader only - for accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
     /* Modal Styles */
     .modal-bg {
       position: fixed;
@@ -2431,11 +2444,6 @@
         return;
       }
       compareList.push(name);
-      
-      // Track badge progress for comparisons
-      if (typeof BadgeSystem !== 'undefined') {
-        BadgeSystem.trackComparison();
-      }
     }
     renderOrgs(true);
     renderCompare();
@@ -2536,6 +2544,11 @@
     renderCompareModal();
     document.getElementById('compareModal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Track badge progress only when comparison is actually opened with 2+ orgs
+    if (typeof BadgeSystem !== 'undefined' && compareList.length >= 2) {
+      BadgeSystem.trackComparison();
+    }
   }
 
   function closeCompareModal() {

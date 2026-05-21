@@ -140,6 +140,11 @@ const BadgeSystem = (function() {
 
     const notification = document.createElement('div');
     notification.className = 'badge-notification';
+    // Add ARIA live region attributes for screen reader accessibility
+    notification.setAttribute('role', 'status');
+    notification.setAttribute('aria-live', 'polite');
+    notification.setAttribute('aria-atomic', 'true');
+    
     notification.innerHTML = `
       <div class="badge-notification-content">
         <div class="badge-notification-icon">${def.name.split(' ')[0]}</div>
@@ -149,6 +154,7 @@ const BadgeSystem = (function() {
           <div class="badge-notification-progress">${def.description}: ${level.threshold}</div>
         </div>
       </div>
+      <span class="sr-only">Badge unlocked: ${def.name} ${level.levelName}. ${def.description} ${level.threshold}.</span>
     `;
 
     document.body.appendChild(notification);

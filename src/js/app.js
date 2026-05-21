@@ -4,7 +4,8 @@
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
-console.log("APP JS LOADED");
+//To check whether app.js is wOrking or not.
+//console.log("APP JS LOADED");
 (function(){
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
@@ -891,7 +892,7 @@ JSON.parse(localStorage.getItem('shortcuts'))
 || defaultShortcuts;
 
 document.addEventListener('keydown', e => {
-   console.log("Key pressed:", e.key);
+   //console.log("Key pressed:", e.key);
   // Close modals first
   if(e.key===shortcuts.close){
     if(document.getElementById('modalBg').classList.contains('open')){
@@ -925,6 +926,17 @@ if(e.key.toLowerCase()==='a'){
 
     document
       .getElementById('ai-recommender')
+      ?.scrollIntoView({
+          behavior:'smooth'
+      });
+
+    return;
+}
+if(e.key.toLowerCase()==='m'){
+    e.preventDefault();
+
+    document
+      .getElementById('mentors')
       ?.scrollIntoView({
           behavior:'smooth'
       });

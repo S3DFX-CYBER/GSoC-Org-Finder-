@@ -445,6 +445,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
 <a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
+<a href="https://github.com/Ashish241"><img src="https://github.com/Ashish241.png" width="50px" alt="Ashish241" /></a>
 <a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
 <a href="https://github.com/Bushra-gh"><img src="https://github.com/Bushra-gh.png" width="50px" alt="Bushra-gh" /></a>
 <a href="https://github.com/Chizaram-Igolo"><img src="https://github.com/Chizaram-Igolo.png" width="50px" alt="Chizaram-Igolo" /></a>
@@ -452,19 +453,24 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Dj-Shortcut"><img src="https://github.com/Dj-Shortcut.png" width="50px" alt="Dj-Shortcut" /></a>
 <a href="https://github.com/HarshaVardhan31012007"><img src="https://github.com/HarshaVardhan31012007.png" width="50px" alt="HarshaVardhan31012007" /></a>
 <a href="https://github.com/Harshith1702"><img src="https://github.com/Harshith1702.png" width="50px" alt="Harshith1702" /></a>
+<a href="https://github.com/IshitaSingh0822"><img src="https://github.com/IshitaSingh0822.png" width="50px" alt="IshitaSingh0822" /></a>
 <a href="https://github.com/Itheshjs"><img src="https://github.com/Itheshjs.png" width="50px" alt="Itheshjs" /></a>
 <a href="https://github.com/Itzzavdheshh"><img src="https://github.com/Itzzavdheshh.png" width="50px" alt="Itzzavdheshh" /></a>
 <a href="https://github.com/Kuldeeps1505"><img src="https://github.com/Kuldeeps1505.png" width="50px" alt="Kuldeeps1505" /></a>
 <a href="https://github.com/Manasa-2303"><img src="https://github.com/Manasa-2303.png" width="50px" alt="Manasa-2303" /></a>
 <a href="https://github.com/OmkarAKadam"><img src="https://github.com/OmkarAKadam.png" width="50px" alt="OmkarAKadam" /></a>
+<a href="https://github.com/PrincePundir123"><img src="https://github.com/PrincePundir123.png" width="50px" alt="PrincePundir123" /></a>
 <a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="50px" alt="S3DFX-CYBER" /></a>
 <a href="https://github.com/SHUBHAM2775"><img src="https://github.com/SHUBHAM2775.png" width="50px" alt="SHUBHAM2775" /></a>
 <a href="https://github.com/ShailiBoddula"><img src="https://github.com/ShailiBoddula.png" width="50px" alt="ShailiBoddula" /></a>
+<a href="https://github.com/Shivansh181003"><img src="https://github.com/Shivansh181003.png" width="50px" alt="Shivansh181003" /></a>
+<a href="https://github.com/ThePrabhu"><img src="https://github.com/ThePrabhu.png" width="50px" alt="ThePrabhu" /></a>
 <a href="https://github.com/VaibhavMP"><img src="https://github.com/VaibhavMP.png" width="50px" alt="VaibhavMP" /></a>
 <a href="https://github.com/a638011"><img src="https://github.com/a638011.png" width="50px" alt="a638011" /></a>
 <a href="https://github.com/abdussamad567"><img src="https://github.com/abdussamad567.png" width="50px" alt="abdussamad567" /></a>
 <a href="https://github.com/angelina-2206"><img src="https://github.com/angelina-2206.png" width="50px" alt="angelina-2206" /></a>
 <a href="https://github.com/anirudh645"><img src="https://github.com/anirudh645.png" width="50px" alt="anirudh645" /></a>
+<a href="https://github.com/arushiranjan"><img src="https://github.com/arushiranjan.png" width="50px" alt="arushiranjan" /></a>
 <a href="https://github.com/bhaktiyadav08"><img src="https://github.com/bhaktiyadav08.png" width="50px" alt="bhaktiyadav08" /></a>
 <a href="https://github.com/bhavyanjain3004"><img src="https://github.com/bhavyanjain3004.png" width="50px" alt="bhavyanjain3004" /></a>
 <a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
@@ -478,9 +484,21 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/prisha-sh"><img src="https://github.com/prisha-sh.png" width="50px" alt="prisha-sh" /></a>
 <a href="https://github.com/shivam-kakkar"><img src="https://github.com/shivam-kakkar.png" width="50px" alt="shivam-kakkar" /></a>
 <a href="https://github.com/shravanithouta108"><img src="https://github.com/shravanithouta108.png" width="50px" alt="shravanithouta108" /></a>
+<a href="https://github.com/srishav3"><img src="https://github.com/srishav3.png" width="50px" alt="srishav3" /></a>
 <a href="https://github.com/syedrazamd"><img src="https://github.com/syedrazamd.png" width="50px" alt="syedrazamd" /></a>
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <!-- CONTRIBUTORS_END -->
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=S3DFX-CYBER%2FGSoC-Org-Finder-&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## 📄 License
 
 Apache 2.0 — made for GSoC beginners, by people who've been there.

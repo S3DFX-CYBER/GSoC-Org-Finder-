@@ -951,46 +951,7 @@
   </div>
 </section>
 
-<<<<<<< HEAD
-<!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-<section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
-  <div class="flex flex-wrap gap-2 mb-4">
-    <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-    <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-    <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-    <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-    <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-    <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
-  </div>
-  <div class="flex flex-wrap gap-2">
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
-  </div>
-  <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
-    <span class="empty-state">No languages selected</span>
-  </div>
-  <div class="mt-2 flex items-center gap-2">
-    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
-      <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
-    </label>
-    <span id="languageLogicHint" 
-    class="text-xs text-primary font-medium italic">
-    </span>
-  </div>
-</section>
-=======
->>>>>>> 33cabf4 (refactor: wrapped filter chips inside organizations section)
+
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
@@ -1028,9 +989,12 @@
     </div>
     <div class="mt-2 flex items-center gap-2">
       <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-        <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+        <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
         <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
       </label>
+      <span id="languageLogicHint" 
+        class="text-xs text-primary font-medium italic">
+      </span>
     </div>
   </div>
 

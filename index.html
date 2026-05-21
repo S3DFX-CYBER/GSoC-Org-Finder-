@@ -2762,30 +2762,27 @@ if(org.ideas){
     return a.name.localeCompare(b.name);
   }
 
- window.clearAllFilters = function() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('categoryFilter').value = 'all';
-  document.getElementById('complexityFilter').value = 'all';
-  document.getElementById('sortSelect').value = 'alpha';
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) heroSearch.value = '';
-
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.classList.remove('bg-orange-600', 'text-white');
-    chip.classList.add('bg-surface-container-highest');
-  });
-
-  // ✅ Reset internal state
-  activeChip = null;
+  window.clearAllFilters = function() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('complexityFilter').value = 'all';
+    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
+    const heroSearch = document.getElementById('hero-search');
+    if (heroSearch) heroSearch.value = '';
+  
+    // Reset chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.classList.remove('bg-orange-600', 'text-white');
+      chip.classList.add('bg-surface-container-highest');
+    });
+    activeChip = null;
   selectedLanguages.clear();
   renderSelectedLanguages();
-
-  // ✅ Clean the URL
   history.replaceState(null, '', location.pathname);
+  applyFilters();  
+ 
+  };
 
-  // ✅ Let applyFilters handle rendering with clean state
-  applyFilters();
-};
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);

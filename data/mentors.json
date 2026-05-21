@@ -2661,17 +2661,28 @@
   "SymPy": {
     "org": "SymPy",
     "ideasUrl": "https://github.com/sympy/sympy/wiki/GSoC-Ideas",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sympy:matrix.org",
+        "label": "SymPy Matrix"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
+        "name": "Shekhar Prasad Rajak",
         "github": "Shekharrajak",
         "githubUrl": "https://github.com/Shekharrajak"
       },
       {
-        "name": "",
+        "name": "Divyanshu Thakur",
         "github": "divyanshu132",
         "githubUrl": "https://github.com/divyanshu132"
+      },
+      {
+        "name": "Aaron Meurer",
+        "github": "asmeurer",
+        "githubUrl": "https://github.com/asmeurer"
       }
     ],
     "mailingLists": [
@@ -2693,7 +2704,7 @@
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-18T12:14:33.000Z"
   },
   "Synfig": {
     "org": "Synfig",

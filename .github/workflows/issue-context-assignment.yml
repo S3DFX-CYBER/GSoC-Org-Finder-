@@ -129,7 +129,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/reviewers/pending-assignments.json
           git diff --cached --quiet || git commit -m "chore: queue assignment for ${{ steps.validate.outputs.claimant }} on issue #${{ steps.validate.outputs.issue_number }} [skip ci]"
-          git pull --rebase origin bot/state
+          if git ls-remote --exit-code --heads origin bot/state >/dev/null; then
+            git pull --rebase origin bot/state
+          fi
+          git push origin HEAD:bot/state
           git push origin HEAD:bot/state
 
       # ── PATH B: /approve-assignment `@username` ──────────────────────────────
@@ -196,5 +199,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/reviewers/pending-assignments.json
           git diff --cached --quiet || git commit -m "chore: assignment approved for issue #${{ github.event.issue.number }} [skip ci]"
-          git pull --rebase origin bot/state
+          if git ls-remote --exit-code --heads origin bot/state >/dev/null; then
+            git pull --rebase origin bot/state
+          fi
+          git push origin HEAD:bot/state
           git push origin HEAD:bot/state

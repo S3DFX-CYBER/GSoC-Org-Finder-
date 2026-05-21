@@ -3,7 +3,8 @@
 
 // ══════════════════════════════════════════════
 // THEME
-// ══════════════════════════════════════════════
+// ═════════════════════════════════════════════
+
 (function(){
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
@@ -1115,6 +1116,87 @@ function openModal(idx){
 function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
 function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
 
+
+const roadmapSteps = [
+  "Star Repository",
+  "Read CONTRIBUTING.md",
+  "Setup Project Locally",
+  "Pick Beginner Issue",
+  "Create Branch",
+  "Create First Pull Request"
+];
+
+function renderContributionRoadmap() {
+
+  console.log("Roadmap rendering");
+
+  const container =
+    document.getElementById("roadmap-steps");
+
+  if (!container) {
+    console.log("roadmap-steps not found");
+    return;
+  }
+
+  container.innerHTML = "";
+
+  roadmapSteps.forEach((step, index) => {
+
+    const label = document.createElement("label");
+
+    label.className =
+      "flex items-center gap-4 p-4 rounded-2xl border border-zinc-100 hover:border-primary/30 hover:bg-primary/5 transition-all cursor-pointer";
+
+    label.innerHTML = `
+      <input
+        type="checkbox"
+        class="w-5 h-5 accent-orange-500"
+        data-index="${index}"
+      />
+
+      <span class="font-medium text-zinc-700">
+        ${step}
+      </span>
+    `;
+
+    container.appendChild(label);
+  });
+
+  updateRoadmapProgress();
+
+  const checkboxes =
+    document.querySelectorAll("#roadmap-steps input");
+
+  checkboxes.forEach((checkbox) => {
+
+    checkbox.addEventListener("change", () => {
+      updateRoadmapProgress();
+    });
+
+  });
+}
+
+function updateRoadmapProgress() {
+
+  const checkboxes =
+    document.querySelectorAll("#roadmap-steps input");
+
+  const checked =
+    [...checkboxes].filter(cb => cb.checked).length;
+
+  const progress =
+    (checked / roadmapSteps.length) * 100;
+
+  const progressBar =
+    document.getElementById("roadmap-progress-bar");
+
+  if (progressBar) {
+    progressBar.style.width = `${progress}%`;
+  }
+}
+
+
+
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
@@ -1383,6 +1465,8 @@ requestAnimationFrame(()=>{
   renderTrending();
   loadCachedIssues();
   checkAPI();
+  renderContributionRoadmap();
+  
 });
 
 // Sync hero search with hidden search input and initialize on load
@@ -1402,4 +1486,7 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+
+
+
 

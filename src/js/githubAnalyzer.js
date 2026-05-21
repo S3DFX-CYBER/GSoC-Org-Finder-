@@ -35,6 +35,51 @@ function setLocalCache(cache) {
   }
 }
 
+async function fetchUserProfileFromAPI(normalizedUsername) {
+  const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    // Handle case where response is not valid JSON
+  }
+
+  if (!response.ok) {
+    throw new Error(data?.error || `Failed to fetch user data: ${response.status}`);
+  }
+
+  if (!data) {
+    throw new Error("No response data returned from server");
+  }
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data;
+}
+
+function handleAnalyzerError(err, username) {
+  console.error("GitHub Analyzer Error:", err);
+
+  const message = err.message || "";
+  if (message.includes("GitHub 404")) {
+    throw new Error(`GitHub user '${username}' not found. Please ensure the username is correct.`);
+  }
+  if (message.includes("GitHub 403")) {
+    throw new Error("GitHub API rate limit reached. Please try again later.");
+  }
+  if (message.includes("GitHub 401") || message.includes("Failed to fetch user data: 401") || message.includes("401 Unauthorized")) {
+    throw new Error("GitHub API authorization failed. Please check the API token configuration or try again.");
+  }
+  if (message === "Invalid user") {
+    throw new Error(`The username '${username}' is not in a valid GitHub format.`);
+  }
+
+  // Propagate operational errors directly instead of masking them
+  throw new Error(message || `Could not analyze GitHub profile for '${username}'.`);
+}
+
 /**
  * Analyzes a GitHub username and returns a standardized UserProfile object.
  * 
@@ -55,25 +100,7 @@ async function analyzeGitHubUser(username) {
   }
 
   try {
-    const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      // Handle case where response is not valid JSON
-    }
-
-    if (!response.ok) {
-      throw new Error(data?.error || `Failed to fetch user data: ${response.status}`);
-    }
-
-    if (!data) {
-      throw new Error("No response data returned from server");
-    }
-
-    if (data.error) {
-      throw new Error(data.error);
-    }
+    const data = await fetchUserProfileFromAPI(normalizedUsername);
 
     // Structure the result
     const userProfile = {
@@ -92,21 +119,7 @@ async function analyzeGitHubUser(username) {
 
     return userProfile;
   } catch (err) {
-    console.error("GitHub Analyzer Error:", err);
-
-    const message = err.message || "";
-    if (message.includes("GitHub 404")) {
-      throw new Error(`GitHub user '${username}' not found. Please ensure the username is correct.`);
-    }
-    if (message.includes("GitHub 403")) {
-      throw new Error("GitHub API rate limit reached. Please try again later.");
-    }
-    if (message === "Invalid user") {
-      throw new Error(`The username '${username}' is not in a valid GitHub format.`);
-    }
-
-    // Propagate operational errors directly instead of masking them
-    throw new Error(message || `Could not analyze GitHub profile for '${username}'.`);
+    handleAnalyzerError(err, username);
   }
 }
 

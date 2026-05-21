@@ -58,13 +58,35 @@ jobs:
             // OUTDATED RUN PROTECTION
             // --------------------------------------------------
 
-            const currentHeadSha = pr.head.sha;
             const eventHeadSha =
               context.payload.pull_request.head.sha;
 
+            let currentHeadSha =
+              eventHeadSha;
+
+            try {
+
+              const livePr =
+                await github.rest.pulls.get({
+                  owner,
+                  repo,
+                  pull_number: prNumber
+                });
+
+              currentHeadSha =
+                livePr.data.head.sha;
+
+            } catch (error) {
+
+              core.warning(
+                `Failed fetching latest PR state: ${error.message}`
+              );
+            }
+
             if (currentHeadSha !== eventHeadSha) {
+
               core.info(
-                'Outdated workflow run detected'
+                `Outdated workflow run detected. Current SHA: ${currentHeadSha}, event SHA: ${eventHeadSha}`
               );
 
               return;
@@ -85,6 +107,7 @@ jobs:
             );
 
             if (commits.length === 0) {
+
               core.info('No commits found');
               return;
             }
@@ -94,7 +117,7 @@ jobs:
             // --------------------------------------------------
 
             const signoffRegex =
-              /^Signed-off-by:\s+.+\s+<[^<>\s@]+@[^<>\s@]+>\s*$/mi;
+              /^Signed-off-by:\s+.+\s+<[^<>]+>\s*$/im;
 
             const invalidCommits = [];
 
@@ -170,27 +193,62 @@ jobs:
               }
             }
 
-            // Always reset state first
-            await safeRemoveLabel(
-              VERIFIED_LABEL
-            );
+            // --------------------------------------------------
+            // SMART LABEL MANAGEMENT
+            // --------------------------------------------------
 
-            await safeRemoveLabel(
-              MISSING_LABEL
-            );
+            const existingLabels =
+              (pr.labels || []).map(
+                l => l.name
+              );
 
-            // Apply ONLY one final label
             if (missingDCO) {
 
-              await safeAddLabel(
-                MISSING_LABEL
-              );
+              if (
+                !existingLabels.includes(
+                  MISSING_LABEL
+                )
+              ) {
+
+                await safeAddLabel(
+                  MISSING_LABEL
+                );
+              }
+
+              if (
+                existingLabels.includes(
+                  VERIFIED_LABEL
+                )
+              ) {
+
+                await safeRemoveLabel(
+                  VERIFIED_LABEL
+                );
+              }
 
             } else {
 
-              await safeAddLabel(
-                VERIFIED_LABEL
-              );
+              if (
+                !existingLabels.includes(
+                  VERIFIED_LABEL
+                )
+              ) {
+
+                await safeAddLabel(
+                  VERIFIED_LABEL
+                );
+              }
+
+              if (
+                existingLabels.includes(
+                  MISSING_LABEL
+                )
+              ) {
+
+                await safeRemoveLabel(
+                  MISSING_LABEL
+                );
+              }
             }
 
             // --------------------------------------------------
@@ -262,10 +320,14 @@ jobs:
             const existing =
               comments.find(comment =>
                 comment.user.type === 'Bot' &&
+                comment.body &&
                 comment.body.includes(MARKER)
               );
 
-            // Avoid unnecessary updates
+            // --------------------------------------------------
+            // AVOID UNNECESSARY COMMENT UPDATES
+            // --------------------------------------------------
+
             if (
               existing &&
               existing.body.trim() === body.trim()
@@ -313,7 +375,7 @@ jobs:
             // SUMMARY
             // --------------------------------------------------
 
-            core.summary
+            await core.summary
               .addHeading(
                 'DCO Validation Result'
               )

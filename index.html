@@ -2752,6 +2752,7 @@ if(org.ideas){
       filteredOrgs.sort((a, b) => applySecondarySort(a, b, sort));
     }
     renderOrgs(true);
+  }
 
   function applySecondarySort(a, b, sortType) {
     if(sortType==='years-desc') return b.years - a.years;

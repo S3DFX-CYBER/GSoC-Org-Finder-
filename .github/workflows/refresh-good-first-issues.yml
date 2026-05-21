@@ -1,0 +1,125 @@
+name: 🔄 Refresh Good First Issues + UI Data
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-good-first-issues
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      - name: Prepare data directory
+        run: |
+          mkdir -p data
+          [ -f data/issues.json ] || echo "{}" > data/issues.json
+          [ -f data/mentors.json ] || echo "{}" > data/mentors.json
+          [ -f data/last-updated.json ] || echo "{}" > data/last-updated.json
+
+      - name: Fetch good first issues
+        run: node agent/scripts/fetch-issues.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract mentor contacts
+        run: node agent/scripts/extract-mentors.js
+
+      - name: Validate mentor data
+        run: node agent/scripts/validate-mentors.js
+
+      - name: Generate UI cache
+        run: |
+          if [ -f agent/scripts/generate-ui-cache.js ]; then
+            node agent/scripts/generate-ui-cache.js
+          fi
+
+      - name: Refresh organization metadata
+        run: |
+          if [ -f agent/scripts/refresh-org-stats.js ]; then
+            node agent/scripts/refresh-org-stats.js
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure generated files exist
+        run: |
+          mkdir -p data
+          [ -f data/ui-summary.json ] || echo '{}' > data/ui-summary.json
+          [ -f data/org-stats.json ] || echo '{}' > data/org-stats.json
+
+      - name: Update refresh timestamp
+        run: |
+          mkdir -p data
+          echo "{\"updatedAt\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}" > data/last-updated.json
+
+      - name: Update UI statistics
+        run: |
+          ORG_COUNT=$(node -e "const d=require('./data/issues.json'); const s=new Set(d.issues.map(i=>i.org)); console.log(s.size)")
+          sed -i "s/Browse all <strong>[0-9]*<\/strong> organizations/Browse all <strong>${ORG_COUNT}<\/strong> organizations/g" index.html
+
+      - name: Bump service worker cache version
+        run: |
+          if [ -f sw.js ]; then
+            TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+            sed -i "s/const CACHE_NAME = '[^']*'/const CACHE_NAME = 'gsoc-finder-${TIMESTAMP}'/" sw.js
+          fi
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        with:
+          commit-message: "chore: refresh issue dataset and UI cache"
+          title: "chore: refresh good first issues + UI cache"
+          body: |
+            ## Automated Refresh
+
+            This PR updates:
+            - good first issue dataset
+            - mentor contact dataset
+            - UI summary cache
+            - organization metadata
+            - refresh timestamps
+            - service worker cache version
+            - UI statistics
+
+            Generated automatically by GitHub Actions.
+          branch: refresh-issues
+          delete-branch: true
+          add-paths: |
+            data/issues.json
+            data/mentors.json
+            data/ui-summary.json
+            data/last-updated.json
+            data/org-stats.json
+            index.html
+            sw.js

@@ -11,7 +11,7 @@ permissions:
 concurrency:
   group: issue-assignment-${{ github.event.issue.number }}
   cancel-in-progress: false
-
+ 
 jobs:
   assign:
     if: |

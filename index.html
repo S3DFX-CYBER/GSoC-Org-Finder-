@@ -1837,15 +1837,16 @@
         </label>`;
     }).join("");
 
-    container.querySelectorAll("input[type=checkbox]").forEach((cb) => {
-      cb.addEventListener("change", () => {
-        const s = loadRoadmapState(orgName);
-        s[cb.dataset.stepId] = cb.checked;
-        saveRoadmapState(orgName, s);
-        renderContributionRoadmap(orgName);
-      });
-    });
-  }
+     container.onclick = function(e) {
+        if (e.target.type === 'checkbox') {
+          const s = loadRoadmapState(orgName);
+          s[e.target.dataset.stepId] = e.target.checked;
+          saveRoadmapState(orgName, s);
+            renderContributionRoadmap(orgName);
+         }
+      };
+};
+  
 
   function getMentorFinderRecords() {
     return ORGS.map((org) => ({

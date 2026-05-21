@@ -677,7 +677,7 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-primary cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
         <option value="programming">Programming</option>
@@ -689,13 +689,13 @@
         <option value="media">Media</option>
         <option value="other">Other</option>
       </select>
-      <select id="complexityFilter" aria-label="Filter by complexity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="complexityFilter" aria-label="Filter by complexity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-primary cursor-pointer text-zinc-600">
         <option value="all">Complexity: All</option>
         <option value="beginner">Beginner</option>
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
-      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-0 cursor-pointer text-zinc-600">
+      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer text-zinc-600">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -749,7 +749,7 @@
           <label for="aiGhUsername" class="block text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">GitHub Username</label>
           <div class="relative">
             <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">person</span>
-            <input type="text" id="aiGhUsername" aria-label="GitHub Username" placeholder="e.g. torvalds" class="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
+            <input type="text" id="aiGhUsername" placeholder="e.g. torvalds" class="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
           </div>
           <p class="text-[10px] text-zinc-500 mt-1 ml-1">Used to analyze your repo languages and activity.</p>
         </div>

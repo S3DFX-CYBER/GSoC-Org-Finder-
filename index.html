@@ -2204,7 +2204,9 @@
     container.innerHTML = '';
     
     compareList.forEach(name => {
+      compareList = compareList.filter(name => ORGS.some(o => o.name === name));
       const org = ORGS.find(o => o.name === name);
+      if (!org) return; // null guard
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       

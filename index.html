@@ -663,9 +663,12 @@
   </div>
   <div class="mt-2 flex items-center gap-2">
     <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
       <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
     </label>
+    <span id="languageLogicHint" 
+    class="text-xs text-primary font-medium italic">
+    </span>
   </div>
 </section>
 
@@ -2979,6 +2982,7 @@ if(org.ideas){
     // keep global in sync for any external code expecting `matchAllLanguages`
     globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
+    updateLanguageModeHint();
   });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;

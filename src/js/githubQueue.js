@@ -34,7 +34,6 @@ function isRateLimited() {
 }
 
 function handleRateLimit(retryAfterHeader) {
-  // FIX: Number.parseInt instead of parseInt (SonarCloud)
   const seconds = Number.parseInt(retryAfterHeader) || Math.pow(2, Math.min(_consecutiveErrors, 6)) * 5;
   _rateLimitedUntil = Date.now() + seconds * 1000;
   _consecutiveErrors++;
@@ -73,22 +72,17 @@ async function fetchWithBackoff(url, retries = 3) {
 
     try {
       const res = await fetch(url);
-
       if (res.status === 429 || res.status === 403) {
         handleRateLimit(res.headers.get('Retry-After'));
         if (attempt < retries) { await sleep(_rateLimitedUntil - Date.now()); continue; }
         return null;
       }
-
       resetErrors();
       return res;
-
     } catch (err) {
-      // FIX: log the error so it's not silently swallowed (SonarCloud line 89)
       console.warn(`[GH Queue] fetch attempt ${attempt + 1} failed:`, err.message);
       _consecutiveErrors++;
-      const backoff = Math.pow(2, attempt) * 500;
-      if (attempt < retries) await sleep(backoff);
+      if (attempt < retries) await sleep(Math.pow(2, attempt) * 500);
     }
   }
   return null;
@@ -111,8 +105,6 @@ function tick() {
   }
 }
 
-// FIX: extracted nested ternary into independent statements (SonarCloud lines 114, 123)
-// FIX: reduced cognitive complexity by splitting cacheKey and url resolution (SonarCloud line 111)
 function getCacheKey(repo, mode) {
   if (mode === 'gfi') return repo + '__gfi';
   if (mode === 'issues') return repo + '__issues';
@@ -130,27 +122,24 @@ async function processJob({ repo, mode, resolve, reject }) {
   const hit = getCached(cacheKey);
   if (hit && !hit.stale) { resolve(hit.data); return; }
 
-  const url = getUrl(repo, mode);
-  const res = await fetchWithBackoff(url);
-  if (!res) { resolve(hit ? hit.data : null); return; }
+  const res = await fetchWithBackoff(getUrl(repo, mode));
+  if (!res) { resolve(hit?.data ?? null); return; }
 
   try {
     const data = await res.json();
-    // FIX: removed negated condition — flipped to positive check (SonarCloud line 130)
     if (data.error) {
-      resolve(hit ? hit.data : null);
+      resolve(hit?.data ?? null);
     } else {
       setCache(cacheKey, data);
       resolve(data);
     }
   } catch (err) {
     console.warn('[GH Queue] JSON parse failed:', err.message);
-    resolve(hit ? hit.data : null);
+    resolve(hit?.data ?? null);
   }
 }
 
 function broadcastAndClean(jobKey, value) {
-  // FIX: optional chain instead of || [] pattern (SonarCloud lines 162, 166, 204, 245)
   _inFlight.get(jobKey)?.forEach(w => w.resolve(value));
   _inFlight.delete(jobKey);
 }
@@ -158,6 +147,21 @@ function broadcastAndClean(jobKey, value) {
 function broadcastErrorAndClean(jobKey, err) {
   _inFlight.get(jobKey)?.forEach(w => w.reject(err));
   _inFlight.delete(jobKey);
+}
+
+// Shared logic: attach a new waiter to an existing in-flight job
+function attachWaiter(jobKey, resolve, reject) {
+  _inFlight.get(jobKey)?.push({ resolve, reject });
+}
+
+// Shared logic: enqueue a background revalidation for stale cache
+function enqueueRevalidation(repo, mode, jobKey, priority) {
+  _queue.enqueue({
+    repo,
+    mode,
+    resolve: () => { _inFlight.delete(jobKey); },
+    reject:  () => { _inFlight.delete(jobKey); },
+  }, priority);
 }
 
 export function fetchGH(repo, priority = 1) {
@@ -170,18 +174,18 @@ export function fetchGH(repo, priority = 1) {
     const jobKey = repo + 'stats';
 
     if (_inFlight.has(jobKey)) {
-      _inFlight.get(jobKey).push({ resolve, reject });
+      attachWaiter(jobKey, resolve, reject);
       return;
     }
 
     _inFlight.set(jobKey, [{ resolve, reject }]);
 
-    if (hit && hit.stale) {
+    if (hit?.stale) {
       resolve(hit.data);
       _queue.enqueue({
         repo, mode: 'stats',
         resolve: (fresh) => { if (fresh) setCache(repo, fresh); _inFlight.delete(jobKey); },
-        reject: () => { _inFlight.delete(jobKey); },
+        reject:  () => { _inFlight.delete(jobKey); },
       }, Math.max(priority, 2));
       tick();
       return;
@@ -199,26 +203,21 @@ export function fetchGH(repo, priority = 1) {
 export function fetchGFI(repo, priority = 1) {
   if (!repo) return Promise.resolve(null);
 
-  const cacheKey = repo + '__gfi';
-  const hit = getCached(cacheKey);
+  const hit = getCached(repo + '__gfi');
   if (hit && !hit.stale) return Promise.resolve(hit.data.gfi ?? hit.data.count ?? null);
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'gfi';
 
     if (_inFlight.has(jobKey)) {
-      _inFlight.get(jobKey).push({ resolve, reject });
+      attachWaiter(jobKey, resolve, reject);
       return;
     }
     _inFlight.set(jobKey, [{ resolve, reject }]);
 
-    if (hit && hit.stale) {
+    if (hit?.stale) {
       resolve(hit.data.gfi ?? hit.data.count ?? null);
-      _queue.enqueue({
-        repo, mode: 'gfi',
-        resolve: () => { _inFlight.delete(jobKey); },
-        reject:  () => { _inFlight.delete(jobKey); },
-      }, 2);
+      enqueueRevalidation(repo, 'gfi', jobKey, 2);
       tick();
       return;
     }
@@ -235,26 +234,21 @@ export function fetchGFI(repo, priority = 1) {
 export function fetchIssues(repo, priority = 2) {
   if (!repo) return Promise.resolve(null);
 
-  const cacheKey = repo + '__issues';
-  const hit = getCached(cacheKey);
+  const hit = getCached(repo + '__issues');
   if (hit && !hit.stale) return Promise.resolve(hit.data);
 
   return new Promise((resolve, reject) => {
     const jobKey = repo + 'issues';
 
     if (_inFlight.has(jobKey)) {
-      _inFlight.get(jobKey).push({ resolve, reject });
+      attachWaiter(jobKey, resolve, reject);
       return;
     }
     _inFlight.set(jobKey, [{ resolve, reject }]);
 
-    if (hit && hit.stale) {
+    if (hit?.stale) {
       resolve(hit.data);
-      _queue.enqueue({
-        repo, mode: 'issues',
-        resolve: () => { _inFlight.delete(jobKey); },
-        reject:  () => { _inFlight.delete(jobKey); },
-      }, 2);
+      enqueueRevalidation(repo, 'issues', jobKey, 2);
       tick();
       return;
     }
@@ -276,7 +270,7 @@ export function fetchAllStats(orgs, onProgress, onDone) {
   for (const org of withGithub) {
     fetchGH(org.github, 2)
       .then(data => { if (data) { org._gh = data; onProgress?.(org, data); } })
-      .catch((err) => { console.warn('[GH Queue] fetchAllStats error:', err.message); })
+      .catch(err => { console.warn('[GH Queue] fetchAllStats error:', err.message); })
       .finally(() => { if (++completed === withGithub.length) onDone?.(); });
   }
 

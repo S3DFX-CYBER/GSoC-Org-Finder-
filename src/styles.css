@@ -582,7 +582,14 @@ footer a:hover{text-decoration:underline}
 @media(max-width:380px){
   .nav-inner{padding:0 8px}
   .btn-compare-nav,
-.btn-analytics{display:none}
+.btn-analytics{
+  display:inline-flex;
+  padding:4px 6px;
+  min-width:28px;
+  justify-content:center;
+  align-items:center;
+  font-size:12px;
+}
   .cd-num{font-size:18px}
   .stat-num{font-size:15px}
   .stat-lbl{font-size:8px}

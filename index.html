@@ -1820,6 +1820,11 @@
     if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
     else selectedLanguages.add(langDisplay);
     renderSelectedLanguages();
+    
+    // Track filter badge when user toggles language pill
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
     applyFilters();
   };
 
@@ -3058,16 +3063,6 @@ if(org.ideas){
     const comp = document.getElementById('complexityFilter').value;
     const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
-    // Track search and filter usage for badges
-    if (typeof BadgeSystem !== 'undefined') {
-      if (query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      if (cat || comp !== 'all' || selectedLanguages.size > 0) {
-        BadgeSystem.trackFilter();
-      }
-    }
-
     filteredOrgs = ORGS.filter(o => {
       const matchSearch = o.name.toLowerCase().includes(query);
       const matchCat = !cat || o.cat === cat;
@@ -3142,9 +3137,28 @@ if(org.ideas){
     renderOrgs(true);
   };
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-  document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-  document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('searchInput').addEventListener('input', () => {
+    // Track search badge when user types a search query
+    const query = document.getElementById('searchInput').value.trim();
+    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+      BadgeSystem.trackSearch();
+    }
+    applyFilters();
+  });
+  document.getElementById('categoryFilter').addEventListener('change', () => {
+    // Track filter badge when user changes category
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
+  document.getElementById('complexityFilter').addEventListener('change', () => {
+    // Track filter badge when user changes complexity
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
   document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
   document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
@@ -3170,6 +3184,12 @@ if(org.ideas){
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
+      
+      // Track search badge when user types in hero search
+      const query = e.target.value.trim();
+      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+        BadgeSystem.trackSearch();
+      }
       applyFilters();
     });
   }

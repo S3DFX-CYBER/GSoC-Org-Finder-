@@ -1299,12 +1299,15 @@ body.modal-open {
   outline-offset: 2px;
 }
 
-.dark .bookmark-btn:hover {
-  color: #facc15;
-  opacity: 1;
-  transform: scale(1.08);
+.dark .bookmark-btn:hover svg path {
+  fill: red !important;
+  stroke: red !important;
+}
+
+.dark .bookmark-btn:hover svg {
+  transform: scale(1.3);
   transition: all 0.2s ease;
-  filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.6));
+  filter: brightness(2) drop-shadow(0 0 10px red);
 }
 
 /* ── ISSUES PAGE ── */

@@ -1067,6 +1067,15 @@
       <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
         <span class="material-symbols-outlined">compare</span> Open Comparison Tool
       </button>
+      <div class="flex flex-wrap items-center gap-3 mt-4">
+    <button id="exportWorkspaceBtn" class="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 rounded-xl text-xs font-bold hover:scale-95 transition-all shadow-sm">
+        <span class="material-symbols-outlined text-sm">download</span> Export Backup
+    </button>
+    <label for="importWorkspaceFile" id="importWorkspaceLabel" tabindex="0" class="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200 rounded-xl text-xs font-bold hover:scale-95 transition-all shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary" onkeydown="if(event.key === 'Enter' || event.key === ' ') document.getElementById('importWorkspaceFile').click();">
+        <span class="material-symbols-outlined text-sm">upload</span> Import Backup
+    </label>
+    <input type="file" id="importWorkspaceFile" accept=".json" class="hidden" style="display: none;">
+</div>
     </div>
     <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
       <div class="grid grid-cols-3 gap-4 text-center">

@@ -31,6 +31,7 @@ jobs:
 
           script: |
             const issue = context.payload.issue;
+            if (!issue) return;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;

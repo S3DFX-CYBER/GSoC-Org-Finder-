@@ -236,15 +236,15 @@ export default async function handler(req) {
     }
 
     const result = {
-      stars:     repoData.stargazers_count,
-      forks:     repoData.forks_count,
-      issues:    repoData.open_issues_count,
-      watchers:  repoData.watchers_count,
+      stars:    repoData.stargazers_count,
+      forks:    repoData.forks_count,
+      issues:   repoData.open_issues_count,
+      watchers: repoData.watchers_count,
       lastCommit,
-      activity:  activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low',
-      language:  repoData.language,
-      gfi:       null,
-      ts:        Date.now(),
+      activity: activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low',
+      language: repoData.language,
+      gfi:      null,
+      ts:       Date.now(),
     };
 
     CACHE.set(repo, result);

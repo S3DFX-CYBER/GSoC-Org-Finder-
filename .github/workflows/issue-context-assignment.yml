@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Detect command
         id: cmd
@@ -74,7 +74,7 @@ jobs:
 
       - name: Queue assignment and ping mentors
         if: steps.cmd.outputs.is_assign == 'true' && steps.validate.outputs.eligible == 'true'
-        uses: actions/github-scriptv9.0.0
+        uses: actions/github-script@v9.0.0
         env:
           ISSUE_NUMBER:     ${{ steps.validate.outputs.issue_number }}
           CLAIMANT:         ${{ steps.validate.outputs.claimant }}

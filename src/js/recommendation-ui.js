@@ -117,73 +117,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
 
-  const normalizeText = (text) => {
-    return text
-      // eslint-disable-next-line no-control-regex
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ')
-      .replace(/[ \t]+/g, ' ')
-      .replace(/(\r\n|\n|\r){2,}/g, '\n')
-      .trim();
-  };
-
-  const extractTextFromPDF = async (arrayBuffer) => {
-    if (!window.pdfjsLib) throw new Error("PDF parser not loaded");
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    
-    const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
-    let fullText = '';
-    
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      fullText += content.items.map(item => item.str).join(' ') + '\n';
-    }
-    return fullText;
-  };
-
-  const extractTextFromDOCX = async (arrayBuffer) => {
-    if (!window.mammoth) throw new Error("DOCX parser not loaded");
-    const result = await window.mammoth.extractRawText({ arrayBuffer });
-    return result.value;
-  };
-
   const parseFile = async (file) => {
     const ext = file.name.split('.').pop().toLowerCase();
+    let text = '';
     
     if (ext === 'pdf') {
-      return await extractTextFromPDF(await file.arrayBuffer());
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await window.pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        text += (await (await pdf.getPage(i)).getTextContent()).items.map(i => i.str).join(' ') + '\n';
+      }
     } else if (ext === 'docx') {
-      return await extractTextFromDOCX(await file.arrayBuffer());
+      text = (await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
     } else if (ext === 'txt') {
-      return await file.text();
+      text = await file.text();
     } else {
       throw new Error("Unsupported file format. Please upload a TXT, PDF, or DOCX file.");
     }
+    
+    // eslint-disable-next-line no-control-regex
+    return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ').replace(/[ \t]+/g, ' ').replace(/(\r\n|\n|\r){2,}/g, '\n').trim();
   };
 
-  // Handle file upload
   if (fileUpload) {
     fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       
-      const originalBtnText = getRecsBtn.innerHTML;
-      const originalDisabled = getRecsBtn.disabled;
-      
-      // Basic UI loading state for file parsing
+      const prevHtml = getRecsBtn.innerHTML;
+      const prevDisabled = getRecsBtn.disabled;
       getRecsBtn.disabled = true;
       getRecsBtn.innerHTML = '<span class="material-symbols-outlined pulse-dot">document_scanner</span> Parsing...';
 
       try {
-        const rawText = await parseFile(file);
-        const cleanText = normalizeText(rawText);
-        resumeText.value = cleanText;
+        resumeText.value = await parseFile(file);
       } catch (err) {
-        console.error("File Parse Error:", err);
-        showError("Failed to parse document. Ensure it's a valid PDF, DOCX, or TXT file.");
+        showError(err.message || "Failed to parse document.");
       } finally {
-        getRecsBtn.disabled = originalDisabled;
-        getRecsBtn.innerHTML = originalBtnText;
+        getRecsBtn.disabled = prevDisabled;
+        getRecsBtn.innerHTML = prevHtml;
       }
     });
   }

@@ -437,113 +437,6 @@
       background: #1c0f05;
     }
 
-    /* --- NEW ANIMATIONS --- */
-    /* 1. Card Hover Lift & 10. Hover Glow */
-    .org-card {
-      transition: all 0.25s ease !important;
-    }
-    .org-card:hover, .group:hover {
-      transform: translateY(-4px) !important;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-    }
-    .dark .org-card:hover, .dark .group:hover {
-      box-shadow: 0 0 20px rgba(249, 115, 22, 0.15) !important;
-      border-color: rgba(249, 115, 22, 0.4) !important;
-    }
-
-    /* 2. Button Hover Animations */
-    button, .btn, .modal-cta, .modal-ideas-link, .modal-repo-link {
-      transition: all 0.2s ease !important;
-    }
-    button:hover:not(.unselect-lang-btn):not(.close-btn):not(#themeToggleBtn):not(#helpBtn):not(#menuBtn), .btn:hover, .modal-cta:hover, .modal-ideas-link:hover {
-      transform: scale(1.03);
-      filter: brightness(1.05);
-    }
-
-    /* 3. Navbar Smooth Transition */
-    header {
-      transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
-    }
-    header.scrolled {
-      background-color: rgba(255, 255, 255, 0.95) !important;
-      backdrop-filter: blur(16px) !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-    }
-    .dark header.scrolled {
-      background-color: rgba(24, 24, 27, 0.95) !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-    }
-
-    /* 4. Smooth Modal Opening */
-    .modal-bg {
-      transition: opacity 0.3s ease, backdrop-filter 0.3s ease !important;
-    }
-    .modal {
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease !important;
-      transform: scale(0.95) !important;
-      opacity: 0 !important;
-    }
-    .modal-bg.open .modal {
-      transform: scale(1) !important;
-      opacity: 1 !important;
-    }
-
-    /* 5. Filter Chip Hover Effects */
-    .filter-chip, .pill {
-      transition: all 0.25s ease !important;
-    }
-    .filter-chip:hover, .pill:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25) !important;
-    }
-    .pill.active, .filter-chip.active {
-      animation: pulse-glow 2.5s infinite alternate !important;
-    }
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 0px rgba(249, 115, 22, 0); }
-      100% { box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
-    }
-
-    /* 6. Accordion Smooth Open/Close */
-    details {
-      transition: max-height 0.4s ease, background-color 0.3s ease;
-      overflow: hidden;
-    }
-    details[open] summary ~ * {
-      animation: sweep .4s ease-in-out;
-    }
-    @keyframes sweep {
-      0%    {opacity: 0; transform: translateY(-10px)}
-      100%  {opacity: 1; transform: translateY(0)}
-    }
-
-    /* 7. Page Fade-In */
-    .fade-up {
-      animation: modernFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both !important;
-    }
-    @keyframes modernFadeUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 8. Scroll-to-Top Smooth Motion */
-    #scrollToTopBtn {
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-    }
-    #scrollToTopBtn:hover {
-      transform: translateY(-5px) scale(1.1) !important;
-      box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4) !important;
-    }
-
-    /* 9. Input Focus Animation */
-    input[type="text"], input[type="search"], textarea {
-      transition: all 0.25s ease !important;
-    }
-    input[type="text"]:focus, input[type="search"]:focus, textarea:focus {
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
-      border-color: #f97316 !important;
-      transform: scale(1.01);
-    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -3263,31 +3156,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <!-- Client-side Document Parsers for Resume Uploads -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" integrity="sha384-nFoSjZIoH3CCp8W639jJyQkuPHinJ2NHe7on1xvlUA7SuGfJAfvMldrsoAVm6ECz" crossorigin="anonymous"></script>
 
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
-<script>
-  // Add scroll listener for modern navbar effect
-  document.addEventListener('DOMContentLoaded', () => {
-    const header = document.querySelector('header');
-    if (header) {
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          header.classList.add('scrolled');
-          header.classList.remove('bg-white/80', 'shadow-sm'); // Remove default tailwind classes if scrolled
-        } else {
-          header.classList.remove('scrolled');
-          header.classList.add('bg-white/80', 'shadow-sm');
-        }
-      });
-    }
-  });
-</script>
+
 
 </body>
 </html>

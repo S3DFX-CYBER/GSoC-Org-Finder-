@@ -1038,6 +1038,9 @@ function resetFilters(){
 // ══════════════════════════════════════════════
 function openModal(idx){
   const o=ORGS[idx];modalIdx=idx;AN.trackOrg(o.name);
+  if (typeof globalThis.addToRecentHistory === 'function') {
+    globalThis.addToRecentHistory(o.name);
+  }
   document.getElementById('mCat').innerHTML=`<span class="cat-pill ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>`;
   document.getElementById('mName').textContent=o.name;
   document.getElementById('mDesc').textContent=o.desc;

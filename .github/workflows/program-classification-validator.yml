@@ -84,10 +84,11 @@ jobs:
               const detected = new Set();
 
               // ------------------------------------
-              // Metadata
+              // Metadata - new template format
               // ------------------------------------
 
               if (
+                body.includes('- [x] gssoc26') ||
                 body.includes('program: gssoc') ||
                 body.includes('- [x] gssoc')
               ) {
@@ -95,6 +96,7 @@ jobs:
               }
 
               if (
+                body.includes('- [x] nsoc26') ||
                 body.includes('program: nsoc') ||
                 body.includes('- [x] nsoc')
               ) {
@@ -102,8 +104,8 @@ jobs:
               }
 
               if (
-                body.includes('program: general') ||
-                body.includes('- [x] general contribution')
+                body.includes('- [x] general contribution') ||
+                body.includes('program: general')
               ) {
                 detected.add('general');
               }
@@ -240,47 +242,41 @@ jobs:
             }
 
             // ----------------------------------------
-            // MISSING PROGRAM
+            // MISSING PROGRAM - FALLBACK
             // ----------------------------------------
 
             if (detectedPrograms.length === 0) {
 
               await clearProgramLabels();
+              await clearValidationLabels();
 
+              // Automatically assign general-contribution
               await addLabels([
-                MISSING_LABEL
+                'general-contribution'
               ]);
 
               const comment =
                 `${MARKER}
 
-            ## ⚠️ Program Classification Required
+            ## ℹ️ Program Classification Not Detected
 
-            Your PR does not currently specify a valid contribution program.
+            No explicit program classification was found in your PR.
 
-            Please edit your PR description and select exactly ONE:
+            **Automatically assigned:** \`general-contribution\`
 
-            - GSSOC
-            - NSOC
-            - General Contribution
+            If this is incorrect, you can update it by editing your PR description and selecting:
 
-            ### Example
+            - [ ] GSSoC26
+            - [ ] NSoC26
+            - [ ] General Contribution
 
-            \`\`\`md
-            program: gssoc
-            \`\`\`
-
-            or use the PR template checkboxes.
-
-            Once updated, this validation will automatically re-run.
-
-            > Stage-2 review routing is temporarily paused until classification is resolved.
+            This validation will automatically re-run.
             `;
 
               await upsertComment(comment);
 
-              core.setFailed(
-                'Missing program classification'
+              core.warning(
+                'Missing program classification - defaulting to general-contribution'
               );
 
               return;

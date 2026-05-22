@@ -3448,7 +3448,11 @@ if(org.ideas){
     const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query);
+      const matchSearch = !query
+        || o.name.toLowerCase().includes(query)
+        || o.desc.toLowerCase().includes(query)
+        || (o.tags || []).some(t => t.toLowerCase().includes(query))
+        || o.cat.toLowerCase().includes(query);
       const matchCat = !cat || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
       const tags = (o.tags || []).map(t => String(t).toLowerCase());

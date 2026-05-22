@@ -350,6 +350,12 @@
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
 
+    /* Dark mode - Footer */
+    .dark footer { background: #18181b !important; border-color: #27272a !important; }
+    .dark footer .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark footer .text-zinc-500 { color: #a1a1aa !important; }
+    .dark footer .hover\:text-orange-500:hover { color: #fb923c !important; }
+
     /* Selected Languages Strip */
     #selectedLangsStrip {
       display: flex;
@@ -2897,7 +2903,8 @@ if(org.ideas){
       if (lastUpdatedEl) {
         if (data.updated_at) {
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
-          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+          const hours = Math.floor(mins / 60);
+          const relative = mins < 60 ? `${mins} min ago` : hours < 48 ? `${hours} hours ago` : `${Math.floor(hours / 24)} days ago`;
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';

@@ -1043,14 +1043,37 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "GRAME": {
+"GRAME": {
     "org": "GRAME",
     "ideasUrl": "https://github.com/grame-cncm/faust/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/RzuFg6B8zA",
+        "label": "#gsoc"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Stéphane Letz",
+        "github": "sletz",
+        "githubUrl": "https://github.com/sletz"
+      },
+      {
+        "name": "Yann Orlarey",
+        "github": "orlarey",
+        "githubUrl": "https://github.com/orlarey"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.sourceforge.net/lists/listinfo/faudiostream-devel",
+        "label": "faudiostream-devel"
+      }
+    ],
+    "tip": "Join Discord at https://discord.gg/RzuFg6B8zA and introduce yourself in the #gsoc channel",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Graphite": {

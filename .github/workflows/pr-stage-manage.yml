@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Evaluate PR Pipeline
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
 
         with:
           # Use built-in token instead of PAT

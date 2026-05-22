@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Analyze Issue
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

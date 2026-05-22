@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Replace inactive mentor reviewers after 24 hours
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

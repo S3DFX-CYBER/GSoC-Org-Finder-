@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Auto-label PR by changed paths
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
 
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -160,7 +160,7 @@ jobs:
 
     steps:
       - name: Auto-triage issues
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
 
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -283,7 +283,7 @@ jobs:
 
     steps:
       - name: Remind stale mentor reviews
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
 
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Find expired pending assignments
         id: expired
@@ -30,7 +30,7 @@ jobs:
           OPERATION: expire
 
       - name: Re-ping with fresh mentors
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
         env:
           EXPIRED_RESULT: ${{ steps.expired.outputs.result }}
         with:

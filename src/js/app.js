@@ -594,60 +594,34 @@ function applyFilters(){
       if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
     }
 
-    // Improved search matching
+    // Better search ranking
 if (search) {
   const words = search.split(/\s+/).filter(Boolean);
 
-  const matches = words.every(word =>
-    orgName.includes(word)
-  );
+  const matchScore = (name) => {
+    let score = 0;
 
-  if (!matches) return false;
-}
+    if (name === search) score += 100;
+    if (name.startsWith(search)) score += 50;
+    if (name.includes(search)) score += 25;
 
-    // Language pills (multi-select)
-    if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
- 
-    // Filter chips
-    if(chips.has('veteran') && yCls(o.years) !== 'veteran') return false;
-    if(chips.has('newcomer') && yCls(o.years) !== 'newcomer') return false;
-    if(chips.has('hot') && o.competition !== 'hot') return false;
-    if(chips.has('chill') && o.competition !== 'chill') return false;
-    if(chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
-    if(chips.has('bookmarked') && !isBookmarked(o.name)) return false;
-    
-    return true;
-  });
+    words.forEach(word => {
+      if (name.includes(word)) score += 10;
+    });
 
-  // Improved search ranking: exact matches first, then startsWith, then partial
-  // Better search ranking
-if (search) {
+    return score;
+  };
+
   res.sort((a, b) => {
     const nameA = a.name.toLowerCase();
     const nameB = b.name.toLowerCase();
 
-    const exactA = nameA === search;
-    const exactB = nameB === search;
+    const scoreA = matchScore(nameA);
+    const scoreB = matchScore(nameB);
 
-    if (exactA && !exactB) return -1;
-    if (exactB && !exactA) return 1;
-
-    const startsA = nameA.startsWith(search);
-    const startsB = nameB.startsWith(search);
-
-    if (startsA && !startsB) return -1;
-    if (startsB && !startsA) return 1;
-
-    const includesA = nameA.includes(search);
-    const includesB = nameB.includes(search);
-
-    if (includesA && !includesB) return -1;
-    if (includesB && !includesA) return 1;
-
-    return applySecondarySort(a, b, sort);
+    return scoreB - scoreA || applySecondarySort(a, b, sort);
   });
 }
-
 
 
   // Apply other sorting if no search

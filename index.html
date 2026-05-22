@@ -185,6 +185,34 @@
     .modal-bg.open .modal {
       transform: scale(1);
     }
+
+    .go-compare-btn {
+      position: fixed;
+      bottom: 82px;
+      right: 24px;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #9d4300;
+      color: #fff;
+      border: none;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(157, 67, 0, 0.35);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .go-compare-btn:hover {
+      transform: scale(1.05);
+      background: #b85300;
+    }
+    .go-compare-btn.visible {
+      display: flex;
+    }
+
     .close-btn {
      position: absolute;
      top: 1.5rem;
@@ -2686,10 +2714,14 @@ sections.forEach(sectionId => {
            <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
        `;
-    card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
+      card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
 
-   grid.appendChild(card);
-   attachOrgCardListeners(card);
+      grid.appendChild(card);
+      attachOrgCardListeners(card);
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button, a, .bookmark-btn, [data-compare-org]')) return;
+        openModal(org.name);
+      });
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
@@ -2750,6 +2782,8 @@ btn.__orgListenerAttached = true;
   }
 
   function renderCompare() {
+    const goBtn = document.getElementById('goCompareBtn');
+    if (goBtn) goBtn.classList.toggle('visible', compareList.length > 0);
     const container = document.querySelector('#compare .grid');
     if (!container) return;
     container.innerHTML = '';
@@ -3416,6 +3450,9 @@ if(org.ideas){
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+    document.getElementById('orgModal').onclick = (e) => {
+      if (e.target === document.getElementById('orgModal')) closeModal();
+    };
   }
 
   function closeModal() {
@@ -4227,6 +4264,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+<button class="go-compare-btn" id="goCompareBtn" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth', block:'start'});">
+  <span class="material-symbols-outlined text-sm">compare_arrows</span> Go to Compare
+</button>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

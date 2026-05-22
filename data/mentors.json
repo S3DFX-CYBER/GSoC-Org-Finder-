@@ -3034,11 +3034,48 @@
   "The NetBSD Foundation": {
     "org": "The NetBSD Foundation",
     "ideasUrl": "https://wiki.netbsd.org/projects/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+      {"type": "IRC",
+        "url": "https://web.libera.chat/#NetBSD-code",
+        "label": "NetBSD Foundation IRC Channel on Libera Chat"
+      }
+      ],
+    "mentors": [
+      {
+        "name": "zoulasc",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "The NetBSD Foundation",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Greg Oster",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Stephen Borrill",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Martin Husemann",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://www.netbsd.org/mailinglists/",
+        "label": "NetBSD Mailing Lists"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The ns-3 Network Simulator Project": {

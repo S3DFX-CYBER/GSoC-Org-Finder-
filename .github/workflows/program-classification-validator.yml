@@ -242,7 +242,7 @@ jobs:
             }
 
             // ----------------------------------------
-            // MISSING PROGRAM - FALLBACK
+            // MISSING PROGRAM - DEFAULT TO GENERAL
             // ----------------------------------------
 
             if (detectedPrograms.length === 0) {
@@ -250,7 +250,7 @@ jobs:
               await clearProgramLabels();
               await clearValidationLabels();
 
-              // Automatically assign general-contribution
+              // Automatically assign general-contribution as default
               await addLabels([
                 'general-contribution'
               ]);
@@ -258,25 +258,25 @@ jobs:
               const comment =
                 `${MARKER}
 
-            ## ℹ️ Program Classification Not Detected
+            ## ✅ Default Classification Applied
 
-            No explicit program classification was found in your PR.
+            No program classification was selected in your PR.
 
             **Automatically assigned:** \`general-contribution\`
 
-            If this is incorrect, you can update it by editing your PR description and selecting:
+            This PR will be processed as a general contribution. If you intended to contribute under GSSoC26 or NSoC26, please edit your PR and select the appropriate classification:
 
             - [ ] GSSoC26
             - [ ] NSoC26
             - [ ] General Contribution
 
-            This validation will automatically re-run.
+            The validator will re-run automatically once you update your selection.
             `;
 
               await upsertComment(comment);
 
-              core.warning(
-                'Missing program classification - defaulting to general-contribution'
+              core.info(
+                'No classification found. Defaulting to general-contribution'
               );
 
               return;

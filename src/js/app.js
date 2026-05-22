@@ -1194,11 +1194,20 @@ function renderIssueCard(iss){
 }
 
 function showMoreIssues(){
+  // Defensive guard: Verify DOM elements exist before manipulation
   const container=document.getElementById('issuesContainer');
+  const grid=container?.querySelector('.issues-grid');
+  if(!container||!grid){
+    return; // Gracefully abort if DOM is unstable (e.g., during filter re-render)
+  }
+  // Fetch next batch of issues and update pagination state
   const next=filteredIssues.slice(shownIssues,shownIssues+ISSUES_PAGE_SIZE);
   shownIssues+=next.length;
-  container.querySelector('.issues-grid').insertAdjacentHTML('beforeend',next.map(renderIssueCard).join(''));
-  document.getElementById('loadMoreWrap').style.display=shownIssues<filteredIssues.length?'flex':'none';
+  // Safely append new issue cards to the grid
+  grid.insertAdjacentHTML('beforeend',next.map(renderIssueCard).join(''));
+  // Update UI: toggle "Load More" button and pagination count
+  const hasMore=shownIssues<filteredIssues.length;
+  document.getElementById('loadMoreWrap').style.display=hasMore?'flex':'none';
   document.getElementById('issShown').textContent=shownIssues;
 }
 

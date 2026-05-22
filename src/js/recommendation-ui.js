@@ -117,17 +117,80 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
 
+  // --- Enhanced Multi-Format File Parsing ---
+  const normalizeText = (text) => {
+    return text
+      // Replace non-printable/control chars (excluding newlines/tabs) with space
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ')
+      // Condense multiple spaces into one
+      .replace(/[ \t]+/g, ' ')
+      // Condense multiple newlines into single newlines
+      .replace(/(\r\n|\n|\r){2,}/g, '\n')
+      .trim();
+  };
+
+  const extractTextFromPDF = async (arrayBuffer) => {
+    if (!window.pdfjsLib) throw new Error("PDF parser not loaded.");
+    // Configure worker dynamically
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
+    let fullText = '';
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(' ');
+      fullText += pageText + '\n';
+    }
+    return fullText;
+  };
+
+  const extractTextFromDOCX = async (arrayBuffer) => {
+    if (!window.mammoth) throw new Error("DOCX parser not loaded.");
+    const result = await window.mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  };
+
+  const parseFile = async (file) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    
+    if (ext === 'pdf') {
+      const arrayBuffer = await file.arrayBuffer();
+      return await extractTextFromPDF(arrayBuffer);
+    } else if (ext === 'docx') {
+      const arrayBuffer = await file.arrayBuffer();
+      return await extractTextFromDOCX(arrayBuffer);
+    } else {
+      // Fallback for .txt, .md, .csv, etc.
+      return await file.text();
+    }
+  };
+
   // Handle file upload
   if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
+    fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      file.text().then(text => {
-        resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+      
+      const originalBtnText = getRecsBtn.innerHTML;
+      const originalDisabled = getRecsBtn.disabled;
+      
+      // Basic UI loading state for file parsing
+      getRecsBtn.disabled = true;
+      getRecsBtn.innerHTML = '<span class="material-symbols-outlined pulse-dot">document_scanner</span> Parsing...';
+
+      try {
+        const rawText = await parseFile(file);
+        const cleanText = normalizeText(rawText);
+        resumeText.value = cleanText;
+      } catch (err) {
+        console.error("File Parse Error:", err);
+        showError("Failed to parse document. Ensure it's a valid PDF, DOCX, or TXT file.");
+      } finally {
+        getRecsBtn.disabled = originalDisabled;
+        getRecsBtn.innerHTML = originalBtnText;
+      }
     });
   }
 

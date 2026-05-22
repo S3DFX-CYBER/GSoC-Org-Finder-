@@ -907,7 +907,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -1272,7 +1272,7 @@
       <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
         <label class="relative block">
           <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
-          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
+          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." aria-label="Search mentors" class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
         </label>
         <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
           <option value="all">All channels</option>
@@ -1488,7 +1488,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeModal()" aria-label="Close organization modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1581,7 +1581,7 @@
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeCompareModal()" aria-label="Close compare modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
       <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
@@ -4130,7 +4130,7 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" onclick="closeHelpModal()" aria-label="Close help modal">
       <span class="material-symbols-outlined">close</span>
     </button>
 

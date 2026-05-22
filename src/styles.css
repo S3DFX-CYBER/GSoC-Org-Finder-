@@ -142,6 +142,8 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .fetch-btn:hover{background:var(--orange);color:white}
 .fetch-btn:disabled{opacity:.5;cursor:not-allowed}
 .spin{width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.spin{width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.spin{width:10px;height:10px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── RESULTS ── */
@@ -577,7 +579,17 @@ footer a:hover{text-decoration:underline}
   display: none;
   z-index: 50;
   box-shadow: 0 3px 10px rgba(244,107,14,.35);
-  transition: opacity .2s;
+  transition: opacity .2s, background .2s, transform .2s;
+}
+
+.scroll-top-btn:hover {
+  background: var(--orange-deep);
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
 }
 
 .scroll-top-btn.visible {

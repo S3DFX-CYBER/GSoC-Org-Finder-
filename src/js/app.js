@@ -594,8 +594,16 @@ function applyFilters(){
       if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
     }
 
-    // Search input (synchronized from hero-search)
-    if(search && !orgName.includes(search)) return false;
+    // Improved search matching
+if (search) {
+  const words = search.split(/\s+/).filter(Boolean);
+
+  const matches = words.every(word =>
+    orgName.includes(word)
+  );
+
+  if (!matches) return false;
+}
 
     // Language pills (multi-select)
     if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
@@ -612,28 +620,33 @@ function applyFilters(){
   });
 
   // Improved search ranking: exact matches first, then startsWith, then partial
-  if(search){
-    res.sort((a,b)=>{
-      const nameA=a.name.toLowerCase();
-      const nameB=b.name.toLowerCase();
-      
-      // Exact match gets highest priority
-      if(nameA===search && nameB!==search) return -1;
-      if(nameB===search && nameA!==search) return 1;
-      
-      // Starts with gets second priority  
-      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
-      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
-      
-      // Both start with search, sort by selected sort option or alphabetically
-      if(nameA.startsWith(search) && nameB.startsWith(search)) {
-        return applySecondarySort(a, b, sort);
-      }
-      
-      // Neither starts with, sort by selected sort option or alphabetically
-      return applySecondarySort(a, b, sort);
-    });
-  }
+  // Better search ranking
+if (search) {
+  res.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+
+    const exactA = nameA === search;
+    const exactB = nameB === search;
+
+    if (exactA && !exactB) return -1;
+    if (exactB && !exactA) return 1;
+
+    const startsA = nameA.startsWith(search);
+    const startsB = nameB.startsWith(search);
+
+    if (startsA && !startsB) return -1;
+    if (startsB && !startsA) return 1;
+
+    const includesA = nameA.includes(search);
+    const includesB = nameB.includes(search);
+
+    if (includesA && !includesB) return -1;
+    if (includesB && !includesA) return 1;
+
+    return applySecondarySort(a, b, sort);
+  });
+}
 
 
 

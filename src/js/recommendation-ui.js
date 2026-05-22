@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const normalizeText = (text) => {
     return text
+      // eslint-disable-next-line no-control-regex
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ')
       .replace(/[ \t]+/g, ' ')
       .replace(/(\r\n|\n|\r){2,}/g, '\n')

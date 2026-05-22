@@ -2858,7 +2858,7 @@
         // Update mobile menu items
         const allMobileLinks = document.querySelectorAll(".mobile-menu-link");
         allMobileLinks.forEach((link) => {
-          const linkSection = link.getAttribute("data-section");
+          const linkSection = link.dataset.section;
           if (linkSection === currentSection) {
             link.classList.remove(
               "text-zinc-700",
@@ -2883,7 +2883,7 @@
         // Update desktop navbar items
         const allDesktopLinks = document.querySelectorAll(".desktop-nav-link");
         allDesktopLinks.forEach((link) => {
-          const linkSection = link.getAttribute("data-section");
+          const linkSection = link.dataset.section;
           if (linkSection === currentSection) {
             link.classList.remove("text-zinc-600", "hover:text-zinc-900");
             link.classList.add(
@@ -2931,7 +2931,7 @@
           if (u.protocol === "http:" || u.protocol === "https:")
             return u.toString();
         } catch (e) {
-          // invalid URL
+          console.error("URL parsing failed during sanitization:", e);
         }
         return null;
       }
@@ -4596,32 +4596,30 @@
             </div>`;
       }
 
-      function getHistoryBasedRecommendations() {
-        const recentList = getRecentHistory();
+      function getFeaturedRecommendations() {
+        const featured = ORGS.filter((o) => !bookmarkedSet.has(o.name))
+          .sort((a, b) => b.years - a.years)
+          .slice(0, 15);
 
-        if (recentList.length === 0) {
-          const featured = ORGS.filter((o) => !bookmarkedSet.has(o.name))
-            .sort((a, b) => b.years - a.years)
-            .slice(0, 15);
-
-          const selected = [];
-          const seenCats = new Set();
-          for (const org of featured) {
-            if (selected.length >= 5) break;
-            if (!seenCats.has(org.cat)) {
-              selected.push({ org, explanation: "Featured Partner" });
-              seenCats.add(org.cat);
-            }
+        const selected = [];
+        const seenCats = new Set();
+        for (const org of featured) {
+          if (selected.length >= 5) break;
+          if (!seenCats.has(org.cat)) {
+            selected.push({ org, explanation: "Featured Partner" });
+            seenCats.add(org.cat);
           }
-          for (const org of featured) {
-            if (selected.length >= 5) break;
-            if (!selected.some((item) => item.org.name === org.name)) {
-              selected.push({ org, explanation: "Featured Partner" });
-            }
-          }
-          return selected;
         }
+        for (const org of featured) {
+          if (selected.length >= 5) break;
+          if (!selected.some((item) => item.org.name === org.name)) {
+            selected.push({ org, explanation: "Featured Partner" });
+          }
+        }
+        return selected;
+      }
 
+      function buildWeights(recentList) {
         const catWeights = {};
         const tagWeights = {};
 
@@ -4640,82 +4638,110 @@
           });
         });
 
-        const scoredOrgs = [];
-        ORGS.forEach((o) => {
-          if (recentList.includes(o.name) || bookmarkedSet.has(o.name)) return;
+        return { catWeights, tagWeights };
+      }
 
-          let score = 0;
-          let matchedCat = false;
-          const matchedTags = [];
+      function getRecommendationExplanation(cat, matchedCat, matchedTags) {
+        const catLabel =
+          {
+            science: "Science",
+            programming: "Programming",
+            data: "Data",
+            web: "Web",
+            os: "OS",
+            security: "Security",
+            media: "Media",
+            infra: "Infra",
+            ai: "AI/ML",
+            dev: "Dev Tools",
+            other: "Open Source",
+          }[cat] || cat;
 
-          if (catWeights[o.cat]) {
-            score += catWeights[o.cat] * 20;
-            matchedCat = true;
+        let explanation = "";
+        if (matchedTags.length > 0 && matchedCat) {
+          explanation = `Similar to ${catLabel} & ${matchedTags[0]}`;
+        } else if (matchedTags.length > 0) {
+          explanation = `Matches ${matchedTags[0]}`;
+        } else {
+          explanation = `Related to ${catLabel}`;
+        }
+
+        if (explanation.length > 28) {
+          explanation = explanation.substring(0, 25) + "...";
+        }
+        return explanation;
+      }
+
+      function scoreOrganization(o, recentList, catWeights, tagWeights) {
+        if (recentList.includes(o.name) || bookmarkedSet.has(o.name)) return null;
+
+        let score = 0;
+        let matchedCat = false;
+        const matchedTags = [];
+
+        if (catWeights[o.cat]) {
+          score += catWeights[o.cat] * 20;
+          matchedCat = true;
+        }
+
+        (o.tags || []).forEach((tag) => {
+          const tLower = tag.toLowerCase().trim();
+          if (tagWeights[tLower]) {
+            score += tagWeights[tLower] * 10;
+            matchedTags.push(tag);
           }
+        });
 
-          (o.tags || []).forEach((tag) => {
-            const tLower = tag.toLowerCase().trim();
-            if (tagWeights[tLower]) {
-              score += tagWeights[tLower] * 10;
-              matchedTags.push(tag);
-            }
+        if (score > 0) {
+          const explanation = getRecommendationExplanation(o.cat, matchedCat, matchedTags);
+          return { org: o, score, explanation };
+        }
+
+        return null;
+      }
+
+      function fillRecommendations(scoredOrgs, recentList) {
+        if (scoredOrgs.length >= 5) return;
+
+        const existingNames = new Set(
+          scoredOrgs.map((item) => item.org.name),
+        );
+        const fillCandidates = ORGS.filter(
+          (o) =>
+            !recentList.includes(o.name) &&
+            !bookmarkedSet.has(o.name) &&
+            !existingNames.has(o.name),
+        ).sort((a, b) => b.years - a.years);
+
+        for (const org of fillCandidates) {
+          if (scoredOrgs.length >= 5) break;
+          scoredOrgs.push({
+            org,
+            score: 0,
+            explanation: "Highly Active Partner",
           });
+        }
+      }
 
-          if (score > 0) {
-            let explanation = "";
-            const catLabel =
-              {
-                science: "Science",
-                programming: "Programming",
-                data: "Data",
-                web: "Web",
-                os: "OS",
-                security: "Security",
-                media: "Media",
-                infra: "Infra",
-                ai: "AI/ML",
-                dev: "Dev Tools",
-                other: "Open Source",
-              }[o.cat] || o.cat;
+      function getHistoryBasedRecommendations() {
+        const recentList = getRecentHistory();
 
-            if (matchedTags.length > 0 && matchedCat) {
-              explanation = `Similar to ${catLabel} & ${matchedTags[0]}`;
-            } else if (matchedTags.length > 0) {
-              explanation = `Matches ${matchedTags[0]}`;
-            } else {
-              explanation = `Related to ${catLabel}`;
-            }
+        if (recentList.length === 0) {
+          return getFeaturedRecommendations();
+        }
 
-            if (explanation.length > 28) {
-              explanation = explanation.substring(0, 25) + "...";
-            }
+        const { catWeights, tagWeights } = buildWeights(recentList);
+        const scoredOrgs = [];
 
-            scoredOrgs.push({ org: o, score, explanation });
+        ORGS.forEach((o) => {
+          const res = scoreOrganization(o, recentList, catWeights, tagWeights);
+          if (res) {
+            scoredOrgs.push(res);
           }
         });
 
         scoredOrgs.sort((a, b) => b.score - a.score);
-
-        if (scoredOrgs.length < 5) {
-          const existingNames = new Set(
-            scoredOrgs.map((item) => item.org.name),
-          );
-          const fillCandidates = ORGS.filter(
-            (o) =>
-              !recentList.includes(o.name) &&
-              !bookmarkedSet.has(o.name) &&
-              !existingNames.has(o.name),
-          ).sort((a, b) => b.years - a.years);
-
-          for (const org of fillCandidates) {
-            if (scoredOrgs.length >= 5) break;
-            scoredOrgs.push({
-              org,
-              score: 0,
-              explanation: "Highly Active Partner",
-            });
-          }
-        }
+        fillRecommendations(scoredOrgs, recentList);
 
         return scoredOrgs.slice(0, 5);
       }
@@ -5239,6 +5265,7 @@
 
           btn.textContent = "Stats Updated!";
         } catch (e) {
+          console.error("Live stats fetch failed:", e);
           btn.textContent = "Error";
         } finally {
           setTimeout(() => {

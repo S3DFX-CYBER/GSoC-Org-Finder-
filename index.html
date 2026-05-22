@@ -484,6 +484,8 @@
     .dark .metric-label { color: #a1a1aa; }
     .dark .close-btn { background: #27272a; color: #a1a1aa; }
     .dark .close-btn:hover { background: #3f3f46; color: #f4f4f5; }
+    .dark .modal-bookmark-btn { background: #27272a !important; color: #a1a1aa !important; }
+    .dark .modal-bookmark-btn:hover { background: #3f3f46 !important; color: #f4f4f5 !important; }
     .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
     .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
     .dark .modal-repo-link:hover { background: #3f3f46; }
@@ -1488,7 +1490,10 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="modal-bookmark-btn" id="mBookmarkBtn" onclick="toggleModalBookmark()" title="Bookmark this organization" style="position:absolute;top:1.5rem;right:4.5rem;z-index:1000;width:2.5rem;height:2.5rem;border-radius:99px;background:#f3f3f3;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;color:#d4d4d4">
+      <span class="material-symbols-outlined text-lg" id="mBookmarkIcon">star</span>
+    </button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1951,6 +1956,7 @@ sections.forEach(sectionId => {
       return [];
     }
   })();
+  let currentModalOrg = null;
 
   const selectedLanguages = new Set();
   let matchAllLanguages = false;
@@ -2756,6 +2762,7 @@ btn.__orgListenerAttached = true;
     
     compareList.forEach(name => {
       const org = ORGS.find(o => o.name === name);
+      if (!org) return;
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
@@ -3023,6 +3030,19 @@ btn.__orgListenerAttached = true;
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
     syncBookmark(orgName, !bookmarkedSet.has(orgName));
+  }
+
+  function toggleModalBookmark() {
+    if (!currentModalOrg) return;
+    const isBm = !bookmarkedSet.has(currentModalOrg);
+    syncBookmark(currentModalOrg, isBm);
+    const icon = document.getElementById('mBookmarkIcon');
+    const btn = document.getElementById('mBookmarkBtn');
+    if (icon) icon.classList.toggle('icon-fill', isBm);
+    if (btn) {
+      btn.style.color = isBm ? '#f59e0b' : '#d4d4d4';
+      btn.title = isBm ? 'Remove bookmark' : 'Add bookmark';
+    }
   }
 
   // Listen for bookmarks toggled by app.js (the other org-grid script).
@@ -3411,6 +3431,16 @@ if(org.ideas){
     if (draftBtn) {
       draftBtn.onclick = () => ProposalBuilder.open(org.name);
     }
+    
+    currentModalOrg = org.name;
+    const mBookmarkBtn = document.getElementById('mBookmarkBtn');
+    const mBookmarkIcon = document.getElementById('mBookmarkIcon');
+    if (mBookmarkBtn && mBookmarkIcon) {
+      const isBm = bookmarkedSet.has(org.name);
+      mBookmarkBtn.style.color = isBm ? '#f59e0b' : '#d4d4d4';
+      mBookmarkIcon.classList.toggle('icon-fill', isBm);
+      mBookmarkBtn.title = isBm ? 'Remove bookmark' : 'Add bookmark';
+    }
      
     document.getElementById('orgModal').classList.add('open');
     document.body.classList.add('modal-open');
@@ -3463,6 +3493,7 @@ if(org.ideas){
       else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
+      else if (activeChip === 'active')  matchChip = (o.firstYear + o.years - 1) >= 2025;
 
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });

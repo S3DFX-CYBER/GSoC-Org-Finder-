@@ -2288,12 +2288,13 @@
 "Processing Foundation": {
   "org": "Processing Foundation",
   "ideasUrl": "https://github.com/processing/Processing-Foundation-GSoC/wiki/Project-Ideas-List-(GSoC-2026)#project-ideas-list",
-  "channels": [
+"channels": [
     {
-      "name": "Discourse Forum",
-      "url": "https://discourse.processing.org/"
+        "type": "Discourse Forum",
+        "url": "https://discourse.processing.org/",
+        "label": "Discourse Forum"
     }
-  ],
+],
   "mentors": [
     {
       "name": "Divyansh013",
@@ -2311,9 +2312,13 @@
       "githubUrl": "https://github.com/diyaayay"
     }
   ],
-  "mailingLists": [
-    "mailto:foundation@processingfoundation.org"
-  ],
+ "mailingLists": [
+    {
+        "type": "email",
+        "url": "mailto:foundation@processingfoundation.org",
+        "label": "Foundation mailing list"
+    }
+],
   "tip": "",
   "status": "ok",
   "lastFetched": "2026-05-22T04:12:12.000Z"

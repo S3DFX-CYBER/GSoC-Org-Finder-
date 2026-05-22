@@ -1,1818 +1,1566 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
-  <meta name="description" content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time." />
-  <link rel="canonical" href="https://findmygsoc.vercel.app/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="FindMyGSoC" />
-  <meta property="og:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
-  <meta property="og:description" content="Discover Google Summer of Code 2026 organizations and track live good first issues across GitHub." />
-  <meta property="og:url" content="https://findmygsoc.vercel.app/" />
-  <meta property="og:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
-  <meta name="twitter:description" content="Find your best-fit GSoC 2026 org and track beginner-friendly GitHub issues." />
-  <meta name="twitter:image" content="https://findmygsoc.vercel.app/src/assets/og-image.jpeg" />
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "FindMyGSoC — GSoC 2026 Org Finder",
-      "url": "https://findmygsoc.vercel.app/",
-      "description": "Find your perfect GSoC 2026 organization filtered by tech stack, domain, and competition level.",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "S3DFX-CYBER"
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <script>
-    // Theme restoration - runs early to prevent FOUC
-    (function(){
-      try {
-        if (localStorage.getItem('theme') === 'dark') {
-          document.documentElement.classList.add('dark');
-        }
-      } catch(e) {
-        // localStorage might be unavailable in some browsers/modes
-        console.warn('Theme restoration failed:', e);
-      }
-    })();
-  </script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          screens: {
-            'xs': '480px',
-            'sm': '640px',
-            'md': '768px',
-            'lg': '1024px',
-            'xl': '1280px',
-            '2xl': '1536px',
-          },
-          colors: {
-            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
-            "surface-container":"#eeeeee","primary-container":"#f97316",
-            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
-            "on-background":"#1a1c1c","on-primary":"#ffffff",
-            "on-surface":"#1a1c1c","error":"#ba1a1a",
-            "primary":"#9d4300","on-surface-variant":"#584237",
-            "outline":"#8c7164","surface-container-lowest":"#ffffff",
-            "secondary":"#006c47","secondary-container":"#8af5be",
-            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
-            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
-            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
-            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
-            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
-            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
-            "on-primary-container":"#582200","surface-tint":"#9d4300",
-          },
-          fontFamily: {
-            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
-            "label":["Space Grotesk"],"mono":["Fira Code"]
-          },
-          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
-        },
-      },
-    }
-  </script>
-  <style>
-    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-    .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
-    .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-    .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    .fade-up{animation:fadeUp .6s ease-out both}
-    @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
-    .pulse-dot{animation:pulse-dot 2s infinite}
-    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
-    .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
+<<<<<<< HEAD
+/* ═══════════════════ BASE & FONTS ═══════════════════ */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
 
-    /* ═══════════════════ 3D CARD EFFECT ═══════════════════ */
-    .card-3d {
-      position: relative;
-      transform: translateZ(0);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-      will-change: transform;
-    }
+.icon-fill {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
 
-    .card-3d:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--primary, #9d4300);
-      box-shadow: 0 25px 50px -12px rgba(157, 67, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-    }
-    
-    /* Dark Mode 3D Adjustments */
-    .dark .card-3d {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-        border-color: rgba(255,255,255,0.05);
-    }
-    
-    .dark .card-3d:hover {
-        border-color: var(--primary-container, #fb923c);
-        box-shadow: 0 25px 50px -12px rgba(251, 146, 60, 0.2), 0 12px 24px -8px rgba(0, 0, 0, 0.4);
-    }
+.glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
 
-    /* Modal Styles */
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-    .modal-bg.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal {
-     background: white;
-     width: 90%;
-     max-width: 700px;
-     max-height: 90vh;
-     border-radius: 2rem;
-     position: relative;
-     overflow: hidden;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-     display: flex;
-     flex-direction: column;
-     padding-top: 1px;
-     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-     transform: scale(0.9);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .modal-bg.open .modal {
-      transform: scale(1);
-    }
-    .close-btn {
-     position: absolute;
-     top: 1.5rem;
-     right: 1.5rem;
-     z-index: 1000;
-     width: 2.5rem;
-     height: 2.5rem;
-     border-radius: 99px;
-     background: #f3f3f3;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     color: #555;
-     font-size: 1.2rem;
-    transition: all 0.2s;
-    }
-    .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
-    
-    .modal-header { padding: 3rem 3rem 1.5rem; }
-    .category-tag {
-      background: rgba(157, 67, 0, 0.1);
-      color: #9d4300;
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 0.3rem 0.8rem;
-      border-radius: 99px;
-      letter-spacing: 0.1em;
-      display: inline-block;
-      margin-bottom: 1rem;
-    }
-    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
-    .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
-
-    .modal-body {padding: 0 3rem 3rem; overflow-y: auto; flex: 1;}
-    .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
-    
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
-    .metric-card { background: #f9f9f9; padding: 1.2rem; border-radius: 1.2rem; border: 1px solid #eee; text-align: center; }
-    .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
-    .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
-
-    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; }
-    .gh-fetch { position: absolute; top: 1rem; right: 1rem; background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .gh-fetch:hover { background: #444; color: #fff; }
-    .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
-
-    .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
-    .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
-    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
-    .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
-    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
-    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
-
-    .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
-    .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
-
-    .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; }
-    .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
-    .modal-ideas-link { background: #9d4300; color: white; }
-    .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
-    .modal-repo-link { background: white; color: #1a1c1c; border: 1px solid #ddd; }
-    .modal-repo-link:hover { background: #f0f0f0; }
-
-    /* Custom Scrollbar for Modal */
-    .modal::-webkit-scrollbar { width: 6px; }
-    .modal::-webkit-scrollbar-track { background: transparent; }
-    .modal::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
-    .modal::-webkit-scrollbar-thumb:hover { background: #ccc; }
-
-    /* Complexity Badges */
-    .complexity-badge { font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 99px; text-transform: uppercase; }
-    .complexity-badge.beginner { background: #dcfce7; color: #166534; }
-    .complexity-badge.intermediate { background: #fef9c3; color: #854d0e; }
-    .complexity-badge.advanced { background: #fee2e2; color: #991b1b; }
-
-    /* Bookmark Button */
-    .bookmark-btn { transition: all 0.2s; font-size: 1.25rem; }
-    .bookmark-btn.active { color: #f59e0b; }
-    .bookmark-btn:hover { transform: scale(1.2); }
-
-    /* Base mobile-first styles */
-    html, body { width: 100%; overflow-x: hidden; }
-    html { scroll-behavior: smooth; }
-    
-    /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
-      scroll-margin-top: 80px;
-    }
-
-    /* Minimal dark-mode support */
-    .dark body { background: #0f0f10; color: #e5e7eb; }
-    .dark .glass { background: rgba(24, 24, 27, 0.85); }
-    .dark .bg-white { background: #18181b !important; }
-    .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
-    .dark .text-zinc-300 { color: #a1a1aa !important; }
-    .dark .text-on-surface { color: #f4f4f5 !important; }
-    .dark .text-on-surface-variant { color: #a1a1aa !important; }
-    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
-    .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
-    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
- 
-
-    /* Light mode - Language pills active state */
-    .pill.active {
-      background: rgba(157, 67, 0, 0.1) !important;
-      border-color: #9d4300 !important;
-      color: #9d4300 !important;
-      font-weight: 600;
-    }
-
-    /* Dark mode - Filter chips & language pills */
-    .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
-    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
-
-    /* Dark mode - Language tag pills */
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
-      background: #27272a !important; 
-      color: #d4d4d8 !important; 
-      border-color: #3f3f46 !important; 
-    }
-    .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip):hover { 
-      border-color: #f97316 !important; 
-      color: #f97316 !important; 
-    }
-    /* Higher-specificity rule beats .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) (0,5,2) */
-    .dark .pill.active,
-    .dark section .flex.flex-wrap.gap-2 > button.pill.active {
-      background: rgba(251, 146, 60, 0.2) !important;
-      border-color: #fb923c !important;
-      color: #fb923c !important;
-    }
-    
-    /* Dark mode - Issue card badges */
-    .dark .bg-green-100 { background: #14532d !important; }
-    .dark .bg-zinc-100 { background: #27272a !important; }
-    .dark .text-green-700 { color: #4ade80 !important; }
-    .dark .text-green-800 { color: #86efac !important; }
-    .dark .text-green-600 { color: #4ade80 !important; }
-    .dark .text-zinc-600 { color: #a1a1aa !important; }
-    
-    /* Dark mode - Card hover effects */
-    .dark .group:hover { background: #1f1f23 !important; border-color: rgba(249, 115, 22, 0.3) !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important; }
-    .dark .group:hover .text-on-surface { color: #f97316 !important; }
-    .dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary { color: #f97316 !important; }
-    
-    /* Dark mode - Tech tags */
-    .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
-    .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
-    .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
-    .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
-    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
-
-    @media (max-width: 640px) {
-      .modal-header { padding: 2rem 1.5rem 1rem; }
-      .modal-body { padding: 0 1.5rem 2rem; }
-      .modal-footer { padding: 1.5rem; flex-direction: column; }
-      .modal-cta { width: 100%; }
-    }
-    
-    /* Dark mode - Modal */
-    .dark .modal { background: #18181b; }
-    .dark .modal-header h2 { color: #f4f4f5; }
-    .dark .modal-header p { color: #a1a1aa; }
-    .dark .section-title { color: #a1a1aa; border-color: #27272a; }
-    .dark .metric-card { background: #27272a; border-color: #3f3f46; }
-    .dark .metric-value { color: #f4f4f5; }
-    .dark .metric-label { color: #a1a1aa; }
-    .dark .close-btn { background: #27272a; color: #a1a1aa; }
-    .dark .close-btn:hover { background: #3f3f46; color: #f4f4f5; }
-    .dark .modal-footer { background: #0f0f10; border-color: #27272a; }
-    .dark .modal-repo-link { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
-    .dark .modal-repo-link:hover { background: #3f3f46; }
-    .dark #compareModalBody { color: #e5e7eb; }
-    .dark #compareModalBody .text-zinc-700 { color: #e5e7eb !important; }
-    .dark #compareModalBody .text-zinc-500 { color: #a1a1aa !important; }
-    .dark #compareModalBody .text-zinc-400 { color: #d4d4d8 !important; }
-
-    /* Dark mode - Guide section cards */
-    .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
-    .dark #guide article h3 { color: #f4f4f5 !important; }
-    .dark #guide article p, .dark #guide article li { color: #a1a1aa !important; }
-    .dark #guide details { border-color: #3f3f46 !important; }
-    .dark #guide details summary { color: #f4f4f5 !important; }
-    .dark #guide a.block { border-color: #3f3f46 !important; }
-    .dark #guide a.block:hover { background: rgba(249, 115, 22, 0.1) !important; }
-    .dark #guide .font-mono { background: #27272a !important; color: #d4d4d8 !important; }
-
-    /* Dark mode - Mobile menu */
-    .dark #mobileMenu #menuPanel { background: #18181b !important; border-right: 1px solid #3f3f46; }
-    .dark #mobileMenu .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark #mobileMenu .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark #mobileMenu .text-zinc-700 { color: #e5e7eb !important; }
-    .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
-    .dark #mobileMenu .bg-orange-50 { background: rgba(249, 115, 22, 0.15) !important; }
-
-    /* Header dark mode */
-    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
-    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark header .text-zinc-600 { color: #a1a1aa !important; }
-    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
-    .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
-
-    /* Selected Languages Strip */
-    #selectedLangsStrip {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      min-height: 32px;
-    }
-    #selectedLangsStrip .empty-state {
-      color: #888;
-      font-style: italic;
-      font-size: 12px;
-    }
-    .selected-lang-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px 4px 12px;
-      background: #fff4ec;
-      border: 1.5px solid #ffe0c8;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #d45800;
-    }
-    .unselect-lang-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: none;
-      background: #ffe0c8;
-      color: #d45800;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 0;
-      margin-left: 2px;
-    }
-    .unselect-lang-btn:hover {
-      background: #f46b0e;
-      color: white;
-    }
-    .clear-all-langs-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 12px;
-      background: transparent;
-      border: 1.5px dashed #ddd;
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #888;
-      cursor: pointer;
-    }
-    .clear-all-langs-btn:hover {
-      border-color: #f46b0e;
-      color: #f46b0e;
-      background: #fff4ec;
-    }
-    /* Dark mode */
-    .dark #selectedLangsStrip .empty-state { color: #8a6a45; }
-    .dark .selected-lang-badge {
-      background: #1c0f05;
-      border-color: #2a1508;
-      color: #f97316;
-    }
-    .dark .unselect-lang-btn {
-      background: #2a1508;
-      color: #f97316;
-    }
-    .dark .unselect-lang-btn:hover {
-      background: #fb923c;
-      color: white;
-    }
-    .dark .clear-all-langs-btn {
-      border-color: #2e1e0a;
-      color: #8a6a45;
-    }
-    .dark .clear-all-langs-btn:hover {
-      border-color: #f97316;
-      color: #fb923c;
-      background: #1c0f05;
-    }
-  </style>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F46B0E" />
-  <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
-</head>
-<body class="bg-background text-on-surface font-body antialiased">
-
-<!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
-      <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span class="material-symbols-outlined text-zinc-600">menu</span>
-      </button>
-      
-      <a href="#" class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
-          <span class="text-white font-bold text-sm">G</span>
-        </div>
-      <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
-        <span class="hidden sm:inline">GSoC 2026 </span>
-        <span class="text-primary italic">Org Finder</span>
-      </span>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-      </nav>
-    </div>
-    
-    <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
-    <div class="flex items-center gap-2 sm:gap-3">
-    
-      <button id="themeToggleBtn" onclick="toggleTheme()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          dark_mode
-        </span>
-      </button>
-    
-      <!-- HELP BUTTON -->
-      <button id="helpBtn"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        title="Keyboard shortcuts (?)">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          help
-        </span>
-      </button>
-    
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
-        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-    
-        <span class="material-symbols-outlined text-sm">
-          star
-        </span>
-    
-        Star & Contribute
-      </a>
-    
-    </div>
-  </div>
-</header>
-
-<!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-  <!-- Backdrop -->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
-  
-  <!-- Menu Panel -->
-  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
-    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
-          <span class="text-white font-bold text-sm">G</span>
-        </div>
-        <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
-      </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
-        <span class="material-symbols-outlined text-zinc-600">close</span>
-      </button>
-    </div>
-    
-    <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        Timeline
-      </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
-        <span class="material-symbols-outlined text-lg">business</span>
-        Organizations
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
-      </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
-        <span class="material-symbols-outlined text-lg">bookmark</span>
-        Watchlist
-      </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
-        <span class="material-symbols-outlined text-lg">bug_report</span>
-        Issues
-      </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
-        <span class="material-symbols-outlined text-lg">group</span>
-        Mentors
-      </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
-        <span class="material-symbols-outlined text-lg">menu_book</span>
-        Guide
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
-      </a>
-    </div>
-    
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
-      </a>
-    </div>
-  </nav>
-</div>
-
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
-        <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
-        <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
-      </div>
-      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
-        Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
-      </h1>
-      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
-      </p>
-      <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
-      </div>
-      <!-- Surprise Button -->
-      <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
-        </button>
-      </div>
-      <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
-        </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
-        </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
-        </div>
-      </div>
-    </div>
-    <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-<section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
-  <div class="flex flex-wrap gap-2 mb-4">
-    <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-    <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-    <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-    <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-    <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-    <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
-  </div>
-  <div class="flex flex-wrap gap-2">
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
-    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
-  </div>
-  <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
-    <span class="empty-state">No languages selected</span>
-  </div>
-  <div class="mt-2 flex items-center gap-2">
-    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
-      <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
-    </label>
-    <span id="languageLogicHint" 
-    class="text-xs text-primary font-medium italic">
-    </span>
-  </div>
-</section>
-
-<!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
-<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
-  <div class="flex items-center justify-between mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
-    <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
-        <option value="all">Categories: All</option>
-        <option value="web">Web</option>
-        <option value="programming">Programming</option>
-        <option value="science">Science</option>
-        <option value="os">OS</option>
-        <option value="infra">Infra</option>
-        <option value="security">Security</option>
-        <option value="data">Data</option>
-        <option value="media">Media</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
-        <option value="all">Complexity: All</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="advanced">Advanced</option>
-      </select>
-      <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
-        <option value="alpha">Sort: A-Z</option>
-        <option value="years-desc">Years (High-Low)</option>
-        <option value="years-asc">Years (Low-High)</option>
-        <option value="comp-low">Competition (Chill First)</option>
-        <option value="stars">GitHub Stars</option>
-        <option value="gfi">Good First Issues</option>
-      </select>
-    </div>
-  </div>
-  
-  <!-- Hidden search input for JavaScript compatibility -->
-  <input type="hidden" id="searchInput" />
-  
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
-    </div>
-  </div>
-
-  <!-- Empty State -->
-  <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
-    <div class="text-6xl mb-4">🔍</div>
-    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
-    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
-    <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
-      Clear All Filters
-    </button>
-  </div>
-
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
-  </div>
-</section>
-
-<!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
-<section id="ai-recommender" class="px-6 max-w-7xl mx-auto py-20 border-t border-zinc-100 dark:border-zinc-800">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">AI-Powered</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Personalized Org Suggestions</h2>
-    <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Enter your GitHub username or paste your resume to get deterministic AI-style organization recommendations tailored to your skills and experience.</p>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-    <!-- Input Form -->
-    <div class="lg:col-span-4 bg-white dark:bg-[#18181b] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm h-fit">
-      <div class="space-y-5">
-        <div>
-          <label for="aiGhUsername" class="block text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">GitHub Username</label>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-sm">person</span>
-            <input type="text" id="aiGhUsername" placeholder="e.g. torvalds" class="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
-          </div>
-          <p class="text-[10px] text-zinc-500 mt-1 ml-1">Used to analyze your repo languages and activity.</p>
-        </div>
-
-        <div>
-          <label for="aiResumeText" class="block text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">Resume / Skills</label>
-          <textarea id="aiResumeText" rows="4" placeholder="Paste your resume or list your skills here (e.g. Python, React, Machine Learning)..." class="w-full p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all resize-none"></textarea>
-          <div class="mt-2 flex items-center justify-between">
-            <label class="text-xs text-primary font-bold cursor-pointer hover:underline flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt
-              <input type="file" id="aiResumeFile" accept=".txt" class="hidden">
-            </label>
-          </div>
-        </div>
-
-        <button id="btnGetRecommendations" class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined text-sm">auto_awesome</span> Get Recommendations
-        </button>
-      </div>
-    </div>
-
-    <!-- Results Area -->
-    <div class="lg:col-span-8">
-      <!-- Initial State -->
-      <div id="aiLoadingState" aria-live="polite" class="hidden flex flex-col items-center justify-center py-16 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700">
-        <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-zinc-600 dark:text-zinc-400 font-bold animate-pulse">Analyzing profile & calculating matches...</p>
-      </div>
-      
-      <!-- Error State -->
-      <div id="aiErrorState" aria-live="assertive" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 text-center block">
-        <span class="material-symbols-outlined text-red-500 text-4xl mb-2">error</span>
-        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Analysis Failed</h3>
-        <p id="aiErrorMsg" class="text-red-600 dark:text-red-300 text-sm"></p>
-      </div>
-
-      <!-- Results Container -->
-      <div id="aiResultsContainer" class="org-grid w-full">
-        <div class="flex flex-col items-center justify-center py-20 text-center text-zinc-400 dark:text-zinc-500">
-          <span class="material-symbols-outlined text-6xl mb-4 opacity-50">magic_button</span>
-          <p class="font-bold">Provide your details to see personalized matches.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ WATCHLIST ═══════════════════ -->
-<section id="watchlist" class="bg-surface-container-low py-20 px-6">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
-      <div>
-        <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
-        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
-        <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
-      </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
-        <!-- Watchlist items will be rendered here -->
-      </div>
-      <!-- Sidebar -->
-      <div class="space-y-6">
-        <div class="bg-white rounded-2xl p-6 border border-zinc-100">
-          <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
-          </div>
-        </div>
-        <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
-          <h4 class="font-bold mb-3">AI Application Insight</h4>
-          <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">Select organizations to get personalized contribution advice.</p>
-          <span class="text-[10px] font-label uppercase tracking-widest text-orange-200">Automated System Advice</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
-<section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
-    <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
-  </div>
-  <!-- Status Banner -->
-  <div id="issuesBanner" class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-3 h-3 rounded-full bg-green-500 pulse-dot" id="issuesBannerDot"></div>
-      <div>
-        <p class="font-bold text-green-800 text-sm" id="issuesBannerTitle">Pre-fetched Issues Ready</p>
-        <p class="text-xs text-green-600" id="issuesBannerSubtitle">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
-      </div>
-    </div>
-    <div class="ml-auto text-right">
-      <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: pending refresh</span>
-      <span id="issuesStaleNote" class="hidden ml-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
-    </div>
-  </div>
-  <!-- Issue Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <!-- Applied card-3d class here -->
-    <div class="card-3d bg-white rounded-xl p-5 border border-zinc-100 group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">rust-lang/rust</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="card-3d bg-white rounded-xl p-5 border border-zinc-100 group cursor-pointer issue-fallback-card" data-url="https://github.com/django/django/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">django/django</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="card-3d bg-white rounded-xl p-5 border border-zinc-100 group cursor-pointer issue-fallback-card" data-url="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">tensorflow/tensorflow</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-    <div class="card-3d bg-white rounded-xl p-5 border border-zinc-100 group cursor-pointer issue-fallback-card" data-url="https://github.com/kubernetes/kubernetes/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
-      <div class="flex items-start justify-between mb-3">
-        <h4 class="font-bold text-sm group-hover:text-primary transition-colors">Browse open Good First Issues</h4>
-        <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
-      </div>
-      <p class="text-xs text-zinc-500 mb-3 font-mono">kubernetes/kubernetes</p>
-      <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">GitHub search</span>
-        <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ MENTOR FINDER ═══════════════════ -->
-<section id="mentors" class="py-20 px-6 bg-surface-container-low">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-12">
-      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Mentor Outreach</span>
-      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Mentor Finder</h2>
-      <p class="text-zinc-600 mt-4 max-w-3xl">Pre-fetched contact channels and conservative mentor handles from org ideas pages, so you can find where to introduce yourself before proposal season gets busy.</p>
-    </div>
-
-    <div class="bg-white border border-zinc-100 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-3 h-3 rounded-full pulse-dot" id="mentorBannerDot" style="background-color:#f97316"></div>
-        <div>
-          <p class="font-bold text-zinc-900 text-sm">Cached mentor contact data</p>
-          <p class="text-xs text-zinc-600">Generated offline by the project workflow to keep scraping out of the browser.</p>
-        </div>
-      </div>
-      <div class="ml-auto text-right">
-        <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500">Last updated: pending refresh</span>
-        <span id="mentorStaleNote" class="hidden ml-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">ℹ GSoC selection complete. Data won't update frequently.</span>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-zinc-100 p-6 mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
-        <label class="relative block">
-          <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
-          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
-        </label>
-        <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
-          <option value="all">All channels</option>
-          <option value="Slack">Slack</option>
-          <option value="Zulip">Zulip</option>
-          <option value="Discord">Discord</option>
-          <option value="Matrix">Matrix</option>
-          <option value="IRC">IRC</option>
-          <option value="Mailing list">Mailing list</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-      </div>
-    </div>
-  </div>
-</section>
- 
-<!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
-<section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
-    <p class="text-zinc-600 mt-4 max-w-3xl">New to open source or this project? Follow this quick path: learn the basics, set up locally, find a good first issue, and open your first PR.</p>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <article class="card-3d bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
-      <h3 class="text-xl font-bold mb-3">1) Open Source Basics</h3>
-      <p class="text-sm text-zinc-600 mb-4 leading-relaxed">Open source projects publish source code publicly so anyone can inspect, improve, and share it. Contribution usually starts with reading contribution guidelines and making small, focused changes.</p>
-      <ul class="space-y-2 text-sm text-zinc-700 list-disc pl-5">
-        <li>Understand how licensing and collaboration work.</li>
-        <li>Start with documentation or beginner-friendly issues.</li>
-        <li>Communicate early through issues and PR comments.</li>
-      </ul>
-    </article>
-
-    <article class="card-3d bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
-      <h3 class="text-xl font-bold mb-3">2) Contribute to a GSoC Organization</h3>
-      <ol class="space-y-2 text-sm text-zinc-700 list-decimal pl-5">
-        <li>Pick 2–3 organizations that match your skills and interests.</li>
-        <li>Read their ideas page, contribution guide, and communication channels.</li>
-        <li>Set up the project locally and start with a small issue or documentation task.</li>
-        <li>Open a focused pull request and respond to mentor feedback quickly.</li>
-        <li>Document your contributions and turn them into a stronger GSoC proposal.</li>
-      </ol>
-      <p class="text-xs text-zinc-500 mt-4">Tip: quality communication and small, consistent contributions usually matter more than a single large PR.</p>
-    </article>
-
-    <article class="card-3d bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
-      <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-        <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">Open Source Guide</p>
-          <p class="text-zinc-600">Practical guide for first-time and returning contributors.</p>
-        </a>
-        <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">GitHub Contribution Flow</p>
-          <p class="text-zinc-600">Official docs for forking, cloning, and opening pull requests.</p>
-        </a>
-        <a href="https://developers.google.com/open-source/gsoc/resources/guide" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">GSoC Contributor/Student Guide</p>
-          <p class="text-zinc-600">Official program timeline and best practices for applicants.</p>
-        </a>
-        <a href="https://developers.google.com/open-source/gsoc/help/student-advice" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">Student Advice</p>
-          <p class="text-zinc-600">Official guidance for choosing orgs, communicating well, and writing proposals.</p>
-        </a>
-        <a href="https://firstcontributions.github.io/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
-          <p class="font-bold mb-1">First Contributions</p>
-          <p class="text-zinc-600">Hands-on tutorial to practice your first fork, commit, and pull request.</p>
-        </a>
-      </div>
-    </article>
-
-    <article class="card-3d bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
-      <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
-      <div class="space-y-3 text-sm">
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">Do I need prior GSoC experience to contribute?</summary>
-          <p class="text-zinc-600 mt-2">No. Start with small docs or UI fixes, then move to larger tasks as you learn the codebase.</p>
-        </details>
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">What should my first pull request look like?</summary>
-          <p class="text-zinc-600 mt-2">Keep it focused on one change, reference the issue number, and include a short explanation of what you tested.</p>
-        </details>
-        <details class="group border border-zinc-200 rounded-xl p-4">
-          <summary class="font-semibold cursor-pointer">How do I find tasks I can start quickly?</summary>
-          <p class="text-zinc-600 mt-2">Look for issues labeled <span class="font-mono text-xs bg-zinc-100 px-1 py-0.5 rounded">good first issue</span> and comment before starting work.</p>
-        </details>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
-  <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
-      </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
-      </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ COMPARE ═══════════════════ -->
-<section class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-    <div>
-      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Decision Tool</span>
-      <h2 class="text-4xl font-extrabold font-headline tracking-tighter mt-2 mb-6">Compare Organizations</h2>
-      <p class="text-zinc-600 leading-relaxed mb-8">Select up to 3 orgs to compare side-by-side. See history, mentor count, tech stack, competition level, and active GFIs at a glance.</p>
-      <button onclick="openCompareModal()" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl hover:scale-95 transition-all shadow-lg">
-        <span class="material-symbols-outlined">compare</span> Open Comparison Tool
-      </button>
-    </div>
-    <div id="compare" class="bg-surface-container-low rounded-3xl p-8 border border-zinc-100">
-      <div class="grid grid-cols-3 gap-4 text-center">
-        <div class="card-3d bg-white rounded-xl p-4 border border-zinc-100">
-          <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-orange-600">psychology</span></div>
-          <p class="font-bold text-sm">TensorFlow</p><p class="text-[10px] text-zinc-500 font-label uppercase mt-1">15y · 42 mentors</p>
-        </div>
-        <div class="card-3d bg-white rounded-xl p-4 border border-zinc-100">
-          <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-amber-600">developer_board</span></div>
-          <p class="font-bold text-sm">Apache</p><p class="text-[10px] text-zinc-500 font-label uppercase mt-1">19y · 64 mentors</p>
-        </div>
-        <div class="card-3d bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300">
-          <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-          <p class="font-bold text-sm text-zinc-400">Add org</p><p class="text-[10px] text-zinc-400 font-label uppercase mt-1">slot 3</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ CONTACT ═══════════════════ -->
-<section id="contact" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="text-center mb-12">
-    <h2 class="text-4xl font-extrabold font-headline tracking-tight mb-4">Get in Touch</h2>
-    <p class="text-zinc-600 max-w-2xl mx-auto">Have questions, feedback, or need help? We'd love to hear from you.</p>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-    <a href="https://github.com/S3DFX-CYBER" target="_blank" rel="noopener noreferrer" class="card-3d bg-white border border-zinc-200 rounded-2xl p-6 text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">person</span>
-      </div>
-      <h3 class="font-bold mb-2">GitHub Profile</h3>
-      <p class="text-sm text-zinc-600">Follow the maintainer and check out other projects.</p>
-    </a>
-    <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues" target="_blank" rel="noopener noreferrer" class="card-3d bg-white border border-zinc-200 rounded-2xl p-6 text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">bug_report</span>
-      </div>
-      <h3 class="font-bold mb-2">Report Issues</h3>
-      <p class="text-sm text-zinc-600">Found a bug or have a feature request? Open an issue.</p>
-    </a>
-    <a href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer" class="card-3d bg-white border border-zinc-200 rounded-2xl p-6 text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">forum</span>
-      </div>
-      <h3 class="font-bold mb-2">Join Discord</h3>
-      <p class="text-sm text-zinc-600">Connect with the community for discussions and support.</p>
-    </a>
-  </div>
-</section>
-
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
-      </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
-    </div>
-    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
-    </nav>
-  </div>
-</footer>
-
-<!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="modal-header" id="mHeader">
-      <!-- Injected: Category, Name, Tagline -->
-    </div>
-    <div class="modal-body">
-      <div class="metrics-grid mb-8" id="mMetrics">
-        <!-- Injected: Years, Competition, First Year, etc. -->
-      </div>
-      
-      <div class="github-stats-container mb-8">
-        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
-        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
-        <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
-      </div>
-
-      <div class="section-title">Description</div>
-      <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <div class="section-title">Technologies</div>
-          <div class="tech-tags" id="mTech"></div>
-        </div>
-        <div>
-          <div class="section-title">Ideal Fit</div>
-          <div class="fit-tags" id="mFit"></div>
-        </div>
-      </div>
-
-      <div class="section-title">Participation Timeline</div>
-      <div class="timeline-grid" id="mTimeline"></div>
-
-      <div class="section-title">Mentors &amp; Contact</div>
-      <div id="mMentorSection" class="space-y-4">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
-      </a>
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">code</span> Repository
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
-<div class="modal-bg compare-bg" id="compareModal">
-  <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="modal-header pb-4 border-b border-zinc-100">
-      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
-      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
-    </div>
-    <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
-      <!-- Injected table -->
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ JS ═══════════════════ -->
-<script src="agent/scripts/orgs.js"></script>
-<script>
-  // ══════════════════════════════════════════════
-  // THEME
-  // ══════════════════════════════════════════════
-  (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
-
-  window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
-
-  function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-
-  // ══════════════════════════════════════════════
-  // MOBILE MENU
-  // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
-    const menu = document.getElementById('mobileMenu');
-    const panel = document.getElementById('menuPanel');
-    const menuBtn = document.getElementById('menuBtn');
-    
-    if(menu.classList.contains('hidden')){
-      // Open menu
-      menu.classList.remove('hidden');
-      menuBtn.setAttribute('aria-expanded', 'true');
-      menuBtn.setAttribute('aria-label', 'Close menu');
-      setTimeout(() => {
-        panel.style.transform = 'translateX(0)';
-      }, 10);
-      document.addEventListener('keydown', handleMenuEscape);
-    } else {
-      // Close menu
-      panel.style.transform = 'translateX(-100%)';
-      menuBtn.setAttribute('aria-expanded', 'false');
-      menuBtn.setAttribute('aria-label', 'Open menu');
-      document.removeEventListener('keydown', handleMenuEscape);
-      setTimeout(() => {
-        menu.classList.add('hidden');
-      }, 300);
-    }
-  };
-  
-  function handleMenuEscape(e){
-    if(e.key === 'Escape'){
-      const menu = document.getElementById('mobileMenu');
-      if(!menu.classList.contains('hidden')){
-        toggleMenu();
-      }
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+.fade-up {
+  animation: fadeUp 0.6s ease-out both;
+}
 
-  // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    // Remove active class from all menu links
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    });
-    
-    // Add active class to clicked link
-    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    
-    // Close menu after a short delay
-    setTimeout(() => {
-      toggleMenu();
-    }, 300);
-  };
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
-    
-    let currentSection = 'orgs'; // Default
-    
-    sections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = sectionId;
-        }
-      }
-    });
-    
-    // Update mobile menu items
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-      }
-    });
-
-    // Update desktop navbar items
-    const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
-    allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-      } else {
-        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-        link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-      }
-    });
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.4;
   }
-
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
-
-  // ══════════════════════════════════════════════
-  // Shared escaping helper (for all dynamic text used in HTML strings)
-  // Prevents HTML injection via <, >, &, quotes.
-  function escapeHtml(value) {
-    return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
+  50% {
+    opacity: 1;
   }
+}
+.pulse-dot {
+  animation: pulse-dot 2s infinite;
+}
 
-  // Sanitize hrefs: only allow http(s) absolute URLs.
-  // Returns the original URL string when allowed, otherwise null.
-  function sanitizeHrefUrl(url) {
-    if (!url || !String(url).trim()) return null;
-    try {
-      const u = new URL(String(url).trim());
-      if (u.protocol === 'http:' || u.protocol === 'https:') return u.toString();
-    } catch (e) {
-      // invalid URL
-    }
-    return null;
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
   }
-
-  function parseStoredBookmarks() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
+  50% {
+    background-position: 100% 50%;
   }
-
-  function trimGitHubPathSlashes(path) {
-    let start = 0;
-    let end = path.length;
-    while (start < end && path[start] === '/') start += 1;
-    while (end > start && path[end - 1] === '/') end -= 1;
-    return path.slice(start, end);
+  100% {
+    background-position: 0% 50%;
   }
+}
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
 
-  function githubPathFromValue(value) {
-    const github = String(value || '').trim();
-    if (!github) return '';
-    try {
-      const url = new URL(github);
-      const hostname = url.hostname.toLowerCase();
-      if (hostname !== 'github.com' && hostname !== 'www.github.com') return '';
-      return trimGitHubPathSlashes(url.pathname);
-    } catch {
-      return trimGitHubPathSlashes(github);
-    }
+.hero-gradient {
+  background: linear-gradient(135deg, #9d4300 0%, #f97316 50%, #f59e0b 100%);
+}
+
+/* ═══════════════════ 3D CARD EFFECT ═══════════════════ */
+.card-3d {
+  position: relative;
+  transform: translateZ(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  will-change: transform;
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--primary, #9d4300);
+  box-shadow: 0 25px 50px -12px rgba(157, 67, 0, 0.25), 
+              0 12px 24px -8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Dark Mode 3D Adjustments */
+.dark .card-3d {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .card-3d:hover {
+  border-color: var(--primary-container, #fb923c);
+  box-shadow: 0 25px 50px -12px rgba(251, 146, 60, 0.2), 
+              0 12px 24px -8px rgba(0, 0, 0, 0.4);
+}
+
+/* ═══════════════════ MODAL STYLES ═══════════════════ */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-bg.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  border-radius: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 1px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: scale(0.9);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-bg.open .modal {
+  transform: scale(1);
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 99px;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #e8e8e8;
+  color: #1a1c1c;
+}
+
+.modal-header {
+  padding: 3rem 3rem 1.5rem;
+}
+
+.category-tag {
+  background: rgba(157, 67, 0, 0.1);
+  color: #9d4300;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  letter-spacing: 0.1em;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.modal-header p {
+  color: #584237;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.modal-body {
+  padding: 0 3rem 3rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #aaa;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  border-bottom: 1px solid #f3f3f3;
+  padding-bottom: 0.5rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background: #f9f9f9;
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+  border: 1px solid #eee;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a1c1c;
+  margin-bottom: 0.2rem;
+}
+
+.metric-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.github-stats-container {
+  background: #1a1a1a;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.gh-fetch {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #333;
+  color: #aaa;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gh-fetch:hover {
+  background: #444;
+  color: #fff;
+}
+
+.gh-stat-item {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tech-tags, .fit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-tag {
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.fit-tag {
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dbeafe;
+}
+
+.mentor-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #fff7ed;
+  color: #9d4300;
+  border: 1px solid #fed7aa;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mentor-handle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.mentor-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.mentor-empty {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.timeline-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timeline-grid span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #666;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.5rem;
+}
+
+.timeline-grid span.current-year {
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fef3c7;
+  font-weight: 700;
+}
+
+.modal-footer {
+  padding: 2rem 3rem 3rem;
+  background: #f9f9f9;
+  display: flex;
+  gap: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.modal-cta {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+.modal-ideas-link {
+  background: #9d4300;
+  color: white;
+}
+
+.modal-ideas-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3);
+}
+
+.modal-repo-link {
+  background: white;
+  color: #1a1c1c;
+  border: 1px solid #ddd;
+}
+
+.modal-repo-link:hover {
+  background: #f0f0f0;
+}
+
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 3px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+/* ═══════════════════ COMPLEXITY BADGES ═══════════════════ */
+.complexity-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.complexity-badge.beginner {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.complexity-badge.intermediate {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.complexity-badge.advanced {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ═══════════════════ BOOKMARK BUTTON ═══════════════════ */
+.bookmark-btn {
+  transition: all 0.2s;
+  font-size: 1.25rem;
+}
+
+.bookmark-btn.active {
+  color: #f59e0b;
+}
+
+.bookmark-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ═══════════════════ BASE MOBILE FIRST ═══════════════════ */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
+  scroll-margin-top: 80px;
+}
+
+/* ═══════════════════ DARK MODE SUPPORT ═══════════════════ */
+.dark body {
+  background: #0f0f10;
+  color: #e5e7eb;
+}
+
+.dark .glass {
+  background: rgba(24, 24, 27, 0.85);
+}
+
+.dark .bg-white {
+  background: #18181b !important;
+}
+
+.dark .bg-surface-container-low {
+  background: #27272a !important;
+  color: #d4d4d8 !important;
+}
+
+.dark .text-zinc-900 {
+  color: #f4f4f5 !important;
+}
+
+.dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 {
+  color: #a1a1aa !important;
+}
+
+.dark .text-zinc-300 {
+  color: #a1a1aa !important;
+}
+
+.dark .text-on-surface {
+  color: #f4f4f5 !important;
+}
+
+.dark .text-on-surface-variant {
+  color: #a1a1aa !important;
+}
+
+.dark .border-zinc-100 {
+  border-color: #3f3f46 !important;
+}
+
+.dark .border-zinc-200 {
+  border-color: #3f3f46 !important;
+}
+
+.dark #timeline-milestones .bg-zinc-200 {
+  background-color: #3f3f46 !important;
+}
+
+.dark .hover\:bg-zinc-100\/50:hover {
+  background: rgba(63, 63, 70, 0.45) !important;
+}
+
+/* Light mode - Language pills active state */
+.pill.active {
+  background: rgba(157, 67, 0, 0.1) !important;
+  border-color: #9d4300 !important;
+  color: #9d4300 !important;
+  font-weight: 600;
+}
+
+/* Dark mode - Filter chips & language pills */
+.dark .bg-surface-container-highest {
+  background: #27272a !important;
+  color: #d4d4d8 !important;
+}
+
+.dark .filter-chip:not(.bg-orange-600) {
+  background: #27272a !important;
+  color: #d4d4d8 !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+.dark .filter-chip:not(.bg-orange-600):hover {
+  background: #fb923c !important;
+  color: #ffffff !important;
+  border-color: #fb923c !important;
+}
+
+/* Dark mode - Language tag pills */
+.dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) {
+  background: #27272a !important;
+  color: #d4d4d8 !important;
+  border-color: #3f3f46 !important;
+}
+
+.dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip):hover {
+  border-color: #f97316 !important;
+  color: #f97316 !important;
+}
+
+.dark .pill.active,
+.dark section .flex.flex-wrap.gap-2 > button.pill.active {
+  background: rgba(251, 146, 60, 0.2) !important;
+  border-color: #fb923c !important;
+  color: #fb923c !important;
+}
+
+/* Dark mode - Issue card badges */
+.dark .bg-green-100 {
+  background: #14532d !important;
+}
+
+.dark .bg-zinc-100 {
+  background: #27272a !important;
+}
+
+.dark .text-green-700 {
+  color: #4ade80 !important;
+}
+
+.dark .text-green-800 {
+  color: #86efac !important;
+}
+
+.dark .text-green-600 {
+  color: #4ade80 !important;
+}
+
+.dark .text-zinc-600 {
+  color: #a1a1aa !important;
+}
+
+/* Dark mode - Card hover effects */
+.dark .group:hover {
+  background: #1f1f23 !important;
+  border-color: rgba(249, 115, 22, 0.3) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .group:hover .text-on-surface {
+  color: #f97316 !important;
+}
+
+.dark .group-hover\:text-primary:hover, .dark .group:hover .group-hover\:text-primary {
+  color: #f97316 !important;
+}
+
+/* Dark mode - Tech tags */
+.dark .tech-tag {
+  background: #27272a;
+  color: #d4d4d8;
+  border-color: #3f3f46;
+}
+
+.dark .fit-tag {
+  background: #1e293b;
+  color: #93c5fd;
+  border-color: #334155;
+}
+
+.dark .mentor-link-chip {
+  background: rgba(124, 45, 18, 0.72);
+  color: #fff7ed;
+  border-color: rgba(251, 146, 60, 0.45);
+}
+
+.dark .mentor-handle-chip {
+  background: #27272a;
+  color: #d4d4d8;
+  border-color: #3f3f46;
+}
+
+.dark .mentor-card, .dark .mentor-empty {
+  background: #18181b;
+  border-color: #3f3f46;
+}
+
+@media (max-width: 640px) {
+  .modal-header {
+    padding: 2rem 1.5rem 1rem;
   }
-
-  function githubOwnerFromValue(value) {
-    return githubPathFromValue(value).split('/')[0] || '';
+  .modal-body {
+    padding: 0 1.5rem 2rem;
   }
-
-  function githubUrlFromValue(value) {
-    const path = githubPathFromValue(value);
-    return path ? `https://github.com/${path}` : null;
+  .modal-footer {
+    padding: 1.5rem;
+    flex-direction: column;
   }
-
-  // NOTE: For JS-string contexts inside inline event handlers,
-  // we must also escape quotes. Prefer removing inline handlers.
-
-  // ══════════════════════════════════════════════
-  // MAIN APP LOGIC
-  // ══════════════════════════════════════════════
-  let visibleCount = 12;
-
-  let filteredOrgs = [...ORGS];
-  let MENTOR_DATA = {};
-  let mentorDataState = 'idle';
-  let compareList = [];
-  const bookmarkedSet = (() => {
-    return new Set(parseStoredBookmarks());
-  })();
-
-  const selectedLanguages = new Set();
-  let matchAllLanguages = false;
-  let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
-  const CHANNEL_ICONS = {
-    Slack: '💬',
-    Zulip: '💬',
-    Discord: '🎮',
-    Matrix: '🔗',
-    IRC: '🖥️',
-    'Mailing list': '📧'
-  };
-  const CONTACT_TIPS = {
-    Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
-    Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
-    Zulip: 'Post a new topic in the GSoC stream with your background and interest.',
-    Matrix: "Say hello in the public room and mention the project area you're exploring.",
-    IRC: 'Stay in the channel for a while; replies are often asynchronous.',
-    'Mailing list': "Send a short intro email with your background and the idea you're interested in."
-  };
-  const LANGUAGE_ALIASES = {
-    'python': ['python'],
-    'javascript': ['javascript', 'js'],
-    'typescript': ['typescript', 'ts'],
-    'c/c++': ['c', 'c++', 'cpp'],
-    'java': ['java'],
-    'rust': ['rust'],
-    'go': ['go', 'golang'],
-    'ruby': ['ruby'],
-    'haskell': ['haskell'],
-    'scala': ['scala'],
-    'ml/ai': ['ml', 'ai', 'machine learning', 'artificial intelligence'],
-    'robotics': ['robotics', 'robot', 'ros']
-  };
-
-  // Compatibility layer: expose a single LANGUAGE_MAP and shared `pills` set
-  // so the embedded script and any external `src/js/app.js` logic agree.
-  (function buildCompatibilityLayer(){
-    // Expose the selectedLanguages set as `pills` for compatibility
-    globalThis.pills = selectedLanguages;
-    // Expose matchAllLanguages as a global variable reference (kept in sync below)
-    globalThis.matchAllLanguages = matchAllLanguages;
-    globalThis.compareList = compareList;
-    globalThis.bookmarkedSet = bookmarkedSet;
-
-    // Build a LANGUAGE_MAP with display-label keys matching src/js/app.js expectations
-    const toDisplayKey = (k) => {
-      if (k === 'ml/ai') return 'ML/AI';
-      if (k === 'c/c++') return 'C/C++';
-      return k.split(/[\s\/]+/).map(p => p.charAt(0).toUpperCase()+p.slice(1)).join(' ');
-    };
-    const LANG_MAP = {};
-    Object.keys(LANGUAGE_ALIASES).forEach(k => {
-      LANG_MAP[toDisplayKey(k)] = LANGUAGE_ALIASES[k];
-    });
-    // Also expose the lowercase-keyed aliases for any consumers that expect that
-    Object.keys(LANGUAGE_ALIASES).forEach(k => { LANG_MAP[k] = LANGUAGE_ALIASES[k]; });
-    globalThis.LANGUAGE_MAP = globalThis.LANGUAGE_MAP || LANG_MAP;
-  })();
-
-  function updateLanguageModeHint() {
-    const hint = document.getElementById('languageLogicHint');
-    if (!hint) return;
-    hint.textContent = matchAllLanguages
-      ? 'Multiple language chips use AND (must match all selected).'
-      : 'Multiple language chips use OR (any selected).';
+  .modal-cta {
+    width: 100%;
   }
+}
 
-  function languageMatchesSelection(tags, lang) {
-    const langKey = lang.toLowerCase();
-    const aliases = LANGUAGE_ALIASES[langKey] || [langKey];
-    // Use exact token matching to prevent false positives like "Go" matching "django"
-    // Tags are split on whitespace, commas, slashes, and plus signs before comparing
-    return aliases.some(alias => {
-      const a = alias.toLowerCase();
-      return tags.some(tag => {
-        const tokens = tag.toLowerCase().split(/[\s,/+]+/);
-        return tokens.includes(a);
-      });
-    });
+/* Dark mode - Modal */
+.dark .modal {
+  background: #18181b;
+}
+
+.dark .modal-header h2 {
+  color: #f4f4f5;
+}
+
+.dark .modal-header p {
+  color: #a1a1aa;
+}
+
+.dark .section-title {
+  color: #a1a1aa;
+  border-color: #27272a;
+}
+
+.dark .metric-card {
+  background: #27272a;
+  border-color: #3f3f46;
+}
+
+.dark .metric-value {
+  color: #f4f4f5;
+}
+
+.dark .metric-label {
+  color: #a1a1aa;
+}
+
+.dark .close-btn {
+  background: #27272a;
+  color: #a1a1aa;
+}
+
+.dark .close-btn:hover {
+  background: #3f3f46;
+  color: #f4f4f5;
+}
+
+.dark .modal-footer {
+  background: #0f0f10;
+  border-color: #27272a;
+}
+
+.dark .modal-repo-link {
+  background: #27272a;
+  color: #e5e7eb;
+  border-color: #3f3f46;
+}
+
+.dark .modal-repo-link:hover {
+  background: #3f3f46;
+}
+
+.dark #compareModalBody {
+  color: #e5e7eb;
+}
+
+.dark #compareModalBody .text-zinc-700 {
+  color: #e5e7eb !important;
+}
+
+.dark #compareModalBody .text-zinc-500 {
+  color: #a1a1aa !important;
+}
+
+.dark #compareModalBody .text-zinc-400 {
+  color: #d4d4d8 !important;
+}
+
+/* Dark mode - Guide section cards */
+.dark #guide article {
+  background: #18181b !important;
+  border-color: #3f3f46 !important;
+}
+
+.dark #guide article h3 {
+  color: #f4f4f5 !important;
+}
+
+.dark #guide article p, .dark #guide article li {
+  color: #a1a1aa !important;
+}
+
+.dark #guide details {
+  border-color: #3f3f46 !important;
+}
+
+.dark #guide details summary {
+  color: #f4f4f5 !important;
+}
+
+.dark #guide a.block {
+  border-color: #3f3f46 !important;
+}
+
+.dark #guide a.block:hover {
+  background: rgba(249, 115, 22, 0.1) !important;
+}
+
+.dark #guide .font-mono {
+  background: #27272a !important;
+  color: #d4d4d8 !important;
+}
+
+/* Dark mode - Mobile menu */
+.dark #mobileMenu #menuPanel {
+  background: #18181b !important;
+  border-right: 1px solid #3f3f46;
+}
+
+.dark #mobileMenu .border-zinc-100 {
+  border-color: #3f3f46 !important;
+}
+
+.dark #mobileMenu .text-zinc-900 {
+  color: #f4f4f5 !important;
+}
+
+.dark #mobileMenu .text-zinc-700 {
+  color: #e5e7eb !important;
+}
+
+.dark #mobileMenu .hover\:bg-zinc-100:hover {
+  background: #27272a !important;
+}
+
+.dark #mobileMenu .bg-orange-50 {
+  background: rgba(249, 115, 22, 0.15) !important;
+}
+
+/* Header dark mode */
+.dark header {
+  background: rgba(24, 24, 27, 0.85) !important;
+  border-bottom: 1px solid #3f3f46;
+}
+
+.dark header .text-zinc-900 {
+  color: #f4f4f5 !important;
+}
+
+.dark header .text-zinc-600 {
+  color: #a1a1aa !important;
+}
+
+.dark header .hover\:text-zinc-900:hover {
+  color: #f4f4f5 !important;
+}
+
+.dark header .hover\:bg-zinc-100\/50:hover {
+  background: rgba(39, 39, 42, 0.5) !important;
+}
+
+/* Selected Languages Strip */
+#selectedLangsStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+#selectedLangsStrip .empty-state {
+  color: #888;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.selected-lang-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 12px;
+  background: #fff4ec;
+  border: 1.5px solid #ffe0c8;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d45800;
+}
+
+.unselect-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: #ffe0c8;
+  color: #d45800;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 2px;
+}
+
+.unselect-lang-btn:hover {
+  background: #f46b0e;
+  color: white;
+}
+
+.clear-all-langs-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1.5px dashed #ddd;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+}
+
+.clear-all-langs-btn:hover {
+  border-color: #f46b0e;
+  color: #f46b0e;
+  background: #fff4ec;
+}
+
+/* Dark mode */
+.dark #selectedLangsStrip .empty-state {
+  color: #8a6a45;
+}
+
+.dark .selected-lang-badge {
+  background: #1c0f05;
+  border-color: #2a1508;
+  color: #f97316;
+}
+
+.dark .unselect-lang-btn {
+  background: #2a1508;
+  color: #f97316;
+}
+
+.dark .unselect-lang-btn:hover {
+  background: #fb923c;
+  color: white;
+}
+
+.dark .clear-all-langs-btn {
+  border-color: #2e1e0a;
+  color: #8a6a45;
+}
+
+.dark .clear-all-langs-btn:hover {
+  border-color: #f97316;
+  color: #fb923c;
+  background: #1c0f05;
+}
+=======
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root,[data-theme="light"]{
+  --bg:#FAFAFA;--white:#FFFFFF;
+  --orange:#F46B0E;--orange-deep:#D45800;--orange-pale:#FFF4EC;--orange-mid:#FFE0C8;--orange-border:#FECBA0;
+  --ink:#1C1008;--ink2:#3A2010;--ink3:#7A5030;--muted:#B07850;
+  --border:#EAD8C8;--border2:#F2E5D8;
+  --green:#00875A;--red:#C53030;--blue:#1A56DB;--purple:#6B21A8;
+  --shadow:0 1px 4px rgb(28 16 8 / 0.07),0 6px 20px rgb(28 16 8 / 0.05);
+  --shadow-lg:0 12px 40px rgb(28 16 8 / 0.13);
+  --card-bg:#FFFFFF;--nav-bg:rgb(250 250 250 / 0.93);--toggle-bg:#EAD8C8;--toggle-knob:#FFFFFF;
+  --input-bg:#FAFAFA;--tag-bg:#FAFAFA;--modal-bg:#FFFFFF;--an-bg:#FAFAFA;
+  --skeleton-base:#e8e8e8;--skeleton-shine:#f4f4f4;
+}
+[data-theme="dark"]{
+  --bg:#0F0A05;--white:#1A1108;
+  --orange:#F97316;--orange-deep:#EA6C00;--orange-pale:#1A0E04;--orange-mid:#2A1608;--orange-border:#3D2008;
+  --ink:#F5E6D3;--ink2:#E0C9A8;--ink3:#C4A07A;--muted:#8A6A45;
+  --border:#2E1E0A;--border2:#241608;
+  --green:#34D399;--red:#FC8181;--blue:#60A5FA;--purple:#C084FC;
+  --shadow:0 1px 4px rgb(0 0 0 / 0.4),0 6px 20px rgb(0 0 0 / 0.3);
+  --shadow-lg:0 12px 40px rgb(0 0 0 / 0.5);
+  --card-bg:#1A1108;--nav-bg:rgb(15 10 5 / 0.93);--toggle-bg:#2E1E0A;--toggle-knob:#F97316;
+  --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
+  --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body.modal-open{overflow:hidden;height:100vh}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
+.nav-inner{max-width:1340px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.gsoc-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBBC04,var(--orange));border-radius:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.04em;box-shadow:0 2px 8px rgb(244 107 14 / 0.3)}
+.nav-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;transition:color .3s}
+.nav-title em{font-style:italic;color:var(--orange)}
+.nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+
+/* COUNTDOWN BANNER */
+.countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.countdown-units{display:inline-flex;gap:8px}
+.cu{display:inline-flex;flex-direction:column;align-items:center;background:var(--orange);color:white;border-radius:6px;padding:2px 8px;min-width:36px}
+.cu-n{font-family:'Playfair Display',serif;font-size:15px;font-weight:900;line-height:1}
+.cu-l{font-size:8px;letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+.countdown-label{font-size:11px;opacity:.8}
+
+/* THEME TOGGLE */
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--orange);background:var(--orange-pale)}
+.toggle-track{width:32px;height:18px;border-radius:100px;background:var(--toggle-bg);position:relative;transition:background .3s;border:1.5px solid var(--border);flex-shrink:0}
+.toggle-knob{width:12px;height:12px;border-radius:50%;background:var(--toggle-knob);position:absolute;top:1px;left:1px;transition:transform .3s;box-shadow:0 1px 3px rgb(0 0 0 / 0.2)}
+[data-theme="dark"] .toggle-knob{transform:translateX(14px)}
+.toggle-label{font-size:11px;font-weight:700;color:var(--ink3);white-space:nowrap}
+.sun-icon,.moon-icon{font-size:12px;line-height:1}
+[data-theme="light"] .moon-icon{display:none}
+[data-theme="dark"] .sun-icon{display:none}
+
+.btn-analytics,.btn-compare-nav{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--ink3);font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.btn-analytics:hover,.btn-compare-nav:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.btn-compare-nav{position:relative}
+.compare-badge{position:absolute;top:-5px;right:-5px;background:var(--orange);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:900;align-items:center;justify-content:center;display:none}
+.compare-badge.show{display:flex}
+.btn-contribute{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;transition:all .18s;white-space:nowrap}
+.btn-contribute:hover{background:var(--orange);color:white;transform:translateY(-1px)}
+.btn-contribute svg{width:13px;height:13px;flex-shrink:0}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
+
+/* HERO */
+.hero{padding:48px 24px 36px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgb(244 107 14 / 0.07),transparent);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--orange-pale);border:1.5px solid var(--orange-border);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--orange-deep);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,5.5vw,68px);font-weight:900;color:var(--ink);line-height:1.02;letter-spacing:-.03em;margin-bottom:12px;transition:color .3s}
+.hero h1 em{font-style:italic;color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--ink3);line-height:1.7;max-width:480px;margin:0 auto 30px;font-weight:400}
+
+/* TRENDING */
+.trending-section{max-width:1340px;margin:0 auto;padding:0 24px 20px}
+.trending-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.trending-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.trending-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.trending-scroll::-webkit-scrollbar{display:none}
+.trend-card{flex-shrink:0;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;min-width:180px;max-width:220px}
+.trend-card:hover{border-color:var(--orange);transform:translateY(-1px);box-shadow:0 4px 12px rgb(244 107 14 / 0.1)}
+.trend-rank{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--orange);opacity:.4;flex-shrink:0;width:20px}
+.trend-info{overflow:hidden}
+.trend-name{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trend-views{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* STATS BAR */
+.stats-bar{display:flex;justify-content:center;margin-bottom:44px}
+.stats-inner{display:inline-flex;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;background:var(--white);box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+.sbox{padding:12px 22px;border-right:1.5px solid var(--border);text-align:center;transition:border-color .3s}
+.sbox:last-child{border-right:none}
+.sn{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;line-height:1;margin-bottom:2px}
+.sl{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.sn.orange{color:var(--orange)}.sn.green{color:var(--green)}.sn.purple{color:var(--purple)}.sn.red{color:var(--red)}
+
+/* FILTERS */
+.wrap{max-width:1340px;margin:0 auto;padding:0 24px}
+.filter-card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px;transition:background .3s,border-color .3s}
+.filter-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.filters-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.fg select,.search-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:9px 13px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;outline:none;cursor:pointer;transition:border-color .18s,background .3s,color .3s;min-width:148px}
+.fg select{appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.fg select:focus,.search-input:focus{border-color:var(--orange)}
+.search-box{position:relative;display:flex;flex-direction:column;gap:5px}
+.search-box label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.search-input{padding-left:34px;min-width:200px}
+.search-ico{position:absolute;bottom:10px;left:12px;font-size:14px;color:var(--muted);pointer-events:none}
+.btn-reset{background:transparent;border:1.5px solid var(--border);border-radius:10px;padding:9px 15px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;align-self:flex-end}
+.btn-reset:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding-top:13px;border-top:1px solid var(--border2)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:100px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;color:var(--ink3);cursor:pointer;transition:all .15s;user-select:none;font-weight:600}
+.chip:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.chip.cv{border-color:#C2410C;background:rgb(194 65 12 / 0.06);color:#C2410C}
+.chip.cn{border-color:var(--purple);background:rgb(107 33 168 / 0.06);color:var(--purple)}
+.chip.ch{border-color:var(--red);background:rgb(197 48 48 / 0.06);color:var(--red)}
+.chip.cc{border-color:var(--green);background:rgb(0 135 90 / 0.06);color:var(--green)}
+.chip.ca{border-color:var(--orange);background:var(--orange-pale);color:var(--orange)}
+.chip.cb{border-color:#0891B2;background:rgb(8 145 178 / 0.06);color:#0891B2}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+.pill{padding:4px 11px;border-radius:100px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;font-weight:600}
+.pill:hover{border-color:var(--orange);color:var(--orange)}
+.pill.active{border-color:var(--orange);background:var(--orange-pale);color:var(--orange-deep)}
+
+/* KEYBOARD HINT */
+.kbd-hint{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.kbd{display:inline-flex;align-items:center;justify-content:center;background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:'Fira Code',monospace;font-size:10px;color:var(--ink3);box-shadow:0 1px 2px rgb(0 0 0 / 0.08)}
+
+/* API BANNER */
+.api-banner{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);font-size:12px;margin-bottom:16px;flex-wrap:wrap;transition:background .3s,border-color .3s}
+.api-ok{border-color:rgb(0 135 90 / 0.3);background:rgb(0 135 90 / 0.04)}
+.api-ok .api-strong{color:var(--green)}
+.api-warn{border-color:rgb(244 107 14 / 0.3);background:var(--orange-pale)}
+.api-warn .api-strong{color:var(--orange-deep)}
+.api-strong{font-weight:700;color:var(--ink)}
+.api-text{color:var(--muted)}
+.fetch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s;white-space:nowrap;margin-left:auto}
+.fetch-btn:hover{background:var(--orange);color:white}
+.fetch-btn:disabled{opacity:.5;cursor:not-allowed}
+.spin{width:10px;height:10px;border:2px solid rgb(255 255 255 / 0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULTS */
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.result-count{font-size:13px;color:var(--muted);font-weight:500}
+.result-count strong{color:var(--ink);font-weight:700}
+.sort-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+.sort-row select{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 26px 6px 9px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;transition:background-color .3s,border-color .3s,color .3s}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-bottom:60px}
+
+/* CARD */
+.org-card{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  animation:fadeUp .25s ease forwards;
+  will-change:transform,box-shadow;
+  transform:translateY(0);
+  box-shadow:
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 1px 4px rgb(28 16 8 / 0.06),
+    0 6px 20px rgb(28 16 8 / 0.04);
+  transition:
+    border-color .25s cubic-bezier(.25,.8,.25,1),
+    box-shadow .25s cubic-bezier(.25,.8,.25,1),
+    transform .25s cubic-bezier(.25,.8,.25,1),
+    background .3s;
+}
+.org-card::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2.5px;
+  background:linear-gradient(90deg,var(--orange),#FBBC04);
+  opacity:0;
+  transition:opacity .2s;
+}
+.org-card-3d.tilt-active,
+.org-card:hover{
+  border-color:var(--orange-border);
+  box-shadow:
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 5px 0px var(--border2),
+    0 6px 0px var(--border2),
+    0 12px 24px rgb(28 16 8 / 0.12),
+    0 24px 48px rgb(244 107 14 / 0.16),
+    0 36px 72px rgb(28 16 8 / 0.08);
+  transform:translateY(-8px) scale(1.05);
+}
+.org-card.tilt-active::after{opacity:1}
+.org-card .glare{
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .3s;
+  z-index:1;
+  background:radial-gradient(circle at 50% 50%,rgb(255 255 255 / 0.18) 0%,rgb(255 255 255 / 0) 65%);
+}
+.org-card.tilt-active .glare{opacity:1}
+.org-card.focused{
+  outline:2px solid var(--orange);
+  outline-offset:2px;
+  border-color:var(--orange-border);
+  box-shadow:
+    0 1px 0px var(--border2),
+    0 2px 0px var(--border2),
+    0 3px 0px var(--border2),
+    0 4px 0px var(--border2),
+    0 12px 24px rgb(244 107 14 / 0.12);
+}
+.org-card.focused::after{opacity:1}
+.org-card.in-compare{border-color:var(--blue);background:rgb(26 86 219 / 0.03)}
+.org-card.in-compare::after{opacity:1;background:linear-gradient(90deg,var(--blue),var(--purple))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+@media(prefers-reduced-motion:no-preference){
+  .org-card-3d{perspective:900px;transform-style:preserve-3d}
+  .org-card-3d .org-name{transform:translateZ(30px)}
+  .org-card-3d .org-desc{transform:translateZ(20px)}
+  .org-card-3d .badges,.org-card-3d .tags{transform:translateZ(15px)}
+  .org-card-3d .org-logo{transform:translateZ(25px);transition:transform .3s ease}
+  .org-card-3d:hover .org-logo{transform:translateZ(40px) scale(1.05)}
+}
+
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
+.card-header-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.card-top-line{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px}
+.org-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);line-height:1.3;flex:1;min-width:0;transition:color .3s}
+.card-actions{display:flex;gap:4px;flex-shrink:0;align-items:flex-start}
+.org-logo-info{flex:1;min-width:0}
+.cat-pill{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.org-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.b{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;border:1px solid transparent}
+.bv{background:rgb(194 65 12 / 0.07);color:#C2410C;border-color:rgb(194 65 12 / 0.2)}
+.be{background:rgb(26 86 219 / 0.07);color:var(--blue);border-color:rgb(26 86 219 / 0.2)}
+.bn{background:rgb(107 33 168 / 0.07);color:var(--purple);border-color:rgb(107 33 168 / 0.2)}
+.bh{background:rgb(197 48 48 / 0.07);color:var(--red);border-color:rgb(197 48 48 / 0.2)}
+.bm{background:#FFFAED;color:#92600A;border-color:rgb(251 191 36 / 0.3)}
+[data-theme="dark"] .bm,[data-theme="dark"] .bam{background:rgb(251 191 36 / 0.12);color:#FBBC04;border-color:rgb(251 191 36 / 0.35)}
+.bc{background:rgb(0 135 90 / 0.07);color:var(--green);border-color:rgb(0 135 90 / 0.2)}
+.bac{background:var(--orange-pale);color:var(--orange-deep);border-color:var(--orange-border)}
+.bam{background:#FFFAED;color:#92600A;border-color:rgb(251 191 36 / 0.2)}
+.bal{background:var(--border2);color:var(--muted);border-color:var(--border)}
+.bna{background:var(--bg);color:var(--muted);border-color:var(--border2)}
+.bgfi{background:rgb(26 86 219 / 0.07);color:var(--blue);border-color:rgb(26 86 219 / 0.2);cursor:default}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border2);color:var(--muted);background:var(--tag-bg);font-family:'Fira Code',monospace;transition:background .3s,border-color .3s,color .3s}
+.org-logo{width:48px;height:48px;border-radius:10px;object-fit:cover;border:1.5px solid var(--border2);background:#fff;flex-shrink:0;transition:border-color .18s}
+[data-theme="dark"] .org-logo{border-color:rgb(255 255 255 / 0.12)}
+.issue-logo{background:#fff!important}
+.org-logo-placeholder{width:48px;height:48px;border-radius:10px;background:var(--orange-pale);color:var(--orange);font-family:'Playfair Display',serif;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--orange-border)}
+.card-repo-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);text-decoration:none;font-family:'Fira Code',monospace;padding:2px 6px;border-radius:4px;border:1px solid var(--border2);background:var(--tag-bg);transition:all .15s;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.card-repo-link:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.card-repo-link svg{width:10px;height:10px;flex-shrink:0}
+.gh-mini{display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);flex-wrap:wrap}
+.bookmark-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:6px}
+.bookmark-btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+/* ISSUES PAGE */
+.page{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;transition:background .3s}
+.page.open{display:block}
+.page-nav{position:sticky;top:0;z-index:10;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:12px}
+.page-back{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--ink3);font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s}
+.page-back:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.page-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:var(--ink);flex:1}
+.page-title em{color:var(--orange);font-style:italic}
+.page-body{max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+.issues-hero{text-align:center;margin-bottom:36px}
+.issues-hero h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:var(--ink);margin-bottom:8px}
+.issues-hero p{font-size:14px;color:var(--ink3);max-width:500px;margin:0 auto 20px}
+.issues-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:12px}
+.issues-controls select,.issues-search{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:500;outline:none;cursor:pointer;transition:border-color .18s,background .3s}
+.issues-controls select{appearance:none;padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.issues-controls select:focus,.issues-search:focus{border-color:var(--orange)}
+.issues-search{min-width:220px}
+.btn-fetch-issues{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s}
+.btn-fetch-issues:hover{background:var(--orange);color:white}
+.btn-fetch-issues:disabled{opacity:.5;cursor:not-allowed}
+.issues-stats{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.istat{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 18px;text-align:center;min-width:80px}
+.istat .iv{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--orange)}
+.istat .il{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.issues-grid{display:flex;flex-direction:column;gap:10px}
+.issue-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:border-color .18s,box-shadow .18s,background .3s;text-decoration:none}
+.issue-card:hover{border-color:var(--orange-border);box-shadow:0 3px 14px rgb(244 107 14 / 0.09)}
+.issue-logo{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border2);object-fit:cover;flex-shrink:0;background:var(--border2)}
+.issue-body{flex:1;min-width:0}
+.issue-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.issue-org{font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
+.issue-title{font-size:13px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:6px;transition:color .3s}
+.issue-card:hover .issue-title{color:var(--orange)}
+.issue-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.issue-label{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
+.issue-label.gfi{background:rgb(0 135 90 / 0.08);color:var(--green);border:1px solid rgb(0 135 90 / 0.2)}
+.issue-label.lang{background:var(--tag-bg);color:var(--muted);border:1px solid var(--border2);font-family:'Fira Code',monospace}
+.issue-label.cat{background:var(--orange-pale);color:var(--orange-deep);border:1px solid var(--orange-border)}
+.issue-date{font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.issue-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.issue-empty .ei{font-size:40px;margin-bottom:12px}
+.issue-empty h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:6px}
+.load-more{display:flex;justify-content:center;margin-top:20px}
+.btn-load-more{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 24px;font-size:12px;font-weight:700;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s}
+.btn-load-more:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.fetch-progress{text-align:center;padding:40px 20px;color:var(--muted)}
+.fetch-progress .fp-bar-wrap{max-width:300px;margin:14px auto 0;background:var(--border2);border-radius:100px;height:6px;overflow:hidden}
+.fetch-progress .fp-bar{height:100%;background:linear-gradient(90deg,var(--orange),#FBBC04);border-radius:100px;transition:width .4s}
+.gh-s{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);font-family:'Fira Code',monospace}
+.gh-s b{color:var(--ink);font-weight:600;transition:color .3s}
+
+/* COMPARE BTN ON CARD */
+.btn-card-compare{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:11px;transition:all .15s;flex-shrink:0}
+.btn-card-compare:hover{border-color:var(--blue);color:var(--blue);background:rgb(26 86 219 / 0.06)}
+.btn-card-compare.active{border-color:var(--blue);color:var(--blue);background:rgb(26 86 219 / 0.08)}
+
+/* CAT COLORS */
+.cb-science{background:rgb(26 86 219 / 0.07);color:#1E40AF}
+.cb-programming{background:rgb(107 33 168 / 0.07);color:#6B21A8}
+.cb-data{background:rgb(0 135 90 / 0.07);color:#065F46}
+.cb-web{background:rgb(244 107 14 / 0.08);color:var(--orange-deep)}
+.cb-os{background:rgb(100 116 139 / 0.08);color:#374151}
+.cb-security{background:rgb(197 48 48 / 0.07);color:#991B1B}
+.cb-media{background:rgb(219 39 119 / 0.07);color:#9D174D}
+.cb-infra{background:rgb(14 165 233 / 0.07);color:#075985}
+.cb-ai{background:rgb(99 102 241 / 0.08);color:#3730A3}
+.cb-dev{background:rgb(245 158 11 / 0.08);color:#78350F}
+.cb-other{background:var(--border2);color:var(--muted)}
+[data-theme="dark"] .cb-os{background:rgb(100 116 139 / 0.15);color:#9CA3AF}
+[data-theme="dark"] .cb-other{background:rgb(255 255 255 / 0.05);color:var(--muted)}
+
+/* EMPTY STATE */
+.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
+.empty-icon{font-size:44px;margin-bottom:14px}
+.empty h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--ink);margin-bottom:8px}
+.empty p{font-size:14px;margin-bottom:24px}
+.btn-clear-filters{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-clear-filters:hover{background:var(--orange);color:white;transform:translateY(-1px);box-shadow:0 4px 12px rgb(244 107 14 / 0.2)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgb(28 16 8 / 0.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+[data-theme="dark"] .modal-bg{background:rgb(0 0 0 / 0.7)}
+.modal-bg.open{display:flex}
+.modal{background:var(--modal-bg);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;animation:su .22s ease;box-shadow:var(--shadow-lg);border:1.5px solid var(--border);transition:background .3s,border-color .3s}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@keyframes su{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.modal-top{padding:26px 26px 0}
+.modal-top-actions{position:absolute;top:14px;right:14px;display:flex;gap:6px}
+.close-btn,.modal-compare-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.close-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+.modal-compare-btn:hover,.modal-compare-btn.active{border-color:var(--blue);color:var(--blue);background:rgb(26 86 219 / 0.06)}
+.m-cat{margin-bottom:8px}
+.m-name{font-family:'Playfair Display',serif;font-size:21px;font-weight:900;color:var(--ink);line-height:1.2;padding-right:80px;margin-bottom:4px;transition:color .3s}
+.m-desc{font-size:13px;color:var(--ink3);line-height:1.7;padding:0 26px 16px}
+.modal-body{padding:0 26px 26px}
+.ms-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.m-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.mc{background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center;transition:background .3s,border-color .3s}
+.mc .mv{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px}
+.mc .ml{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.prog{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:2px}
+.gh-box{background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:12px 14px;margin-bottom:16px;transition:background .3s,border-color .3s}
+.gh-box-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.gh-box-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.09em;text-transform:uppercase}
+.gh-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.gls{text-align:center}
+.gls .gv{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:var(--ink);transition:color .3s}
+.gls .gl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.gh-fetch{display:inline-flex;align-items:center;gap:4px;background:var(--ink);color:var(--bg);border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:background .18s,color .18s}
+.gh-fetch:hover{background:var(--orange);color:white}
+.m-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.m-tag{font-size:11px;padding:4px 10px;border-radius:6px;border:1.5px solid var(--border);color:var(--ink3);background:var(--bg);font-weight:500;transition:background .3s,border-color .3s,color .3s}
+.timeline{font-size:12px;color:var(--ink3);line-height:2;margin-bottom:16px}
+.modal-cta{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s}
+.modal-cta:hover{background:var(--orange-deep)}
+.modal-ideas-link{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s;margin-right:10px}
+.modal-ideas-link:hover{opacity:.95}
+.modal-ideas-link:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+[data-theme="dark"] .modal-ideas-link{background:#0FA673;color:#FFFFFF}
+[data-theme="dark"] .modal-ideas-link:hover{background:#096247;opacity:1}
+.modal-ideas-text{color:var(--muted);font-size:13px;font-style:italic;padding:10px 0;display:block}
+
+/* COMPARE PANEL */
+.compare-bg{position:fixed;inset:0;z-index:150;background:rgb(28 16 8 / 0.55);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
+[data-theme="dark"] .compare-bg{background:rgb(0 0 0 / 0.75)}
+.compare-bg.open{display:flex}
+.compare-panel{background:var(--modal-bg);border-radius:20px;width:100%;max-width:900px;max-height:92vh;overflow-y:auto;position:relative;animation:su .25s ease;box-shadow:var(--shadow-lg);border:1.5px solid var(--border)}
+.compare-panel::-webkit-scrollbar{width:3px}
+.compare-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.compare-header{padding:22px 26px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.compare-header h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--ink)}
+.compare-header p{font-size:12px;color:var(--muted);margin-top:2px}
+.compare-body{padding:22px 26px}
+.compare-slots{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px}
+.compare-slot{background:var(--bg);border:2px dashed var(--border);border-radius:12px;padding:16px;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;cursor:pointer;transition:all .2s;text-align:center}
+.compare-slot.filled{border-style:solid;border-color:var(--orange-border);background:var(--orange-pale);cursor:default;align-items:flex-start;justify-content:flex-start}
+.compare-slot.filled .slot-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink);text-align:left;line-height:1.3}
+.compare-slot .slot-empty{font-size:11px;color:var(--muted);font-weight:600}
+.compare-slot .slot-cat{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.slot-remove{display:inline-flex;align-items:center;gap:3px;margin-top:6px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--white);color:var(--muted);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
+.slot-remove:hover{border-color:var(--red);color:var(--red)}
+.compare-table{width:100%;border-collapse:collapse;font-size:12px}
+.compare-table th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;border-bottom:1.5px solid var(--border2)}
+.compare-table th:not(:first-child){text-align:center}
+.compare-table td{padding:10px 12px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.compare-table td:not(:first-child){text-align:center}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .row-label{font-weight:600;color:var(--ink3);font-size:11px;white-space:nowrap}
+.cmp-best{font-weight:700;color:var(--green)}
+.cmp-worst{color:var(--red)}
+.cmp-val{font-family:'Fira Code',monospace;color:var(--ink)}
+.cmp-bar-wrap{display:flex;align-items:center;gap:6px}
+.cmp-bar-track{flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden;min-width:60px}
+.cmp-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),#FBBC04)}
+.compare-hint{font-size:11px;color:var(--muted);text-align:center;padding:20px;border:1.5px dashed var(--border);border-radius:10px;margin-top:4px}
+
+/* ANALYTICS PANEL */
+.an-bg{position:fixed;inset:0;z-index:200;background:rgb(28 16 8 / 0.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+[data-theme="dark"] .an-bg{background:rgb(0 0 0 / 0.7)}
+.an-bg.open{display:flex}
+.an-panel{background:var(--white);border-radius:20px;width:100%;max-width:660px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:su .22s ease;border:1.5px solid var(--border);transition:background .3s,border-color .3s}
+.an-header{padding:24px 26px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.an-header h2{font-family:'Playfair Display',serif;font-size:21px;font-weight:900;color:var(--ink);transition:color .3s}
+.an-header p{font-size:12px;color:var(--muted);margin-top:3px}
+.an-body{padding:18px 26px 24px}
+.an-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.astat{background:var(--an-bg);border:1.5px solid var(--border2);border-radius:11px;padding:14px;text-align:center;transition:background .3s,border-color .3s}
+.astat .av{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);transition:color .3s}
+.astat .al{font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+.astat.hi{background:var(--orange-pale);border-color:var(--orange-border)}
+.astat.hi .av{color:var(--orange-deep)}
+.chart-sec{margin-bottom:16px}
+.chart-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+.bar-chart{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:flex;align-items:center;gap:9px}
+.bar-lbl{width:110px;text-align:right;font-size:11px;color:var(--ink3);flex-shrink:0}
+.bar-track{flex:1;background:var(--border2);border-radius:100px;height:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--orange),#FBBC04);transition:width .8s cubic-bezier(.22,1,.36,1)}
+.bar-val{width:30px;font-size:10px;color:var(--muted);font-family:'Fira Code',monospace;flex-shrink:0}
+.search-chips{display:flex;flex-wrap:wrap;gap:5px}
+.sch{background:var(--bg);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--ink3);font-weight:500;transition:background .3s,border-color .3s}
+.sch.hot{background:var(--orange-pale);border-color:var(--orange-border);color:var(--orange-deep)}
+.an-note{font-size:11px;color:var(--muted);text-align:center;padding-top:13px;border-top:1px solid var(--border2);margin-top:4px;line-height:1.6}
+
+/* SCROLL TOP */
+.scroll-top-btn{position:fixed;bottom:28px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--orange);color:white;border:none;font-size:18px;cursor:pointer;display:none;z-index:50;box-shadow:0 3px 10px rgb(244 107 14 / 0.35);transition:opacity .2s}
+.scroll-top-btn.visible{display:flex;align-items:center;justify-content:center}
+
+/* SELECTED LANGUAGES STRIP */
+.selected-langs-strip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:32px}
+.selected-langs-strip .empty-state{color:var(--muted);font-style:italic;font-size:12px}
+.selected-lang-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 12px;background:var(--orange-pale);border:1.5px solid var(--orange-border);border-radius:100px;font-size:12px;font-weight:600;color:var(--orange-deep);transition:all .15s ease}
+.selected-lang-badge:hover{border-color:var(--orange);background:var(--orange-mid)}
+.unselect-lang-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:none;background:var(--orange-border);color:var(--orange-deep);font-size:14px;font-weight:700;line-height:1;cursor:pointer;transition:all .15s ease;padding:0;margin-left:2px}
+.unselect-lang-btn:hover{background:var(--orange);color:white}
+.clear-all-langs-btn{display:inline-flex;align-items:center;padding:4px 12px;background:transparent;border:1.5px dashed var(--border);border-radius:100px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s ease;margin-left:4px}
+.clear-all-langs-btn:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-pale)}
+[data-theme="dark"] .selected-lang-badge{background:var(--orange-pale);border-color:var(--orange-border);color:var(--orange)}
+[data-theme="dark"] .selected-lang-badge:hover{border-color:var(--orange-deep);background:var(--orange-mid)}
+[data-theme="dark"] .unselect-lang-btn{background:var(--orange-border);color:var(--orange)}
+[data-theme="dark"] .unselect-lang-btn:hover{background:var(--orange-deep);color:white}
+[data-theme="dark"] .clear-all-langs-btn{border-color:var(--border);color:var(--muted)}
+[data-theme="dark"] .clear-all-langs-btn:hover{border-color:var(--orange);color:var(--orange-deep);background:var(--orange-pale)}
+
+/* FOOTER */
+footer{border-top:1.5px solid var(--border);padding:24px;text-align:center;transition:border-color .3s}
+.footer-inner{max-width:1340px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted)}
+footer a{color:var(--orange);text-decoration:none;font-weight:600}
+footer a:hover{text-decoration:underline}
+[data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
+
+/* SKELETON */
+.skeleton-card{background:var(--card-bg);border-radius:12px;padding:20px;height:220px}
+.skeleton-head{display:flex;gap:12px;margin-bottom:16px}
+.skeleton-logo{width:48px;height:48px;border-radius:10px;flex-shrink:0;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear}
+.skeleton-lines{flex:1;display:flex;flex-direction:column;gap:8px}
+.skeleton-line{height:12px;border-radius:4px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear}
+.skeleton-title{width:70%}
+.skeleton-subtitle{width:50%}
+.skeleton-body{height:40px;border-radius:6px;margin-bottom:12px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear}
+.skeleton-tags{display:flex;gap:8px}
+.skeleton-pill{width:60px;height:20px;border-radius:100px;background-image:linear-gradient(90deg,var(--skeleton-base) 25%,var(--skeleton-shine) 50%,var(--skeleton-base) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.skeleton-logo,.skeleton-line,.skeleton-body,.skeleton-pill{animation:none}}
+
+/* RESPONSIVE — Tablet (≤900px) */
+@media(max-width:900px){
+  .nav-title{display:none}
+  .btn-contribute{display:none}
+  .compare-slots{grid-template-columns:1fr 1fr}
+  .nav-inner{gap:6px}
+  .nav-right{gap:6px}
+  .stats-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;flex-wrap:nowrap}
+  .compare-panel{max-width:98vw}
+  .m-metrics{grid-template-columns:repeat(2,1fr)}
+}
+
+/* RESPONSIVE — Phone (≤640px) */
+@media(max-width:640px){
+  .nav-inner{padding:0 12px;gap:4px;flex-wrap:nowrap;overflow-x:auto}
+  .nav-logo{font-size:14px;flex-shrink:0}
+  .nav-right{gap:4px;flex-shrink:0}
+  .nav-right .btn-contribute span{display:none}
+  .compare-btn span:first-child,.analytics-btn span:first-child{display:none}
+  .compare-btn,.analytics-btn{padding:5px 10px;font-size:11px}
+  .stats-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 12px 6px;flex-wrap:nowrap;gap:6px;justify-content:flex-start}
+  .stat-item{flex-shrink:0;padding:8px 12px;min-width:72px}
+  .stat-num{font-size:18px}
+  .stat-lbl{font-size:9px}
+  .countdown-banner{padding:10px 12px;flex-direction:column;gap:6px;text-align:center}
+  .countdown-units{gap:8px}
+  .cd-unit .cd-num{font-size:20px}
+  .wrap{padding:0 12px}
+  .filter-card{padding:12px}
+  .filter-label{font-size:12px}
+  .filters-row{flex-direction:column;gap:8px}
+  .fg{width:100%}
+  .fg label{font-size:10px}
+  .fg select,.search-input{min-width:0!important;width:100%;box-sizing:border-box;font-size:13px;padding:9px 12px}
+  .search-box{width:100%}
+  .btn-reset{width:100%;text-align:center;padding:9px}
+  .chips-row{flex-wrap:wrap;gap:5px}
+  .chip{font-size:11px;padding:5px 10px}
+  .pills-section{gap:6px}
+  .pill{font-size:11px;padding:4px 10px}
+  .results-row{flex-direction:column;gap:6px;align-items:flex-start}
+  .result-count{font-size:12px}
+  .sort-row{width:100%}
+  .sort-row select{width:100%;font-size:13px}
+  .grid{grid-template-columns:1fr;gap:10px;margin-bottom:40px}
+  .org-card{padding:14px;animation:none;opacity:1;transform:none!important;transition:border-color .18s,box-shadow .18s,background .3s}
+  .org-card .glare{display:none}
+  .card-header-row{gap:10px}
+  .org-logo{width:40px;height:40px}
+  .org-name{font-size:13px}
+  .org-desc{font-size:12px;-webkit-line-clamp:2;line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .tags{gap:4px}
+  .tag{font-size:10px;padding:2px 7px}
+  .badges{gap:4px}
+  .b{font-size:10px;padding:2px 7px}
+  .gh-mini{gap:6px;flex-wrap:wrap}
+  .gh-s{font-size:10px}
+  .modal-bg{padding:8px}
+  .modal{border-radius:16px;max-height:96vh}
+  .modal-top{padding:18px 16px 0}
+  .m-desc{padding:0 16px 12px;font-size:12px}
+  .modal-body{padding:0 16px 20px}
+  .m-name{font-size:17px;padding-right:60px}
+  .m-metrics{grid-template-columns:repeat(2,1fr);gap:6px}
+  .mc{padding:9px 8px}
+  .mv{font-size:15px}
+  .gh-grid{grid-template-columns:repeat(3,1fr);gap:5px}
+  .m-tags{gap:4px}
+  .m-tag{font-size:10px;padding:3px 8px}
+  .modal-cta{font-size:12px;padding:9px 16px}
+  .modal-ideas-link{font-size:12px;padding:9px 16px;margin-right:8px}
+  .compare-panel{border-radius:14px;max-height:95vh}
+  .compare-header{padding:14px 16px}
+  .compare-body{padding:12px 16px}
+  .compare-table{font-size:11px}
+  .compare-table th,.compare-table td{padding:7px 8px}
+  .api-banner{padding:8px 12px;gap:8px;font-size:11px}
+  footer{padding:20px 12px}
+  .footer-inner{flex-direction:column;gap:4px;text-align:center;font-size:11px}
+  .issues-controls{flex-direction:column;align-items:stretch;gap:8px}
+  .issues-controls select,.issues-search{width:100%;box-sizing:border-box;min-width:0}
+  .btn-fetch-issues{width:100%;justify-content:center}
+  .issues-stats{gap:8px}
+  .istat{padding:8px 12px;min-width:60px}
+  .issue-card{padding:12px 14px;gap:10px}
+  .issue-logo{width:30px;height:30px}
+  .issue-title{font-size:12px}
+  .trend-card{min-width:140px;padding:8px 10px}
+  .trend-name{font-size:11px}
+  .an-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .an-num{font-size:22px}
+}
+
+/* RESPONSIVE — Small Phone (≤380px) */
+@media(max-width:380px){
+  .nav-inner{padding:0 8px}
+  .compare-btn,.analytics-btn{display:none}
+  .cd-num{font-size:18px}
+  .stat-num{font-size:15px}
+  .stat-lbl{font-size:8px}
+  .org-card{padding:12px}
+  .org-logo{width:34px;height:34px}
+  .org-name{font-size:12px}
+}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  *{
+    animation-delay:-1ms!important;
+    animation-duration:1ms!important;
+    animation-iteration-count:1!important;
+    background-attachment:initial!important;
+    scroll-behavior:auto!important;
+    transition-duration:1ms!important;
+    transition-delay:-1ms!important;
   }
-
-  function clearSelectedLanguagePills() {
-    selectedLanguages.clear();
-    document.querySelectorAll('.pill.active').forEach(pill => {
-      pill.classList.remove('active');
-      pill.setAttribute('aria-pressed', 'false');
-    });
-    renderSelectedLanguages();
+  .org-card{
+    animation:none!important;
+    opacity:1!important;
+    transform:none!important;
+    transition:border-color .18s,box-shadow .18s,background .3s!important;
   }
-
-  function renderSelectedLanguages() {
-    const container = document.getElementById('selectedLangsStrip');
-    if (!container) return;
-
-    if (selectedLanguages.size === 0) {
-      container.innerHTML = '<span class="empty-state">No languages selected</span>';
-      return;
-    }
-
-    const badges = [...selectedLanguages].map(lang => {
-      return `<span class="selected-lang-badge" data-lang="${lang}">
-        ${lang}
-        <button class="unselect-lang-btn" onclick="unselectLanguage('${lang}')" aria-label="Remove ${lang}">×</button>
-      </span>`;
-    }).join('');
-
-    const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
-    container.innerHTML = badges + clearAll;
+  .org-card .glare{display:none!important}
+  .skeleton-logo,.skeleton-line,.skeleton-body,.skeleton-pill{animation:none!important}
+  .org-card-3d,
+  .org-card-3d:hover,
+  .org-card-3d::before,
+  .org-card-3d::after,
+  .org-card-3d .org-logo,
+  .org-card-3d:hover .org-logo,
+  .org-card-3d .org-name,
+  .org-card-3d .org-desc,
+  .org-card-3d .badges,
+  .org-card-3d .tags{
+    transform:none!important;
+    transition:box-shadow .25s ease!important;
   }
-
-  window.unselectLanguage = function(lang) {
-    selectedLanguages.delete(lang);
-    const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
-    if (pillBtn) {
-      pillBtn.classList.remove('active');
-      pillBtn.setAttribute('aria-pressed', 'false');
-    }
-    renderSelectedLanguages();
-    applyFilters();
-  }
-
-  window.clearAllLanguages = function() {
-    selectedLanguages.clear();
-    document.querySelectorAll('.pill.active').forEach(p => {
-      p.classList.remove('active');
-      p.setAttribute('aria-pressed', 'false');
-    });
-    renderSelectedLanguages();
-    applyFilters();
-  }
-
-  // NOTE: toggleLanguageMode removed — the matchAllLanguagesToggle checkbox
-  // uses a direct event listener (line ~1538) and does not use onclick=.
-
-  window.togglePill = function(el) {
-    const langDisplay = el.dataset.lang || '';
-    const langKey = langDisplay.trim().toLowerCase();
-    if (!langKey) return;
-    const isActive = el.classList.toggle('active');
-    el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
-    else selectedLanguages.add(langDisplay);
-    renderSelectedLanguages();
-    applyFilters();
-  };
-
-  function createDefaultMentorEntry(org) {
-    return {
-      org: org.name,
-      ideasUrl: org.ideas || '',
-      channels: [],
-      mentors: [],
-      mailingLists: [],
-      tip: '',
-      status: 'fetch-failed',
-      lastFetched: ''
-    };
-  }
-
-  function getMentorEntry(name) {
-    const org = ORGS.find(item => item.name === name);
-    if (!org) return null;
-    return MENTOR_DATA[name] || createDefaultMentorEntry(org);
-  }
-
-  function formatRelativeRefresh(isoString) {
-    if (!isoString) return 'Last updated: unavailable';
-    const timestamp = new Date(isoString).getTime();
-    if (Number.isNaN(timestamp)) return 'Last updated: unavailable';
-    const minutes = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
-    if (minutes < 60) return `Last updated: ${minutes} min ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 48) return `Last updated: ${hours} hour${hours === 1 ? '' : 's'} ago`;
-    const days = Math.floor(hours / 24);
-    return `Last updated: ${days} day${days === 1 ? '' : 's'} ago`;
-  }
-
-  function getPrimaryMentorContact(entry) {
-    if (entry.channels.length > 0) return entry.channels[0];
-    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
-    return null;
-  }
-
-  function buildChannelChips(records) {
-    return records
-      .map((record) => {
-        const safe = sanitizeHrefUrl(record.url);
-        if (!safe) return '';
-        return `
-          <a class="mentor-link-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
-            <span>${CHANNEL_ICONS[record.type] || '💬'}</span>
-            <span>${escapeHtml(record.label || record.type)}</span>
-          </a>
-        `;
-      })
-      .filter(Boolean)
-      .join('');
-  }
-
-  function buildMentorChips(mentors) {
-    return mentors
-      .map((mentor) => {
-        if (mentor.githubUrl) {
-          const safe = sanitizeHrefUrl(mentor.githubUrl);
-          const label = mentor.github ? `@${mentor.github}` : (mentor.name || mentor.githubUrl);
-          if (safe) {
-            return `
-              <a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
-                <span>🐙</span>
-                <span>${escapeHtml(label)}</span>
-              </a>
-            `;
-          }
-        }
-
-        return `
-          <span class="mentor-handle-chip">
-            <span>👤</span>
-            <span>${escapeHtml(mentor.name || 'Mentor')}</span>
-          </span>
-        `;
-      })
-      .join('');
-  }
-
-  function buildMentorPreviewChips(mentorPreview) {
-    if (mentorPreview.length === 0) {
-      return '<p class="text-sm text-zinc-600">No mentor handles parsed yet.</p>';
-    }
-
-    const chips = mentorPreview.map((mentor) => {
-      if (mentor.githubUrl) {
-        const safe = sanitizeHrefUrl(mentor.githubUrl);
-        if (safe) return `<a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer"><span>🐙</span><span>${escapeHtml(mentor.displayLabel)}</span></a>`;
-      }
-
-      return `<span class="mentor-handle-chip"><span>👤</span><span>${escapeHtml(mentor.displayLabel)}</span></span>`;
-    }).join('');
-
-    return `<div class="flex flex-wrap gap-2">${chips}</div>`;
-  }
-
-  function renderMentorContactSection(org) {
-    const container = document.getElementById('mMentorSection');
-    if (!container) return;
-
-    if (mentorDataState === 'idle' || mentorDataState === 'loading') {
-      container.innerHTML = '<p class="text-sm text-zinc-500">Loading mentor contact data...</p>';
-      return;
-    }
-
-    const entry = getMentorEntry(org.name);
-    if (!entry) {
-      container.innerHTML = '<p class="text-sm text-zinc-500">Mentor data unavailable right now.</p>';
-      return;
-    }
-
-    const fallbackIdeasLink = (function(){
-      const u = sanitizeHrefUrl(org.ideas);
-      return u ? `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>` : '';
-    })();
-
-    const sections = [];
-    if (entry.status === 'ok' && entry.channels.length > 0) {
-      sections.push(`
-        <div>
-          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
-          <div class="flex flex-wrap gap-2">${buildChannelChips(entry.channels)}</div>
-        </div>
-      `);
-    }
-
-    if (entry.status === 'ok' && entry.mentors.length > 0) {
-      sections.push(`
-        <div>
-          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
-          <div class="flex flex-wrap gap-2">${buildMentorChips(entry.mentors)}</div>
-        </div>
-      `);
-    }
-
-    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
-      sections.push(`
-        <div>
-          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
-          <div class="flex flex-wrap gap-2">${buildChannelChips(entry.mailingLists.map((list) => ({ ...list, type: 'Mailing list' })))}</div>
-        </div>
-      `);
-    }
-
-    if (entry.tip) {
-      sections.push(`
-        <div class="rounded-2xl bg-orange-50 border border-orange-100 p-4">
-          <p class="text-xs font-bold uppercase tracking-widest text-primary mb-1">Contact Tip</p>
-          <p class="text-sm text-zinc-700">${escapeHtml(entry.tip)}</p>
-        </div>
-      `);
-    }
-
-    if (sections.length === 0) {
-      let message = 'No contact info parsed yet.';
-      if (entry.status === 'fetch-failed') {
-        message = 'Mentor data unavailable right now.';
-      }
-      container.innerHTML = `
-        <div class="rounded-2xl border border-dashed border-zinc-200 p-5">
-          <p class="text-sm text-zinc-600 mb-3">${message}</p>
-          <div class="flex flex-wrap gap-2">${fallbackIdeasLink || '<span class="text-xs text-zinc-400">No ideas page listed.</span>'}</div>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = `
-      <div class="space-y-4">
-        ${sections.join('')}
-        ${fallbackIdeasLink ? `<div class="flex flex-wrap gap-2">${fallbackIdeasLink}</div>` : ''}
-      </div>
-    `;
-  }
-
-  function getMentorFinderRecords() {
-    return ORGS.map((org) => ({
-      org,
-      entry: getMentorEntry(org.name)
-    }));
-  }
-
-  function renderMentorFinder() {
-    const grid = document.getElementById('mentorGrid');
-    const lastUpdatedEl = document.getElementById('mentorLastUpdated');
-    if (!grid) return;
-
-    if (mentorDataState === 'loading' || mentorDataState === 'idle') {
-      grid.innerHTML = `
-        <div class="col-span-full mentor-empty">
-          <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-        </div>
-      `;
-      return;
-    }
-
-    if (mentorDataState === 'error') {
-      grid.innerHTML = `
-        <div class="col-span-full mentor-empty">
-          <p class="font-bold text-zinc-900 mb-2">Mentor data unavailable right now.</p>
-          <p class="text-sm text-zinc-600">The cached mentor snapshot could not be loaded. Please try again later.</p>
-        </div>
-      `;
-      if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
-      return;
-    }
-
-    const search = (document.getElementById('mentorSearchInput')?.value || '').trim().toLowerCase();
-    const channelFilter = document.getElementById('mentorChannelFilter')?.value || 'all';
-    const records = getMentorFinderRecords();
-    const lastFetched = records.map((record) => record.entry.lastFetched).find(Boolean);
-    if (lastUpdatedEl?.textContent !== undefined) {
-      lastUpdatedEl.textContent = formatRelativeRefresh(lastFetched);
-    }
-
-    const filteredRecords = records.filter(({ org, entry })
+}
+>>>>>>> eb643e9422874838a54d09fce82a3963540f52a2

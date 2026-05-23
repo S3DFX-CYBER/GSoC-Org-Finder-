@@ -455,7 +455,7 @@
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#" class="flex items-center gap-2">
+      <button onclick="navigateTo('/timeline', event)" class="flex items-center gap-2 bg-transparent border-none cursor-pointer">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
@@ -463,15 +463,15 @@
         <span class="hidden sm:inline">GSoC 2026 </span>
         <span class="text-primary italic">Org Finder</span>
       </span>
-      </a>
+      </button>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <button class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/timeline', event)" data-section="timeline">Timeline</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/orgs', event)" data-section="orgs">Organizations</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/ai-recommender', event)" data-section="ai-recommender">AI Recommender</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/watchlist', event)" data-section="watchlist">Watchlist</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/issues', event)" data-section="issues">Issues</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/mentors', event)" data-section="mentors">Mentors</button>
+        <button class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors bg-transparent border-none cursor-pointer" onclick="navigateTo('/timeline', event)" data-section="timeline">Timeline</button>
       </nav>
     </div>
     
@@ -531,38 +531,38 @@
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <button onclick="navigateTo('/timeline', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
-      </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      </button>
+      <button onclick="navigateTo('/orgs', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      </button>
+      <button onclick="navigateTo('/ai-recommender', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
-      </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      </button>
+      <button onclick="navigateTo('/watchlist', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
-      </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      </button>
+      <button onclick="navigateTo('/issues', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
-      </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      </button>
+      <button onclick="navigateTo('/mentors', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
-      </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      </button>
+      <button onclick="navigateTo('/guide', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
-      </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      </button>
+      <button onclick="navigateTo('/ai-recommender', event); setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors bg-transparent border-none cursor-pointer w-full text-left" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
-      </a>
+      </button>
     </div>
     
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
@@ -1138,8 +1138,8 @@
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+      <button onclick="navigateTo('/privacy', event)" class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all bg-transparent border-none cursor-pointer">Privacy</button>
+      <button onclick="navigateTo('/contact', event)" class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all bg-transparent border-none cursor-pointer">Contact</button>
     </nav>
   </div>
 </footer>
@@ -1187,10 +1187,10 @@
       </div>
     </div>
     <div class="modal-footer">
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasLink" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="mLink" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
     </div>
@@ -1213,33 +1213,15 @@
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
+<script src="src/js/githubAnalyzer.js"></script>
+<script src="src/js/skillExtractor.js"></script>
+<script src="src/js/recommender.js"></script>
+<script src="src/js/recommendation-ui.js"></script>
+<script src="src/js/app.js"></script>
 <script>
   // ══════════════════════════════════════════════
-  // THEME
+  // THEME & ROUTING are now handled in app.js
   // ══════════════════════════════════════════════
-  (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
-
-  window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
-
-  function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
-  }
 
   // ══════════════════════════════════════════════
   // MOBILE MENU

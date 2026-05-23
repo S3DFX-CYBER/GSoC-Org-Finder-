@@ -159,7 +159,8 @@ async function checkAPI(){
     if(data.ok){
       const rem   = data.core?.remaining;
       const limit = data.core?.limit;
-      const pct   = (rem !== undefined && limit) ? Math.round(rem / limit * 100) : null;
+      const pct = (Number.isFinite(rem) && Number.isFinite(limit) && limit > 0)
+  ? Math.round(rem / limit * 100) : null;
       banner.className='api-banner api-ok';
       document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
       document.getElementById('apiText').textContent=

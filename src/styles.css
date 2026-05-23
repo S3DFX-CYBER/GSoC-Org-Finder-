@@ -563,29 +563,34 @@ footer a:hover{text-decoration:underline}
 
 /* Style of scroll-to-top button */
 .scroll-top-btn {
-  position: fixed;
-  bottom: 28px;
-  right: 24px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--orange);
-  color: white;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  display: none;
-  z-index: 50;
-  box-shadow: 0 3px 10px rgba(244,107,14,.35);
-  transition: opacity .2s;
+  display: none !important;
+  position: fixed !important;
+  bottom: 2rem !important;
+  right: 2rem !important;
+  z-index: 9999 !important;
+  background: #F46B0E !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 1.2rem !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s, transform 0.2s, background 0.2s !important;
 }
-
 .scroll-top-btn.visible {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
-
+.scroll-top-btn:hover {
+  background: #D45800 !important;
+  transform: translateY(-2px);
+}
+.scroll-top-btn:focus-visible {
+  outline: 2px solid #F46B0E !important;
+  outline-offset: 2px;
+}
 /* ═══════════════════════════════════════════
    SELECTED LANGUAGES STRIP
 ═══════════════════════════════════════════ */

@@ -120,7 +120,7 @@ async function fetchWithBackoff(url, retries = 3) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     if (isRateLimited()) await sleep(_rateLimitedUntil - Date.now());
     try {
-      const res  = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
       let   data = null;
       try { data = await res.clone().json(); } catch { /* non-JSON */ }
 
@@ -197,8 +197,8 @@ export function fetchGH(repo, priority = 1) {
       resolve(hit.data);
       _queue.enqueue({
         repo, mode: 'stats',
-        resolve: (fresh) => { if (fresh) setCache(repo, fresh); _inFlight.delete(jobKey); },
-        reject:  ()      => { _inFlight.delete(jobKey); },
+resolve: (fresh) => { if (fresh) setCache(repo, fresh); resolveInFlight(jobKey, fresh); },
+        reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, Math.max(priority, 2));
       tick(); return;
     }
@@ -227,12 +227,11 @@ export function fetchGFI(repo, priority = 1) {
       resolve(toGfi(hit.data));
       _queue.enqueue({
         repo, mode: 'gfi',
-        resolve: () => { _inFlight.delete(jobKey); },
-        reject:  () => { _inFlight.delete(jobKey); },
+        resolve: (fresh) => { resolveInFlight(jobKey, toGfi(fresh)); },
+        reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, 2);
       tick(); return;
     }
-
     _queue.enqueue({
       repo, mode: 'gfi',
       resolve: (d) => resolveInFlight(jobKey, toGfi(d)),
@@ -256,12 +255,11 @@ export function fetchIssues(repo, priority = 2) {
       resolve(hit.data);
       _queue.enqueue({
         repo, mode: 'issues',
-        resolve: () => { _inFlight.delete(jobKey); },
-        reject:  () => { _inFlight.delete(jobKey); },
+        resolve: (fresh) => { resolveInFlight(jobKey, fresh); },
+        reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, 2);
       tick(); return;
     }
-
     _queue.enqueue({
       repo, mode: 'issues',
       resolve: (d) => resolveInFlight(jobKey, d),

@@ -1225,7 +1225,7 @@ async function fetchAllIssues(){
 async function loadCachedIssues(){
   if(allIssues.length||issuesFetching) return;
   try{
-    const res=await fetch('/data/issues.json');
+    const res=await fetch('./data/issues.json');
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data=await res.json();
     if(!Array.isArray(data.issues)) return;

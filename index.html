@@ -1757,7 +1757,7 @@
       entry: getMentorEntry(org.name)
     }));
   }
-
+ let visibleMentors =10;
   function renderMentorFinder() {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
@@ -1814,7 +1814,9 @@
       return;
     }
 
-    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+   
+
+    grid.innerHTML = filteredRecords.slice(0, visibleMentors).map(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -1879,6 +1881,24 @@
         </article>
       `;
     }).join('');
+    if(filteredRecords.length > visibleMentors){
+      grid.innerHTML +=  `
+    <div class="col-span-full text-center mt-6">
+      <button id="mentorLoadMoreBtn"
+        class="px-6 py-3 bg-black text-white rounded-lg hover:opacity-80">
+        Load More
+      </button>
+    </div>
+  `;
+    }
+    const loadMoreBtn = document.getElementById('mentorLoadMoreBtn');
+
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener('click', () => {
+    visibleMentors += 10;
+    renderMentorFinder();
+  });
+}
 
     attachOrgCardListeners(grid);
   }
@@ -1888,7 +1908,7 @@
     renderMentorFinder();
 
     try {
-      const res = await fetch(`/data/mentors.json?v=${Date.now()}`);
+      const res = await fetch(`./data/mentors.json?v=${Date.now()}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
@@ -2891,7 +2911,7 @@ if(org.ideas){
   // Dynamic GFIs
   async function renderGoodFirstIssues() {
     try {
-      const res = await fetch('/data/issues.json?v=' + Date.now());
+      const res = await fetch('./data/issues.json?v=' + Date.now());
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const container = document.querySelector('#issues .grid');

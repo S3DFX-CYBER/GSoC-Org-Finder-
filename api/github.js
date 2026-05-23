@@ -189,6 +189,7 @@ export default async function handler(req) {
   }
 
   // ── GFI count only
+ // ── GFI count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
     const cached   = CACHE.get(cacheKey);

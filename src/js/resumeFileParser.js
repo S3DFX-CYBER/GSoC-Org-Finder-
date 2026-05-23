@@ -30,7 +30,7 @@ async function readTxtFile(file) {
 
 async function readPdfFile(file) {
   if (typeof pdfjsLib === 'undefined') {
-    throw new Error('PDF support failed to load. Refresh the page and try again.');
+    throw new TypeError('PDF support failed to load. Refresh the page and try again.');
   }
 
   pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_SRC;
@@ -57,7 +57,7 @@ async function readPdfFile(file) {
 
 async function readDocxFile(file) {
   if (typeof mammoth === 'undefined') {
-    throw new Error('DOCX support failed to load. Refresh the page and try again.');
+    throw new TypeError('DOCX support failed to load. Refresh the page and try again.');
   }
 
   const arrayBuffer = await file.arrayBuffer();
@@ -79,7 +79,11 @@ async function readDocxFile(file) {
  */
 async function readResumeFile(file) {
   if (!file) {
-    throw new Error('No file selected.');
+    throw new TypeError('No file selected.');
+  }
+
+  if (typeof Blob !== 'undefined' && !(file instanceof Blob)) {
+    throw new TypeError('Expected a File or Blob for resume upload.');
   }
 
   if (file.size > MAX_RESUME_BYTES) {
@@ -88,7 +92,7 @@ async function readResumeFile(file) {
 
   const kind = getResumeFileKind(file);
   if (!kind) {
-    throw new Error('Unsupported file type. Please upload a .txt, .pdf, or .docx file.');
+    throw new TypeError('Unsupported file type. Please upload a .txt, .pdf, or .docx file.');
   }
 
   switch (kind) {
@@ -99,7 +103,7 @@ async function readResumeFile(file) {
     case 'docx':
       return readDocxFile(file);
     default:
-      throw new Error('Unsupported file type. Please upload a .txt, .pdf, or .docx file.');
+      throw new TypeError('Unsupported file type. Please upload a .txt, .pdf, or .docx file.');
   }
 }
 
@@ -205,7 +209,11 @@ function buildSkillsSummary(text) {
  * @returns {{ githubUsername: string, skillsText: string, rawText: string }}
  */
 function parseResumeContent(rawText) {
-  const text = (rawText || '').trim();
+  if (typeof rawText !== 'string') {
+    throw new TypeError('Resume content must be a string.');
+  }
+
+  const text = rawText.trim();
   if (!text) {
     throw new Error('Resume file appears to be empty.');
   }

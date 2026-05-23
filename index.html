@@ -1898,7 +1898,7 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
-        throw new Error('Invalid mentors.json payload');
+        throw new TypeError('Invalid mentors.json payload');
       }
       MENTOR_DATA = data;
       mentorDataState = 'loaded';

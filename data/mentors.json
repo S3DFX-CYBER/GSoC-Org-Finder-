@@ -9,7 +9,7 @@
         "github": "52north",
         "githubUrl": "https://github.com/52north"
       }
-    ], 
+    ],
     "mailingLists": [], 
     "tip": "",
     "status": "ok",
@@ -87,7 +87,48 @@
         "label": "Accord Project Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Matt Roberts",
+        "github": "mttrbrts",
+        "githubUrl": "https://github.com/mttrbrts"
+      },
+      {
+        "name": "Sanket Shevkar",
+        "github": "sanketshevkar",
+        "githubUrl": "https://github.com/sanketshevkar"
+      },
+      {
+        "name": "Diana Lease",
+        "github": "dianalease",
+        "githubUrl": "https://github.com/dianalease"
+      },
+      {
+        "name": "Ertugrul Karademir",
+        "github": "ekarademir",
+        "githubUrl": "https://github.com/ekarademir"
+      },
+      {
+        "name": "Daniel Selman",
+        "github": "dselman",
+        "githubUrl": "https://github.com/dselman"
+      },
+      {
+        "name": "Niall Roche",
+        "github": "niallroche",
+        "githubUrl": "https://github.com/niallroche"
+      },
+      {
+        "name": "Steven Obiajulu",
+        "github": "StevenObiajulu",
+        "githubUrl": "https://github.com/StevenObiajulu"
+      },
+      {
+        "name": "Jamie Shorten",
+        "github": "jamieshorten",
+        "githubUrl": "https://github.com/jamieshorten"
+      }
+    ],
     "mailingLists": [],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",
@@ -684,12 +725,50 @@
   },
   "EROFS filesystem": {
     "org": "EROFS filesystem",
-    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/erofs-filesystem",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "ideasUrl": "https://erofs.docs.kernel.org/en/latest/gsoc.html",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "linux-erofs@lists.ozlabs.org",
+        "label": "EROFS filesystem Email"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gao Xiang",
+        "github": "hsiangkao",
+        "githubUrl": "https://github.com/hsiangkao"
+      },
+      {
+        "name": "Hongbo Li",
+        "github": "hb-lee",
+        "githubUrl": "https://github.com/hb-lee"
+      },
+      {
+        "name": "Yifan Zhao",
+        "github": "SToPire",
+        "githubUrl": "https://github.com/SToPire"
+      },
+      {
+        "name": "Chunhai Guo",
+        "github": "speedan1",
+        "githubUrl": "https://github.com/speedan1"
+      },
+      {
+        "name": "Dreamacro",
+        "github": "Dreamacro",
+        "githubUrl": "https://github.com/Dreamacro"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.ozlabs.org/listinfo/linux-erofs",
+        "label": "EROFS filesystem Mailing list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FFmpeg": {
@@ -1046,12 +1125,70 @@
   },
   "Invesalius": {
     "org": "Invesalius",
-    "ideasUrl": "https://github.com/invesalius/invesalius3/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "ideasUrl": "https://github.com/invesalius/gsoc/blob/main/gsoc_2026_ideas.md",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "mailto:invesalius@cti.gov.br",
+        "label": "Invesalius Email"
+      }
+    ],
+    "mentors": [
+       {
+        "name": "Paulo Henrique Junqueira Amorim",
+        "github": "paulojamorim",
+        "githubUrl": "https://github.com/paulojamorim"
+      },
+      {
+        "name": "Thiago Franco de Moraes",
+        "github": "tfmoraes",
+        "githubUrl": "https://github.com/tfmoraes"
+      },
+      {
+        "name": "Renan Matsuda",
+        "github": "rmatsuda",
+        "githubUrl": "https://github.com/rmatsuda"
+      },
+      {
+        "name": "Thais Marchetti",
+        "github": "thaismarchetti",
+        "githubUrl": "https://github.com/thaismarchetti"
+      },
+      {
+        "name": "Lucas Betioli",
+        "github": "LucasBetioli123",
+        "githubUrl": "https://github.com/LucasBetioli123"
+      },
+      {
+        "name": "Kirsten Petras",
+        "github": "kpetras",
+        "githubUrl": "https://github.com/kpetras"
+      },
+      {
+        "name": "Marcio Campos",
+        "github": "MarcioCamposJr",
+        "githubUrl": "https://github.com/MarcioCamposJr"
+      },
+      {
+        "name": "Victor H. Souza",
+        "github": "vhosouza",
+        "githubUrl": "https://github.com/vhosouza"
+      },
+      {
+        "name": "Sotodela",
+        "github": "sotodela",
+        "githubUrl": "https://github.com/sotodela"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://github.com/invesalius/invesalius3/discussions",
+        "label": "Invesalius Mailing list"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "IOOS": {
@@ -1698,27 +1835,80 @@
     "org": "NumFOCUS",
     "ideasUrl": "https://github.com/numfocus/gsoc/blob/master/2026/ideas-list.md",
     "channels": [],
-    "mentors": [
+    "mentors": [],
+    "mailingLists": [
       {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
+        "type": "Mailing list",
+        "url": "https://groups.google.com/a/numfocus.org/forum/#!forum/gsoc",
+        "label": "NumFOCUS GSoC mailing list"
+      },
+      {
+        "type": "Email",
+        "url": "mailto:gsoc@numfocus.org",
+        "label": "gsoc@numfocus.org"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "tip": "NumFOCUS is an umbrella organization. For project-specific questions, contact the individual project communities under the umbrella.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-14T00:00:00.000Z"
   },
   "omegaUp": {
     "org": "omegaUp",
     "ideasUrl": "https://github.com/omegaup/omegaup/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/gMEMX7Mrwe",
+        "label": "omegaUp GSoC Discord (Candidates)"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/K3JFd9d3wk",
+        "label": "omegaUp Community Discord"
+      },
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/omegaup/omegaup/discussions",
+        "label": "omegaUp GitHub Discussions"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "",
+        "github": "pabo99",
+        "githubUrl": "https://github.com/pabo99"
+      },
+      {
+        "name": "",
+        "github": "heduenas",
+        "githubUrl": "https://github.com/heduenas"
+      },
+      {
+        "name": "",
+        "github": "Ankitsinghsisodya",
+        "githubUrl": "https://github.com/Ankitsinghsisodya"
+      },
+      {
+        "name": "",
+        "github": "carlosabcs",
+        "githubUrl": "https://github.com/carlosabcs"
+      },
+      {
+        "name": "",
+        "github": "iqbalcodes6602",
+        "githubUrl": "https://github.com/iqbalcodes6602"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:hello@omegaup.com",
+        "label": "hello@omegaup.com"
+      }
+    ],
+    "tip": "Join the Discord server to get help and connect with mentors. Make sure to solve at least 2 of 3 problems on the GSoC 2026 arena test.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T00:00:00.000Z"
   },
   "Open Food Facts": {
     "org": "Open Food Facts",
@@ -2044,25 +2234,59 @@
   },
   "Pharo Consortium": {
     "org": "Pharo Consortium",
-    "ideasUrl": "https://github.com/pharo-project/pharo/wiki/GSoC-2026-Ideas",
-    "channels": [],
+    "ideasUrl": "https://gsoc.pharo.org/ideas",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/QewZMZa",
+        "label": "Pharo Discord — #gsoc-students channel"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Join Pharo Discord and go to the #gsoc-students channel to introduce yourself and discuss project ideas with mentors.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "PostgreSQL": {
     "org": "PostgreSQL",
     "ideasUrl": "https://wiki.postgresql.org/wiki/GSoC_2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/",
+        "label": "PostgreSQL Slack — #gsoc-contributors channel"
+      },
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/join/shared_invite/zt-3o5j6cdj5-o~IYnyU_Ggcwk1zI6UYpOg",
+        "label": "PostgreSQL Slack invite link"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jesper Pedersen",
+        "github": "jesperpedersen",
+        "githubUrl": "https://github.com/jesperpedersen"
+      },
+      {
+        "name": "Pavlo Golub",
+        "github": "pashagolub",
+        "githubUrl": "https://github.com/pashagolub"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:gsoc-mentors@lists.postgresql.org",
+        "label": "PostgreSQL GSoC Mentors Mailing List"
+      }
+    ],
+    "tip": "Join the #gsoc-contributors channel on PostgreSQL Slack. Email gsoc-mentors@lists.postgresql.org before submitting your proposal.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-"preCICE": {
+  "preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
     "channels": [
@@ -2465,17 +2689,28 @@
   "SymPy": {
     "org": "SymPy",
     "ideasUrl": "https://github.com/sympy/sympy/wiki/GSoC-Ideas",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sympy:matrix.org",
+        "label": "SymPy Matrix"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
+        "name": "Shekhar Prasad Rajak",
         "github": "Shekharrajak",
         "githubUrl": "https://github.com/Shekharrajak"
       },
       {
-        "name": "",
+        "name": "Divyanshu Thakur",
         "github": "divyanshu132",
         "githubUrl": "https://github.com/divyanshu132"
+      },
+      {
+        "name": "Aaron Meurer",
+        "github": "asmeurer",
+        "githubUrl": "https://github.com/asmeurer"
       }
     ],
     "mailingLists": [
@@ -2497,7 +2732,7 @@
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-18T12:14:33.000Z"
   },
   "Synfig": {
     "org": "Synfig",
@@ -2555,13 +2790,24 @@
         "label": "Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+          {
+            "name": "Mahmoud Khawaja",
+            "github": "Mahmoud-Khawaja",
+            "githubUrl": "https://github.com/Mahmoud-Khawaja"
+          },
+          {
+            "name": "Franck van Breugel",
+            "github": "franck-van-breugel",
+            "githubUrl": "https://github.com/franck-van-breugel"
+          },
+          {
+            "name": "Cyrille Artho",
+            "github": "cyrille-artho",
+            "githubUrl": "https://github.com/cyrille-artho"
+          }
+    ],
     "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/forum/",
-        "label": "Mailing list"
-      },
       {
         "type": "Mailing list",
         "url": "http://groups.google.com/group/java-pathfinder",
@@ -2600,13 +2846,156 @@
   },
   "The Linux Foundation": {
     "org": "The Linux Foundation",
-    "ideasUrl": "https://wiki.linuxfoundation.org/gsoc/google-summer-code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "ideasUrl": "https://github.com/LinuxFoundationGSoC/ProjectIdeas/wiki/Google-Summer-of-Code-2026",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/Ck7jw53nU2",
+        "label": "Sound Open Firmware Discord"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/ZztCaVeQVG",
+        "label": "Automotive Grade Linux Discord"
+      },
+      {
+        "type": "Telegram",
+        "url": "https://t.me/OpenPrinting",
+        "label": "OpenPrinting Telegram Channel"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/Ck7jw53nU2",
+        "label": "Zephyr Discord"
+      },
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/spdx/spdx",
+        "label": "SPDX Gitter"
+      },
+      {
+        "type": "IRC",
+        "url": "https://www.oftc.net/",
+        "label": "#kernelnewbies on irc.oftc.net"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Till Kamppeter",
+        "github": "tillkamppeter",
+        "githubUrl": "https://github.com/tillkamppeter"
+      },
+      {
+        "name": "Michael Sweet",
+        "github": "michaelrsweet",
+        "githubUrl": "https://github.com/michaelrsweet"
+      },
+      {
+        "name": "Aveek Basu",
+        "github": "AveekBasu",
+        "githubUrl": "https://github.com/AveekBasu"
+      },
+      {
+        "name": "Zdenek Dohnal",
+        "github": "zdohnal",
+        "githubUrl": "https://github.com/zdohnal"
+      },
+      {
+        "name": "Jan-Simon Möller",
+        "github": "dl9pf",
+        "githubUrl": "https://github.com/dl9pf"
+      },
+      {
+        "name": "Iuliana Prodan",
+        "github": "iuliana-prodan",
+        "githubUrl": "https://github.com/iuliana-prodan"
+      },
+      {
+        "name": "George Stefan",
+        "github": "george-stefan",
+        "githubUrl": "https://github.com/george-stefan"
+      },
+      {
+        "name": "Daniel Baluta",
+        "github": "dbaluta",
+        "githubUrl": "https://github.com/dbaluta"
+      },
+      {
+        "name": "Simona Toaca",
+        "github": "simonatoaca",
+        "githubUrl": "https://github.com/simonatoaca"
+      },
+      {
+        "name": "Dhruva Gole",
+        "github": "DhruvaG2000",
+        "githubUrl": "https://github.com/DhruvaG2000"
+      },
+      {
+        "name": "Manorit Chawdhry",
+        "github": "manorit2001",
+        "githubUrl": "https://github.com/manorit2001"
+      },
+      {
+        "name": "Arthit Suriyawongkul",
+        "github": "bact",
+        "githubUrl": "https://github.com/bact"
+      },
+      {
+        "name": "John Speed Meyers",
+        "github": "jspeed-meyers",
+        "githubUrl": "https://github.com/jspeed-meyers"
+      },
+      {
+        "name": "Laurentiu Mihalcea",
+        "github": "LaurentiuM1234",
+        "githubUrl": "https://github.com/LaurentiuM1234"
+      },
+      {
+        "name": "Hubert Guan",
+        "github": "HubertYGuan",
+        "githubUrl": "https://github.com/HubertYGuan"
+      },
+      {
+        "name": "Akarshan Kapoor",
+        "github": "Kappuccino111",
+        "githubUrl": "https://github.com/Kappuccino111"
+      },
+      {
+        "name": "Ayush Singh",
+        "github": "ayush1325",
+        "githubUrl": "https://github.com/ayush1325"
+      },
+      {
+        "name": "Jason Kridner",
+        "github": "jadonk",
+        "githubUrl": "https://github.com/jadonk"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "http://lists.automotivelinux.org/",
+        "label": "Automotive Grade Linux Mailing Lists"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.linux.dev/listinfo/printing-architecture",
+        "label": "printing-architecture mailing list"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lore.kernel.org/",
+        "label": "Linux Kernel Mailing Lists"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.spdx.org/g/Spdx-tech",
+        "label": "SPDX Tech Mailing List"
+      }
+    ],
+    "tip": "Introduce yourself to the relevant Linux Foundation workgroup before applying and follow the contributor application template.",
+    "status": "ok",
+    "lastFetched": "2026-05-16T18:30:00.000Z"
   },
   "The Mifos Initiative": {
     "org": "The Mifos Initiative",
@@ -2621,11 +3010,48 @@
   "The NetBSD Foundation": {
     "org": "The NetBSD Foundation",
     "ideasUrl": "https://wiki.netbsd.org/projects/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+      {"type": "IRC",
+        "url": "https://web.libera.chat/#NetBSD-code",
+        "label": "NetBSD Foundation IRC Channel on Libera Chat"
+      }
+      ],
+    "mentors": [
+      {
+        "name": "zoulasc",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "The NetBSD Foundation",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Greg Oster",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Stephen Borrill",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Martin Husemann",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://www.netbsd.org/mailinglists/",
+        "label": "NetBSD Mailing Lists"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The ns-3 Network Simulator Project": {
@@ -2963,7 +3389,23 @@
         "label": "webpack Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Claudio Wunder",
+        "github": "ovflowd",
+        "githubUrl": "https://github.com/ovflowd"
+      },
+      {
+        "name": "Sebastian Beltran",
+        "github": "bjohansebas",
+        "githubUrl": "https://github.com/bjohansebas"
+      },
+      {
+        "name": "Aviv Keller",
+        "github": "avivkeller",
+        "githubUrl": "https://github.com/avivkeller"
+      }
+    ],
     "mailingLists": [],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",

@@ -158,10 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (uploadToken !== currentUploadToken) return;
         resumeText.value = parsedText;
       } catch (err) {
+        if (uploadToken !== currentUploadToken) return;
         showError(err.message || "Failed to parse document.");
       } finally {
-        getRecsBtn.disabled = prevDisabled;
-        getRecsBtn.innerHTML = prevHtml;
+        if (uploadToken === currentUploadToken) {
+          getRecsBtn.disabled = prevDisabled;
+          getRecsBtn.innerHTML = prevHtml;
+        }
       }
     });
   }

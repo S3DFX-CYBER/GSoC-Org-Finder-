@@ -767,7 +767,7 @@
             <span id="aiResumeUploadText">Choose .txt, .pdf, or .docx</span>
             <input type="file" id="aiResumeFile" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden">
           </label>
-          <p id="aiUploadStatus" class="hidden text-[10px] mt-2 ml-1 font-medium"></p>
+          <p id="aiUploadStatus" role="status" aria-live="polite" aria-atomic="true" class="hidden text-[10px] mt-2 ml-1 font-medium"></p>
           <p class="text-[10px] text-zinc-500 mt-2 ml-1">Auto-fills GitHub username and skills above. Nothing is sent to a server.</p>
         </div>
 
@@ -3175,8 +3175,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRvU1DUCG6e" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js" integrity="sha384-F9c4WGfCRfzaY1ngABA8Z7qHFDuWabKbcwCb2Tk3Qf4njoUVhOChtw0UrXJmSp1y" crossorigin="anonymous"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/resumeFileParser.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>

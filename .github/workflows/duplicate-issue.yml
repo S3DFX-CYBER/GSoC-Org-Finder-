@@ -1,0 +1,251 @@
+name: 🔁 Duplicate Issue Detector
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+
+concurrency:
+  group: duplicate-issue-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  detect-duplicate:
+    name: Detect Duplicate Issues
+    runs-on: ubuntu-latest
+
+    if: |
+      github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Analyze Issue
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issue_number = issue.number;
+            const username = issue.user ? issue.user.login : 'unknown';
+            const author_association = issue.author_association;
+
+            // Skip if the issue was opened by the repository owner/maintainer/collaborator
+            const maintainerAssociations = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+            if (maintainerAssociations.includes(author_association) || username === owner) {
+              core.info(`Skipping maintainer issue (association: ${author_association})`);
+              return;
+            }
+
+            // Ignore bots
+            if (
+              (issue.user && issue.user.type === 'Bot') ||
+              username.endsWith('[bot]')
+            ) {
+              core.info('Skipping bot issue');
+              return;
+            }
+
+            // Ignore PRs
+            if (issue.pull_request) {
+              core.info('Skipping pull request');
+              return;
+            }
+
+            const labels = (issue.labels || [])
+              .map(l => l.name.toLowerCase());
+
+            // Ignore research/meta issues
+            if (
+              labels.includes('research') ||
+              labels.includes('meta')
+            ) {
+              core.info('Skipping exempt issue');
+              return;
+            }
+
+            const title = (issue.title || '').trim();
+
+            // Ignore short titles that do not carry enough signal.
+            if (title.length < 10) {
+              core.info('Title too short');
+              return;
+            }
+
+            // Normalize helper
+            const normalize = str =>
+              str
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            const currentTitle = normalize(title);
+            const currentBody = normalize(issue.body || '');
+            const structuredPatterns = [
+              'data research task',
+              'mentor contact info',
+              'verify/fix mentor'
+            ].map(p => normalize(p));
+
+            if (structuredPatterns.some(p => currentTitle.includes(p))) {
+              core.info('Skipping structured batch pattern');
+              return;
+            }
+
+            // Similarity helper (Jaccard)
+            const getSimilarity = (s1, s2) => {
+              if (!s1 || !s2) return 0;
+              const words1 = new Set(s1.split(' ').filter(w => w.length > 0));
+              const words2 = new Set(s2.split(' ').filter(w => w.length > 0));
+              if (words1.size === 0 || words2.size === 0) return 0;
+              const intersection = new Set([...words1].filter(x => words2.has(x)));
+              const union = new Set([...words1, ...words2]);
+              return intersection.size / union.size;
+            };
+
+            // Fetch RECENT issues only
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              {
+                owner,
+                repo,
+                state: 'open',
+                sort: 'created',
+                direction: 'desc',
+                per_page: 50
+              }
+            );
+
+            let duplicate = null;
+
+            for (const existing of issues) {
+
+              if (
+                existing.number === issue_number ||
+                existing.pull_request
+              ) {
+                continue;
+              }
+
+              const existingLabels = (
+                existing.labels || []
+              ).map(l => l.name.toLowerCase());
+
+              if (
+                existingLabels.includes('research') ||
+                existingLabels.includes('meta')
+              ) {
+                continue;
+              }
+
+              const existingTitle = normalize(existing.title || '');
+              const existingBody = normalize(existing.body || '');
+
+              // 1. An exact title match is enough to treat the issue as a duplicate.
+              if (existingTitle === currentTitle) {
+                duplicate = existing;
+                break;
+              }
+
+              // 2. Skip if bodies are too short to compare reliably
+              if (currentBody.split(' ').length < 5 || existingBody.split(' ').length < 5) {
+                continue;
+              }
+
+              // Require high similarity in BOTH title and body for non-exact matches
+              const titleSim = getSimilarity(currentTitle, existingTitle);
+              const bodySim = getSimilarity(currentBody, existingBody);
+
+              if (titleSim > 0.8 && bodySim > 0.7) {
+                duplicate = existing;
+                break;
+              }
+            }
+
+            if (!duplicate) {
+              core.info('No duplicate detected');
+              return;
+            }
+
+            const MARKER =
+              '<!-- duplicate-detector -->';
+
+            const body =
+              `${MARKER}\n` +
+              `## 🔁 Possible Duplicate Issue\n\n` +
+              `Hi @${username}, this issue appears similar to:\n\n` +
+              `➡️ #${duplicate.number}\n\n` +
+              `Please review the existing discussion before continuing.\n\n` +
+              `If this issue is substantially different, feel free to clarify the distinction.`;
+
+            // Existing sticky comment?
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number,
+                per_page: 50
+              }
+            );
+
+            const existingComment = comments.find(c =>
+              c.user &&
+              c.user.type === 'Bot' &&
+              (c.body || '').includes(MARKER)
+            );
+
+            // Update or create comment
+            if (existingComment) {
+
+              if (
+                existingComment.body.trim() === body.trim()
+              ) {
+                core.info('Comment already current');
+                return;
+              }
+
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body
+              });
+
+              core.info('Updated duplicate comment');
+
+            } else {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+
+              core.info('Created duplicate comment');
+            }
+
+            // Add label quietly
+            try {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number,
+                labels: ['possible-duplicate']
+              });
+
+            } catch (e) {
+              core.info(
+                `Label may already exist: ${e.message}`
+              );
+            }
+

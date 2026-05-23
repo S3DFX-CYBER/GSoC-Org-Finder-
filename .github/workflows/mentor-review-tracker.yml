@@ -1,0 +1,67 @@
+name: Mentor Review Tracker
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: mentor-review-tracker-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  track:
+    if: |
+      github.event.review.user.type != 'Bot' &&
+      github.actor != 'github-actions[bot]' &&
+      github.event.review.user.login != github.event.pull_request.user.login &&
+      contains(fromJson('["approved","changes_requested","commented"]'), github.event.review.state)
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@1d1121627393d3320a1197462314830db9140c2d # v4.2.0
+        with:
+          node-version: 22
+
+      - name: Detect low-effort review
+        id: quality
+        env:
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+        run: |
+          RESULT=$(node .github/scripts/detect-low-effort-review.js || echo '{"lowEffort":false}')
+          echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+
+      - name: Update mentor stats
+        env:
+          REVIEWER: ${{ github.event.review.user.login }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          REVIEW_ID: ${{ github.event.review.id }}
+          REVIEWED_AT: ${{ github.event.review.submitted_at }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+          IS_PRIORITY: ${{ contains(github.event.pull_request.labels.*.name, 'priority-p0') || contains(github.event.pull_request.labels.*.name, 'priority-p1') || contains(github.event.pull_request.labels.*.name, 'priority-p2') || contains(github.event.pull_request.labels.*.name, 'priority-p3') || contains(github.event.pull_request.labels.*.name, 'priority-p4') }}
+          IS_ASSIGNMENT_APPROVAL: ${{ contains(github.event.review.body, '/approve-assignment') }}
+          IS_LOW_EFFORT: ${{ fromJson(steps.quality.outputs.result).lowEffort }}
+        run: node .github/scripts/update-mentor-stats.js
+
+      - name: Commit stats when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .github/reviewers/mentor-stats.json
+
+          git diff --cached --quiet && exit 0
+
+          git commit -m "chore: update mentor review stats"
+
+          git pull --rebase origin ${GITHUB_REF_NAME}
+
+          git push
+

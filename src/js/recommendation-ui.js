@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark, parseResumeFile */
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
@@ -116,18 +116,85 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+  const uploadStatus = document.getElementById('aiUploadStatus');
 
-  // Handle file upload
+  function setUploadStatus(message, isError) {
+    if (!uploadStatus) return;
+    if (!message) {
+      uploadStatus.classList.add('hidden');
+      uploadStatus.textContent = '';
+      return;
+    }
+    uploadStatus.textContent = message;
+    uploadStatus.classList.remove('hidden', 'text-emerald-600', 'dark:text-emerald-400', 'text-amber-600', 'dark:text-amber-400');
+    uploadStatus.classList.add(isError ? 'text-amber-600' : 'text-emerald-600', isError ? 'dark:text-amber-400' : 'dark:text-emerald-400');
+  }
+
+  function applyParsedResume({ githubUsername, skillsText }) {
+    if (githubUsername && ghInput) {
+      ghInput.value = githubUsername;
+      ghInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (skillsText && resumeText) {
+      resumeText.value = skillsText;
+      resumeText.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  // Handle resume file upload — auto-fill GitHub username and skills fields
   if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
+    fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      file.text().then(text => {
-        resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+
+      const uploadLabel = document.getElementById('aiResumeUploadLabel');
+      const uploadIcon = document.getElementById('aiResumeUploadIcon');
+      const uploadText = document.getElementById('aiResumeUploadText');
+      const prevIcon = uploadIcon ? uploadIcon.textContent : '';
+      const prevText = uploadText ? uploadText.textContent : '';
+
+      setUploadStatus('');
+      errorState.classList.add('hidden');
+
+      if (uploadLabel) {
+        uploadLabel.classList.add('opacity-60', 'pointer-events-none');
+      }
+      if (uploadIcon) {
+        uploadIcon.textContent = 'progress_activity';
+        uploadIcon.classList.add('animate-spin');
+      }
+      if (uploadText) {
+        uploadText.textContent = 'Parsing resume…';
+      }
+
+      try {
+        const parsed = await parseResumeFile(file);
+        applyParsedResume(parsed);
+
+        const parts = ['Skills field updated'];
+        if (parsed.githubUsername) {
+          parts[0] = `GitHub @${parsed.githubUsername} and skills filled`;
+        } else {
+          parts.push('add your GitHub username if it was not detected');
+        }
+        setUploadStatus(parts.join(' — ') + '.');
+      } catch (err) {
+        console.error('File Read Error:', err);
+        showError(err.message || 'Failed to read file. Please use .txt, .pdf, or .docx.');
+        setUploadStatus(err.message || 'Could not parse resume.', true);
+      } finally {
+        e.target.value = '';
+        if (uploadLabel) {
+          uploadLabel.classList.remove('opacity-60', 'pointer-events-none');
+        }
+        if (uploadIcon) {
+          uploadIcon.textContent = prevIcon;
+          uploadIcon.classList.remove('animate-spin');
+        }
+        if (uploadText) {
+          uploadText.textContent = prevText;
+        }
+      }
     });
   }
 

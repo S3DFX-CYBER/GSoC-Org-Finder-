@@ -20,7 +20,7 @@ function getResumeFileKind(file) {
   ) {
     return 'docx';
   }
-  if (name.endsWith('.txt') || type === 'text/plain' || type === '') return 'txt';
+  if (name.endsWith('.txt') || type === 'text/plain') return 'txt';
   return null;
 }
 

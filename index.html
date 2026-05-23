@@ -4225,8 +4225,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.closeHelpModal = closeHelpModal;
 
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  if (scrollBtn) {
+    window.addEventListener('scroll', () => {
+      scrollBtn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+  }
+
 });
 </script>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">↑</button>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

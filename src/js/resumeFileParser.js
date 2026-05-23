@@ -118,6 +118,10 @@ const GITHUB_RESERVED_PATHS = new Set([
 ]);
 
 const GITHUB_USER_CAPTURE = '([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})';
+/** Trailing delimiter after a GitHub URL (alternation avoids duplicate-prone char classes). */
+const GITHUB_URL_END = String.raw`(?=$|\s|[.,;)|"'])`;
+/** Separators after a "GitHub" label (en dash U+2013 or ASCII hyphen). */
+const GITHUB_LABEL_SEP = String.raw`(?:[:@|]|\u2013|-)`;
 
 /**
  * Normalize resume text so broken PDF/DOCX URLs still match.
@@ -132,7 +136,10 @@ function normalizeResumeTextForGitHub(text) {
     .replace(/\bgit\s+hub\s*\.?\s*com/gi, 'github.com')
     .replace(/(github\.com)\s*\/\s*/gi, '$1/')
     .replace(
-      /github\.com\s+([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})(?=[\s.,;)\]"']|$)/gi,
+      new RegExp(
+        String.raw`github\.com\s+${GITHUB_USER_CAPTURE}${GITHUB_URL_END}`,
+        'gi'
+      ),
       'github.com/$1'
     );
 }
@@ -158,7 +165,7 @@ function extractGitHubUsername(text) {
   const normalized = normalizeResumeTextForGitHub(text);
 
   const urlRe = new RegExp(
-    String.raw`(?:https?://)?(?:www\.)?github\.com/${GITHUB_USER_CAPTURE}(?=[/?#\s,;)\]"']|$)`,
+    String.raw`(?:https?://)?(?:www\.)?github\.com/${GITHUB_USER_CAPTURE}(?=$|[/?#]|\s|[.,;)|"'])`,
     'gi'
   );
 
@@ -170,10 +177,22 @@ function extractGitHubUsername(text) {
   }
 
   const labeledPatterns = [
-    /github\s*(?:profile|username|handle|user|account|link|id)?\s*[:@|–\-]\s*(?!https?:\/\/)@?([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})/gi,
-    /github\s*[-–]\s*(?!https?:\/\/)@?([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})/gi,
-    /github\s+@(?!https?:\/\/)([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})/gi,
-    /(?:^|[\s,;|])(?:@)?([a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38})\s*(?:\||•)\s*github/gim,
+    new RegExp(
+      String.raw`github\s*(?:profile|username|handle|user|account|link|id)?\s*${GITHUB_LABEL_SEP}\s*(?!https?:\/\/)@?${GITHUB_USER_CAPTURE}`,
+      'gi'
+    ),
+    new RegExp(
+      String.raw`github\s*(?:-|–)\s*(?!https?:\/\/)@?${GITHUB_USER_CAPTURE}`,
+      'gi'
+    ),
+    new RegExp(
+      String.raw`github\s+@(?!https?:\/\/)${GITHUB_USER_CAPTURE}`,
+      'gi'
+    ),
+    new RegExp(
+      String.raw`(?:^|\s|[,;|])(?:@)?${GITHUB_USER_CAPTURE}\s*(?:\||•)\s*github`,
+      'gim'
+    ),
   ];
 
   for (const pattern of labeledPatterns) {

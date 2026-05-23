@@ -129,10 +129,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (ext === 'docx') {
       text = (await globalThis.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
+    } else if (ext === 'doc') {
+      text = await file.text();
     } else if (ext === 'txt') {
       text = await file.text();
     } else {
-      throw new Error("Unsupported file format. Please upload a TXT, PDF, or DOCX file.");
+      throw new Error("Unsupported file format. Please upload a TXT, PDF, DOC, or DOCX file.");
     }
     
     // eslint-disable-next-line no-control-regex

@@ -183,12 +183,12 @@ export default async function handler(req) {
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
       return new Response(JSON.stringify({ total, items }), { status: 200, headers: rh });
-    } catch (err) {
-      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
+   } catch (err) {
+      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers: { ...headers } });
     }
   }
 
-  // ── GFI count only: ?gfi=1 ────────────────────────────────────────────────
+  // ── GFI count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
     const cached   = CACHE.get(cacheKey);

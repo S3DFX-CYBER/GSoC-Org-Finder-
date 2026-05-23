@@ -47,8 +47,8 @@ async function readPdfFile(file) {
   }
 
   const text = parts.join('\n').replace(/[^\S\n]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
-  if (!text) {
-    throw new Error(
+  if (typeof text !== 'string' || text.length === 0) {
+    throw new TypeError(
       'Could not extract text from this PDF. Use a text-based PDF or paste your resume manually.'
     );
   }
@@ -64,8 +64,8 @@ async function readDocxFile(file) {
   const result = await mammoth.extractRawText({ arrayBuffer });
   const text = (result.value || '').replace(/[^\S\n]+/g, ' ').trim();
 
-  if (!text) {
-    throw new Error(
+  if (typeof text !== 'string' || text.length === 0) {
+    throw new TypeError(
       'Could not extract text from this Word file. Try another file or paste your resume manually.'
     );
   }
@@ -86,8 +86,8 @@ async function readResumeFile(file) {
     throw new TypeError('Expected a File or Blob for resume upload.');
   }
 
-  if (file.size > MAX_RESUME_BYTES) {
-    throw new Error('File is too large. Please use a resume under 5 MB.');
+  if (typeof file.size !== 'number' || file.size > MAX_RESUME_BYTES) {
+    throw new RangeError('File is too large. Please use a resume under 5 MB.');
   }
 
   const kind = getResumeFileKind(file);
@@ -214,8 +214,8 @@ function parseResumeContent(rawText) {
   }
 
   const text = rawText.trim();
-  if (!text) {
-    throw new Error('Resume file appears to be empty.');
+  if (text.length === 0) {
+    throw new TypeError('Resume file appears to be empty.');
   }
 
   const githubUsername = extractGitHubUsername(text);

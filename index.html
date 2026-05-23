@@ -40,21 +40,21 @@
       }
     }
   </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" crossorigin="anonymous">
+  </script>
+
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet" />
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" as="style"
-  onload="this.onload=null;this.rel='stylesheet'">
 
-<noscript>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" />
-  </noscript>  
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
   <script>
-
 
     // Theme restoration - runs early to prevent FOUC
     (function () {
@@ -199,6 +199,7 @@
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
+      overflow: hidden;
     }
 
     .modal-bg.open {
@@ -213,7 +214,11 @@
       max-height: 90vh;
       border-radius: 2rem;
       position: relative;
-      overflow-y: auto;
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      padding-top: 1px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       transform: scale(0.9);
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -227,6 +232,7 @@
       position: absolute;
       top: 1.5rem;
       right: 1.5rem;
+      z-index: 1000;
       width: 2.5rem;
       height: 2.5rem;
       border-radius: 99px;
@@ -1034,6 +1040,7 @@
           aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
           <span class="material-symbols-outlined text-zinc-600">menu</span>
         </button>
+
         <a href="#" class="flex items-center gap-2">
           <div
             class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
@@ -1097,9 +1104,8 @@
   <!-- Mobile Menu Overlay -->
   <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()"
-      onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button"
-      aria-label="Close menu"></div>
+    <button class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" aria-label="Close menu">
+    </button>
 
     <!-- Menu Panel -->
     <nav
@@ -2907,16 +2913,14 @@
         <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
           <span class="material-symbols-outlined text-orange-600">psychology</span>
         </div>
-        <div class="flex-1 w-full">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="font-bold">${escapeHtml(org.name)}</h4>
-            <span class="text-[10px] font-label uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded">Watchlisted</span>
-          </div>
-          <p class="text-sm text-zinc-600 mb-3 line-clamp-1">${escapeHtml(org.desc)}</p>
-          <div class="flex items-center gap-4 text-xs text-zinc-500">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">code</span> ${escapeHtml(org.github)}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">bar_chart</span> ${escapeHtml(org.competition)}</span>
-            <button data-bookmark-org="${escapeHtml(org.name)}" class="ml-auto text-red-500 font-bold hover:underline">Remove</button>
+        <!-- Body -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
+            <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${catClass}">${escapeHtml(catLabel)}</span>
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
+            </div>
           </div>
         </div>
       `;

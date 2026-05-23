@@ -122,13 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let text = '';
     
     if (ext === 'pdf') {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      const pdf = await window.pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+      globalThis.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await globalThis.pdfjsLib.getDocument(await file.arrayBuffer()).promise;
       for (let i = 1; i <= pdf.numPages; i++) {
         text += (await (await pdf.getPage(i)).getTextContent()).items.map(i => i.str).join(' ') + '\n';
       }
     } else if (ext === 'docx') {
-      text = (await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
+      text = (await globalThis.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
     } else if (ext === 'txt') {
       text = await file.text();
     } else {
@@ -139,18 +139,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ').replace(/[ \t]+/g, ' ').replace(/(\r\n|\n|\r){2,}/g, '\n').trim();
   };
 
+  let currentUploadToken = 0;
+
   if (fileUpload) {
     fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       
+      const uploadToken = ++currentUploadToken;
+
       const prevHtml = getRecsBtn.innerHTML;
       const prevDisabled = getRecsBtn.disabled;
       getRecsBtn.disabled = true;
       getRecsBtn.innerHTML = '<span class="material-symbols-outlined pulse-dot">document_scanner</span> Parsing...';
 
       try {
-        resumeText.value = await parseFile(file);
+        const parsedText = await parseFile(file);
+        if (uploadToken !== currentUploadToken) return;
+        resumeText.value = parsedText;
       } catch (err) {
         showError(err.message || "Failed to parse document.");
       } finally {

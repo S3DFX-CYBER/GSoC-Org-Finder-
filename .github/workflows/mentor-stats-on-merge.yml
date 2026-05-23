@@ -1,0 +1,164 @@
+name: Mentor Stats on PR Merge
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: mentor-stats-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  update-merged-stats:
+    if: github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        # Security: persist-credentials=false prevents token from being stored
+        # in .git/config when running under pull_request_target. We only check
+        # out the base branch (never head/fork code), so this is safe.
+        uses: actions/checkout@v4 # NOSONAR
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch PR reviews and update mentor stats
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          IS_PRIORITY: >-
+            ${{
+              contains(github.event.pull_request.labels.*.name, 'priority-p0') ||
+              contains(github.event.pull_request.labels.*.name, 'priority-p1') ||
+              contains(github.event.pull_request.labels.*.name, 'priority-p2') ||
+              contains(github.event.pull_request.labels.*.name, 'priority-p3') ||
+              contains(github.event.pull_request.labels.*.name, 'priority-p4')
+            }}
+        run: |
+          node - <<'EOF'
+          const fs   = require('fs');
+          const { execSync } = require('child_process');
+
+          const token      = process.env.GITHUB_TOKEN;
+          const owner      = process.env.REPO_OWNER;
+          const repo       = process.env.REPO_NAME;
+          const prNumber   = process.env.PR_NUMBER;
+          const isPriority = process.env.IS_PRIORITY === 'true';
+
+          async function ghFetch(path) {
+            const res = await fetch(`https://api.github.com${path}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/vnd.github+json',
+                'User-Agent': 'gsoc-mentor-tracker'
+              }
+            });
+            if (!res.ok) throw new Error(`GitHub API ${res.status} for ${path}`);
+            return res.json();
+          }
+
+          (async () => {
+            const reviews = await ghFetch(
+              `/repos/${owner}/${repo}/pulls/${prNumber}/reviews`
+            );
+
+            if (!reviews || !reviews.length) {
+              console.log('No reviews found for this PR.');
+              process.exit(0);
+            }
+
+            const seen = new Set();
+            const toUpdate = [];
+
+            for (const review of reviews) {
+              const login = review.user?.login;
+              const state = review.state?.toLowerCase();
+              const reviewId = String(review.id);
+              const submittedAt = review.submitted_at;
+
+              if (!login || login.endsWith('[bot]')) continue;
+              if (!['approved', 'changes_requested', 'commented'].includes(state)) continue;
+
+              const key = `${login}-${reviewId}`;
+              if (seen.has(key)) continue;
+              seen.add(key);
+
+              toUpdate.push({ login, state, reviewId, submittedAt });
+            }
+
+            if (!toUpdate.length) {
+              console.log('No valid mentor reviews to update.');
+              process.exit(0);
+            }
+
+            console.log(`Updating stats for ${toUpdate.length} review(s)...`);
+
+            const mentorsPath = '.github/reviewers/gssoc-mentors.json';
+            const mentorData = JSON.parse(fs.readFileSync(mentorsPath, 'utf8'));
+            const mentors = new Set(
+              (mentorData.reviewers || []).map(m => String(m).trim().toLowerCase())
+            );
+
+            for (const { login, state, reviewId, submittedAt } of toUpdate) {
+              if (!mentors.has(login.toLowerCase())) {
+                console.log(`Skipping ${login} — not a registered mentor`);
+                continue;
+              }
+
+              console.log(`Updating: ${login} (${state}, review #${reviewId})`);
+
+              process.env.REVIEWER            = login;
+              process.env.REVIEW_STATE        = state;
+              process.env.REVIEW_ID           = reviewId;
+              process.env.REVIEWED_AT         = submittedAt;
+              process.env.PR_MERGED           = 'true';
+              process.env.IS_PRIORITY         = String(isPriority);
+              process.env.IS_ASSIGNMENT_APPROVAL = 'false';
+              process.env.IS_LOW_EFFORT       = 'false';
+
+              try {
+                execSync('node .github/scripts/update-mentor-stats.js', {
+                  stdio: 'inherit',
+                  env: process.env
+                });
+              } catch (err) {
+                console.error(`Failed updating stats for ${login}:`, err.message);
+              }
+            }
+
+            console.log('All mentor stats updated.');
+          })();
+          EOF
+
+      - name: Regenerate leaderboard file
+        run: node .github/scripts/generate-mentor-leaderboard.js
+
+      - name: Commit updated stats and leaderboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .github/reviewers/mentor-stats.json
+          git add .github/reviewers/mentor-leaderboard.md
+
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+
+          git commit -m "chore: update mentor stats after PR #${{ github.event.pull_request.number }} merged"
+
+          git pull --rebase origin ${{ github.base_ref }}
+
+          git push

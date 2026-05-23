@@ -1,0 +1,128 @@
+name: 📏 Validate PR
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-validate-${{ github.event.pull_request.number }}-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate PR structure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.actor === 'github-actions[bot]') return;
+            const { updateStickyComment, syncLabels } = require('./.github/scripts/common-utils.js');
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const username = pr.user.login;
+
+            if (pr.user.type === 'Bot') return;
+
+            const lowerBody = body.toLowerCase();
+            let warnings = [];
+
+            const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+            if (!issueRegex.test(body)) {
+              warnings.push('⚠️ Missing linked issue. Add: `Closes #issue-number`');
+            }
+
+            const mentionsNSOC = lowerBody.includes('nsoc');
+            const mentionsGSSOC = lowerBody.includes('gssoc');
+
+            if (!mentionsNSOC && !mentionsGSSOC) {
+              warnings.push('⚠️ Missing program tag (`GSSOC` or `NSOC`)');
+            }
+
+            const labelsToAdd = [];
+            const labelsToRemove = [];
+            if (mentionsNSOC) labelsToAdd.push('nsoc26'); else labelsToRemove.push('nsoc26');
+            if (mentionsGSSOC) labelsToAdd.push('gssoc26'); else labelsToRemove.push('gssoc26');
+
+            await syncLabels({ github, owner, repo, issue_number: prNumber, add: labelsToAdd, remove: labelsToRemove });
+
+            const requiredSections = ['description', 'related issue', 'type of change', 'checklist'];
+            for (const section of requiredSections) {
+              if (!lowerBody.includes(section)) {
+                warnings.push(`⚠️ Missing template section: \`${section}\``);
+              }
+            }
+
+            const conventionalRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
+            if (!conventionalRegex.test(title)) {
+              warnings.push('⚠️ Use conventional PR title. Example: `feat: add search filters`');
+            }
+
+            const { data: prFiles } = await github.rest.pulls.listFiles({
+              owner, repo, pull_number: prNumber, per_page: 100
+            });
+
+            const totalAdditions = prFiles.reduce((sum, f) => sum + f.additions, 0);
+            const totalDeletions = prFiles.reduce((sum, f) => sum + f.deletions, 0);
+            const totalChanges = totalAdditions + totalDeletions;
+            const filesChanged = prFiles.length;
+
+            const isFix = /^fix/i.test(title);
+            const isDocs = /^docs/i.test(title);
+            const isStyle = /^style/i.test(title);
+
+            if (isFix && totalChanges > 500) {
+              warnings.push(`⚠️ Large diff for a bug fix (${totalChanges} lines across ${filesChanged} files). Consider splitting into smaller PRs.`);
+            }
+            if (isDocs && totalChanges > 1000) {
+              warnings.push(`⚠️ Very large documentation change (${totalChanges} lines). Ensure all changes are relevant.`);
+            }
+            if (isStyle && totalChanges > 300) {
+              warnings.push(`⚠️ Large diff for a style change (${totalChanges} lines). Avoid mixing unrelated changes.`);
+            }
+
+            const unrelatedExtensions = new Set(prFiles.map(f => f.filename.split('.').pop()));
+            if (unrelatedExtensions.size > 5 && totalChanges > 200) {
+              warnings.push(`⚠️ Changes span ${unrelatedExtensions.size} different file types and ${filesChanged} files. Ensure all changes are related to the stated purpose.`);
+            }
+
+            const generatedFilePatterns = ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'];
+            const touchesLockFiles = prFiles.some(f => generatedFilePatterns.some(p => f.filename.endsWith(p)));
+            if (touchesLockFiles) {
+              warnings.push('⚠️ Lock file changes detected. This repo follows a zero-dependency philosophy — avoid adding packages unless explicitly approved.');
+            }
+
+            const marker = '<!-- pr-validator -->';
+            let commentBody = '';
+
+            if (warnings.length > 0) {
+              commentBody = [
+                `## ⚠️ PR Format Issues Detected`, '',
+                `Hi @${username},`, '',
+                ...warnings.map(w => `- ${w}`), '',
+                `Please fix these and push new commits.`
+              ].join('\n');
+            } else {
+              commentBody = [
+                `## ✅ PR Format Check Passed`, '',
+                `Hi @${username}, basic PR structure checks passed.`, '',
+                `This does **not** mean the PR is approved.`
+              ].join('\n');
+            }
+
+            await updateStickyComment({ github, owner, repo, issue_number: prNumber, marker, newBody: commentBody });

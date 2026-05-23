@@ -1,0 +1,83 @@
+name: 🔁 Duplicate Issue Detector
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: issue-${{ github.event.issue.number }}-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  detect-duplicate:
+    name: Detect Duplicate Issues
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Analyze Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { stringSimilarity, updateStickyComment, syncLabels } = require('./.github/scripts/common-utils.js');
+            const issue = context.payload.issue;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = issue.number;
+            const username = issue.user.login;
+
+            if (issue.user.type === 'Bot' || username.endsWith('[bot]') || issue.pull_request) {
+              return;
+            }
+
+            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
+            if (labels.includes('research') || labels.includes('meta')) {
+              return;
+            }
+
+            const title = (issue.title || '').trim();
+            if (title.length < 10) return;
+
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              { owner, repo, state: 'open', sort: 'created', direction: 'desc', per_page: 50 }
+            );
+
+            let duplicate = null;
+            let highestSimilarity = 0;
+
+            for (const existing of issues) {
+              if (existing.number === issue_number || existing.pull_request) continue;
+              const existingLabels = (existing.labels || []).map(l => l.name.toLowerCase());
+              if (existingLabels.includes('research') || existingLabels.includes('meta')) continue;
+
+              const sim = stringSimilarity(existing.title || '', title);
+              if (sim > highestSimilarity) {
+                highestSimilarity = sim;
+                if (sim >= 0.6) {
+                  duplicate = existing;
+                }
+              }
+            }
+
+            if (!duplicate) {
+              core.info(`No duplicate detected. Highest similarity was ${highestSimilarity.toFixed(2)}`);
+              return;
+            }
+
+            const marker = '<!-- duplicate-detector -->';
+            const newBody = [
+              `## 🔁 Possible Duplicate Issue`, '',
+              `Hi @${username}, this issue appears similar to:`, '',
+              `➡️ #${duplicate.number} (Similarity: ${(highestSimilarity * 100).toFixed(0)}%)`, '',
+              `Please review the existing discussion before continuing.`, '',
+              `If this issue is substantially different, feel free to clarify the distinction.`
+            ].join('\n');
+
+            await updateStickyComment({ github, owner, repo, issue_number, marker, newBody });
+            await syncLabels({ github, owner, repo, issue_number, add: ['possible-duplicate'] });

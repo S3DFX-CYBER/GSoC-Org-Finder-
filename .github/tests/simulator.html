@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Automation Simulator</title>
+  <!-- Google Fonts Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --bg-card: #161b22;
+      --bg-input: #21262d;
+      --border-color: #30363d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #58a6ff;
+      --accent-green: #238636;
+      --accent-green-hover: #2ea043;
+      --accent-orange: #d29922;
+      --accent-red: #f85149;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background-color: rgba(22, 27, 34, 0.85);
+    }
+
+    header h1 {
+      font-family: var(--font-outfit);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #58a6ff 0%, #2ea043 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header .controls {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--border-color);
+      border-color: #8b949e;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-green);
+      border-color: var(--accent-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-green-hover);
+      border-color: var(--accent-green-hover);
+    }
+
+    .btn-danger {
+      background-color: rgba(248, 81, 73, 0.15);
+      border-color: rgba(248, 81, 73, 0.4);
+      color: #ff7b72;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--accent-red);
+      color: white;
+      border-color: var(--accent-red);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+      padding: 2rem;
+      flex-grow: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .section-title {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tab-nav {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-color);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--accent-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* GitHub Mockup elements */
+    .github-issue-header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .github-title-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .github-title {
+      font-family: var(--font-outfit);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .github-number {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .github-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .github-badge {
+      background-color: var(--accent-green);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .github-badge.pr {
+      background-color: #a371f7;
+    }
+
+    .github-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .github-label {
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    /* Comment feed */
+    .comment-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+    }
+
+    .comment-box {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .comment-header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      color: white;
+    }
+
+    .comment-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 0.1rem 0.4rem;
+      border-radius: 10px;
+    }
+
+    .comment-body {
+      padding: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .comment-body h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.25rem;
+    }
+
+    .comment-body blockquote {
+      border-left: 4px solid var(--border-color);
+      padding-left: 1rem;
+      color: var(--text-muted);
+      margin: 0.5rem 0;
+    }
+
+    .comment-body pre {
+      background-color: var(--bg-card);
+      padding: 0.75rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      margin: 0.5rem 0;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Actions Console */
+    .console-logs {
+      background-color: #05070a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: #39ff14; /* Neon green terminal */
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    /* Input controls */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-select, .form-textarea {
+      width: 100%;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-family: var(--font-inter);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent-color);
+    }
+
+    .quick-templates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .badge-label {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .badge-label:hover {
+      background-color: var(--border-color);
+    }
+
+    /* Pipeline stage layout table */
+    .pipeline-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .pipeline-table th, .pipeline-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.6rem;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    .pipeline-table th {
+      background-color: var(--bg-input);
+      font-weight: 600;
+    }
+
+    /* Leaderboard rendered style */
+    .leaderboard-preview {
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .leaderboard-preview table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .leaderboard-preview th, .leaderboard-preview td {
+      border: 1px solid var(--border-color);
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    .leaderboard-preview th {
+      background-color: var(--bg-input);
+    }
+
+    /* Pre JSON block formatting */
+    .json-code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background-color: #0b0e14;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      max-height: 450px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🤖 Mentor Automation & Leaderboard Simulator</h1>
+    <div class="controls">
+      <button class="btn btn-danger" id="btn-reset" onclick="resetState()">🔄 Reset State</button>
+      <button class="btn btn-primary" id="btn-refresh" onclick="refreshData()">⚡ Refresh Data</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left Column: Simulated GitHub Interface -->
+    <div>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchLeftTab('issues-tab')">💬 Issues Simulator</button>
+        <button class="tab-btn" onclick="switchLeftTab('pr-tab')">🔀 PR Simulator</button>
+      </div>
+
+      <!-- Issues Simulator Tab -->
+      <div id="issues-tab" class="tab-content active">
+        <div class="card">
+          <div class="github-issue-header">
+            <div class="github-title-row">
+              <span class="github-badge">🟢 Open</span>
+              <div class="github-title">
+                Implement new home page layout <span class="github-number">#1</span>
+              </div>
+            </div>
+            <div class="github-meta">
+              <span>Opened by <strong>contrib1</strong></span>
+              <span>• 3 comments</span>
+              <div class="github-labels" id="issue-labels">
+                <span class="github-label" style="background-color: #5319e7; color: white;">gssoc26</span>
+                <span class="github-label" style="background-color: #128A0C; color: white;">help-wanted</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-feed" id="issue-comments">
+            <!-- Initial Issue comment -->
+            <div class="comment-box">
+              <div class="comment-header">
+                <span class="comment-author">contrib1</span>
+                <span class="comment-badge">Author</span>
+              </div>
+              <div class="comment-body">
+                Please assign this issue to me. I would love to work on implementing the new landing page dashboard!
+              </div>
+            </div>
+          </div>
+
+          <!-- Add comment block -->
+          <div class="form-group">
+            <label for="comment-user">Select Commenter (Role Mock):</label>
+            <select id="comment-user" class="form-select">
+              <option value="contrib1">contrib1 (Contributor)</option>
+              <option value="srinadhtadikonda">srinadhtadikonda (Mentor)</option>
+              <option value="ritika">ritika (Mentor)</option>
+              <option value="S3DFX-CYBER">S3DFX-CYBER (Maintainer/Owner)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="comment-text">Comment Text:</label>
+            <textarea id="comment-text" class="form-textarea" rows="3" placeholder="Type a comment or a slash command..."></textarea>
+            <div class="quick-templates">
+              <span class="badge-label" onclick="setComment('/assign')">/assign</span>
+              <span class="badge-label" onclick="setComment('/approve-assignment @contrib1')">/approve-assignment @contrib1</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-submit-comment" onclick="submitComment()">Post Comment & Run Bot</button>
+        </div>
+      </div>
+
+      <!-- PR Simulator Tab -->
+      <div id="pr-tab" class="tab-content">
+        <div class="card">
+          <div class="github-issue-header">
+            <div class="github-title-row">
+              <span class="github-badge pr">🔀 PR Open</span>
+              <div class="github-title">
+                feat: add awesome landing page <span class="github-number">#2</span>
+              </div>
+            </div>
+            <div class="github-meta">
+              <span>Opened by <strong>contrib1</strong></span>
+              <span>• Base branch: main</span>
+              <div class="github-labels" id="pr-labels">
+                <span class="github-label" style="background-color: #5319e7; color: white;">gssoc26</span>
+                <span class="github-label" style="background-color: #0E8A16; color: white;">stage-1-approved</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-feed" id="pr-comments">
+            <div class="comment-box">
+              <div class="comment-header">
+                <span class="comment-author">contrib1</span>
+                <span class="comment-badge">Author</span>
+              </div>
+              <div class="comment-body">
+                Added visual elements, layout styles, and optimized landing page performance. Closes #1.
+              </div>
+            </div>
+
+            <!-- Bot sticky PR Pipeline card -->
+            <div class="comment-box" id="pr-pipeline-comment">
+              <div class="comment-header">
+                <span class="comment-author">github-actions[bot]</span>
+                <span class="comment-badge">Bot</span>
+              </div>
+              <div class="comment-body">
+                <h2>🚦 PR Review Pipeline</h2>
+                <blockquote>🟢 <strong>GSSOC PR</strong></blockquote>
+                <table class="pipeline-table">
+                  <thead>
+                    <tr><th>Stage</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><strong>Stage 1 — Automated Checks</strong></td><td>✅ All automated checks passed</td></tr>
+                    <tr><td><strong>Stage 2 — Mentor/Reviewer</strong></td><td>⏳ Awaiting GSSOC mentor review</td></tr>
+                    <tr><td><strong>Stage 3 — Maintainer</strong></td><td>🔒 Blocked until Stage 2 passes</td></tr>
+                  </tbody>
+                </table>
+                <hr>
+                <small>Last updated: Fri, 22 May 2026 04:15:00 GMT</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- PR Review Mock Controls -->
+          <h3 class="section-title">Submit Mentor Review</h3>
+          
+          <div class="form-group">
+            <label for="review-user">Select Mentor Reviewer:</label>
+            <select id="review-user" class="form-select">
+              <option value="ritika">ritika (Mentor)</option>
+              <option value="srinadhtadikonda">srinadhtadikonda (Mentor)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="review-state">Review State:</label>
+            <select id="review-state" class="form-select">
+              <option value="APPROVED">APPROVED (Approve pull request)</option>
+              <option value="COMMENTED">COMMENTED (Submit comments only)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="review-body">Review Feedbacks (Simulate Low Effort vs High Effort):</label>
+            <textarea id="review-body" class="form-textarea" rows="3" placeholder="Provide detailed changes..."></textarea>
+            <div class="quick-templates">
+              <span class="badge-label" onclick="setReviewBody('LGTM')">LGTM (Low Effort)</span>
+              <span class="badge-label" onclick="setReviewBody('Looks great! I verified the responsive grid layout on viewport resize and tested styling compliance. Code logic is flawless.')">Detailed High Effort Review</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-submit-review" onclick="submitPRReview()">Submit Review & Run Bot</button>
+        </div>
+      </div>
+
+      <!-- Action logs terminal pane -->
+      <h3 class="section-title">Terminal / Workflow Runner Output</h3>
+      <div class="console-logs" id="console-logs">System initialized. Click actions above to trigger scripts...</div>
+    </div>
+
+    <!-- Right Column: Live JSON Code State / Leaderboard Render -->
+    <div>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchRightTab('leaderboard-view')">🏆 Leaderboard MD Render</button>
+        <button class="tab-btn" onclick="switchRightTab('pending-view')">⏳ pending-assignments.json</button>
+        <button class="tab-btn" onclick="switchRightTab('stats-view')">📊 mentor-stats.json</button>
+      </div>
+
+      <!-- Leaderboard Render -->
+      <div id="leaderboard-view" class="tab-content active">
+        <div class="card">
+          <div class="leaderboard-preview" id="leaderboard-container">
+            <em>No leaderboard generated yet. Submit reviews to see statistics update.</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Assignments JSON -->
+      <div id="pending-view" class="tab-content">
+        <pre class="json-code" id="pending-json-container">{}</pre>
+      </div>
+
+      <!-- Mentor Stats JSON -->
+      <div id="stats-view" class="tab-content">
+        <pre class="json-code" id="stats-json-container">{}</pre>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tab functions
+    function switchLeftTab(tabId) {
+      document.querySelectorAll('#issues-tab, #pr-tab').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-nav:first-of-type .tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function switchRightTab(tabId) {
+      document.querySelectorAll('#leaderboard-view, #pending-view, #stats-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-nav:nth-of-type(2) .tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function setComment(text) {
+      document.getElementById('comment-text').value = text;
+    }
+
+    function setReviewBody(text) {
+      document.getElementById('review-body').value = text;
+    }
+
+    // Append mock comment to visual log
+    function appendComment(user, body, isBot = false, id = null) {
+      const container = document.getElementById('issue-comments');
+      const box = document.createElement('div');
+      box.className = 'comment-box';
+      if (id) box.id = id;
+      box.innerHTML = `
+        <div class="comment-header">
+          <span class="comment-author">${user}</span>
+          <span class="comment-badge">${isBot ? 'Bot' : 'User'}</span>
+        </div>
+        <div class="comment-body">
+          ${body.replace(/\n/g, '<br>')}
+        </div>
+      `;
+      container.appendChild(box);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendPRComment(user, body, isBot = false, id = null) {
+      const container = document.getElementById('pr-comments');
+      const box = document.createElement('div');
+      box.className = 'comment-box';
+      if (id) box.id = id;
+      box.innerHTML = `
+        <div class="comment-header">
+          <span class="comment-author">${user}</span>
+          <span class="comment-badge">${isBot ? 'Bot' : 'User'}</span>
+        </div>
+        <div class="comment-body">
+          ${body.replace(/\n/g, '<br>')}
+        </div>
+      `;
+      container.appendChild(box);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Refresh display
+    async function refreshData() {
+      try {
+        const res = await fetch('/api/data');
+        const data = await res.json();
+
+        // Render pending JSON
+        document.getElementById('pending-json-container').textContent = JSON.stringify(data.pending, null, 2);
+        
+        // Render stats JSON
+        document.getElementById('stats-json-container').textContent = JSON.stringify(data.stats, null, 2);
+
+        // Populate mentor dropdowns
+        if (data.mentors && data.mentors.length > 0) {
+          const reviewUser = document.getElementById('review-user');
+          if (reviewUser.options.length <= 2) {
+            reviewUser.innerHTML = '';
+            data.mentors.forEach(m => {
+              reviewUser.add(new Option(m + ' (Mentor)', m));
+            });
+          }
+        }
+
+        // Render Leaderboard Markdown
+        if (data.leaderboard) {
+          // simple parser for markdown tables
+          let html = data.leaderboard;
+          html = html.replace(/# (.*)/g, '<h2>$1</h2>');
+          html = html.replace(/> (.*)/g, '<blockquote>$1</blockquote>');
+          
+          // Table parsing
+          const lines = html.split('\n');
+          let inTable = false;
+          let tableHtml = '<table><thead>';
+          for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('|')) {
+              const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+              if (line.includes('---')) {
+                tableHtml += '</thead><tbody>';
+                inTable = true;
+                continue;
+              }
+              if (!inTable) {
+                tableHtml += '<tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr>';
+              } else {
+                tableHtml += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+              }
+            } else if (inTable) {
+              tableHtml += '</tbody></table>';
+              inTable = false;
+              html = html.replace(/\|[\s\S]*?\|[\s\S]*?\|/m, tableHtml);
+            }
+          }
+          document.getElementById('leaderboard-container').innerHTML = html;
+        } else {
+          document.getElementById('leaderboard-container').innerHTML = '<em>No leaderboard generated yet. Submit reviews to see statistics update.</em>';
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Reset State
+    async function resetState() {
+      document.getElementById('console-logs').textContent = 'Resetting environment...';
+      const res = await fetch('/api/reset', { method: 'POST' });
+      await res.json();
+      document.getElementById('issue-comments').innerHTML = `
+        <div class="comment-box">
+          <div class="comment-header">
+            <span class="comment-author">contrib1</span>
+            <span class="comment-badge">Author</span>
+          </div>
+          <div class="comment-body">
+            Please assign this issue to me. I would love to work on implementing the new landing page dashboard!
+          </div>
+        </div>
+      `;
+      document.getElementById('pr-comments').innerHTML = `
+        <div class="comment-box">
+          <div class="comment-header">
+            <span class="comment-author">contrib1</span>
+            <span class="comment-badge">Author</span>
+          </div>
+          <div class="comment-body">
+            Added visual elements, layout styles, and optimized landing page performance. Closes #1.
+          </div>
+        </div>
+        <div class="comment-box" id="pr-pipeline-comment">
+          <div class="comment-header">
+            <span class="comment-author">github-actions[bot]</span>
+            <span class="comment-badge">Bot</span>
+          </div>
+          <div class="comment-body">
+            <h2>🚦 PR Review Pipeline</h2>
+            <blockquote>🟢 <strong>GSSOC PR</strong></blockquote>
+            <table class="pipeline-table">
+              <thead>
+                <tr><th>Stage</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>Stage 1 — Automated Checks</strong></td><td>✅ All automated checks passed</td></tr>
+                <tr><td><strong>Stage 2 — Mentor/Reviewer</strong></td><td>⏳ Awaiting GSSOC mentor review</td></tr>
+                <tr><td><strong>Stage 3 — Maintainer</strong></td><td>🔒 Blocked until Stage 2 passes</td></tr>
+              </tbody>
+            </table>
+            <hr>
+            <small>Last updated: Fri, 22 May 2026 04:15:00 GMT</small>
+          </div>
+        </div>
+      `;
+      document.getElementById('console-logs').textContent += '\nEnvironment reset complete.';
+      await refreshData();
+    }
+
+    // Post comment trigger
+    async function submitComment() {
+      const user = document.getElementById('comment-user').value;
+      const text = document.getElementById('comment-text').value;
+
+      if (!text.trim()) return;
+
+      appendComment(user, text);
+      document.getElementById('comment-text').value = '';
+
+      const logConsole = document.getElementById('console-logs');
+      logConsole.textContent += `\n\n[Trigger] Comment posted by ${user}: "${text}"`;
+
+      let actionType = null;
+      if (text.trim() === '/assign') {
+        actionType = 'assign';
+      } else if (text.trim().startsWith('/approve-assignment')) {
+        actionType = 'approve';
+      }
+
+      if (actionType) {
+        logConsole.textContent += `\nRunning GitHub Action workflow step: ${actionType}`;
+        const res = await fetch('/api/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action_type: actionType,
+            comment_user: user,
+            comment_body: text
+          })
+        });
+        const result = await res.json();
+        logConsole.textContent += `\n\n--- Runner Logs ---\n${result.logs}`;
+
+        if (actionType === 'assign' && result.data.selected_mentors) {
+          appendComment('github-actions[bot]', result.data.comment_body, true, 'comment-assign-queued');
+          // Update issue assignee or labels visually if needed
+          const labelsDiv = document.getElementById('issue-labels');
+          if (!document.getElementById('label-queued')) {
+            labelsDiv.innerHTML += '<span id="label-queued" class="github-label" style="background-color: #FEF2C0; color: #1F2328;">assignment-queued</span>';
+          }
+          
+          // Dynamically add selected mentors to the comment dropdown
+          result.data.selected_mentors.forEach(m => {
+            const select = document.getElementById('comment-user');
+            if (!Array.from(select.options).some(opt => opt.value === m)) {
+              select.add(new Option(m + ' (Mentor)', m));
+            }
+          });
+        } else if (actionType === 'approve') {
+          if (result.data.ok) {
+            appendComment('github-actions[bot]', result.data.comment_body, true, 'comment-assign-approved');
+            const labelsDiv = document.getElementById('issue-labels');
+            const queuedLabel = document.getElementById('label-queued');
+            if (queuedLabel) queuedLabel.remove();
+            labelsDiv.innerHTML += '<span class="github-label" style="background-color: #0E8A16; color: white;">assigned</span>';
+          } else {
+            if (result.data.error === 'not_authorized') {
+              appendComment('github-actions[bot]', `⛔ @${user} — you are not one of the currently pinged mentors. Only ${result.data.authorized.map(m => `@${m}`).join(' or ')} can approve.`, true);
+            } else {
+              appendComment('github-actions[bot]', `⛔ Assignment not found or expired.`, true);
+            }
+          }
+        }
+        await refreshData();
+      }
+    }
+
+    // Submit PR Review trigger
+    async function submitPRReview() {
+      const user = document.getElementById('review-user').value;
+      const state = document.getElementById('review-state').value;
+      const body = document.getElementById('review-body').value;
+
+      appendPRComment(user, `**PR Review Submitted (${state})**\n\n${body}`);
+      document.getElementById('review-body').value = '';
+
+      const logConsole = document.getElementById('console-logs');
+      logConsole.textContent += `\n\n[Trigger] PR review submitted by ${user}: [${state}] "${body}"`;
+
+      logConsole.textContent += `\nRunning GitHub Action workflow step: pr_review`;
+      const res = await fetch('/api/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action_type: 'pr_review',
+          comment_user: user,
+          comment_body: body,
+          review_state: state
+        })
+      });
+      const result = await res.json();
+      logConsole.textContent += `\n\n--- Runner Logs ---\n${result.logs}`;
+
+      if (result.data.is_low_effort) {
+        appendPRComment('github-actions[bot]', result.data.warning_comment, true, 'comment-low-effort-warning');
+      }
+
+      // Update PR pipeline visual card
+      const pipelineBody = document.querySelector('#pr-pipeline-comment .comment-body');
+      if (pipelineBody) {
+        let s2Icon = '⏳';
+        let s2Text = 'Awaiting GSSOC mentor review';
+        let s3Icon = '🔒';
+        let s3Text = 'Blocked until Stage 2 passes';
+
+        if (state === 'APPROVED' && !result.data.is_low_effort) {
+          s2Icon = '✅';
+          s2Text = 'Mentor approved';
+          s3Icon = '⏳';
+          s3Text = 'Awaiting maintainer review';
+          
+          // Add label visually
+          const prLabelsDiv = document.getElementById('pr-labels');
+          prLabelsDiv.innerHTML += '<span class="github-label" style="background-color: #0E8A16; color: white;">gssoc-mentor-approved</span>';
+        }
+
+        pipelineBody.innerHTML = `
+          <h2>🚦 PR Review Pipeline</h2>
+          <blockquote>🟢 <strong>GSSOC PR</strong></blockquote>
+          <table class="pipeline-table">
+            <thead>
+              <tr><th>Stage</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Stage 1 — Automated Checks</strong></td><td>✅ All automated checks passed</td></tr>
+              <tr><td><strong>Stage 2 — Mentor/Reviewer</strong></td><td>${s2Icon} ${s2Text}</td></tr>
+              <tr><td><strong>Stage 3 — Maintainer</strong></td><td>${s3Icon} ${s3Text}</td></tr>
+            </tbody>
+          </table>
+          <hr>
+          <small>Last updated: ${new Date().toUTCString()}</small>
+        `;
+      }
+
+      await refreshData();
+    }
+
+    // Initial load
+    window.onload = function() {
+      refreshData();
+    }
+  </script>
+</body>
+</html>

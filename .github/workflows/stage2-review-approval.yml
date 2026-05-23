@@ -1,0 +1,141 @@
+name: Stage 2 - Review Approval Handler
+
+on:
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  handle-review-approval:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Process Stage 2 Approval
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { updateStickyComment, syncLabels, canonicalizeMentor } = require('./.github/scripts/common-utils.js');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            let reviewer, prNumber;
+
+            if (context.eventName === 'pull_request_review') {
+              const pr = context.payload.pull_request;
+              reviewer = canonicalizeMentor(context.payload.review.user.login);
+              prNumber = pr.number;
+
+              if (reviewer === canonicalizeMentor(pr.user.login)) {
+                core.info('Self-approval ignored.');
+                return;
+              }
+            } else {
+              const comment = context.payload.comment;
+              const commentBody = (comment.body || '').trim().toLowerCase();
+
+              const isExplicitApproval = /^\/(approve-pr|lgtm)\b/.test(commentBody);
+              if (!isExplicitApproval) return;
+
+              reviewer = canonicalizeMentor(comment.user.login);
+              prNumber = context.payload.issue.number;
+
+              const { data: prData } = await github.rest.pulls.get({
+                owner, repo, pull_number: prNumber
+              });
+              if (reviewer === canonicalizeMentor(prData.user.login)) {
+                core.info('Self-approval via comment ignored.');
+                return;
+              }
+            }
+
+            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: prNumber
+            });
+            const labels = labelData.map(l => l.name.toLowerCase());
+
+            const isGssoc = labels.includes('gssoc26');
+            const stage1Passed = labels.includes('stage-1-approved');
+
+            if (!stage1Passed) {
+              core.info('Stage 1 not passed. Ignoring review approval for Stage 2.');
+              return;
+            }
+
+            if (!isGssoc) {
+              core.info('PR is not GSSOC. Stage 2 special review not applicable.');
+              return;
+            }
+
+            let mentorList = [];
+            try {
+              const { data: file } = await github.rest.repos.getContent({
+                owner, repo, path: '.github/reviewers/gssoc-mentors.json', ref: 'main'
+              });
+              const content = Buffer.from(file.content, 'base64').toString('utf8');
+              mentorList = (JSON.parse(content).reviewers || []).map(canonicalizeMentor);
+            } catch (e) {
+              core.warning(`Failed to load mentor list: ${e?.message || e}`);
+              return;
+            }
+
+            if (!mentorList.includes(reviewer)) {
+              core.info(`@${reviewer} is not a GSSOC mentor. Ignoring.`);
+              return;
+            }
+
+            const reviews = await github.paginate(
+              github.rest.pulls.listReviews,
+              { owner, repo, pull_number: prNumber }
+            );
+
+            const mentorApprovals = new Set();
+            for (const review of reviews) {
+              if (review.state !== 'APPROVED') continue;
+              const reviewUser = canonicalizeMentor(review.user.login);
+              if (mentorList.includes(reviewUser)) {
+                mentorApprovals.add(reviewUser);
+              }
+            }
+
+            if (context.eventName === 'issue_comment' && mentorList.includes(reviewer)) {
+              mentorApprovals.add(reviewer);
+            }
+
+            core.info(`GSSOC mentor approvals: ${mentorApprovals.size} (${Array.from(mentorApprovals).join(', ')})`);
+
+            if (mentorApprovals.size >= 1) {
+              await syncLabels({ 
+                github, owner, repo, issue_number: prNumber, 
+                add: ['gssoc-mentor-approved', 'mentor-approved', 'pa-review-required', `mentor:${reviewer}`],
+                remove: ['needs-mentor-review', 'mentor-review-requested']
+              });
+
+              const marker = '<!-- mentor-review-status -->';
+              const newBody = [
+                `## ✅ Stage 2 Complete — Mentor Approved`, '',
+                `@${reviewer} has approved this PR.`, '',
+                `**Next:** PA/Maintainer review required. Label \`pa-review-required\` has been applied.`, '',
+                `@S3DFX-CYBER — this PR is ready for your final review.`
+              ].join('\n');
+
+              await updateStickyComment({ github, owner, repo, issue_number: prNumber, marker, newBody });
+              core.info('Stage 2 complete: GSSOC mentor approved. PA review requested.');
+            }

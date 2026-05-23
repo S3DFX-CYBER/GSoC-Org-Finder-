@@ -1,0 +1,160 @@
+name: 🚦 PR Stage Manager
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: pr-stage-manager-${{ github.event.pull_request.number || github.event.review.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  stage-manager:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request_review' ||
+      (github.event.pull_request && github.event.pull_request.head.repo.full_name == github.repository)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Evaluate PR Pipeline
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { updateStickyComment, syncLabels } = require('./.github/scripts/common-utils.js');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const prNumber = context.payload.pull_request?.number || context.payload.review?.pull_request_url?.split('/').pop();
+
+            if (!prNumber) {
+              core.setFailed('Unable to determine PR number');
+              return;
+            }
+
+            if (context.payload.action && ['opened', 'synchronize'].includes(context.payload.action)) {
+              await new Promise(r => setTimeout(r, 15000));
+            }
+
+            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: Number(prNumber)
+            });
+
+            const labels = labelData.map(l => l.name.toLowerCase());
+
+            const isGSSOC = labels.includes('gssoc26');
+            const isNSOC = labels.includes('nsoc26');
+
+            const dcoVerified = labels.includes('dco-verified');
+            const dcoMissing = labels.includes('dco-missing');
+            const aiSlop = labels.includes('ai-slop') || labels.includes('gssoc:ai-slop');
+            const duplicatePR = labels.includes('possible-duplicate-pr') || labels.includes('possible-duplicate');
+            const gssocSpam = labels.includes('gssoc:spam');
+            const gssocInvalid = labels.includes('gssoc:invalid');
+
+            const stage1Passed = dcoVerified && !dcoMissing && !aiSlop && !gssocSpam && !gssocInvalid;
+
+            const mentorApproved = labels.includes('gssoc-mentor-approved') || labels.includes('mentor-approved');
+            const reviewerApproved = labels.includes('review-approved');
+
+            const stage2Passed = isNSOC ? stage1Passed : (isGSSOC ? mentorApproved : (mentorApproved || reviewerApproved));
+
+            const gssocApproved = labels.includes('gssoc:approved');
+            const paApproved = labels.includes('pa-approved') || gssocApproved;
+            const mergeReady = labels.includes('merge-ready');
+
+            const labelsToAdd = [];
+            const labelsToRemove = [];
+
+            if (stage1Passed) {
+              labelsToAdd.push('stage-1-approved');
+              labelsToRemove.push('needs-stage-1-fixes');
+
+              if (!mentorApproved && !reviewerApproved && isGSSOC) {
+                labelsToAdd.push('needs-mentor-review', 'mentor-review-requested');
+              }
+            } else {
+              labelsToRemove.push('stage-1-approved', 'needs-mentor-review', 'mentor-review-requested');
+              labelsToAdd.push('needs-stage-1-fixes');
+            }
+
+            await syncLabels({ github, owner, repo, issue_number: Number(prNumber), add: labelsToAdd, remove: labelsToRemove });
+
+            let s1Icon = '';
+            let s1Text = 'Waiting for automated checks';
+            if (stage1Passed) {
+              s1Text = 'All automated checks passed';
+            } else if (dcoMissing || aiSlop || gssocSpam || gssocInvalid) {
+              s1Text = 'Failed — fixes required';
+            }
+
+            let s2Icon = '🔒';
+            let s2Text = 'Blocked until Stage 1 passes';
+            if (stage1Passed) {
+              if (isNSOC) {
+                s2Icon = '';
+                s2Text = 'NSOC bypasses mentor review';
+              } else {
+                s2Icon = '';
+                s2Text = isGSSOC ? 'Awaiting GSSOC mentor review' : 'Awaiting reviewer approval';
+                if (stage2Passed) {
+                  s2Text = isGSSOC ? 'Mentor approved' : 'Reviewer approved';
+                }
+              }
+            }
+
+            let s3Icon = '🔒';
+            let s3Text = 'Blocked until Stage 2 passes';
+            if (stage1Passed && stage2Passed) {
+              s3Icon = '';
+              s3Text = 'Awaiting maintainer review';
+              if (paApproved || mergeReady) {
+                s3Text = 'Ready to merge';
+              }
+            }
+
+            const details = [];
+            if (!dcoVerified) details.push('DCO verification pending');
+            if (dcoMissing) details.push('DCO sign-off missing');
+            if (aiSlop) details.push('AI/slop detection triggered');
+            if (duplicatePR) details.push('Possible duplicate PR');
+            if (gssocSpam) details.push('Marked as GSSOC spam');
+            if (gssocInvalid) details.push('Marked as GSSOC invalid');
+
+            const typeBadge = isGSSOC ? '> 🟢 **GSSOC PR**' : (isNSOC ? '> 🔵 **NSOC PR**' : '> ⚪ **Standard PR**');
+
+            const marker = '<!-- pr-stage-manager -->';
+            let body = [
+              `## 🚦 PR Review Pipeline`, '',
+              typeBadge, '',
+              `| Stage | Status |`,
+              `|-------|--------|`,
+              `| **Stage 1 — Automated Checks** | ${s1Icon} ${s1Text} |`,
+              `| **Stage 2 — Mentor/Reviewer** | ${s2Icon} ${s2Text} |`,
+              `| **Stage 3 — Maintainer** | ${s3Icon} ${s3Text} |`, ''
+            ].join('\n');
+
+            if (details.length > 0) {
+              body += details.map(d => `> - ${d}`).join('\n') + '\n\n';
+            } else {
+              body += '> No active issues\n\n';
+            }
+
+            body += '---\n';
+
+            try {
+              await updateStickyComment({ github, owner, repo, issue_number: Number(prNumber), marker, newBody: body });
+            } catch (e) {
+              core.warning('Insufficient permissions to write pipeline comment. Skipping comment.');
+            }

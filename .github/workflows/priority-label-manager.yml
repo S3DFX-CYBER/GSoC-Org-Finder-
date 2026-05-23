@@ -1,0 +1,60 @@
+name: Priority Label Manager
+
+on:
+  pull_request_target:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: priority-label-${{ github.event.pull_request.number }}-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Normalize priority labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.actor === 'github-actions[bot]') return;
+            const { syncLabels } = require('./.github/scripts/common-utils.js');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            const allowed = [
+              'priority-p0',
+              'priority-p1',
+              'priority-p2',
+              'priority-p3',
+              'priority-p4'
+            ];
+
+            const { data: labelData } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+
+            const currentLabels = labelData.map(l => l.name.toLowerCase());
+            const present = currentLabels.filter(l => allowed.includes(l)).sort();
+
+            if (present.length <= 1) {
+              core.info('No duplicate priority labels detected.');
+              return;
+            }
+
+            const keep = present[0];
+            const remove = present.filter(l => l !== keep);
+
+            await syncLabels({ github, owner, repo, issue_number, remove });
+            core.info(`Kept: ${keep}, Removed: ${remove.join(', ')}`);

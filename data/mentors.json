@@ -2254,19 +2254,25 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "OSGeo (Open Source Geospatial Foundation)": {
+"OSGeo (Open Source Geospatial Foundation)": {
     "org": "OSGeo (Open Source Geospatial Foundation)",
-    "ideasUrl": "https://wiki.osgeo.org/wiki/Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [
+    "ideasUrl": "https://wiki.osgeo.org/wiki/Google_Summer_of_Code_2026_Ideas",
+    "channels": [
       {
-        "type": "Mailing list",
-        "url": "http://lists.osgeo.org/mailman/listinfo/soc",
-        "label": "OSGeo (Open Source Geospatial Foundation) Mailing list"
+        "type": "Discourse",
+        "url": "https://discourse.osgeo.org/c/initiatives/soc",
+        "label": "OSGeo GSoC Discourse (Summer of Code)"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "mentors": [
+      {
+        "name": "Ashish",
+        "github": "krashish8",
+        "githubUrl": "https://github.com/krashish8"
+      }
+    ],
+    "mailingLists": [],
+    "tip": "Post in the OSGeo Discourse community to introduce yourself and ask questions related to GSoC.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

@@ -3517,8 +3517,15 @@ if(org.ideas){
       chip.classList.add('bg-surface-container-highest');
     });
 
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    // Reset internal state
+    activeChip = null;
+    selectedLanguages.clear();
+    renderSelectedLanguages();
+
+    // Clean the URL
+    history.replaceState(null, '', location.pathname);
+
+    applyFilters();
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {

@@ -3439,16 +3439,20 @@ if(org.ideas){
     openModal(randomOrg.name);
   }
 
+  function normalizeStr(s) {
+    return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
   function applyFilters() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const query = normalizeStr(document.getElementById('searchInput').value.trim());
     const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
     const cat = categoryValue === 'all' ? '' : categoryValue;
     const comp = document.getElementById('complexityFilter').value;
     const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query);
+      const matchSearch = normalizeStr(o.name).includes(query);
       const matchCat = !cat || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
       const tags = (o.tags || []).map(t => String(t).toLowerCase());
@@ -3469,8 +3473,8 @@ if(org.ideas){
 
     if(query){
       filteredOrgs.sort((a,b)=>{
-        const nameA=a.name.toLowerCase();
-        const nameB=b.name.toLowerCase();
+        const nameA=normalizeStr(a.name);
+        const nameB=normalizeStr(b.name);
         if(nameA===query && nameB!==query) return -1;
         if(nameB===query && nameA!==query) return 1;
         if(nameA.startsWith(query) && !nameB.startsWith(query)) return -1;

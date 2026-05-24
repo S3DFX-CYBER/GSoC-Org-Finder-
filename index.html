@@ -2062,8 +2062,17 @@
   window.handleImgError = function(img, orgName) {
     if (!img.dataset.triedClearbit) {
       img.dataset.triedClearbit = 'true';
-      const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
-      img.src = `https://logo.clearbit.com/${domain}`;
+      const githubOwner = img.dataset.githubOwner;
+      if (githubOwner) {
+        img.src = `https://logo.clearbit.com/${githubOwner.toLowerCase()}.com`;
+      } else {
+        img.style.display = 'none';
+        const placeholder = img.parentElement.querySelector('.logo-placeholder');
+        if (placeholder) {
+          placeholder.style.display = 'flex';
+          placeholder.textContent = orgName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+        }
+      }
     } else {
       img.style.display = 'none';
       const placeholder = img.parentElement.querySelector('.logo-placeholder');
@@ -2108,7 +2117,7 @@
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
+            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" data-github-owner="${escapeHtml(githubOwner)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
@@ -2212,7 +2221,7 @@
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" data-github-owner="${escapeHtml(githubOwner)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>

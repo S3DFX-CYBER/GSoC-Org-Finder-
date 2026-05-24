@@ -1226,10 +1226,14 @@
     .then(data => { communityActivity = data; renderOrgs(false); })
     .catch(() => { communityActivity = {}; });
 
+  function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function getActivityBadge(orgName) {
     const a = communityActivity[orgName];
     if (!a) return '';
-    return `<span class="activity-badge tier-${a.tier}" title="Activity Score: ${a.score}/100">${a.label}</span>`;
+    return `<span class="activity-badge tier-${escapeHtml(a.tier)}" title="Activity Score: ${escapeHtml(a.score)}/100">${escapeHtml(a.label)}</span>`;
   }
   // THEME
   // ══════════════════════════════════════════════
@@ -2634,6 +2638,7 @@
       <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
       <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+      ${getActivityBadge(org.name)}
     `;
 
     document.getElementById('mDesc').textContent = org.desc;

@@ -1385,8 +1385,6 @@ requestAnimationFrame(()=>{
   renderTrending();
   loadCachedIssues();
   checkAPI();
-  renderContributionRoadmap();
-  
 });
 
 // Sync hero search with hidden search input and initialize on load

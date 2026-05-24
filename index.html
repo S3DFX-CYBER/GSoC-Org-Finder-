@@ -1812,7 +1812,7 @@
     container.innerHTML = roadmapSteps.map((step) => {
       const checked = !!state[step.id];
       return `
-        <label style="
+        <label   class="roadmap-step" style="
           display:flex; align-items:center; gap:12px;
           padding:12px 16px; border-radius:12px; cursor:pointer;
           border: 1.5px solid ${checked ? '#86efac' : '#e5e7eb'};
@@ -1826,27 +1826,104 @@
             ${checked ? "checked" : ""}
             style="width:18px; height:18px; accent-color:#22c55e; cursor:pointer; flex-shrink:0;"
           />
-          <span style="
+          <span class="roadmap-label" style="
             font-size:13px; font-weight:500;
             color: ${checked ? '#86efac' : 'var(--ink, #1a1a1a)'};
             text-decoration: ${checked ? 'line-through' : 'none'};
           ">
             ${escapeHtml(step.label)}
           </span>
-          ${checked ? '<span style="margin-left:auto; color:#22c55e; font-size:16px;">✓</span>' : ''}
+          ${checked ? '<span class="checkmark" style="margin-left:auto; color:#22c55e; font-size:16px;">✓</span>' : ''}
         </label>`;
     }).join("");
+}
+   
+  const roadmapContainer = document.getElementById("roadmap-steps");
 
-     container.onclick = function(e) {
-        if (e.target.type === 'checkbox') {
-          const s = loadRoadmapState(orgName);
-          s[e.target.dataset.stepId] = e.target.checked;
-          saveRoadmapState(orgName, s);
-            renderContributionRoadmap(orgName);
-         }
-      };
-};
-  
+  if (roadmapContainer) {
+
+  roadmapContainer.addEventListener("change", function (e) {
+
+    if (!e.target.matches(".roadmap-checkbox")) return;
+
+    const checkbox = e.target;
+
+    const orgName = checkbox.dataset.orgName;
+    const stepId = checkbox.dataset.stepId;
+
+    // Load saved state
+    const state = loadRoadmapState(orgName);
+
+    // Update state
+    state[stepId] = checkbox.checked;
+
+    // Save state
+    saveRoadmapState(orgName, state);
+
+    // Update UI directly
+    const label = checkbox.closest(".roadmap-step");
+    const text = label.querySelector(".roadmap-label");
+
+    if (checkbox.checked) {
+
+      label.style.border = "1.5px solid #86efac";
+      label.style.background = "#f0fdf4";
+
+      text.style.color = "#86efac";
+      text.style.textDecoration = "line-through";
+
+      // Add checkmark
+      if (!label.querySelector(".checkmark")) {
+
+        const checkmark = document.createElement("span");
+
+        checkmark.className = "checkmark";
+        checkmark.textContent = "✓";
+
+        checkmark.style.marginLeft = "auto";
+        checkmark.style.color = "#22c55e";
+        checkmark.style.fontSize = "16px";
+
+        label.appendChild(checkmark);
+      }
+
+    } else {
+
+      label.style.border = "1.5px solid #e5e7eb";
+      label.style.background = "#ffffff";
+
+      text.style.color = "var(--ink, #1a1a1a)";
+      text.style.textDecoration = "none";
+
+      // Remove checkmark
+      const checkmark = label.querySelector(".checkmark");
+
+      if (checkmark) {
+        checkmark.remove();
+      }
+    }
+
+    // Update progress
+    const completed = roadmapSteps.filter(step => state[step.id]).length;
+
+    const total = roadmapSteps.length;
+
+    const percent = Math.round((completed / total) * 100);
+
+    const bar = document.getElementById("roadmap-progress-bar");
+    const pct = document.getElementById("modal-roadmap-pct");
+
+    if (bar) {
+      bar.style.width = percent + "%";
+    }
+
+    if (pct) {
+      pct.textContent = completed + " / " + total;
+    }
+
+  });
+
+}
 
   function getMentorFinderRecords() {
     return ORGS.map((org) => ({

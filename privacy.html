@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" integrity="sha384-9gQ8upeWZQ9/fPKaAGJuDpTMaZdwDhECBPX+H6i9vVTa3EllQ1skSXUr6bXADJRW" crossorigin="anonymous" />
   <script>
-    // Tailwind Configuration
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -28,6 +27,21 @@
       }
     }
   </script>
+  <style>
+    .dark body { background: #0f0f10; color: #e5e7eb; }
+    .dark .bg-surface { background: #18181b !important; }
+    .dark .bg-zinc-100 { background: #27272a !important; }
+    .dark .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark .text-zinc-600 { color: #a1a1aa !important; }
+    .dark .text-zinc-500 { color: #a1a1aa !important; }
+    .dark .text-zinc-400 { color: #a1a1aa !important; }
+    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
+    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
+    .dark header a { color: #a1a1aa; }
+    .dark header a:hover { color: #f4f4f5; }
+  </style>
 </head>
 <body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
 
@@ -44,7 +58,12 @@
       <a href="index.html#guide" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
       <a href="index.html#issues" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
     </nav>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
+      <button id="themeToggleBtn" onclick="toggleTheme()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
+      </button>
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
       </a>
@@ -91,6 +110,32 @@
     </nav>
   </div>
 </footer>
+
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.classList.toggle('dark', saved === 'dark');
+  updateThemeIcon();
+})();
+
+window.toggleTheme = function(){
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  updateThemeIcon();
+};
+
+function updateThemeIcon(){
+  const btn = document.getElementById('themeToggleBtn');
+  const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+  if(icon){
+    const isDark = document.documentElement.classList.contains('dark');
+    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+}
+</script>
 
 </body>
 </html>

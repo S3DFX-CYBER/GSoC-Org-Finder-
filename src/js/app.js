@@ -874,10 +874,10 @@ const GRID_COLS=()=>{
   return cols;
 };
 
-document.addEventListener('keydown',e=>{
-  document.getElementById('hamburger-btn')?.addEventListener('click', () => {
+document.getElementById('hamburger-btn')?.addEventListener('click', () => {
   document.getElementById('nav-links')?.classList.toggle('open');
 });
+document.addEventListener('keydown',e=>{
   // Close modals first
   if(e.key==='Escape'){
     if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}

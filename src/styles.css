@@ -741,23 +741,16 @@ body { overflow-x: hidden; }
    RESPONSIVE FIXES — issue #1171
    ============================================ */
 
-/* Hero search full width on mobile */
+/* Hero search + Surprise Me — mobile */
 @media (max-width: 640px) {
   #hero-search {
     width: 100% !important;
     min-width: 0 !important;
   }
-
-  /* Surprise Me button full width on mobile */
   #surpriseBtn {
     width: 100% !important;
     display: flex !important;
     justify-content: center !important;
-  }
-
-  /* Filter dropdowns — stack on mobile */
-  .flex.items-center.gap-4 > select {
-    font-size: 11px !important;
   }
 }
 
@@ -774,7 +767,3 @@ body { overflow-x: hidden; }
     grid-template-columns: 1fr !important;
   }
 }
-
-/* Global overflow guard */
-body { overflow-x: hidden; }
-*, *::before, *::after { box-sizing: border-box; }

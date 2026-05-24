@@ -37,6 +37,36 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js" integrity="sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7" crossorigin="anonymous"></script>
+  <script>
+    if (typeof marked === 'undefined') {
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/marked@9.1.6/marked.min.js";
+      s.integrity = "sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7";
+      s.crossOrigin = "anonymous";
+      document.head.appendChild(s);
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.0/dist/purify.min.js" integrity="sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7" crossorigin="anonymous"></script>
+  <script>
+    if (typeof DOMPurify === 'undefined') {
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/dompurify@3.4.0/dist/purify.min.js";
+      s.integrity = "sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7";
+      s.crossOrigin = "anonymous";
+      document.head.appendChild(s);
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js" integrity="sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY" crossorigin="anonymous"></script>
+  <script>
+    if (typeof html2pdf === 'undefined') {
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js";
+      s.integrity = "sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY";
+      s.crossOrigin = "anonymous";
+      document.head.appendChild(s);
+    }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -206,6 +236,120 @@
     .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
     .modal-repo-link { background: white; color: #1a1c1c; border: 1px solid #ddd; }
     .modal-repo-link:hover { background: #f0f0f0; }
+    .modal-proposal-link { background: linear-gradient(135deg, #c2410c, #9a3412); color: white; border: none; cursor: pointer; }
+    .modal-proposal-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(154, 52, 18, 0.45); }
+
+    /* Proposal workspace */
+    dialog.proposal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      border: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      color: inherit;
+    }
+    dialog.proposal-bg.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .proposal-workspace {
+      background: white;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .proposal-bg.open .proposal-workspace {
+      transform: translateY(0);
+    }
+    .proposal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9f9f9;
+    }
+    .proposal-header-title { flex: 1; min-width: 200px; }
+    .proposal-header-title h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
+    .proposal-header-title p { font-size: 0.75rem; color: #888; margin: 0.25rem 0 0; }
+    .proposal-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .proposal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border: 1px solid #ddd;
+      background: white;
+      color: #1a1c1c;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .proposal-btn:hover { background: #f3f3f3; }
+    .proposal-btn-primary { background: #9d4300; color: white; border-color: #9d4300; }
+    .proposal-btn-primary:hover { background: #7a3500; }
+    .proposal-btn-danger { color: #ba1a1a; border-color: #fecaca; }
+    .proposal-btn-danger:hover { background: #fef2f2; }
+    .proposal-autosave { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #666; cursor: pointer; user-select: none; }
+    .proposal-body { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+    @media (min-width: 768px) { .proposal-body { flex-direction: row; } }
+    .proposal-editor, .proposal-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      min-height: 200px;
+    }
+    .proposal-editor { border-bottom: 1px solid #eee; background: #fff; }
+    @media (min-width: 768px) { .proposal-editor { border-bottom: none; border-right: 1px solid #eee; } }
+    .proposal-textarea {
+      width: 100%;
+      min-height: 280px;
+      height: 100%;
+      border: none;
+      resize: none;
+      outline: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #333;
+      background: transparent;
+    }
+    .proposal-preview {
+      background: #fafafa;
+      color: #333;
+    }
+    .proposal-preview h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .proposal-preview h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .proposal-preview h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .proposal-preview p { margin-bottom: 1rem; line-height: 1.6; }
+    .proposal-preview ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+    .proposal-preview ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
+    .proposal-preview code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; }
+    .proposal-preview pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+    .proposal-preview blockquote { border-left: 4px solid #ddd; padding-left: 1rem; color: #666; margin-bottom: 1rem; }
+    .proposal-preview a { color: #f97316; text-decoration: underline; }
+    .proposal-preview-error { color: #ba1a1a; font-size: 0.875rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
     /* Custom Scrollbar for Modal */
     .modal::-webkit-scrollbar { width: 6px; }
@@ -247,7 +391,17 @@
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
- 
+    .dark .proposal-workspace { background: #18181b; }
+    .dark .proposal-header { background: #0f0f10; border-color: #27272a; }
+    .dark .proposal-editor { background: #18181b; border-color: #27272a; }
+    .dark .proposal-preview { background: #1f1f23; color: #d4d4d8; }
+    .dark .proposal-textarea { color: #d4d4d8; }
+    .dark .proposal-preview code { background: #3f3f46; color: #f4f4f5; }
+    .dark .proposal-preview pre { background: #27272a; }
+    .dark .proposal-preview blockquote { border-color: #3f3f46; color: #a1a1aa; }
+    .dark .proposal-btn { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
+    .dark .proposal-btn:hover { background: #3f3f46; }
+    .dark .proposal-autosave { color: #a1a1aa; }
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -1197,6 +1351,9 @@
       </div>
     </div>
     <div class="modal-footer">
+      <button type="button" id="mDraftBtn" class="modal-cta modal-proposal-link flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-lg">edit_document</span> Open Proposal Builder
+      </button>
       <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
@@ -1206,6 +1363,43 @@
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════ PROPOSAL BUILDER ═══════════════════ -->
+<dialog class="proposal-bg" id="proposalModal" aria-labelledby="pwOrgName">
+  <div class="proposal-workspace">
+    <header class="proposal-header">
+      <div class="proposal-header-title">
+        <h2 id="pwOrgName">Organization Proposal</h2>
+        <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+      </div>
+      <label class="proposal-autosave">
+        <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
+        Enable autosave
+      </label>
+      <div class="proposal-toolbar">
+        <button type="button" id="pwClearBtn" class="proposal-btn proposal-btn-danger" aria-label="Clear proposal draft">
+          <span class="material-symbols-outlined text-sm">delete</span> Clear
+        </button>
+        <button type="button" id="pwExportMDBtn" class="proposal-btn" aria-label="Export proposal as Markdown">
+          <span class="material-symbols-outlined text-sm">download</span> Markdown
+        </button>
+        <button type="button" id="pwExportPDFBtn" class="proposal-btn proposal-btn-primary" aria-label="Download proposal as PDF">
+          <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
+        </button>
+        <button type="button" id="pwCloseBtn" class="proposal-btn" aria-label="Close proposal builder">
+          <span class="material-symbols-outlined text-sm">close</span> Close
+        </button>
+      </div>
+    </header>
+    <div class="proposal-body">
+      <div class="proposal-editor">
+        <label for="pwEditor" class="sr-only">Proposal markdown editor</label>
+        <textarea id="pwEditor" class="proposal-textarea" spellcheck="true" aria-label="Proposal markdown editor"></textarea>
+      </div>
+      <div id="pwPreview" class="proposal-preview" aria-live="polite" aria-label="Proposal preview"></div>
+    </div>
+  </div>
+</dialog>
 
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
@@ -2357,7 +2551,9 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (document.getElementById('compareModal')?.classList.contains('open')) {
+    if (document.getElementById('proposalModal')?.classList.contains('open')) {
+      closeProposalBuilder();
+    } else if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
@@ -2799,6 +2995,11 @@ if(org.ideas){
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
     renderMentorContactSection(org);
+
+    const draftBtn = document.getElementById('mDraftBtn');
+    if (draftBtn) {
+      draftBtn.onclick = () => ProposalBuilder.open(org.name);
+    }
      
     document.getElementById('orgModal').classList.add('open');
     document.body.classList.add('modal-open');
@@ -3115,6 +3316,290 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
+  // Proposal
+  let currentProposalOrg = '';
+  let proposalFocusReturn = null;
+  let proposalAutosaveTimer = null;
+  const inMemoryDrafts = {};
+  let localStorageAvailable = true;
+  const PROPOSAL_AUTOSAVE_KEY = 'gaf_proposal_autosave';
+
+  const GSOC_TEMPLATE = `# GSoC 2026 Proposal: [Project Title]
+**Organization:** [Organization Name]
+**Applicant:** [Your Name]
+
+## 1. Contact Information
+* **Email:** [your.email@example.com]
+* **GitHub:** [https://github.com/your-username]
+* **Timezone:** [Your Timezone]
+
+## 2. Abstract
+[Provide a short summary of what you intend to do, why it is useful, and the expected outcome.]
+
+## 3. Architecture and Implementation
+[Detail your technical approach, libraries, design patterns, and any API changes you plan to make.]
+
+## 4. Timeline
+* **Community Bonding:** [Pre-coding activities]
+* **Week 1-2:** [Tasks]
+* **Week 3-4:** [Tasks]
+* **Midterm Evaluation:** [Deliverables at this stage]
+* **Week 5-6:** [Tasks]
+* **Week 7-8:** [Tasks]
+* **Final Evaluation:** [Final deliverables and documentation]
+
+## 5. Deliverables
+[List what will be completed and merged by the end of the program.]
+
+## 6. About Me
+[Your background, relevant skills, and past contributions to open source.]
+`;
+
+  function proposalStorageKey(orgName) {
+    return 'gaf_proposal_' + orgName;
+  }
+
+  function isAutosaveEnabled() {
+    if (!localStorageAvailable) return false;
+    try {
+      return localStorage.getItem(PROPOSAL_AUTOSAVE_KEY) === 'true';
+    } catch {
+      localStorageAvailable = false;
+      return false;
+    }
+  }
+
+  function syncAutosaveToggle() {
+    const toggle = document.getElementById('pwAutosaveToggle');
+    if (toggle) toggle.checked = isAutosaveEnabled();
+  }
+
+  function setAutosaveEnabled(enabled) {
+    if (localStorageAvailable) {
+      try {
+        localStorage.setItem(PROPOSAL_AUTOSAVE_KEY, enabled ? 'true' : 'false');
+      } catch {
+        localStorageAvailable = false;
+      }
+    }
+    syncAutosaveToggle();
+  }
+
+  function getDraft(orgName) {
+    if (Object.hasOwn(inMemoryDrafts, orgName)) {
+      return inMemoryDrafts[orgName];
+    }
+    if (!localStorageAvailable) return null;
+    try {
+      const stored = localStorage.getItem(proposalStorageKey(orgName));
+      if (stored !== null) {
+        inMemoryDrafts[orgName] = stored;
+        return stored;
+      }
+    } catch {
+      localStorageAvailable = false;
+    }
+    return null;
+  }
+
+  function saveDraft(orgName, content) {
+    inMemoryDrafts[orgName] = content;
+    if (!localStorageAvailable) return;
+    try {
+      localStorage.setItem(proposalStorageKey(orgName), content);
+    } catch {
+      localStorageAvailable = false;
+    }
+  }
+
+  function clearDraft(orgName) {
+    delete inMemoryDrafts[orgName];
+    if (!localStorageAvailable) return;
+    try {
+      localStorage.removeItem(proposalStorageKey(orgName));
+    } catch {
+      localStorageAvailable = false;
+    }
+  }
+
+  function getTemplateForOrg(orgName) {
+    return GSOC_TEMPLATE.replaceAll('[Organization Name]', orgName);
+  }
+
+  function renderPreview() {
+    const editor = document.getElementById('pwEditor');
+    const preview = document.getElementById('pwPreview');
+    if (!editor || !preview) return;
+    if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+      preview.innerHTML = DOMPurify.sanitize(marked.parse(editor.value));
+    } else {
+      preview.innerHTML = '<p class="proposal-preview-error">Markdown preview unavailable. Check your connection and reload the page.</p>';
+    }
+  }
+
+  function openProposalBuilder(orgName) {
+    currentProposalOrg = orgName;
+    const modal = document.getElementById('proposalModal');
+    const orgModal = document.getElementById('orgModal');
+    const editor = document.getElementById('pwEditor');
+    if (!modal || !editor) return;
+
+    document.getElementById('pwOrgName').textContent = orgName + ' Proposal';
+    syncAutosaveToggle();
+
+    const saved = getDraft(orgName);
+    if (saved === null) {
+      editor.value = getTemplateForOrg(orgName);
+    } else {
+      editor.value = saved;
+    }
+    renderPreview();
+
+    proposalFocusReturn = document.getElementById('mDraftBtn');
+    if (orgModal) orgModal.setAttribute('aria-hidden', 'true');
+
+    modal.classList.add('open');
+    modal.setAttribute('open', '');
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    const closeBtn = document.getElementById('pwCloseBtn');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeProposalBuilder() {
+    const modal = document.getElementById('proposalModal');
+    const orgModal = document.getElementById('orgModal');
+    if (!modal) return;
+
+    modal.classList.remove('open');
+    modal.removeAttribute('open');
+    if (orgModal) orgModal.removeAttribute('aria-hidden');
+
+    if (!orgModal?.classList.contains('open')) {
+      document.body.classList.remove('modal-open');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+
+    if (proposalFocusReturn) {
+      proposalFocusReturn.focus();
+      proposalFocusReturn = null;
+    }
+  }
+
+  function clearProposalDraft() {
+    if (!currentProposalOrg) return;
+    if (!confirm('Clear this proposal draft? This removes the saved copy from this device.')) return;
+    clearDraft(currentProposalOrg);
+    const editor = document.getElementById('pwEditor');
+    if (editor) {
+      editor.value = getTemplateForOrg(currentProposalOrg);
+      renderPreview();
+    }
+  }
+
+  function exportProposalMD() {
+    if (!currentProposalOrg) return;
+    const content = document.getElementById('pwEditor')?.value || '';
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GSoC_Proposal_' + currentProposalOrg.replace(/\s+/g, '_') + '.md';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportProposalPDF() {
+    if (!currentProposalOrg) return;
+    if (typeof html2pdf !== 'function') {
+      alert('PDF export is unavailable. Check your connection and reload the page.');
+      return;
+    }
+    const element = document.getElementById('pwPreview');
+    if (!element) return;
+
+    const printElement = element.cloneNode(true);
+    printElement.style.padding = '40px';
+    printElement.style.background = 'white';
+    printElement.style.color = 'black';
+    printElement.style.width = '800px';
+    printElement.querySelectorAll('code, pre').forEach((node) => {
+      node.style.background = '#f4f4f4';
+      node.style.color = '#333';
+    });
+    document.body.appendChild(printElement);
+
+    const opt = {
+      margin: 15,
+      filename: 'GSoC_Proposal_' + currentProposalOrg.replace(/\s+/g, '_') + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+
+    html2pdf()
+      .set(opt)
+      .from(printElement)
+      .save()
+      .then(() => printElement.remove())
+      .catch((err) => {
+        console.error('PDF export failed:', err);
+        printElement.remove();
+        alert('PDF export failed. Try exporting Markdown instead.');
+      });
+  }
+
+  document.getElementById('pwEditor')?.addEventListener('input', (e) => {
+    renderPreview();
+    if (!currentProposalOrg || !isAutosaveEnabled()) return;
+    clearTimeout(proposalAutosaveTimer);
+    proposalAutosaveTimer = setTimeout(() => {
+      saveDraft(currentProposalOrg, e.target.value);
+    }, 300);
+  });
+
+  document.getElementById('pwAutosaveToggle')?.addEventListener('change', (e) => {
+    setAutosaveEnabled(e.target.checked);
+    if (e.target.checked && currentProposalOrg) {
+      const editor = document.getElementById('pwEditor');
+      if (editor) saveDraft(currentProposalOrg, editor.value);
+    }
+  });
+
+  document.getElementById('proposalModal')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab' || !document.getElementById('proposalModal')?.classList.contains('open')) return;
+    const modal = document.getElementById('proposalModal');
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const list = [...focusable].filter((el) => !el.disabled && el.offsetParent !== null);
+    if (list.length === 0) return;
+    const first = list[0];
+    const last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  document.getElementById('pwClearBtn')?.addEventListener('click', clearProposalDraft);
+  document.getElementById('pwExportMDBtn')?.addEventListener('click', exportProposalMD);
+  document.getElementById('pwExportPDFBtn')?.addEventListener('click', exportProposalPDF);
+  document.getElementById('pwCloseBtn')?.addEventListener('click', closeProposalBuilder);
+
+  globalThis.ProposalBuilder = {
+    open: openProposalBuilder,
+    close: closeProposalBuilder
+  };
+
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -3288,7 +3773,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (e.key === 'Escape') {
-      closeHelpModal();
+      if (document.getElementById('proposalModal')?.classList.contains('open')) {
+        globalThis.ProposalBuilder?.close?.();
+      } else {
+        closeHelpModal();
+      }
     }
 
   });

@@ -590,7 +590,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="search" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -703,6 +703,10 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button onclick="clearAllFilters()" class="flex items-center gap-1.5 px-3 py-2 bg-surface-container-low hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-xl text-xs font-bold text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors" title="Clear all filters">
+        <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+        Clear
+      </button>
     </div>
   </div>
   
@@ -2805,11 +2809,13 @@ if(org.ideas){
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      document.getElementById('searchInput').value = e.target.value;
+    const syncSearch = () => {
+      document.getElementById('searchInput').value = heroSearch.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
       applyFilters();
-    });
+    };
+    heroSearch.addEventListener('input', syncSearch);
+    heroSearch.addEventListener('search', syncSearch);
   }
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
@@ -3000,7 +3006,7 @@ if(org.ideas){
 
     function setElValue(id, value) {
       const el = document.getElementById(id);
-      if (el && value) el.value = value;
+      if (el) el.value = value ?? '';
     }
 
     function getChipKey(text) {

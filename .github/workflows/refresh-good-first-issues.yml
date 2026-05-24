@@ -36,9 +36,15 @@ jobs:
           [ -f data/issues.json ] || echo "{}" > data/issues.json
           [ -f data/mentors.json ] || echo "{}" > data/mentors.json
           [ -f data/last-updated.json ] || echo "{}" > data/last-updated.json
+          [ -f data/winners-tree.json ] || echo "{}" > data/winners-tree.json
 
       - name: Fetch good first issues
         run: node agent/scripts/fetch-issues.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch winners archive tree
+        run: node agent/scripts/fetch-winners-archive.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,6 +73,7 @@ jobs:
           mkdir -p data
           [ -f data/ui-summary.json ] || echo '{}' > data/ui-summary.json
           [ -f data/org-stats.json ] || echo '{}' > data/org-stats.json
+          [ -f data/winners-tree.json ] || echo '{}' > data/winners-tree.json
 
       - name: Update refresh timestamp
         run: |
@@ -121,5 +128,6 @@ jobs:
             data/ui-summary.json
             data/last-updated.json
             data/org-stats.json
+            data/winners-tree.json
             index.html
             sw.js

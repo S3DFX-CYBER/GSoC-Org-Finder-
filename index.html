@@ -747,6 +747,14 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    @media print {
+      body * { visibility: hidden; }
+      #watchlist, #watchlist * { visibility: visible; }
+      #watchlist { position: absolute; left: 0; top: 0; width: 100%; }
+      #watchlist .bg-gradient-to-br, #watchlist .hidden { display: none !important; }
+      #watchlistContainer .bg-white { break-inside: avoid; border: 1px solid #e5e7eb !important; box-shadow: none !important; }
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -1129,12 +1137,20 @@
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="exportWatchlistCSV()"
+          class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-100 transition-colors"
+          title="Export watchlist as CSV" id="exportWatchlistBtn">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export CSV
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-6">
@@ -3052,6 +3068,29 @@ btn.__orgListenerAttached = true;
     updateAIInsights();
   }
 
+  window.exportWatchlistCSV = function() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+    if (!bookmarks.length) return;
+
+    const rows = [
+      ['Name', 'Domain', 'Competition', 'Years in GSoC', 'GitHub', 'Tech Stack'],
+      ...bookmarks.map(o => [o.name, o.cat, o.competition, String(o.years), o.github, (o.tags || []).join('; ')])
+    ];
+
+    const csvContent = rows.map(r => r.map(c => `"${String(c).replaceAll('"', '""')}"`).join(',')).join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gsoc-watchlist-${bookmarks.length}-orgs.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
@@ -3064,8 +3103,10 @@ btn.__orgListenerAttached = true;
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
-    // Show / hide "Clear All" button
+    // Show / hide "Clear All" and "Export CSV" buttons
     if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
+    const exportBtn = document.getElementById('exportWatchlistBtn');
+    if (exportBtn) exportBtn.classList.toggle('hidden', bookmarks.length === 0);
 
     // ── Empty state ───────────────────────────────────────────────────────────
     if (bookmarks.length === 0) {

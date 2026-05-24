@@ -2251,11 +2251,39 @@
   "PostgreSQL": {
     "org": "PostgreSQL",
     "ideasUrl": "https://wiki.postgresql.org/wiki/GSoC_2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/",
+        "label": "PostgreSQL Slack — #gsoc-contributors channel"
+      },
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/join/shared_invite/zt-3o5j6cdj5-o~IYnyU_Ggcwk1zI6UYpOg",
+        "label": "PostgreSQL Slack invite link"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jesper Pedersen",
+        "github": "jesperpedersen",
+        "githubUrl": "https://github.com/jesperpedersen"
+      },
+      {
+        "name": "Pavlo Golub",
+        "github": "pashagolub",
+        "githubUrl": "https://github.com/pashagolub"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:gsoc-mentors@lists.postgresql.org",
+        "label": "PostgreSQL GSoC Mentors Mailing List"
+      }
+    ],
+    "tip": "Join the #gsoc-contributors channel on PostgreSQL Slack. Email gsoc-mentors@lists.postgresql.org before submitting your proposal.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "preCICE": {
@@ -2982,11 +3010,48 @@
   "The NetBSD Foundation": {
     "org": "The NetBSD Foundation",
     "ideasUrl": "https://wiki.netbsd.org/projects/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+      {"type": "IRC",
+        "url": "https://web.libera.chat/#NetBSD-code",
+        "label": "NetBSD Foundation IRC Channel on Libera Chat"
+      }
+      ],
+    "mentors": [
+      {
+        "name": "zoulasc",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "The NetBSD Foundation",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Greg Oster",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Stephen Borrill",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Martin Husemann",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://www.netbsd.org/mailinglists/",
+        "label": "NetBSD Mailing Lists"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The ns-3 Network Simulator Project": {
@@ -3089,67 +3154,73 @@
     ],
     "mentors": [
       {
-        "name": "",
+        "name": "Arman Bilge",
         "github": "armanbilge",
         "githubUrl": "https://github.com/armanbilge"
       },
       {
-        "name": "",
+        "name": "Brian P. Holt",
         "github": "bpholt",
         "githubUrl": "https://github.com/bpholt"
       },
       {
-        "name": "",
+        "name": "Chew Ching Hian",
         "github": "Chingles2404",
         "githubUrl": "https://github.com/Chingles2404"
       },
       {
-        "name": "",
+        "name": "Antonio Jimenez",
         "github": "antoniojimeneznieto",
         "githubUrl": "https://github.com/antoniojimeneznieto"
       },
       {
-        "name": "",
+        "name": "Daniel Spiewak",
         "github": "djspiewak",
         "githubUrl": "https://github.com/djspiewak"
       },
       {
-        "name": "",
+        "name": "Michael Pilquist",
         "github": "mpilquist",
         "githubUrl": "https://github.com/mpilquist"
       },
       {
-        "name": "",
+        "name": "Marco Zühlke",
         "github": "mzuehlke",
         "githubUrl": "https://github.com/mzuehlke"
       },
       {
-        "name": "",
+        "name": "Andrew Valencik",
         "github": "valencik",
         "githubUrl": "https://github.com/valencik"
       },
       {
-        "name": "",
+        "name": "Rikito Taniguchi",
         "github": "tanishiking",
         "githubUrl": "https://github.com/tanishiking"
       },
       {
-        "name": "",
+        "name": "P. Oscar Boykin",
         "github": "johnynek",
         "githubUrl": "https://github.com/johnynek"
       },
       {
-        "name": "",
+        "name": "Noel Welsh",
         "github": "noelwelsh",
         "githubUrl": "https://github.com/noelwelsh"
       },
       {
-        "name": "",
+        "name": "Jamie Willis",
         "github": "j-mie6",
         "githubUrl": "https://github.com/j-mie6"
       }
     ],
-    "mailingLists": [],
+    "mailingLists": [
+      {
+        "type": "Google Group",
+        "label": "Typelevel Google Group",
+        "url": "https://groups.google.com/g/typelevel"
+      }
+    ],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -3324,7 +3395,23 @@
         "label": "webpack Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Claudio Wunder",
+        "github": "ovflowd",
+        "githubUrl": "https://github.com/ovflowd"
+      },
+      {
+        "name": "Sebastian Beltran",
+        "github": "bjohansebas",
+        "githubUrl": "https://github.com/bjohansebas"
+      },
+      {
+        "name": "Aviv Keller",
+        "github": "avivkeller",
+        "githubUrl": "https://github.com/avivkeller"
+      }
+    ],
     "mailingLists": [],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",

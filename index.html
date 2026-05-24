@@ -1908,11 +1908,19 @@
     document.documentElement.style.overflow='';document.body.style.overflow='';
   }
 
-  function openRandomOrg(){
-    const pool=filteredOrgs.length>0?filteredOrgs:ORGS;
-    if(!pool.length){alert('No organizations match your filters — try clearing some!');return;}
-    openModal(pool[Math.floor(Math.random()*pool.length)].name);
-  }
+  function openRandomOrg() {
+    const pool = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+
+    if (!pool.length) {
+        alert('No organizations match your filters — try clearing some!');
+        return;
+    }
+
+    const randomIndex =
+        crypto.getRandomValues(new Uint32Array(1))[0] % pool.length;
+
+    openModal(pool[randomIndex].name);
+}
 
   // ══════════════════════════════════════════════
   // FILTERS

@@ -233,6 +233,11 @@ def create_branch_and_commit(
             return False
 
     def run(cmd: list[str]) -> subprocess.CompletedProcess:
+        """Run a git CLI command and return the CompletedProcess.
+
+        Raises RuntimeError when the command fails and prints stdout/stderr
+        for debugging.
+        """
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
             print(

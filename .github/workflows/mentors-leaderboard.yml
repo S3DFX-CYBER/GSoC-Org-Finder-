@@ -1,6 +1,10 @@
 name: 🏆 Mentor Leaderboard
 
 on:
+  pull_request_review:
+    types:
+      - submitted
+
   pull_request_target:
     types:
       - closed
@@ -18,7 +22,6 @@ concurrency:
 
 jobs:
   update-mentor-leaderboard:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +38,9 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
+            // -----------------------------
+            // Mentor List
+            // -----------------------------
             const mentors = {
               reviewers: [
                 "12fahed",
@@ -110,15 +116,34 @@ jobs:
               mentors.reviewers.map(m => m.toLowerCase())
             );
 
+            // -----------------------------
+            // Review Scoring
+            // -----------------------------
+            const REVIEW_POINTS = {
+              APPROVED: 5,
+              CHANGES_REQUESTED: 4,
+              COMMENTED: 2
+            };
+
+            // -----------------------------
+            // Init Stats
+            // -----------------------------
             const stats = {};
 
             for (const mentor of mentors.reviewers) {
               stats[mentor] = {
-                merged_reviews: 0
+                approved: 0,
+                changes_requested: 0,
+                commented: 0,
+                merged_reviews: 0,
+                score: 0
               };
             }
 
-            core.info('Fetching merged pull requests...');
+            // -----------------------------
+            // Fetch PRs
+            // -----------------------------
+            core.info('Fetching closed pull requests...');
 
             const pulls = await github.paginate(
               github.rest.pulls.list,
@@ -134,8 +159,12 @@ jobs:
 
             core.info(`Found ${mergedPRs.length} merged PRs`);
 
+            // -----------------------------
+            // Process PR Reviews
+            // -----------------------------
             for (const pr of mergedPRs) {
               try {
+
                 const reviews = await github.paginate(
                   github.rest.pulls.listReviews,
                   {
@@ -146,60 +175,89 @@ jobs:
                   }
                 );
 
-                const validReviews = reviews.filter(review => {
+                // latest review per mentor
+                const latestReviewByMentor = new Map();
+
+                for (const review of reviews) {
+
                   if (!review.user || !review.user.login) {
-                    return false;
+                    continue;
                   }
 
                   const reviewer = review.user.login;
 
+                  // ignore self review
                   if (
                     reviewer.toLowerCase() ===
                     pr.user.login.toLowerCase()
                   ) {
-                    return false;
+                    continue;
                   }
 
+                  // only mentors
                   if (
                     !mentorSet.has(reviewer.toLowerCase())
                   ) {
-                    return false;
+                    continue;
                   }
+
+                  // ignore dismissed reviews
+                  if (
+                    review.state === 'DISMISSED'
+                  ) {
+                    continue;
+                  }
+
+                  const existing =
+                    latestReviewByMentor.get(
+                      reviewer.toLowerCase()
+                    );
 
                   if (
-                    review.state !== 'APPROVED'
+                    !existing ||
+                    new Date(review.submitted_at) >
+                    new Date(existing.submitted_at)
                   ) {
-                    return false;
+                    latestReviewByMentor.set(
+                      reviewer.toLowerCase(),
+                      review
+                    );
                   }
-
-                  const body = (review.body || '').trim();
-
-                  if (body.length < 15) {
-                    return false;
-                  }
-
-                  return true;
-                });
-
-                if (validReviews.length === 0) {
-                  continue;
                 }
 
-                validReviews.sort((a, b) => {
-                  return new Date(b.submitted_at) -
-                    new Date(a.submitted_at);
-                });
+                // -----------------------------
+                // Score Reviews
+                // -----------------------------
+                for (const review of latestReviewByMentor.values()) {
 
-                const finalReview = validReviews[0];
-                const reviewer = finalReview.user.login;
+                  const reviewer = review.user.login;
+                  const state = review.state;
 
-                if (!stats[reviewer]) {
-                  stats[reviewer] = {
-                    merged_reviews: 0
-                  };
+                  if (!stats[reviewer]) {
+                    stats[reviewer] = {
+                      approved: 0,
+                      changes_requested: 0,
+                      commented: 0,
+                      merged_reviews: 0,
+                      score: 0
+                    };
+                  }
+
+                  if (state === 'APPROVED') {
+                    stats[reviewer].approved++;
+                  }
+                  else if (state === 'CHANGES_REQUESTED') {
+                    stats[reviewer].changes_requested++;
+                  }
+                  else {
+                    stats[reviewer].commented++;
+                  }
+
+                  stats[reviewer].merged_reviews++;
+
+                  stats[reviewer].score +=
+                    REVIEW_POINTS[state] || 1;
                 }
-
-                stats[reviewer].merged_reviews++;
 
               } catch (error) {
                 core.warning(
@@ -208,26 +266,60 @@ jobs:
               }
             }
 
+            // -----------------------------
+            // Sort Leaderboard
+            // -----------------------------
             const leaderboard = Object.entries(stats)
               .sort((a, b) => {
+
+                if (
+                  b[1].score !== a[1].score
+                ) {
+                  return b[1].score - a[1].score;
+                }
+
                 return (
                   b[1].merged_reviews -
                   a[1].merged_reviews
                 );
               });
 
-            let markdown = '# 🏆 GSSOC Mentor Leaderboard\n\n';
-            markdown += '> Tracks successful mentor-reviewed PR merges.\n\n';
-            markdown += '| Rank | Mentor | Successful Reviews |\n';
-            markdown += '|------|--------|-------------------|\n';
+            // -----------------------------
+            // Generate Markdown
+            // -----------------------------
+            let markdown =
+              '# 🏆 GSSOC Mentor Leaderboard\n\n';
 
-            leaderboard.forEach(([mentor, data], index) => {
-              markdown += `| ${index + 1} | @${mentor} | ${data.merged_reviews} |\n`;
-            });
+            markdown +=
+              '> Tracks mentor reviews and mentoring activity across merged pull requests.\n\n';
+
+            markdown +=
+              '| Rank | Mentor | Approved | Changes Requested | Comments | Total Reviews | Score |\n';
+
+            markdown +=
+              '|------|--------|-----------|-------------------|----------|----------------|-------|\n';
+
+            leaderboard.forEach(
+              ([mentor, data], index) => {
+
+                markdown +=
+                  `| ${index + 1} | @${mentor} | ${data.approved} | ${data.changes_requested} | ${data.commented} | ${data.merged_reviews} | ${data.score} |\n`;
+              }
+            );
 
             markdown += '\n';
-            markdown += `Last updated: ${new Date().toUTCString()}\n`;
+            markdown +=
+              `Last updated: ${new Date().toUTCString()}\n`;
 
+            markdown += '\n';
+            markdown += '## 🎯 Scoring System\n\n';
+            markdown += '- APPROVED review → +5 points\n';
+            markdown += '- CHANGES_REQUESTED review → +4 points\n';
+            markdown += '- COMMENTED review → +2 points\n';
+
+            // -----------------------------
+            // Save Files
+            // -----------------------------
             fs.writeFileSync(
               '.github/reviewers/mentor-leaderboard.md',
               markdown
@@ -238,7 +330,9 @@ jobs:
               JSON.stringify(stats, null, 2)
             );
 
-            core.info('Mentor leaderboard generated successfully');
+            core.info(
+              'Mentor leaderboard generated successfully'
+            );
 
       - name: Commit leaderboard updates
         run: |

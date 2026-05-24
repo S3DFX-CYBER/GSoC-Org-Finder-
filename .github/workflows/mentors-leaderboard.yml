@@ -1,0 +1,377 @@
+name: 🏆 Mentor Leaderboard
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: mentor-leaderboard
+  cancel-in-progress: false
+
+jobs:
+  update-mentor-leaderboard:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Mentor Leaderboard
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const mentors = [
+              "srinadhtadikonda",
+              "ritika",
+              "CoderOggy78",
+              "techRunnerBySJ",
+              "thakurutkarsh22",
+              "aanjalii01",
+              "SyedImtiyaz-1",
+              "neilblaze",
+              "abhishekraoas",
+              "lovestaco",
+              "Anushreebasics",
+              "12fahed",
+              "sabeenaviklar",
+              "ayu-yishu13",
+              "Precise-Goals",
+              "morningstarxcdcode",
+              "Haile-12",
+              "BandhiyaHardik",
+              "deepak0x",
+              "knoxiboy",
+              "saurabh24thakur",
+              "1754riya",
+              "magic-peach",
+              "lourduradjou",
+              "m4milaad",
+              "kunalverma2512",
+              "anubhavxdev",
+              "stealthwhizz",
+              "DevROHIT11",
+              "leonagoel",
+              "SaifRasool92",
+              "aryanbhutani26",
+              "AnirbansarkarS",
+              "Sagar-Datkhile",
+              "MUKUL-PRASAD-SIGH",
+              "TarunyaProgrammer",
+              "preetbiswas12",
+              "Shravanthi20",
+              "Balaji91221",
+              "whyankush07",
+              "vanshaggarwal07",
+              "OmkarKathile007",
+              "kallal79",
+              "MAYANKSHARMA01010",
+              "swastik7805",
+              "KUMARNiru007",
+              "rounakkraaj-1744",
+              "himanshu007-creator",
+              "oasis-parzival",
+              "Maxd646",
+              "deepaksinghh12",
+              "manan-chawla",
+              "nishantxscooby",
+              "uddalak2005",
+              "iarmaanx",
+              "kota-jagadeesh",
+              "AnirudhPhophalia",
+              "IkkiOcean",
+              "Eswaramuthu",
+              "SparshM8",
+              "KaranGupta2005",
+              "sparshagarwal0411",
+              "subratamondalnsec",
+              "the-matrixneo",
+              "suvanwita",
+              "Harsh-2006-git",
+              "nihalawasthi",
+              "adithyan-css",
+              "xthxr",
+              "Devnil434",
+              "aayushi1806sharma-afk",
+              "AditthyaSS",
+              "Satya900",
+              "JoeCelaster",
+              "AshutoshRaj1260",
+              "topshe23",
+              "Ayushh-Sharmaa",
+              "piyushdotcomm",
+              "coder-zs-cse",
+              "bishal2623",
+              "Ayush-Patel-56",
+              "Mohit-368",
+              "diksha78dev",
+              "Mrigakshi-Rathore",
+              "itsdakshjain",
+              "4f4d"
+            ];
+
+            const mentorSet = new Set(
+              mentors.map(m => m.toLowerCase())
+            );
+
+            const stats = {};
+
+            for (const mentor of mentors) {
+              stats[mentor] = {
+                total_points: 0,
+                detailed_reviews: 0,
+                quick_reviews: 0,
+                approved_reviews: 0,
+                prs_reviewed: 0
+              };
+            }
+
+            core.info('Fetching merged pull requests...');
+
+            const pulls = await github.paginate(
+              github.rest.pulls.list,
+              {
+                owner,
+                repo,
+                state: 'closed',
+                per_page: 100
+              }
+            );
+
+            const mergedPRs = pulls.filter(pr => pr.merged_at);
+
+            core.info(`Found ${mergedPRs.length} merged PRs`);
+
+            for (const pr of mergedPRs) {
+              try {
+                const reviews = await github.paginate(
+                  github.rest.pulls.listReviews,
+                  {
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    per_page: 100
+                  }
+                );
+
+                const countedReviews = new Set();
+
+                for (const review of reviews) {
+
+                  if (!review.user || !review.user.login) {
+                    continue;
+                  }
+
+                  const reviewer = review.user.login;
+
+                  if (
+                    reviewer.toLowerCase() ===
+                    pr.user.login.toLowerCase()
+                  ) {
+                    continue;
+                  }
+
+                  if (
+                    !mentorSet.has(reviewer.toLowerCase())
+                  ) {
+                    continue;
+                  }
+
+                  if (
+                    countedReviews.has(
+                      reviewer.toLowerCase()
+                    )
+                  ) {
+                    continue;
+                  }
+
+                  const state = review.state;
+                  const body = (review.body || '').trim();
+
+                  let points = 0;
+                  let reviewType = '';
+
+                  // Detailed mentor review
+                  if (
+                    body.length >= 80 ||
+                    body.split('\n').length >= 3
+                  ) {
+                    points = 5;
+                    reviewType = 'detailed';
+                  }
+
+                  // Medium review
+                  else if (body.length >= 20) {
+                    points = 3;
+                    reviewType = 'medium';
+                  }
+
+                  // Quick approval / lightweight review
+                  else {
+                    points = 2;
+                    reviewType = 'quick';
+                  }
+
+                  // Bonus for requesting changes
+                  if (state === 'CHANGES_REQUESTED') {
+                    points += 1;
+                  }
+
+                  if (!stats[reviewer]) {
+                    stats[reviewer] = {
+                      total_points: 0,
+                      detailed_reviews: 0,
+                      quick_reviews: 0,
+                      approved_reviews: 0,
+                      prs_reviewed: 0
+                    };
+                  }
+
+                  stats[reviewer].total_points += points;
+                  stats[reviewer].prs_reviewed++;
+
+                  if (reviewType === 'detailed') {
+                    stats[reviewer].detailed_reviews++;
+                  } else {
+                    stats[reviewer].quick_reviews++;
+                  }
+
+                  if (state === 'APPROVED') {
+                    stats[reviewer].approved_reviews++;
+                  }
+
+                  countedReviews.add(
+                    reviewer.toLowerCase()
+                  );
+                }
+
+              } catch (error) {
+                core.warning(
+                  `Failed processing PR #${pr.number}: ${error.message}`
+                );
+              }
+            }
+
+            const leaderboard = Object.entries(stats)
+              .sort((a, b) => {
+                return (
+                  b[1].total_points -
+                  a[1].total_points
+                );
+              });
+
+            let markdown = '# 🏆 GSSOC Mentor Leaderboard\n\n';
+
+            markdown += '> Mentor review leaderboard based on merged PR reviews.\n\n';
+
+            markdown += '| Rank | Mentor | Points | PRs Reviewed | Detailed Reviews | Quick Reviews | Approvals |\n';
+
+            markdown += '|------|--------|--------|---------------|------------------|---------------|------------|\n';
+
+            leaderboard.forEach(([mentor, data], index) => {
+
+              const medal =
+                index === 0 ? '🥇' :
+                index === 1 ? '🥈' :
+                index === 2 ? '🥉' : '';
+
+              markdown += `| ${medal} ${index + 1} | @${mentor} | ${data.total_points} | ${data.prs_reviewed} | ${data.detailed_reviews} | ${data.quick_reviews} | ${data.approved_reviews} |\n`;
+            });
+
+            markdown += '\n';
+
+            markdown += '### 📊 Scoring System\n\n';
+            markdown += '- Detailed review → **5 pts**\n';
+            markdown += '- Medium review → **3 pts**\n';
+            markdown += '- Quick approval/review → **2 pts**\n';
+            markdown += '- Changes requested bonus → **+1 pt**\n\n';
+
+            markdown += `Last updated: ${new Date().toUTCString()}\n`;
+
+            fs.writeFileSync(
+              '.github/reviewers/mentor-leaderboard.md',
+              markdown
+            );
+
+            fs.writeFileSync(
+              '.github/reviewers/mentor-stats.json',
+              JSON.stringify(stats, null, 2)
+            );
+
+            core.setOutput(
+              'leaderboard_markdown',
+              markdown
+            );
+
+            core.info(
+              'Mentor leaderboard generated successfully'
+            );
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        id: cpr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update mentor leaderboard"
+          title: "chore: update mentor leaderboard"
+          body: |
+            Automated mentor leaderboard update.
+
+            Generated by GitHub Actions.
+          branch: automated/mentor-leaderboard-update
+          delete-branch: true
+
+      - name: Comment on merged PR
+        if: github.event.pull_request.merged == true
+        uses: actions/github-script@v7
+        env:
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number =
+              context.payload.pull_request.number;
+
+            const pr = context.payload.pull_request;
+
+            const commentBody =
+              '## 🏆 Mentor Leaderboard Updated\n\n' +
+              'Mentor review scores have been recalculated after this PR merge.\n\n' +
+              '### 📊 Review Scoring\n' +
+              '- Detailed review → **5 pts**\n' +
+              '- Medium review → **3 pts**\n' +
+              '- Quick approval/review → **2 pts**\n' +
+              '- Changes requested bonus → **+1 pt**\n\n' +
+              (process.env.PR_URL
+                ? `🔗 Leaderboard Update PR: ${process.env.PR_URL}\n\n`
+                : '') +
+              'Thanks to all mentors reviewing contributions 🚀';
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pull_number,
+              body: commentBody
+            });
+
+            core.info(
+              `Posted mentor leaderboard comment on PR #${pull_number}`
+            );

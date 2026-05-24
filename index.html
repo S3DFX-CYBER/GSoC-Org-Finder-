@@ -1581,10 +1581,18 @@
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="modal-header pb-4 border-b border-zinc-100">
-      <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
-      <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+    <div class="flex items-center justify-between p-6 pb-0">
+      <div class="modal-header">
+        <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
+        <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="exportComparisonCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-xl text-xs font-bold text-zinc-600 dark:text-zinc-300 transition-colors" title="Export to CSV">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export CSV
+        </button>
+        <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+      </div>
     </div>
     <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
       <!-- Injected table -->
@@ -2862,10 +2870,8 @@ btn.__orgListenerAttached = true;
   let prevFocusBeforeAnalytics = null;
 
   window.openAnalytics = function() {
-    // Save current focus
     prevFocusBeforeAnalytics = document.activeElement;
 
-    // Render badges if BadgeSystem is available
     if (typeof BadgeSystem !== 'undefined') {
       renderBadges();
     }
@@ -2874,7 +2880,6 @@ btn.__orgListenerAttached = true;
     modal?.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Focus the close button for keyboard accessibility
     setTimeout(() => {
       const closeBtn = modal?.querySelector('.close-btn');
       closeBtn?.focus();
@@ -2885,7 +2890,6 @@ btn.__orgListenerAttached = true;
     document.getElementById('anBg')?.classList.remove('open');
     document.body.style.overflow = 'auto';
 
-    // Restore focus to the element that opened the modal
     if (prevFocusBeforeAnalytics && document.contains(prevFocusBeforeAnalytics)) {
       prevFocusBeforeAnalytics.focus();
     }
@@ -2931,20 +2935,45 @@ btn.__orgListenerAttached = true;
     html += '</div>';
     badgesContainer.innerHTML = html;
     
-    // Update badge indicator in header
     const badgeIndicator = document.getElementById('badgeIndicator');
     if (badgeIndicator) {
       badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${unlockedCount}/${totalCount}`;
     }
   }
 
-  // Listen for badge reset event
   document.addEventListener('badgesReset', () => {
     if (document.getElementById('anBg')?.classList.contains('open')) {
       renderBadges();
     }
   });
 
+  window.exportComparisonCSV = function() {
+    const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
+    if (selectedOrgs.length < 2) return;
+
+    const rows = [
+      ['Metric', ...selectedOrgs.map(o => o.name)],
+      ['Category', ...selectedOrgs.map(o => o.cat)],
+      ['GSoC Years', ...selectedOrgs.map(o => String(o.years))],
+      ['First Year', ...selectedOrgs.map(o => String(o.firstYear))],
+      ['Competition', ...selectedOrgs.map(o => o.competition)],
+      ['Codebase', ...selectedOrgs.map(o => o.codebase)],
+      ['Tech Stack', ...selectedOrgs.map(o => o.tags.join('; '))],
+      ['Best Fit', ...selectedOrgs.map(o => o.fit.join('; '))],
+      ['Repository', ...selectedOrgs.map(o => o.github)],
+    ];
+
+    const csvContent = rows.map(r => r.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gsoc-comparison-${selectedOrgs.map(o => o.name).join('-').replace(/[^a-z0-9-]/gi, '_').substring(0, 100)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
   document.getElementById('compareModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'compareModal') closeCompareModal();
   });

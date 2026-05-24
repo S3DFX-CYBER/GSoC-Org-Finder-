@@ -2933,12 +2933,21 @@ if(org.ideas){
 
   // Hero Search Link
   const heroSearch = document.getElementById('hero-search');
+  // Local debounce helper to avoid immediate filtering on every keystroke
+  function __debounce_local(fn, wait = 300) {
+    let t = null;
+    return function(...args) {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => { t = null; try { fn.apply(this, args); } catch(e) { console.error(e); } }, wait);
+    };
+  }
+  const debouncedApplyLocal = __debounce_local(() => applyFilters(), 300);
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-      applyFilters();
+      debouncedApplyLocal();
     });
   }
 

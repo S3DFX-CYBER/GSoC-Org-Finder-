@@ -200,18 +200,34 @@
   "Apache Software Foundation": {
     "org": "Apache Software Foundation",
     "ideasUrl": "https://community.apache.org/gsoc.html",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.apache.org/list.html?dev@community.apache.org",
+        "label": "dev@community.apache.org"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.apache.org/list.html?mentors@community.apache.org",
+        "label": "mentors@community.apache.org"
+      }
+    ],
     "mentors": [],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://groups.google.com/group/google-summer-of-code-discuss",
-        "label": "GSoC discussion list"
+        "url": "https://lists.apache.org/list.html?dev@community.apache.org",
+        "label": "dev@community.apache.org"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.apache.org/list.html?mentors@community.apache.org",
+        "label": "mentors@community.apache.org"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Use dev@community.apache.org for GSoC questions and mentors@community.apache.org for mentor coordination.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-24T00:00:00.000Z"
   },
   "API Dash": {
     "org": "API Dash",

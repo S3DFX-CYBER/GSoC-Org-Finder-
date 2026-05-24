@@ -703,6 +703,12 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+        <button id="clearFiltersBtn"
+        class="px-4 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors">
+        Clear Filters
+        </button>
+        
+
     </div>
   </div>
   
@@ -721,8 +727,8 @@
     <div class="text-6xl mb-4">🔍</div>
     <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
     <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
-    <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
-      Clear All Filters
+    <button id="clearFiltersBtn" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
+    wsClear All Filters
     </button>
   </div>
 
@@ -1536,7 +1542,7 @@
       </span>`;
     }).join('');
 
-    const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+    const clearAll = `<button class="clear-all-langs-btn" onclick="clearAllFilters()">Clear all</button>`;
     container.innerHTML = badges + clearAll;
   }
 
@@ -1560,7 +1566,70 @@
     renderSelectedLanguages();
     applyFilters();
   }
+  window.clearAllFilters = function() {
 
+  // Clear search inputs
+  document.getElementById('searchInput').value = '';
+
+  const heroSearch = document.getElementById('hero-search');
+  if (heroSearch) {
+    heroSearch.value = '';
+  }
+
+  // Reset dropdowns
+  document.getElementById('categoryFilter').value = 'all';
+  document.getElementById('complexityFilter').value = 'all';
+
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.value = 'alpha';
+  }
+
+  // Reset language pills
+  clearSelectedLanguagePills();
+
+  // Reset language toggle
+  matchAllLanguages = false;
+  globalThis.matchAllLanguages = false;
+
+  const toggle = document.getElementById('matchAllLanguagesToggle');
+  if (toggle) {
+    toggle.checked = false;
+  }
+
+  // Reset active chip
+  activeChip = null;
+
+  // Reset chip UI
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+
+    chip.classList.remove(
+      'bg-orange-600',
+      'text-white'
+    );
+
+    chip.classList.add(
+      'bg-surface-container-highest'
+    );
+
+  });
+
+  // Reset visible cards count
+  visibleCount = 12;
+
+  // Reset filtered organizations
+  filteredOrgs = [...ORGS];
+
+  // Clear URL params
+  history.replaceState(null, '', location.pathname);
+
+  // Update language mode hint
+  updateLanguageModeHint();
+
+  // Re-render orgs
+  applyFilters();
+
+};
   // NOTE: toggleLanguageMode removed — the matchAllLanguagesToggle checkbox
   // uses a direct event listener (line ~1538) and does not use onclick=.
 
@@ -2765,28 +2834,14 @@ if(org.ideas){
     if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
     return a.name.localeCompare(b.name);
   }
-
-  window.clearAllFilters = function() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('categoryFilter').value = 'all';
-    document.getElementById('complexityFilter').value = 'all';
-    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
-    const heroSearch = document.getElementById('hero-search');
-    if (heroSearch) heroSearch.value = '';
   
-    // Reset chips
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.classList.remove('bg-orange-600', 'text-white');
-      chip.classList.add('bg-surface-container-highest');
-    });
-
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
-  };
+  
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('clearFiltersBtn')
+  ?.addEventListener('click', clearAllFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
   document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
   document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
@@ -3050,6 +3105,7 @@ if(org.ideas){
 
     applyFilters();
   })();
+
   renderOrgs();
   renderWatchlist();
   updateAIInsights();   // populate AI insight panel on page load
@@ -3066,11 +3122,11 @@ if(org.ideas){
 <!-- Vercel Speed Insights -->
 <script type="module" src="agent/scripts/speed-insights.js"></script>
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
-    });
-  }
+  //if ('serviceWorker' in navigator) {
+    //window.addEventListener('load', () => {
+      //navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+    //});
+  //}
 </script>
 
 <div class="modal-bg" id="helpModal">

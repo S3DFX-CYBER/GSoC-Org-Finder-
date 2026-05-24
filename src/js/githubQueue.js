@@ -55,11 +55,18 @@ const resetErrors = () => { _consecutiveErrors = 0; };
 class PriorityQueue {
   constructor() { this._q = []; }
 
-  enqueue(item, priority = 1) {
-    if (this._q.some(e => e.repo === item.repo && e.mode === item.mode)) return;
-    this._q.push({ ...item, priority });
-    this._q.sort((a, b) => a.priority - b.priority);
+ enqueue(item, priority = 1) {
+  const existing = this._q.find(e => e.repo === item.repo && e.mode === item.mode);
+  if (existing) {
+    if (priority < existing.priority) {
+      existing.priority = priority;
+      this._q.sort((a, b) => a.priority - b.priority);
+    }
+    return;
   }
+  this._q.push({ ...item, priority });
+  this._q.sort((a, b) => a.priority - b.priority);
+}
 
   dequeue()    { return this._q.shift() || null; }
   get size()   { return this._q.length; }

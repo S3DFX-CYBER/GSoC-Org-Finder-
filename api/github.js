@@ -182,7 +182,7 @@ export default async function handler(req) {
       }));
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
-      return new Response(JSON.stringify({ total, items }), { status: 200, headers: rh });
+      return new Response(JSON.stringify({ total, items }), { status: 200, headers: responseHeaders });
    } catch (err) {
       return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers: { ...headers } });
     }
@@ -207,7 +207,7 @@ export default async function handler(req) {
       const data = await res.json();
       const gfi  = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
-      return new Response(JSON.stringify({ gfi }), { status: 200, headers: rh });
+      return new Response(JSON.stringify({ gfi }), { status: 200, headers: responseHeaders });
     } catch (err) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
     }
@@ -257,7 +257,7 @@ export default async function handler(req) {
     };
 
     safeCacheSet(repo, result);
-    return new Response(JSON.stringify(result), { status: 200, headers: rh });
+    return new Response(JSON.stringify(result), { status: 200, headers: responseHeaders });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
   }

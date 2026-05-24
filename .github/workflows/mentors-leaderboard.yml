@@ -1,0 +1,254 @@
+name: 🏆 Mentor Leaderboard
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: mentor-leaderboard
+  cancel-in-progress: false
+
+jobs:
+  update-mentor-leaderboard:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Mentor Leaderboard
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const mentors = {
+              reviewers: [
+                "12fahed",
+                "4f4d",
+                "aanjalii01",
+                "adithyan-css",
+                "AditthyaSS",
+                "AnirbansarkarS",
+                "AnirudhPhophalia",
+                "anubhavxdev",
+                "Anushreebasics",
+                "aryanbhutani26",
+                "arzoo0511",
+                "ayu-yishu13",
+                "Ayush-Patel-56",
+                "Ayushh-Sharmaa",
+                "Balaji91221",
+                "BandhiyaHardik",
+                "coder-zs-cse",
+                "CoderOggy78",
+                "deepak0x",
+                "deepaksinghh12",
+                "DevROHIT11",
+                "Haile-12",
+                "harxhe",
+                "itsdakshjain",
+                "JoeCelaster",
+                "kallal79",
+                "KaranGupta2005",
+                "knoxiboy",
+                "Kota-Jagadeesh",
+                "kpj2006",
+                "KUMARNiru007",
+                "lourduradjou",
+                "lovestaco",
+                "magic-peach",
+                "Manan-Chawla",
+                "Maxd646",
+                "MAYANKSHARMA01010",
+                "Mohit-368",
+                "morningstarxcdcode",
+                "Mrigakshi-Rathore",
+                "MUKUL-PRASAD-SIGH",
+                "Neilblaze",
+                "nihalawasthi",
+                "nirvik34",
+                "nitinog10",
+                "oasis-parzival",
+                "piyushdotcomm",
+                "Precise-Goals",
+                "preetbiswas12",
+                "rounakkraaj-1744",
+                "sabeenaviklar",
+                "Sagar-Datkhile",
+                "Satya900",
+                "saurabh24thakur",
+                "Shravanthi20",
+                "sparshagarwal0411",
+                "SparshM8",
+                "stealthwhizz",
+                "subratamondalnsec",
+                "Suvanwita",
+                "SyedImtiyaz-1",
+                "TarunyaProgrammer",
+                "thakurutkarsh22",
+                "uddalak2005",
+                "UltraBot05",
+                "vanshaggarwal07"
+              ]
+            };
+
+            const mentorSet = new Set(
+              mentors.reviewers.map(m => m.toLowerCase())
+            );
+
+            const stats = {};
+
+            for (const mentor of mentors.reviewers) {
+              stats[mentor] = {
+                merged_reviews: 0
+              };
+            }
+
+            core.info('Fetching merged pull requests...');
+
+            const pulls = await github.paginate(
+              github.rest.pulls.list,
+              {
+                owner,
+                repo,
+                state: 'closed',
+                per_page: 100
+              }
+            );
+
+            const mergedPRs = pulls.filter(pr => pr.merged_at);
+
+            core.info(`Found ${mergedPRs.length} merged PRs`);
+
+            for (const pr of mergedPRs) {
+              try {
+                const reviews = await github.paginate(
+                  github.rest.pulls.listReviews,
+                  {
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    per_page: 100
+                  }
+                );
+
+                const validReviews = reviews.filter(review => {
+                  if (!review.user || !review.user.login) {
+                    return false;
+                  }
+
+                  const reviewer = review.user.login;
+
+                  if (
+                    reviewer.toLowerCase() ===
+                    pr.user.login.toLowerCase()
+                  ) {
+                    return false;
+                  }
+
+                  if (
+                    !mentorSet.has(reviewer.toLowerCase())
+                  ) {
+                    return false;
+                  }
+
+                  if (
+                    review.state !== 'APPROVED'
+                  ) {
+                    return false;
+                  }
+
+                  const body = (review.body || '').trim();
+
+                  if (body.length < 15) {
+                    return false;
+                  }
+
+                  return true;
+                });
+
+                if (validReviews.length === 0) {
+                  continue;
+                }
+
+                validReviews.sort((a, b) => {
+                  return new Date(b.submitted_at) -
+                    new Date(a.submitted_at);
+                });
+
+                const finalReview = validReviews[0];
+                const reviewer = finalReview.user.login;
+
+                if (!stats[reviewer]) {
+                  stats[reviewer] = {
+                    merged_reviews: 0
+                  };
+                }
+
+                stats[reviewer].merged_reviews++;
+
+              } catch (error) {
+                core.warning(
+                  `Failed processing PR #${pr.number}: ${error.message}`
+                );
+              }
+            }
+
+            const leaderboard = Object.entries(stats)
+              .sort((a, b) => {
+                return (
+                  b[1].merged_reviews -
+                  a[1].merged_reviews
+                );
+              });
+
+            let markdown = '# 🏆 GSSOC Mentor Leaderboard\n\n';
+            markdown += '> Tracks successful mentor-reviewed PR merges.\n\n';
+            markdown += '| Rank | Mentor | Successful Reviews |\n';
+            markdown += '|------|--------|-------------------|\n';
+
+            leaderboard.forEach(([mentor, data], index) => {
+              markdown += `| ${index + 1} | @${mentor} | ${data.merged_reviews} |\n`;
+            });
+
+            markdown += '\n';
+            markdown += `Last updated: ${new Date().toUTCString()}\n`;
+
+            fs.writeFileSync(
+              '.github/reviewers/mentor-leaderboard.md',
+              markdown
+            );
+
+            fs.writeFileSync(
+              '.github/reviewers/mentor-stats.json',
+              JSON.stringify(stats, null, 2)
+            );
+
+            core.info('Mentor leaderboard generated successfully');
+
+      - name: Commit leaderboard updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .github/reviewers/mentor-leaderboard.md
+          git add .github/reviewers/mentor-stats.json
+
+          git diff --cached --quiet && exit 0
+
+          git commit -m "chore: update mentor leaderboard"
+          git push

@@ -708,3 +708,73 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* ===== RESPONSIVE FIXES — mobile search & grid ===== */
+
+/* B: Search bar + Surprise Me button */
+@media (max-width: 640px) {
+  #searchInput {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #surpriseBtn {
+    width: 100% !important;
+  }
+}
+
+/* C: Org card grid breakpoints */
+@media (max-width: 900px) {
+  #orgsGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 640px) {
+  #orgsGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* C: Prevent horizontal overflow on all screens */
+body { overflow-x: hidden; }
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ============================================
+   RESPONSIVE FIXES — issue #1171
+   ============================================ */
+
+/* Hero search full width on mobile */
+@media (max-width: 640px) {
+  #hero-search {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Surprise Me button full width on mobile */
+  #surpriseBtn {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Filter dropdowns — stack on mobile */
+  .flex.items-center.gap-4 > select {
+    font-size: 11px !important;
+  }
+}
+
+/* Org card grid — 2 col on tablet */
+@media (max-width: 900px) {
+  #orgGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Org card grid — 1 col on phone */
+@media (max-width: 640px) {
+  #orgGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Global overflow guard */
+body { overflow-x: hidden; }
+*, *::before, *::after { box-sizing: border-box; }

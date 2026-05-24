@@ -383,7 +383,12 @@ function renderCompareSlots(){
       html+=`<div class="compare-slot filled">
         <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
         <span class="slot-name">${escapeHtml(o.name)}</span>
-        <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">✕ Remove</button>
+        <button 
+           class="slot-remove"
+           aria-label="Remove organization from comparison"
+          onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">
+          ✕ Remove
+        </button>
       </div>`;
     } else {
       html+=`<div class="compare-slot"><span class="slot-empty">+ Add org</span><span style="font-size:10px;color:var(--muted)">Click ⚖️ on any card</span></div>`;

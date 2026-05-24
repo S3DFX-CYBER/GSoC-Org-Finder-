@@ -20,6 +20,18 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+// Simple debounce helper for input events to improve search performance
+function debounce(fn, wait) {
+  let t = null;
+  return function(...args) {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => {
+      t = null;
+      try { fn.apply(this, args); } catch (e) { console.error('debounced fn error', e); }
+    }, wait);
+  };
+}
+
 globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -1387,14 +1399,26 @@ requestAnimationFrame(()=>{
 
 // Sync hero search with hidden search input and initialize on load
 const heroSearch = document.getElementById('hero-search');
+// Debounced applyFilters to reduce re-renders on rapid typing
+const debouncedApply = debounce(applyFilters, 300);
 if (heroSearch) {
   heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
   heroSearch.addEventListener('input', (e) => {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
       searchInput.value = e.target.value;
-      applyFilters();
+      debouncedApply();
     }
+  });
+}
+
+// Wire main search input to use debounced filtering as well
+const mainSearch = document.getElementById('searchInput');
+if (mainSearch) {
+  mainSearch.addEventListener('input', (e) => {
+    // keep hero search in sync
+    if (heroSearch) heroSearch.value = e.target.value;
+    debouncedApply();
   });
 }
 

@@ -117,17 +117,57 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
 
-  // Handle file upload
+  const parseFile = async (file) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let text = '';
+    
+    if (ext === 'pdf') {
+      globalThis.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await globalThis.pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        text += (await (await pdf.getPage(i)).getTextContent()).items.map(i => i.str).join(' ') + '\n';
+      }
+    } else if (ext === 'docx') {
+      text = (await globalThis.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
+    } else if (ext === 'doc') {
+      text = await file.text();
+    } else if (ext === 'txt') {
+      text = await file.text();
+    } else {
+      throw new Error("Unsupported file format. Please upload a TXT, PDF, DOC, or DOCX file.");
+    }
+    
+    // eslint-disable-next-line no-control-regex
+    return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ').replace(/[ \t]+/g, ' ').replace(/(\r\n|\n|\r){2,}/g, '\n').trim();
+  };
+
+  let currentUploadToken = 0;
+
   if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
+    fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      file.text().then(text => {
-        resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+      
+      const uploadToken = ++currentUploadToken;
+
+      const prevHtml = getRecsBtn.innerHTML;
+      const prevDisabled = getRecsBtn.disabled;
+      getRecsBtn.disabled = true;
+      getRecsBtn.innerHTML = '<span class="material-symbols-outlined pulse-dot">document_scanner</span> Parsing...';
+
+      try {
+        const parsedText = await parseFile(file);
+        if (uploadToken !== currentUploadToken) return;
+        resumeText.value = parsedText;
+      } catch (err) {
+        if (uploadToken !== currentUploadToken) return;
+        showError(err.message || "Failed to parse document.");
+      } finally {
+        if (uploadToken === currentUploadToken) {
+          getRecsBtn.disabled = prevDisabled;
+          getRecsBtn.innerHTML = prevHtml;
+        }
+      }
     });
   }
 

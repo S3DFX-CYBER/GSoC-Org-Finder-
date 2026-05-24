@@ -257,7 +257,7 @@ export default async function handler(req) {
     };
 
     safeCacheSet(repo, result);
-    return new Response(JSON.stringify(result), { status: 200, headers: responseHeaders });
+    return new Response(JSON.stringify(result), { status: 200, headers: rh });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
   }

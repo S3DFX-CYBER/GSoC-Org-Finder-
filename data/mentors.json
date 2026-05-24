@@ -9,7 +9,7 @@
         "github": "52north",
         "githubUrl": "https://github.com/52north"
       }
-    ], 
+    ],
     "mailingLists": [], 
     "tip": "",
     "status": "ok",
@@ -584,12 +584,45 @@
   "CRIU": {
     "org": "CRIU",
     "ideasUrl": "https://github.com/checkpoint-restore/criu/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/checkpoint-restore/criu",
+        "label": "CRIU Gitter"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Adrian Reber",
+        "github": "adrianreber",
+        "githubUrl": "https://github.com/adrianreber"
+      },
+      {
+        "name": "Radostin Stoyanov",
+        "github": "rst0git",
+        "githubUrl": "https://github.com/rst0git"
+      },
+      {
+        "name": "Pavel Tikhomirov",
+        "github": "Snorch",
+        "githubUrl": "https://github.com/Snorch"
+      },
+      {
+        "name": "Alexander Mikhalitsyn",
+        "github": "mihalicyn",
+        "githubUrl": "https://github.com/mihalicyn"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing List",
+        "url": "mailto:criu@openvz.org",
+        "label": "criu@openvz.org"
+      }
+    ],
+    "tip": "Clone and build CRIU locally, and run a simple checkpoint/restore test before reaching out.",
+    "status": "ok",
+    "lastFetched": "2026-05-14T20:00:00.000Z"
   },
   "Cuneiform Digital Library Initiative (CDLI)": {
     "org": "Cuneiform Digital Library Initiative (CDLI)",
@@ -1426,16 +1459,34 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "LibreCube Initiative": {
-    "org": "LibreCube Initiative",
-    "ideasUrl": "https://librecube.org/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"LibreCube Initiative": {
+  "org": "LibreCube Initiative",
+  "ideasUrl": "https://librecube.org/google-summer-of-code/",
+  "channels": [
+    {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#librecube.org:matrix.org",
+      "label": "LibreCube Matrix Room"
+    }
+  ],
+  "mentors": [
+    { "name": "Artur Scholz", "github": "", "githubUrl": "" },
+    { "name": "Peter Mader", "github": "", "githubUrl": "" },
+    { "name": "Sai", "github": "", "githubUrl": "" },
+    { "name": "Tamara Hinderman", "github": "", "githubUrl": "" },
+    { "name": "Shayan Majumder", "github": "", "githubUrl": "" }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "mailto:gsoc@librecube.org",
+      "label": "gsoc@librecube.org"
+    }
+  ],
+  "tip": "Please email directly to the mentors (with gsoc@librecube.org in copy), with a short text about yourself (your skills and interests) and what of the project(s) you find interesting to work on.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "LibreHealth": {
     "org": "LibreHealth",
     "ideasUrl": "https://wiki.librehealth.io/GSoC_2026",
@@ -2191,19 +2242,25 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "OSGeo (Open Source Geospatial Foundation)": {
+"OSGeo (Open Source Geospatial Foundation)": {
     "org": "OSGeo (Open Source Geospatial Foundation)",
-    "ideasUrl": "https://wiki.osgeo.org/wiki/Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [
+    "ideasUrl": "https://wiki.osgeo.org/wiki/Google_Summer_of_Code_2026_Ideas",
+    "channels": [
       {
-        "type": "Mailing list",
-        "url": "http://lists.osgeo.org/mailman/listinfo/soc",
-        "label": "OSGeo (Open Source Geospatial Foundation) Mailing list"
+        "type": "Discourse",
+        "url": "https://discourse.osgeo.org/c/initiatives/soc",
+        "label": "OSGeo GSoC Discourse (Summer of Code)"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "mentors": [
+      {
+        "name": "Ashish",
+        "github": "krashish8",
+        "githubUrl": "https://github.com/krashish8"
+      }
+    ],
+    "mailingLists": [],
+    "tip": "Post in the OSGeo Discourse community to introduce yourself and ask questions related to GSoC.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
@@ -2263,14 +2320,42 @@
   "PostgreSQL": {
     "org": "PostgreSQL",
     "ideasUrl": "https://wiki.postgresql.org/wiki/GSoC_2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/",
+        "label": "PostgreSQL Slack — #gsoc-contributors channel"
+      },
+      {
+        "type": "Slack",
+        "url": "https://postgresteam.slack.com/join/shared_invite/zt-3o5j6cdj5-o~IYnyU_Ggcwk1zI6UYpOg",
+        "label": "PostgreSQL Slack invite link"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jesper Pedersen",
+        "github": "jesperpedersen",
+        "githubUrl": "https://github.com/jesperpedersen"
+      },
+      {
+        "name": "Pavlo Golub",
+        "github": "pashagolub",
+        "githubUrl": "https://github.com/pashagolub"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:gsoc-mentors@lists.postgresql.org",
+        "label": "PostgreSQL GSoC Mentors Mailing List"
+      }
+    ],
+    "tip": "Join the #gsoc-contributors channel on PostgreSQL Slack. Email gsoc-mentors@lists.postgresql.org before submitting your proposal.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-"preCICE": {
+  "preCICE": {
     "org": "preCICE",
     "ideasUrl": "https://github.com/precice/precice.github.io/wiki/GSoC-2026",
     "channels": [
@@ -2673,17 +2758,28 @@
   "SymPy": {
     "org": "SymPy",
     "ideasUrl": "https://github.com/sympy/sympy/wiki/GSoC-Ideas",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sympy:matrix.org",
+        "label": "SymPy Matrix"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
+        "name": "Shekhar Prasad Rajak",
         "github": "Shekharrajak",
         "githubUrl": "https://github.com/Shekharrajak"
       },
       {
-        "name": "",
+        "name": "Divyanshu Thakur",
         "github": "divyanshu132",
         "githubUrl": "https://github.com/divyanshu132"
+      },
+      {
+        "name": "Aaron Meurer",
+        "github": "asmeurer",
+        "githubUrl": "https://github.com/asmeurer"
       }
     ],
     "mailingLists": [
@@ -2705,7 +2801,7 @@
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-18T12:14:33.000Z"
   },
   "Synfig": {
     "org": "Synfig",
@@ -2819,13 +2915,156 @@
   },
   "The Linux Foundation": {
     "org": "The Linux Foundation",
-    "ideasUrl": "https://wiki.linuxfoundation.org/gsoc/google-summer-code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "ideasUrl": "https://github.com/LinuxFoundationGSoC/ProjectIdeas/wiki/Google-Summer-of-Code-2026",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/Ck7jw53nU2",
+        "label": "Sound Open Firmware Discord"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/ZztCaVeQVG",
+        "label": "Automotive Grade Linux Discord"
+      },
+      {
+        "type": "Telegram",
+        "url": "https://t.me/OpenPrinting",
+        "label": "OpenPrinting Telegram Channel"
+      },
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/Ck7jw53nU2",
+        "label": "Zephyr Discord"
+      },
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/spdx/spdx",
+        "label": "SPDX Gitter"
+      },
+      {
+        "type": "IRC",
+        "url": "https://www.oftc.net/",
+        "label": "#kernelnewbies on irc.oftc.net"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Till Kamppeter",
+        "github": "tillkamppeter",
+        "githubUrl": "https://github.com/tillkamppeter"
+      },
+      {
+        "name": "Michael Sweet",
+        "github": "michaelrsweet",
+        "githubUrl": "https://github.com/michaelrsweet"
+      },
+      {
+        "name": "Aveek Basu",
+        "github": "AveekBasu",
+        "githubUrl": "https://github.com/AveekBasu"
+      },
+      {
+        "name": "Zdenek Dohnal",
+        "github": "zdohnal",
+        "githubUrl": "https://github.com/zdohnal"
+      },
+      {
+        "name": "Jan-Simon Möller",
+        "github": "dl9pf",
+        "githubUrl": "https://github.com/dl9pf"
+      },
+      {
+        "name": "Iuliana Prodan",
+        "github": "iuliana-prodan",
+        "githubUrl": "https://github.com/iuliana-prodan"
+      },
+      {
+        "name": "George Stefan",
+        "github": "george-stefan",
+        "githubUrl": "https://github.com/george-stefan"
+      },
+      {
+        "name": "Daniel Baluta",
+        "github": "dbaluta",
+        "githubUrl": "https://github.com/dbaluta"
+      },
+      {
+        "name": "Simona Toaca",
+        "github": "simonatoaca",
+        "githubUrl": "https://github.com/simonatoaca"
+      },
+      {
+        "name": "Dhruva Gole",
+        "github": "DhruvaG2000",
+        "githubUrl": "https://github.com/DhruvaG2000"
+      },
+      {
+        "name": "Manorit Chawdhry",
+        "github": "manorit2001",
+        "githubUrl": "https://github.com/manorit2001"
+      },
+      {
+        "name": "Arthit Suriyawongkul",
+        "github": "bact",
+        "githubUrl": "https://github.com/bact"
+      },
+      {
+        "name": "John Speed Meyers",
+        "github": "jspeed-meyers",
+        "githubUrl": "https://github.com/jspeed-meyers"
+      },
+      {
+        "name": "Laurentiu Mihalcea",
+        "github": "LaurentiuM1234",
+        "githubUrl": "https://github.com/LaurentiuM1234"
+      },
+      {
+        "name": "Hubert Guan",
+        "github": "HubertYGuan",
+        "githubUrl": "https://github.com/HubertYGuan"
+      },
+      {
+        "name": "Akarshan Kapoor",
+        "github": "Kappuccino111",
+        "githubUrl": "https://github.com/Kappuccino111"
+      },
+      {
+        "name": "Ayush Singh",
+        "github": "ayush1325",
+        "githubUrl": "https://github.com/ayush1325"
+      },
+      {
+        "name": "Jason Kridner",
+        "github": "jadonk",
+        "githubUrl": "https://github.com/jadonk"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "http://lists.automotivelinux.org/",
+        "label": "Automotive Grade Linux Mailing Lists"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.linux.dev/listinfo/printing-architecture",
+        "label": "printing-architecture mailing list"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lore.kernel.org/",
+        "label": "Linux Kernel Mailing Lists"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.spdx.org/g/Spdx-tech",
+        "label": "SPDX Tech Mailing List"
+      }
+    ],
+    "tip": "Introduce yourself to the relevant Linux Foundation workgroup before applying and follow the contributor application template.",
+    "status": "ok",
+    "lastFetched": "2026-05-16T18:30:00.000Z"
   },
   "The Mifos Initiative": {
     "org": "The Mifos Initiative",
@@ -2840,11 +3079,48 @@
   "The NetBSD Foundation": {
     "org": "The NetBSD Foundation",
     "ideasUrl": "https://wiki.netbsd.org/projects/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+      {"type": "IRC",
+        "url": "https://web.libera.chat/#NetBSD-code",
+        "label": "NetBSD Foundation IRC Channel on Libera Chat"
+      }
+      ],
+    "mentors": [
+      {
+        "name": "zoulasc",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "The NetBSD Foundation",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Greg Oster",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Stephen Borrill",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Martin Husemann",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://www.netbsd.org/mailinglists/",
+        "label": "NetBSD Mailing Lists"
+      }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The ns-3 Network Simulator Project": {
@@ -2947,67 +3223,73 @@
     ],
     "mentors": [
       {
-        "name": "",
+        "name": "Arman Bilge",
         "github": "armanbilge",
         "githubUrl": "https://github.com/armanbilge"
       },
       {
-        "name": "",
+        "name": "Brian P. Holt",
         "github": "bpholt",
         "githubUrl": "https://github.com/bpholt"
       },
       {
-        "name": "",
+        "name": "Chew Ching Hian",
         "github": "Chingles2404",
         "githubUrl": "https://github.com/Chingles2404"
       },
       {
-        "name": "",
+        "name": "Antonio Jimenez",
         "github": "antoniojimeneznieto",
         "githubUrl": "https://github.com/antoniojimeneznieto"
       },
       {
-        "name": "",
+        "name": "Daniel Spiewak",
         "github": "djspiewak",
         "githubUrl": "https://github.com/djspiewak"
       },
       {
-        "name": "",
+        "name": "Michael Pilquist",
         "github": "mpilquist",
         "githubUrl": "https://github.com/mpilquist"
       },
       {
-        "name": "",
+        "name": "Marco Zühlke",
         "github": "mzuehlke",
         "githubUrl": "https://github.com/mzuehlke"
       },
       {
-        "name": "",
+        "name": "Andrew Valencik",
         "github": "valencik",
         "githubUrl": "https://github.com/valencik"
       },
       {
-        "name": "",
+        "name": "Rikito Taniguchi",
         "github": "tanishiking",
         "githubUrl": "https://github.com/tanishiking"
       },
       {
-        "name": "",
+        "name": "P. Oscar Boykin",
         "github": "johnynek",
         "githubUrl": "https://github.com/johnynek"
       },
       {
-        "name": "",
+        "name": "Noel Welsh",
         "github": "noelwelsh",
         "githubUrl": "https://github.com/noelwelsh"
       },
       {
-        "name": "",
+        "name": "Jamie Willis",
         "github": "j-mie6",
         "githubUrl": "https://github.com/j-mie6"
       }
     ],
-    "mailingLists": [],
+    "mailingLists": [
+      {
+        "type": "Google Group",
+        "label": "Typelevel Google Group",
+        "url": "https://groups.google.com/g/typelevel"
+      }
+    ],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -3182,7 +3464,23 @@
         "label": "webpack Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Claudio Wunder",
+        "github": "ovflowd",
+        "githubUrl": "https://github.com/ovflowd"
+      },
+      {
+        "name": "Sebastian Beltran",
+        "github": "bjohansebas",
+        "githubUrl": "https://github.com/bjohansebas"
+      },
+      {
+        "name": "Aviv Keller",
+        "github": "avivkeller",
+        "githubUrl": "https://github.com/avivkeller"
+      }
+    ],
     "mailingLists": [],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",

@@ -2909,7 +2909,8 @@ if(org.ideas){
     renderOrgs(true);
   };
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  // `searchInput` is handled via debounced listener in `src/js/app.js` to avoid
+  // excessive re-renders: do not bind a synchronous applyFilters() here.
   document.getElementById('categoryFilter').addEventListener('change', applyFilters);
   document.getElementById('complexityFilter').addEventListener('change', applyFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);

@@ -3724,26 +3724,40 @@ if(org.ideas){
     const btn = document.getElementById('mFetchBtn');
     const orgName = document.querySelector('#mHeader h2').textContent;
     const org = ORGS.find(o => o.name === orgName);
-    if (!org) return;
+    if (!org || !org.github) return;
 
     btn.textContent = 'Fetching...';
     btn.disabled = true;
 
     try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
-      document.getElementById('mForks').textContent = forks;
-      document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
+      const repo = org.github.trim();
+      const res = await fetch(`/api/github?repo=${encodeURIComponent(repo)}`);
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+
+      const stars = data.stars ?? 0;
+      const forks = data.forks ?? 0;
+      const issues = data.openIssues ?? 0;
+      const lastCommit = data.lastCommit ? new Date(data.lastCommit) : null;
+      const daysSinceCommit = lastCommit ? Math.floor((Date.now() - lastCommit.getTime()) / 86400000) : 999;
+
+      let activity = 'Moderate';
+      let activityClass = 'gh-stat-item text-blue-400';
+      if (daysSinceCommit <= 30) { activity = 'High'; activityClass = 'gh-stat-item text-green-400'; }
+      else if (daysSinceCommit <= 90) { activity = 'Moderate'; activityClass = 'gh-stat-item text-yellow-400'; }
+      else { activity = 'Low'; activityClass = 'gh-stat-item text-red-400'; }
+
+      document.getElementById('mStars').textContent = stars >= 1000 ? `${(stars / 1000).toFixed(1)}k` : String(stars);
+      document.getElementById('mForks').textContent = String(forks);
+      document.getElementById('mIssues').textContent = String(issues);
+      document.getElementById('mActivity').textContent = activity;
+      document.getElementById('mActivity').className = activityClass;
+
+      if (data.gfi !== undefined) {
+        org._gh = org._gh || {};
+        org._gh.gfi = data.gfi;
+      }
+
       btn.textContent = 'Stats Updated!';
     } catch (e) {
       btn.textContent = 'Error';

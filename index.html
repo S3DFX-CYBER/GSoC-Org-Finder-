@@ -930,7 +930,7 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-zinc-100 p-6 mb-8">
+    <div class="bg-white rounded-2xl border border-zinc-100 p-6 mb-8" data-category="${mentor.cat}">
       <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
         <label class="relative block">
           <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
@@ -947,7 +947,77 @@
         </select>
       </div>
     </div>
+ <div class="flex flex-wrap gap-4 p-5 mb-6 bg-white border border-gray-200 rounded-2xl shadow-sm">
 
+ <button class="mentor-tab active px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  onclick="filterMentors('', this)">
+  All
+</button>
+
+  <button
+    onclick="filterMentors('science', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Science
+  </button>
+
+  <button
+    onclick="filterMentors('programming', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Programming
+  </button>
+
+  <button
+    onclick="filterMentors('security', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Security
+  </button>
+
+<button
+    onclick="filterMentors('media', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Media
+  </button>
+
+  <button
+    onclick="filterMentors('web', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Web
+  </button>
+
+  <button
+    onclick="filterMentors('os', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    OS
+  </button>
+
+  <button
+    onclick="filterMentors('dev', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Dev
+  </button>
+
+   <button
+    onclick="filterMentors('data', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Data
+  </button>
+
+  <button
+    onclick="filterMentors('other', this)"
+    class="mentor-tab px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold text-sm transition-all duration-200 hover:bg-orange-100 hover:text-orange-600"
+  >
+    Other 
+  </button>
+
+</div>
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
@@ -955,7 +1025,6 @@
     </div>
   </div>
 </section>
- 
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
@@ -1132,6 +1201,10 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
@@ -1754,6 +1827,23 @@
     }));
   }
 
+
+  let activeMentorCategory = '';
+
+function filterMentors(category, element){
+
+  activeMentorCategory = category;
+
+  document.querySelectorAll('.mentor-tab')
+    .forEach(btn => btn.classList.remove('active'));
+
+  element.classList.add('active');
+
+  renderMentorFinder();
+}
+
+globalThis.filterMentors = filterMentors;
+
   function renderMentorFinder() {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
@@ -1788,6 +1878,13 @@
     }
 
     const filteredRecords = records.filter(({ org, entry }) => {
+
+      if(
+   activeMentorCategory &&
+   org.cat !== activeMentorCategory
+){
+   return false;
+} 
       const searchHaystack = [
         org.name,
         ...(entry.mentors || []).flatMap((mentor) => [mentor.name || '', mentor.github || ''])

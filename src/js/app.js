@@ -579,7 +579,7 @@ function applyFilters(){
     const orgName=o.name.toLowerCase();
     
     // Category Filter
-    if(cat && o.cat !== cat) return false;
+   if (cat && o.cat?.toLowerCase() !== cat.toLowerCase()) return false;
 
     // Complexity Filter (if it exists in data, otherwise skip)
     // Note: Complexity is currently a display-only field in the card UI 
@@ -655,6 +655,51 @@ function applyFilters(){
   if (selectedLangs.length)    params.set('lang', selectedLangs.join(','));
   if (sort && sort !== 'alpha')    params.set('sort',sort);
   history.replaceState(null,'',params.toString()?'?'+params.toString():location.pathname);
+}
+
+function filterMentors(category, button) {
+
+  // Button active state
+  document.querySelectorAll('.mentor-tab').forEach(btn => {
+    btn.classList.remove('bg-orange-500', 'text-white');
+    btn.classList.add('bg-gray-100', 'text-gray-700');
+  });
+
+  button.classList.remove('bg-gray-100', 'text-gray-700');
+  button.classList.add('bg-orange-500', 'text-white');
+
+  // Mentor cards
+  const cards = document.querySelectorAll('.mentor-card');
+
+  cards.forEach(card => {
+
+    const mentorCategory =
+      card.dataset.category?.toLowerCase();
+
+    // IMPORTANT FIX
+    if (
+      category === '' ||          // for ALL button
+      category === 'all' ||       // backup condition
+      mentorCategory === category
+    ) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+
+  });
+
+  // Hide/show "No mentors found"
+  const visibleCards = [...cards].filter(
+    card => card.style.display !== 'none'
+  );
+
+  const noResults = document.getElementById('noMentorResults');
+
+  if (noResults) {
+    noResults.style.display =
+      visibleCards.length === 0 ? 'block' : 'none';
+  }
 }
 
 function applySecondarySort(a, b, sortType) {
@@ -1402,4 +1447,3 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

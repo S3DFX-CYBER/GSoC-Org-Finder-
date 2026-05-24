@@ -1,6 +1,17 @@
 /* global module */
 
 const ORGS = [
+{ name:"Mozilla",cat:"os",},
+{name:"React Community",  cat:"dev",},
+{ name:"OpenCV", cat:"media",},
+{ name:"Random Org",  cat:"other",},
+{ name:"React", cat:"web",},
+{ name:"Next.js", cat:"web",},
+{ name:"Mozilla", cat:"os",},
+{ name:"TensorFlow",cat:"ai",},
+{name:"Apache Spark", cat:"data",},
+{ name:"NumFOCUS", cat:"data",},
+{ name:"Pandas", cat:"data",},
   { name:"52°North Spatial Information Research GmbH", cat:"science", years:11, firstYear:2016, competition:"moderate", codebase:"intermediate", github:"52North/SOS", tags:["python","javascript","java","gis","geospatial"], desc:"Innovative ideas & technologies in geoinformatics.", fit:["GIS enthusiasts","Python/Java devs"], ideas:"https://52north.org/outreach-dissemination/google-summer-of-code/project-ideas/" },
   { name:"AboutCode", cat:"security", years:7, firstYear:2017, competition:"chill", codebase:"beginner", github:"nexB/scancode-toolkit", tags:["python","javascript","c","shell script"], desc:"Scan code for origin, license and vulnerabilities.", fit:["Python devs","Open source compliance"], ideas:"https://github.com/aboutcode-org/aboutcode/wiki/GSOC-2026-project-ideas" },
   { name:"Accord Project", cat:"programming", years:6, firstYear:2020, competition:"chill", codebase:"beginner", github:"accordproject/concerto", tags:["javascript","react","ocaml","compiler"], desc:"Open source software for smart legal contracts.", fit:["JavaScript devs","Legal tech"], ideas:"https://github.com/accordproject/techdocs/wiki/Google-Summer-of-Code-2026-Ideas-List" },

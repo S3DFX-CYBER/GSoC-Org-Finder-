@@ -874,9 +874,7 @@ const GRID_COLS=()=>{
   return cols;
 };
 
-document.getElementById('hamburger-btn')?.addEventListener('click', () => {
-  document.getElementById('nav-links')?.classList.toggle('open');
-});
+
 document.addEventListener('keydown',e=>{
   // Close modals first
   if(e.key==='Escape'){

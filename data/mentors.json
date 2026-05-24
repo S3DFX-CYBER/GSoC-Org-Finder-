@@ -1459,16 +1459,34 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "LibreCube Initiative": {
-    "org": "LibreCube Initiative",
-    "ideasUrl": "https://librecube.org/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"LibreCube Initiative": {
+  "org": "LibreCube Initiative",
+  "ideasUrl": "https://librecube.org/google-summer-of-code/",
+  "channels": [
+    {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#librecube.org:matrix.org",
+      "label": "LibreCube Matrix Room"
+    }
+  ],
+  "mentors": [
+    { "name": "Artur Scholz", "github": "", "githubUrl": "" },
+    { "name": "Peter Mader", "github": "", "githubUrl": "" },
+    { "name": "Sai", "github": "", "githubUrl": "" },
+    { "name": "Tamara Hinderman", "github": "", "githubUrl": "" },
+    { "name": "Shayan Majumder", "github": "", "githubUrl": "" }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "mailto:gsoc@librecube.org",
+      "label": "gsoc@librecube.org"
+    }
+  ],
+  "tip": "Please email directly to the mentors (with gsoc@librecube.org in copy), with a short text about yourself (your skills and interests) and what of the project(s) you find interesting to work on.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "LibreHealth": {
     "org": "LibreHealth",
     "ideasUrl": "https://wiki.librehealth.io/GSoC_2026",
@@ -3187,67 +3205,73 @@
     ],
     "mentors": [
       {
-        "name": "",
+        "name": "Arman Bilge",
         "github": "armanbilge",
         "githubUrl": "https://github.com/armanbilge"
       },
       {
-        "name": "",
+        "name": "Brian P. Holt",
         "github": "bpholt",
         "githubUrl": "https://github.com/bpholt"
       },
       {
-        "name": "",
+        "name": "Chew Ching Hian",
         "github": "Chingles2404",
         "githubUrl": "https://github.com/Chingles2404"
       },
       {
-        "name": "",
+        "name": "Antonio Jimenez",
         "github": "antoniojimeneznieto",
         "githubUrl": "https://github.com/antoniojimeneznieto"
       },
       {
-        "name": "",
+        "name": "Daniel Spiewak",
         "github": "djspiewak",
         "githubUrl": "https://github.com/djspiewak"
       },
       {
-        "name": "",
+        "name": "Michael Pilquist",
         "github": "mpilquist",
         "githubUrl": "https://github.com/mpilquist"
       },
       {
-        "name": "",
+        "name": "Marco Zühlke",
         "github": "mzuehlke",
         "githubUrl": "https://github.com/mzuehlke"
       },
       {
-        "name": "",
+        "name": "Andrew Valencik",
         "github": "valencik",
         "githubUrl": "https://github.com/valencik"
       },
       {
-        "name": "",
+        "name": "Rikito Taniguchi",
         "github": "tanishiking",
         "githubUrl": "https://github.com/tanishiking"
       },
       {
-        "name": "",
+        "name": "P. Oscar Boykin",
         "github": "johnynek",
         "githubUrl": "https://github.com/johnynek"
       },
       {
-        "name": "",
+        "name": "Noel Welsh",
         "github": "noelwelsh",
         "githubUrl": "https://github.com/noelwelsh"
       },
       {
-        "name": "",
+        "name": "Jamie Willis",
         "github": "j-mie6",
         "githubUrl": "https://github.com/j-mie6"
       }
     ],
-    "mailingLists": [],
+    "mailingLists": [
+      {
+        "type": "Google Group",
+        "label": "Typelevel Google Group",
+        "url": "https://groups.google.com/g/typelevel"
+      }
+    ],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
@@ -3422,7 +3446,23 @@
         "label": "webpack Discord"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Claudio Wunder",
+        "github": "ovflowd",
+        "githubUrl": "https://github.com/ovflowd"
+      },
+      {
+        "name": "Sebastian Beltran",
+        "github": "bjohansebas",
+        "githubUrl": "https://github.com/bjohansebas"
+      },
+      {
+        "name": "Aviv Keller",
+        "github": "avivkeller",
+        "githubUrl": "https://github.com/avivkeller"
+      }
+    ],
     "mailingLists": [],
     "tip": "Introduce yourself in the public channel before asking project-specific questions.",
     "status": "ok",

@@ -1182,15 +1182,19 @@
           <div style="margin-top:8px; padding:16px; background:#f9fafb; border-radius:16px; margin-bottom:24px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
              <span style="font-size:13px; color:#6b7280;">Track your progress for this org</span>
-             <span id="modal-roadmap-pct" style="font-size:12px; font-weight:600; color:#22c55e;">0 / 6</span>
+             <span id="modal-roadmap-pct" aria-live="polite" style="font-size:12px; font-weight:600; color:#22c55e;">0 / 6</span>
           </div>
           <div style="height:6px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin-bottom:12px;">
-              <div id="roadmap-progress-bar"
+              <div id="roadmap-progress-bar"  role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
                  style="height:100%; width:0%; background:#22c55e; border-radius:99px; transition:width .3s ease;">
               </div>
           </div>
-          <div id="roadmap-steps" style="display:grid; gap:8px;"></div>
-        </div>
+          <div id="roadmap-steps"  role="group"
+           aria-label="Contribution roadmap checklist" style="display:grid; gap:8px;"></div>
+          </div>
 
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">
@@ -1791,6 +1795,28 @@
     }
   }
 
+
+  function updateRoadmapProgress(state) {
+
+  const completed = roadmapSteps.filter(s => state[s.id]).length;
+
+  const total = roadmapSteps.length;
+
+  const percent = Math.round((completed / total) * 100);
+
+  const bar = document.getElementById("roadmap-progress-bar");
+  const pct = document.getElementById("modal-roadmap-pct");
+
+  if (bar) {
+    bar.style.width = percent + "%";
+    bar.setAttribute("aria-valuenow", percent);
+  }
+
+  if (pct) {
+    pct.textContent = completed + " / " + total;
+  }
+}
+
   function renderContributionRoadmap(orgName) {
     const container = document.getElementById("roadmap-steps");
     const bar = document.getElementById("roadmap-progress-bar");
@@ -1802,12 +1828,10 @@
     }
 
     const state = loadRoadmapState(orgName);
-    const completed = roadmapSteps.filter(s => state[s.id]).length;
-    const total = roadmapSteps.length;
-    const percent = Math.round((completed / total) * 100);
-
-    if (bar) bar.style.width = percent + "%";
-    if (pct) pct.textContent = completed + " / " + total;
+    updateRoadmapProgress(state);
+    if (container.dataset.rendered === orgName) {
+       return;
+    }
 
     container.innerHTML = roadmapSteps.map((step) => {
       const checked = !!state[step.id];
@@ -1836,6 +1860,7 @@
           ${checked ? '<span class="checkmark" style="margin-left:auto; color:#22c55e; font-size:16px;">✓</span>' : ''}
         </label>`;
     }).join("");
+    container.dataset.rendered = orgName;
 }
    
   const roadmapContainer = document.getElementById("roadmap-steps");
@@ -1844,87 +1869,76 @@
 
   roadmapContainer.addEventListener("change", function (e) {
 
-    if (!e.target.matches(".roadmap-checkbox")) return;
+  if (!e.target.matches(".roadmap-checkbox")) return;
 
-    const checkbox = e.target;
+  const checkbox = e.target;
 
-    const orgName = checkbox.dataset.orgName;
-    const stepId = checkbox.dataset.stepId;
+  const orgName = checkbox.dataset.orgName;
+  const stepId = checkbox.dataset.stepId;
 
-    // Load saved state
-    const state = loadRoadmapState(orgName);
+  // Load saved state
+  const state = loadRoadmapState(orgName);
 
-    // Update state
-    state[stepId] = checkbox.checked;
+  // Update state
+  state[stepId] = checkbox.checked;
 
-    // Save state
-    saveRoadmapState(orgName, state);
+  // Save state
+  saveRoadmapState(orgName, state);
 
-    // Update UI directly
-    const label = checkbox.closest(".roadmap-step");
-    const text = label.querySelector(".roadmap-label");
+  // Update UI directly
+  const label = checkbox.closest(".roadmap-step");
 
-    if (checkbox.checked) {
+  if (!label) return;
 
-      label.style.border = "1.5px solid #86efac";
-      label.style.background = "#f0fdf4";
+  const text = label.querySelector(".roadmap-label");
 
-      text.style.color = "#86efac";
-      text.style.textDecoration = "line-through";
+  if (!text) return;
 
-      // Add checkmark
-      if (!label.querySelector(".checkmark")) {
+  if (checkbox.checked) {
 
-        const checkmark = document.createElement("span");
+    label.style.border = "1.5px solid #86efac";
+    label.style.background = "#f0fdf4";
 
-        checkmark.className = "checkmark";
-        checkmark.textContent = "✓";
+    text.style.color = "#86efac";
+    text.style.textDecoration = "line-through";
 
-        checkmark.style.marginLeft = "auto";
-        checkmark.style.color = "#22c55e";
-        checkmark.style.fontSize = "16px";
+    // Add checkmark
+    if (!label.querySelector(".checkmark")) {
 
-        label.appendChild(checkmark);
-      }
+      const checkmark = document.createElement("span");
 
-    } else {
+      checkmark.className = "checkmark";
+      checkmark.textContent = "✓";
 
-      label.style.border = "1.5px solid #e5e7eb";
-      label.style.background = "#ffffff";
+      checkmark.style.marginLeft = "auto";
+      checkmark.style.color = "#22c55e";
+      checkmark.style.fontSize = "16px";
 
-      text.style.color = "var(--ink, #1a1a1a)";
-      text.style.textDecoration = "none";
-
-      // Remove checkmark
-      const checkmark = label.querySelector(".checkmark");
-
-      if (checkmark) {
-        checkmark.remove();
-      }
+      label.appendChild(checkmark);
     }
 
-    // Update progress
-    const completed = roadmapSteps.filter(step => state[step.id]).length;
+  } else {
 
-    const total = roadmapSteps.length;
+    label.style.border = "1.5px solid #e5e7eb";
+    label.style.background = "#ffffff";
 
-    const percent = Math.round((completed / total) * 100);
+    text.style.color = "var(--ink, #1a1a1a)";
+    text.style.textDecoration = "none";
 
-    const bar = document.getElementById("roadmap-progress-bar");
-    const pct = document.getElementById("modal-roadmap-pct");
+    // Remove checkmark
+    const checkmark = label.querySelector(".checkmark");
 
-    if (bar) {
-      bar.style.width = percent + "%";
+    if (checkmark) {
+      checkmark.remove();
     }
+  }
 
-    if (pct) {
-      pct.textContent = completed + " / " + total;
-    }
+  // Shared progress updater
+  updateRoadmapProgress(state);
 
-  });
-
-}
-
+});
+  
+  }
   function getMentorFinderRecords() {
     return ORGS.map((org) => ({
       org,

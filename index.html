@@ -1323,7 +1323,19 @@
 </footer>
 
 <!-- ═══════════════════ PRIVACY POLICY MODAL ═══════════════════ -->
-<div class="modal-bg" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+<style>
+  dialog#privacyModal.modal-bg {
+    border: none;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  dialog#privacyModal::backdrop {
+    background: transparent;
+  }
+</style>
+<dialog class="modal-bg" id="privacyModal" aria-labelledby="privacyModalTitle">
   <div class="modal">
     <button class="close-btn" id="closePrivacyModalBtn" aria-label="Close privacy policy">
       <span class="material-symbols-outlined">close</span>
@@ -1374,7 +1386,7 @@
       </p>
     </div>
   </div>
-</div>
+</dialog>
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
@@ -3745,6 +3757,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openPrivacyModal() {
       if (!privacyModal) return;
+      if (typeof privacyModal.showModal === 'function') {
+        privacyModal.showModal();
+      } else {
+        privacyModal.setAttribute('open', '');
+      }
       privacyModal.classList.add('open');
       document.body.style.overflow = 'hidden';
       var items = getFocusable();
@@ -3755,6 +3772,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!privacyModal) return;
       privacyModal.classList.remove('open');
       document.body.style.overflow = '';
+      setTimeout(function() {
+        if (typeof privacyModal.close === 'function') {
+          privacyModal.close();
+        } else {
+          privacyModal.removeAttribute('open');
+        }
+      }, 300); // 300ms matches the CSS opacity transition
       if (privacyLink) privacyLink.focus();
     }
 

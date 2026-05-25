@@ -818,6 +818,27 @@ function showCompareToast(msg) {
   setTimeout(() => (t.style.opacity = '0'), 2200);
 }
 
+async function shareComparison() {
+  try {
+    await navigator.clipboard.writeText(
+      window.location.href
+    );
+
+    showCompareToast(
+      'Comparison link copied!'
+    );
+  } catch (err) {
+    console.error(
+      'Failed to copy comparison link',
+      err
+    );
+
+    showCompareToast(
+      'Could not copy comparison link'
+    );
+  }
+}
+
 function showSkeletons(count = 12) {
   const grid = document.getElementById('orgGrid');
   if (!grid) return;

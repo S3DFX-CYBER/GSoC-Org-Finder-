@@ -975,6 +975,12 @@
         <span class="material-symbols-outlined text-sm">delete_sweep</span>
         Clear All
       </button>
+      <button id="shareWatchlistBtn"
+        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20 rounded-full px-4 py-2 hover:bg-primary/5 transition-colors"
+        title="Copy shareable link for your watchlist">
+        <span class="material-symbols-outlined text-sm">share</span>
+        Share Watchlist
+      </button>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-6">
@@ -1638,6 +1644,20 @@
 
   function parseStoredBookmarks() {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlWatchlist = urlParams.get('watchlist');
+      if (urlWatchlist) {
+        const decoded = decodeURIComponent(urlWatchlist).split(',').map(n => n.trim()).filter(Boolean);
+        if (decoded.length > 0) {
+          const stored = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+          const merged = [...new Set([...stored, ...decoded])];
+          localStorage.setItem('bookmarks', JSON.stringify(merged));
+          urlParams.delete('watchlist');
+          const newSearch = urlParams.toString();
+          history.replaceState(null, '', newSearch ? '?' + newSearch + window.location.hash : window.location.pathname + window.location.hash);
+          return merged;
+        }
+      }
       const parsed = JSON.parse(localStorage.getItem('bookmarks') || '[]');
       return Array.isArray(parsed) ? parsed : [];
     } catch {
@@ -2792,6 +2812,24 @@
   // Wire up "Clear All" button
   document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
 
+  // Wire up "Share Watchlist" button
+  document.getElementById('shareWatchlistBtn')?.addEventListener('click', () => {
+    const watchlistNames = [...bookmarkedSet].map(encodeURIComponent).join(',');
+    const shareUrl = `${window.location.origin}${window.location.pathname}?watchlist=${watchlistNames}${window.location.hash}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      const shareBtn = document.getElementById('shareWatchlistBtn');
+      if (shareBtn) {
+        const originalText = shareBtn.innerHTML;
+        shareBtn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Copied Link!';
+        shareBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+        setTimeout(() => {
+          shareBtn.innerHTML = originalText;
+          shareBtn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+        }, 2000);
+      }
+    });
+  });
+
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
@@ -2806,6 +2844,7 @@
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
     const clearBtn  = document.getElementById('clearAllBookmarksBtn');
+    const shareBtn  = document.getElementById('shareWatchlistBtn');
     if (!container) return;
 
     container.innerHTML = '';
@@ -2814,8 +2853,9 @@
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
-    // Show / hide "Clear All" button
+    // Show / hide "Clear All" and "Share Watchlist" buttons
     if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
+    if (shareBtn) shareBtn.classList.toggle('hidden', bookmarks.length === 0);
 
     // ── Empty state ───────────────────────────────────────────────────────────
     if (bookmarks.length === 0) {

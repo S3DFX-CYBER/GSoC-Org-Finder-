@@ -1316,11 +1316,65 @@
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
+      <button type="button" class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" id="privacyLink" aria-haspopup="dialog">Privacy</button>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
 </footer>
+
+<!-- ═══════════════════ PRIVACY POLICY MODAL ═══════════════════ -->
+<div class="modal-bg" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+  <div class="modal">
+    <button class="close-btn" id="closePrivacyModalBtn" aria-label="Close privacy policy">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="modal-header">
+      <h2 id="privacyModalTitle">Privacy Policy</h2>
+      <p>How FindMyGSoC handles your data</p>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;">
+      <div class="section-title">Overview</div>
+      <p class="text-sm text-zinc-600 leading-relaxed mb-6">
+        FindMyGSoC is a static web application hosted on Vercel. This page explains what data
+        is handled when you use this site.
+      </p>
+
+      <div class="section-title">Data stored locally</div>
+      <ul class="text-sm text-zinc-600 leading-relaxed mb-6 space-y-2 list-disc pl-5">
+        <li><strong>Watchlist &amp; bookmarks</strong> — saved only in your browser's <code class="text-xs bg-zinc-100 px-1 py-0.5 rounded">localStorage</code>. Nothing is sent to a server.</li>
+        <li><strong>Theme preference</strong> (light/dark) — stored in <code class="text-xs bg-zinc-100 px-1 py-0.5 rounded">localStorage</code> on your device only.</li>
+      </ul>
+
+      <div class="section-title">Network requests made by this site</div>
+      <ul class="text-sm text-zinc-600 leading-relaxed mb-6 space-y-2 list-disc pl-5">
+        <li><strong>Live repo stats</strong> — clicking "Fetch Live Stats" sends a request to this site's own <code class="text-xs bg-zinc-100 px-1 py-0.5 rounded">/api/github</code> Vercel edge function, which queries the GitHub API server-side. Your IP is visible to Vercel.</li>
+        <li><strong>AI Recommender</strong> — if you enter a GitHub username, it is sent to the same edge function. No username or result is stored beyond Vercel's standard access logs.</li>
+      </ul>
+
+      <div class="section-title">Hosting &amp; access logs</div>
+      <p class="text-sm text-zinc-600 leading-relaxed mb-6">
+        Vercel may record standard HTTP access logs (IP address, user-agent, request path).
+        These are subject to the <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-orange-500 hover:underline">Vercel Privacy Policy</a>.
+        GitHub API calls are subject to the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer" class="text-orange-500 hover:underline">GitHub Privacy Statement</a>.
+      </p>
+
+      <div class="section-title">Cookies</div>
+      <p class="text-sm text-zinc-600 leading-relaxed mb-6">
+        This site does not set cookies. All user preferences stay in <code class="text-xs bg-zinc-100 px-1 py-0.5 rounded">localStorage</code>.
+      </p>
+
+      <div class="section-title">Analytics</div>
+      <p class="text-sm text-zinc-600 leading-relaxed mb-6">
+        No analytics scripts are embedded. There is no Google Analytics, tracking pixel, or similar service.
+      </p>
+
+      <div class="section-title">Questions</div>
+      <p class="text-sm text-zinc-600 leading-relaxed">
+        Open an issue on <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues" target="_blank" rel="noopener noreferrer" class="text-orange-500 hover:underline">GitHub</a> or use the contact options in the footer.
+      </p>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
@@ -3676,6 +3730,62 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.closeHelpModal = closeHelpModal;
+
+  // ── Privacy Modal ──────────────────────────────────────────────
+  (function() {
+    var privacyModal = document.getElementById('privacyModal');
+    var privacyLink  = document.getElementById('privacyLink');
+    var closeBtn     = document.getElementById('closePrivacyModalBtn');
+
+    function getFocusable() {
+      return Array.from(privacyModal.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ));
+    }
+
+    function openPrivacyModal() {
+      if (!privacyModal) return;
+      privacyModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      var items = getFocusable();
+      if (items.length) items[0].focus();
+    }
+
+    function closePrivacyModal() {
+      if (!privacyModal) return;
+      privacyModal.classList.remove('open');
+      document.body.style.overflow = '';
+      if (privacyLink) privacyLink.focus();
+    }
+
+    if (privacyLink) privacyLink.addEventListener('click', openPrivacyModal);
+    if (closeBtn)    closeBtn.addEventListener('click', closePrivacyModal);
+
+    if (privacyModal) {
+      // Close on backdrop click
+      privacyModal.addEventListener('click', function(e) {
+        if (e.target === privacyModal) closePrivacyModal();
+      });
+      // Focus trap
+      privacyModal.addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab') return;
+        var items = getFocusable();
+        if (!items.length) return;
+        if (e.shiftKey && document.activeElement === items[0]) {
+          e.preventDefault(); items[items.length - 1].focus();
+        } else if (!e.shiftKey && document.activeElement === items[items.length - 1]) {
+          e.preventDefault(); items[0].focus();
+        }
+      });
+    }
+
+    // Escape key to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && privacyModal && privacyModal.classList.contains('open')) {
+        closePrivacyModal();
+      }
+    });
+  })();
 
 });
 </script>

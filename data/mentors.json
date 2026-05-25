@@ -552,12 +552,24 @@
   },
   "Cuneiform Digital Library Initiative (CDLI)": {
     "org": "Cuneiform Digital Library Initiative (CDLI)",
-    "ideasUrl": "https://cdli-gh.github.io/pages/gsoc.html",
-    "channels": [],
+    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/cuneiform-digital-library-initiative-cdli",
+    "channels": [
+      {
+        "type":"Chat",
+        "url":"https://gitlab.com/cdli/framework/-/wikis/Join-the-Community-and-GSoC-Contact",
+        "label":"CDLI Chat"
+      },
+      {
+        "type":"Blog",
+        "url":"https://www.linkedin.com/company/cuneiform-digital-library-initiative/",
+        "label":"CDLI Blog"
+
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Read GSoC proposal writing guide and discuss your ideas with mentors before submitting a proposal",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "D Language Foundation": {
@@ -583,21 +595,69 @@
   "Data for the Common Good": {
     "org": "Data for the Common Good",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/data-for-the-common-good",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Email",
+        "url": "lgraglia@uchicago.edu",
+        "label": "Data for the Common Good contact Email"
+      },
+      {
+        "type": "X",
+        "url": "https://x.com/PedsDataCommons",
+        "label": "Data for the Common Good on X"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Brian Furner",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Steve Krasinsky",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Tianyun Zhang",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Paul Murdoch",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Jooho Lee",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Contributor guidance: https://chicagopcdc.github.io/GSoC/proposal",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "DBpedia": {
     "org": "DBpedia",
     "ideasUrl": "https://github.com/dbpedia/databus/wiki/GSoC-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type":"Discord",
+        "url":"https://discord.gg/fB8byAPP7e",
+        "label":"DBpedia Discord"
+      },
+      {
+        "type":"Forum",
+        "url":"https://forum.dbpedia.org/",
+        "label":"DBpedia Community Forum"
+      }
+    ],
     "mentors": [],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Join the Discord dev channel or contact the Databus team via email.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Debian": {

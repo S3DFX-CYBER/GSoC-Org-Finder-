@@ -439,15 +439,43 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "Ceph": {
+"Ceph": {
     "org": "Ceph",
-    "ideasUrl": "https://github.com/ceph/ceph/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "ideasUrl": "https://ceph.io/en/developers/google-summer-of-code/",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://ceph.io/en/community/",
+        "label": "Ceph Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Afreen Misbah",
+        "github": "afreen23",
+        "githubUrl": "https://github.com/afreen23"
+      },
+      {
+        "name": "Abhishek Desai",
+        "github": "abhishekdesai",
+        "githubUrl": "https://github.com/abhishekdesai"
+      },
+      {
+        "name": "Dnyaneshwari Talwekar",
+        "github": "dnyanee1997",
+        "githubUrl": "https://github.com/dnyanee1997"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "email",
+        "url": "mailto:vallari.agrawal@ibm.com",
+        "label": "Vallari Agrawal (GSoC Coordinator)"
+      }
+    ],
+    "tip": "Join Ceph Slack from https://ceph.io/en/community/ and reach out to @Afreen @Abhishek Desai @Dnyaneshwari Talwekar. For questions contact Vallari Agrawal at vallari.agrawal@ibm.com",
+    "status": "ok",
+    "lastFetched": "2026-05-16T05:42:45.000Z"
   },
   "CERN-HSF": {
     "org": "CERN-HSF",
@@ -1076,14 +1104,37 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "GRAME": {
+"GRAME": {
     "org": "GRAME",
     "ideasUrl": "https://github.com/grame-cncm/faust/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/RzuFg6B8zA",
+        "label": "#gsoc"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Stéphane Letz",
+        "github": "sletz",
+        "githubUrl": "https://github.com/sletz"
+      },
+      {
+        "name": "Yann Orlarey",
+        "github": "orlarey",
+        "githubUrl": "https://github.com/orlarey"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.sourceforge.net/lists/listinfo/faudiostream-devel",
+        "label": "faudiostream-devel"
+      }
+    ],
+    "tip": "Join Discord at https://discord.gg/RzuFg6B8zA and introduce yourself in the #gsoc channel",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Graphite": {

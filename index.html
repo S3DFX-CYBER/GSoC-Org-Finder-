@@ -1547,19 +1547,27 @@ window.setActiveMenu = function(clickedLink) {
   allLinks.forEach(link => {
     link.classList.remove(
       'bg-orange-50',
-      'text-orange-600'
+      'text-orange-600',
+      'font-bold'
     );
 
-    link.classList.add('text-zinc-700');
+    link.classList.add(
+      'text-zinc-700',
+      'font-medium'
+    );
   });
 
   // Add active class to clicked link
-  clickedLink.classList.add(
-    'bg-orange-50',
-    'text-orange-600'
+  clickedLink.classList.remove(
+    'text-zinc-700',
+    'font-medium'
   );
 
-  clickedLink.classList.remove('text-zinc-700');
+  clickedLink.classList.add(
+    'bg-orange-50',
+    'text-orange-600',
+    'font-bold'
+  );
 
   // Close menu
   toggleMenu();

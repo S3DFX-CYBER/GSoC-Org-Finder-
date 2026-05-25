@@ -99,4 +99,4 @@
 - Quick approval/review → **2 pts**
 - Changes requested bonus → **+1 pt**
 
-Last updated: Sun, 24 May 2026 19:59:43 GMT
+Last updated: Sun, 24 May 2026 20:02:00 GMT

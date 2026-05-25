@@ -6,6 +6,7 @@
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
   <meta name="description" content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/" />
+  <link rel="stylesheet" href="src/styles.css">
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FindMyGSoC" />
   <meta property="og:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
@@ -443,38 +444,6 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
- <style>
-    #scrollTopBtn {
-      display: none !important;
-      position: fixed !important;
-      bottom: 2rem !important;
-      right: 2rem !important;
-      z-index: 9999 !important;
-      background: var(--orange) !important;
-      color: white !important;
-      border: none !important;
-      border-radius: 50% !important;
-      width: 44px !important;
-      height: 44px !important;
-      font-size: 1.2rem !important;
-      cursor: pointer !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    #scrollTopBtn.visible {
-      display: flex !important;
-    }
-    #scrollTopBtn:hover {
-      background: #F46B0E !important;
-      transform: translateY(-2px) !important;
-    }
-    #scrollTopBtn:focus-visible {
-      outline: 2px solid #F46B0E !important;
-      outline-offset: 2px !important;
-    }
-  </style>
-
-
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
 
@@ -3206,19 +3175,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
- <button id="scrollTopBtn" aria-label="Scroll to top" style="display:none; position:fixed; bottom:2rem; right:2rem; z-index:99999; background:#F46B0E; color:white; border:none; border-radius:50%; width:44px; height:44px; font-size:1.2rem; cursor:pointer; align-items:center; justify-content:center;">↑</button>
+ <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
 
     <script>
   const scrollBtn = document.getElementById('scrollTopBtn');
-  
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 400) {
-      scrollBtn.setAttribute('style', 'display:flex !important; position:fixed !important; bottom:2rem !important; right:2rem !important; z-index:99999 !important; background:#F46B0E !important; color:white !important; border:none !important; border-radius:50% !important; width:44px !important; height:44px !important; cursor:pointer !important; align-items:center !important; justify-content:center !important;');
-    } else {
-      scrollBtn.setAttribute('style', 'display:none !important;');
-    }
+    scrollBtn.classList.toggle('visible', window.scrollY > 400);
   });
-  
   scrollBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });

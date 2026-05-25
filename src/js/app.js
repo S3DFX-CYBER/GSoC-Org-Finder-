@@ -253,7 +253,9 @@ cleanCache();
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
-let matchAllLanguages=false; // false = OR (any), true = AND (all)
+let matchAllLanguages = false; // false = OR (any), true = AND (all)
+const PAGE_SIZE = 12; // Number of org cards per page
+let currentPage = 1; // Tracks current page for pagination
 
 // Expose to global scope for HTML onclick handlers and debugging
 globalThis.pills = pills;
@@ -644,7 +646,9 @@ function applyFilters(){
 
   filteredOrgs=res;
   focusedIdx=-1;
+  currentPage = 1;
   renderGrid(res);
+  updateLoadMoreVisibility();
   document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
@@ -776,9 +780,11 @@ function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
   return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
+
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
-  if(!orgs.length){
+  const displayOrgs = orgs.slice(0, currentPage * PAGE_SIZE);
+  if(!displayOrgs.length){
     g.innerHTML=`
       <div class="empty">
         <div class="empty-icon">🔍</div>
@@ -788,7 +794,7 @@ function renderGrid(orgs){
       </div>`;
     return;
   }
-  g.innerHTML=orgs.map((o,i)=>{
+  g.innerHTML=displayOrgs.map((o,i)=>{
     const act=o._gh?.activity||null;
     const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
     const ghm=o._gh?`<div class="gh-mini">
@@ -851,6 +857,13 @@ function renderGrid(orgs){
     </div>`;
   }).join('');
 }
+
+function updateLoadMoreVisibility(){
+  const container=document.getElementById('loadMoreContainer');
+  const more = filteredOrgs.length > currentPage * PAGE_SIZE;
+  if(container) container.style.display = more ? 'flex' : 'none';
+}
+
 
 function updateStats(){
   document.getElementById('totalStat').textContent=ORGS.length;
@@ -1402,4 +1415,14 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+
+// Load More button
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener('click', () => {
+    currentPage++;
+    renderGrid(filteredOrgs);
+    updateLoadMoreVisibility();
+  });
+}
 

@@ -24,10 +24,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Mentor Leaderboard
+        id: leaderboard
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,108 +36,78 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            const mentors = [
-              "srinadhtadikonda",
-              "ritika",
-              "CoderOggy78",
-              "techRunnerBySJ",
-              "thakurutkarsh22",
-              "aanjalii01",
-              "SyedImtiyaz-1",
-              "neilblaze",
-              "abhishekraoas",
-              "lovestaco",
-              "Anushreebasics",
-              "12fahed",
-              "sabeenaviklar",
-              "ayu-yishu13",
-              "Precise-Goals",
-              "morningstarxcdcode",
-              "Haile-12",
-              "BandhiyaHardik",
-              "deepak0x",
-              "knoxiboy",
-              "saurabh24thakur",
-              "1754riya",
-              "magic-peach",
-              "lourduradjou",
-              "m4milaad",
-              "kunalverma2512",
-              "anubhavxdev",
-              "stealthwhizz",
-              "DevROHIT11",
-              "leonagoel",
-              "SaifRasool92",
-              "aryanbhutani26",
-              "AnirbansarkarS",
-              "Sagar-Datkhile",
-              "MUKUL-PRASAD-SIGH",
-              "TarunyaProgrammer",
-              "preetbiswas12",
-              "Shravanthi20",
-              "Balaji91221",
-              "whyankush07",
-              "vanshaggarwal07",
-              "OmkarKathile007",
-              "kallal79",
-              "MAYANKSHARMA01010",
-              "swastik7805",
-              "KUMARNiru007",
-              "rounakkraaj-1744",
-              "himanshu007-creator",
-              "oasis-parzival",
-              "Maxd646",
-              "deepaksinghh12",
-              "manan-chawla",
-              "nishantxscooby",
-              "uddalak2005",
-              "iarmaanx",
-              "kota-jagadeesh",
-              "AnirudhPhophalia",
-              "IkkiOcean",
-              "Eswaramuthu",
-              "SparshM8",
-              "KaranGupta2005",
-              "sparshagarwal0411",
-              "subratamondalnsec",
-              "the-matrixneo",
-              "suvanwita",
-              "Harsh-2006-git",
-              "nihalawasthi",
-              "adithyan-css",
-              "xthxr",
-              "Devnil434",
-              "aayushi1806sharma-afk",
-              "AditthyaSS",
-              "Satya900",
-              "JoeCelaster",
-              "AshutoshRaj1260",
-              "topshe23",
-              "Ayushh-Sharmaa",
-              "piyushdotcomm",
-              "coder-zs-cse",
-              "bishal2623",
-              "Ayush-Patel-56",
-              "Mohit-368",
-              "diksha78dev",
-              "Mrigakshi-Rathore",
-              "itsdakshjain",
-              "4f4d"
-            ];
+            const mentors = {
+              reviewers: [
+                "12fahed",
+                "4f4d",
+                "aanjalii01",
+                "adithyan-css",
+                "AditthyaSS",
+                "AnirbansarkarS",
+                "AnirudhPhophalia",
+                "anubhavxdev",
+                "Anushreebasics",
+                "aryanbhutani26",
+                "ayu-yishu13",
+                "Ayush-Patel-56",
+                "Ayushh-Sharmaa",
+                "Balaji91221",
+                "BandhiyaHardik",
+                "coder-zs-cse",
+                "CoderOggy78",
+                "deepak0x",
+                "deepaksinghh12",
+                "DevROHIT11",
+                "Haile-12",
+                "itsdakshjain",
+                "JoeCelaster",
+                "kallal79",
+                "KaranGupta2005",
+                "knoxiboy",
+                "KUMARNiru007",
+                "lourduradjou",
+                "lovestaco",
+                "magic-peach",
+                "Maxd646",
+                "MAYANKSHARMA01010",
+                "Mohit-368",
+                "morningstarxcdcode",
+                "Mrigakshi-Rathore",
+                "MUKUL-PRASAD-SIGH",
+                "nihalawasthi",
+                "oasis-parzival",
+                "piyushdotcomm",
+                "Precise-Goals",
+                "preetbiswas12",
+                "rounakkraaj-1744",
+                "sabeenaviklar",
+                "Sagar-Datkhile",
+                "Satya900",
+                "saurabh24thakur",
+                "Shravanthi20",
+                "sparshagarwal0411",
+                "SparshM8",
+                "stealthwhizz",
+                "subratamondalnsec",
+                "Suvanwita",
+                "SyedImtiyaz-1",
+                "TarunyaProgrammer",
+                "thakurutkarsh22",
+                "uddalak2005",
+                "vanshaggarwal07"
+              ]
+            };
 
             const mentorSet = new Set(
-              mentors.map(m => m.toLowerCase())
+              mentors.reviewers.map(m => m.toLowerCase())
             );
 
             const stats = {};
 
-            for (const mentor of mentors) {
+            for (const mentor of mentors.reviewers) {
               stats[mentor] = {
-                total_points: 0,
-                detailed_reviews: 0,
-                quick_reviews: 0,
-                approved_reviews: 0,
-                prs_reviewed: 0
+                reviews: 0,
+                score: 0
               };
             }
 
@@ -170,8 +139,6 @@ jobs:
                   }
                 );
 
-                const countedReviews = new Set();
-
                 for (const review of reviews) {
 
                   if (!review.user || !review.user.login) {
@@ -194,71 +161,37 @@ jobs:
                   }
 
                   if (
-                    countedReviews.has(
-                      reviewer.toLowerCase()
-                    )
+                    review.state !== 'APPROVED' &&
+                    review.state !== 'CHANGES_REQUESTED'
                   ) {
                     continue;
                   }
 
-                  const state = review.state;
                   const body = (review.body || '').trim();
 
                   let points = 0;
-                  let reviewType = '';
 
-                  // Detailed mentor review
-                  if (
-                    body.length >= 80 ||
-                    body.split('\n').length >= 3
-                  ) {
+                  if (body.length >= 120) {
                     points = 5;
-                    reviewType = 'detailed';
-                  }
-
-                  // Medium review
-                  else if (body.length >= 20) {
+                  } else if (body.length >= 40) {
                     points = 3;
-                    reviewType = 'medium';
-                  }
-
-                  // Quick approval / lightweight review
-                  else {
+                  } else {
                     points = 2;
-                    reviewType = 'quick';
                   }
 
-                  // Bonus for requesting changes
-                  if (state === 'CHANGES_REQUESTED') {
+                  if (review.state === 'CHANGES_REQUESTED') {
                     points += 1;
                   }
 
                   if (!stats[reviewer]) {
                     stats[reviewer] = {
-                      total_points: 0,
-                      detailed_reviews: 0,
-                      quick_reviews: 0,
-                      approved_reviews: 0,
-                      prs_reviewed: 0
+                      reviews: 0,
+                      score: 0
                     };
                   }
 
-                  stats[reviewer].total_points += points;
-                  stats[reviewer].prs_reviewed++;
-
-                  if (reviewType === 'detailed') {
-                    stats[reviewer].detailed_reviews++;
-                  } else {
-                    stats[reviewer].quick_reviews++;
-                  }
-
-                  if (state === 'APPROVED') {
-                    stats[reviewer].approved_reviews++;
-                  }
-
-                  countedReviews.add(
-                    reviewer.toLowerCase()
-                  );
+                  stats[reviewer].reviews++;
+                  stats[reviewer].score += points;
                 }
 
               } catch (error) {
@@ -270,38 +203,34 @@ jobs:
 
             const leaderboard = Object.entries(stats)
               .sort((a, b) => {
-                return (
-                  b[1].total_points -
-                  a[1].total_points
-                );
+                if (b[1].score !== a[1].score) {
+                  return b[1].score - a[1].score;
+                }
+
+                return b[1].reviews - a[1].reviews;
               });
 
-            let markdown = '# 🏆 GSSOC Mentor Leaderboard\n\n';
+            let markdown = '# 🏆 Mentor Review Leaderboard\n\n';
 
-            markdown += '> Mentor review leaderboard based on merged PR reviews.\n\n';
+            markdown +=
+              '> Tracks mentor review activity and review quality across all merged pull requests.\n\n';
 
-            markdown += '| Rank | Mentor | Points | PRs Reviewed | Detailed Reviews | Quick Reviews | Approvals |\n';
+            markdown +=
+              '| Rank | Mentor | Reviews | Score |\n';
 
-            markdown += '|------|--------|--------|---------------|------------------|---------------|------------|\n';
+            markdown +=
+              '|------|--------|---------|-------|\n';
 
             leaderboard.forEach(([mentor, data], index) => {
 
-              const medal =
-                index === 0 ? '🥇' :
-                index === 1 ? '🥈' :
-                index === 2 ? '🥉' : '';
+              const medals = ['🥇', '🥈', '🥉'];
+              const medal = medals[index] || `${index + 1}`;
 
-              markdown += `| ${medal} ${index + 1} | @${mentor} | ${data.total_points} | ${data.prs_reviewed} | ${data.detailed_reviews} | ${data.quick_reviews} | ${data.approved_reviews} |\n`;
+              markdown +=
+                `| ${medal} | @${mentor} | ${data.reviews} | ${data.score} |\n`;
             });
 
             markdown += '\n';
-
-            markdown += '### 📊 Scoring System\n\n';
-            markdown += '- Detailed review → **5 pts**\n';
-            markdown += '- Medium review → **3 pts**\n';
-            markdown += '- Quick approval/review → **2 pts**\n';
-            markdown += '- Changes requested bonus → **+1 pt**\n\n';
-
             markdown += `Last updated: ${new Date().toUTCString()}\n`;
 
             fs.writeFileSync(
@@ -315,17 +244,13 @@ jobs:
             );
 
             core.setOutput(
-              'leaderboard_markdown',
-              markdown
+              'leaderboard',
+              JSON.stringify(leaderboard.slice(0, 5))
             );
 
-            core.info(
-              'Mentor leaderboard generated successfully'
-            );
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+      - name: Create Leaderboard Update PR
         id: cpr
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update mentor leaderboard"
@@ -333,45 +258,91 @@ jobs:
           body: |
             Automated mentor leaderboard update.
 
-            Generated by GitHub Actions.
+            - Updated mentor review rankings
+            - Updated mentor scores
+            - Updated mentor stats
           branch: automated/mentor-leaderboard-update
           delete-branch: true
 
-      - name: Comment on merged PR
+      - name: Post Mentor Leaderboard Comment
         if: github.event.pull_request.merged == true
         uses: actions/github-script@v7
         env:
+          LEADERBOARD: ${{ steps.leaderboard.outputs.leaderboard }}
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const leaderboard = JSON.parse(
+              process.env.LEADERBOARD || '[]'
+            );
+
+            const prUrl = process.env.PR_URL;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const pull_number =
+
+            const prNumber =
               context.payload.pull_request.number;
 
-            const pr = context.payload.pull_request;
+            let body = '';
 
-            const commentBody =
-              '## 🏆 Mentor Leaderboard Updated\n\n' +
-              'Mentor review scores have been recalculated after this PR merge.\n\n' +
-              '### 📊 Review Scoring\n' +
-              '- Detailed review → **5 pts**\n' +
-              '- Medium review → **3 pts**\n' +
-              '- Quick approval/review → **2 pts**\n' +
-              '- Changes requested bonus → **+1 pt**\n\n' +
-              (process.env.PR_URL
-                ? `🔗 Leaderboard Update PR: ${process.env.PR_URL}\n\n`
-                : '') +
-              'Thanks to all mentors reviewing contributions 🚀';
+            body += '# 🏆 Mentor Review Leaderboard\n\n';
+
+            body +=
+              'Top mentor reviewers of all time:\n\n';
+
+            body +=
+              '| Rank | Mentor | Reviews | Score |\n';
+
+            body +=
+              '|---|---|---|---|\n';
+
+            leaderboard.forEach((entry, index) => {
+
+              const mentor = entry[0];
+              const data = entry[1];
+
+              const medals = ['🥇', '🥈', '🥉'];
+
+              const rank =
+                medals[index] || `${index + 1}`;
+
+              const avatar =
+                `https://github.com/${mentor}.png?size=40`;
+
+              body +=
+                `| ${rank} | <img src="${avatar}" width="24" height="24"/> @${mentor} | ${data.reviews} | ${data.score} |\n`;
+            });
+
+            body += '\n---\n';
+
+            body +=
+              'Review scoring:\n\n';
+
+            body +=
+              '- Detailed review → **5 pts**\n';
+
+            body +=
+              '- Medium review → **3 pts**\n';
+
+            body +=
+              '- Quick review → **2 pts**\n';
+
+            body +=
+              '- Changes requested bonus → **+1 pt**\n\n';
+
+            if (prUrl) {
+              body +=
+                `🔗 Leaderboard Update PR: ${prUrl}\n\n`;
+            }
+
+            body +=
+              'Thank you to all mentors reviewing PRs! 🚀';
 
             await github.rest.issues.createComment({
               owner,
               repo,
-              issue_number: pull_number,
-              body: commentBody
+              issue_number: prNumber,
+              body
             });
-
-            core.info(
-              `Posted mentor leaderboard comment on PR #${pull_number}`
-            );

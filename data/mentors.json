@@ -471,12 +471,35 @@
   "cBioPortal for Cancer Genomics": {
     "org": "cBioPortal for Cancer Genomics",
     "ideasUrl": "https://github.com/cBioPortal/cbioportal/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://slack.cbioportal.org/",
+        "label": "cBioPortal Public Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "",
+        "github": "inodb",
+        "githubUrl": "https://github.com/inodb"
+      },
+      {
+        "name": "",
+        "github": "jjgao",
+        "githubUrl": "https://github.com/jjgao"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:cbioportal@googlegroups.com",
+        "label": "cBioPortal Google Group"
+      }
+    ],
+    "tip": "Ask project-idea questions on the cBioPortal Public Slack or in the linked GSoC issues.",
+    "status": "ok",
+    "lastFetched": "2026-05-24T00:00:00.000Z"
   },
   "CCExtractor Development": {
     "org": "CCExtractor Development",

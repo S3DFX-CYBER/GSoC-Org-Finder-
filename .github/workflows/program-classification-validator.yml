@@ -64,10 +64,17 @@ jobs:
             const MARKER =
               '<!-- program-classification -->';
 
-            const VALID_LABELS = [
+            const ACTUAL_PROGRAMS = [
               'gssoc26',
-              'nsoc26',
-              'general-contribution'
+              'nsoc26'
+            ];
+
+            const FALLBACK_PROGRAM =
+              'general-contribution';
+
+            const VALID_LABELS = [
+              ...ACTUAL_PROGRAMS,
+              FALLBACK_PROGRAM
             ];
 
             const MISSING_LABEL =
@@ -81,7 +88,8 @@ jobs:
             // ----------------------------------------
 
             function detectProgram() {
-              const detected = new Set();
+              const actualPrograms = new Set();
+              let hasGeneralContribution = false;
 
               // ------------------------------------
               // Metadata - new template format
@@ -92,7 +100,7 @@ jobs:
                 body.includes('program: gssoc') ||
                 body.includes('- [x] gssoc')
               ) {
-                detected.add('gssoc');
+                actualPrograms.add('gssoc');
               }
 
               if (
@@ -100,51 +108,59 @@ jobs:
                 body.includes('program: nsoc') ||
                 body.includes('- [x] nsoc')
               ) {
-                detected.add('nsoc');
+                actualPrograms.add('nsoc');
               }
 
               if (
                 body.includes('- [x] general contribution') ||
                 body.includes('program: general')
               ) {
-                detected.add('general');
+                hasGeneralContribution = true;
               }
 
               // ------------------------------------
-              // Labels
+              // Labels - ACTUAL PROGRAMS
               // ------------------------------------
 
               if (labels.includes('gssoc26')) {
-                detected.add('gssoc');
+                actualPrograms.add('gssoc');
               }
 
               if (labels.includes('nsoc26')) {
-                detected.add('nsoc');
+                actualPrograms.add('nsoc');
               }
+
+              // ------------------------------------
+              // Labels - FALLBACK PROGRAM
+              // ------------------------------------
 
               if (
                 labels.includes('general-contribution')
               ) {
-                detected.add('general');
+                hasGeneralContribution = true;
               }
 
               // ------------------------------------
-              // Branch hints
+              // Branch hints - ACTUAL PROGRAMS
               // ------------------------------------
 
               if (branch.includes('gssoc')) {
-                detected.add('gssoc');
+                actualPrograms.add('gssoc');
               }
 
               if (branch.includes('nsoc')) {
-                detected.add('nsoc');
+                actualPrograms.add('nsoc');
               }
 
-              return [...detected];
+              return {
+                actual: [...actualPrograms],
+                fallback: hasGeneralContribution
+              };
             }
 
-            const detectedPrograms =
-              detectProgram();
+            const detected = detectProgram();
+            const detectedActualPrograms = detected.actual;
+            const hasGeneralContribution = detected.fallback;
 
             // ----------------------------------------
             // LABEL HELPERS
@@ -245,7 +261,7 @@ jobs:
             // MISSING PROGRAM - DEFAULT TO GENERAL
             // ----------------------------------------
 
-            if (detectedPrograms.length === 0) {
+            if (detectedActualPrograms.length === 0) {
 
               await clearProgramLabels();
               await clearValidationLabels();
@@ -283,10 +299,10 @@ jobs:
             }
 
             // ----------------------------------------
-            // MULTIPLE PROGRAMS
+            // MULTIPLE ACTUAL PROGRAMS
             // ----------------------------------------
 
-            if (detectedPrograms.length > 1) {
+            if (detectedActualPrograms.length > 1) {
 
               await clearProgramLabels();
 
@@ -309,7 +325,7 @@ jobs:
 
             Detected:
 
-            ${detectedPrograms
+            ${detectedActualPrograms
               .map(p => `- ${p}`)
               .join('\n')}
 
@@ -328,11 +344,11 @@ jobs:
             }
 
             // ----------------------------------------
-            // VALID PROGRAM
+            // VALID SINGLE ACTUAL PROGRAM
             // ----------------------------------------
 
             const program =
-              detectedPrograms[0];
+              detectedActualPrograms[0];
 
             await clearValidationLabels();
             await clearProgramLabels();

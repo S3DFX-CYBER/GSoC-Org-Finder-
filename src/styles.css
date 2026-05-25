@@ -425,7 +425,14 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ── MOBILE ── */
+/* ── STICKY FILTER CONTROLS ── */
 
+.sticky-controls{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
 /* ═══════════════════════════════════════════
    RESPONSIVE — Tablet (≤900px)
 ═══════════════════════════════════════════ */
@@ -479,41 +486,24 @@ footer a:hover{text-decoration:underline}
 
   /* ── STICKY FILTER CONTROLS ── */
 
-.sticky-controls{
-  position: sticky;
-  top: 70px;
-  z-index: 1000;
-
-  background: white;
-
-  padding: 12px 0;
-  width:100%;
-
-  box-shadow:0 2px 8px rgba(0,0,0,0,05);
-}
 
 /* Mobile responsiveness */
-@media(max-width:640px){
-
   .sticky-controls{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-
-    top: 58px;
-  }
-
-  .sticky-controls .flex.items-center.gap-4{
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .sticky-controls select{
-    flex: 1;
-    min-width: 120px;
-  }
+  flex-direction: column;
+  align-items: stretch;
 }
+
+.sticky-controls .flex.items-center.gap-4{
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 10px;
+}
+
+.sticky-controls select{
+  width: 100%;
+}
+
 
   /* Results row */
   .results-row{flex-direction:column;gap:6px;align-items:flex-start}

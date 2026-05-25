@@ -1600,9 +1600,9 @@
 "LabLua": {
   "org": "LabLua",
   "ideasUrl": "https://github.com/labluapucrio/gsoc",
-  "channels": ["https://matrix.to/#/#lablua:matrix.org"],
+  "channels": [{"type": "Matrix", "url": "https://matrix.to/#/#lablua:matrix.org", "label": "LabLua Matrix Room"}],
   "mentors": [],
-  "mailingLists": ["https://groups.google.com/g/lua-l"],
+  "mailingLists": [{"type": "GoogleGroup", "url": "https://groups.google.com/g/lua-l", "label": "lua-l Mailing List"}],
   "tip": "",
   "status": "ok",
   "lastFetched": "2026-05-09T16:09:12.548Z"

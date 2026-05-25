@@ -30,7 +30,7 @@ def get_gfi_tech_stack(repo_name):
           
             return {
                 "count": total_count,
-                "tags": list(detected_tags)
+                "tags": sorted(detected_tags)
             }
             
     except Exception:

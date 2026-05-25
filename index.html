@@ -104,6 +104,19 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+    /* Screen reader only - for accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
     /* Modal Styles */
     .modal-bg {
       position: fixed;
@@ -343,6 +356,150 @@
     .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
     .dark #mobileMenu .bg-orange-50 { background: rgba(249, 115, 22, 0.15) !important; }
 
+    /* Badge Notification Toast */
+    .badge-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(249, 115, 22, 0.4);
+      z-index: 9999;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 320px;
+    }
+    .badge-notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .badge-notification-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge-notification-icon {
+      font-size: 32px;
+      animation: badgePulse 0.6s ease-out;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .badge-notification-text {
+      flex: 1;
+    }
+    .badge-notification-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-notification-desc {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .badge-notification-progress {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    /* Badge Display in Analytics Panel */
+    .badge-card {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border: 2px solid #fed7aa;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .badge-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+    }
+    .badge-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .badge-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9d4300;
+      margin-bottom: 4px;
+    }
+    .badge-level {
+      font-size: 10px;
+      font-weight: 600;
+      color: #c2410c;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-progress {
+      margin-top: 6px;
+      height: 4px;
+      background: rgba(157, 67, 0, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .badge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      transition: width 0.3s ease;
+    }
+    .badge-count {
+      font-size: 11px;
+      color: #92600A;
+      margin-top: 4px;
+    }
+    .badge-locked {
+      opacity: 0.5;
+      filter: grayscale(1);
+    }
+    .badge-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      border: 1.5px solid #fed7aa;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #9d4300;
+    }
+
+    /* Dark mode - Badges */
+    .dark .badge-notification {
+      background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+    }
+    .dark .badge-card {
+      background: linear-gradient(135deg, #1c0f05 0%, #2a1508 100%);
+      border-color: #3a1f0a;
+    }
+    .dark .badge-name {
+      color: #fb923c;
+    }
+    .dark .badge-level {
+      color: #fdba74;
+    }
+    .dark .badge-count {
+      color: #fb923c;
+    }
+    .dark .badge-progress {
+      background: rgba(251, 146, 60, 0.2);
+    }
+    .dark .badge-indicator {
+      background: linear-gradient(135deg, #1c0f05, #2a1508);
+      border-color: #3a1f0a;
+      color: #fb923c;
+    }
+
     /* Header dark mode */
     .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
     .dark header .text-zinc-900 { color: #f4f4f5 !important; }
@@ -483,6 +640,17 @@
     
         <span class="material-symbols-outlined text-zinc-600">
           dark_mode
+        </span>
+      </button>
+    
+      <!-- ANALYTICS BUTTON -->
+      <button id="analyticsBtn" onclick="openAnalytics()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="View Analytics & Badges"
+        aria-label="View Analytics and Badges">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          analytics
         </span>
       </button>
     
@@ -1218,6 +1386,89 @@
   </div>
 </div>
 
+<!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
+
+<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
+  <div class="modal w-full max-w-4xl">
+    <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header pb-4 border-b border-zinc-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-extrabold font-headline">Analytics & Achievements</h2>
+          <p class="text-zinc-500 text-sm mt-1">Your activity stats and unlocked badges</p>
+          <p class="text-zinc-400 text-xs mt-1 flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:14px">info</span>
+            Badges are stored locally in your browser (per-device, cleared with browser data)
+          </p>
+        </div>
+        <span class="badge-indicator" id="badgeIndicator">
+          <span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> 0/16
+        </span>
+      </div>
+    </div>
+    <div class="modal-body p-6">
+      <!-- Stats Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px">
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aTot">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Total Visits</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aToday">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Today</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aSearches">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Searches</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aViews">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Org Views</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aFilters">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Filters Used</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aTime">—</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Session Time</div>
+        </div>
+      </div>
+
+      <!-- Badges Section -->
+      <div style="margin-bottom:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">🏆 Achievement Badges</h3>
+          <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.background='rgba(197,48,48,.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+            Reset Progress
+          </button>
+        </div>
+        <div id="badgesContainer">
+          <!-- Badges will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Top Categories -->
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Top Categories</h3>
+        <div id="catChart"></div>
+      </div>
+
+      <!-- Top Organizations -->
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Most Viewed Orgs</h3>
+        <div id="orgChart"></div>
+      </div>
+
+      <!-- Search Terms -->
+      <div>
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Recent Searches</h3>
+        <div id="srchTerms"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
@@ -1617,6 +1868,11 @@
     if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
     else selectedLanguages.add(langDisplay);
     renderSelectedLanguages();
+    
+    // Track filter badge when user toggles language pill
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
     applyFilters();
   };
 
@@ -2341,12 +2597,106 @@
     renderCompareModal();
     document.getElementById('compareModal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Track badge progress only when comparison is actually opened with 2+ orgs
+    if (typeof BadgeSystem !== 'undefined' && compareList.length >= 2) {
+      BadgeSystem.trackComparison();
+    }
   }
 
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
     document.body.style.overflow = 'auto';
   }
+
+  // ══════════════════════════════════════════════
+  // ANALYTICS PANEL
+  // ══════════════════════════════════════════════
+  let prevFocusBeforeAnalytics = null;
+
+  window.openAnalytics = function() {
+    // Save current focus
+    prevFocusBeforeAnalytics = document.activeElement;
+
+    // Render badges if BadgeSystem is available
+    if (typeof BadgeSystem !== 'undefined') {
+      renderBadges();
+    }
+    
+    const modal = document.getElementById('anBg');
+    modal?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Focus the close button for keyboard accessibility
+    setTimeout(() => {
+      const closeBtn = modal?.querySelector('.close-btn');
+      closeBtn?.focus();
+    }, 100);
+  };
+
+  window.closeAn = function() {
+    document.getElementById('anBg')?.classList.remove('open');
+    document.body.style.overflow = 'auto';
+
+    // Restore focus to the element that opened the modal
+    if (prevFocusBeforeAnalytics && document.contains(prevFocusBeforeAnalytics)) {
+      prevFocusBeforeAnalytics.focus();
+    }
+    prevFocusBeforeAnalytics = null;
+  };
+
+  window.closeAnEvent = function(e) {
+    if (e.target.id === 'anBg') {
+      closeAn();
+    }
+  };
+
+  function renderBadges() {
+    const badgesContainer = document.getElementById('badgesContainer');
+    if (!badgesContainer || typeof BadgeSystem === 'undefined') return;
+    
+    const stats = BadgeSystem.getBadgeStats();
+    const unlockedCount = BadgeSystem.getUnlockedCount();
+    const totalCount = BadgeSystem.getTotalBadgesCount();
+    
+    let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px">';
+    
+    Object.keys(stats).forEach(badgeType => {
+      const badge = stats[badgeType];
+      const isLocked = !badge.level;
+      const icon = badge.name.split(' ')[0];
+      const levelName = badge.level ? badge.level.levelName : 'Locked';
+      const progress = badge.progress;
+      
+      html += `
+        <div class="badge-card ${isLocked ? 'badge-locked' : ''}">
+          <span class="badge-icon">${icon}</span>
+          <div class="badge-name">${escapeHtml(badge.name.substring(2))}</div>
+          <div class="badge-level">${escapeHtml(levelName)}</div>
+          <div class="badge-count">${badge.count}${badge.nextThreshold ? ' / ' + badge.nextThreshold : ''}</div>
+          <div class="badge-progress">
+            <div class="badge-progress-fill" style="width:${progress}%"></div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    badgesContainer.innerHTML = html;
+    
+    // Update badge indicator in header
+    const badgeIndicator = document.getElementById('badgeIndicator');
+    if (badgeIndicator) {
+      badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${unlockedCount}/${totalCount}`;
+    }
+  }
+
+  // Listen for badge reset event
+  document.addEventListener('badgesReset', () => {
+    if (document.getElementById('anBg')?.classList.contains('open')) {
+      renderBadges();
+    }
+  });
 
   document.getElementById('compareModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'compareModal') closeCompareModal();
@@ -2358,6 +2708,8 @@
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
+    } else if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
     }
   });
   
@@ -2736,6 +3088,11 @@
     if (!org) return;
     addRecentlyViewed(name);
 
+    // Track badge progress for org views
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackOrgView();
+    }
+
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <h2>${escapeHtml(org.name)}</h2>
@@ -2906,9 +3263,28 @@ if(org.ideas){
     renderOrgs(true);
   };
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-  document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-  document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('searchInput').addEventListener('input', () => {
+    // Track search badge when user types a search query
+    const query = document.getElementById('searchInput').value.trim();
+    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+      BadgeSystem.trackSearch();
+    }
+    applyFilters();
+  });
+  document.getElementById('categoryFilter').addEventListener('change', () => {
+    // Track filter badge when user changes category
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
+  document.getElementById('complexityFilter').addEventListener('change', () => {
+    // Track filter badge when user changes complexity
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
   document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
   document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
@@ -2934,6 +3310,12 @@ if(org.ideas){
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
+      
+      // Track search badge when user types in hero search
+      const query = e.target.value.trim();
+      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+        BadgeSystem.trackSearch();
+      }
       applyFilters();
     });
   }
@@ -3294,6 +3676,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+<script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

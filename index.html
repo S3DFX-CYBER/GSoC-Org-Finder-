@@ -240,6 +240,33 @@
     /* Base mobile-first styles */
     body { width: 100%; overflow-x: hidden; }
     html { width: 100%; scroll-behavior: smooth; }
+    html.menu-open, body.menu-open {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+    #mobileMenu {
+      top: 64px;
+      height: calc(100vh - 64px);
+      height: calc(100dvh - 64px);
+    }
+    #menuPanel {
+      display: flex;
+      flex-direction: column;
+      width: min(82vw, 20rem);
+      max-width: 320px;
+    }
+    .mobile-menu-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 1rem;
+    }
+    .mobile-menu-footer {
+      flex-shrink: 0;
+      padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+    .mobile-menu-cta {
+      min-height: 48px;
+    }
     
     /* Scroll offset for fixed header */
     #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
@@ -318,6 +345,62 @@
       .modal-body { padding: 0 1.5rem 2rem; }
       .modal-footer { padding: 1.5rem; flex-direction: column; }
       .modal-cta { width: 100%; }
+      #orgs > .flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      #orgs > .flex > .flex {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      #orgs select {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 400px) {
+      header > div {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+      #menuBtn,
+      #themeToggleBtn,
+      #analyticsBtn,
+      #helpBtn {
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: 0.375rem !important;
+      }
+      header a[href="#"] {
+        gap: 0.5rem !important;
+      }
+      header a[href="#"] .w-8 {
+        width: 1.875rem !important;
+        height: 1.875rem !important;
+      }
+      header a[href="#"] .text-base {
+        font-size: 0.95rem !important;
+      }
+      header .material-symbols-outlined {
+        font-size: 1.25rem;
+      }
+      #mobileMenu {
+        top: 61px;
+        height: calc(100vh - 61px);
+        height: calc(100dvh - 61px);
+      }
+      #menuPanel {
+        width: min(78vw, 18rem);
+      }
+      .mobile-menu-list {
+        padding: 1rem !important;
+      }
+      .mobile-menu-link {
+        min-height: 3.25rem;
+      }
     }
     
     /* Dark mode - Modal */
@@ -679,13 +762,13 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-x-0 bottom-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
   <!-- Menu Panel -->
-  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
-    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+  <nav class="absolute top-0 left-0 bottom-0 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
+    <div class="mobile-menu-header hidden items-center justify-between p-6 border-b border-zinc-100">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
           <span class="text-white font-bold text-sm">G</span>
@@ -697,39 +780,39 @@
       </button>
     </div>
     
-    <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+    <div class="mobile-menu-list p-4 space-y-1">
+      <a href="#timeline" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" onclick="setActiveMenu(event, this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
     </div>
     
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+    <div class="mobile-menu-footer p-4 border-t border-zinc-100">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="mobile-menu-cta flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-base">star</span> Star & Contribute
       </a>
     </div>
@@ -1505,6 +1588,51 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
+  let mobileMenuScrollY = 0;
+
+  function lockMobileMenuScroll() {
+    mobileMenuScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    document.documentElement.classList.add('menu-open');
+    document.body.classList.add('menu-open');
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${mobileMenuScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+
+  function unlockMobileMenuScroll(restorePosition = true) {
+    document.documentElement.classList.remove('menu-open');
+    document.body.classList.remove('menu-open');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    if (restorePosition) window.scrollTo(0, mobileMenuScrollY);
+  }
+
+  function closeMobileMenu({ onClosed } = {}) {
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+    if (!menu || menu.classList.contains('hidden')) {
+      if (typeof onClosed === 'function') onClosed();
+      return;
+    }
+
+    panel.style.transform = 'translateX(-100%)';
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Open menu');
+    document.removeEventListener('keydown', handleMenuEscape);
+
+    setTimeout(() => {
+      menu.classList.add('hidden');
+      unlockMobileMenuScroll();
+      if (typeof onClosed === 'function') onClosed();
+    }, 300);
+  }
+
   window.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
@@ -1515,19 +1643,13 @@
       menu.classList.remove('hidden');
       menuBtn.setAttribute('aria-expanded', 'true');
       menuBtn.setAttribute('aria-label', 'Close menu');
+      lockMobileMenuScroll();
       setTimeout(() => {
         panel.style.transform = 'translateX(0)';
       }, 10);
       document.addEventListener('keydown', handleMenuEscape);
     } else {
-      // Close menu
-      panel.style.transform = 'translateX(-100%)';
-      menuBtn.setAttribute('aria-expanded', 'false');
-      menuBtn.setAttribute('aria-label', 'Open menu');
-      document.removeEventListener('keydown', handleMenuEscape);
-      setTimeout(() => {
-        menu.classList.add('hidden');
-      }, 300);
+      closeMobileMenu();
     }
   };
   
@@ -1535,13 +1657,20 @@
     if(e.key === 'Escape'){
       const menu = document.getElementById('mobileMenu');
       if(!menu.classList.contains('hidden')){
-        toggleMenu();
+        closeMobileMenu();
       }
     }
   }
 
   // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
+  window.setActiveMenu = function(eventOrLink, clickedLink){
+    if (eventOrLink && typeof eventOrLink.preventDefault === 'function') {
+      eventOrLink.preventDefault();
+    } else if (!clickedLink) {
+      clickedLink = eventOrLink;
+    }
+    if (!clickedLink) return;
+
     // Remove active class from all menu links
     const allLinks = document.querySelectorAll('.mobile-menu-link');
     allLinks.forEach(link => {
@@ -1553,10 +1682,15 @@
     clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
     clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
     
-    // Close menu after a short delay
+    // Close the drawer before scrolling so the page does not move behind it.
     setTimeout(() => {
-      toggleMenu();
-    }, 300);
+      const target = document.querySelector(clickedLink.getAttribute('href'));
+      closeMobileMenu({
+        onClosed: () => {
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }, 120);
   };
 
   // Update active state based on scroll position
@@ -3687,3 +3821,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
+

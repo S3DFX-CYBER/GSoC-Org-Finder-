@@ -1010,6 +1010,12 @@
           <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">Select organizations to get personalized contribution advice.</p>
           <span class="text-[10px] font-label uppercase tracking-widest text-orange-200">Automated System Advice</span>
         </div>
+        <div id="watchlistStatsCard" class="hidden bg-white rounded-2xl p-6 border border-zinc-100 animate-fade-up">
+          <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">donut_large</span> Watchlist Technologies</h4>
+          <div id="watchlistStatsContainer" class="space-y-3">
+            <!-- Language breakdown will be rendered here -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2825,6 +2831,7 @@
           <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
           <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
         </div>`;
+      updateWatchlistStats();
       return;
     }
 
@@ -2887,6 +2894,54 @@
 
       container.appendChild(item);
       attachOrgCardListeners(item);
+    });
+
+    updateWatchlistStats();
+  }
+
+  function updateWatchlistStats() {
+    const card = document.getElementById('watchlistStatsCard');
+    const container = document.getElementById('watchlistStatsContainer');
+    if (!card || !container) return;
+
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+
+    if (bookmarks.length === 0) {
+      card.classList.add('hidden');
+      return;
+    }
+
+    card.classList.remove('hidden');
+    container.innerHTML = '';
+
+    const langCount = {};
+    bookmarks.forEach(o => {
+      (o.tags || []).forEach(t => {
+        const lang = t.toLowerCase().trim();
+        langCount[lang] = (langCount[lang] || 0) + 1;
+      });
+    });
+
+    const sortedLangs = Object.entries(langCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    sortedLangs.forEach(([lang, count]) => {
+      const percentage = Math.round((count / bookmarks.length) * 100);
+      const row = document.createElement('div');
+      row.className = 'space-y-1';
+      row.innerHTML = `
+        <div class="flex justify-between text-xs">
+          <span class="font-semibold capitalize text-zinc-700">${escapeHtml(lang)}</span>
+          <span class="text-zinc-500">${count} org${count > 1 ? 's' : ''} (${percentage}%)</span>
+        </div>
+        <div class="w-full bg-zinc-100 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-primary h-1.5 rounded-full" style="width: ${percentage}%"></div>
+        </div>
+      `;
+      container.appendChild(row);
     });
   }
 

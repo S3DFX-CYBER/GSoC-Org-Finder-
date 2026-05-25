@@ -776,27 +776,54 @@
   },
   "Debian": {
     "org": "Debian",
-    "ideasUrl": "https://wiki.debian.org/SummerOfCode2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://wiki.debian.org/SummerOfCode2026/Projects",
+    "channels": [
+      {
+        "type": "IRC",
+        "url": "irc://irc.debian.org/debian-outreach",
+        "label": "#debian-outreach (OFTC)"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Bastien Roucaries",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Christian Kastner",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Arian Ott",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Jelmer Vernooij",
+        "github": "jelmer",
+        "githubUrl": "https://github.com/jelmer"
+      },
+      {
+        "name": "Otto Kekalainen",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Colin Watson",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "http://lists.debian.org/",
-        "label": "Mailing-lists"
-      },
-      {
-        "type": "Mailing list",
         "url": "https://lists.debian.org/debian-outreach/",
-        "label": "Debian Mailing list"
-      },
-      {
-        "type": "Mailing list",
-        "url": "http://lists.debian.org/debian-outreach/",
-        "label": "Debian Mailing list"
+        "label": "debian-outreach"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Familiarize yourself with Debian's communication tools (IRC, Mailing lists, Bug Tracking System) and contact the mentors to complete a small task.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

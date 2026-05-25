@@ -1403,3 +1403,47 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 
+// ══════════════════════════════════════════════
+// SHAREABLE COMPARE URLS
+// ══════════════════════════════════════════════
+
+function slugifyOrgName(name) {
+  return name
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/^-|-$/g, '');
+}
+
+function restoreCompareFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const compareParam = params.get('compare');
+
+  if (!compareParam) return;
+
+  const requestedSlugs = compareParam
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (!requestedSlugs.length) return;
+
+  const matchedOrgs = [];
+
+  requestedSlugs.forEach((slug) => {
+    const org = ORGS.find(
+      (o) => slugifyOrgName(o.name) === slug
+    );
+
+    if (org && !matchedOrgs.includes(org.name)) {
+      matchedOrgs.push(org.name);
+    }
+  });
+
+  globalThis.compareList = matchedOrgs.slice(0, 3);
+
+  if (globalThis.compareList.length > 0) {
+    renderCompareUI?.();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', restoreCompareFromURL);

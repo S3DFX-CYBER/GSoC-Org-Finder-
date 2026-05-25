@@ -1540,24 +1540,30 @@
     }
   }
 
-  // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    // Remove active class from all menu links
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    });
-    
-    // Add active class to clicked link
-    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    
-    // Close menu after a short delay
-    setTimeout(() => {
-      toggleMenu();
-    }, 300);
-  };
+window.setActiveMenu = function(clickedLink) {
+  // Remove active class from all menu links
+  const allLinks = document.querySelectorAll('.mobile-menu-link');
+
+  allLinks.forEach(link => {
+    link.classList.remove(
+      'bg-orange-50',
+      'text-orange-600'
+    );
+
+    link.classList.add('text-zinc-700');
+  });
+
+  // Add active class to clicked link
+  clickedLink.classList.add(
+    'bg-orange-50',
+    'text-orange-600'
+  );
+
+  clickedLink.classList.remove('text-zinc-700');
+
+  // Close menu
+  toggleMenu();
+};
 
   // Update active state based on scroll position
   function updateActiveSection() {

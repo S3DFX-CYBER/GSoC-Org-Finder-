@@ -651,6 +651,7 @@ function updateCompareBadge() {
 }
 
 function openCompare() {
+  syncCompareURL();
   renderCompareSlots();
   renderCompareTable();
   document.getElementById('compareBg').classList.add('open');
@@ -1001,7 +1002,11 @@ function applyFilters() {
   document.getElementById('orgCount').textContent = res.length;
 
   // Sync filter state to URL
-  const params = new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  params.delete('q');
+  params.delete('cat');
+  params.delete('lang');
+  params.delete('sort');
   if (search) params.set('q', search);
   if (cat) params.set('cat', cat);
   const selectedLangs = pills.size ? [...pills] : lang ? [lang] : [];
@@ -1942,6 +1947,10 @@ requestAnimationFrame(() => {
 
 restoreCompareFromURL();
 
+if (compareSet.size >= 2) {
+  openCompare();
+}
+
 // Sync hero search with hidden search input and initialize on load
 const heroSearch = document.getElementById('hero-search');
 if (heroSearch) {
@@ -1963,63 +1972,3 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 
-// ══════════════════════════════════════════════
-// SHAREABLE COMPARE URLS
-// ══════════════════════════════════════════════
-
-function slugifyOrgName(name) {
-  return name
-    .toLowerCase()
-    .replaceAll(/[^a-z0-9]+/g, '-')
-    .replaceAll(/^-|-$/g, '');
-}
-
-function restoreCompareFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const compareParam = params.get('compare');
-
-  if (!compareParam) return;
-
-  const requestedSlugs = compareParam
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (!requestedSlugs.length) return;
-
-  const matchedOrgs = [];
-
-  requestedSlugs.forEach((slug) => {
-    const org = ORGS.find((o) => slugifyOrgName(o.name) === slug);
-
-    if (org && !matchedOrgs.includes(org.name)) {
-      matchedOrgs.push(org.name);
-    }
-  });
-
-  globalThis.compareList = matchedOrgs.slice(0, 3);
-
-  if (globalThis.compareList.length > 0) {
-    renderCompareUI?.();
-  }
-}
-
-window.addEventListener('DOMContentLoaded', restoreCompareFromURL);
-
-function syncCompareURL() {
-  const params = new URLSearchParams(window.location.search);
-
-  if (!globalThis.compareList?.length) {
-    params.delete('compare');
-  } else {
-    const compareSlugs = globalThis.compareList.map(slugifyOrgName);
-
-    params.set('compare', compareSlugs.join(','));
-  }
-
-  const newURL = `${window.location.pathname}${
-    params.toString() ? '?' + params.toString() : ''
-  }`;
-
-  history.replaceState({}, '', newURL);
-}

@@ -650,6 +650,28 @@ function updateCompareBadge() {
   badge.classList.toggle('show', compareSet.size > 0);
 }
 
+globalThis.shareComparison = async function () {
+  if (compareSet.size < 2) {
+    showCompareToast('Select at least 2 organizations');
+    return;
+  }
+
+  syncCompareURL();
+
+  const shareUrl = window.location.href;
+
+  try {
+    if (!navigator.clipboard?.writeText) {
+      throw new Error('Clipboard API unavailable');
+    }
+    await navigator.clipboard.writeText(shareUrl);
+    showCompareToast('Comparison link copied!');
+  } catch {
+    prompt('Copy comparison link:', shareUrl);
+    showCompareToast('Copy the comparison link from the prompt');
+  }
+};
+
 function openCompare() {
   syncCompareURL();
   renderCompareSlots();
@@ -657,6 +679,7 @@ function openCompare() {
   document.getElementById('compareBg').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 function closeCompare() {
   document.getElementById('compareBg').classList.remove('open');
   document.body.style.overflow = '';
@@ -817,27 +840,6 @@ function showCompareToast(msg) {
   t.textContent = msg;
   t.style.opacity = '1';
   setTimeout(() => (t.style.opacity = '0'), 2200);
-}
-
-async function shareComparison() {
-  try {
-    await navigator.clipboard.writeText(
-      window.location.href
-    );
-
-    showCompareToast(
-      'Comparison link copied!'
-    );
-  } catch (err) {
-    console.error(
-      'Failed to copy comparison link',
-      err
-    );
-
-    showCompareToast(
-      'Could not copy comparison link'
-    );
-  }
 }
 
 function showSkeletons(count = 12) {

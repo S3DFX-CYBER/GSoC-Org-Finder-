@@ -477,6 +477,44 @@ footer a:hover{text-decoration:underline}
   .pills-section{gap:6px}
   .pill{font-size:11px;padding:4px 10px}
 
+  /* ── STICKY FILTER CONTROLS ── */
+
+.sticky-controls{
+  position: sticky;
+  top: 70px;
+  z-index: 1000;
+
+  background: white;
+
+  padding: 12px 0;
+  width:100%;
+
+  box-shadow:0 2px 8px rgba(0,0,0,0,05);
+}
+
+/* Mobile responsiveness */
+@media(max-width:640px){
+
+  .sticky-controls{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    top: 58px;
+  }
+
+  .sticky-controls .flex.items-center.gap-4{
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sticky-controls select{
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
   /* Results row */
   .results-row{flex-direction:column;gap:6px;align-items:flex-start}
   .result-count{font-size:12px}

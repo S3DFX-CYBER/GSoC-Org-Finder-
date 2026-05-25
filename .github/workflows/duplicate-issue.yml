@@ -52,7 +52,7 @@ jobs:
             const labels = (issue.labels || [])
               .map(l => l.name.toLowerCase());
 
-            // Ignore research/meta issues
+            // Ignore exempt labels
             if (
               labels.includes('research') ||
               labels.includes('meta')
@@ -61,38 +61,124 @@ jobs:
               return;
             }
 
-            const title = (issue.title || '').trim();
+            const title =
+              (issue.title || '').trim();
 
-            // Ignore very short titles
-            if (title.length < 10) {
+            const body =
+              (issue.body || '').trim();
+
+            // Ignore weak issues
+            if (title.length < 12) {
               core.info('Title too short');
               return;
             }
 
-            // Normalize helper
-            const normalize = str =>
-              str
+            const STOPWORDS = new Set([
+              'the',
+              'a',
+              'an',
+              'is',
+              'are',
+              'to',
+              'of',
+              'for',
+              'on',
+              'in',
+              'and',
+              'with',
+              'issue',
+              'bug',
+              'problem',
+              'error',
+              'request',
+              'feature',
+              'add',
+              'fix',
+              'support',
+              'broken',
+              'not',
+              'working'
+            ]);
+
+            function normalize(str) {
+              return str
                 .toLowerCase()
-                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/[^a-z0-9\s]/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
+            }
 
-            const currentTitle = normalize(title);
+            function tokenize(str) {
+              return normalize(str)
+                .split(' ')
+                .filter(Boolean)
+                .filter(
+                  word =>
+                    !STOPWORDS.has(word)
+                );
+            }
 
-            // Fetch RECENT issues only
-            const issues = await github.paginate(
-              github.rest.issues.listForRepo,
-              {
-                owner,
-                repo,
-                state: 'open',
-                sort: 'created',
-                direction: 'desc',
-                per_page: 50
+            function similarity(a, b) {
+
+              const setA =
+                new Set(tokenize(a));
+
+              const setB =
+                new Set(tokenize(b));
+
+              if (
+                setA.size === 0 ||
+                setB.size === 0
+              ) {
+                return 0;
               }
-            );
+
+              const intersection =
+                [...setA].filter(
+                  x => setB.has(x)
+                );
+
+              const union =
+                new Set([
+                  ...setA,
+                  ...setB
+                ]);
+
+              return (
+                intersection.length /
+                union.size
+              );
+            }
+
+            function commonKeywordCount(a, b) {
+
+              const setA =
+                new Set(tokenize(a));
+
+              const setB =
+                new Set(tokenize(b));
+
+              return [...setA]
+                .filter(x => setB.has(x))
+                .length;
+            }
+
+            // Fetch recent open issues
+            const issues =
+              await github.paginate(
+                github.rest.issues.listForRepo,
+                {
+                  owner,
+                  repo,
+                  state: 'open',
+                  sort: 'created',
+                  direction: 'desc',
+                  per_page: 100
+                }
+              );
 
             let duplicate = null;
+            let bestScore = 0;
 
             for (const existing of issues) {
 
@@ -103,9 +189,11 @@ jobs:
                 continue;
               }
 
-              const existingLabels = (
-                existing.labels || []
-              ).map(l => l.name.toLowerCase());
+              const existingLabels =
+                (existing.labels || [])
+                  .map(l =>
+                    l.name.toLowerCase()
+                  );
 
               if (
                 existingLabels.includes('research') ||
@@ -114,76 +202,131 @@ jobs:
                 continue;
               }
 
-              const existingTitle = normalize(
-                existing.title || ''
+              const existingTitle =
+                existing.title || '';
+
+              const existingBody =
+                existing.body || '';
+
+              const titleScore =
+                similarity(
+                  title,
+                  existingTitle
+                );
+
+              const bodyScore =
+                similarity(
+                  body,
+                  existingBody
+                );
+
+              const keywordOverlap =
+                commonKeywordCount(
+                  title,
+                  existingTitle
+                );
+
+              // Weighted score
+              const finalScore =
+                (titleScore * 0.7) +
+                (bodyScore * 0.3);
+
+              core.info(
+                `Issue #${existing.number} score=${finalScore.toFixed(2)} overlap=${keywordOverlap}`
               );
 
-              // Exact match
-              if (existingTitle === currentTitle) {
-                duplicate = existing;
-                break;
+              // Conservative thresholds
+              if (
+                finalScore >= 0.82 &&
+                keywordOverlap >= 3
+              ) {
+
+                if (finalScore > bestScore) {
+
+                  bestScore = finalScore;
+                  duplicate = existing;
+
+                }
+
               }
 
-              // Strong partial overlap
-              if (
-                existingTitle.includes(currentTitle) ||
-                currentTitle.includes(existingTitle)
-              ) {
-                duplicate = existing;
-                break;
-              }
             }
 
             if (!duplicate) {
-              core.info('No duplicate detected');
+              core.info(
+                'No duplicate detected'
+              );
               return;
             }
 
             const MARKER =
               '<!-- duplicate-detector -->';
 
-            const body =
-              `${MARKER}\n` +
-              `## 🔁 Possible Duplicate Issue\n\n` +
-              `Hi @${username}, this issue appears similar to:\n\n` +
-              `➡️ #${duplicate.number}\n\n` +
-              `Please review the existing discussion before continuing.\n\n` +
-              `If this issue is substantially different, feel free to clarify the distinction.`;
+            const similarityPercent =
+              Math.round(bestScore * 100);
 
-            // Existing sticky comment?
-            const comments = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner,
-                repo,
-                issue_number,
-                per_page: 50
-              }
-            );
+            const bodyText = [
+              MARKER,
+              '',
+              '## 🔁 Possible Duplicate Issue',
+              '',
+              `Hi @${username}, this issue appears similar to:`,
+              '',
+              `➡️ #${duplicate.number}`,
+              '',
+              `Similarity confidence: **${similarityPercent}%**`,
+              '',
+              'Please review the existing issue before continuing.',
+              '',
+              'If this issue is substantially different, you may clarify the distinction.',
+              '',
+              '_No automatic closure was performed._'
+            ].join('\n');
 
-            const existingComment = comments.find(c =>
-              c.user.type === 'Bot' &&
-              c.body.includes(MARKER)
-            );
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number,
+                  per_page: 50
+                }
+              );
 
-            // Update or create comment
+            const existingComment =
+              comments.find(
+                c =>
+                  c.user.type === 'Bot' &&
+                  c.body.includes(MARKER)
+              );
+
             if (existingComment) {
 
               if (
-                existingComment.body.trim() === body.trim()
+                existingComment.body.trim() ===
+                bodyText.trim()
               ) {
-                core.info('Comment already current');
+
+                core.info(
+                  'Comment already exists'
+                );
+
                 return;
+
               }
 
               await github.rest.issues.updateComment({
                 owner,
                 repo,
-                comment_id: existingComment.id,
-                body
+                comment_id:
+                  existingComment.id,
+                body: bodyText
               });
 
-              core.info('Updated duplicate comment');
+              core.info(
+                'Updated duplicate comment'
+              );
 
             } else {
 
@@ -191,14 +334,18 @@ jobs:
                 owner,
                 repo,
                 issue_number,
-                body
+                body: bodyText
               });
 
-              core.info('Created duplicate comment');
+              core.info(
+                'Created duplicate comment'
+              );
+
             }
 
-            // Add label quietly
+            // Add soft label only
             try {
+
               await github.rest.issues.addLabels({
                 owner,
                 repo,
@@ -207,7 +354,9 @@ jobs:
               });
 
             } catch (e) {
+
               core.info(
-                `Label may already exist: ${e.message}`
+                `Label error: ${e.message}`
               );
+
             }

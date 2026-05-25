@@ -21,6 +21,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: bot/state
+        continue-on-error: true
+
+      - name: Fallback to main if bot/state doesn't exist
+        if: failure()
+        uses: actions/checkout@v4
 
       - name: Detect command
         id: cmd
@@ -95,7 +102,7 @@ jobs:
                      CLAIMANT: claimant, SELECTED_MENTORS: JSON.stringify(selected) }
             });
 
-            const marker      = '<!-- assignment-status -->';
+            const marker      = '';
             const mentionList = selected.length
               ? selected.map(m => `@${m}`).join(' and ')
               : '_no active mentors available — a maintainer will review manually_';
@@ -148,7 +155,7 @@ jobs:
             const { owner, repo } = context.repo;
             const issue_number    = context.payload.issue.number;
             const approver        = context.payload.comment.user.login.toLowerCase();
-            const marker          = '<!-- assignment-status -->';
+            const marker          = '';
             let result;
             try {
               const out = execSync('node .github/scripts/update-pending-assignments.js', {
@@ -202,4 +209,3 @@ jobs:
             git pull --rebase origin bot/state
           fi
           git push origin HEAD:bot/state
-          

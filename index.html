@@ -1568,7 +1568,7 @@ window.setActiveMenu = function(clickedLink) {
   // Update active state based on scroll position
   function updateActiveSection() {
     const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
+    const scrollPosition = window.scrollY + 80; // Offset for fixed header
     
 let currentSection = 'timeline';
 
@@ -3698,44 +3698,79 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommendation-ui.js"></script>
 
 <script>
-document.getElementById("logoLink").addEventListener("click", function (e) {
-  e.preventDefault();
+const logoLink = document.getElementById("logoLink");
 
-  // Scroll to timeline section
-  document.getElementById("timeline").scrollIntoView({
-    behavior: "smooth"
+if (logoLink) {
+  logoLink.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Scroll to timeline section
+    document.getElementById("timeline").scrollIntoView({
+      behavior: "smooth"
+    });
+
+    // Remove active classes from desktop nav links
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+
+      link.classList.add("text-zinc-600");
+    });
+
+    // Activate Timeline desktop nav link
+    const timelineLink = document.querySelector(
+      '.desktop-nav-link[href="#timeline"]'
+    );
+
+    if (timelineLink) {
+      timelineLink.classList.remove("text-zinc-600");
+
+      timelineLink.classList.add(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+    }
+
+    // Sync mobile menu links
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+
+      link.classList.add(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+    });
+
+    const mobileTimelineLink = document.querySelector(
+      '.mobile-menu-link[data-section="timeline"]'
+    );
+
+    if (mobileTimelineLink) {
+      mobileTimelineLink.classList.remove(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+
+      mobileTimelineLink.classList.add(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+    }
   });
-
-  // Remove active classes from all nav links
-  document.querySelectorAll(".desktop-nav-link").forEach(link => {
-    link.classList.remove(
-      "text-orange-600",
-      "font-bold",
-      "border-b-2",
-      "border-orange-600"
-    );
-
-    link.classList.add(
-      "text-zinc-600"
-    );
-  });
-
-  // Activate Timeline nav link
-  const timelineLink = document.querySelector(
-    '.desktop-nav-link[href="#timeline"]'
-  );
-
-  if (timelineLink) {
-    timelineLink.classList.remove("text-zinc-600");
-
-    timelineLink.classList.add(
-      "text-orange-600",
-      "font-bold",
-      "border-b-2",
-      "border-orange-600"
-    );
-  }
-});
+}
 </script>
 
 </body>

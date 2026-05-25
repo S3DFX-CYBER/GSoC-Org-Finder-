@@ -768,7 +768,7 @@
   
   <!-- Menu Panel -->
   <nav class="absolute top-0 left-0 bottom-0 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
-    <div class="mobile-menu-header hidden items-center justify-between p-6 border-b border-zinc-100">
+    <div class="mobile-menu-header flex items-center justify-between p-6 border-b border-zinc-100">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
           <span class="text-white font-bold text-sm">G</span>
@@ -1682,12 +1682,22 @@
     clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
     clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
     
-    // Close the drawer before scrolling so the page does not move behind it.
+    const href = clickedLink.getAttribute('href') || '';
+    const targetId = href.startsWith('#') ? decodeURIComponent(href.slice(1)) : '';
+    const target = targetId ? document.getElementById(targetId) : null;
+
+    // Close the drawer before navigating so scroll lock and anchor movement do not compete.
     setTimeout(() => {
-      const target = document.querySelector(clickedLink.getAttribute('href'));
       closeMobileMenu({
         onClosed: () => {
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (target) {
+            if (window.location.hash !== href) {
+              history.pushState(null, '', href);
+            }
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (href) {
+            window.location.href = clickedLink.href;
+          }
         }
       });
     }, 120);

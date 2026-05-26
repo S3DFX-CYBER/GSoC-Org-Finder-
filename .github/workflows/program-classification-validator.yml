@@ -258,41 +258,47 @@ jobs:
             }
 
             // ----------------------------------------
-            // MISSING PROGRAM - DEFAULT TO GENERAL
+            // MISSING PROGRAM
             // ----------------------------------------
 
             if (detectedActualPrograms.length === 0) {
 
               await clearProgramLabels();
-              await clearValidationLabels();
 
-              // Automatically assign general-oss as default
               await addLabels([
-                'general-oss'
+                MISSING_LABEL
               ]);
 
               const comment =
                 `${MARKER}
 
-            ## ✅ Default Classification Applied
+            ## ⚠️ Program Classification Required
 
-            No program classification was selected in your PR.
+            Your PR does not currently specify a valid contribution program.
 
-            **Automatically assigned:** \`general-oss\`
+            Please edit your PR description and select exactly ONE:
 
-            This PR will be processed as a general contribution. If you intended to contribute under GSSoC26 or NSoC26, please edit your PR and select the appropriate classification:
+            - GSSOC
+            - NSOC
+            - General Contribution
 
-            - [ ] GSSoC26
-            - [ ] NSoC26
-            - [ ] General Contribution
+            ### Example
 
-            The validator will re-run automatically once you update your selection.
+            \`\`\`md
+            program: gssoc
+            \`\`\`
+
+            or use the PR template checkboxes.
+
+            Once updated, this validation will automatically re-run.
+
+            > Stage-2 review routing is temporarily paused until classification is resolved.
             `;
 
               await upsertComment(comment);
 
-              core.info(
-                'No classification found. Defaulting to general-oss'
+              core.setFailed(
+                'Missing program classification'
               );
 
               return;

@@ -4,28 +4,28 @@
 
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
-| 🥇 | @4f4d | 7 | 37 |
-| 🥈 | @TarunyaProgrammer | 7 | 29 |
+| 🥇 | @TarunyaProgrammer | 9 | 37 |
+| 🥈 | @4f4d | 7 | 37 |
 | 🥉 | @KUMARNiru007 | 6 | 22 |
 | 4 | @deepak0x | 5 | 20 |
 | 5 | @saurabh24thakur | 3 | 17 |
 | 6 | @Balaji91221 | 8 | 16 |
-| 7 | @itsdakshjain | 4 | 12 |
-| 8 | @knoxiboy | 4 | 12 |
-| 9 | @MUKUL-PRASAD-SIGH | 4 | 9 |
-| 10 | @12fahed | 2 | 9 |
-| 11 | @nihalawasthi | 3 | 7 |
-| 12 | @AnirudhPhophalia | 3 | 6 |
-| 13 | @Mrigakshi-Rathore | 3 | 6 |
-| 14 | @Anushreebasics | 2 | 6 |
-| 15 | @sabeenaviklar | 2 | 6 |
-| 16 | @stealthwhizz | 2 | 6 |
-| 17 | @CoderOggy78 | 2 | 5 |
+| 7 | @Anushreebasics | 5 | 13 |
+| 8 | @itsdakshjain | 4 | 12 |
+| 9 | @knoxiboy | 4 | 12 |
+| 10 | @12fahed | 3 | 11 |
+| 11 | @MUKUL-PRASAD-SIGH | 4 | 9 |
+| 12 | @CoderOggy78 | 3 | 7 |
+| 13 | @nihalawasthi | 3 | 7 |
+| 14 | @AnirudhPhophalia | 3 | 6 |
+| 15 | @Mrigakshi-Rathore | 3 | 6 |
+| 16 | @sabeenaviklar | 2 | 6 |
+| 17 | @stealthwhizz | 2 | 6 |
 | 18 | @lourduradjou | 2 | 5 |
-| 19 | @SparshM8 | 2 | 4 |
-| 20 | @AnirbansarkarS | 1 | 2 |
-| 21 | @Ayush-Patel-56 | 1 | 2 |
-| 22 | @BandhiyaHardik | 1 | 2 |
+| 19 | @BandhiyaHardik | 2 | 4 |
+| 20 | @SparshM8 | 2 | 4 |
+| 21 | @AnirbansarkarS | 1 | 2 |
+| 22 | @Ayush-Patel-56 | 1 | 2 |
 | 23 | @piyushdotcomm | 1 | 2 |
 | 24 | @Sagar-Datkhile | 1 | 2 |
 | 25 | @aanjalii01 | 0 | 0 |
@@ -62,4 +62,4 @@
 | 56 | @uddalak2005 | 0 | 0 |
 | 57 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Tue, 26 May 2026 19:02:11 GMT
+Last updated: Tue, 26 May 2026 20:50:43 GMT

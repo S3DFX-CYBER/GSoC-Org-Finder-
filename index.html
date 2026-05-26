@@ -1285,6 +1285,12 @@
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
     </div>
+
+    <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
+      <button id="loadMoreMentorBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
+      </button>
+    </div>
   </div>
 </section>
  
@@ -1894,6 +1900,7 @@
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
+  let visibleMentorCount = 12;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2255,10 +2262,15 @@
     }));
   }
 
-  function renderMentorFinder() {
+  function renderMentorFinder(reset = true) {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
     if (!grid) return;
+
+    if (reset) {
+      grid.innerHTML = '';
+      visibleMentorCount = 12;
+    }
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
@@ -2308,10 +2320,12 @@
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
+      document.getElementById('loadMoreMentorContainer').style.display = 'none';
       return;
     }
 
-    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
+    grid.innerHTML = slice.map(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2377,6 +2391,11 @@
       `;
     }).join('');
 
+    if (visibleMentorCount < filteredRecords.length) {
+      document.getElementById('loadMoreMentorContainer').style.display = 'flex';
+    } else {
+      document.getElementById('loadMoreMentorContainer').style.display = 'none';
+    }
     attachOrgCardListeners(grid);
   }
 
@@ -3502,6 +3521,11 @@ if(org.ideas){
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
+  });
+
+  document.getElementById('loadMoreMentorBtn').addEventListener('click', () => {
+    visibleMentorCount += 12;
+    renderMentorFinder(false);
   });
 
   // Surprise button event listener

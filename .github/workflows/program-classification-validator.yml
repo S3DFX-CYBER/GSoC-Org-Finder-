@@ -70,7 +70,7 @@ jobs:
             ];
 
             const FALLBACK_PROGRAM =
-              'general-contribution';
+              'general-oss';
 
             const VALID_LABELS = [
               ...ACTUAL_PROGRAMS,
@@ -135,7 +135,7 @@ jobs:
               // ------------------------------------
 
               if (
-                labels.includes('general-contribution')
+                labels.includes('general-oss')
               ) {
                 hasGeneralContribution = true;
               }
@@ -266,9 +266,9 @@ jobs:
               await clearProgramLabels();
               await clearValidationLabels();
 
-              // Automatically assign general-contribution as default
+              // Automatically assign general-oss as default
               await addLabels([
-                'general-contribution'
+                'general-oss'
               ]);
 
               const comment =
@@ -278,7 +278,7 @@ jobs:
 
             No program classification was selected in your PR.
 
-            **Automatically assigned:** \`general-contribution\`
+            **Automatically assigned:** \`general-oss\`
 
             This PR will be processed as a general contribution. If you intended to contribute under GSSoC26 or NSoC26, please edit your PR and select the appropriate classification:
 
@@ -292,7 +292,7 @@ jobs:
               await upsertComment(comment);
 
               core.info(
-                'No classification found. Defaulting to general-contribution'
+                'No classification found. Defaulting to general-oss'
               );
 
               return;
@@ -354,7 +354,7 @@ jobs:
             await clearProgramLabels();
 
             let finalLabel =
-              'general-contribution';
+              'general-oss';
 
             if (program === 'gssoc') {
               finalLabel = 'gssoc26';

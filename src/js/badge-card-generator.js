@@ -7,6 +7,13 @@
 // Generates shareable PNG images of badge achievements
 // Uses html2canvas for client-side image generation
 // Privacy-first: No backend, all processing happens in browser
+// 
+// Features:
+// - Generate 1200x630px PNG cards optimized for social media
+// - Preview modal with card customization
+// - Social sharing buttons (Twitter, LinkedIn, Facebook)
+// - Light/dark theme support
+// - Success/error notifications
 // ══════════════════════════════════════════════
 
 const BadgeCardGenerator = (function() {

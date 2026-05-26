@@ -1520,17 +1520,19 @@
              <span style="font-size:13px; color:#6b7280;">Track your progress for this org</span>
              <span id="modal-roadmap-pct" aria-live="polite" style="font-size:12px; font-weight:600; color:#22c55e;">0 / 6</span>
           </div>
-          <div style="height:6px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin-bottom:12px;">
-              <div id="roadmap-progress-bar"  role="progressbar"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="0"
-                 style="height:100%; width:0%; background:#22c55e; border-radius:99px; transition:width .3s ease;">
-              </div>
-          </div>
-          <div id="roadmap-steps"  role="group"
-           aria-label="Contribution roadmap checklist" style="display:grid; gap:8px;"></div>
-          </div>
+           <progress
+              id="roadmap-progress-bar"
+              value="0"
+              max="100"
+              style="
+                 width:100%;
+                 height:6px;
+                 margin-bottom:12px;
+                 accent-color:#22c55e;
+                ">
+            </progress>
+          <div id="roadmap-steps"
+            style="display:grid; gap:8px;"></div>
 
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">
@@ -2329,8 +2331,7 @@ sections.forEach(sectionId => {
   const pct = document.getElementById("modal-roadmap-pct");
 
   if (bar) {
-    bar.style.width = percent + "%";
-    bar.setAttribute("aria-valuenow", percent);
+    bar.value = percent;
   }
 
   if (pct) {
@@ -2340,9 +2341,7 @@ sections.forEach(sectionId => {
 
   function renderContributionRoadmap(orgName) {
     const container = document.getElementById("roadmap-steps");
-    const bar = document.getElementById("roadmap-progress-bar");
-    const pct = document.getElementById("modal-roadmap-pct");
-
+    
     if (!container) {
       console.warn("roadmap-steps element not found");
       return;

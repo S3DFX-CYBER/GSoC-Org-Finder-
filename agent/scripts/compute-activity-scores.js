@@ -110,7 +110,6 @@ async function analyzeOrg({ name, repo }) {
       ideasFreshnessDays,
       starsGrowth
     });
-    
     const { tier, label } = getTier(score);
 
     return {

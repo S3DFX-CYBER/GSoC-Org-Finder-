@@ -2172,12 +2172,24 @@
   },
   "Open Food Facts": {
     "org": "Open Food Facts",
-    "ideasUrl": "https://github.com/openfoodfacts/openfoodfacts-server/wiki/Google-Summer-Of-Code",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://wiki.openfoodfacts.org/GSOC/2026_ideas_list",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://slack.openfoodfacts.org/",
+        "label": "#off-explorer"
+      }
+  ],
+    "mentors": [
+      {
+        "name" : "VaiTon",
+        "github" : "VaiTon",
+        "githubUrl": "https://github.com/VaiTon"
+      }
+    ],
     "mailingLists": [],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Open Genome Informatics": {

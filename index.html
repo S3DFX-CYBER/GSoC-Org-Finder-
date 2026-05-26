@@ -4136,6 +4136,11 @@ if(org.ideas){
       <td class="py-2">?</td>
       <td class="py-2">Toggle help dialog</td>
     </tr>
+
+    <tr>
+      <td class="py-2">/</td>
+      <td class="py-2">Focus search bar</td>
+    </tr>
   </tbody>
 </table>
 
@@ -4182,6 +4187,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    if (e.key === '/') {
+    const active = document.activeElement;
+
+    const isTyping = ['INPUT','SELECT','TEXTAREA'].includes(active.tagName) || active.isContentEditable;
+
+    if (!isTyping) {
+      e.preventDefault();
+      const searchInput = document.getElementById('hero-search');
+      if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+      return;
+    }
   });
 
   window.closeHelpModal = closeHelpModal;

@@ -161,7 +161,7 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .sort-row select{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 26px 6px 9px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;transition:background-color .3s,border-color .3s,color .3s}
 
 /* ── GRID ── */
-.grid {
+.org-card {
   display: grid;
   /* Use auto-fit to allow the grid to collapse empty tracks */
   grid-template-columns: repeat(auto-fit, 310px); 

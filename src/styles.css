@@ -1,3 +1,12 @@
+/* Add this to your stylesheet */
+.wrap, .container, main {
+  max-width: 1200px; /* Limits the width so it doesn't stretch too far */
+  margin: 0 auto;    /* This is the magic for centering */
+  padding: 0 15px;   /* Adds the "little space at the corner" on mobile */
+  box-sizing: border-box;
+}
+
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root,[data-theme="light"]{
   --bg:#FAFAFA;--white:#FFFFFF;
@@ -152,7 +161,20 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .sort-row select{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 26px 6px 9px;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23B07850' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;transition:background-color .3s,border-color .3s,color .3s}
 
 /* ── GRID ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-bottom:60px}
+.grid {
+  display: grid;
+  /* Use auto-fit to allow the grid to collapse empty tracks */
+  grid-template-columns: repeat(auto-fit, 310px); 
+  /* Center the cards within the container */
+  justify-content: center; 
+  gap: 12px;
+  
+  /* Make the container take full width but center its content */
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  margin-bottom: 60px;
+}
 
 /* ── CARD ── */
 .org-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;position:relative;overflow:hidden;animation:fadeUp .25s ease forwards;transition:border-color .18s,box-shadow .18s,transform .15s,background .3s}

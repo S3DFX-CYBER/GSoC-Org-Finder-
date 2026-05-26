@@ -891,66 +891,52 @@
 </div>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
-    <div class="lg:col-span-7">
-      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
+<section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-4xl mx-auto fade-up">
+  <div class="flex flex-col items-center text-center gap-8 lg:gap-12">
+    
+    <div class="flex flex-col items-center">
+      <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
         <span class="font-label text-[10px] sm:text-xs uppercase font-bold tracking-widest">Google Summer of Code 2026</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-4 sm:mb-6 leading-[0.95]">
+      
+      <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold font-headline tracking-tighter text-zinc-900 mb-6 leading-[0.95]">
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
-      <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
+      
+      <p class="text-base sm:text-lg text-zinc-600 max-w-xl leading-relaxed">
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
-      <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
+    </div>
+
+    <div class="w-full max-w-xl">
+      <div class="relative mb-6">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-4 pl-12 pr-4 shadow-lg shadow-zinc-200/50" />
       </div>
-      <!-- Surprise Button -->
-      <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
-        </button>
+      <button id="surpriseBtn" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full font-bold hover:scale-105 transition-all">
+        <span class="material-symbols-outlined text-sm">casino</span> 🎲 Surprise Me!
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center gap-8 w-full max-w-2xl">
+      <div class="flex flex-wrap justify-center gap-4">
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"><span class="material-symbols-outlined text-primary text-lg">groups</span><div><p class="text-[10px] text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div></div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"><span class="material-symbols-outlined text-secondary text-lg">code</span><div><p class="text-[10px] text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div></div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm"><span class="material-symbols-outlined text-primary-container text-lg">category</span><div><p class="text-[10px] text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div></div>
       </div>
-      <!-- Stat Badges -->
-      <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+      
+      <div id="timeline" class="w-full bg-white rounded-3xl p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100 text-left">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-headline font-extrabold text-lg">2026 Timeline</h3>
+          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">Live</span>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
-        </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
-          <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
-        </div>
+        <div id="timeline-milestones" class="space-y-4"></div>
       </div>
     </div>
-    <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
 </section>
-
 <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
 <section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
   <div class="flex flex-wrap gap-2 mb-4">

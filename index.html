@@ -1171,10 +1171,20 @@
 
 <!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
 <section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
-    <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
+  <div class="mb-12 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+    <div>
+      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
+      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
+      <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
+    </div>
+    <div class="flex-shrink-0">
+      <select id="issueAgeFilter" aria-label="Filter issues by maximum age" onchange="renderGoodFirstIssues()" class="bg-surface-container-low border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary cursor-pointer text-zinc-700 py-3 px-4 shadow-sm transition-shadow hover:shadow-md">
+        <option value="any">Max Age: Any time</option>
+        <option value="6m">Max Age: &lt; 6 months</option>
+        <option value="1y">Max Age: &lt; 1 year</option>
+        <option value="2y">Max Age: &lt; 2 years</option>
+      </select>
+    </div>
   </div>
   <!-- Status Banner -->
   <div id="issuesBanner" class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -3604,7 +3614,7 @@ if(org.ideas){
       const data = await res.json();
       const container = document.querySelector('#issues .grid');
       if (!container) return;
-      const issues = Array.isArray(data.issues) ? data.issues : [];
+      let issues = Array.isArray(data.issues) ? data.issues : [];
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');
       if (lastUpdatedEl) {
         if (data.updated_at) {
@@ -3614,6 +3624,22 @@ if(org.ideas){
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';
         }
+      }
+
+      // Sort by newest first
+      issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      // Filter by max age
+      const ageFilter = document.getElementById('issueAgeFilter')?.value || 'any';
+      const now = Date.now();
+      if (ageFilter !== 'any') {
+        issues = issues.filter(issue => {
+          const diffDays = (now - new Date(issue.created_at).getTime()) / (1000 * 3600 * 24);
+          if (ageFilter === '6m') return diffDays <= 180;
+          if (ageFilter === '1y') return diffDays <= 365;
+          if (ageFilter === '2y') return diffDays <= 730;
+          return true;
+        });
       }
 
       if (!issues.length) {
@@ -3630,6 +3656,10 @@ if(org.ideas){
         const safeRepo = escapeHtml(issue.repo || '');
         const safeTitle = escapeHtml(issue.title || '');
         const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
+        
+        const diffDays = (now - new Date(issue.created_at).getTime()) / (1000 * 3600 * 24);
+        const oldBadge = diffDays > 365 ? `<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-700 rounded font-bold">⚠️ Old Issue</span>` : '';
+
         card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
             <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
@@ -3638,6 +3668,7 @@ if(org.ideas){
           <p class="text-xs text-zinc-500 mb-3 font-mono">${safeRepo}</p>
           <div class="flex flex-wrap gap-1.5">
             ${labelsHtml}
+            ${oldBadge}
             <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${escapeHtml(String(issue.comments || 0))} comments</span>
           </div>
         `;

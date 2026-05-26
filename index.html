@@ -747,6 +747,48 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    #scrollToTopBtn {
+    position: fixed;
+    bottom: 28px; right: 24px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f46b0e, #fb923c); /* project ka orange color */
+    opacity: 0; visibility: hidden;       /* initially hidden */
+    transform: translateY(12px);
+    transition: opacity 0.3s, transform 0.3s; /* fade effect */
+    }
+    #scrollToTopBtn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+    #scrollToTopBtn:hover   { transform: translateY(-2px); } /* hover lift effect */
+    /* ── Toast Notification ── */
+    #shareToast {
+      position: fixed;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: #18181b;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+    #shareToast.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dark #shareToast { background: #f4f4f5; color: #18181b; }
+
+    /* ── Share Button ── */
+    .share-btn { transition: all 0.2s; font-size: 1.1rem; color: #a1a1aa; }
+    .share-btn:hover { color: #f46b0e; transform: scale(1.2); }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -2615,6 +2657,9 @@
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
             <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+            <button class="share-btn" data-share-org="${escapeHtml(org.name)}" title="Copy link to clipboard">
+            <span class="material-symbols-outlined text-lg">share</span>
+            </button>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
@@ -2658,6 +2703,13 @@
       img.__orgListenerAttached = true;
     });
 
+    // share buttons
+    (root.querySelectorAll ? root.querySelectorAll('.share-btn[data-share-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => shareOrg(e, btn.dataset.shareOrg));
+      btn.__orgListenerAttached = true;
+    });
+
     // bookmark buttons
     (root.querySelectorAll ? root.querySelectorAll('.bookmark-btn[data-bookmark-org]') : []).forEach(btn => {
       if (btn.__orgListenerAttached) return;
@@ -2682,6 +2734,38 @@
       btn.__orgListenerAttached = true;
     });
   }
+  function shareOrg(e, name) {
+    if (e) e.stopPropagation();
+    const org = window.__orgsData?.find(o => o.name === name);
+    const githubUrl = org ? (githubUrlFromValue(org.github) || 'https://github.com') : 'https://github.com';
+    const text = `Check out ${name} for GSoC 2026: ${githubUrl}`;
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('shareToast');
+    if (toast) {
+
+  // clear previous timeout if user clicks repeatedly
+    if (window.shareToastTimeout) {
+    clearTimeout(window.shareToastTimeout);
+    }
+
+    toast.classList.add('show');
+
+    window.shareToastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+      }}).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const toast = document.getElementById('shareToast');
+      if (toast) { toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+    });
+}
 
   function toggleCompare(e, name) {
     if (e) e.stopPropagation();
@@ -4056,6 +4140,7 @@ if(org.ideas){
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+  globalThis.__orgsData = typeof ORGS !== 'undefined' ? ORGS : [];
 </script>
 
 <!-- Vercel Speed Insights -->
@@ -4173,6 +4258,21 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+<!-- Button -->
+<button id="scrollToTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
 
+<!-- Scroll listener -->
+<script>
+  window.addEventListener('scroll', function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    window.scrollY > 300
+      ? btn.classList.add('visible')
+      : btn.classList.remove('visible');
+  }, { passive: true });
+</script>
+<!-- Share Toast Notification -->
+<div id="shareToast">✅ Organization link copied!</div>
 </body>
 </html>

@@ -1422,12 +1422,44 @@
   "JabRef e.V.": {
     "org": "JabRef e.V.",
     "ideasUrl": "https://github.com/JabRef/jabref/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.jabref.org/",
+        "label": "JabRef Discourse Forum"
+      },
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/JabRef/jabref",
+        "label": "JabRef Gitter"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Oliver Kopp",
+        "github": "koppor",
+        "githubUrl": "https://github.com/koppor"
+      },
+      {
+        "name": "Carl Christian Snethlage",
+        "github": "calixtus",
+        "githubUrl": "https://github.com/calixtus"
+      },
+      {
+        "name": "Christoph",
+        "github": "Siedlerchr",
+        "githubUrl": "https://github.com/Siedlerchr"
+      },
+      {
+        "name": "Tobias Diez",
+        "github": "tobiasdiez",
+        "githubUrl": "https://github.com/tobiasdiez"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Introduce yourself on the JabRef Discourse forum (https://discourse.jabref.org/) and mention the project idea you're interested in. Engage publicly rather than via DMs — mentors prefer transparent discussions. Contributing to 'good first issues' on GitHub is strongly encouraged before applying.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T18:05:00.000Z"
   },
   "JBoss Community": {
     "org": "JBoss Community",

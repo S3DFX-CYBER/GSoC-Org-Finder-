@@ -384,6 +384,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/MUKUL-PRASAD-SIGH"><img src="https://github.com/MUKUL-PRASAD-SIGH.png" width="50px" alt="MUKUL-PRASAD-SIGH" /></a>
 <a href="https://github.com/Neilblaze"><img src="https://github.com/Neilblaze.png" width="50px" alt="Neilblaze" /></a>
 <a href="https://github.com/nihalawasthi"><img src="https://github.com/nihalawasthi.png" width="50px" alt="nihalawasthi" /></a>
+<a href="https://github.com/nitinog10"><img src="https://github.com/nitinog10.png" width="50px" alt="nitinog10" /></a>
 <a href="https://github.com/oasis-parzival"><img src="https://github.com/oasis-parzival.png" width="50px" alt="oasis-parzival" /></a>
 <a href="https://github.com/piyushdotcomm"><img src="https://github.com/piyushdotcomm.png" width="50px" alt="piyushdotcomm" /></a>
 <a href="https://github.com/Precise-Goals"><img src="https://github.com/Precise-Goals.png" width="50px" alt="Precise-Goals" /></a>

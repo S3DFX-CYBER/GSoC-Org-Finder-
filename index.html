@@ -3011,7 +3011,7 @@
 
   function handleGridKeyboardNav(e) {
     const card = e.target.closest('#orgGrid > article');
-    if (!card) return;
+    if (!card || e.target !== card) return;
 
     const cards = Array.from(document.querySelectorAll('#orgGrid > article'));
     const index = cards.indexOf(card);
@@ -3037,29 +3037,30 @@
 
     switch (e.key) {
       case 'ArrowRight':
+        e.preventDefault();
         targetIndex = index + 1;
         break;
       case 'ArrowLeft':
+        e.preventDefault();
         targetIndex = index - 1;
         break;
       case 'ArrowDown':
+        e.preventDefault();
         targetIndex = index + cols;
         break;
       case 'ArrowUp':
+        e.preventDefault();
         targetIndex = index - cols;
         break;
       case 'Enter':
-        if (e.target === card) {
-          e.preventDefault();
-          openModal(card.dataset.org);
-        }
+        e.preventDefault();
+        openModal(card.dataset.org);
         return;
       default:
         return;
     }
 
     if (targetIndex >= 0 && targetIndex < cards.length) {
-      e.preventDefault();
       cards[targetIndex].focus();
       cards[targetIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }

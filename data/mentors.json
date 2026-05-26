@@ -1783,61 +1783,78 @@
   "MDAnalysis": {
     "org": "MDAnalysis",
     "ideasUrl": "https://github.com/MDAnalysis/mdanalysis/wiki/Google-Summer-of-Code",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/fXTSfDJyxE",
+        "label": "MDAnalysis Discord"
+      },
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/MDAnalysis/mdanalysis/discussions",
+        "label": "MDAnalysis Discussions"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
+        "name": "Brady Johnston",
         "github": "BradyAJohnston",
         "githubUrl": "https://github.com/BradyAJohnston"
       },
       {
-        "name": "",
+        "name": "Oliver Beckstein",
         "github": "orbeckst",
         "githubUrl": "https://github.com/orbeckst"
       },
       {
-        "name": "",
+        "name": "Talha Agaev",
         "github": "talagayev",
         "githubUrl": "https://github.com/talagayev"
       },
       {
-        "name": "",
+        "name": "Yuxuan Zhuang",
         "github": "yuxuanzhuang",
         "githubUrl": "https://github.com/yuxuanzhuang"
       },
       {
-        "name": "",
+        "name": "Li-Ting Chong",
         "github": "ltchong",
         "githubUrl": "https://github.com/ltchong"
       },
       {
-        "name": "",
+        "name": "Nilay Verma",
         "github": "nilay-v3rma",
         "githubUrl": "https://github.com/nilay-v3rma"
       },
       {
-        "name": "",
+        "name": "Jenna Swann",
         "github": "jennaswa",
         "githubUrl": "https://github.com/jennaswa"
       },
       {
-        "name": "",
+        "name": "Irfan Alibay",
         "github": "IAlibay",
         "githubUrl": "https://github.com/IAlibay"
       },
       {
-        "name": "",
+        "name": "Matthias Heyden",
         "github": "HeydenLabASU",
         "githubUrl": "https://github.com/HeydenLabASU"
       },
       {
-        "name": "",
+        "name": "Amruthesh T",
         "github": "amruthesht",
         "githubUrl": "https://github.com/amruthesht"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/mdnalysis-discussion",
+        "label": "MDAnalysis Discussion Group (archival)"
+      }
+    ],
+    "tip": "Review the MDAnalysis GSoC ideas page and engage with the community before submitting a proposal.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
@@ -2397,7 +2414,13 @@
   "Oppia Foundation": {
     "org": "Oppia Foundation",
     "ideasUrl": "https://github.com/oppia/oppia/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/oppia/oppia/discussions/categories/general-gsoc-2026-q-a-web",
+        "label": "Oppia GSoC 2026 GitHub Discussions"
+      }
+    ],
     "mentors": [
       {
         "name": "",
@@ -2778,22 +2801,69 @@
   },
   "Ruby": {
     "org": "Ruby",
-    "ideasUrl": "https://github.com/rubygsoc/rubygsoc/wiki/Ideas-List",
-    "channels": [],
+    "ideasUrl": "https://github.com/rubygsoc/rubygsoc/wiki/Ideas-List-(2026)",
+      "channels": [
+    {
+      "type": "Slack",
+      "label": "#rubygsoc",
+      "url": "https://bundler.slack.com"
+    },
+    {
+      "type": "Discord",
+      "label": "Ruby GSoC Discord",
+      "url": "https://discord.gg/7ESQJSjr"
+    }
+  ],
     "mentors": [
       {
-        "name": "",
-        "github": "rubygsoc",
-        "githubUrl": "https://github.com/rubygsoc"
+        "name": "Colby Swandale",
+        "github": "colby-swandale",
+        "githubUrl": "https://github.com/colby-swandale"
+      },
+      {
+        "name": "Jenny Shen",
+        "github": "jenshenny",
+        "githubUrl": "https://github.com/jenshenny"
       },
       {
         "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
+        "github": "cuneyter",
+        "githubUrl": "https://github.com/cuneyter"
+      },
+      {
+        "name": "",
+        "github": "daz-codes",
+        "githubUrl": "https://github.com/daz-codes"
+      },
+      {
+        "name": "",
+        "github": "tonekk",
+        "githubUrl": "https://github.com/tonekk"
+      },
+      {
+        "name": "",
+        "github": "rsamoilov",
+        "githubUrl": "https://github.com/rsamoilov"
+      },
+      {
+        "name": "",
+        "github": "maedi",
+        "githubUrl": "https://github.com/maedi"
+      },
+      {
+        "name": "Marco Concetto Rudilosso",
+        "github": "Maaarcocr",
+        "githubUrl": "https://github.com/Maaarcocr"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/rubygsoc",
+      "label": "rubygsoc"
+    }
+  ],
+    "tip": "Blog: https://rubygsoc.github.io/ | For direct contact, email Saroj at saroj@zoras.me",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
@@ -3155,14 +3225,24 @@
   },
   "The Libreswan Project": {
     "org": "The Libreswan Project",
-    "ideasUrl": "https://libreswan.org/wiki/GSoC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/libreswan/libreswan/wiki/GSoC-2026-Code-Project-Ideas",
+    "channels": [
+      {
+       "type": "IRC",
+       "url": "https://web.libera.chat/#libreswan",
+        "label": "#libreswan on Libera.Chat" 
+      }
+    ],
+    "mentors": [
+      { "name": "Andrew Cagney", "github": "cagney", "githubUrl": "https://github.com/cagney" },
+      { "name": "Paul Wouters", "github": "letoams", "githubUrl": "https://github.com/letoams" },
+      { "name": "Tuomo Soini", "github": "", "githubUrl": "" }
+],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://lists.libreswan.org/",
-        "label": "The Libreswan Project Mailing list"
+        "url": "https://lists.libreswan.org",
+        "label": "swan-dev@lists.libreswan.org"
       }
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",
@@ -3391,13 +3471,66 @@
   },
   "The OpenROAD Initiative": {
     "org": "The OpenROAD Initiative",
-    "ideasUrl": "https://github.com/The-OpenROAD-Project/OpenROAD/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "ideasUrl": "https://ucsc-ospo.github.io/project/osre24/openroad/openroad/",
+    "channels": [
+      {
+        "type": "GitHub",
+        "url": "https://github.com/The-OpenROAD-Project/OpenROAD",
+        "label": "OpenROAD GitHub"
+      },
+      {
+        "type": "Slack",
+        "url": "https://open-source-silicon.slack.com",
+        "label": "OpenROAD Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Eder Monteiro",
+        "github": "eder-matheus",
+        "githubUrl": "https://github.com/eder-matheus"
+      },
+      {
+        "name": "Jack Luar",
+        "github": "luarss",
+        "githubUrl": "https://github.com/luarss"
+      },
+      {
+        "name": "Chaitanya Gambali",
+        "github": "gs-chaitanya",
+        "githubUrl": "https://github.com/gs-chaitanya"
+      },
+      {
+        "name": "Mehdi Saligane",
+        "github": "msaligane",
+        "githubUrl": "https://github.com/msaligane"
+      },
+      {
+        "name": "Matt Liberty",
+        "github": "mattliberty",
+        "githubUrl": "https://github.com/mattliberty"
+      },
+      {
+        "name": "Vitor Bandeira",
+        "github": "vvbandeira",
+        "githubUrl": "https://github.com/vvbandeira"
+      },
+      {
+        "name": "Austin Rovinski",
+        "github": "rovinski",
+        "githubUrl": "https://github.com/rovinski"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Discussion Forum",
+        "url": "https://github.com/The-OpenROAD-Project/OpenROAD/discussions",
+        "label": "OpenROAD Discussions"
+      }
+    ],
+    "tip": "Review OpenROAD-flow-scripts and contribute small fixes or tests before applying.",
+    "status": "ok",
+    "lastFetched": "2026-05-16T00:00:00.000Z"
   },
   "The P4 Language Consortium": {
     "org": "The P4 Language Consortium",

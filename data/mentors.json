@@ -3208,14 +3208,24 @@
   },
   "The Libreswan Project": {
     "org": "The Libreswan Project",
-    "ideasUrl": "https://libreswan.org/wiki/GSoC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/libreswan/libreswan/wiki/GSoC-2026-Code-Project-Ideas",
+    "channels": [
+      {
+       "type": "IRC",
+       "url": "https://web.libera.chat/#libreswan",
+        "label": "#libreswan on Libera.Chat" 
+      }
+    ],
+    "mentors": [
+      { "name": "Andrew Cagney", "github": "cagney", "githubUrl": "https://github.com/cagney" },
+      { "name": "Paul Wouters", "github": "letoams", "githubUrl": "https://github.com/letoams" },
+      { "name": "Tuomo Soini", "github": "", "githubUrl": "" }
+],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://lists.libreswan.org/",
-        "label": "The Libreswan Project Mailing list"
+        "url": "https://lists.libreswan.org",
+        "label": "swan-dev@lists.libreswan.org"
       }
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",

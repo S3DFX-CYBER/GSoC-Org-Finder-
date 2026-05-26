@@ -566,24 +566,45 @@ footer a:hover{text-decoration:underline}
   position: fixed;
   bottom: 28px;
   right: 24px;
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: var(--orange);
   color: white;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  display: none;
   z-index: 50;
-  box-shadow: 0 3px 10px rgba(244,107,14,.35);
-  transition: opacity .2s;
-}
-
-.scroll-top-btn.visible {
+  box-shadow: 0 4px 14px rgb(244 107 14 / 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(15px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-top-btn:hover {
+  background: var(--orange-deep);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 6px 20px rgb(244 107 14 / 0.5);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+@media print {
+  .scroll-top-btn {
+    display: none !important;
+  }
 }
 
 /* ═══════════════════════════════════════════

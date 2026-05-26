@@ -121,7 +121,7 @@ AN.trackVisit();
  */
 function validateIdeasUrl(ideasUrl) {
   // Return null for empty or whitespace-only strings
-  if (!ideasUrl || !ideasUrl.trim()) {
+  if (!ideasUrl?.trim()) {
     return null;
   }
   
@@ -1402,4 +1402,39 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+
+// Scroll to Top Button
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+if (scrollTopBtn) {
+  let scrollTimeout;
+  
+  const checkVisibility = () => {
+    if (globalThis.scrollY > 300) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
+  };
+
+  globalThis.addEventListener('scroll', () => {
+    if (!scrollTimeout) {
+      globalThis.requestAnimationFrame(() => {
+        checkVisibility();
+        scrollTimeout = false;
+      });
+      scrollTimeout = true;
+    }
+  });
+
+  scrollTopBtn.addEventListener('click', () => {
+    globalThis.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+
+  // Initialize visibility on load
+  checkVisibility();
+}
+
 

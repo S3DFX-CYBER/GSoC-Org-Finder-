@@ -436,6 +436,62 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    
+    /* Scroll to Top Button */
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--orange, #f46b0e);
+      color: white;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow: 0 4px 14px rgb(244 107 14 / 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(15px) scale(0.9);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scroll-top-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .scroll-top-btn:hover {
+      background: #d45800; /* dark orange */
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 6px 20px rgb(244 107 14 / 0.5);
+    }
+
+    .scroll-top-btn:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .dark .scroll-top-btn {
+      background: var(--orange, #f97316);
+      box-shadow: 0 4px 14px rgb(249 115 22 / 0.35);
+    }
+
+    .dark .scroll-top-btn:hover {
+      background: #fb923c;
+      box-shadow: 0 6px 20px rgb(249 115 22 / 0.5);
+    }
+
+    @media print {
+      .scroll-top-btn {
+        display: none !important;
+      }
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -806,12 +862,20 @@
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="flex items-center gap-3 mt-8">
+        <button id="exportWatchlistBtn"
+          class="hidden flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-600 border border-green-200 rounded-full px-4 py-2 hover:bg-green-50 transition-colors"
+          title="Export watchlist as CSV" onclick="exportWatchlistCSV()">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export CSV
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="hidden flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
@@ -1206,6 +1270,11 @@
     </div>
   </div>
 </div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top" title="Scroll to top">
+  <span class="material-symbols-outlined">arrow_upward</span>
+</button>
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
@@ -2399,10 +2468,40 @@
     updateAIInsights();
   }
 
+  globalThis.exportWatchlistCSV = function() {
+    if (!bookmarkedSet.size) return;
+    const bookmarkedOrgs = ORGS.filter(o => bookmarkedSet.has(o.name));
+    
+    // Create CSV content
+    const headers = ['Name', 'Category', 'GSoC Years', 'Competition', 'Languages', 'Repository', 'Ideas Page'];
+    const rows = bookmarkedOrgs.map(o => [
+      `"${o.name}"`,
+      `"${o.cat}"`,
+      o.years,
+      `"${o.competition}"`,
+      `"${o.tags.join(', ')}"`,
+      `"${o.github ? 'https://github.com/' + o.github : ''}"`,
+      `"${o.ideas || ''}"`
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+    
+    // Download as file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'gsoc-watchlist.csv');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {
     const container = document.getElementById('watchlistContainer');
     const clearBtn  = document.getElementById('clearAllBookmarksBtn');
+    const exportBtn = document.getElementById('exportWatchlistBtn');
     if (!container) return;
 
     container.innerHTML = '';
@@ -2411,8 +2510,9 @@
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
-    // Show / hide "Clear All" button
+    // Show / hide buttons
     if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
+    if (exportBtn) exportBtn.classList.toggle('hidden', bookmarks.length === 0);
 
     // ── Empty state ───────────────────────────────────────────────────────────
     if (bookmarks.length === 0) {
@@ -3053,6 +3153,40 @@ if(org.ideas){
   renderGoodFirstIssues();
   renderCompare();
 
+  // Scroll to Top Button
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    let scrollTimeout;
+    
+    const checkVisibility = () => {
+      if (globalThis.scrollY > 300) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+    };
+
+    globalThis.addEventListener('scroll', () => {
+      if (!scrollTimeout) {
+        globalThis.requestAnimationFrame(() => {
+          checkVisibility();
+          scrollTimeout = false;
+        });
+        scrollTimeout = true;
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      globalThis.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Initialize visibility on load
+    checkVisibility();
+  }
+
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
@@ -3165,6 +3299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

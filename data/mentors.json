@@ -482,7 +482,13 @@
   "CircuitVerse.org": {
     "org": "CircuitVerse.org",
     "ideasUrl": "https://github.com/CircuitVerse/CircuitVerse/wiki/GSoC'26-Project-List",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://circuitverse.org/slack",
+        "label": "Slack Channel"
+      }
+    ],
     "mentors": [
       {
         "name": "",
@@ -561,7 +567,7 @@
       }
     ],
     "mailingLists": [],
-    "tip": "",
+    "tip": "Join and say hi in the GSoC Slack channel before DMing mentors.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

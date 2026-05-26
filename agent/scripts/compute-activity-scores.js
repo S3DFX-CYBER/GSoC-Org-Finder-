@@ -76,7 +76,7 @@ async function analyzeOrg({ name, repo }) {
     const issues = await fetchJSON(
       `https://api.github.com/repos/${repo}/issues?state=closed&since=${since}&per_page=100`
     );
-    let issueResponseDays = 14; 
+    let issueResponseDays = null; 
     if (Array.isArray(issues) && issues.length > 0) {
       const responseTimes = issues
         .filter(i => i.created_at && i.closed_at && !i.pull_request)
@@ -88,9 +88,9 @@ async function analyzeOrg({ name, repo }) {
 
     // Fetch PRs
     const prs = await fetchJSON(
-      `https://api.github.com/repos/${repo}/pulls?state=closed&since=${since}&per_page=100`
+      `https://api.github.com/repos/${repo}/pulls?state=closed&per_page=100`
     );
-    let prMergeRate = 0.5; 
+    let prMergeRate = null; 
     if (Array.isArray(prs) && prs.length > 0) {
       const merged = prs.filter(p => p.merged_at).length;
       prMergeRate = merged / prs.length;
@@ -104,13 +104,13 @@ async function analyzeOrg({ name, repo }) {
       : 60;
 
     const score = computeScore({
-      issueResponseDays,
+      issueResponseDays: issueResponseDays ?? 14,
       commitFrequency,
-      prMergeRate,
+      prMergeRate: prMergeRate ?? 0.5,
       ideasFreshnessDays,
       starsGrowth
     });
-
+    
     const { tier, label } = getTier(score);
 
     return {

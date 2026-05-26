@@ -861,7 +861,7 @@ function updateStats(){
 // ══════════════════════════════════════════════
 // KEYBOARD NAVIGATION
 // ══════════════════════════════════════════════
-cconst GRID_COLS = () => {
+const GRID_COLS = () => {
   const g = document.getElementById('orgGrid');
   
   // 1. Safety check: ensure element exists

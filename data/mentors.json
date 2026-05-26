@@ -2397,7 +2397,13 @@
   "Oppia Foundation": {
     "org": "Oppia Foundation",
     "ideasUrl": "https://github.com/oppia/oppia/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/oppia/oppia/discussions/categories/general-gsoc-2026-q-a-web",
+        "label": "Oppia GSoC 2026 GitHub Discussions"
+      }
+    ],
     "mentors": [
       {
         "name": "",
@@ -2778,22 +2784,69 @@
   },
   "Ruby": {
     "org": "Ruby",
-    "ideasUrl": "https://github.com/rubygsoc/rubygsoc/wiki/Ideas-List",
-    "channels": [],
+    "ideasUrl": "https://github.com/rubygsoc/rubygsoc/wiki/Ideas-List-(2026)",
+      "channels": [
+    {
+      "type": "Slack",
+      "label": "#rubygsoc",
+      "url": "https://bundler.slack.com"
+    },
+    {
+      "type": "Discord",
+      "label": "Ruby GSoC Discord",
+      "url": "https://discord.gg/7ESQJSjr"
+    }
+  ],
     "mentors": [
       {
-        "name": "",
-        "github": "rubygsoc",
-        "githubUrl": "https://github.com/rubygsoc"
+        "name": "Colby Swandale",
+        "github": "colby-swandale",
+        "githubUrl": "https://github.com/colby-swandale"
+      },
+      {
+        "name": "Jenny Shen",
+        "github": "jenshenny",
+        "githubUrl": "https://github.com/jenshenny"
       },
       {
         "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
+        "github": "cuneyter",
+        "githubUrl": "https://github.com/cuneyter"
+      },
+      {
+        "name": "",
+        "github": "daz-codes",
+        "githubUrl": "https://github.com/daz-codes"
+      },
+      {
+        "name": "",
+        "github": "tonekk",
+        "githubUrl": "https://github.com/tonekk"
+      },
+      {
+        "name": "",
+        "github": "rsamoilov",
+        "githubUrl": "https://github.com/rsamoilov"
+      },
+      {
+        "name": "",
+        "github": "maedi",
+        "githubUrl": "https://github.com/maedi"
+      },
+      {
+        "name": "Marco Concetto Rudilosso",
+        "github": "Maaarcocr",
+        "githubUrl": "https://github.com/Maaarcocr"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/rubygsoc",
+      "label": "rubygsoc"
+    }
+  ],
+    "tip": "Blog: https://rubygsoc.github.io/ | For direct contact, email Saroj at saroj@zoras.me",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

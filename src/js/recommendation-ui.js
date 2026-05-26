@@ -116,6 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+  const retryBtn = document.getElementById('aiRetryBtn');
+  let lastAnalysisInput = { username: '', resume: '' };
 
   // Handle file upload
   if (fileUpload) {
@@ -147,24 +149,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  getRecsBtn.addEventListener('click', async () => {
-    const username = ghInput.value.trim();
-    const resume = resumeText.value.trim();
-
+  async function runAnalysis(username, resume) {
     if (!username && !resume) {
-      showError("Please provide either a GitHub username or resume text to get recommendations.");
+      showError("Add a GitHub username or resume text so we have enough signal to recommend organizations.");
       return;
     }
 
+    lastAnalysisInput = { username, resume };
     setAnalysisStateUI(true);
     try {
       const recommendations = await analyzeProfile(username, resume);
       renderRecommendations(recommendations);
     } catch (err) {
-      showError(err.message || "An unexpected error occurred during analysis.");
+      showError(err.message || "We couldn't analyze your profile right now. Please try again in a moment.");
     } finally {
       setAnalysisStateUI(false);
     }
+  }
+
+  getRecsBtn.addEventListener('click', async () => {
+    await runAnalysis(ghInput.value.trim(), resumeText.value.trim());
+  });
+
+  retryBtn?.addEventListener('click', async () => {
+    await runAnalysis(lastAnalysisInput.username, lastAnalysisInput.resume);
   });
 
   function showError(msg) {
@@ -201,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderRecommendations(recs) {
     if (!recs || recs.length === 0) {
-      showError("Could not find any matching organizations based on your profile.");
+      showError("No strong organization matches were found. Add more languages, frameworks, or project experience and try again.");
       return;
     }
 

@@ -1091,16 +1091,50 @@
     <!-- Results Area -->
     <div class="lg:col-span-8">
       <!-- Initial State -->
-      <div id="aiLoadingState" aria-live="polite" class="hidden flex flex-col items-center justify-center py-16 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700">
-        <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-zinc-600 dark:text-zinc-400 font-bold animate-pulse">Analyzing profile & calculating matches...</p>
+      <div id="aiLoadingState" aria-live="polite" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 animate-pulse">
+            <div class="h-14 w-14 rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-5"></div>
+            <div class="h-4 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800 mb-3"></div>
+            <div class="h-3 w-24 rounded bg-orange-100 dark:bg-orange-900/30 mb-5"></div>
+            <div class="space-y-2">
+              <div class="h-3 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 animate-pulse">
+            <div class="h-14 w-14 rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-5"></div>
+            <div class="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800 mb-3"></div>
+            <div class="h-3 w-20 rounded bg-orange-100 dark:bg-orange-900/30 mb-5"></div>
+            <div class="space-y-2">
+              <div class="h-3 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 animate-pulse">
+            <div class="h-14 w-14 rounded-xl bg-zinc-200 dark:bg-zinc-800 mb-5"></div>
+            <div class="h-4 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800 mb-3"></div>
+            <div class="h-3 w-28 rounded bg-orange-100 dark:bg-orange-900/30 mb-5"></div>
+            <div class="space-y-2">
+              <div class="h-3 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+              <div class="h-3 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800"></div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Error State -->
       <div id="aiErrorState" aria-live="assertive" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 text-center block">
         <span class="material-symbols-outlined text-red-500 text-4xl mb-2">error</span>
-        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Analysis Failed</h3>
+        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Couldn't build recommendations</h3>
         <p id="aiErrorMsg" class="text-red-600 dark:text-red-300 text-sm"></p>
+        <button id="aiRetryBtn" type="button" class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-red-700">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+          Retry
+        </button>
       </div>
 
       <!-- Results Container -->
@@ -1281,8 +1315,32 @@
     </div>
 
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+      <div class="bg-white rounded-2xl border border-zinc-100 p-6 animate-pulse">
+        <div class="h-3 w-20 bg-zinc-200 rounded mb-4"></div>
+        <div class="h-6 w-2/3 bg-zinc-200 rounded mb-5"></div>
+        <div class="space-y-3">
+          <div class="h-8 bg-zinc-100 rounded-full"></div>
+          <div class="h-8 w-3/4 bg-zinc-100 rounded-full"></div>
+          <div class="h-3 w-full bg-zinc-100 rounded"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-zinc-100 p-6 animate-pulse">
+        <div class="h-3 w-24 bg-zinc-200 rounded mb-4"></div>
+        <div class="h-6 w-1/2 bg-zinc-200 rounded mb-5"></div>
+        <div class="space-y-3">
+          <div class="h-8 w-4/5 bg-zinc-100 rounded-full"></div>
+          <div class="h-8 w-2/3 bg-zinc-100 rounded-full"></div>
+          <div class="h-3 w-full bg-zinc-100 rounded"></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-zinc-100 p-6 animate-pulse">
+        <div class="h-3 w-16 bg-zinc-200 rounded mb-4"></div>
+        <div class="h-6 w-3/4 bg-zinc-200 rounded mb-5"></div>
+        <div class="space-y-3">
+          <div class="h-8 bg-zinc-100 rounded-full"></div>
+          <div class="h-8 w-1/2 bg-zinc-100 rounded-full"></div>
+          <div class="h-3 w-5/6 bg-zinc-100 rounded"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2191,7 +2249,13 @@ sections.forEach(sectionId => {
     if (!container) return;
 
     if (mentorDataState === 'idle' || mentorDataState === 'loading') {
-      container.innerHTML = '<p class="text-sm text-zinc-500">Loading mentor contact data...</p>';
+      container.innerHTML = `
+        <div class="animate-pulse space-y-3">
+          <div class="h-4 w-40 rounded bg-zinc-200"></div>
+          <div class="h-9 w-56 rounded-full bg-zinc-100"></div>
+          <div class="h-9 w-44 rounded-full bg-zinc-100"></div>
+        </div>
+      `;
       return;
     }
 
@@ -2272,6 +2336,20 @@ sections.forEach(sectionId => {
     }));
   }
 
+  async function fetchJsonWithFallback(paths) {
+    let lastError = null;
+    for (const path of paths) {
+      try {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw lastError || new Error('Unable to load JSON data');
+  }
+
   function renderMentorFinder() {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
@@ -2279,9 +2357,18 @@ sections.forEach(sectionId => {
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
-        <div class="col-span-full mentor-empty">
-          <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-        </div>
+        ${Array.from({ length: 6 }, () => `
+          <div class="mentor-card animate-pulse">
+            <div class="h-3 w-20 rounded bg-zinc-200 mb-4"></div>
+            <div class="h-6 w-2/3 rounded bg-zinc-200 mb-5"></div>
+            <div class="space-y-3">
+              <div class="h-8 rounded-full bg-zinc-100"></div>
+              <div class="h-8 w-3/4 rounded-full bg-zinc-100"></div>
+              <div class="h-3 rounded bg-zinc-100"></div>
+              <div class="h-3 w-5/6 rounded bg-zinc-100"></div>
+            </div>
+          </div>
+        `).join('')}
       `;
       return;
     }
@@ -2289,8 +2376,13 @@ sections.forEach(sectionId => {
     if (mentorDataState === 'error') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
-          <p class="font-bold text-zinc-900 mb-2">Mentor data unavailable right now.</p>
-          <p class="text-sm text-zinc-600">The cached mentor snapshot could not be loaded. Please try again later.</p>
+          <span class="material-symbols-outlined text-4xl text-primary mb-3">wifi_off</span>
+          <p class="font-bold text-zinc-900 mb-2">Couldn't load mentor contact data.</p>
+          <p class="text-sm text-zinc-600 max-w-xl mx-auto mb-4">Please try again, or open an organization's ideas page from its card to find the latest contact guidance manually.</p>
+        <button type="button" onclick="window.retryMentorData()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-primary">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            Retry
+          </button>
         </div>
       `;
       if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
@@ -2399,12 +2491,16 @@ sections.forEach(sectionId => {
 
   async function loadMentorData() {
     mentorDataState = 'loading';
+    MENTOR_DATA = {};
     renderMentorFinder();
 
     try {
-      const res = await fetch(`/data/mentors.json?v=${Date.now()}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const cacheBust = `?v=${Date.now()}`;
+      const data = await fetchJsonWithFallback([
+        `data/mentors.json${cacheBust}`,
+        `./data/mentors.json${cacheBust}`,
+        `/data/mentors.json${cacheBust}`
+      ]);
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
         throw new Error('Invalid mentors.json payload');
       }
@@ -3589,11 +3685,12 @@ if(org.ideas){
 
   function renderFallbackOrgSearchCards(container) {
     const orgsWithGithub = ORGS.filter(o => typeof o.github === 'string' && o.github.trim());
+    container.dataset.state = 'empty';
     container.innerHTML = '';
 
     const notice = document.createElement('p');
-    notice.className = 'col-span-full text-sm text-zinc-500';
-    notice.textContent = 'Live pre-fetched issues are still syncing. Browse open Good First Issues for all organizations below.';
+    notice.className = 'col-span-full rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-center text-sm text-zinc-600';
+    notice.innerHTML = '<strong class="block text-zinc-900 mb-1">No cached issue cards are available yet.</strong><span>Browse open Good First Issues on GitHub while the project cache catches up.</span>';
     container.appendChild(notice);
 
     orgsWithGithub.forEach(org => {
@@ -3617,13 +3714,51 @@ if(org.ideas){
     });
   }
 
+  function renderIssueSkeletonCards(container) {
+    if (!container) return;
+    container.dataset.state = 'loading';
+    container.innerHTML = Array.from({ length: 6 }, () => `
+      <div class="bg-white rounded-xl p-5 border border-zinc-100 animate-pulse">
+        <div class="flex items-start justify-between mb-4">
+          <div class="h-4 w-2/3 rounded bg-zinc-200"></div>
+          <div class="h-5 w-5 rounded bg-zinc-100"></div>
+        </div>
+        <div class="h-3 w-32 rounded bg-zinc-100 mb-4"></div>
+        <div class="flex flex-wrap gap-2">
+          <div class="h-5 w-24 rounded bg-green-100"></div>
+          <div class="h-5 w-32 rounded bg-zinc-100"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderIssueErrorState(container) {
+    if (!container) return;
+    container.dataset.state = 'error';
+    container.innerHTML = `
+      <div class="col-span-full bg-white rounded-2xl p-8 border border-zinc-100 text-center">
+        <span class="material-symbols-outlined text-4xl text-primary mb-3">cloud_off</span>
+        <p class="text-sm font-bold text-zinc-900 mb-2">Couldn't load issue data right now.</p>
+        <p class="text-sm text-zinc-600 max-w-xl mx-auto mb-4">Please try again, or continue exploring organizations manually and open their GitHub issue searches from the cards.</p>
+        <button type="button" onclick="window.retryGoodFirstIssues()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-primary">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+          Retry
+        </button>
+      </div>`;
+  }
+
   // Dynamic GFIs
   async function renderGoodFirstIssues() {
+    const container = document.querySelector('#issues .grid');
+    renderIssueSkeletonCards(container);
+
     try {
-      const res = await fetch('/data/issues.json?v=' + Date.now());
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const container = document.querySelector('#issues .grid');
+      const cacheBust = `?v=${Date.now()}`;
+      const data = await fetchJsonWithFallback([
+        `data/issues.json${cacheBust}`,
+        `./data/issues.json${cacheBust}`,
+        `/data/issues.json${cacheBust}`
+      ]);
       if (!container) return;
       const issues = Array.isArray(data.issues) ? data.issues : [];
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');
@@ -3643,6 +3778,7 @@ if(org.ideas){
       }
 
       container.innerHTML = '';
+      container.dataset.state = 'loaded';
       issues.slice(0, 6).forEach(issue => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
@@ -3666,19 +3802,16 @@ if(org.ideas){
       });
     } catch (e) {
       console.error("GFI render failed:", e);
-      const container = document.querySelector('#issues .grid');
-      if (container) {
-        container.innerHTML = `
-          <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
-            <p class="text-sm font-bold text-zinc-900 mb-2">Unable to load pre-fetched issues</p>
-            <p class="text-sm text-zinc-600 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
-          </div>`;
-      }
+      renderIssueErrorState(container);
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');
       if (lastUpdatedEl) {
         lastUpdatedEl.textContent = 'Last updated: unavailable';
       }
     }
+  }
+
+  function retryGoodFirstIssues() {
+    renderGoodFirstIssues();
   }
 
   // Live GitHub Stats Mock/Fetch
@@ -4067,6 +4200,10 @@ if(org.ideas){
   renderWatchlist();
   renderRecentlyViewed();
   updateAIInsights();   // populate AI insight panel on page load
+  window.loadMentorData = loadMentorData;
+  window.renderGoodFirstIssues = renderGoodFirstIssues;
+  window.retryGoodFirstIssues = retryGoodFirstIssues;
+  window.retryMentorData = loadMentorData;
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();

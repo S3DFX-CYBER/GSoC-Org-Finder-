@@ -1126,6 +1126,21 @@ let filteredIssues=[];
 let shownIssues=0;
 const ISSUES_PAGE_SIZE=40;
 let issuesFetching=false;
+let issuesLoadState='idle';
+
+async function fetchJsonWithFallback(paths){
+  let lastError=null;
+  for(const path of paths){
+    try{
+      const res=await fetch(path,{cache:'no-store'});
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }catch(error){
+      lastError=error;
+    }
+  }
+  throw lastError||new Error('Unable to load JSON data');
+}
 
 function openIssuesPage(){
   document.getElementById('issuesPage').classList.add('open');
@@ -1214,6 +1229,7 @@ async function fetchAllIssues(){
   allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 
   issuesFetching=false;
+  issuesLoadState='loaded';
   btn.disabled=false; spin.style.display='none'; txt.textContent='↻ Refresh';
 
   filterIssues();
@@ -1223,11 +1239,11 @@ async function fetchAllIssues(){
 
 async function loadCachedIssues(){
   if(allIssues.length||issuesFetching) return;
+  issuesLoadState='loading';
+  renderIssues();
   try{
-    const res=await fetch('/data/issues.json');
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data=await res.json();
-    if(!Array.isArray(data.issues)) return;
+    const data=await fetchJsonWithFallback(['data/issues.json','./data/issues.json','/data/issues.json']);
+    if(!Array.isArray(data.issues)) throw new Error('Invalid issues.json payload');
 
     const orgByGithub=new Map(ORGS.map(o=>[o.github?.toLowerCase(),o]));
     const orgByName=new Map(ORGS.map(o=>[o.name?.toLowerCase(),o]));
@@ -1251,9 +1267,14 @@ async function loadCachedIssues(){
     });
 
     allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    issuesLoadState='loaded';
     filterIssues();
   }catch(err){
     console.warn('Failed to load cached issues:',err);
+    allIssues=[];
+    filteredIssues=[];
+    issuesLoadState='error';
+    renderIssues();
   }
 }
 
@@ -1288,13 +1309,43 @@ function renderIssues(){
   const statsDiv=document.getElementById('issuesStats');
   const loadMore=document.getElementById('loadMoreWrap');
 
+  if(issuesLoadState==='loading'){
+    container.innerHTML=`<div class="issues-grid">${Array.from({length:6},()=>`
+      <div class="issue-card" aria-hidden="true">
+        <div class="issue-logo skeleton-line"></div>
+        <div class="issue-body">
+          <div class="skeleton-line skeleton-title" style="margin-bottom:8px"></div>
+          <div class="skeleton-line skeleton-subtitle" style="margin-bottom:12px"></div>
+          <div class="issue-meta">
+            <span class="skeleton-pill"></span>
+            <span class="skeleton-pill"></span>
+          </div>
+        </div>
+      </div>
+    `).join('')}</div>`;
+    statsDiv.style.display='none';loadMore.style.display='none';return;
+  }
+
+  if(issuesLoadState==='error'){
+    container.innerHTML=`<div class="issue-empty">
+      <div class="ei">!</div>
+      <h3>Couldn't load cached issues</h3>
+      <p>Please try again, or fetch live Good First Issues from GitHub.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+        <button class="btn-fetch-issues" onclick="loadCachedIssues()">Retry cache</button>
+        <button class="btn-load-more" onclick="fetchAllIssues()">Fetch live issues</button>
+      </div>
+    </div>`;
+    statsDiv.style.display='none';loadMore.style.display='none';return;
+  }
+
   if(!allIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei">+</div><h3>No issue data loaded yet</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
     statsDiv.style.display='none';loadMore.style.display='none';return;
   }
 
   if(!filteredIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei">?</div><h3>No issues match your filters</h3><p>Try a broader search, clear one filter, or switch to all categories.</p></div>`;
     statsDiv.style.display='flex';loadMore.style.display='none';
   } else {
     shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);

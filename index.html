@@ -1997,7 +1997,12 @@
     return aliases.some(alias => {
       const a = alias.toLowerCase();
       return tags.some(tag => {
-        const tokens = tag.toLowerCase().split(/[\s,/+]+/);
+        const normalizedTag = tag.toLowerCase();
+        // Exact match or multi-word substring check
+        if (normalizedTag === a || (a.includes(' ') && normalizedTag.includes(a))) {
+          return true;
+        }
+        const tokens = normalizedTag.split(/[\s,/+]+/);
         return tokens.includes(a);
       });
     });
@@ -2600,8 +2605,14 @@
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 focus-within:ring-2 focus-within:ring-primary/50 focus:ring-2 focus:ring-primary/50 focus:outline-none animate-fade-up';
       card.dataset.org = org.name;
+      card.tabIndex = 0;
+      card.setAttribute('role', 'article');
+      card.setAttribute('aria-label', `Organization: ${org.name}`);
+      card.addEventListener('click', () => {
+        openModal(org.name);
+      });
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
@@ -2997,6 +3008,64 @@
     renderWatchlist();
     updateAIInsights();
   }
+
+  function handleGridKeyboardNav(e) {
+    const card = e.target.closest('#orgGrid > article');
+    if (!card) return;
+
+    const cards = Array.from(document.querySelectorAll('#orgGrid > article'));
+    const index = cards.indexOf(card);
+    if (index === -1) return;
+
+    const getGridColumns = () => {
+      const grid = document.getElementById('orgGrid');
+      if (!grid || cards.length < 2) return 1;
+      const first = cards[0].getBoundingClientRect();
+      let cols = 1;
+      for (let i = 1; i < cards.length; i++) {
+        if (Math.abs(cards[i].getBoundingClientRect().top - first.top) < 5) {
+          cols++;
+        } else {
+          break;
+        }
+      }
+      return cols;
+    };
+
+    const cols = getGridColumns();
+    let targetIndex = -1;
+
+    switch (e.key) {
+      case 'ArrowRight':
+        targetIndex = index + 1;
+        break;
+      case 'ArrowLeft':
+        targetIndex = index - 1;
+        break;
+      case 'ArrowDown':
+        targetIndex = index + cols;
+        break;
+      case 'ArrowUp':
+        targetIndex = index - cols;
+        break;
+      case 'Enter':
+        if (e.target === card) {
+          e.preventDefault();
+          openModal(card.dataset.org);
+        }
+        return;
+      default:
+        return;
+    }
+
+    if (targetIndex >= 0 && targetIndex < cards.length) {
+      e.preventDefault();
+      cards[targetIndex].focus();
+      cards[targetIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  document.getElementById('orgGrid')?.addEventListener('keydown', handleGridKeyboardNav);
 
   // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {

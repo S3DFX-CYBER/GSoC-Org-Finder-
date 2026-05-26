@@ -2,6 +2,20 @@
 
 /* global ORGS */
 
+const SCORE_BREAKDOWN_MAX = {
+  lang: 40,
+  topic: 30,
+  activity: 15,
+  experience: 15,
+};
+
+function formatSkillLabel(skill) {
+  return String(skill)
+    .split(/[\s_-]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 /**
  * Retrieves the top 6 recommended organizations based on skills and profile.
  * 
@@ -48,7 +62,9 @@ function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, m
   });
 
   const langMatches = primaryLangs.length;
-  if (langMatches === 0) return 0;
+  if (langMatches === 0) {
+    return { score: 0, matched: [] };
+  }
 
   let langDelta = 0;
   if (langMatches >= 1) langDelta += 15;
@@ -58,7 +74,10 @@ function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, m
 
   const displayLangs = primaryLangs.slice(0, 2).join(", ");
   matchReasons.push(`Strong stack match: ${displayLangs}${primaryLangs.length > 2 ? '...' : ''}`);
-  return Math.min(langDelta, 40);
+  return {
+    score: Math.min(langDelta, SCORE_BREAKDOWN_MAX.lang),
+    matched: primaryLangs,
+  };
 }
 
 function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons) {
@@ -71,7 +90,9 @@ function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchRe
   });
 
   const topicMatches = matchedTopics.length;
-  if (topicMatches === 0) return 0;
+  if (topicMatches === 0) {
+    return { score: 0, matched: [] };
+  }
 
   let topicDelta = 0;
   if (topicMatches >= 1) topicDelta += 12;
@@ -79,7 +100,10 @@ function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchRe
   if (topicMatches >= 3) topicDelta += 8;
 
   matchReasons.push(`Fits your interests in ${matchedTopics[0]}`);
-  return Math.min(topicDelta, 30);
+  return {
+    score: Math.min(topicDelta, SCORE_BREAKDOWN_MAX.topic),
+    matched: matchedTopics,
+  };
 }
 
 function calculateActivityScore(githubProfile, org, matchReasons) {
@@ -146,13 +170,15 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   const orgTags = new Set((org.tags || []).map(t => orgNormalize(t.toLowerCase())));
   const orgCat = org.cat ? orgNormalize(org.cat.toLowerCase()) : '';
 
-  let score = 0;
-  
-  score += calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
-  score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
-  score += calculateActivityScore(githubProfile, org, matchReasons);
-  score += calculateExperienceScore(githubProfile, org, matchReasons);
-  score += calculateStabilityBonus(org, matchReasons);
+  const langResult = calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
+  const topicResult = calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
+  const activityScore = calculateActivityScore(githubProfile, org, matchReasons);
+  const experienceScore = calculateExperienceScore(githubProfile, org, matchReasons);
+  const stabilityBonus = calculateStabilityBonus(org, matchReasons);
+
+  const experienceDisplayScore = Math.min(experienceScore, SCORE_BREAKDOWN_MAX.experience);
+
+  let score = langResult.score + topicResult.score + activityScore + experienceScore + stabilityBonus;
 
   const cappedScore = Math.min(Math.round(score), 99);
   const tieBreaker = (org.name.length % 10) / 100 + (index % 100) / 10000;
@@ -162,13 +188,32 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
     matchReasons.push("Matches your general developer profile");
   }
 
+  const matchedDomains = [...new Set(topicResult.matched)];
+  if (org.cat && !matchedDomains.includes(orgNormalize(org.cat.toLowerCase()))) {
+    const catNorm = orgNormalize(org.cat.toLowerCase());
+    if (userTopics.has(catNorm) || userLanguages.has(catNorm)) {
+      matchedDomains.unshift(catNorm);
+    }
+  }
+
   return {
     orgIndex: index,
     org: org,
-    score: cappedScore, 
+    score: cappedScore,
     rawScore: finalRawScore,
     matchedSkills: [...new Set(matchedSkills)],
-    reasons: matchReasons
+    reasons: matchReasons,
+    scoreBreakdown: {
+      total: cappedScore,
+      breakdown: {
+        langScore: { score: langResult.score, max: SCORE_BREAKDOWN_MAX.lang },
+        topicScore: { score: topicResult.score, max: SCORE_BREAKDOWN_MAX.topic },
+        activityScore: { score: activityScore, max: SCORE_BREAKDOWN_MAX.activity },
+        experienceScore: { score: experienceDisplayScore, max: SCORE_BREAKDOWN_MAX.experience },
+      },
+      matchedLanguages: langResult.matched.map(formatSkillLabel),
+      matchedDomains: matchedDomains.map(formatSkillLabel),
+    },
   };
 }
 

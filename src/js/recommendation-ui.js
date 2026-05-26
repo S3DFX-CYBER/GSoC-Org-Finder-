@@ -54,6 +54,52 @@ const safeEscapeHtml = (str) => {
     .replaceAll("'", '&#039;');
 };
 
+const BREAKDOWN_METRICS = [
+  { key: 'langScore', label: 'Language Fit' },
+  { key: 'topicScore', label: 'Domain Interest' },
+  { key: 'activityScore', label: 'Activity Match' },
+  { key: 'experienceScore', label: 'Experience Level' },
+];
+
+function renderScoreBreakdownPanel(scoreBreakdown, panelId) {
+  if (!scoreBreakdown?.breakdown) return '';
+
+  const barsHtml = BREAKDOWN_METRICS.map(({ key, label }) => {
+    const item = scoreBreakdown.breakdown[key] || { score: 0, max: 1 };
+    const pct = item.max > 0 ? Math.round((item.score / item.max) * 100) : 0;
+    return `
+      <div class="match-bar-row">
+        <div class="match-bar-header">
+          <span class="match-bar-label">${label}</span>
+          <span class="match-bar-points">${item.score}/${item.max} pts</span>
+        </div>
+        <div class="match-bar" role="progressbar" aria-valuenow="${item.score}" aria-valuemin="0" aria-valuemax="${item.max}" aria-label="${label}">
+          <div class="match-bar-fill" style="--match-pct: ${pct}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const langPills = (scoreBreakdown.matchedLanguages || [])
+    .map((lang) => `<span class="match-pill match-pill-lang">${safeEscapeHtml(lang)}</span>`)
+    .join('');
+  const domainPills = (scoreBreakdown.matchedDomains || [])
+    .map((domain) => `<span class="match-pill match-pill-domain">${safeEscapeHtml(domain)}</span>`)
+    .join('');
+
+  const tagsHtml = (langPills || domainPills)
+    ? `<div class="match-pill-groups">
+        ${langPills ? `<div class="match-pill-group"><span class="match-pill-heading">Languages</span><div class="match-pill-list">${langPills}</div></div>` : ''}
+        ${domainPills ? `<div class="match-pill-group"><span class="match-pill-heading">Domains</span><div class="match-pill-list">${domainPills}</div></div>` : ''}
+       </div>`
+    : '';
+
+  return `
+    <div class="match-breakdown-panel hidden" id="${panelId}" aria-hidden="true">
+      <div class="match-breakdown-bars">${barsHtml}</div>
+      ${tagsHtml}
+    </div>`;
+}
+
 
 function handleBookmarkAction(e, btn) {
   e.stopPropagation();
@@ -192,6 +238,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareBtn && card) {
         return handleCompareAction(e, compareBtn, card);
       }
+
+      const breakdownBtn = target.closest('[data-breakdown-toggle]');
+      if (breakdownBtn) {
+        e.stopPropagation();
+        const panelId = breakdownBtn.getAttribute('aria-controls');
+        const panel = panelId ? document.getElementById(panelId) : null;
+        if (!panel) return;
+
+        const isOpen = !panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', isOpen);
+        panel.setAttribute('aria-hidden', String(isOpen));
+        breakdownBtn.setAttribute('aria-expanded', String(!isOpen));
+        breakdownBtn.classList.toggle('is-open', !isOpen);
+
+        if (!isOpen) {
+          const fills = panel.querySelectorAll('.match-bar-fill');
+          fills.forEach(el => el.style.width = '0%');
+          requestAnimationFrame(() => {
+            fills.forEach(el => {
+              el.style.width = el.style.getPropertyValue('--match-pct') || '0%';
+            });
+          });
+        }
+        return;
+      }
       
       if (card) {
         return handleCardActivation(card);
@@ -208,8 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentCompareList = globalThis.compareList || [];
     const currentBookmarkedSet = globalThis.bookmarkedSet || new Set();
 
-    const html = recs.map(rec => {
+    const html = recs.map((rec, recIndex) => {
       const o = rec.org;
+      const breakdownPanelId = `match-breakdown-${recIndex}`;
       const githubOwner = o.github ? o.github.split('/')[0] : '';
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
@@ -271,6 +343,18 @@ document.addEventListener('DOMContentLoaded', () => {
               ${reasonsHtml}
             </ul>
             ${matchedSkillsHtml}
+          </div>
+
+          <div class="match-breakdown-wrap mt-3">
+            <button type="button"
+                    class="match-breakdown-toggle"
+                    data-breakdown-toggle
+                    aria-expanded="false"
+                    aria-controls="${breakdownPanelId}">
+              View Score Breakdown
+              <span class="match-breakdown-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+            </button>
+            ${renderScoreBreakdownPanel(rec.scoreBreakdown, breakdownPanelId)}
           </div>
         </div>
 

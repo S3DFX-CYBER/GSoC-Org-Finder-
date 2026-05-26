@@ -14,15 +14,15 @@
 | 8 | @knoxiboy | 4 | 12 |
 | 9 | @MUKUL-PRASAD-SIGH | 4 | 9 |
 | 10 | @12fahed | 2 | 9 |
-| 11 | @AnirudhPhophalia | 3 | 6 |
-| 12 | @Mrigakshi-Rathore | 3 | 6 |
-| 13 | @Anushreebasics | 2 | 6 |
-| 14 | @sabeenaviklar | 2 | 6 |
-| 15 | @stealthwhizz | 2 | 6 |
-| 16 | @lourduradjou | 2 | 5 |
-| 17 | @nihalawasthi | 2 | 4 |
-| 18 | @SparshM8 | 2 | 4 |
-| 19 | @CoderOggy78 | 1 | 3 |
+| 11 | @nihalawasthi | 3 | 7 |
+| 12 | @AnirudhPhophalia | 3 | 6 |
+| 13 | @Mrigakshi-Rathore | 3 | 6 |
+| 14 | @Anushreebasics | 2 | 6 |
+| 15 | @sabeenaviklar | 2 | 6 |
+| 16 | @stealthwhizz | 2 | 6 |
+| 17 | @CoderOggy78 | 2 | 5 |
+| 18 | @lourduradjou | 2 | 5 |
+| 19 | @SparshM8 | 2 | 4 |
 | 20 | @AnirbansarkarS | 1 | 2 |
 | 21 | @Ayush-Patel-56 | 1 | 2 |
 | 22 | @BandhiyaHardik | 1 | 2 |
@@ -62,4 +62,4 @@
 | 56 | @uddalak2005 | 0 | 0 |
 | 57 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Tue, 26 May 2026 14:42:35 GMT
+Last updated: Tue, 26 May 2026 19:02:11 GMT

@@ -2615,7 +2615,16 @@
        timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
+    
+    const modalBg = document.querySelector('.modal-bg');
 
+    if (modalBg) {
+      modalBg.addEventListener('click', (e) => {
+        if (e.target === modalBg) {
+          modalBg.classList.remove('open');
+        }
+      });
+    }
     // Sanitize and set idea/repo links
     const ideasUrl = sanitizeHrefUrl(org.ideas);
     const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));

@@ -5,27 +5,27 @@
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
 | 🥇 | @4f4d | 7 | 37 |
-| 🥈 | @TarunyaProgrammer | 6 | 24 |
-| 🥉 | @KUMARNiru007 | 5 | 20 |
-| 4 | @saurabh24thakur | 3 | 17 |
-| 5 | @itsdakshjain | 4 | 12 |
-| 6 | @knoxiboy | 3 | 10 |
-| 7 | @MUKUL-PRASAD-SIGH | 4 | 9 |
-| 8 | @deepak0x | 3 | 9 |
-| 9 | @12fahed | 2 | 9 |
-| 10 | @AnirudhPhophalia | 3 | 6 |
-| 11 | @Balaji91221 | 3 | 6 |
-| 12 | @Anushreebasics | 2 | 6 |
-| 13 | @sabeenaviklar | 2 | 6 |
-| 14 | @stealthwhizz | 2 | 6 |
-| 15 | @lourduradjou | 2 | 5 |
-| 16 | @Mrigakshi-Rathore | 2 | 4 |
-| 17 | @SparshM8 | 2 | 4 |
-| 18 | @CoderOggy78 | 1 | 3 |
-| 19 | @AnirbansarkarS | 1 | 2 |
-| 20 | @Ayush-Patel-56 | 1 | 2 |
-| 21 | @BandhiyaHardik | 1 | 2 |
-| 22 | @nihalawasthi | 1 | 2 |
+| 🥈 | @TarunyaProgrammer | 7 | 29 |
+| 🥉 | @KUMARNiru007 | 6 | 22 |
+| 4 | @deepak0x | 5 | 20 |
+| 5 | @saurabh24thakur | 3 | 17 |
+| 6 | @Balaji91221 | 8 | 16 |
+| 7 | @itsdakshjain | 4 | 12 |
+| 8 | @knoxiboy | 4 | 12 |
+| 9 | @MUKUL-PRASAD-SIGH | 4 | 9 |
+| 10 | @12fahed | 2 | 9 |
+| 11 | @AnirudhPhophalia | 3 | 6 |
+| 12 | @Mrigakshi-Rathore | 3 | 6 |
+| 13 | @Anushreebasics | 2 | 6 |
+| 14 | @sabeenaviklar | 2 | 6 |
+| 15 | @stealthwhizz | 2 | 6 |
+| 16 | @lourduradjou | 2 | 5 |
+| 17 | @nihalawasthi | 2 | 4 |
+| 18 | @SparshM8 | 2 | 4 |
+| 19 | @CoderOggy78 | 1 | 3 |
+| 20 | @AnirbansarkarS | 1 | 2 |
+| 21 | @Ayush-Patel-56 | 1 | 2 |
+| 22 | @BandhiyaHardik | 1 | 2 |
 | 23 | @piyushdotcomm | 1 | 2 |
 | 24 | @Sagar-Datkhile | 1 | 2 |
 | 25 | @aanjalii01 | 0 | 0 |
@@ -62,4 +62,4 @@
 | 56 | @uddalak2005 | 0 | 0 |
 | 57 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Mon, 25 May 2026 18:56:09 GMT
+Last updated: Tue, 26 May 2026 14:42:35 GMT

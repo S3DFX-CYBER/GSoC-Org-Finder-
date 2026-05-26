@@ -723,12 +723,12 @@ footer a:hover{text-decoration:underline}
 
 /* C: Org card grid breakpoints */
 @media (max-width: 900px) {
-  #orgsGrid {
+  #orgGrid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 @media (max-width: 640px) {
-  #orgsGrid {
+  #orgGrid {
     grid-template-columns: 1fr !important;
   }
 }
@@ -754,16 +754,3 @@ body { overflow-x: hidden; }
   }
 }
 
-/* Org card grid — 2 col on tablet */
-@media (max-width: 900px) {
-  #orgGrid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-/* Org card grid — 1 col on phone */
-@media (max-width: 640px) {
-  #orgGrid {
-    grid-template-columns: 1fr !important;
-  }
-}

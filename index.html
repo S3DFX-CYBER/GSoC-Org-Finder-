@@ -103,6 +103,18 @@
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
+    /* Screen reader only - for accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
 
     /* Modal Styles */
     .modal-bg {
@@ -225,8 +237,8 @@
     .bookmark-btn:hover { transform: scale(1.2); }
 
     /* Base mobile-first styles */
-    html, body { width: 100%; overflow-x: hidden; }
-    html { scroll-behavior: smooth; }
+    body { width: 100%; overflow-x: hidden; }
+    html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
     #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
@@ -342,6 +354,150 @@
     .dark #mobileMenu .text-zinc-700 { color: #e5e7eb !important; }
     .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
     .dark #mobileMenu .bg-orange-50 { background: rgba(249, 115, 22, 0.15) !important; }
+
+    /* Badge Notification Toast */
+    .badge-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(249, 115, 22, 0.4);
+      z-index: 9999;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 320px;
+    }
+    .badge-notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .badge-notification-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge-notification-icon {
+      font-size: 32px;
+      animation: badgePulse 0.6s ease-out;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .badge-notification-text {
+      flex: 1;
+    }
+    .badge-notification-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-notification-desc {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .badge-notification-progress {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    /* Badge Display in Analytics Panel */
+    .badge-card {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border: 2px solid #fed7aa;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .badge-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+    }
+    .badge-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .badge-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9d4300;
+      margin-bottom: 4px;
+    }
+    .badge-level {
+      font-size: 10px;
+      font-weight: 600;
+      color: #c2410c;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-progress {
+      margin-top: 6px;
+      height: 4px;
+      background: rgba(157, 67, 0, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .badge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      transition: width 0.3s ease;
+    }
+    .badge-count {
+      font-size: 11px;
+      color: #92600A;
+      margin-top: 4px;
+    }
+    .badge-locked {
+      opacity: 0.5;
+      filter: grayscale(1);
+    }
+    .badge-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      border: 1.5px solid #fed7aa;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #9d4300;
+    }
+
+    /* Dark mode - Badges */
+    .dark .badge-notification {
+      background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+    }
+    .dark .badge-card {
+      background: linear-gradient(135deg, #1c0f05 0%, #2a1508 100%);
+      border-color: #3a1f0a;
+    }
+    .dark .badge-name {
+      color: #fb923c;
+    }
+    .dark .badge-level {
+      color: #fdba74;
+    }
+    .dark .badge-count {
+      color: #fb923c;
+    }
+    .dark .badge-progress {
+      background: rgba(251, 146, 60, 0.2);
+    }
+    .dark .badge-indicator {
+      background: linear-gradient(135deg, #1c0f05, #2a1508);
+      border-color: #3a1f0a;
+      color: #fb923c;
+    }
 
     /* Header dark mode */
     .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
@@ -471,7 +627,6 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
       </nav>
     </div>
     
@@ -484,6 +639,17 @@
     
         <span class="material-symbols-outlined text-zinc-600">
           dark_mode
+        </span>
+      </button>
+    
+      <!-- ANALYTICS BUTTON -->
+      <button id="analyticsBtn" onclick="openAnalytics()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="View Analytics & Badges"
+        aria-label="View Analytics and Badges">
+    
+        <span class="material-symbols-outlined text-zinc-600">
+          analytics
         </span>
       </button>
     
@@ -559,10 +725,6 @@
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
-      </a>
     </div>
     
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
@@ -590,7 +752,7 @@
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -663,9 +825,12 @@
   </div>
   <div class="mt-2 flex items-center gap-2">
     <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
       <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
     </label>
+    <span id="languageLogicHint" 
+    class="text-xs text-primary font-medium italic">
+    </span>
   </div>
 </section>
 
@@ -674,7 +839,7 @@
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
         <option value="programming">Programming</option>
@@ -686,13 +851,13 @@
         <option value="media">Media</option>
         <option value="other">Other</option>
       </select>
-      <select id="complexityFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="complexityFilter" aria-label="Filter by complexity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Complexity: All</option>
         <option value="beginner">Beginner</option>
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
-      <select id="sortSelect" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -705,13 +870,18 @@
   
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
-  
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+
+  <div class="w-full max-h-[720px] overflow-y-auto border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
+    
+    <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="orgGrid">
     </div>
-  </div>
+    <div class="mt-10 mb-4 flex justify-center w-full" id="loadMoreContainer">
+        <button id="loadMoreBtn" class="px-12 py-4 bg-teal-500 text-white font-headline font-bold rounded-full text-sm hover:bg-teal-600 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-teal-500/20 flex items-center gap-3" onclick="loadMoreOrgs()">
+            View More Organizations 
+            <span class="material-symbols-outlined text-lg animate-bounce">expand_more</span>
+        </button>
+    </div>
+</div>
 
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
@@ -722,12 +892,7 @@
       Clear All Filters
     </button>
   </div>
-
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
-  </div>
+  
 </section>
 
 <!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
@@ -811,8 +976,23 @@
       </button>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 space-y-4" id="watchlistContainer">
-        <!-- Watchlist items will be rendered here -->
+      <div class="lg:col-span-2 space-y-6">
+        <div id="recentlyViewedSection" class="space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
+              <h3 class="text-lg font-bold text-zinc-900">Recently Viewed Organizations</h3>
+              <span id="recentlyViewedOverflowBadge" class="hidden rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-zinc-500">+0</span>
+            </div>
+            <button id="clearRecentlyViewedBtn" class="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-500 transition-colors" aria-label="Clear All recently viewed organizations">Clear All</button>
+          </div>
+          <div id="recentlyViewedContainer" class="space-y-3">
+            <!-- Recently viewed items will be rendered here -->
+          </div>
+        </div>
+
+        <div class="space-y-4" id="watchlistContainer">
+          <!-- Watchlist items will be rendered here -->
+        </div>
       </div>
       <!-- Sidebar -->
       <div class="space-y-6">
@@ -945,11 +1125,15 @@
       </div>
     </div>
 
+    <div id="mentorsScrollContainer" class="w-full max-h-[720px] overflow-y-auto animate-rainbow-bg border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 ease-in-out hover:border-teal-500 hover:shadow-2xl hover:shadow-teal-500/10">
+    
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-      </div>
+        <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
+            <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+        </div>
     </div>
+
+</div>
   </div>
 </section>
  
@@ -1119,7 +1303,7 @@
 </section>
 
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100">
+<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
   <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
@@ -1129,6 +1313,10 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
@@ -1200,6 +1388,89 @@
     </div>
     <div class="modal-body p-6 overflow-x-auto" id="compareModalBody">
       <!-- Injected table -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
+
+<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
+  <div class="modal w-full max-w-4xl">
+    <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header pb-4 border-b border-zinc-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-extrabold font-headline">Analytics & Achievements</h2>
+          <p class="text-zinc-500 text-sm mt-1">Your activity stats and unlocked badges</p>
+          <p class="text-zinc-400 text-xs mt-1 flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:14px">info</span>
+            Badges are stored locally in your browser (per-device, cleared with browser data)
+          </p>
+        </div>
+        <span class="badge-indicator" id="badgeIndicator">
+          <span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> 0/16
+        </span>
+      </div>
+    </div>
+    <div class="modal-body p-6">
+      <!-- Stats Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px">
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aTot">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Total Visits</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aToday">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Today</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aSearches">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Searches</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aViews">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Org Views</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aFilters">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Filters Used</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:900;margin-bottom:2px" id="aTime">—</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Session Time</div>
+        </div>
+      </div>
+
+      <!-- Badges Section -->
+      <div style="margin-bottom:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">🏆 Achievement Badges</h3>
+          <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.background='rgba(197,48,48,.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+            Reset Progress
+          </button>
+        </div>
+        <div id="badgesContainer">
+          <!-- Badges will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Top Categories -->
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Top Categories</h3>
+        <div id="catChart"></div>
+      </div>
+
+      <!-- Top Organizations -->
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Most Viewed Orgs</h3>
+        <div id="orgChart"></div>
+      </div>
+
+      <!-- Search Terms -->
+      <div>
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Recent Searches</h3>
+        <div id="srchTerms"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1407,6 +1678,24 @@
     return path ? `https://github.com/${path}` : null;
   }
 
+  const CATEGORY_META = {
+    science: { className: 'bg-blue-100 text-blue-700', label: 'Science' },
+    programming: { className: 'bg-violet-100 text-violet-700', label: 'Programming' },
+    data: { className: 'bg-cyan-100 text-cyan-700', label: 'Data' },
+    web: { className: 'bg-green-100 text-green-700', label: 'Web' },
+    os: { className: 'bg-orange-100 text-orange-700', label: 'OS / Systems' },
+    security: { className: 'bg-red-100 text-red-700', label: 'Security' },
+    media: { className: 'bg-pink-100 text-pink-700', label: 'Media' },
+    infra: { className: 'bg-yellow-100 text-yellow-700', label: 'Infrastructure' },
+    ai: { className: 'bg-purple-100 text-purple-700', label: 'AI / ML' },
+    dev: { className: 'bg-teal-100 text-teal-700', label: 'Dev Tools' },
+    other: { className: 'bg-zinc-100 text-zinc-600', label: 'Other' },
+  };
+
+  function getCategoryMeta(category) {
+    return CATEGORY_META[category] || CATEGORY_META.other;
+  }
+
   // NOTE: For JS-string contexts inside inline event handlers,
   // we must also escape quotes. Prefer removing inline handlers.
 
@@ -1421,6 +1710,25 @@
   let compareList = [];
   const bookmarkedSet = (() => {
     return new Set(parseStoredBookmarks());
+  })();
+
+  // Recently Viewed Organizations
+  const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
+  const RECENTLY_VIEWED_LIMIT = 8;
+  let recentlyViewed = (() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+      if (!Array.isArray(parsed)) return [];
+      const orgNames = new Set(ORGS.map(org => org.name));
+      const seen = new Set();
+      return parsed.filter(name => {
+        if (typeof name !== 'string' || !orgNames.has(name) || seen.has(name)) return false;
+        seen.add(name);
+        return true;
+      });
+    } catch {
+      return [];
+    }
   })();
 
   const selectedLanguages = new Set();
@@ -1566,6 +1874,11 @@
     if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
     else selectedLanguages.add(langDisplay);
     renderSelectedLanguages();
+    
+    // Track filter badge when user toggles language pill
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
     applyFilters();
   };
 
@@ -2290,12 +2603,106 @@
     renderCompareModal();
     document.getElementById('compareModal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Track badge progress only when comparison is actually opened with 2+ orgs
+    if (typeof BadgeSystem !== 'undefined' && compareList.length >= 2) {
+      BadgeSystem.trackComparison();
+    }
   }
 
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
     document.body.style.overflow = 'auto';
   }
+
+  // ══════════════════════════════════════════════
+  // ANALYTICS PANEL
+  // ══════════════════════════════════════════════
+  let prevFocusBeforeAnalytics = null;
+
+  window.openAnalytics = function() {
+    // Save current focus
+    prevFocusBeforeAnalytics = document.activeElement;
+
+    // Render badges if BadgeSystem is available
+    if (typeof BadgeSystem !== 'undefined') {
+      renderBadges();
+    }
+    
+    const modal = document.getElementById('anBg');
+    modal?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Focus the close button for keyboard accessibility
+    setTimeout(() => {
+      const closeBtn = modal?.querySelector('.close-btn');
+      closeBtn?.focus();
+    }, 100);
+  };
+
+  window.closeAn = function() {
+    document.getElementById('anBg')?.classList.remove('open');
+    document.body.style.overflow = 'auto';
+
+    // Restore focus to the element that opened the modal
+    if (prevFocusBeforeAnalytics && document.contains(prevFocusBeforeAnalytics)) {
+      prevFocusBeforeAnalytics.focus();
+    }
+    prevFocusBeforeAnalytics = null;
+  };
+
+  window.closeAnEvent = function(e) {
+    if (e.target.id === 'anBg') {
+      closeAn();
+    }
+  };
+
+  function renderBadges() {
+    const badgesContainer = document.getElementById('badgesContainer');
+    if (!badgesContainer || typeof BadgeSystem === 'undefined') return;
+    
+    const stats = BadgeSystem.getBadgeStats();
+    const unlockedCount = BadgeSystem.getUnlockedCount();
+    const totalCount = BadgeSystem.getTotalBadgesCount();
+    
+    let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px">';
+    
+    Object.keys(stats).forEach(badgeType => {
+      const badge = stats[badgeType];
+      const isLocked = !badge.level;
+      const icon = badge.name.split(' ')[0];
+      const levelName = badge.level ? badge.level.levelName : 'Locked';
+      const progress = badge.progress;
+      
+      html += `
+        <div class="badge-card ${isLocked ? 'badge-locked' : ''}">
+          <span class="badge-icon">${icon}</span>
+          <div class="badge-name">${escapeHtml(badge.name.substring(2))}</div>
+          <div class="badge-level">${escapeHtml(levelName)}</div>
+          <div class="badge-count">${badge.count}${badge.nextThreshold ? ' / ' + badge.nextThreshold : ''}</div>
+          <div class="badge-progress">
+            <div class="badge-progress-fill" style="width:${progress}%"></div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    badgesContainer.innerHTML = html;
+    
+    // Update badge indicator in header
+    const badgeIndicator = document.getElementById('badgeIndicator');
+    if (badgeIndicator) {
+      badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${unlockedCount}/${totalCount}`;
+    }
+  }
+
+  // Listen for badge reset event
+  document.addEventListener('badgesReset', () => {
+    if (document.getElementById('anBg')?.classList.contains('open')) {
+      renderBadges();
+    }
+  });
 
   document.getElementById('compareModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'compareModal') closeCompareModal();
@@ -2307,6 +2714,8 @@
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
+    } else if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
     }
   });
   
@@ -2428,27 +2837,7 @@
       const logoUrl     = githubOwner
         ? `https://github.com/${githubOwner}.png?size=80`
         : '';
-
-      // Category colour mapping (mirrors the existing badge system)
-      const CAT_COLOURS = {
-        science: 'bg-blue-100 text-blue-700',
-        programming: 'bg-violet-100 text-violet-700',
-        data: 'bg-cyan-100 text-cyan-700',
-        web: 'bg-green-100 text-green-700',
-        os: 'bg-orange-100 text-orange-700',
-        security: 'bg-red-100 text-red-700',
-        media: 'bg-pink-100 text-pink-700',
-        infra: 'bg-yellow-100 text-yellow-700',
-        ai: 'bg-purple-100 text-purple-700',
-        dev: 'bg-teal-100 text-teal-700',
-        other: 'bg-zinc-100 text-zinc-600',
-      };
-      const catClass = CAT_COLOURS[org.cat] || CAT_COLOURS.other;
-      const catLabel = {
-        science:'Science', programming:'Programming', data:'Data', web:'Web',
-        os:'OS / Systems', security:'Security', media:'Media', infra:'Infrastructure',
-        ai:'AI / ML', dev:'Dev Tools', other:'Other',
-      }[org.cat] || org.cat;
+      const category = getCategoryMeta(org.cat);
 
       const topTags = (org.tags || []).slice(0, 4)
         .map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded text-zinc-600">${escapeHtml(t)}</span>`)
@@ -2474,7 +2863,7 @@
           <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
             <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${catClass}">${escapeHtml(catLabel)}</span>
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${escapeHtml(category.label)}</span>
               <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
             </div>
           </div>
@@ -2503,6 +2892,17 @@
       attachOrgCardListeners(item);
     });
   }
+
+// Deletes the script structure logic. 
+// Keep only what is needed for the original project:
+window.loadMoreOrgs = function() {
+    
+    hasLoadedMore = true;
+    orgsContainer.classList.remove('max-h-[720px]'); 
+    orgsContainer.classList.add('max-h-none'); 
+    document.getElementById('loadMoreContainer').style.display = 'none';
+};
+
 
   // ── updateAIInsights ─────────────────────────────────────────────────────────
   /**
@@ -2603,9 +3003,112 @@
       </div>`;
   }
 
+  function addRecentlyViewed(name) {
+    if (!name) return;
+    try {
+      // Remove if already exists, then add to front
+      recentlyViewed = recentlyViewed.filter(n => n !== name);
+      recentlyViewed.unshift(name);
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to add to recently viewed:', e);
+    }
+  }
+
+  function persistRecentlyViewed() {
+    try {
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
+    } catch (error) {
+      console.warn('Recently viewed persistence failed:', error);
+    }
+  }
+
+  function removeRecentlyViewed(name) {
+    try {
+      recentlyViewed = recentlyViewed.filter(n => n !== name);
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to remove from recently viewed:', e);
+    }
+  }
+
+  function clearRecentlyViewed() {
+    try {
+      recentlyViewed = [];
+      persistRecentlyViewed();
+      renderRecentlyViewed();
+    } catch (e) {
+      console.warn('Failed to clear recently viewed:', e);
+    }
+  }
+
+  function renderRecentlyViewed() {
+    const section = document.getElementById('recentlyViewedSection');
+    const container = document.getElementById('recentlyViewedContainer');
+    const overflowBadge = document.getElementById('recentlyViewedOverflowBadge');
+    if (!section || !container) return;
+
+    // Hide section if empty
+    if (recentlyViewed.length === 0) {
+      section.classList.add('hidden');
+      overflowBadge?.classList.add('hidden');
+      return;
+    }
+
+    section.classList.remove('hidden');
+    container.innerHTML = '';
+
+    const overflowCount = Math.max(recentlyViewed.length - RECENTLY_VIEWED_LIMIT, 0);
+    if (overflowBadge) {
+      overflowBadge.textContent = overflowCount > 0 ? `+${overflowCount}` : '';
+      overflowBadge.classList.toggle('hidden', overflowCount === 0);
+    }
+
+    recentlyViewed.slice(0, RECENTLY_VIEWED_LIMIT).forEach(name => {
+      const org = ORGS.find(o => o.name === name);
+      if (!org) return;
+      const category = getCategoryMeta(org.cat);
+
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-lg p-4 border border-zinc-100 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
+      card.innerHTML = `
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm mb-1">${escapeHtml(org.name)}</h4>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${escapeHtml(category.label)}</span>
+            <span class="text-[10px] text-zinc-500">${escapeHtml(String(org.years))} years</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 ml-2 flex-shrink-0">
+          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${escapeHtml(name)}" title="Remove from recently viewed" aria-label="Remove ${escapeHtml(name)} from recently viewed">
+            <span class="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      `;
+      card.onclick = () => openModal(org.name);
+      container.appendChild(card);
+    });
+
+    // Wire up remove buttons
+    container.querySelectorAll('[data-remove-recent]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        removeRecentlyViewed(btn.dataset.removeRecent);
+      });
+    });
+  }
+
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
+    addRecentlyViewed(name);
+
+    // Track badge progress for org views
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackOrgView();
+    }
 
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
@@ -2777,9 +3280,28 @@ if(org.ideas){
     renderOrgs(true);
   };
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-  document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-  document.getElementById('complexityFilter').addEventListener('change', applyFilters);
+  document.getElementById('searchInput').addEventListener('input', () => {
+    // Track search badge when user types a search query
+    const query = document.getElementById('searchInput').value.trim();
+    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+      BadgeSystem.trackSearch();
+    }
+    applyFilters();
+  });
+  document.getElementById('categoryFilter').addEventListener('change', () => {
+    // Track filter badge when user changes category
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
+  document.getElementById('complexityFilter').addEventListener('change', () => {
+    // Track filter badge when user changes complexity
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackFilter();
+    }
+    applyFilters();
+  });
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
   document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
   document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
@@ -2788,6 +3310,7 @@ if(org.ideas){
     // keep global in sync for any external code expecting `matchAllLanguages`
     globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
+    updateLanguageModeHint();
   });
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
@@ -2804,6 +3327,12 @@ if(org.ideas){
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
+      
+      // Track search badge when user types in hero search
+      const query = e.target.value.trim();
+      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+        BadgeSystem.trackSearch();
+      }
       applyFilters();
     });
   }
@@ -3044,10 +3573,13 @@ if(org.ideas){
   })();
   renderOrgs();
   renderWatchlist();
+  renderRecentlyViewed();
   updateAIInsights();   // populate AI insight panel on page load
   loadMentorData();
   renderGoodFirstIssues();
   renderCompare();
+  // Wire up Recently Viewed clear button
+  document.getElementById('clearRecentlyViewedBtn')?.addEventListener('click', clearRecentlyViewed);
 
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;
@@ -3161,6 +3693,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+<script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

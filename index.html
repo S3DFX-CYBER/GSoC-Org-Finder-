@@ -1287,7 +1287,7 @@
     </div>
 
     <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
-      <button id="loadMoreMentorBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+      <button type="button" id="loadMoreMentorBtn" aria-label="Load more mentors" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
         View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
       </button>
     </div>
@@ -2340,7 +2340,10 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
-      document.getElementById('loadMoreMentorContainer').style.display = 'none';
+      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+      if (loadMoreContainer) {
+        loadMoreContainer.style.display = 'none';
+      }
       return;
     }
 
@@ -2412,10 +2415,13 @@ sections.forEach(sectionId => {
       grid.appendChild(article);
     });
 
-    if (visibleMentorCount < filteredRecords.length) {
-      document.getElementById('loadMoreMentorContainer').style.display = 'flex';
-    } else {
-      document.getElementById('loadMoreMentorContainer').style.display = 'none';
+    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+    if (loadMoreContainer) {
+      if (visibleMentorCount < filteredRecords.length) {
+        loadMoreContainer.style.display = 'flex';
+      } else {
+        loadMoreContainer.style.display = 'none';
+      }
     }
     attachOrgCardListeners(grid);
   }
@@ -3544,7 +3550,7 @@ if(org.ideas){
     renderOrgs(false);
   });
 
-  document.getElementById('loadMoreMentorBtn').addEventListener('click', () => {
+  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
     visibleMentorCount += 12;
     renderMentorFinder(false);
   });

@@ -705,14 +705,21 @@
   
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
-  
+  <div class="w-full max-h-[720px] overflow-y-auto border border-zinc-200 rounded-2xl my-8 p-6 shadow-xl relative bg-zinc-50 transition-all duration-500">
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
     <div class="col-span-full py-20 text-center animate-pulse">
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
+    
   </div>
-
+<div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
+    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
+    </button>
+  </div>
+  </div>
+  
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -723,11 +730,7 @@
     </button>
   </div>
 
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
-  </div>
+
 </section>
 
 <!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
@@ -945,7 +948,7 @@
       </div>
     </div>
 
-    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full max-h-[720px] overflow-y-auto border border-zinc-200 rounded-2xl my-8 p-6 shadow-xl relative bg-zinc-50">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>

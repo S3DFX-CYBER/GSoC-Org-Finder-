@@ -74,7 +74,7 @@ async function analyzeOrg({ name, repo }) {
     const commitFrequency = Array.isArray(commits) ? commits.length / 90 : 0;
 
     const issues = await fetchJSON(
-      `https://api.github.com/repos/${repo}/issues?state=closed&since=${since}&per_page=30`
+      `https://api.github.com/repos/${repo}/issues?state=closed&since=${since}&per_page=100`
     );
     let issueResponseDays = 14; 
     if (Array.isArray(issues) && issues.length > 0) {
@@ -88,7 +88,7 @@ async function analyzeOrg({ name, repo }) {
 
     // Fetch PRs
     const prs = await fetchJSON(
-      `https://api.github.com/repos/${repo}/pulls?state=closed&since=${since}&per_page=30`
+      `https://api.github.com/repos/${repo}/pulls?state=closed&since=${since}&per_page=100`
     );
     let prMergeRate = 0.5; 
     if (Array.isArray(prs) && prs.length > 0) {

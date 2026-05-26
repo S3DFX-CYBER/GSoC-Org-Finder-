@@ -1221,14 +1221,10 @@
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script>
   let communityActivity = {};
-  fetch('data/community_activity.json?v=' + Date.now())
+  fetch('data/community_activity.json?v=' + new Date().toISOString().slice(0, 10))
     .then(r => r.json())
-    .then(data => { communityActivity = data; renderOrgs(false); })
+    .then(data => { communityActivity = data; applyFilters(); })
     .catch(() => { communityActivity = {}; });
-
-  function escapeHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
 
   function getActivityBadge(orgName) {
     const a = communityActivity[orgName];

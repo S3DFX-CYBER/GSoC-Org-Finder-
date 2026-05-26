@@ -931,7 +931,13 @@
   "Genome Assembly and Annotation": {
     "org": "Genome Assembly and Annotation",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/genome-assembly-and-annotation",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Email",
+        "url": "mailto:helpdesk@ensembl.org",
+        "label": "helpdesk@ensembl.org"
+      }
+    ],
     "mentors": [
       {
         "name": "Senthilnathan Vijayaraja",
@@ -1059,14 +1065,8 @@
         "githubUrl": ""
       }
     ],
-    "mailingLists": [
-      {
-        "type": "Email",
-        "url": "mailto:helpdesk@ensembl.org",
-        "label": "helpdesk@ensembl.org"
-      }
-    ],
-    "tip": "Contact the EMBL-EBI GSoC helpdesk at helpdesk@ensembl.org; project teams also coordinate through Slack and mailing lists.",
+    "mailingLists": [],
+    "tip": "Contact the EMBL-EBI GSoC helpdesk at helpdesk@ensembl.org for project questions.",
     "status": "ok",
     "lastFetched": "2026-05-26T00:00:00.000Z"
   },

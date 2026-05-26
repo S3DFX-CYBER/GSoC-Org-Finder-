@@ -861,15 +861,32 @@ function updateStats(){
 // ══════════════════════════════════════════════
 // KEYBOARD NAVIGATION
 // ══════════════════════════════════════════════
-const GRID_COLS=()=>{
-  const g=document.getElementById('orgGrid');
-  if(!g||!g.children.length)return 3;
-  const firstRect=g.children[0].getBoundingClientRect();
-  let cols=1;
-  for(let i=1;i<g.children.length;i++){
-    if(Math.abs(g.children[i].getBoundingClientRect().top-firstRect.top)<5)cols++;
-    else break;
+cconst GRID_COLS = () => {
+  const g = document.getElementById('orgGrid');
+  
+  // 1. Safety check: ensure element exists
+  if (!g) return 3;
+
+  // 2. Target only the cards, ignore loading spinners or empty-state text
+  const cards = g.querySelectorAll('.org-card');
+  
+  // 3. If no cards exist, return default
+  if (cards.length === 0) return 3;
+
+  const firstRect = cards[0].getBoundingClientRect();
+  let cols = 1;
+
+  // 4. Loop through remaining cards and check if they are on the same "top" line
+  for (let i = 1; i < cards.length; i++) {
+    const currentRect = cards[i].getBoundingClientRect();
+    // Using a tolerance of 5px for sub-pixel rendering differences
+    if (Math.abs(currentRect.top - firstRect.top) < 5) {
+      cols++;
+    } else {
+      break;
+    }
   }
+  
   return cols;
 };
 

@@ -1783,61 +1783,78 @@
   "MDAnalysis": {
     "org": "MDAnalysis",
     "ideasUrl": "https://github.com/MDAnalysis/mdanalysis/wiki/Google-Summer-of-Code",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/fXTSfDJyxE",
+        "label": "MDAnalysis Discord"
+      },
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/MDAnalysis/mdanalysis/discussions",
+        "label": "MDAnalysis Discussions"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
+        "name": "Brady Johnston",
         "github": "BradyAJohnston",
         "githubUrl": "https://github.com/BradyAJohnston"
       },
       {
-        "name": "",
+        "name": "Oliver Beckstein",
         "github": "orbeckst",
         "githubUrl": "https://github.com/orbeckst"
       },
       {
-        "name": "",
+        "name": "Talha Agaev",
         "github": "talagayev",
         "githubUrl": "https://github.com/talagayev"
       },
       {
-        "name": "",
+        "name": "Yuxuan Zhuang",
         "github": "yuxuanzhuang",
         "githubUrl": "https://github.com/yuxuanzhuang"
       },
       {
-        "name": "",
+        "name": "Li-Ting Chong",
         "github": "ltchong",
         "githubUrl": "https://github.com/ltchong"
       },
       {
-        "name": "",
+        "name": "Nilay Verma",
         "github": "nilay-v3rma",
         "githubUrl": "https://github.com/nilay-v3rma"
       },
       {
-        "name": "",
+        "name": "Jenna Swann",
         "github": "jennaswa",
         "githubUrl": "https://github.com/jennaswa"
       },
       {
-        "name": "",
+        "name": "Irfan Alibay",
         "github": "IAlibay",
         "githubUrl": "https://github.com/IAlibay"
       },
       {
-        "name": "",
+        "name": "Matthias Heyden",
         "github": "HeydenLabASU",
         "githubUrl": "https://github.com/HeydenLabASU"
       },
       {
-        "name": "",
+        "name": "Amruthesh T",
         "github": "amruthesht",
         "githubUrl": "https://github.com/amruthesht"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/mdnalysis-discussion",
+        "label": "MDAnalysis Discussion Group (archival)"
+      }
+    ],
+    "tip": "Review the MDAnalysis GSoC ideas page and engage with the community before submitting a proposal.",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

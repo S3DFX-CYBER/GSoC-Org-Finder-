@@ -1,96 +1,65 @@
-# 🏆 Mentor Leaderboard
+# 🏆 Mentor Review Leaderboard
 
-> Dynamic mentor activity ranking based on approvals, merged reviews, quality scoring, assignment participation, and activity recency.
+> Tracks mentor review activity and review quality across all merged pull requests.
 
-Generated: 2026-05-20T19:00:35.073Z
+| Rank | Mentor | Reviews | Score |
+|------|--------|---------|-------|
+| 🥇 | @4f4d | 7 | 37 |
+| 🥈 | @TarunyaProgrammer | 7 | 29 |
+| 🥉 | @KUMARNiru007 | 6 | 22 |
+| 4 | @deepak0x | 5 | 20 |
+| 5 | @saurabh24thakur | 3 | 17 |
+| 6 | @Balaji91221 | 8 | 16 |
+| 7 | @itsdakshjain | 4 | 12 |
+| 8 | @knoxiboy | 4 | 12 |
+| 9 | @MUKUL-PRASAD-SIGH | 4 | 9 |
+| 10 | @12fahed | 2 | 9 |
+| 11 | @nihalawasthi | 3 | 7 |
+| 12 | @AnirudhPhophalia | 3 | 6 |
+| 13 | @Mrigakshi-Rathore | 3 | 6 |
+| 14 | @Anushreebasics | 2 | 6 |
+| 15 | @sabeenaviklar | 2 | 6 |
+| 16 | @stealthwhizz | 2 | 6 |
+| 17 | @CoderOggy78 | 2 | 5 |
+| 18 | @lourduradjou | 2 | 5 |
+| 19 | @SparshM8 | 2 | 4 |
+| 20 | @AnirbansarkarS | 1 | 2 |
+| 21 | @Ayush-Patel-56 | 1 | 2 |
+| 22 | @BandhiyaHardik | 1 | 2 |
+| 23 | @piyushdotcomm | 1 | 2 |
+| 24 | @Sagar-Datkhile | 1 | 2 |
+| 25 | @aanjalii01 | 0 | 0 |
+| 26 | @adithyan-css | 0 | 0 |
+| 27 | @AditthyaSS | 0 | 0 |
+| 28 | @anubhavxdev | 0 | 0 |
+| 29 | @aryanbhutani26 | 0 | 0 |
+| 30 | @ayu-yishu13 | 0 | 0 |
+| 31 | @Ayushh-Sharmaa | 0 | 0 |
+| 32 | @coder-zs-cse | 0 | 0 |
+| 33 | @deepaksinghh12 | 0 | 0 |
+| 34 | @DevROHIT11 | 0 | 0 |
+| 35 | @Haile-12 | 0 | 0 |
+| 36 | @JoeCelaster | 0 | 0 |
+| 37 | @kallal79 | 0 | 0 |
+| 38 | @KaranGupta2005 | 0 | 0 |
+| 39 | @lovestaco | 0 | 0 |
+| 40 | @magic-peach | 0 | 0 |
+| 41 | @Maxd646 | 0 | 0 |
+| 42 | @MAYANKSHARMA01010 | 0 | 0 |
+| 43 | @Mohit-368 | 0 | 0 |
+| 44 | @morningstarxcdcode | 0 | 0 |
+| 45 | @oasis-parzival | 0 | 0 |
+| 46 | @Precise-Goals | 0 | 0 |
+| 47 | @preetbiswas12 | 0 | 0 |
+| 48 | @rounakkraaj-1744 | 0 | 0 |
+| 49 | @Satya900 | 0 | 0 |
+| 50 | @Shravanthi20 | 0 | 0 |
+| 51 | @sparshagarwal0411 | 0 | 0 |
+| 52 | @subratamondalnsec | 0 | 0 |
+| 53 | @Suvanwita | 0 | 0 |
+| 54 | @SyedImtiyaz-1 | 0 | 0 |
+| 55 | @thakurutkarsh22 | 0 | 0 |
+| 56 | @uddalak2005 | 0 | 0 |
+| 57 | @vanshaggarwal07 | 0 | 0 |
 
-| Rank | Mentor | Score | Approvals | Merged Reviews | Quality | Activity |
-|---:|---|---:|---:|---:|---:|---|
-| 🥇 | @12fahed | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| 🥈 | @1754riya | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| 🥉 | @aanjalii01 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #4 | @aayushi1806sharma-afk | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #5 | @abhishekraoas | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #6 | @adithyan-css | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #7 | @aditthyass | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #8 | @anirbansarkars | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #9 | @anirudhphophalia | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #10 | @anubhavxdev | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #11 | @anushreebasics | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #12 | @aryanbhutani26 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #13 | @ashutoshraj1260 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #14 | @ayu-yishu13 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #15 | @ayush-patel-56 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #16 | @ayushh-sharmaa | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #17 | @balaji91221 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #18 | @bandhiyahardik | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #19 | @bishal2623 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #20 | @coder-zs-cse | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #21 | @coderoggy78 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #22 | @deepak0x | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #23 | @deepaksinghh12 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #24 | @devnil434 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #25 | @devrohit11 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #26 | @diksha78dev | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #27 | @eswaramuthu | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #28 | @haile-12 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #29 | @harsh-2006-git | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #30 | @himanshu007-creator | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #31 | @iarmaanx | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #32 | @ikkiocean | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #33 | @itsdakshjain | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #34 | @joecelaster | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #35 | @kallal79 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #36 | @karangupta2005 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #37 | @knoxiboy | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #38 | @kota-jagadeesh | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #39 | @kumarniru007 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #40 | @kunalverma2512 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #41 | @leonagoel | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #42 | @lourduradjou | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #43 | @lovestaco | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #44 | @m4milaad | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #45 | @magic-peach | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #46 | @manan-chawla | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #47 | @maxd646 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #48 | @mayanksharma01010 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #49 | @mohit-368 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #50 | @morningstarxcdcode | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #51 | @mrigakshi-rathore | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #52 | @mukul-prasad-sigh | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #53 | @neilblaze | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #54 | @nihalawasthi | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #55 | @nirvik34 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #56 | @nishantxscooby | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #57 | @nitinog10 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #58 | @oasis-parzival | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #59 | @omkarkathile007 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #60 | @piyushdotcomm | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #61 | @precise-goals | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #62 | @preetbiswas12 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #63 | @ritika | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #64 | @rounakkraaj-1744 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #65 | @sabeenaviklar | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #66 | @sagar-datkhile | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #67 | @saifrasool92 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #68 | @satya900 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #69 | @saurabh24thakur | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #70 | @shravanthi20 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #71 | @sparshagarwal0411 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #72 | @sparshm8 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #73 | @srinadhtadikonda | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #74 | @stealthwhizz | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #75 | @subratamondalnsec | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #76 | @suvanwita | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #77 | @swastik7805 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #78 | @syedimtiyaz-1 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #79 | @tarunyaprogrammer | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #80 | @techrunnerbysj | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #81 | @thakurutkarsh22 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #82 | @the-matrixneo | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #83 | @topshe23 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #84 | @uddalak2005 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #85 | @ultrabot05 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #86 | @vanshaggarwal07 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #87 | @whyankush07 | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
-| #88 | @xthxr | 0.00 | 0 | 0 | 0.00 | 🔴 Inactive |
+Last updated: Tue, 26 May 2026 19:02:11 GMT

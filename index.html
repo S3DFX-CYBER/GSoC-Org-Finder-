@@ -147,6 +147,28 @@
       border-width: 0;
     }
 
+    /* Notification Animations */
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
     /* Modal Styles */
     .modal-bg {
       position: fixed;
@@ -1633,9 +1655,15 @@
       <div style="margin-bottom:24px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">🏆 Achievement Badges</h3>
-          <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.background='rgba(197,48,48,.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
-            Reset Progress
-          </button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button onclick="if(typeof BadgeCardGenerator !== 'undefined') { BadgeCardGenerator.showPreview(); }" style="font-size:10px;font-weight:700;color:var(--accent);background:transparent;border:1.5px solid var(--accent);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:4px" onmouseover="this.style.background='rgba(59,130,246,.06)'" onmouseout="this.style.background='transparent'" title="Share your achievements">
+              <span class="material-symbols-outlined" style="font-size:14px">share</span>
+              Share Achievements
+            </button>
+            <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.background='rgba(197,48,48,.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+              Reset Progress
+            </button>
+          </div>
         </div>
         <div id="badgesContainer">
           <!-- Badges will be rendered here -->
@@ -1665,6 +1693,8 @@
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
+<!-- html2canvas library for badge card generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   // ══════════════════════════════════════════════
   // THEME
@@ -4186,6 +4216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script src="src/js/badges-mvp.js"></script>
+<script src="src/js/badge-card-generator.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>

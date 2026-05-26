@@ -59,6 +59,7 @@ const BREAKDOWN_METRICS = [
   { key: 'topicScore', label: 'Domain Interest' },
   { key: 'activityScore', label: 'Activity Match' },
   { key: 'experienceScore', label: 'Experience Level' },
+  { key: 'stabilityScore', label: 'Stability Bonus' },
 ];
 
 function renderScoreBreakdownPanel(scoreBreakdown, panelId) {

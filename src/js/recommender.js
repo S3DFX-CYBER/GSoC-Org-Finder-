@@ -6,7 +6,8 @@ const SCORE_BREAKDOWN_MAX = {
   lang: 40,
   topic: 30,
   activity: 15,
-  experience: 15,
+  experience: 25,
+  stability: 10,
 };
 
 function formatSkillLabel(skill) {
@@ -176,8 +177,6 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   const experienceScore = calculateExperienceScore(githubProfile, org, matchReasons);
   const stabilityBonus = calculateStabilityBonus(org, matchReasons);
 
-  const experienceDisplayScore = Math.min(experienceScore, SCORE_BREAKDOWN_MAX.experience);
-
   let score = langResult.score + topicResult.score + activityScore + experienceScore + stabilityBonus;
 
   const cappedScore = Math.min(Math.round(score), 99);
@@ -209,7 +208,8 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
         langScore: { score: langResult.score, max: SCORE_BREAKDOWN_MAX.lang },
         topicScore: { score: topicResult.score, max: SCORE_BREAKDOWN_MAX.topic },
         activityScore: { score: activityScore, max: SCORE_BREAKDOWN_MAX.activity },
-        experienceScore: { score: experienceDisplayScore, max: SCORE_BREAKDOWN_MAX.experience },
+        experienceScore: { score: experienceScore, max: SCORE_BREAKDOWN_MAX.experience },
+        stabilityScore: { score: stabilityBonus, max: SCORE_BREAKDOWN_MAX.stability },
       },
       matchedLanguages: langResult.matched.map(formatSkillLabel),
       matchedDomains: matchedDomains.map(formatSkillLabel),

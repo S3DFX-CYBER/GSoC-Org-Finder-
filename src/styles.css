@@ -734,7 +734,7 @@ footer a:hover{text-decoration:underline}
 .match-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;border:1px solid transparent}
 .match-pill-lang{background:var(--white);border-color:var(--green);color:var(--green)}
 .match-pill-domain{background:var(--white);border-color:var(--blue);color:var(--blue)}
-.match-pill-lang::before,.match-pill-domain::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;background:currentColor}
+.match-pill-lang::before,.match-pill-domain::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;background:currentcolor}
 @media(max-width:640px){
   .match-breakdown-panel{padding:10px}
   .match-bar-label{font-size:10px}

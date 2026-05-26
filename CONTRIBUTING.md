@@ -4,12 +4,10 @@
 
 If you are contributing under a specific program, refer to the dedicated guide for your track:
 
-| Track | Guide |
-|-------|-------|
-| GSSoC'26 Contributors | GSSoC Contributor Guide |
-| GSSoC'26 Mentors | GSSoC Mentor Guide |
-| NSoC'26 Contributors | NSoC Guide |
-| General Contributors | General Contributor Guide |
+| GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) | 
+ | GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) | 
+ | NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) | 
+ | General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
 
 The rest of this document covers the shared rules, architecture, workflows, automation systems, and contribution policies that apply to all contributors.
 

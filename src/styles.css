@@ -709,3 +709,83 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* =========================================
+   Responsive Navbar Improvements
+========================================= */
+
+/* Desktop / Default Layout */
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+/* Navigation Links */
+.nav-links,
+#mobileMenu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Tablet Devices */
+@media screen and (max-width: 992px) {
+
+  .nav-inner {
+    gap: 16px;
+  }
+
+  .nav-links,
+  #mobileMenu {
+    gap: 14px;
+  }
+}
+
+/* Mobile Devices */
+@media screen and (max-width: 768px) {
+
+  .nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 14px;
+    height: auto;
+  }
+
+  .nav-links,
+  #mobileMenu {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .nav-links a,
+  #mobileMenu a,
+  .desktop-nav-link {
+    width: 100%;
+    display: block;
+    padding: 8px 0;
+  }
+}
+
+/* Small Mobile Devices */
+@media screen and (max-width: 480px) {
+
+  .nav-inner {
+    gap: 10px;
+  }
+
+  .nav-links,
+  #mobileMenu {
+    gap: 10px;
+  }
+
+  .nav-links a,
+  #mobileMenu a,
+  .desktop-nav-link {
+    font-size: 14px;
+  }
+  }

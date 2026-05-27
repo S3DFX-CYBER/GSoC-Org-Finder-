@@ -31,7 +31,7 @@ const labels = new Set();
 
 // 3. Safer check for org to handle cases with falsy values properly (null-safe checking)
 for (const issue of issues) {
-  if (issue.org !== undefined && issue.org !== null) {
+ if (issue.org !== undefined && issue.org !== null && issue.org !== '') {
     orgs.add(issue.org);
   }
 

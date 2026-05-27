@@ -4195,5 +4195,56 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
 
+
+<script>
+document.getElementById("logoLink").addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Scroll to timeline section
+  document.getElementById("timeline").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  // Remove active classes from all nav links
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.classList.remove(
+      "text-orange-600",
+      "font-bold",
+      "border-b-2",
+      "border-orange-600"
+    );
+
+    link.classList.add(
+      "text-zinc-600"
+    );
+  });
+
+  // Activate Timeline nav link
+  const timelineLink = document.querySelector(
+    '.desktop-nav-link[href="#timeline"]'
+  );
+
+  if (timelineLink) {
+    timelineLink.classList.remove("text-zinc-600");
+
+    timelineLink.classList.add(
+      "text-orange-600",
+      "font-bold",
+      "border-b-2",
+      "border-orange-600"
+    );
+  }
+});
+
+const logoLink = document.getElementById("logoLink");
+
+if (logoLink) {
+  logoLink.addEventListener("click", function () {
+    location.hash = "#timeline";
+
+    updateActiveSection();
+  });
+}
+</script>
 </body>
 </html>

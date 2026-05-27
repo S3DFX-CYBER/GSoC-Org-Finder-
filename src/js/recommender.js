@@ -12,9 +12,14 @@ const SCORE_BREAKDOWN_MAX = {
 
 function formatSkillLabel(skill) {
   return String(skill)
-    .split(/[\s_-]+/)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+    .split('/')
+    .map((part) =>
+      part
+        .split(/[\s_-]+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ')
+    )
+    .join('/');
 }
 
 /**
@@ -177,7 +182,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   const experienceScore = calculateExperienceScore(githubProfile, org, matchReasons);
   const stabilityBonus = calculateStabilityBonus(org, matchReasons);
 
-  let score = langResult.score + topicResult.score + activityScore + experienceScore + stabilityBonus;
+  const score = langResult.score + topicResult.score + activityScore + experienceScore + stabilityBonus;
 
   const cappedScore = Math.min(Math.round(score), 99);
   const tieBreaker = (org.name.length % 10) / 100 + (index % 100) / 10000;

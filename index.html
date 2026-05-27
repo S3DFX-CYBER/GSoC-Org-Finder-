@@ -1032,7 +1032,7 @@
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-
+  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1286,6 +1286,7 @@
       </div>
     </div>
   </div>
+  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -1910,8 +1911,11 @@ sections.forEach(sectionId => {
   // ══════════════════════════════════════════════
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
+  const ITEMS_PER_PAGE = 9;
   let visibleCount = 12;
-
+  let orgCurrentPage = 1;
+  let mentorCurrentPage = 1;
+  
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
@@ -2275,14 +2279,18 @@ sections.forEach(sectionId => {
   function renderMentorFinder() {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
+    const mentorPagination = document.getElementById('mentorPagination');
     if (!grid) return;
-
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
           <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
         </div>
       `;
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+      }
       return;
     }
 
@@ -2294,6 +2302,10 @@ sections.forEach(sectionId => {
         </div>
       `;
       if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+      }
       return;
     }
 
@@ -2325,10 +2337,27 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+      }
       return;
     }
+    const totalMentorPages = Math.max(
+      1,
+      Math.ceil(filteredRecords.length / ITEMS_PER_PAGE)
+    );
 
-    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+    if (mentorCurrentPage > totalMentorPages) {
+      mentorCurrentPage = totalMentorPages;
+    }
+
+    const paginatedRecords = getPaginatedItems(
+      filteredRecords,
+      mentorCurrentPage
+    );
+
+    grid.innerHTML = paginatedRecords.map(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2393,7 +2422,11 @@ sections.forEach(sectionId => {
         </article>
       `;
     }).join('');
-
+    renderPaginationControls('mentorPagination', filteredRecords.length, mentorCurrentPage, (page) => {
+      mentorCurrentPage = page;
+      renderMentorFinder();
+      document.getElementById('mentors')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     attachOrgCardListeners(grid);
   }
 
@@ -2592,27 +2625,112 @@ sections.forEach(sectionId => {
     }
   };
 
+function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  return items.slice(startIndex, startIndex + itemsPerPage);
+}
+
+function renderPaginationControls(containerId, totalItems, currentPage, onPageChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'flex';
+
+  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
+  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
+  const activeClass = 'bg-primary text-white border-primary';
+  const disabledClass = 'opacity-50 cursor-not-allowed';
+
+  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
+    const page = index + 1;
+    return `
+      <button
+        type="button"
+        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
+        data-page="${page}"
+        aria-label="Go to page ${page}"
+        ${page === currentPage ? 'aria-current="page"' : ''}
+      >
+        ${page}
+      </button>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
+      data-page="${currentPage - 1}"
+      ${currentPage === 1 ? 'disabled' : ''}
+    >
+      Previous
+    </button>
+
+    ${pageButtons}
+
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
+      data-page="${currentPage + 1}"
+      ${currentPage === totalPages ? 'disabled' : ''}
+    >
+      Next
+    </button>
+  `;
+
+  container.querySelectorAll('[data-page]').forEach(button => {
+    button.addEventListener('click', () => {
+      const page = Number(button.dataset.page);
+
+      if (
+        button.disabled ||
+        Number.isNaN(page) ||
+        page < 1 ||
+        page > totalPages ||
+        page === currentPage
+      ) {
+        return;
+      }
+
+      onPageChange(page);
+    });
+  });
+}
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
 
     const emptyState = document.getElementById('emptyState');
     if (reset) {
-      grid.innerHTML = '';
-      visibleCount = 12;
+      orgCurrentPage = 1;
     }
+
+    grid.innerHTML = '';
 
     if (filteredOrgs.length === 0) {
       grid.classList.add('hidden');
       if (emptyState) emptyState.classList.remove('hidden');
       document.getElementById('orgCount').textContent = '0';
       document.getElementById('loadMoreContainer').style.display = 'none';
+      document.getElementById('orgPagination').innerHTML = '';
+      document.getElementById('orgPagination').style.display = 'none';
       return;
     } else {
       grid.classList.remove('hidden');
       if (emptyState) emptyState.classList.add('hidden');
     }
     
-    const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
+    const totalOrgPages = Math.max(1, Math.ceil(filteredOrgs.length / ITEMS_PER_PAGE));
+    if (orgCurrentPage > totalOrgPages) orgCurrentPage = totalOrgPages;
+
+    const slice = getPaginatedItems(filteredOrgs, orgCurrentPage);
     slice.forEach(org => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
@@ -2660,7 +2778,13 @@ sections.forEach(sectionId => {
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
-    document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
+    document.getElementById('loadMoreContainer').style.display = 'none';
+
+    renderPaginationControls('orgPagination', filteredOrgs.length, orgCurrentPage, (page) => {
+      orgCurrentPage = page;
+      renderOrgs(false);
+      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   // Attach listeners to elements created from org templates.
@@ -3511,8 +3635,15 @@ if(org.ideas){
     applyFilters();
   });
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
-  document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
-  document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
+  document.getElementById('mentorSearchInput')?.addEventListener('input', () => {
+    mentorCurrentPage = 1;
+    renderMentorFinder();
+  });
+
+  document.getElementById('mentorChannelFilter')?.addEventListener('change', () => {
+    mentorCurrentPage = 1;
+    renderMentorFinder();
+  });
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
     matchAllLanguages = e.target.checked;
     // keep global in sync for any external code expecting `matchAllLanguages`
@@ -3520,8 +3651,8 @@ if(org.ideas){
     applyFilters();
     updateLanguageModeHint();
   });
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    visibleCount += 12;
+  document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+    orgCurrentPage += 1;
     renderOrgs(false);
   });
 

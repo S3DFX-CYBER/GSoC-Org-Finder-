@@ -1,4 +1,4 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+7*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root,[data-theme="light"]{
   --bg:#FAFAFA;--white:#FFFFFF;
   --orange:#F46B0E;--orange-deep:#D45800;--orange-pale:#FFF4EC;--orange-mid:#FFE0C8;--orange-border:#FECBA0;
@@ -708,3 +708,66 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* ===============================
+   NAVBAR RESPONSIVE (ALL DEVICES)
+   320px – 992px
+   =============================== */
+
+/* Base (desktop > 992px) */
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+/* ===============================
+   MOBILE + SMALL TABLET (320–767px)
+   =============================== */
+@media (min-width: 320px) and (max-width: 767px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+  }
+
+  .nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    margin-top: 10px;
+  }
+}
+
+/* ===============================
+   TABLET (768–992px)
+   =============================== */
+@media (min-width: 768px) and (max-width: 992px) {
+  .nav {
+    padding: 14px 18px;
+  }
+
+  .nav-links {
+    gap: 16px;
+  }
+  }

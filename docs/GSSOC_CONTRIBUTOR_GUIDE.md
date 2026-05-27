@@ -91,3 +91,10 @@ Once criteria are verified, two active mentors are randomly selected and request
 *   If an assigned issue shows no progress (linked PR, draft PR, or descriptive updates) for **7 days**, you will be automatically unassigned by the stale bot.
 *   If you are unassigned due to inactivity, you must wait **24 hours** before re-requesting assignment on that same issue.
 *   To manually release an issue you are unable to complete, comment `/unassign`.
+
+---
+
+## 🔗 Program Resources
+*   [GSSoC Official Website](https://gssoc.girlscript.tech)
+*   [GSSoC Contributor Guidelines](https://gssoc.girlscript.tech/guidelines)
+

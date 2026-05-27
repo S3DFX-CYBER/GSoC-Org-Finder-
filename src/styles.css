@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /* ═══════════════════ BASE & FONTS ═══════════════════ */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -920,7 +920,6 @@ html {
   color: #fb923c;
   background: #1c0f05;
 }
-=======
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root,[data-theme="light"]{
   --bg:#FAFAFA;--white:#FFFFFF;
@@ -947,17 +946,19 @@ html {
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s
 body.modal-open{overflow:hidden;height:100vh}
-
-/* NAV */
+===
+/* N
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
 .nav-inner{max-width:1340px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px}
 .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
 .gsoc-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBBC04,var(--orange));border-radius:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.04em;box-shadow:0 2px 8px rgb(244 107 14 / 0.3)}
 .nav-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;transition:color .3s}
 .nav-title em{font-style:italic;color:var(--orange)}
-.nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.nav-right{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+.nav-right  > a:not(.btn-contribute) { color: var(--ink);text-decoration: none;transition: color 0.2s ease;}
+.nav-right  > a:not(.btn-contribute):hover {color: var(--orange);}
 
 /* COUNTDOWN BANNER */
 .countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -1268,7 +1269,6 @@ body.modal-open{overflow:hidden;height:100vh}
 .cb-other{background:var(--border2);color:var(--muted)}
 [data-theme="dark"] .cb-os{background:rgb(100 116 139 / 0.15);color:#9CA3AF}
 [data-theme="dark"] .cb-other{background:rgb(255 255 255 / 0.05);color:var(--muted)}
-
 /* EMPTY STATE */
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}
@@ -1563,4 +1563,4 @@ footer a:hover{text-decoration:underline}
     transition:box-shadow .25s ease!important;
   }
 }
->>>>>>> eb643e9422874838a54d09fce82a3963540f52a2
+

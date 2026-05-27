@@ -3529,16 +3529,15 @@ function handleCopyToClipboard(btn, url) {
   copyBtn.title = 'Copy link';
   copyBtn.setAttribute('aria-label', 'Copy ideas page link');
   copyBtn.addEventListener('click', function() {
-    if (!navigator.clipboard) {
-      // Fallback for non-secure contexts
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(validatedIdeasUrl);
+    } else {
       const ta = document.createElement('textarea');
       ta.value = validatedIdeasUrl;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
-      document.body.removeChild(ta);
-    } else {
-      navigator.clipboard.writeText(validatedIdeasUrl);
+      ta.remove();
     }
     copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
     copyBtn.style.background = '#dcfce7';

@@ -3468,14 +3468,12 @@ function handleCopyToClipboard(btn, url) {
   if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
     setCopyBtnError(btn);
     setTimeout(function () { resetCopyBtn(btn); }, 2000);
-    return;
   }
 }
 function handleCopyNameToClipboard(btn, name) {
   if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
     setCopyBtnError(btn);
     setTimeout(function () { resetCopyNameBtn(btn); }, 2000);
-    return;
   }
 
   navigator.clipboard.writeText(name).then(function () {

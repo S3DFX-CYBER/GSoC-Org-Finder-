@@ -3419,6 +3419,58 @@ btn.__orgListenerAttached = true;
     });
   }
 
+  // ── Clipboard helpers ──────────────────────────────────────────────────────
+
+/** Resets copy button back to its default idle state. */
+function resetCopyBtn(btn) {
+  var icon = btn.querySelector('.material-symbols-outlined');
+  if (icon) icon.textContent = 'content_copy';
+  btn.title = 'Copy link';
+  btn.setAttribute('aria-label', 'Copy link');
+  btn.style.background = '';
+  btn.style.color = '';
+}
+
+/** Applies the success visual state to the copy button. */
+function setCopyBtnSuccess(btn) {
+  var icon = btn.querySelector('.material-symbols-outlined');
+  if (icon) icon.textContent = 'check_circle';
+  btn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+  btn.style.background = '#dcfce7';
+  btn.style.color = '#166534';
+  btn.title = 'Copied!';
+  btn.setAttribute('aria-label', 'Link copied to clipboard');
+}
+
+/** Applies the failure visual state to the copy button. */
+function setCopyBtnError(btn) {
+  var icon = btn.querySelector('.material-symbols-outlined');
+  if (icon) icon.textContent = 'error';
+  btn.title = 'Copy failed';
+  btn.setAttribute('aria-label', 'Copy failed — clipboard not available');
+}
+
+/**
+ * Handles copying a URL to clipboard with success/error UI feedback.
+ * @param {HTMLButtonElement} btn - The button element that triggered the copy.
+ * @param {string} url - The URL string to copy.
+ */
+function handleCopyToClipboard(btn, url) {
+  if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+    setCopyBtnError(btn);
+    setTimeout(function () { resetCopyBtn(btn); }, 2000);
+    return;
+  }
+
+  navigator.clipboard.writeText(url).then(function () {
+    setCopyBtnSuccess(btn);
+    setTimeout(function () { resetCopyBtn(btn); }, 2000);
+  }).catch(function () {
+    setCopyBtnError(btn);
+    setTimeout(function () { resetCopyBtn(btn); }, 2000);
+  });
+ }
+
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
@@ -3467,27 +3519,20 @@ btn.__orgListenerAttached = true;
     }
 
 // Copy link button
-const oldCopy = document.getElementById('mIdeasCopyBtn');
-if(oldCopy) oldCopy.remove();
-if(org.ideas){
-  const copyBtn = document.createElement('button');
+  var oldCopy = document.getElementById('mIdeasCopyBtn');
+  if (oldCopy) oldCopy.remove();
+  if (org.ideas) {
+  var copyBtn = document.createElement('button');
   copyBtn.id = 'mIdeasCopyBtn';
   copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
   copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-  copyBtn.onclick = function(){
-    navigator.clipboard.writeText(org.ideas).then(()=>{
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-      copyBtn.style.background = '#dcfce7';
-      copyBtn.style.color = '#166534';
-      setTimeout(()=>{
-        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-        copyBtn.style.background = '';
-        copyBtn.style.color = '';
-      }, 2000);
-    });
-  };
+  copyBtn.title = 'Copy link';
+  copyBtn.setAttribute('aria-label', 'Copy link');
+  copyBtn.addEventListener('click', function () {
+    handleCopyToClipboard(copyBtn, org.ideas);
+  });
   document.getElementById('mIdeasBtn').after(copyBtn);
-}
+  }
     renderMentorContactSection(org);
 
     const draftBtn = document.getElementById('mDraftBtn');

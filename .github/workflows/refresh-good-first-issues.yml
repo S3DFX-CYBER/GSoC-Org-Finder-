@@ -44,6 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch winners archive tree
+        continue-on-error: true
         run: node agent/scripts/fetch-winners-archive.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

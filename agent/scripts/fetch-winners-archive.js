@@ -1,3 +1,4 @@
+/* eslint-env node */
 'use strict';
 
 const fs = require('fs');
@@ -17,7 +18,21 @@ async function fetchArchiveTree() {
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
-  const res = await fetch(TREE_API, { headers });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  let res;
+  try {
+    res = await fetch(TREE_API, { headers, signal: controller.signal });
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error && error.name === 'AbortError') {
+      throw new Error('GitHub tree fetch timed out after 10 seconds');
+    }
+    throw error;
+  }
+
+  clearTimeout(timeoutId);
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`GitHub API ${res.status}: ${body.slice(0, 200)}`);

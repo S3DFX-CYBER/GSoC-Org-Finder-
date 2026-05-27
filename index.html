@@ -386,7 +386,7 @@
     html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #winners, #mentors, #contact {
+    #timeline, #orgs, #guide, #watchlist, #issues, #winners, #mentors, #ai-recommender, #contact {
       scroll-margin-top: 80px;
     }
 
@@ -1991,6 +1991,18 @@ sections.forEach(sectionId => {
   function getWinnersCountForOrg(name) {
     const key = normalizeOrgKey(name);
     return winnersOrgCounts.get(key) || 0;
+  }
+
+  function syncWinnersOrgUrl(key) {
+    const params = new URLSearchParams(location.search);
+    const normalizedKey = key && key !== 'all' ? normalizeOrgKey(key) : '';
+    if (normalizedKey) {
+      params.set('winnersOrg', normalizedKey);
+    } else {
+      params.delete('winnersOrg');
+    }
+    const nextUrl = params.toString() ? `${location.pathname}?${params.toString()}${location.hash || ''}` : `${location.pathname}${location.hash || ''}`;
+    history.replaceState(null, '', nextUrl);
   }
 
   // NOTE: For JS-string contexts inside inline event handlers,
@@ -4035,13 +4047,14 @@ if(org.ideas){
 
   function setActiveWinnersOrg(key) {
     activeWinnersOrg = key || 'all';
+    syncWinnersOrgUrl(activeWinnersOrg);
     renderWinnersOrgFilters();
     renderWinners();
   }
 
   function openWinnersForOrg(orgName) {
     const key = normalizeOrgKey(orgName);
-    pendingWinnersOrg = key;
+    pendingWinnersOrg = key || null;
     const searchInput = document.getElementById('winnersSearchInput');
     if (searchInput) searchInput.value = '';
     if (winnersDataState === 'loaded') {
@@ -4455,6 +4468,16 @@ if(org.ideas){
     setElValue('categoryFilter', params.get('cat'));
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
+
+    const winnersOrg = params.get('winnersOrg');
+    const normalizedWinnersOrg = winnersOrg ? normalizeOrgKey(winnersOrg) : '';
+    if (normalizedWinnersOrg && normalizedWinnersOrg !== 'all') {
+      if (winnersDataState === 'loaded') {
+        setActiveWinnersOrg(normalizedWinnersOrg);
+      } else {
+        pendingWinnersOrg = normalizedWinnersOrg;
+      }
+    }
 
     const lang = params.get('lang');
     if (lang) {

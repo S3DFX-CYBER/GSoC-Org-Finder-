@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSoC Proposal Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js/dist/html2pdf.bundle.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9f9; }
+    .header { background: white; border-bottom: 1px solid #e5e7eb; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .body { display: flex; height: calc(100vh - 130px); }
+    .editor, .preview { flex: 1; overflow: auto; padding: 1.5rem; }
+    .editor { border-right: 1px solid #e5e7eb; background: white; }
+    .preview { background: #fafafa; }
+    textarea { width: 100%; height: 100%; min-height: 500px; border: none; resize: none; outline: none; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6; }
+    .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.75rem; cursor: pointer; border: 1px solid #e5e7eb; background: white; }
+    .btn-primary { background: #9d4300; color: white; border-color: #9d4300; }
+    .btn-primary:hover { background: #7a3500; }
+    .btn-danger { color: #dc2626; border-color: #fecaca; }
+    .btn-danger:hover { background: #fef2f2; }
+    .preview h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .preview h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .preview code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 4px; }
+    .preview pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow: auto; margin-bottom: 1rem; }
+    .status-bar { background: #f0fdf4; border-top: 1px solid #dcfce7; padding: 0.5rem 1.5rem; font-size: 0.75rem; color: #166534; display: flex; justify-content: space-between; }
+    @media (max-width: 768px) { .body { flex-direction: column; } .editor { border-right: none; border-bottom: 1px solid #e5e7eb; } }
+  </style>
+</head>
+<body>
+<div>
+  <div class="header">
+    <div>
+      <h2 class="text-lg font-extrabold" id="orgTitle">GSoC 2026 Proposal Builder</h2>
+      <p class="text-xs text-gray-500">Write your proposal in Markdown</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn btn-danger" id="clearBtn">Clear</button>
+      <button class="btn" id="exportMDBtn">Export MD</button>
+      <button class="btn btn-primary" id="exportPDFBtn">Export PDF</button>
+    </div>
+  </div>
+  <div class="body">
+    <div class="editor">
+      <textarea id="editor" placeholder="# Write your GSoC proposal in Markdown..."></textarea>
+    </div>
+    <div class="preview" id="preview"></div>
+  </div>
+  <div class="status-bar">
+    <span id="saveStatus">📝 Draft auto-saves locally</span>
+    <span>💡 Close this tab when done</span>
+  </div>
+</div>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const orgName = urlParams.get('org') || 'Organization';
+  document.getElementById('orgTitle').textContent = `GSoC 2026 Proposal: ${orgName}`;
+  
+  const storageKey = 'gaf_proposal_' + orgName;
+  const editor = document.getElementById('editor');
+  const preview = document.getElementById('preview');
+  const saveStatus = document.getElementById('saveStatus');
+  let autosaveTimer = null;
+  
+  function renderPreview() {
+    if (typeof marked !== 'undefined') {
+      preview.innerHTML = marked.parse(editor.value);
+    }
+  }
+  
+  function saveDraft() {
+    localStorage.setItem(storageKey, editor.value);
+    saveStatus.innerHTML = '✓ Saved just now';
+    saveStatus.style.color = '#166534';
+    setTimeout(() => {
+      saveStatus.innerHTML = '📝 Draft auto-saves locally';
+      saveStatus.style.color = '';
+    }, 2000);
+  }
+  
+  const saved = localStorage.getItem(storageKey);
+  if (saved) {
+    editor.value = saved;
+  } else {
+    editor.value = `# GSoC 2026 Proposal: [Project Title]
+
+**Organization:** ${orgName}
+**Applicant:** [Your Name]
+
+## 1. Contact Information
+- **Email:** [your.email@example.com]
+- **GitHub:** [https://github.com/your-username]
+- **Timezone:** [Your Timezone]
+
+## 2. Abstract
+Provide a short summary of what you intend to do, why it is useful, and the expected outcome.
+
+## 3. Architecture and Implementation
+Detail your technical approach, libraries, design patterns, and any API changes you plan to make.
+
+## 4. Timeline
+- **Community Bonding:** [Pre-coding activities]
+- **Week 1-2:** [Tasks]
+- **Week 3-4:** [Tasks]
+- **Midterm Evaluation:** [Deliverables at this stage]
+- **Week 5-6:** [Tasks]
+- **Week 7-8:** [Tasks]
+- **Final Evaluation:** [Final deliverables and documentation]
+
+## 5. Deliverables
+List what will be completed and merged by the end of the program.
+
+## 6. About Me
+Your background, relevant skills, and past contributions to open source.`;
+  }
+  renderPreview();
+  
+  editor.addEventListener('input', () => {
+    renderPreview();
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(saveDraft, 500);
+  });
+  
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if (confirm('Clear this proposal draft? This cannot be undone.')) {
+      localStorage.removeItem(storageKey);
+      editor.value = '';
+      renderPreview();
+      saveStatus.innerHTML = '🗑️ Draft cleared';
+      setTimeout(() => {
+        saveStatus.innerHTML = '📝 Draft auto-saves locally';
+      }, 2000);
+    }
+  });
+  
+  document.getElementById('exportMDBtn').addEventListener('click', () => {
+    const blob = new Blob([editor.value], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GSoC_Proposal_${orgName.replace(/\s/g, '_')}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  
+  document.getElementById('exportPDFBtn').addEventListener('click', async () => {
+    if (typeof html2pdf === 'undefined') {
+      alert('PDF export unavailable. Please try again.');
+      return;
+    }
+    const printElement = preview.cloneNode(true);
+    printElement.style.padding = '40px';
+    printElement.style.background = 'white';
+    printElement.style.width = '800px';
+    document.body.appendChild(printElement);
+    
+    const opt = {
+      margin: 15,
+      filename: `GSoC_Proposal_${orgName.replace(/\s/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(printElement).save().then(() => printElement.remove());
+  });
+  
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(storageKey, editor.value);
+  });
+</script>
+</body>
+</html>

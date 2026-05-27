@@ -2962,32 +2962,49 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "SageMath": {
-    "org": "SageMath",
-    "ideasUrl": "https://wiki.sagemath.org/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/forum/",
-        "label": "sage-gsoc"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/qYzrY-92Q2A/m/P49CneVKAQAJ",
-        "label": "SageMath Mailing list"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/ds7aqEd-lj4/m/IvUXk3ZCAgAJ",
-        "label": "SageMath Mailing list"
-      }
-    ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"SageMath": {
+  "org": "SageMath",
+  "ideasUrl": "https://wiki.sagemath.org/GSoC/2026",
+  "channels": [
+    {
+      "type": "Zulip",
+      "label": "SageMath Zulip",
+      "url": "https://sagemath.zulipchat.com/"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Travis Scrimshaw",
+      "github": "tscrim",
+      "githubUrl": "https://github.com/tscrim"
+    },
+    {
+      "name": "Martin Rubey",
+      "github": "mantepse",
+      "githubUrl": "https://github.com/mantepse"
+    },
+    {
+      "name": "David Coudert",
+      "github": "dcoudert",
+      "githubUrl": "https://github.com/dcoudert"
+    },
+    {
+      "name": "Rocky Bernstein",
+      "github": "rocky",
+      "githubUrl": "https://github.com/rocky"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/sage-gsoc",
+      "label": "sage-gsoc"
+    }
+  ],
+  "tip": "Send a short introduction with your background and the project idea you're interested in.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "ScummVM": {
     "org": "ScummVM",
     "ideasUrl": "https://github.com/scummvm/scummvm/wiki/GSoC-Ideas-2026",

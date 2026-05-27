@@ -2721,16 +2721,40 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "Python Software Foundation": {
+ "Python Software Foundation": {
     "org": "Python Software Foundation",
     "ideasUrl": "https://python-gsoc.org/",
     "channels": [
       {
-        "type": "Matrix",
+        "type": "matrix",
         "url": "https://matrix.to/#/#python-gsoc:matrix.python-gsoc.org",
-        "label": "#python-gsoc:matrix.python-gsoc.org"
+        "label": "Python GSoC Matrix Room"
       }
     ],
+    "mentors": [
+      { "name": "Terri Oda", "github": "", "githubUrl": "" },
+      { "name": "John Hawley", "github": "", "githubUrl": "" },
+      { "name": "Matthew Lagoe", "github": "", "githubUrl": "" },
+      { "name": "Morgan Gangwere", "github": "", "githubUrl": "" },
+      { "name": "Ben Lewis", "github": "", "githubUrl": "" },
+      { "name": "Kushal Das", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:gsoc-general@python.org",
+        "label": "GSoC Contributors Mailing List"
+      },
+      {
+        "type": "Email",
+        "url": "mailto:gsoc-admins@python.org",
+        "label": "GSoC Admins Mailing List"
+      }
+    ],
+    "tip": "Join the Matrix room at https://matrix.to/#/#python-gsoc:matrix.python-gsoc.org or email gsoc-general@python.org. Admins can be reached at gsoc-admins@python.org.",
+    "status": "ok",
+    "lastFetched": "2026-05-09T16:09:12.548Z"
+  },
     "mentors": [
       {
         "name": "",

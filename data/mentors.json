@@ -4224,19 +4224,30 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Zulip": {
-    "org": "Zulip",
-    "ideasUrl": "https://github.com/zulip/zulip/wiki/GSoC-2026",
-    "channels": [
-      {
-        "type": "Zulip",
-        "url": "https://zulip.com/development-community/",
-        "label": "development community chat"
-      }
-    ],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "Post a new topic in the GSoC stream with your background and interest.",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  }
+  "org": "Zulip",
+  "ideasUrl": "https://zulip.readthedocs.io/en/latest/outreach/gsoc.html",
+  "channels": [
+    {
+      "type": "Zulip",
+      "url": "https://chat.zulip.org/",
+      "label": "Zulip contributor chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Tim Abbott",
+      "github": "timabbott",
+      "githubUrl": "https://github.com/timabbott"
+    },
+    {
+      "name": "Anders Kaseorg",
+      "github": "andersk",
+      "githubUrl": "https://github.com/andersk"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Join the Zulip contributor chat and introduce yourself before discussing project ideas.",
+  "status": "ok",
+  "lastFetched": "2026-05-27T20:20:00.000Z"
+}
 }

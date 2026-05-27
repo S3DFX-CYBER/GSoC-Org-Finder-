@@ -6,6 +6,7 @@
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
+/* global pdfjsLib */
 async function analyzeProfile(username, resume) {
   let githubProfile = null;
   let skills = [];
@@ -124,27 +125,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!file) return;
     try {
       // TXT FILE SUPPORT
-      if (file.type === "text/plain") {
+    if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
         const text = await file.text();
         resumeText.value = text;
-      }
-      // PDF FILE SUPPORT
-      else if (file.type === "application/pdf") {
+    }
+   // PDF FILE SUPPORT
+    else if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+        
+        // AI Review Fix: Guard check for pdfjsLib
+        if (typeof pdfjsLib === "undefined") {
+             showError("PDF library load nahi hui hai. Kripya page refresh karein.");
+             return;
+        }
+
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({
-          data: arrayBuffer
+            data: arrayBuffer
         }).promise;
+        
         let extractedText = "";
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-          const page = await pdf.getPage(pageNum);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items
-            .map(item => item.str)
-            .join(" ");
-          extractedText += pageText + "\n";
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items
+                .map(item => item.str)
+                .join(" ");
+            extractedText += pageText + "\n";
         }
         resumeText.value = extractedText;
-      }
+    }
  // INVALID FILE
       else {
         showError("Please upload a valid .txt or .pdf file.");

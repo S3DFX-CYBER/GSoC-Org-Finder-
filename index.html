@@ -3425,7 +3425,14 @@ btn.__orgListenerAttached = true;
 function resetCopyBtn(btn) {
   btn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
   btn.title = 'Copy link';
-  btn.setAttribute('aria-label', 'Copy organization name');
+  btn.setAttribute('aria-label', 'Copy link to clipboard');
+  btn.style.background = '';
+  btn.style.color = '';
+}
+function resetCopyNameBtn(btn) {
+  btn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Name';
+  btn.title = 'Copy Name';
+  btn.setAttribute('aria-label', 'Copy organization name to clipboard');
   btn.style.background = '';
   btn.style.color = '';
 }
@@ -3438,7 +3445,7 @@ function setCopyBtnSuccess(btn) {
   btn.style.background = '#dcfce7';
   btn.style.color = '#166534';
   btn.title = 'Copied!';
-  btn.setAttribute('aria-label', 'Link copied to clipboard');
+  btn.setAttribute('aria-label', 'Copied to clipboard');
 }
 
 /** Applies the failure visual state to the copy button. */
@@ -3460,13 +3467,20 @@ function handleCopyToClipboard(btn, url) {
     setTimeout(function () { resetCopyBtn(btn); }, 2000);
     return;
   }
+}
+function handleCopyNameToClipboard(btn, name) {
+  if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+    setCopyBtnError(btn);
+    setTimeout(function () { resetCopyNameBtn(btn); }, 2000);
+    return;
+  }
 
-  navigator.clipboard.writeText(url).then(function () {
+  navigator.clipboard.writeText(name).then(function () {
     setCopyBtnSuccess(btn);
-    setTimeout(function () { resetCopyBtn(btn); }, 2000);
+    setTimeout(function () { resetCopyNameBtn(btn); }, 2000);
   }).catch(function () {
     setCopyBtnError(btn);
-    setTimeout(function () { resetCopyBtn(btn); }, 2000);
+    setTimeout(function () { resetCopyNameBtn(btn); }, 2000);
   });
  }
 
@@ -3565,7 +3579,7 @@ function handleCopyToClipboard(btn, url) {
         nameCopyBtn.setAttribute('aria-label', 'Copy organization name');
 
         nameCopyBtn.addEventListener('click', function () {
-          handleCopyToClipboard(nameCopyBtn, org.name);
+          handleCopyNameToClipboard(nameCopyBtn, org.name);
         });
 
         document.getElementById('mIdeasBtn').after(nameCopyBtn);

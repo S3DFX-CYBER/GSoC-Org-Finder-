@@ -90,10 +90,13 @@ async function analyzeOrg({ name, repo }) {
     const prs = await fetchJSON(
       `https://api.github.com/repos/${repo}/pulls?state=closed&per_page=100`
     );
-    let prMergeRate = null; 
+    let prMergeRate = null;
     if (Array.isArray(prs) && prs.length > 0) {
-      const merged = prs.filter(p => p.merged_at).length;
-      prMergeRate = merged / prs.length;
+      const recentPrs = prs.filter(p => p.closed_at && new Date(p.closed_at) >= new Date(since));
+      if (recentPrs.length > 0) {
+        const merged = recentPrs.filter(p => p.merged_at).length;
+        prMergeRate = merged / recentPrs.length;
+      }
     }
 
     const repoData = await fetchJSON(`https://api.github.com/repos/${repo}`);

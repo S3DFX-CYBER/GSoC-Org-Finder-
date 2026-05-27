@@ -3423,10 +3423,9 @@ btn.__orgListenerAttached = true;
 
 /** Resets copy button back to its default idle state. */
 function resetCopyBtn(btn) {
-  var icon = btn.querySelector('.material-symbols-outlined');
-  if (icon) icon.textContent = 'content_copy';
+  btn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
   btn.title = 'Copy link';
-  btn.setAttribute('aria-label', 'Copy link');
+  btn.setAttribute('aria-label', 'Copy organization name');
   btn.style.background = '';
   btn.style.color = '';
 }
@@ -3521,15 +3520,34 @@ function handleCopyToClipboard(btn, url) {
 // Copy link button
   var oldCopy = document.getElementById('mIdeasCopyBtn');
   if (oldCopy) oldCopy.remove();
-  if (org.ideas) {
+  const validatedIdeasUrl = sanitizeHrefUrl(org.ideas);
+  if (validatedIdeasUrl) {
   var copyBtn = document.createElement('button');
   copyBtn.id = 'mIdeasCopyBtn';
   copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
   copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
   copyBtn.title = 'Copy link';
-  copyBtn.setAttribute('aria-label', 'Copy link');
-  copyBtn.addEventListener('click', function () {
-    handleCopyToClipboard(copyBtn, org.ideas);
+  copyBtn.setAttribute('aria-label', 'Copy ideas page link');
+  copyBtn.addEventListener('click', function() {
+    if (!navigator.clipboard) {
+      // Fallback for non-secure contexts
+      const ta = document.createElement('textarea');
+      ta.value = validatedIdeasUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    } else {
+      navigator.clipboard.writeText(validatedIdeasUrl);
+    }
+    copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+    copyBtn.style.background = '#dcfce7';
+    copyBtn.style.color = '#166534';
+    setTimeout(() => {
+      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+      copyBtn.style.background = '';
+      copyBtn.style.color = '';
+    }, 2000);
   });
   document.getElementById('mIdeasBtn').after(copyBtn);
   }

@@ -747,6 +747,68 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    
+    /* SVG Flowing Border Trace animation */
+    .timeline-border-rect {
+      stroke-dasharray: 25 75;
+      stroke-dashoffset: 100;
+      animation: draw-border 4s linear infinite;
+      rx: 16px;
+      ry: 16px;
+    }
+
+    /* Keep search bar rect rounded corners matching its fixed container */
+    .search-bar-container .timeline-border-rect {
+      rx: 16px;
+      ry: 16px;
+    }
+
+    /* Make timeline border radius match container's responsive radius */
+    #timeline .timeline-border-rect {
+      rx: 16px;
+      ry: 16px;
+    }
+    @media (min-width: 640px) {
+      #timeline .timeline-border-rect {
+        rx: 24px;
+        ry: 24px;
+      }
+    }
+
+    @keyframes draw-border {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .light-only-rotating-border {
+      /* Show and rotate in light mode */
+      display: block !important;
+    }
+    
+    /* Make search bar rotating border invisible when clicked/focused to type */
+    .search-bar-container:focus-within .light-only-rotating-border {
+      opacity: 0 !important;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    
+    /* Focus styles for search bar in light mode */
+    .search-bar-container:focus-within .search-border-outer {
+      background: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25), 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    /* Dark mode adjustments: border animations only work in light mode */
+    .dark .light-only-rotating-border {
+      display: none !important;
+    }
+    
+    /* Focus/Clicked glow effect for search bar in dark mode */
+    .dark .search-bar-container:focus-within .search-border-outer {
+      background: #fb923c !important; /* highlight orange border */
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3), 0 0 15px rgba(249, 115, 22, 0.2) !important;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -905,9 +967,18 @@
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+      <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container group">
+        <div class="relative rounded-2xl p-[1.5px] bg-zinc-200 dark:bg-zinc-800 transition-all duration-300 search-border-outer shadow-lg shadow-zinc-200/50">
+          <!-- SVG Flowing Border Effect (Light mode only) -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 light-only-rotating-border overflow-visible" fill="none">
+            <rect class="timeline-border-rect" x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="16" ry="16" stroke="#f97316" stroke-width="2" pathLength="100" />
+          </svg>
+          <!-- Inner Input Layer -->
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+          </div>
+        </div>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -933,17 +1004,24 @@
       </div>
     </div>
     <!-- Timeline Card -->
-    <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+    <div id="timeline" class="lg:col-span-5 fade-up group" style="animation-delay:.2s">
+      <div class="relative rounded-2xl sm:rounded-3xl p-[1.5px] bg-zinc-200 dark:bg-zinc-700 transition-colors duration-300 dark:shadow-lg dark:shadow-zinc-200/50">
+        <!-- SVG Flowing Border Effect -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0 light-only-rotating-border overflow-visible" fill="none">
+          <rect class="timeline-border-rect" x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="16" ry="16" stroke="#f97316" stroke-width="2" pathLength="100" />
+        </svg>
+        <!-- Inner Card Content Layer -->
+        <div class="relative z-10 bg-white rounded-[calc(1rem-1.5px)] sm:rounded-[calc(1.5rem-1.5px)] p-6 sm:p-8 h-full w-full">
+          <div class="flex items-center justify-between mb-6 sm:mb-8">
+            <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
+            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+          </div>
+          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
+              <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+            </div>
           </div>
         </div>
       </div>

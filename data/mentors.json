@@ -1536,11 +1536,33 @@
   "Kiwix": {
     "org": "Kiwix",
     "ideasUrl": "https://github.com/kiwix/kiwix-android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://kiwixoffline.slack.com/",
+        "label": "kiwix Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name":"Benoît BERAUD",
+        "github":"benoit74",
+        "githubUrl":"https://github.com/benoit74"
+      },
+      {
+        "name":"Travis Briggs",
+        "github":"audiodude",
+        "githubUrl":"https://github.com/audiodude"
+      },
+      {
+        "name":"Mohit Mali",
+        "github":"MohitMaliDeveloper",
+        "githubUrl":"https://github.com/MohitMaliDeveloper/"
+      }
+    ],
     "mailingLists": [],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "KolibriOS Project Team": {
@@ -2925,32 +2947,49 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "SageMath": {
-    "org": "SageMath",
-    "ideasUrl": "https://wiki.sagemath.org/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/forum/",
-        "label": "sage-gsoc"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/qYzrY-92Q2A/m/P49CneVKAQAJ",
-        "label": "SageMath Mailing list"
-      },
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/fricas-devel/c/ds7aqEd-lj4/m/IvUXk3ZCAgAJ",
-        "label": "SageMath Mailing list"
-      }
-    ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"SageMath": {
+  "org": "SageMath",
+  "ideasUrl": "https://wiki.sagemath.org/GSoC/2026",
+  "channels": [
+    {
+      "type": "Zulip",
+      "label": "SageMath Zulip",
+      "url": "https://sagemath.zulipchat.com/"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Travis Scrimshaw",
+      "github": "tscrim",
+      "githubUrl": "https://github.com/tscrim"
+    },
+    {
+      "name": "Martin Rubey",
+      "github": "mantepse",
+      "githubUrl": "https://github.com/mantepse"
+    },
+    {
+      "name": "David Coudert",
+      "github": "dcoudert",
+      "githubUrl": "https://github.com/dcoudert"
+    },
+    {
+      "name": "Rocky Bernstein",
+      "github": "rocky",
+      "githubUrl": "https://github.com/rocky"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/sage-gsoc",
+      "label": "sage-gsoc"
+    }
+  ],
+  "tip": "Send a short introduction with your background and the project idea you're interested in.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "ScummVM": {
     "org": "ScummVM",
     "ideasUrl": "https://github.com/scummvm/scummvm/wiki/GSoC-Ideas-2026",
@@ -4196,19 +4235,30 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Zulip": {
-    "org": "Zulip",
-    "ideasUrl": "https://github.com/zulip/zulip/wiki/GSoC-2026",
-    "channels": [
-      {
-        "type": "Zulip",
-        "url": "https://zulip.com/development-community/",
-        "label": "development community chat"
-      }
-    ],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "Post a new topic in the GSoC stream with your background and interest.",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  }
+  "org": "Zulip",
+  "ideasUrl": "https://zulip.readthedocs.io/en/latest/outreach/gsoc.html",
+  "channels": [
+    {
+      "type": "Zulip",
+      "url": "https://chat.zulip.org/",
+      "label": "Zulip contributor chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Tim Abbott",
+      "github": "timabbott",
+      "githubUrl": "https://github.com/timabbott"
+    },
+    {
+      "name": "Anders Kaseorg",
+      "github": "andersk",
+      "githubUrl": "https://github.com/andersk"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Join the Zulip contributor chat and introduce yourself before discussing project ideas.",
+  "status": "ok",
+  "lastFetched": "2026-05-27T20:20:00.000Z"
+}
 }

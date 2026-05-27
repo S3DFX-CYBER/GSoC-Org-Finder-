@@ -118,19 +118,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMsg = document.getElementById('aiErrorMsg');
 
   // Handle file upload
-  if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      file.text().then(text => {
+ if (fileUpload) {
+  fileUpload.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      // TXT FILE SUPPORT
+      if (file.type === "text/plain") {
+        const text = await file.text();
         resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
-    });
-  }
-
+      }
+      // PDF FILE SUPPORT
+      else if (file.type === "application/pdf") {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({
+          data: arrayBuffer
+        }).promise;
+        let extractedText = "";
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items
+            .map(item => item.str)
+            .join(" ");
+          extractedText += pageText + "\n";
+        }
+        resumeText.value = extractedText;
+      }
+ // INVALID FILE
+      else {
+        showError("Please upload a valid .txt or .pdf file.");
+      }
+    } catch (err) {
+      console.error("File Read Error:", err);
+      showError("Failed to process the uploaded file.");
+    }  
+  });
+}
 
 
   function setAnalysisStateUI(isActive) {

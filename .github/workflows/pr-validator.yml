@@ -1,0 +1,146 @@
+name: 🔍 Validate PR
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR structure
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const username = pr.user.login;
+
+            const lowerBody = body.toLowerCase();
+            let warnings = [];
+
+            // Ignore bots
+            if (pr.user.type === 'Bot') return;
+
+            // 1. Linked Issue Check
+            const issueRegex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+            if (!issueRegex.test(body)) {
+              warnings.push('❌ Missing linked issue. Add: `Closes #issue-number`');
+            }
+
+            // 2. Program Detection (NSOC / GSSOC)
+            const mentionsNSOC = lowerBody.includes('nsoc');
+            const mentionsGSSOC = lowerBody.includes('gssoc');
+
+            if (!mentionsNSOC && !mentionsGSSOC) {
+              warnings.push('⚠️ Missing program tag (`GSSOC` or `NSOC`)');
+            }
+
+            // 3. Apply Program Labels
+            try {
+              for (const label of ['nsoc26', 'gssoc26']) {
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label }); } catch (e) {}
+              }
+              if (mentionsNSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['nsoc26'] });
+              if (mentionsGSSOC) await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: ['gssoc26'] });
+            } catch (e) {
+              core.warning(`Label operation failed: ${e?.message || e}`);
+            }
+
+            // 4. Required Template Sections
+            const requiredSections = ['description', 'related issue', 'type of change', 'checklist'];
+            for (const section of requiredSections) {
+              if (!lowerBody.includes(section)) {
+                warnings.push(`⚠️ Missing template section: \`${section}\``);
+              }
+            }
+
+            // 5. Conventional Title
+            const conventionalRegex = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
+            if (!conventionalRegex.test(title)) {
+              warnings.push('⚠️ Use conventional PR title. Example: `feat: add search filters`');
+            }
+
+            // 6. Diff size and change quality analysis
+            const { data: prFiles } = await github.rest.pulls.listFiles({
+              owner, repo, pull_number: prNumber, per_page: 100
+            });
+
+            const totalAdditions = prFiles.reduce((sum, f) => sum + f.additions, 0);
+            const totalDeletions = prFiles.reduce((sum, f) => sum + f.deletions, 0);
+            const totalChanges = totalAdditions + totalDeletions;
+            const filesChanged = prFiles.length;
+
+            const isFix = /^fix/i.test(title);
+            const isDocs = /^docs/i.test(title);
+            const isStyle = /^style/i.test(title);
+
+            if (isFix && totalChanges > 500) {
+              warnings.push(`⚠️ Large diff for a bug fix (${totalChanges} lines across ${filesChanged} files). Consider splitting into smaller PRs.`);
+            }
+            if (isDocs && totalChanges > 1000) {
+              warnings.push(`⚠️ Very large documentation change (${totalChanges} lines). Ensure all changes are relevant.`);
+            }
+            if (isStyle && totalChanges > 300) {
+              warnings.push(`⚠️ Large diff for a style change (${totalChanges} lines). Avoid mixing unrelated changes.`);
+            }
+
+            const unrelatedExtensions = new Set(prFiles.map(f => f.filename.split('.').pop()));
+            if (unrelatedExtensions.size > 5 && totalChanges > 200) {
+              warnings.push(`⚠️ Changes span ${unrelatedExtensions.size} different file types and ${filesChanged} files. Ensure all changes are related to the stated purpose.`);
+            }
+
+            const generatedFilePatterns = ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'];
+            const touchesLockFiles = prFiles.some(f => generatedFilePatterns.some(p => f.filename.endsWith(p)));
+            if (touchesLockFiles) {
+              warnings.push('⚠️ Lock file changes detected. This repo follows a zero-dependency philosophy — avoid adding packages unless explicitly approved.');
+            }
+
+            // Build Comment
+            let commentBody = warnings.length > 0 
+              ? `## ⚠️ PR Format Issues Detected\n\n` +
+                `Hi @${username},\n\n` +
+                warnings.map(w => `- ${w}`).join('\n') +
+                `\n\nPlease fix these and push new commits.`
+              : `## ✅ PR Format Check Passed\n\n` +
+                `Hi @${username}, basic PR structure checks passed.\n\n` +
+                `This does **not** mean the PR is approved.`;
+
+            // Upsert Comment (avoid spam)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100
+            });
+
+            const existing = comments.find(c => 
+              c.user.type === 'Bot' && 
+              (c.body.includes('PR Format Issues Detected') || c.body.includes('PR Format Check Passed'))
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber, body: commentBody
+              });
+            }

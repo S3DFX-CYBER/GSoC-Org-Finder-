@@ -130,7 +130,7 @@ function validateIdeasUrl(ideasUrl) {
     
     // Prepend https:// only if no protocol scheme is present
     // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
-    if (!url.includes('://')) {
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url)) {
       url = 'https://' + url;
     }
     

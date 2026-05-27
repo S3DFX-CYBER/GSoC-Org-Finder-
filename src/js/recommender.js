@@ -25,15 +25,22 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
   }
 
   resumeSkills.forEach(s => {
-    const skill = normalize(s.toLowerCase());
+    if (!s || typeof s !== "string") return;
+
+    const skill = normalize(
+      s.trim().toLowerCase()
+    );
+
+    if (!skill) return;
+
     userLanguages.add(skill);
     userTopics.add(skill);
   });
 
-  const scoredOrgs = ORGS.map((org, index) => 
+  const scoredOrgs = ORGS.map((org, index) =>
     calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile)
   );
-  
+
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
   return scoredOrgs.slice(0, 6);
 }
@@ -147,7 +154,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   const orgCat = org.cat ? orgNormalize(org.cat.toLowerCase()) : '';
 
   let score = 0;
-  
+
   score += calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
   score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
   score += calculateActivityScore(githubProfile, org, matchReasons);
@@ -165,7 +172,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   return {
     orgIndex: index,
     org: org,
-    score: cappedScore, 
+    score: cappedScore,
     rawScore: finalRawScore,
     matchedSkills: [...new Set(matchedSkills)],
     reasons: matchReasons

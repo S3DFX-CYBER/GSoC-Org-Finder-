@@ -4,11 +4,10 @@ on:
   pull_request_target:
     types:
       - opened
-      - edited
       - reopened
+      - ready_for_review
 
 permissions:
-  contents: read
   pull-requests: write
   issues: write
 
@@ -18,90 +17,177 @@ concurrency:
 
 jobs:
   detect-duplicate-pr:
+    name: Detect Duplicate PRs
     runs-on: ubuntu-latest
+
+    if: |
+      github.event.pull_request.draft == false &&
+      github.actor != 'github-actions[bot]'
+
     steps:
-      - name: Detect duplicate PRs
+      - name: Analyze Pull Request
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
+
             const prNumber = pr.number;
-            const title = (pr.title || '').trim();
             const username = pr.user.login;
 
             // Ignore bots
-            if (pr.user.type === 'Bot') {
-              core.info('Ignoring bot PR');
+            if (
+              pr.user.type === 'Bot' ||
+              username.endsWith('[bot]')
+            ) {
+              core.info('Skipping bot PR');
               return;
             }
 
+            const title = (pr.title || '').trim();
+
+            // Ignore short/generic titles
             if (title.length < 10) {
-              core.info('Title too short, skipping duplicate check');
+              core.info('Title too short');
               return;
             }
 
-            // Normalize title
+            // Normalize helper
             const normalize = str =>
-              str.toLowerCase()
-                 .replace(/[^a-z0-9\s]/g, '')
-                 .replace(/\s+/g, ' ')
-                 .trim();
+              str
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
 
-            const current = normalize(title);
+            const currentTitle = normalize(title);
 
-            // Fetch open PRs
-            const existingPRs = await github.paginate(
+            // Fetch recent open PRs only
+            const prs = await github.paginate(
               github.rest.pulls.list,
               {
                 owner,
                 repo,
                 state: 'open',
-                per_page: 100
+                sort: 'created',
+                direction: 'desc',
+                per_page: 50
               }
             );
 
-            let duplicatePR = null;
-            for (const existing of existingPRs) {
-              if (existing.number === prNumber) continue;
-              const existingTitle = normalize(existing.title || '');
-              if (existingTitle === current) {
-                duplicatePR = existing;
+            let duplicate = null;
+
+            for (const existing of prs) {
+
+              if (existing.number === prNumber) {
+                continue;
+              }
+
+              const existingTitle = normalize(
+                existing.title || ''
+              );
+
+              // Exact match
+              if (existingTitle === currentTitle) {
+                duplicate = existing;
+                break;
+              }
+
+              // Strong overlap match
+              if (
+                existingTitle.includes(currentTitle) ||
+                currentTitle.includes(existingTitle)
+              ) {
+                duplicate = existing;
                 break;
               }
             }
 
-            if (!duplicatePR) {
-              core.info('No duplicate PR found');
+            if (!duplicate) {
+              core.info('No duplicate PR detected');
               return;
             }
 
-            // Build comment
-            const body = `## 🔁 Possible Duplicate PR Detected\n\n` +
-              `Hi @${username}, a PR with a very similar title already exists:\n\n` +
-              `➡️ #${duplicatePR.number}\n\n` +
-              `Please check if your changes overlap with the existing PR.\n\n` +
-              `This is just a heads-up. The PR will **not** be auto-closed.`;
+            const MARKER =
+              '<!-- duplicate-pr-guard -->';
 
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: prNumber,
-              body
-            });
+            const body =
+              `${MARKER}\n` +
+              `## 🔁 Possible Duplicate PR\n\n` +
+              `Hi @${username}, a similar PR may already exist:\n\n` +
+              `➡️ #${duplicate.number}\n\n` +
+              `Please check whether the changes overlap before continuing.\n\n` +
+              `This is only an informational warning — your PR will remain open.`;
 
-            // Add label
+            // Fetch existing comments
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number: prNumber,
+                per_page: 50
+              }
+            );
+
+            const existingComment = comments.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes(MARKER)
+            );
+
+            // Avoid duplicate updates
+            if (
+              existingComment &&
+              existingComment.body.trim() === body.trim()
+            ) {
+              core.info('Comment already current');
+              return;
+            }
+
+            // Update or create sticky comment
+            if (existingComment) {
+
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body
+              });
+
+              core.info('Updated duplicate warning');
+
+            } else {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body
+              });
+
+              core.info('Created duplicate warning');
+            }
+
+            // Add label quietly
             try {
+
               await github.rest.issues.addLabels({
                 owner,
                 repo,
                 issue_number: prNumber,
                 labels: ['possible-duplicate-pr']
               });
+
             } catch (e) {
-              core.warning(`Failed adding duplicate label: ${e?.message || e}`);
+
+              core.info(
+                `Label may already exist: ${e.message}`
+              );
             }
 
-            core.info(`Duplicate PR detected: #${prNumber} → #${duplicatePR.number}`);
+            core.info(
+              `Potential duplicate detected: #${prNumber} -> #${duplicate.number}`
+            );

@@ -3452,6 +3452,9 @@ function setCopyBtnSuccess(btn) {
 function setCopyBtnError(btn) {
   var icon = btn.querySelector('.material-symbols-outlined');
   if (icon) icon.textContent = 'error';
+  btn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copy Failed!';
+  btn.style.background = '#fee2e2';
+  btn.style.color = '#991b1b';
   btn.title = 'Copy failed';
   btn.setAttribute('aria-label', 'Copy failed — clipboard not available');
 }

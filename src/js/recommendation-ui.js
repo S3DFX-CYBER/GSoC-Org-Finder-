@@ -280,8 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           
-          <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-            View <span class="material-symbols-outlined text-sm">arrow_forward</span>
+         <button 
+        data-org-name="${safeEscapeHtml(o.name)}"
+          class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+          View <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </button>
         </div>
       </article>

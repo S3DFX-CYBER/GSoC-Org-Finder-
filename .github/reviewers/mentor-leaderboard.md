@@ -18,11 +18,11 @@
 | 12 | @CoderOggy78 | 3 | 7 |
 | 13 | @nihalawasthi | 3 | 7 |
 | 14 | @AnirudhPhophalia | 3 | 6 |
-| 15 | @Mrigakshi-Rathore | 3 | 6 |
-| 16 | @sabeenaviklar | 2 | 6 |
-| 17 | @stealthwhizz | 2 | 6 |
-| 18 | @lourduradjou | 2 | 5 |
-| 19 | @BandhiyaHardik | 2 | 4 |
+| 15 | @BandhiyaHardik | 3 | 6 |
+| 16 | @Mrigakshi-Rathore | 3 | 6 |
+| 17 | @sabeenaviklar | 2 | 6 |
+| 18 | @stealthwhizz | 2 | 6 |
+| 19 | @lourduradjou | 2 | 5 |
 | 20 | @SparshM8 | 2 | 4 |
 | 21 | @AnirbansarkarS | 1 | 2 |
 | 22 | @Ayush-Patel-56 | 1 | 2 |
@@ -62,4 +62,4 @@
 | 56 | @uddalak2005 | 0 | 0 |
 | 57 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Tue, 26 May 2026 21:29:00 GMT
+Last updated: Wed, 27 May 2026 14:40:09 GMT

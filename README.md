@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](README.md) • [🤝 Contributing Guide](CONTRIBUTING.md) • [📜 Code of Conduct](CODE_OF_CONDUCT.md) • [🛡️ Security Policy](SECURITY.md) • [📚 General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md)
 
 ---
@@ -162,7 +162,7 @@ This repository operates on a **zero-build, static-first** architectural philoso
 
 ### 1. Clone & Setup
 ```bash
-git clone https://github.com/your-username/GSoC-Org-Finder-.git
+git clone https://github.com/S3DFX-CYBER/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
 ```
 
@@ -343,7 +343,7 @@ These mentors guide contributors and review code changes:
 | **March 16, 2026** | **GSoC Student applications open** |
 | **March 31, 2026** | **GSoC Application submission deadline** |
 | **April 30, 2026** | Accepted GSoC student proposals announced |
-| **May – November 2026**| Offical coding and evaluation window |
+| **May – November 2026**| Official coding and evaluation window |
 
 ---
 

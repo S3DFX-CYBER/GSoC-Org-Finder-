@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
 
 ---
@@ -77,9 +77,9 @@ Once verified, the bot will post a confirmation comment. Do **NOT** start workin
     git commit -s -m "feat: descriptive commit message"
     ```
 3.  **Open PR:** Select the **NSoC PR Template** when opening your PR. Link the assigned issue in the PR description:
-    ```
-    Closes #issue-number
-    ```
+    ```text
+Closes #issue-number
+```
 
 ---
 

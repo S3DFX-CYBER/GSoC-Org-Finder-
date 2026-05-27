@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
 
 ---
@@ -29,7 +29,7 @@ Visit the [GitHub Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/is
 
 ### Step 2 — Request Assignment
 Comment on the target issue with:
-```
+```text
 /assign
 ```
 Include a note stating: *"I would like to work on this issue as a general contributor."*
@@ -69,7 +69,7 @@ Adhere to the [Conventional Commits](https://www.conventionalcommits.org/) stand
 git push origin feat/your-feature-name
 ```
 Select the **General PR Template** when opening your PR on GitHub, and ensure you link the target issue explicitly:
-```
+```text
 Closes #issue-number
 ```
 

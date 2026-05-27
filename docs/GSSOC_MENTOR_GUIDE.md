@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
 
 ---
@@ -26,7 +26,7 @@ As a mentor for FindMyGSoC, you play a critical role in maintaining our vanilla 
 
 ### Registration
 Mentors are registered in our reviewer list at:
-```
+```json
 .github/reviewers/gssoc-mentors.json
 ```
 
@@ -59,17 +59,17 @@ Mentors should only review PRs that have successfully passed the automated Stage
 
 ### Approving an Assignment Request
 When pinged to approve a contributor assignment, verify their eligibility and comment:
-```
+```text
 /approve-assignment @username
 ```
 
 ### Approving a Pull Request
 After validating code correctness, performance, and cross-viewport responsiveness:
-```
+```text
 /approve-pr
 ```
 *or*
-```
+```text
 /lgtm
 ```
 *(GitHub's formal Approve review action also works).*

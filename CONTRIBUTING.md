@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](README.md) • [🤝 Contributing Guide](CONTRIBUTING.md) • [📜 Code of Conduct](CODE_OF_CONDUCT.md) • [🛡️ Security Policy](SECURITY.md) • [📚 General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md)
 
 ---

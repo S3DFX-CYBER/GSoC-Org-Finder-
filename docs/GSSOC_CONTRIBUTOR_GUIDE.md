@@ -2,7 +2,7 @@
 
 ---
 
-### 🌐 Navigation
+## 🌐 Navigation
 [🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
 
 ---
@@ -42,7 +42,7 @@ We use an automated assignment queue. Please do not ask maintainers to assign is
 
 ### Step 1 — Comment on the Issue
 Request the issue by commenting:
-```
+```text
 /assign gssoc
 ```
 > [!IMPORTANT]
@@ -80,7 +80,7 @@ Once criteria are verified, two active mentors are randomly selected and request
     git commit -s -m "feat: your conventional commit message"
     ```
 3.  **Submit PR:** Use the **GSSoC PR Template** when opening your pull request. Link the issue in your PR description:
-    ```
+    ```text
     Closes #issue-number
     ```
 

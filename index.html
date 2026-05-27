@@ -3651,10 +3651,6 @@ if(org.ideas){
     applyFilters();
     updateLanguageModeHint();
   });
-  document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
-    orgCurrentPage += 1;
-    renderOrgs(false);
-  });
 
   // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);

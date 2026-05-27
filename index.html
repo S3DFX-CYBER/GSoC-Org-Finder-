@@ -3552,6 +3552,25 @@ function handleCopyToClipboard(btn, url) {
   }
     renderMentorContactSection(org);
 
+  // Copy organization name button
+    var oldNameCopy = document.getElementById('mOrgNameCopyBtn');
+      if (oldNameCopy) oldNameCopy.remove();
+
+      if (org.name) {
+        var nameCopyBtn = document.createElement('button');
+        nameCopyBtn.id = 'mOrgNameCopyBtn';
+        nameCopyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Name';
+        nameCopyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+        nameCopyBtn.title = 'Copy organization name';
+        nameCopyBtn.setAttribute('aria-label', 'Copy organization name');
+
+        nameCopyBtn.addEventListener('click', function () {
+          handleCopyToClipboard(nameCopyBtn, org.name);
+        });
+
+        document.getElementById('mIdeasBtn').after(nameCopyBtn);
+      }
+
     const draftBtn = document.getElementById('mDraftBtn');
     if (draftBtn) {
       draftBtn.onclick = () => ProposalBuilder.open(org.name);

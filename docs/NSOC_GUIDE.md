@@ -9,7 +9,7 @@
 
 Welcome to the **Nexus Spring of Code 2026** contributor guide!
 
-NSoC is an open-source program by the Nirmaan Organization that connects contributors with real-world projects. This guide outlines program timeline rules, assignment workflows, points logic, and standard guidelines for your NSoC contributions.
+NSoC is an open-source program by the Nirmaan Organization that connects contributors with real-world projects. This guide outlines program timeline rules, assignment workflows, and standard guidelines for your NSoC contributions.
 
 **Official Website:** [https://www.nsoc.in/](https://www.nsoc.in/)
 

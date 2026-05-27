@@ -1,235 +1,90 @@
 # NSoC'26 (Nexus Spring of Code) Guide
 
-Welcome to the **Nexus Spring of Code 2026** contribution track for FindMyGSoC!
+---
 
-NSoC (Nexus Spring of Code) is an open-source program by Nirmaan Organization that connects contributors with real-world projects. It provides mentorship, community support, and recognition for meaningful open-source contributions.
+### 🌐 Navigation
+[🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
+
+---
+
+Welcome to the **Nexus Spring of Code 2026** contributor guide!
+
+NSoC is an open-source program by the Nirmaan Organization that connects contributors with real-world projects. This guide outlines program timeline rules, assignment workflows, points logic, and standard guidelines for your NSoC contributions.
 
 **Official Website:** [https://www.nsoc.in/](https://www.nsoc.in/)
 
 ---
 
-## What is NSoC?
+## 📅 NSoC Timeline & Limits
 
-Nexus Spring of Code is a program designed to:
+### Timeline Advantage
+Unlike other structured programs, NSoC contributors can request assignments **immediately**. There are no pre-program date restrictions on issue claiming!
 
-- Introduce contributors to open-source development
-- Provide structured mentorship and project guidance
-- Recognize contributions through certificates and rewards
-- Build a supportive community of developers
+### 🛑 Maximum Active Assignments Limit
+To ensure balanced issue distribution, NSoC contributors are limited to a maximum of **3 active assigned issues** at any single time.
 
 ---
 
-## Getting Started
+## 🏆 Contribution Levels & Difficulty Labels
 
-### Prerequisites
+Issues are classified under three levels:
 
-- A GitHub account
-- Basic understanding of Git (fork, clone, branch, commit, push)
-- Familiarity with HTML/CSS/JavaScript (our core stack)
+| NSoC Level | Difficulty Label | Typical Examples |
+| :--- | :--- | :--- |
+| **Level 1** | `level1` / `level:beginner` | Small HTML alterations, typography, styling tweaks, minor bugs, and documentation fixes. |
+| **Level 2** | `level2` / `level:intermediate` | Feature filters, recommendation matching logic, caching adjustments, and Vercel proxy updates. |
+| **Level 3** | `level3` / `level:advanced` | Core performance profiling, security patches, and structural modules. |
 
-### Step 1 — Find an Issue
+---
 
-Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter by:
+## 📋 The Automated Assignment Workflow
 
-- `nsoc26` label for NSoC-specific issues
-- `level:beginner` (or `level1`) for beginner-friendly tasks
-- `level:intermediate` (or `level2`) for intermediate tasks
-- `level:advanced` (or `level3`) for advanced tasks
-- `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement` for specific types
+Issue assignments are handled through automated workflows to ensure transparency. Do not ask mentors for manual assignments.
 
-New issues are **automatically triaged by our AI bot** which applies difficulty and type labels. You can filter by these labels to find issues that match your skill level.
-
-### Step 2 — Request Assignment
-
-Comment on the issue with:
-
+### Step 1 — Request Assignment
+Find an open issue containing the `nsoc26` label. Comment on it with:
 ```bash
 /assign nsoc
 ```
+> [!IMPORTANT]
+> You **must** include the `nsoc` parameter in the command, or the bot will ignore your request.
 
-You **must** include `nsoc` in your assignment command.
+### Step 2 — Automatic Eligibility Checks
+The bot evaluates your request against the following constraints:
+*   The issue is unassigned.
+*   Your active assigned issue count is under the limit of **3**.
+*   Your GitHub account is at least **7 days old**.
+*   Difficulty prerequisites are satisfied:
+    *   **Level 1:** Open to everyone.
+    *   **Level 2:** Your GitHub account must be at least **30 days old** to auto-assign.
+    *   **Level 3:** Requires at least **1 previously merged PR** in this repository.
 
-### Step 3 — Assignment Processing
-
-The automated system validates:
-
-- Your GitHub account is at least **7 days old**
-- The issue is available (not already assigned)
-- Your active assignment count is under the maximum (**3 issues**)
-- No recent spam/AI-slop flags on your account
-
-**Auto-assignment rules by difficulty (on verified issues):**
-
-| Issue Level | Requirement |
-|-------------|-------------|
-| `level1` (Beginner) | Anyone can self-assign immediately (no restrictions) |
-| `level2` (Intermediate) | Account must be at least **30 days old** for auto-assignment |
-| `level3` (Advanced) | Must have at least **1 merged PR** in this repository |
-
-- If the issue is not yet verified, a maintainer approves via `/approve-assignment`
-- If you don't meet the requirements for a level, you can still request assignment and a maintainer can manually approve
-
-Do **NOT** start working until the bot confirms your assignment.
+### Step 3 — Bot Confirmation
+Once verified, the bot will post a confirmation comment. Do **NOT** start working or open a PR until this confirmation is posted.
 
 ---
 
-## NSoC Timeline
+## 🛠️ Step-by-Step PR Submission
 
-NSoC contributors can request assignments immediately — there is no date restriction like GSSoC. Start contributing as soon as you join the program!
-
----
-
-## Contribution Levels
-
-| Level | Label | Examples |
-|-------|-------|----------|
-| Level 1 | `level1` | UI tweaks, docs, small bug fixes, accessibility |
-| Level 2 | `level2` | Filter logic, caching, API improvements, search |
-| Level 3 | `level3` | Architecture changes, performance, security |
-
-**Level 3 issues** require at least 1 previously merged PR in this repository. **Level 2 issues** require an account at least 30 days old for auto-assignment. **Level 1 issues** have no restrictions — anyone can start here.
-
----
-
-## PR Submission Process
-
-### 1. Fork and Clone
-
-```bash
-git clone https://github.com/your-username/GSoC-Org-Finder-.git
-cd GSoC-Org-Finder-
-```
-
-### 2. Create a Branch
-
-```bash
-git checkout -b feat/your-feature-name
-```
-
-### 3. Make Your Changes
-
-Follow the project's zero-build, zero-dependency philosophy. Do not add frameworks or build tools.
-
-### 4. Commit with Sign-Off
-
-```bash
-git commit -s -m "feat: your descriptive message"
-```
-
-Use [Conventional Commits](https://www.conventionalcommits.org/) format:
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation
-- `style:` for UI/styling
-- `refactor:` for code cleanup
-- `perf:` for performance improvements
-
-### 5. Push and Open a PR
-
-```bash
-git push origin feat/your-feature-name
-```
-
-When opening your PR, select the **NSoC PR Template** and fill in all sections.
-
-### 6. Link Your Issue
-
-Your PR body **must** include:
-
-```
-Closes #issue-number
-```
+1.  **Fork & Clone:** Clone your fork and create a clean development branch:
+    ```bash
+    git clone https://github.com/your-username/GSoC-Org-Finder-.git
+    cd GSoC-Org-Finder-
+    git checkout -b feat/your-feature-name
+    ```
+2.  **Commit with Sign-Off:** Verify that all commits are signed off to pass the DCO checks:
+    ```bash
+    git commit -s -m "feat: descriptive commit message"
+    ```
+3.  **Open PR:** Select the **NSoC PR Template** when opening your PR. Link the assigned issue in the PR description:
+    ```
+    Closes #issue-number
+    ```
 
 ---
 
-## NSoC PR Template
+## 💤 Inactivity Expiry (7-Day Rule)
 
-When creating a PR, use the NSoC template located at `.github/PULL_REQUEST_TEMPLATE/nsoc.md`. It requires:
-
-- Program declaration (NSOC)
-- Description of changes
-- Related issue link
-- Type of change
-- Testing steps
-- Screenshots (for UI changes)
-- Checklist confirmation
-
----
-
-## Rules & Guidelines
-
-### Do
-
-- Write clean, readable code
-- Test changes locally before submitting
-- Keep PRs focused and minimal
-- Follow the existing code style
-- Respond to review feedback promptly
-- Be respectful to mentors and other contributors
-- Ask questions if you're stuck
-
-### Don't
-
-- Self-assign issues via GitHub UI (use the bot)
-- Start working before assignment is confirmed
-- Submit AI-generated code without understanding it
-- Open multiple tiny PRs for contribution farming
-- Copy contributions from other PRs
-- Ping maintainers repeatedly for reviews
-- Add unnecessary dependencies or build tools
-
----
-
-## Review Process (3-Stage Pipeline)
-
-Your PR goes through an automated 3-stage pipeline:
-
-| Stage | What Happens | Labels Applied |
-|-------|-------------|----------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
-| **Stage 2** — Reviewer/Maintainer Review | A reviewer checks code quality | `mentor-approved` + `pa-review-required` |
-| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
-
-The **LLM PR Analysis** bot will automatically verify that your PR:
-- Links to a valid issue
-- Actually addresses the linked issue
-- Does not include out-of-scope changes
-
-### Expected Review Times
-
-- PR review: 24–72 hours
-- Please do not ping for faster reviews
-
----
-
-## Inactivity Policy
-
-- Assigned issues with no progress for **7 days** will be auto-unassigned
-- "Progress" means posting a comment OR opening a non-draft PR linked to the issue
-- Maintainers and collaborators with write access are exempt
-- After being unassigned, you must wait **24 hours** before re-requesting
-- If you cannot complete an issue, comment `/unassign` to release it for others
-
----
-
-## Code of Conduct
-
-All NSoC participants must follow the project's [Code of Conduct](../CODE_OF_CONDUCT.md) and the NSoC program guidelines. Violations may result in removal from the program.
-
----
-
-## Resources
-
-- [NSoC Official Website](https://www.nsoc.in/)
-- [Project Discord](https://discord.gg/mgWV3xSV7)
-- [Project Contributing Guide](../CONTRIBUTING.md)
-
----
-
-## Need Help?
-
-- Ask questions on GitHub Issues or Discussions
-- Join our [Discord server](https://discord.gg/mgWV3xSV7)
-- Tag your question with `nsoc` for program-specific queries
-
-Happy contributing!
+*   Assigned issues with no progress (linked PR, draft PR, or descriptive status updates) for **7 days** are automatically unassigned.
+*   If you are unassigned due to inactivity, you must wait **24 hours** before re-requesting assignment on that same issue.
+*   To manually release an issue you are unable to complete, comment `/unassign`.

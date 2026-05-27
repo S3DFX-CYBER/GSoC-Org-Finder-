@@ -1,589 +1,169 @@
-# Contributing Guide
-
-## Program-Specific Guides
-
-If you are contributing under a specific program, refer to the dedicated guide for your track:
-
-| Track | Guide | 
- |-------|-------| 
- | GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) | 
- | GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) | 
- | NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) | 
- | General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
-
-
-The rest of this document covers the shared rules, architecture, workflows, automation systems, and contribution policies that apply to all contributors.
+# Contributing to GSoC Org Finder
 
 ---
 
-## Project Philosophy
-
-This repository follows a:
-
-- Zero-build philosophy
-- Minimal dependency philosophy
-- Static-first architecture
-- Edge-runtime compatible workflow
-
-### Core Principles
-
-- No unnecessary dependencies
-- No heavy frameworks
-- No bundlers unless absolutely required
-- Simple and maintainable code
-- Fast runtime performance
-- Lightweight APIs
-- Edge-compatible architecture
-- Human-reviewed contributions over AI-generated spam
-
-Contributors should avoid introducing:
-
-- unnecessary npm packages
-- client-side frameworks
-- large runtime abstractions
-- unnecessary build pipelines
-- dependency-heavy tooling
-
-unless clearly justified.
+### 🌐 Navigation
+[🏠 Home (README)](README.md) • [🤝 Contributing Guide](CONTRIBUTING.md) • [📜 Code of Conduct](CODE_OF_CONDUCT.md) • [🛡️ Security Policy](SECURITY.md) • [📚 General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md)
 
 ---
 
-## Architecture
-
-The project is built using:
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | Vanilla HTML/CSS/JS |
-| Backend | Vercel Edge Functions |
-| Hosting | Vercel |
-| Data | Static JSON + GitHub API |
-| Analytics | localStorage |
-
-### Architecture Goals
-
-- Fully static-first deployment
-- Fast initial page load
-- Minimal API overhead
-- Edge-compatible runtime
-- No hydration complexity
-- Maintainable repository structure
+## 📖 Table of Contents
+- [Program-Specific Guides](#-program-specific-guides)
+- [Project Philosophy](#-project-philosophy)
+- [Local Development & Environment Setup](#-local-development--environment-setup)
+- [Coding Standards & Linters](#-coding-standards--linters)
+- [Issue Assignment Workflow](#-issue-assignment-workflow)
+- [The Automated Stage Triage Pipeline](#-the-automated-stage-triage-pipeline)
+- [Smart Review Pipeline](#-smart-review-pipeline)
+- [Pull Request Checklist](#-pull-request-checklist)
+- [Inactivity & Maintainer Ping Policies](#-inactivity--maintainer-ping-policies)
 
 ---
 
-## Local Development
+## 📚 Program-Specific Guides
 
-**Install Vercel CLI**
+If you are participating under a structured program, please follow the guidelines specified for your track:
 
-```bash
-npm install -g vercel
-```
+| Program / Track | Purpose | Detailed Track Guide |
+| :--- | :--- | :--- |
+| **GSSoC'26 Contributors** | GirlScript Summer of Code 2026 track | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |
+| **GSSoC'26 Mentors** | Mentorship instructions and rotation | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) |
+| **NSoC'26 Contributors** | Nexus Spring of Code 2026 track | [NSoC Guide](docs/NSOC_GUIDE.md) |
+| **General Contributors** | Open source contributions outside formal tracks | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
 
-**Clone Repository**
+---
 
+## ✨ Project Philosophy
+
+This codebase operates on four cornerstone principles:
+1.  **Zero-Build Philosophy** — No compilers, transpilers, webpacks, or hydration frameworks. The frontend is vanilla HTML5, CSS3, and ES6 Javascript.
+2.  **Minimal Dependency Philosophy** — Do not introduce external npm packages unless absolute business necessity demands it.
+3.  **Static-First Architecture** — Build fast, responsive pages that can be hosted on any static CDN.
+4.  **Edge-Runtime Proxy Functions** — Perform necessary server interactions via Vercel Edge Functions to avoid exposing secret tokens.
+
+---
+
+## 🛠️ Local Development & Environment Setup
+
+Follow these steps to run a full development environment including API proxy services:
+
+### 1. Clone & Set Tokens
+Create a Personal Access Token (PAT) on GitHub and set it inside a `.env` file:
 ```bash
 git clone https://github.com/S3DFX-CYBER/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
+echo "GITHUB_TOKEN=ghp_your_token_here" > .env
 ```
 
-**Start Local Development**
-
+### 2. Start Vercel Edge Runtime Dev
+For live stats, search indices, and API mocks, run the Vercel emulator locally:
 ```bash
+# Global Vercel CLI install
+npm install -g vercel
+
+# Run development server
 vercel dev
 ```
-
-This simulates the Vercel Edge runtime locally.
-
----
-
-## Repository Structure
-
-```
-GSoC-Org-Finder-
-├── .github/
-│   ├── workflows/
-│   ├── reviewers/
-│   ├── scripts/
-│   └── ISSUE_TEMPLATE/
-├── api/
-├── data/
-├── docs/
-├── src/
-│   ├── js/
-│   ├── assets/
-│   └── styles.css
-├── index.html
-├── sw.js
-└── README.md
-```
+The server starts at `http://localhost:3000`.
 
 ---
 
-## How To Start Contributing
+## 📏 Coding Standards & Linters
 
-### Step 1 — Find an Issue
+To maintain maximum code quality and formatting consistency, this project enforces strict linting rules. Ensure your contributions pass all validations before committing:
 
-Go to the **Issues** tab and filter by labels:
-
-- `level:beginner`
-- `level:intermediate`
-- `level:advanced`
-- `type:bug`
-- `type:docs`
-- `type:ui`
-- `type:enhancement`
-- `type:api`
-- `gssoc26`
-- `nsoc26`
-
-Issues are automatically analyzed using repository automation.
-
-The triage system:
-
-- categorizes difficulty
-- detects duplicates
-- identifies spam
-- labels issue type
-- flags low-quality reports
+*   **JavaScript Linting (`.eslintrc.json`)** — Verifies variable scoping, ES module standard, clean indenting, and prevents deprecated syntax patterns.
+*   **CSS Linting (`.stylelintrc.json`)** — Keeps properties ordered, prevents nesting overflow, and standardizes visual variables.
+*   **HTML Linting (`.htmlhintrc`)** — Checks semantic structures, tag closures, tag structure validity, and correct accessibility tags.
 
 ---
 
-## Assignment Workflow
+## 📋 Issue Assignment Workflow
 
-This repository uses a **mentor-assisted assignment pipeline**.
+The repository relies on a mentor-assisted automated assignment pipeline. Do **not** comment begging to be assigned, and **never** attempt manual assignment using the GitHub UI.
 
-> Assignments are **NOT** handled manually through the GitHub UI.  
-> All issue assignment requests are processed through repository automation.
-
-### Requesting Assignment
-
-To request an issue, comment:
-
-```
-/assign
+```mermaid
+graph TD
+    User["Contributor wants to help"] --> Cmd["Comments '/assign' or '/assign gssoc' or '/assign nsoc'"]
+    Cmd --> Bot["Assignment Bot validates limitations"]
+    Bot -->|Fails eligibility/limit checks| Reject["Rejects with comment feedback"]
+    Bot -->|Passes check criteria| Queue["Queued automatically"]
+    Queue --> Select["Selects 2 active program mentors randomly"]
+    Select --> Expire{"Mentors approve in 24 hours?"}
+    Expire -->|No| Rotate["Mentor rotated to new active reviewer"]
+    Expire -->|Yes| Confirm["Bot assigns contributor & starts 7-day progress timer"]
 ```
 
-> Do **NOT** self-assign using the GitHub interface.
+### 🏷️ Difficulty Level Rules
+To match experience levels, auto-assignment rules are strictly governed:
+
+| Difficulty Level | Label Criteria | Auto-Assignment Eligibility |
+| :--- | :--- | :--- |
+| **Beginner** | `level:beginner` / `level1` | Anyone may request assignment. Ideal for docs, UI spacing, or standard fixes. |
+| **Intermediate** | `level:intermediate` / `level2` | Your GitHub account must be at least **30 days old** to auto-assign. |
+| **Advanced** | `level:advanced` / `level3` | Requires at least **1 previously merged PR** in this repository. |
+
+### 🛑 Active Assignment Limit
+To keep the environment fair for all, contributors can only have a maximum of **3 active assigned issues** at any single time.
 
 ---
 
-### Mentor-Based Assignment Queue
-
-When a contributor requests assignment:
-
-1. The request is queued automatically
-2. Two active mentors are randomly selected from the mentor activity pool
-3. The mentors are notified on the issue
-4. Mentors have **24 hours** to approve the assignment
-5. If mentors do not respond within 24 hours:
-   - Mentors are rotated automatically
-   - New active mentors are selected
-6. If no mentor approves after timeout:
-   - The Project Admin (PA) is notified automatically
-   - Manual assignment review begins
-
-#### Mentor Selection System
-
-Mentor selection is:
-
-- Randomized
-- Activity-aware
-- Weighted toward active mentors
-- Dynamically rotated
-- Workload balanced
-
-The system avoids repeatedly selecting the same mentors for every issue. Mentors are selected from the active mentor leaderboard and review activity data. Inactive mentors are deprioritized automatically.
-
----
-
-### Assignment Approval Commands
-
-**Contributors**
-
-| Command | Description |
-|---------|-------------|
-| `/assign` | Request issue assignment |
-| `/unassign` | Remove your current assignment |
-
-**Mentors**
-
-| Command | Description |
-|---------|-------------|
-| `/approve-assignment @username` | Approve and assign a contributor |
-
-> Only currently pinged mentors may approve.
-
----
-
-### Assignment Eligibility
-
-#### Beginner Issues
-
-Anyone may request assignment.
-
-Examples: documentation fixes, UI tweaks, accessibility fixes, simple bug fixes
-
-#### Intermediate Issues
-
-**Requirements:** GitHub account at least 30 days old
-
-Examples: filtering improvements, caching changes, API improvements, search improvements
-
-#### Advanced Issues
-
-**Requirements:** At least 1 merged PR in this repository
-
-Examples: architecture changes, security-sensitive logic, performance optimization, workflow redesign
-
----
-
-### Maximum Active Assignments
-
-To ensure fairness:
-
-| Program | Maximum Active Issues |
-|---------|-----------------------|
-| GSSoC | 3 |
-| NSoC | 3 |
-| General Contributors | 3 |
-
-Requests above the limit are automatically rejected.
-
----
-
-## Duplicate Issue Detection
-
-The repository includes an **AI-assisted duplicate detection system**.
-
-### How Duplicate Detection Works
-
-The detector compares:
-
-- Normalized issue titles
-- Semantic keyword overlap
-- Important technical keywords
-- Issue intent similarity
-- Token overlap scoring
-
-The system intentionally avoids:
-
-- Aggressive exact-title matching
-- Weak substring matching
-- Low-confidence duplicate flags
-
-The duplicate detector uses:
-
-- Weighted similarity scoring
-- Keyword extraction
-- Overlap thresholds
-- Confidence filtering
-- Technical term matching
-
-This significantly reduces false positives.
-
-> Issues are **NOT** auto-closed solely because they are flagged as possible duplicates.
-
----
-
-## Smart Review Pipeline
-
-Pull requests go through a **3-stage review pipeline**:
-
-| Stage | Reviewer | Purpose |
-|-------|----------|---------|
-| Stage 1 | Automation | Validation + anti-spam |
-| Stage 2 | Mentors | Code review |
-| Stage 3 | Project Admin | Final merge gate |
-
-### Stage 1 — Automated Validation
-
-Automation checks:
-
-- DCO sign-off
-- PR formatting
-- Issue linking
-- Duplicate PR detection
-- AI slop detection
-- Context validation
-- Diff quality
-- Repository policy compliance
-
-The repository also uses:
-
-- LLM-assisted PR analysis
-- Spam heuristics
-- Low-effort detection
-- Context validation against linked issues
-
-### Stage 2 — Mentor Review
-
-Once Stage 1 passes:
-
-1. Active mentors are selected automatically
-2. Mentors are requested dynamically
-3. Review activity is tracked in the mentor leaderboard
-4. Review quality scoring is calculated
-5. Mentors have **24 hours** to respond
-6. Inactive mentors are replaced automatically
-
-#### Mentor Review Quality System
-
-| Review Type | Score |
-|-------------|-------|
-| Low-effort approval | Low points |
-| Detailed review with feedback | Higher points |
-| Helpful requested changes | Higher points |
-| Merge-quality approval | Highest points |
-
-The mentor leaderboard tracks:
-
-- Reviews completed
-- Review quality
-- Approvals
-- Merged-review count
-- Assignment approvals
-- Priority review activity
-
-### Mentor Review Leaderboard
-
-The mentor leaderboard:
-
-- Updates automatically
-- Tracks all-time review activity
-- Includes mentor profile avatars
-- Generates visual leaderboard comments
-- Updates after PR merges
-- Powers mentor assignment weighting
-
-The leaderboard prioritizes: active mentors, high-quality reviewers, and consistent participation.
-
----
-
-## Contributor Leaderboard
-
-The contributor leaderboard updates automatically after PR merges.
-
-It includes:
-
-- GitHub avatars
-- Contributor rankings
-- Merged PR counts
-- Contribution scores
-- Contextual leaderboard comments
-
-Leaderboard comments are posted automatically on merged PRs.
-
----
-
-## Pull Request Workflow
-
-### Before Opening a PR
-
-Ensure:
-
-- The issue is assigned to you
-- The work is complete
-- Changes are tested locally
-- Your PR follows repository conventions
-
-### Linking Issues is Mandatory
-
-Every PR **MUST** contain:
-
-```
-Closes #issue-number
+## 🚦 The Automated Stage Triage Pipeline
+
+All pull requests pass through an automated 3-stage validation pipeline:
+
+```mermaid
+flowchart LR
+    PR[Pull Request Submitted] --> Stage1[Stage 1: Automated Checks]
+    Stage1 -->|Passes DCO, AI Slop, Duplicate scan| Stage2[Stage 2: Mentor Review]
+    Stage1 -->|Fails checks| Block[PR Blocked / Fix Requested]
+    Stage2 -->|Approved by Mentor| Stage3[Stage 3: PA Merge Gate]
+    Stage3 -->|Approved by Project Admin| Merge[PR Merged & Leaderboard Updated]
 ```
 
-> PRs without linked issues may be closed automatically.
+---
 
-### Required PR Standards
+## 🔍 Smart Review Pipeline
 
-Your PR should:
+### 🤖 Stage 1: Automated Checks
+Before a human ever looks at your PR, GitHub Actions run the following automation:
+*   **Developer Certificate of Origin (DCO)** — Every commit must be signed off. Commit using `git commit -s -m "type: message"`.
+*   **AI-Slop & Spam Detection** — Automated scripts analyze contributions to reject generic autogenerated filler, low-effort documentation spam, or copy-paste code.
+*   **PR Size Boundaries** — Automatically labels PR size so reviewers know what to expect.
+*   **TENET AI Code Review Agent** — Automatically runs deep diff audits using Google Gemini (`gemini-2.5-flash`) to flag potential bugs, architecture deviations, and labels high severity reports as `🚨 security`.
 
-- Remain focused
-- Avoid unnecessary files
-- Avoid unrelated changes
-- Avoid dependency bloat
-- Preserve architecture consistency
-- Follow conventional commits
+### 👥 Stage 2: Mentor Review
+Once Stage 1 is fully completed and green, two active mentors are automatically selected to review your implementation.
+*   Mentors review for code cleanlines, vanilla design patterns, and responsive layout compatibility.
+*   Mentors have **24 hours** to complete reviews before they are rotated out.
+*   Review approvals are registered by commenting `/approve-pr` or `/lgtm`.
+
+### 🔑 Stage 3: Project Admin Final Gate
+*   The Project Admin (**@S3DFX-CYBER**) coordinates the final merge checks.
+*   Merges automatically sync and post updates to the automated **Contributor Leaderboard** and **Mentor Leaderboard**.
 
 ---
 
-## Conventional Commit Format
+## 📝 Pull Request Checklist
 
-**Format**
-
-```
-type: short description
-```
-
-**Examples**
-
-```
-feat: improve issue filtering
-fix: resolve assignment queue race condition
-ci: improve mentor rotation workflow
-docs: update contribution guide
-```
-
-### Common Commit Types
-
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation |
-| `style` | UI/styling |
-| `refactor` | Internal cleanup |
-| `perf` | Performance |
-| `ci` | Workflow/configuration |
-| `chore` | Maintenance |
+Ensure all items are checked before filing your PR:
+*   [ ] I have been officially assigned to the linked issue by the automated bot.
+*   [ ] My PR includes the precise closing reference in the description (e.g. `Closes #142`).
+*   [ ] All commits are signed off (`git commit -s`).
+*   [ ] The codebase compiles/runs locally with zero errors under style linting.
+*   [ ] Commit messages adhere to the **Conventional Commit** format (e.g., `feat: details`, `fix: details`).
+*   [ ] Unrelated code adjustments, folder changes, or dependency introductions have been avoided.
 
 ---
 
-## PR Checklist
+## 🕒 Inactivity & Maintainer Ping Policies
 
-Before submitting:
+### 💤 Inactivity Expiry (7-Day Limit)
+If there is no progress (linked PR, descriptive status updates, or draft commits) on an assigned issue for **7 days**, the issue is automatically unassigned.
+*   To manually release an issue you cannot complete, comment `/unassign`.
+*   Once unassigned due to inactivity, you must wait **24 hours** before requesting assignment on that issue again.
 
-- [ ] Issue is assigned to me
-- [ ] PR links an issue
-- [ ] Changes are focused and minimal
-- [ ] No unnecessary dependencies added
-- [ ] Code follows repository architecture
-- [ ] I tested changes locally
-- [ ] I understand the code submitted
-
-For UI changes:
-
-- [ ] Screenshots attached
-
----
-
-## AI-Generated Contributions Policy
-
-AI assistance is **allowed**. However:
-
-- Blindly generated PRs are prohibited
-- Contributors must understand submitted code
-- Low-quality AI spam is rejected
-- Fake complexity is prohibited
-- Meaningless documentation spam is prohibited
-
-All PRs are reviewed for:
-
-- Code quality
-- Context accuracy
-- Implementation understanding
-- Contribution relevance
-
----
-
-## Strictly Prohibited
-
-The following may result in rejection:
-
-- Fake complexity
-- Spam PRs
-- Duplicate PRs
-- Copied code without attribution
-- Low-effort documentation spam
-- Meaningless formatting-only PRs
-- Unnecessary dependency additions
-- Claiming issues without intent to work
-- Excessive maintainer pinging
-
----
-
-## Maintainer Ping Policy
-
-Avoid repeatedly pinging maintainers for issue assignment, mentor review, merge requests, labels, or review escalation.
-
-**Recommended waiting periods:**
-
-| Action | Recommended Wait |
-|--------|-----------------|
-| Mentor approval | 24 hours |
-| Maintainer review | 24–72 hours |
-| Assignment review | Up to 24 hours |
-
-Mentor review rotation is automated. Repeated spam pings may result in comment cleanup, assignment removal, or spam labeling.
-
----
-
-## Inactivity Policy
-
-Assigned issues with no meaningful progress for **7 days** may be automatically unassigned.
-
-Meaningful progress includes:
-
-- Issue updates
-- Linked PR creation
-- Implementation discussion
-- Active development progress
-
-Contributors may need to wait before reclaiming inactive issues.
-
----
-
-## Automation Features
-
-The repository includes:
-
-- AI issue triage
-- Duplicate issue detection
-- Mentor auto-rotation
-- Smart assignment queueing
-- Weighted mentor selection
-- Contributor leaderboard automation
-- Mentor leaderboard automation
-- Review quality scoring
-- Stale PR cleanup
-- DCO enforcement
-- PR size labeling
-- AI-slop detection
-- LLM PR validation
-- Workflow-based review gates
-
----
-
-## Testing
-
-Before submitting:
-
-```bash
-vercel dev
-```
-
-Verify:
-
-- Edge functions work correctly
-- No build tooling was introduced
-- No existing functionality breaks
-- Responsive layout remains functional
-- APIs behave correctly
-
----
-
-## Need Help?
-
-If you need help:
-
-- Open a [GitHub Issue](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues)
-- Use [GitHub Discussions](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/discussions)
-- Ask in the community server
-
----
-
-## Final Notes
-
-This repository prioritizes:
-
-- Quality over quantity
-- Maintainable contributions
-- Fair contributor practices
-- Meaningful improvements
-- Human-reviewed code quality
-
-Not all PRs are guaranteed to be merged.
-
-Thank you for contributing to FindMyGSoC 🚀
+### 🔇 Maintainer/Mentor Ping Etiquette
+Please do **not** tag maintainers or mentors repeatedly. Reviews are managed automatically.
+*   Allow **24 hours** for Mentor actions (rotations are automated).
+*   Allow **24–72 hours** for Project Admin review and merge cycles.

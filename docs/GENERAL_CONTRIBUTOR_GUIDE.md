@@ -1,271 +1,102 @@
 # General Contributor Guide
 
-Welcome! This guide is for contributors who want to contribute to FindMyGSoC **outside** of any formal program (GSSoC or NSoC).
+---
 
-Whether you found a bug, want to add a feature, or simply want to improve the project — you're welcome here.
+### 🌐 Navigation
+[🏠 Home (README)](../README.md) • [🤝 Contributing Guide](../CONTRIBUTING.md) • [📜 Code of Conduct](../CODE_OF_CONDUCT.md) • [🛡️ Security Policy](../SECURITY.md)
 
 ---
 
-## Getting Started
+Welcome! This guide is tailored for open-source contributors wishing to improve FindMyGSoC **outside** of any structured program (such as GirlScript Summer of Code or Nexus Spring of Code). 
 
-### Prerequisites
+Whether you found a bug, want to add a feature, or want to enhance accessibility, we are excited to review your contributions.
 
-- A GitHub account
-- Basic understanding of Git (fork, clone, branch, commit, push)
-- Familiarity with HTML/CSS/JavaScript (our core stack)
+---
 
-### Step 1 — Find an Issue
+## 🚀 Getting Started
 
-Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) for open issues. Look for:
+### Step 1 — Find an Open Issue
+Visit the [GitHub Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter using search parameters. Focus on:
+*   Issues **without** program-specific tags like `gssoc26` or `nsoc26`.
+*   Issues labeled `good first issue` for beginner tasks.
+*   Issues labeled `help wanted` for tasks seeking active help.
 
-- Issues **without** `gssoc26` or `nsoc26` labels (these are program-reserved)
-- `good first issue` label for beginner-friendly tasks
-- `help wanted` label for tasks needing contributors
-- Issues labeled `level:beginner`, `level:intermediate`, or `level:advanced` without program restrictions
-
-**Assignment eligibility by level:**
-- `level:beginner` — Anyone can self-assign (no restrictions)
-- `level:intermediate` — Account must be at least 30 days old for auto-assignment
-- `level:advanced` — Requires at least 1 merged PR in this repository
-
-You can also **create your own issue** if you've found a bug or have a feature idea.
+> [!NOTE]
+> Check assignment eligibility constraints:
+> *   **Beginner (`level:beginner`):** Available to anyone.
+> *   **Intermediate (`level:intermediate`):** Account must be ≥ 30 days old.
+> *   **Advanced (`level:advanced`):** Requires at least 1 previously merged PR.
 
 ### Step 2 — Request Assignment
-
-Comment on the issue with:
-
+Comment on the target issue with:
 ```
 /assign
 ```
+Include a note stating: *"I would like to work on this issue as a general contributor."*
 
-Since you are not part of a specific program, you can simply state:
-
-> I would like to work on this issue as a general contributor.
-
-### Step 3 — Wait for Confirmation
-
-The assignment bot will process your request. Once confirmed, you can start working.
+### Step 3 — Start Development
+Once the automated bot registers your request and confirms assignment, you are clear to begin.
 
 ---
 
-## No Program Restrictions
+## 🛠️ The Pull Request Workflow
 
-As a general contributor:
-
-- No date restrictions on assignments
-- No program-specific requirements
-- No points tracking (contributions are recognized in the Contributors section)
-- Standard open-source workflow applies
-
----
-
-## PR Submission Process
-
-### 1. Fork and Clone
-
+### 1. Fork & Branch
+Fork the repository and checkout a descriptive branch:
 ```bash
 git clone https://github.com/your-username/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
-```
-
-### 2. Create a Branch
-
-```bash
 git checkout -b feat/your-feature-name
 ```
+Branch prefix rules:
+*   `feat/` — for new features (e.g. `feat/search-filter`)
+*   `fix/` — for bug fixes (e.g. `fix/modal-overflow`)
+*   `docs/` — for documentation improvements (e.g. `docs/update-setup`)
 
-Use descriptive branch names:
-- `feat/add-search-filter` for features
-- `fix/modal-overflow` for bug fixes
-- `docs/update-readme` for documentation
+### 2. Implementation Style
+*   **Vanilla First:** Follow our zero-build and vanilla frontend philosophy. No client framework integrations or extra npm dependencies are allowed.
+*   **Style Cleanliness:** Ensure your edits pass all local style rule checks.
 
-### 3. Make Your Changes
-
-Follow the project's zero-build, zero-dependency philosophy:
-- No frameworks or build tools
-- Vanilla HTML/CSS/JS only
-- Keep it simple and maintainable
-
-### 4. Commit with Sign-Off
-
+### 3. Signed-Off Commits (Mandatory)
+Every commit **MUST** be signed off using the `-s` flag to verify the Developer Certificate of Origin (DCO):
 ```bash
-git commit -s -m "feat: your descriptive message"
+git commit -s -m "feat: descriptive message here"
 ```
+Adhere to the [Conventional Commits](https://www.conventionalcommits.org/) standards.
 
-Use [Conventional Commits](https://www.conventionalcommits.org/) format:
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation
-- `style:` for UI/styling
-- `refactor:` for code cleanup
-- `perf:` for performance improvements
-
-### 5. Push and Open a PR
-
+### 4. Push & Open PR
 ```bash
 git push origin feat/your-feature-name
 ```
-
-When opening your PR, select the **General PR Template** and fill in all sections.
-
-### 6. Link Your Issue
-
-Your PR body **must** include:
-
+Select the **General PR Template** when opening your PR on GitHub, and ensure you link the target issue explicitly:
 ```
 Closes #issue-number
 ```
 
 ---
 
-## General PR Template
+## 🚦 PR Review Pipeline (3-Stage Workflow)
 
-Use the template at `.github/PULL_REQUEST_TEMPLATE/general.md`. It requires:
+All pull requests pass through an automated 3-stage validation pipeline:
 
-- Description of changes
-- Related issue link
-- Type of change
-- Testing steps
-- Screenshots (for UI changes)
-- Checklist confirmation
-
----
-
-## What Makes a Good Contribution
-
-Strong contributions include:
-
-- Meaningful bug fixes
-- Useful features that improve the user experience
-- Performance improvements
-- Accessibility improvements
-- Clean, maintainable refactors
-- Quality documentation improvements
-- Responsive/mobile improvements
-
-Before opening a PR, ask yourself:
-
-> Does this meaningfully improve the project?
+| Stage | Process | Label |
+| :--- | :--- | :--- |
+| **Stage 1: Automated Checks** | DCO signature, format validation, duplicate scan, AI slop analysis, and a security audit via the **TENET AI Agent** using Gemini. | `stage-1-approved` |
+| **Stage 2: Code Review** | Active community mentors verify code execution, performance, responsive spacing, and styling standards. | `mentor-approved` |
+| **Stage 3: Project Admin Gate** | Final checks, administrative merging, and update to the public leaderboards by the Project Admin. | `pa-approved` |
 
 ---
 
-## Rules & Guidelines
+## ⚖️ Dos and Don'ts
 
-### Do
+### ✅ Do:
+*   Test all visual styling responsiveness locally across mobile, tablet, and desktop viewports.
+*   Write clear, semantic HTML and keep JavaScript modules organized.
+*   Sign off all commits (`git commit -s`).
+*   Be helpful and constructive in discussion comments.
 
-- Write clean, readable code
-- Test changes locally before submitting
-- Keep PRs focused and minimal
-- Follow the existing code style
-- Respond to review feedback promptly
-- Be respectful to maintainers and other contributors
-
-### Don't
-
-- Self-assign issues via GitHub UI (use the bot)
-- Start working before assignment is confirmed
-- Submit AI-generated code without understanding it
-- Add unnecessary dependencies or build tools
-- Open PRs without linked issues
-- Make changes unrelated to the linked issue
-
----
-
-## Review Process (3-Stage Pipeline)
-
-Your PR goes through an automated 3-stage pipeline:
-
-| Stage | What Happens | Labels Applied |
-|-------|-------------|----------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
-| **Stage 2** — Human Review | Maintainer or reviewer checks code quality | `mentor-approved` + `pa-review-required` |
-| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
-
-The **LLM PR Analysis** bot will automatically verify that your PR:
-- Links to a valid issue
-- Actually addresses the linked issue
-- Does not include out-of-scope changes
-
-Once merged, you're added to the Contributors section in the README.
-
-### Expected Review Times
-
-- PR review: 24–72 hours
-- Please allow reasonable time before following up
-
----
-
-## Reporting Bugs
-
-If you find a bug:
-
-1. Check existing issues to avoid duplicates
-2. Open a new issue with:
-   - Clear description of the bug
-   - Steps to reproduce
-   - Expected vs. actual behavior
-   - Browser/OS information
-   - Screenshots if applicable
-
----
-
-## Suggesting Features
-
-If you have a feature idea:
-
-1. Check existing issues for similar suggestions
-2. Open a new issue describing:
-   - What the feature does
-   - Why it would be useful
-   - How it fits the project's architecture
-   - Any implementation ideas (optional)
-
----
-
-## Local Development
-
-### Quick Start
-
-```bash
-# Clone
-git clone https://github.com/your-username/GSoC-Org-Finder-.git
-cd GSoC-Org-Finder-
-
-# Open directly (no API features)
-open index.html
-
-# Full local development with API
-npm install -g vercel
-vercel dev
-```
-
-### Environment Setup
-
-For full API functionality, set up a GitHub token:
-
-1. Generate a token at [github.com/settings/tokens](https://github.com/settings/tokens) (only `public_repo` scope needed)
-2. Set it in your Vercel project or local environment
-
----
-
-## Code of Conduct
-
-All contributors must follow the project's [Code of Conduct](../CODE_OF_CONDUCT.md). Be respectful, constructive, and collaborative.
-
----
-
-## Resources
-
-- [Project README](../README.md)
-- [Main Contributing Guide](../CONTRIBUTING.md)
-- [Project Discord](https://discord.gg/mgWV3xSV7)
-
----
-
-## Need Help?
-
-- Open a GitHub Issue with your question
-- Use GitHub Discussions for general topics
-- Join our [Discord server](https://discord.gg/mgWV3xSV7)
-
-Thank you for contributing to FindMyGSoC!
+### ❌ Do NOT:
+*   Self-assign using the GitHub interface (always comment `/assign` for the bot).
+*   Add arbitrary npm libraries or bundlers.
+*   Ping mentors or the project admin repeatedly for reviews.
+*   Submit unverified or blind AI-generated code.

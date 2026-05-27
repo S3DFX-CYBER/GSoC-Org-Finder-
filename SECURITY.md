@@ -1,38 +1,52 @@
 # Security Policy
 
-## Supported Versions
+---
+
+### 🌐 Navigation
+[🏠 Home (README)](README.md) • [🤝 Contributing Guide](CONTRIBUTING.md) • [📜 Code of Conduct](CODE_OF_CONDUCT.md) • [🛡️ Security Policy](SECURITY.md) • [📚 General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md)
+
+---
+
+## 🚦 Supported Versions
 
 Currently, only the latest version of the project is actively supported with security updates.
 
-## Reporting a Vulnerability
+---
 
-If you discover a security vulnerability, please report it responsibly.
+## 📞 Reporting a Vulnerability
 
-📧 Email: saviodsouza8a@gmail.com 
-Or report via GitHub Private Vulnerability Reporting: https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/security/advisories/new
+If you discover a security vulnerability, please report it responsibly:
 
-Please DO NOT create a public GitHub issue for security vulnerabilities.
+📧 **Email:** saviodsouza8a@gmail.com   
+🔒 **GitHub Private Reporting:** Report directly via [GitHub Private Vulnerability Reporting](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/security/advisories/new)
 
-## What to Include
+> [!WARNING]
+> Please DO NOT create a public GitHub issue for security vulnerabilities.
 
-When reporting a vulnerability, include:
+---
 
-- Description of the issue
-- Steps to reproduce
-- Possible impact
-- Suggested fix (if any)
+## 📝 What to Include
 
-## Response Timeline
+When reporting a vulnerability, please include:
+*   A descriptive summary of the potential security issue.
+*   Step-by-step instructions to reproduce the behavior.
+*   Possible impact or exploit vectors.
+*   Suggested remediation or patch (if any).
 
-We aim to acknowledge reports within **1–7 days** and provide updates as the investigation progresses.
+---
 
-## Security Best Practices
+## ⏱️ Response Timeline
 
-For contributors:
+We aim to acknowledge security reports within **1–7 days** and provide regular status updates as the investigation progresses.
 
-- Never commit secrets or API keys
-- Use environment variables for sensitive data
-- Keep dependencies updated
-- Follow secure coding practices
+---
 
-Thank you for helping keep this project secure 🙏
+## 🔒 Security Best Practices
+
+We expect all contributors to adhere to the following best practices:
+*   **Never commit secrets, API keys, or access tokens.**
+*   Always load configuration variables and credentials from environment configurations (`process.env`).
+*   Keep dependencies up to date.
+*   Write secure, validation-hardened JavaScript (e.g. sanitizing search queries or URL formatting inputs).
+
+Thank you for helping keep this project secure! 🙏

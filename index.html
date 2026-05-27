@@ -4156,14 +4156,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function openHelpModal() {
     if (helpModal) {
       helpModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
   }
 
   function closeHelpModal() {
     if (helpModal) {
       helpModal.classList.remove('open');
+      document.body.style.overflow = '';
     }
   }
+
+  window.addEventListener('click', (e) => {
+  if (helpModal && helpModal.classList.contains('open') && e.target === helpModal) {
+    closeHelpModal();
+  }
+});
 
   if (helpBtn) {
     helpBtn.addEventListener('click', openHelpModal);

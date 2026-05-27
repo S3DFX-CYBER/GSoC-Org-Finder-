@@ -16,14 +16,14 @@ const STATIC_ASSETS = [
   'src/assets/icon-512.png',
 ];
 
-self.addEventListener('install', (event) => {
+globalThis.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
-  self.skipWaiting();
+  globalThis.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+globalThis.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -33,14 +33,14 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-  self.clients.claim();
+  globalThis.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
+globalThis.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (!event.request.url.startsWith(self.location.origin)) return;
+  if (!event.request.url.startsWith(globalThis.location.origin)) return;
 
-  // Fix: Never cache /api/ routes — always hit the network
+  // Never cache /api/ routes — always hit the network
   if (event.request.url.includes('/api/')) return;
 
   event.respondWith(
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
 
       return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'opaque') {
+        if (!response?.ok || response.type === 'opaque') {
           return response;
         }
         const url = new URL(event.request.url);

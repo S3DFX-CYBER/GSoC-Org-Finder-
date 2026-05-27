@@ -4,7 +4,7 @@
 export const config = { runtime: 'edge' };
 
 const CACHE = new Map();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL = 60 * 60 * 1000;
 const CACHE_MAX_SIZE = 500;
 
 function safeCacheSet(key, value) {
@@ -15,7 +15,6 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
-// Fix 3: normalize githubRepo — strips full URLs down to "owner/repo"
 function normalizeRepo(raw) {
   if (!raw) return '';
   try {
@@ -27,73 +26,13 @@ function normalizeRepo(raw) {
   }
 }
 
-export default async function handler(req) {
-  // Fix 1: CORS — only allow your own site, not the whole internet
-  const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://your-vercel-app.vercel.app';
-  const origin = req.headers.get('origin') || '';
-
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
-
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    if (origin !== ALLOWED_ORIGIN) {
-      return new Response('Forbidden', { status: 403 });
-    }
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
-
-  // Block requests from unknown origins
-  if (origin !== ALLOWED_ORIGIN) {
-    return new Response('Forbidden', { status: 403 });
-  }
-
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
-  }
-
-  let body;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: corsHeaders });
-  }
-
-  const { orgName, description, tags, domain, fit, githubRepo } = body;
-
-  if (!orgName) {
-    return new Response(JSON.stringify({ error: 'Missing orgName' }), { status: 400, headers: corsHeaders });
-  }
-
-  // Check cache first
-  const cacheKey = `proposal__${orgName}`;
-  const cached = CACHE.get(cacheKey);
-  if (cached && Date.now() - cached.ts < CACHE_TTL) {
-    return new Response(JSON.stringify({ outline: cached.outline, cached: true }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Cache-Control': 's-maxage=3600' },
-    });
-  }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'Server configuration error: GROQ_API_KEY not set' }), {
-      status: 500,
-      headers: corsHeaders,
-    });
-  }
-
-  const tagsStr  = Array.isArray(tags) && tags.length ? tags.join(', ') : 'Not specified';
-  const fitStr   = Array.isArray(fit)  && fit.length  ? fit.join(', ')  : 'Not specified';
-  // Fix 3: use normalized repo value
+function buildPrompt({ orgName, domain, tags, description, fit, githubRepo }) {
+  const tagsStr = Array.isArray(tags) && tags.length ? tags.join(', ') : 'Not specified';
+  const fitStr  = Array.isArray(fit)  && fit.length  ? fit.join(', ')  : 'Not specified';
   const safeRepo = normalizeRepo(githubRepo);
   const repoUrl  = safeRepo ? `https://github.com/${safeRepo}` : 'Not specified';
 
-  const prompt = `You are a GSoC proposal writing assistant. Generate a structured GSoC proposal outline for the following organization:
+  return `You are a GSoC proposal writing assistant. Generate a structured GSoC proposal outline for the following organization:
 
 Organization: ${orgName}
 Domain: ${domain || 'Not specified'}
@@ -114,8 +53,9 @@ Generate a detailed GSoC proposal outline with these sections:
 9. Post-GSoC Plans
 
 Keep it structured, actionable, and specific to this org's tech stack. Use plain text with clear section headers.`;
+}
 
-  // Fix 2: AbortController — 15 second timeout so the edge function never stalls
+async function callGroq(prompt, apiKey) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
 
@@ -136,36 +76,101 @@ Keep it structured, actionable, and specific to this org's tech stack. Use plain
     });
 
     clearTimeout(timeoutId);
+    return { response, timedOut: false };
+  } catch (err) {
+    clearTimeout(timeoutId);
+    return { response: null, timedOut: err.name === 'AbortError' };
+  }
+}
 
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      return new Response(JSON.stringify({ error: `LLM API error: ${response.status}`, detail: errText }), {
-        status: 502,
-        headers: corsHeaders,
-      });
-    }
+export default async function handler(req) {
+  // Fix 1: fail fast if ALLOWED_ORIGIN not set — no placeholder fallback
+  const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+  if (!ALLOWED_ORIGIN) {
+    return new Response(JSON.stringify({ error: 'Server configuration error: ALLOWED_ORIGIN not set' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
-    const data = await response.json();
-    const outline = data.choices?.[0]?.message?.content ?? 'Unable to generate outline.';
+  const origin = req.headers.get('origin') || '';
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
 
-    safeCacheSet(cacheKey, { outline, ts: Date.now() });
+  if (req.method === 'OPTIONS') {
+    if (origin !== ALLOWED_ORIGIN) return new Response('Forbidden', { status: 403 });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
 
-    return new Response(JSON.stringify({ outline }), {
+  if (origin !== ALLOWED_ORIGIN) return new Response('Forbidden', { status: 403 });
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
+  }
+
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: corsHeaders });
+  }
+
+  const { orgName, description, tags, domain, fit, githubRepo } = body;
+  if (!orgName) {
+    return new Response(JSON.stringify({ error: 'Missing orgName' }), { status: 400, headers: corsHeaders });
+  }
+
+  const cacheKey = `proposal__${orgName}`;
+  const cached = CACHE.get(cacheKey);
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    return new Response(JSON.stringify({ outline: cached.outline, cached: true }), {
       status: 200,
       headers: { ...corsHeaders, 'Cache-Control': 's-maxage=3600' },
     });
+  }
 
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      return new Response(JSON.stringify({ error: 'Request timed out. Please try again.' }), {
-        status: 504,
-        headers: corsHeaders,
-      });
-    }
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'Server configuration error: GROQ_API_KEY not set' }), {
+      status: 500,
+      headers: corsHeaders,
+    });
+  }
+
+  const prompt = buildPrompt({ orgName, description, tags, domain, fit, githubRepo });
+  const { response, timedOut } = await callGroq(prompt, apiKey);
+
+  if (timedOut) {
+    return new Response(JSON.stringify({ error: 'Request timed out. Please try again.' }), {
+      status: 504,
+      headers: corsHeaders,
+    });
+  }
+
+  if (!response) {
     return new Response(JSON.stringify({ error: 'Failed to reach LLM API' }), {
       status: 500,
       headers: corsHeaders,
     });
   }
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => '');
+    return new Response(JSON.stringify({ error: `LLM API error: ${response.status}`, detail: errText }), {
+      status: 502,
+      headers: corsHeaders,
+    });
+  }
+
+  const data = await response.json();
+  const outline = data.choices?.[0]?.message?.content ?? 'Unable to generate outline.';
+  safeCacheSet(cacheKey, { outline, ts: Date.now() });
+
+  return new Response(JSON.stringify({ outline }), {
+    status: 200,
+    headers: { ...corsHeaders, 'Cache-Control': 's-maxage=3600' },
+  });
 }

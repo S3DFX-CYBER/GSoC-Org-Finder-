@@ -2933,6 +2933,10 @@ sections.forEach(sectionId => {
     if (e.target.id === 'compareModal') closeCompareModal();
   });
 
+  document.getElementById('orgModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'orgModal') closeModal();
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('proposalModal')?.classList.contains('open')) {

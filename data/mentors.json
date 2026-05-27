@@ -2945,12 +2945,29 @@
   },
   "St. Jude Children's Research Hospital": {
     "org": "St. Jude Children's Research Hospital",
-    "ideasUrl": "https://github.com/stjudecloud/gsoc",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://gist.github.com/claymcleod/ee8e62831a4975cba2032d888bb52080",
+    "channels": [
+      {
+        "type": "email",
+        "url": "https://gist.github.com/claymcleod/ee8e62831a4975cba2032d888bb52080",
+        "label": "View GSoC 2026 Ideas"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Clay McLeod",
+        "github": "claymcleod",
+        "githubUrl": "https://github.com/claymcleod"
+      },
+      {
+        "name": "Ari Frantz",
+        "github": "a-frantz",
+        "githubUrl": "https://github.com/a-frantz"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Email clay.mcleod@stjude.org and stephanie.sandor@stjude.org with [GSoC] in the subject line. St. Jude works on Rust-based bioinformatics tooling — Sprocket (WDL workflow engine), omics (genomics primitives), and crankshaft (execution engine). Projects involve Rust, WDL, Python bindings (PyO3), SIMD, and genomic data structures.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "stdlib": {

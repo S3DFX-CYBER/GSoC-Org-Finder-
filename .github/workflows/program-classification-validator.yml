@@ -22,21 +22,11 @@ jobs:
   validate-program:
     name: Validate PR Program Classification
 
-    if: |
-      github.event.pull_request.draft == false &&
-      github.actor != 'github-actions[bot]'
+    if: github.event.pull_request.draft == false
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
       - name: Validate classification
         uses: actions/github-script@v8
         env:
@@ -45,8 +35,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
           script: |
-            const fs = require('fs');
-            const path = require('path');
+            // Prevent bot recursion — skip execution if triggered by the github-actions bot
+            if (context.actor === 'github-actions[bot]') {
+              core.info('Skipping workflow run for github-actions[bot]');
+              return;
+            }
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
@@ -144,7 +137,21 @@ jobs:
             const detectedPrograms =
               detectProgram();
 
+            // ── Dual-label guard ────────────────────────────────────────────
+            // If both GSSoC and NSoC signals/labels are detected, apply the
+            // priority rule (GSSoC takes priority) and discard the NSoC signal
+            // so exactly one program classification is validated and applied.
+            if (detectedPrograms.includes('gssoc') && detectedPrograms.includes('nsoc')) {
+              const nsocIndex = detectedPrograms.indexOf('nsoc');
+              if (nsocIndex > -1) {
+                detectedPrograms.splice(nsocIndex, 1);
+              }
+              core.warning('Dual-label program classification detected (gssoc + nsoc) — resolved to GSSoC priority');
+            }
+            // ────────────────────────────────────────────────────────────────
+
             // ----------------------------------------
+
             // LABEL HELPERS
             // ----------------------------------------
 

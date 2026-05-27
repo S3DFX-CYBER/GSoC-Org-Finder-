@@ -1518,11 +1518,33 @@
   "Kiwix": {
     "org": "Kiwix",
     "ideasUrl": "https://github.com/kiwix/kiwix-android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://kiwixoffline.slack.com/",
+        "label": "kiwix Slack"
+      }
+    ],
+    "mentors": [
+      {
+        "name":"Benoît BERAUD",
+        "github":"benoit74",
+        "githubUrl":"https://github.com/benoit74"
+      },
+      {
+        "name":"Travis Briggs",
+        "github":"audiodude",
+        "githubUrl":"https://github.com/audiodude"
+      },
+      {
+        "name":"Mohit Mali",
+        "github":"MohitMaliDeveloper",
+        "githubUrl":"https://github.com/MohitMaliDeveloper/"
+      }
+    ],
     "mailingLists": [],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "KolibriOS Project Team": {

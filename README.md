@@ -37,7 +37,7 @@ No sign-up. No install. No build step. Just open and explore.
 
 ## 📈 Flowchart
 
-<img width="8192" height="1328" alt="User Action Flow for Org-2026-05-05-154517" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" />
+<img width="8192" height="1328" alt="Flowchart showing the user action flow for discovering and filtering GSoC organizations" src="https://github.com/user-attachments/assets/a56902d0-e172-42e9-b0d5-8a8ee2c7d156" />
 
 ---
 

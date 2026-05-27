@@ -1,4 +1,3 @@
-
 const CACHE_NAME = 'gsoc-finder-v1';
 
 const STATIC_ASSETS = [
@@ -40,6 +39,9 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
+
+  // Fix: Never cache /api/ routes — always hit the network
+  if (event.request.url.includes('/api/')) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

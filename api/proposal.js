@@ -15,33 +15,58 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+// Fix 3: normalize githubRepo — strips full URLs down to "owner/repo"
+function normalizeRepo(raw) {
+  if (!raw) return '';
+  try {
+    const str = raw.includes('://') ? raw : `https://github.com/${raw}`;
+    const url = new URL(str);
+    return url.pathname.replace(/^\//, '').replace(/\/$/, '');
+  } catch {
+    return raw.replace(/^\/|\/$/g, '');
+  }
+}
+
 export default async function handler(req) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
+  // Fix 1: CORS — only allow your own site, not the whole internet
+  const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://your-vercel-app.vercel.app';
+  const origin = req.headers.get('origin') || '';
+
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
 
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers });
+    if (origin !== ALLOWED_ORIGIN) {
+      return new Response('Forbidden', { status: 403 });
+    }
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Block requests from unknown origins
+  if (origin !== ALLOWED_ORIGIN) {
+    return new Response('Forbidden', { status: 403 });
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
   }
 
   let body;
   try {
     body = await req.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers });
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: corsHeaders });
   }
 
   const { orgName, description, tags, domain, fit, githubRepo } = body;
 
   if (!orgName) {
-    return new Response(JSON.stringify({ error: 'Missing orgName' }), { status: 400, headers });
+    return new Response(JSON.stringify({ error: 'Missing orgName' }), { status: 400, headers: corsHeaders });
   }
 
   // Check cache first
@@ -50,22 +75,23 @@ export default async function handler(req) {
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     return new Response(JSON.stringify({ outline: cached.outline, cached: true }), {
       status: 200,
-      headers: { ...headers, 'Cache-Control': 's-maxage=3600' },
+      headers: { ...corsHeaders, 'Cache-Control': 's-maxage=3600' },
     });
   }
 
-  // ── Groq API key (free at https://console.groq.com) ──────────────────────
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'Server configuration error: GROQ_API_KEY not set' }), {
       status: 500,
-      headers,
+      headers: corsHeaders,
     });
   }
 
-  const tagsStr = Array.isArray(tags) && tags.length ? tags.join(', ') : 'Not specified';
-  const fitStr  = Array.isArray(fit)  && fit.length  ? fit.join(', ')  : 'Not specified';
-  const repoUrl = githubRepo ? `https://github.com/${githubRepo}` : 'Not specified';
+  const tagsStr  = Array.isArray(tags) && tags.length ? tags.join(', ') : 'Not specified';
+  const fitStr   = Array.isArray(fit)  && fit.length  ? fit.join(', ')  : 'Not specified';
+  // Fix 3: use normalized repo value
+  const safeRepo = normalizeRepo(githubRepo);
+  const repoUrl  = safeRepo ? `https://github.com/${safeRepo}` : 'Not specified';
 
   const prompt = `You are a GSoC proposal writing assistant. Generate a structured GSoC proposal outline for the following organization:
 
@@ -89,8 +115,11 @@ Generate a detailed GSoC proposal outline with these sections:
 
 Keep it structured, actionable, and specific to this org's tech stack. Use plain text with clear section headers.`;
 
+  // Fix 2: AbortController — 15 second timeout so the edge function never stalls
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
   try {
-    // ── Groq API call (OpenAI-compatible format) ──────────────────────────
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -98,35 +127,45 @@ Keep it structured, actionable, and specific to this org's tech stack. Use plain
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', // fast + high quality, free tier
+        model: 'llama-3.3-70b-versatile',
         max_tokens: 1500,
         temperature: 0.7,
         messages: [{ role: 'user', content: prompt }],
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
       return new Response(JSON.stringify({ error: `LLM API error: ${response.status}`, detail: errText }), {
         status: 502,
-        headers,
+        headers: corsHeaders,
       });
     }
 
     const data = await response.json();
-    // Groq uses OpenAI-compatible response format
     const outline = data.choices?.[0]?.message?.content ?? 'Unable to generate outline.';
 
     safeCacheSet(cacheKey, { outline, ts: Date.now() });
 
     return new Response(JSON.stringify({ outline }), {
       status: 200,
-      headers: { ...headers, 'Cache-Control': 's-maxage=3600' },
+      headers: { ...corsHeaders, 'Cache-Control': 's-maxage=3600' },
     });
+
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Failed to reach LLM API: ' + err.message }), {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      return new Response(JSON.stringify({ error: 'Request timed out. Please try again.' }), {
+        status: 504,
+        headers: corsHeaders,
+      });
+    }
+    return new Response(JSON.stringify({ error: 'Failed to reach LLM API' }), {
       status: 500,
-      headers,
+      headers: corsHeaders,
     });
   }
 }

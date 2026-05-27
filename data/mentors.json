@@ -1098,7 +1098,13 @@
   "Kiwix": {
     "org": "Kiwix",
     "ideasUrl": "https://github.com/kiwix/kiwix-android/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://kiwixoffline.slack.com/",
+        "label": "kiwix Slack"
+      }
+    ],
     "mentors": [
       {
         "name":"Benoît BERAUD",

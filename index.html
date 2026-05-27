@@ -2651,12 +2651,12 @@ sections.forEach(sectionId => {
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
-      `;
-      grid.appendChild(card);
-        // Attach per-card listeners for non-bubbling events and data-driven actions
-        attachOrgCardListeners(card);
+       `;
+    card.querySelector('button').dataset.openOrg = org.name;
+
+    grid.appendChild(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;

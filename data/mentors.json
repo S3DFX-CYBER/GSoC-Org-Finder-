@@ -1276,13 +1276,65 @@
   },
   "Haskell.org": {
     "org": "Haskell.org",
-    "ideasUrl": "https://summer.haskell.org/",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://summer.haskell.org/ideas.html",
+    "channels": [
+      {
+        "type": "Email",
+        "url": "mailto:committee@haskell.org",
+        "label": "Haskell.org committee email"
+      },
+      {
+        "type": "IRC",
+        "url": "irc://irc.libera.chat/#haskell",
+        "label": "#haskell on Libera"
+      },
+      {
+        "type": "Web",
+        "url": "https://web.libera.chat/#haskell",
+        "label": "Web chat for #haskell on Libera"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "fendor",
+        "github": "fendor",
+        "githubUrl": "https://github.com/fendor"
+      },
+      {
+        "name": "wz1000",
+        "github": "wz1000",
+        "githubUrl": "https://github.com/wz1000"
+      },
+      {
+        "name": "Michael Chavinda",
+        "github": "mchav",
+        "githubUrl": "https://github.com/mchav"
+      },
+      {
+        "name": "Adithya Obilisetty",
+        "github": "adithyaov",
+        "githubUrl": "https://github.com/adithyaov"
+      },
+      {
+        "name": "Facundo Domínguez",
+        "github": "facundominguez",
+        "githubUrl": "https://github.com/facundominguez"
+      },
+      {
+        "name": "Adrian Sieber",
+        "github": "ad-si",
+        "githubUrl": "https://github.com/ad-si"
+      },
+      {
+        "name": "Masaya Taniguchi",
+        "github": "tani",
+        "githubUrl": "https://github.com/tani"
+      }
+    ],
     "mailingLists": [],
     "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "status": "ok",
+    "lastFetched": "2026-05-27T00:00:00.000Z"
   },
   "HumanAI": {
     "org": "HumanAI",

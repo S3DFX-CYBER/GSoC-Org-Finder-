@@ -3869,6 +3869,8 @@ if(org.ideas){
 
     const closeBtn = document.getElementById('pwCloseBtn');
     if (closeBtn) closeBtn.focus();
+
+    window.history.pushState({ proposalBuilderOpen: true, orgName: orgName }, '', window.location.href);
   }
 
   function closeProposalBuilder() {
@@ -3997,6 +3999,12 @@ if(org.ideas){
   document.getElementById('pwExportMDBtn')?.addEventListener('click', exportProposalMD);
   document.getElementById('pwExportPDFBtn')?.addEventListener('click', exportProposalPDF);
   document.getElementById('pwCloseBtn')?.addEventListener('click', closeProposalBuilder);
+
+  window.addEventListener('popstate', (e) => {
+    if (document.getElementById('proposalModal')?.classList.contains('open')) {
+      closeProposalBuilder();
+    }
+  });
 
   globalThis.ProposalBuilder = {
     open: openProposalBuilder,

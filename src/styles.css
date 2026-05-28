@@ -23,8 +23,40 @@
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── THEME TRANSITIONS ── */
+/* active only after initial page load to prevent flicker */
+html.theme-transitions-active,
+html.theme-transitions-active body {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* modern browsers get the fancy cross-fade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+}
+
+/* respect user OS settings */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitions-active, 
+  html.theme-transitions-active body,
+  #themeToggleBtn,
+  #themeIconSun,
+  #themeIconMoon {
+    transition: none !important;
+  }
+}
 
 /* ── NAV ── */
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}

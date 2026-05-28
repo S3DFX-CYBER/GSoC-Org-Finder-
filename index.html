@@ -778,7 +778,7 @@
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#" class="flex items-center gap-2">
+      <a href="#timeline" class="flex items-center gap-2" id="logoLink">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
@@ -1476,14 +1476,11 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
 </footer>
@@ -1746,43 +1743,63 @@
     }
   }
 
-  // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    // Remove active class from all menu links
-    const allLinks = document.querySelectorAll('.mobile-menu-link');
-    allLinks.forEach(link => {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    });
-    
-    // Add active class to clicked link
-    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    
-    // Close menu after a short delay
-    setTimeout(() => {
-      toggleMenu();
-    }, 300);
-  };
+window.setActiveMenu = function(clickedLink) {
+  // Remove active class from all menu links
+  const allLinks = document.querySelectorAll('.mobile-menu-link');
+
+  allLinks.forEach(link => {
+    link.classList.remove(
+      'bg-orange-50',
+      'text-orange-600',
+      'font-bold'
+    );
+
+    link.classList.add(
+      'text-zinc-700',
+      'font-medium'
+    );
+  });
+
+  // Add active class to clicked link
+  clickedLink.classList.remove(
+    'text-zinc-700',
+    'font-medium'
+  );
+
+  clickedLink.classList.add(
+    'bg-orange-50',
+    'text-orange-600',
+    'font-bold'
+  );
+
+  // Close menu
+  toggleMenu();
+};
 
   // Update active state based on scroll position
   function updateActiveSection() {
     const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 100; // Offset for fixed header
+    const scrollPosition = window.scrollY + 80; // Offset for fixed header
     
-    let currentSection = 'orgs'; // Default
-    
-    sections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
+let currentSection = 'timeline';
+
+sections.forEach(sectionId => {
+    const section = document.getElementById(sectionId);
+
+    if (section) {
         const sectionTop = section.offsetTop;
         const sectionBottom = sectionTop + section.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = sectionId;
+
+        const triggerPoint = window.innerHeight / 2;
+
+        if (
+            sectionTop <= scrollPosition + triggerPoint &&
+            sectionBottom > scrollPosition + triggerPoint
+        ) {
+            currentSection = sectionId;
         }
-      }
-    });
+    }
+});
     
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
@@ -2909,6 +2926,10 @@
 
   document.getElementById('compareModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'compareModal') closeCompareModal();
+  });
+
+  document.getElementById('orgModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'orgModal') closeModal();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -4185,6 +4206,82 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+
+<script>
+const logoLink = document.getElementById("logoLink");
+
+if (logoLink) {
+  logoLink.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Scroll to timeline section
+    document.getElementById("timeline").scrollIntoView({
+      behavior: "smooth"
+    });
+
+    // Remove active classes from desktop nav links
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+
+      link.classList.add("text-zinc-600", "hover:text-zinc-900");
+    });
+
+    // Activate Timeline desktop nav link
+    const timelineLink = document.querySelector(
+      '.desktop-nav-link[href="#timeline"]'
+    );
+
+    if (timelineLink) {
+      timelineLink.classList.remove("text-zinc-600");
+
+      timelineLink.classList.add(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+    }
+
+    // Sync mobile menu links
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+
+      link.classList.add(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+    });
+
+    const mobileTimelineLink = document.querySelector(
+      '.mobile-menu-link[data-section="timeline"]'
+    );
+
+    if (mobileTimelineLink) {
+      mobileTimelineLink.classList.remove(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+
+      mobileTimelineLink.classList.add(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+    }
+  });
+}
+</script>
 
 </body>
 </html>

@@ -661,6 +661,18 @@
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
 
+    /* Search Insights Panel - dark mode */
+    .dark #searchInsightsPanel {
+      background: rgba(24,24,27,0.7) !important;
+      border-color: #3f3f46 !important;
+    }
+    .dark #searchInsightsPanel .bg-white {
+      background: #27272a !important;
+      border-color: #3f3f46 !important;
+    }
+    .dark #searchInsightsPanel .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark #searchInsightsPanel .text-zinc-400 { color: #71717a !important; }
+
     /* Selected Languages Strip */
     #selectedLangsStrip {
       display: flex;
@@ -961,6 +973,39 @@
     <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
     <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
+  
+<!--SEarch insight panel - REPLACED-->
+  <!-- âââ SEARCH INSIGHTS PANEL âââ -->
+  <div id="searchInsightsPanel" class="hidden mb-6 rounded-2xl border border-orange-100 bg-orange-50/60 p-5 transition-all">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-primary text-lg">insights</span>
+      <h3 class="font-headline font-extrabold text-sm uppercase tracking-widest text-primary">Search Insights</h3>
+      <span class="ml-auto text-[10px] font-label uppercase tracking-widest text-zinc-400">Live Â· updates with filters</span>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div class="bg-white rounded-xl p-4 border border-zinc-100 text-center shadow-sm">
+        <p class="text-2xl font-extrabold text-primary" id="si-total">0</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">Orgs Found</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-zinc-100 text-center shadow-sm">
+        <p class="text-base font-extrabold text-zinc-900 truncate" id="si-lang">â</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">Top Language</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-zinc-100 text-center shadow-sm">
+        <p class="text-2xl font-extrabold text-secondary" id="si-mentors">0</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">Have Mentors</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-zinc-100 text-center shadow-sm">
+        <p class="text-2xl font-extrabold text-green-600" id="si-gfi">0</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">Have GFIs</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-zinc-100 text-center shadow-sm col-span-2 sm:col-span-1">
+        <p class="text-base font-extrabold truncate" id="si-difficulty" style="color:#9d4300">â</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">Avg Difficulty</p>
+      </div>
+    </div>
+  </div>
+
   <div class="flex flex-wrap gap-2">
     <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
     <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
@@ -3449,6 +3494,7 @@ if(org.ideas){
     }
 
     renderOrgs(true);
+    updateSearchInsights(filteredOrgs);
 
     // Persist filter state to URL so it survives page refresh
     const params = new URLSearchParams();
@@ -3459,6 +3505,86 @@ if(org.ideas){
     if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
     if (activeChip)                        params.set('chip', activeChip);
     history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
+  }
+
+  // ══════════════════════════════════════════════
+  // SEARCH INSIGHTS PANEL
+  // ══════════════════════════════════════════════
+  function updateSearchInsights(orgs) {
+    const panel = document.getElementById('searchInsightsPanel');
+    if (!panel) return;
+
+    const query = (document.getElementById('searchInput')?.value || '').trim();
+    const cat = document.getElementById('categoryFilter')?.value || 'all';
+    const comp = document.getElementById('complexityFilter')?.value || 'all';
+    const hasFilter = query || cat !== 'all' || comp !== 'all' || selectedLanguages.size > 0 || activeChip;
+
+    if (!hasFilter || orgs.length === 0) {
+      panel.classList.add('hidden');
+      return;
+    }
+    panel.classList.remove('hidden');
+
+    // 1. Total orgs found
+    const siTotal = document.getElementById('si-total');
+    if (siTotal) siTotal.textContent = orgs.length;
+
+    // 2. Most common programming language (skip generic non-language tags)
+    const skipTags = new Set(['web','linux','android','ios','html','html5','sql','api','ai','llm','mcp','rest','json','xml','rdf','sparql','big data','distributed','ide','cad','3d','animation','video','audio','codecs','multimedia','gradle','fpga','verilog','hpc','embedded','drones','ros','kernel','docker','containers','containerd','geospatial','gis','dicom','bioinformatics','cancer genomics','drug discovery','statistics','physics','game theory','malware analysis','code quality','ecmascript','programming-language','genai','data analysis','opengl','opencascade']);
+    const langCount = {};
+    orgs.forEach(org => {
+      (org.tags || []).forEach(tag => {
+        const t = tag.toLowerCase().trim();
+        if (!skipTags.has(t) && t.length > 1) {
+          langCount[t] = (langCount[t] || 0) + 1;
+        }
+      });
+    });
+    const topLang = Object.entries(langCount).sort((a, b) => b[1] - a[1])[0];
+    const siLang = document.getElementById('si-lang');
+    if (siLang) {
+      if (topLang) {
+        const name = topLang[0].replace(/\b\w/g, c => c.toUpperCase());
+        siLang.textContent = name;
+      } else {
+        siLang.textContent = '\u2014';
+      }
+    }
+
+    // 3. Orgs with mentor contacts
+    const siMentors = document.getElementById('si-mentors');
+    if (siMentors) {
+      const withMentors = orgs.filter(org => {
+        const entry = MENTOR_DATA[org.name];
+        return entry && entry.status === 'ok' && (
+          (entry.channels && entry.channels.length > 0) ||
+          (entry.mentors && entry.mentors.length > 0) ||
+          (entry.mailingLists && entry.mailingLists.length > 0)
+        );
+      }).length;
+      siMentors.textContent = withMentors;
+    }
+
+    // 4. Orgs with Good First Issues
+    const siGfi = document.getElementById('si-gfi');
+    if (siGfi) {
+      const withGfi = orgs.filter(org => org._gh && org._gh.gfi > 0).length;
+      siGfi.textContent = withGfi;
+    }
+
+    // 5. Average difficulty
+    const siDiff = document.getElementById('si-difficulty');
+    if (siDiff) {
+      const diffMap = { beginner: 1, intermediate: 2, advanced: 3 };
+      const diffLabel = { 1: 'Beginner', 2: 'Intermediate', 3: 'Advanced' };
+      const valid = orgs.filter(org => diffMap[org.codebase]);
+      if (valid.length === 0) {
+        siDiff.textContent = '\u2014';
+      } else {
+        const avg = valid.reduce((sum, org) => sum + diffMap[org.codebase], 0) / valid.length;
+        siDiff.textContent = diffLabel[Math.round(avg)] || '\u2014';
+      }
+    }
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -3486,6 +3612,7 @@ if(org.ideas){
 
     filteredOrgs = [...ORGS];
     renderOrgs(true);
+    updateSearchInsights(filteredOrgs);
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {

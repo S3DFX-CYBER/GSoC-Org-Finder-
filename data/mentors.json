@@ -801,14 +801,36 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "DeepChem": {
-    "org": "DeepChem",
-    "ideasUrl": "https://github.com/deepchem/deepchem/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+      "org": "DeepChem",
+      "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/deepchem",
+      "channels": [
+        {
+          "type": "Discord",
+          "url": "https://discord.com/invite/RYTrUY8Ssn",
+          "label": "DeepChem Discord"
+        }
+      ],
+      "mentors": [
+        {
+          "name": "José A. Sigüenza",
+          "github": "JoseAntonioSiguenza",
+          "githubUrl": "https://github.com/JoseAntonioSiguenza"
+        },
+        {
+          "name": "Aryan Amit Barsainyan",
+          "github": "ARY2260",
+          "githubUrl": "https://github.com/ARY2260"
+        },
+        {
+          "name": "Harindhar",
+          "github": "Harindhar10",
+          "githubUrl": "https://github.com/Harindhar10"
+        }
+      ],
+      "mailingLists": [],
+      "tip": "Join the DeepChem Discord server and introduce yourself before reaching out to mentors directly.",
+      "status": "ok",
+      "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "Django Software Foundation": {
     "org": "Django Software Foundation",
@@ -1165,16 +1187,59 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "GNU Mailman": {
-    "org": "GNU Mailman",
-    "ideasUrl": "https://wiki.list.org/DEV/Google%20Summer%20of%20Code%202026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"GNU Mailman": {
+  "org": "GNU Mailman",
+  "ideasUrl": "https://wiki.list.org/DEV/Google-Summer-of-Code-2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://libera.chat/",
+      "label": "#mailman on Libera.Chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Abhilash Raj",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Stephen J. Turnbull",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Mark Sapiro",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Daniel Toe",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Victoriano Giralt",
+      "github": "",
+      "githubUrl": ""
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "mailto:mailman-developers@python.org",
+      "label": "Mailman Developers"
+    },
+    {
+      "type": "Mailing list",
+      "url": "mailto:mailman-users@mailman3.org",
+      "label": "Mailman 3 Users"
+    }
+  ],
+  "tip": "Primary mentor communication happens through the Mailman Developers mailing list or #mailman IRC.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "GNU Octave": {
     "org": "GNU Octave",
     "ideasUrl": "https://wiki.octave.org/Summer_of_Code_-_Getting_Started",
@@ -3143,37 +3208,18 @@
   "Sugar Labs": {
     "org": "Sugar Labs",
     "ideasUrl": "https://github.com/sugarlabs/GSoC/blob/master/Ideas-2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sugar-labs:matrix.org",
+        "label": "Sugar Labs Matrix"
+      }
+    ],
     "mentors": [
-      {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
-      },
-      {
-        "name": "",
-        "github": "benikk",
-        "githubUrl": "https://github.com/benikk"
-      },
       {
         "name": "",
         "github": "walterbender",
         "githubUrl": "https://github.com/walterbender"
-      },
-      {
-        "name": "",
-        "github": "pikurasa",
-        "githubUrl": "https://github.com/pikurasa"
-      },
-      {
-        "name": "",
-        "github": "sum2it",
-        "githubUrl": "https://github.com/sum2it"
-      },
-      {
-        "name": "",
-        "github": "mostlykiguess",
-        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3182,8 +3228,13 @@
       },
       {
         "name": "",
-        "github": "xjuan",
-        "githubUrl": "https://github.com/xjuan"
+        "github": "pikurasa",
+        "githubUrl": "https://github.com/pikurasa"
+      },
+      {
+        "name": "",
+        "github": "mostlykiguess",
+        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3192,13 +3243,18 @@
       },
       {
         "name": "",
-        "github": "Commanderk3",
-        "githubUrl": "https://github.com/Commanderk3"
+        "github": "benikk",
+        "githubUrl": "https://github.com/benikk"
       },
       {
         "name": "",
-        "github": "amannaik247",
-        "githubUrl": "https://github.com/amannaik247"
+        "github": "sum2it",
+        "githubUrl": "https://github.com/sum2it"
+      },
+      {
+        "name": "",
+        "github": "xjuan",
+        "githubUrl": "https://github.com/xjuan"
       },
       {
         "name": "",
@@ -3224,12 +3280,28 @@
         "name": "",
         "github": "mebinthattil",
         "githubUrl": "https://github.com/mebinthattil"
+      },
+      {
+        "name": "",
+        "github": "Commanderk3",
+        "githubUrl": "https://github.com/Commanderk3"
+      },
+      {
+        "name": "",
+        "github": "amannaik247",
+        "githubUrl": "https://github.com/amannaik247"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.sugarlabs.org/listinfo/sugar-devel",
+        "label": "sugar-devel mailing list"
+      }
+    ],
+    "tip": "Join the Matrix space at #sugar-labs:matrix.org to introduce yourself before asking project-specific questions.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "SW360": {
     "org": "SW360",

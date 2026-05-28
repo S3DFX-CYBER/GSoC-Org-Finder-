@@ -2617,8 +2617,11 @@ sections.forEach(sectionId => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer';
       card.dataset.org = org.name;
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View details for ${org.name}`);
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
@@ -2698,6 +2701,38 @@ sections.forEach(sectionId => {
       });
       btn.__orgListenerAttached = true;
     });
+
+    // Card-level click and keydown triggers (Enter / Space) for details modal
+    if (root && root.tagName === 'ARTICLE' && root.dataset.org) {
+      if (!root.__cardListenerAttached) {
+        root.addEventListener('click', () => {
+          openModal(root.dataset.org);
+        });
+        root.addEventListener('keydown', (e) => {
+          if (e.target !== root) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(root.dataset.org);
+          }
+        });
+        root.__cardListenerAttached = true;
+      }
+    } else {
+      (root.querySelectorAll ? root.querySelectorAll('article[data-org]') : []).forEach(cardEl => {
+        if (cardEl.__cardListenerAttached) return;
+        cardEl.addEventListener('click', () => {
+          openModal(cardEl.dataset.org);
+        });
+        cardEl.addEventListener('keydown', (e) => {
+          if (e.target !== cardEl) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(cardEl.dataset.org);
+          }
+        });
+        cardEl.__cardListenerAttached = true;
+      });
+    }
   }
 
   function toggleCompare(e, name) {

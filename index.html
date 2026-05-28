@@ -747,6 +747,123 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Competitive Intelligence Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .intel-card {
+      background-color: #000000;
+      border: 1px solid #1a1c1c;
+      border-radius: 1rem;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .intel-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 15px rgba(0, 255, 238, 0.15);
+      border-color: #00ffee;
+    }
+
+    .intel-title {
+      color: #888888;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .intel-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .highlight-cyan {
+      color: #00ffee;
+      text-shadow: 0 0 8px rgba(0, 255, 238, 0.4);
+    }
+
+    .highlight-blue {
+      color: #0066ff;
+      text-shadow: 0 0 8px rgba(0, 102, 255, 0.4);
+    }
+
+     /* ISSUE:1221 COMPETITIVE INTEL DASHBOARD  */
+    .intel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .intel-card {
+      background: #0a0a0a;
+      border: 1px solid #222222;
+      border-radius: 12px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .intel-card:hover {
+      border-color: #444444;
+      background: #111111;
+    }
+
+    .intel-label {
+      color: #666666;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .intel-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+  
+    .intel-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: #222222;
+      border-radius: 2px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    
+    .intel-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease-out;
+    }
+
+    .intel-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: auto;
+      width: fit-content;
+    }
+    
+
+    .badge-hard { background: #ff005520; color: #ff0055; border: 1px solid #ff005540; }
+    .badge-med { background: #00ffee20; color: #00ffee; border: 1px solid #00ffee40; }
+    .badge-easy { background: #00ff6620; color: #00ff66; border: 1px solid #00ff6640; }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -1493,8 +1610,12 @@
         <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
       </div>
 
+      <div class="section-title">Competitive Intelligence</div>
+      <div id="competitive-dashboard-container" class="mb-8">
+        </div>
       <div class="section-title">Description</div>
       <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
+
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
@@ -2422,7 +2543,11 @@ sections.forEach(sectionId => {
       const orgName = document.querySelector('#mHeader h2')?.textContent;
       if (orgName) {
         const org = ORGS.find((item) => item.name === orgName);
-        if (org) renderMentorContactSection(org);
+       
+        if (org) {
+          renderMentorContactSection(org);
+          renderIntelligenceDashboard(org);
+        }
       }
     }
   }
@@ -3329,6 +3454,9 @@ sections.forEach(sectionId => {
     document.getElementById('mDesc').textContent = org.desc;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+
+    // ADDING RENDER CALL 
+    renderIntelligenceDashboard(org);
 
     // Timeline
     let timelineHtml = '';
@@ -4268,6 +4396,64 @@ if (logoLink) {
       );
     }
   });
+}
+
+function renderIntelligenceDashboard(org) {
+  const container = document.getElementById('competitive-dashboard-container');
+  if (!container) return;
+
+  const compMap = { 'hot': 'High', 'moderate': 'Medium', 'chill': 'Low' };
+  const compColor = { 'hot': '#ff0055', 'moderate': '#00ffee', 'chill': '#00ff66' };
+  const compLevel = compMap[org.competition] || 'Medium';
+  const cColor = compColor[org.competition] || '#00ffee';
+
+  const diffMap = { 'beginner': 'High', 'intermediate': 'Medium', 'advanced': 'Low' };
+  const beginnerFriendly = diffMap[org.codebase] || 'Medium';
+
+  const mentorEntry = getMentorEntry(org.name);
+  let mentorResp = "Unknown";
+  if (mentorEntry && mentorEntry.status === 'ok') {
+    const totalChannels = (mentorEntry.channels?.length || 0) + (mentorEntry.mailingLists?.length || 0);
+    if (totalChannels > 1) mentorResp = "Fast / Accessible";
+    else if (totalChannels === 1) mentorResp = "Standard";
+  } else if (mentorEntry && mentorEntry.status === 'fetch-failed') {
+    mentorResp = "Data Unavailable";
+  }
+
+  let propDiff = "Medium";
+  if (org.competition === 'hot' && org.years > 8) propDiff = "Hard (Legacy)";
+  else if (org.competition === 'hot') propDiff = "Hard";
+  else if (org.competition === 'chill' && org.years < 5) propDiff = "Accessible";
+
+  let trend = "Stable";
+  if (org.years <= 3) trend = "Variable / New";
+  else if (org.years >= 10) trend = "Highly Consistent";
+
+  container.innerHTML = `
+    <div class="intel-grid">
+      <div class="intel-card">
+        <div class="intel-label">Competition Level</div>
+        <div class="intel-val" style="color: ${cColor}; text-shadow: 0 0 10px ${cColor}40;">${compLevel}</div>
+        <div class="intel-bar-bg"><div class="intel-bar-fill" style="width: ${compLevel === 'High' ? '90%' : compLevel === 'Medium' ? '50%' : '20%'}; background: ${cColor};"></div></div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-label">Mentor Responsiveness</div>
+        <div class="intel-val" style="color: #ffffff;">${mentorResp}</div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-label">Beginner Friendly</div>
+        <div class="intel-val" style="color: ${beginnerFriendly === 'High' ? '#00ff66' : '#ffffff'};">${beginnerFriendly}</div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-label">Proposal Difficulty</div>
+        <div class="intel-badge ${propDiff.includes('Hard') ? 'badge-hard' : propDiff.includes('Accessible') ? 'badge-easy' : 'badge-med'}">${propDiff}</div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-label">Acceptance Trend</div>
+        <div class="intel-val" style="color: #aaaaaa; font-size: 1rem;">${trend}</div>
+      </div>
+    </div>
+  `;
 }
 </script>
 

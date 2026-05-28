@@ -5304,11 +5304,17 @@
 
     // Enable smooth scrolling only after initial load to prevent jarring scroll animations on refresh
     window.addEventListener('load', () => {
+<<<<<<< HEAD
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         setTimeout(() => {
           document.documentElement.style.scrollBehavior = 'smooth';
         }, 100);
       }
+=======
+      setTimeout(() => {
+        document.documentElement.style.scrollBehavior = 'smooth';
+      }, 100);
+>>>>>>> 31a1ac13504268072cf27da3ede564b0b71b1888
     });
 
   </script>

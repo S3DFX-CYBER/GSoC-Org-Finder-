@@ -3740,11 +3740,39 @@
   "The ns-3 Network Simulator Project": {
     "org": "The ns-3 Network Simulator Project",
     "ideasUrl": "https://www.nsnam.org/wiki/GSOC2026Projects",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://ns-3.zulipchat.com/",
+        "label": "Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Tommaso Pecorella",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Mohit Prakash Tahiliani",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Biljana Bojovic",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/ns-developers",
+        "label": "ns-developers"
+      }
+    ],
+    "tip": "Contact developers through the mailing list or Zulip chat before refining proposals.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The OpenROAD Initiative": {
@@ -3871,11 +3899,28 @@
   "Tiled": {
     "org": "Tiled",
     "ideasUrl": "https://github.com/mapeditor/tiled/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.mapeditor.org/",
+        "label": "Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Thorbjørn Lindeijer",
+        "github": "bjorn",
+        "githubUrl": "https://github.com/bjorn"
+      },
+      {
+        "name": "",
+        "github": "dogboydog",
+        "githubUrl": "https://github.com/dogboydog"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Introduce yourself on the forum and mention your project interest.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Typelevel": {

@@ -2128,8 +2128,8 @@ sections.forEach(sectionId => {
   }
 
   function getPrimaryMentorContact(entry) {
-    if (entry.channels.length > 0) return entry.channels[0];
-    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
+    if ((entry.channels || []).length > 0) return entry.channels[0];
+    if ((entry.mailingLists || []).length > 0) return entry.mailingLists[0];
     return null;
   }
 
@@ -2213,7 +2213,7 @@ sections.forEach(sectionId => {
     })();
 
     const sections = [];
-    if (entry.status === 'ok' && entry.channels.length > 0) {
+    if (entry.status === 'ok' && (entry.channels || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
@@ -2222,7 +2222,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && entry.mentors.length > 0) {
+    if (entry.status === 'ok' && (entry.mentors || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
@@ -2231,7 +2231,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
+    if (entry.status === 'ok' && (entry.mailingLists || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
@@ -2657,12 +2657,13 @@ sections.forEach(sectionId => {
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
-      `;
-      grid.appendChild(card);
-        // Attach per-card listeners for non-bubbling events and data-driven actions
-        attachOrgCardListeners(card);
+       `;
+    card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
+
+   grid.appendChild(card);
+   attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
@@ -2702,7 +2703,7 @@ sections.forEach(sectionId => {
         e.stopPropagation();
         openModal(btn.dataset.openOrg);
       });
-      btn.__orgListenerAttached = true;
+btn.__orgListenerAttached = true;
     });
   }
 

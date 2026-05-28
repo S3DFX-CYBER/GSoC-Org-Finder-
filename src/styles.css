@@ -23,8 +23,19 @@
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+}
 
 /* ── THEME TRANSITIONS ── */
 /* active only after initial page load to prevent flicker */

@@ -36,7 +36,7 @@
       }
     }
   </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js" integrity="sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7" crossorigin="anonymous"></script>
   <script>
     if (typeof marked === 'undefined') {
@@ -87,45 +87,8 @@
       document.documentElement.classList.add('theme-transitions-active');
     });
   </script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          screens: {
-            'xs': '480px',
-            'sm': '640px',
-            'md': '768px',
-            'lg': '1024px',
-            'xl': '1280px',
-            '2xl': '1536px',
-          },
-          colors: {
-            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
-            "surface-container":"#eeeeee","primary-container":"#f97316",
-            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
-            "on-background":"#1a1c1c","on-primary":"#ffffff",
-            "on-surface":"#1a1c1c","error":"#ba1a1a",
-            "primary":"#9d4300","on-surface-variant":"#584237",
-            "outline":"#8c7164","surface-container-lowest":"#ffffff",
-            "secondary":"#006c47","secondary-container":"#8af5be",
-            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
-            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
-            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
-            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
-            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
-            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
-            "on-primary-container":"#582200","surface-tint":"#9d4300",
-          },
-          fontFamily: {
-            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
-            "label":["Space Grotesk"],"mono":["Fira Code"]
-          },
-          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
-        },
-      },
-    }
-  </script>
+  <link href="./src/tailwind.css" rel="stylesheet" />
+
   <style>
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
     .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
@@ -763,19 +726,19 @@
 <body class="bg-background text-on-surface font-body antialiased">
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
-<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 glass shadow-sm overflow-hidden sm:overflow-visible">
+  <div class="flex items-center justify-between px-2 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-1 sm:gap-4 md:gap-8">
       <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-1 sm:p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#timeline" class="flex items-center gap-2" id="logoLink">
+      <a href="#timeline" class="flex items-center gap-1 sm:gap-2" id="logoLink">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
-      <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
+      <span class="text-sm sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
         <span class="hidden sm:inline">GSoC 2026 </span>
         <span class="text-primary italic">Org Finder</span>
       </span>
@@ -791,7 +754,7 @@
     </div>
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center gap-0 sm:gap-3">
     
       <button id="themeToggleBtn" onclick="toggleTheme()"
         class="relative inline-flex shrink-0 items-center justify-center w-10 h-10 hover:bg-zinc-100/50 rounded-full transition-transform active:scale-95 overflow-hidden"
@@ -816,7 +779,7 @@
     
       <!-- ANALYTICS BUTTON -->
       <button id="analyticsBtn" onclick="openAnalytics()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        class="inline-flex shrink-0 items-center justify-center p-1 sm:p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         title="View Analytics & Badges"
         aria-label="View Analytics and Badges">
     
@@ -827,7 +790,7 @@
     
       <!-- HELP BUTTON -->
       <button id="helpBtn"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        class="inline-flex shrink-0 items-center justify-center p-1 sm:p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         title="Keyboard shortcuts (?)">
     
         <span class="material-symbols-outlined text-zinc-600">

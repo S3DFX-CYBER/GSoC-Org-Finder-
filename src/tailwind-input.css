@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Screens */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Custom Colors from config */
+  --color-surface-container-highest: #e2e2e2;
+  --color-background: #f9f9f9;
+  --color-surface-container: #eeeeee;
+  --color-primary-container: #f97316;
+  --color-surface: #f9f9f9;
+  --color-surface-variant: #e2e2e2;
+  --color-on-background: #1a1c1c;
+  --color-on-primary: #ffffff;
+  --color-on-surface: #1a1c1c;
+  --color-error: #ba1a1a;
+  --color-primary: #9d4300;
+  --color-on-surface-variant: #584237;
+  --color-outline: #8c7164;
+  --color-surface-container-lowest: #ffffff;
+  --color-secondary: #006c47;
+  --color-secondary-container: #8af5be;
+  --color-on-secondary-container: #00714b;
+  --color-on-secondary: #ffffff;
+  --color-surface-container-low: #f3f3f3;
+  --color-surface-container-high: #e8e8e8;
+  --color-surface-dim: #dadada;
+  --color-primary-fixed: #ffdbca;
+  --color-primary-fixed-dim: #ffb690;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-on-secondary-fixed: #002113;
+  --color-secondary-fixed-dim: #71dba6;
+  --color-tertiary: #5f5e5e;
+  --color-on-primary-container: #582200;
+  --color-surface-tint: #9d4300;
+
+  /* Custom Fonts */
+  --font-headline: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-label: 'Space Grotesk', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Border Radius */
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+}

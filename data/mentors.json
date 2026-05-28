@@ -3170,37 +3170,18 @@
   "Sugar Labs": {
     "org": "Sugar Labs",
     "ideasUrl": "https://github.com/sugarlabs/GSoC/blob/master/Ideas-2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sugar-labs:matrix.org",
+        "label": "Sugar Labs Matrix"
+      }
+    ],
     "mentors": [
-      {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
-      },
-      {
-        "name": "",
-        "github": "benikk",
-        "githubUrl": "https://github.com/benikk"
-      },
       {
         "name": "",
         "github": "walterbender",
         "githubUrl": "https://github.com/walterbender"
-      },
-      {
-        "name": "",
-        "github": "pikurasa",
-        "githubUrl": "https://github.com/pikurasa"
-      },
-      {
-        "name": "",
-        "github": "sum2it",
-        "githubUrl": "https://github.com/sum2it"
-      },
-      {
-        "name": "",
-        "github": "mostlykiguess",
-        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3209,8 +3190,13 @@
       },
       {
         "name": "",
-        "github": "xjuan",
-        "githubUrl": "https://github.com/xjuan"
+        "github": "pikurasa",
+        "githubUrl": "https://github.com/pikurasa"
+      },
+      {
+        "name": "",
+        "github": "mostlykiguess",
+        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3219,13 +3205,18 @@
       },
       {
         "name": "",
-        "github": "Commanderk3",
-        "githubUrl": "https://github.com/Commanderk3"
+        "github": "benikk",
+        "githubUrl": "https://github.com/benikk"
       },
       {
         "name": "",
-        "github": "amannaik247",
-        "githubUrl": "https://github.com/amannaik247"
+        "github": "sum2it",
+        "githubUrl": "https://github.com/sum2it"
+      },
+      {
+        "name": "",
+        "github": "xjuan",
+        "githubUrl": "https://github.com/xjuan"
       },
       {
         "name": "",
@@ -3251,12 +3242,28 @@
         "name": "",
         "github": "mebinthattil",
         "githubUrl": "https://github.com/mebinthattil"
+      },
+      {
+        "name": "",
+        "github": "Commanderk3",
+        "githubUrl": "https://github.com/Commanderk3"
+      },
+      {
+        "name": "",
+        "github": "amannaik247",
+        "githubUrl": "https://github.com/amannaik247"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.sugarlabs.org/listinfo/sugar-devel",
+        "label": "sugar-devel mailing list"
+      }
+    ],
+    "tip": "Join the Matrix space at #sugar-labs:matrix.org to introduce yourself before asking project-specific questions.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "SW360": {
     "org": "SW360",

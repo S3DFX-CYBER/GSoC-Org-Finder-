@@ -563,10 +563,28 @@
     "org": "CGAL Project",
     "ideasUrl": "https://github.com/CGAL/cgal/wiki/Project-Ideas-for-GSOC-2026",
     "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "mentors": [
+      { "name": "Sebastien Loriot", "github": "", "githubUrl": "" },
+      { "name": "Andreas Fabri", "github": "", "githubUrl": "" },
+      { "name": "Efi Fogel", "github": "", "githubUrl": "" },
+      { "name": "Jane Tournois", "github": "", "githubUrl": "" },
+      { "name": "Mael Rouxel-Labbé", "github": "", "githubUrl": "" },
+      { "name": "Sven Oesau", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:gsoc-cgal@inria.fr",
+        "label": "CGAL GSoC Mailing List"
+      },
+      {
+        "type": "Email",
+        "url": "mailto:cgal-discuss@inria.fr",
+        "label": "CGAL Public Discussion List"
+      }
+    ],
+    "tip": "Email gsoc-cgal@inria.fr for GSoC queries. For general discussion join cgal-discuss@inria.fr. Ideas page at https://github.com/CGAL/cgal/wiki/Project-Ideas-for-GSOC-2026",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "checkstyle": {
@@ -1287,11 +1305,28 @@
   "HumanAI": {
     "org": "HumanAI",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/humanai",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "matrix",
+        "url": "https://matrix.to/#/#humanai-foundation:gitter.im",
+        "label": "HumanAI Gitter/Matrix"
+      }
+    ],
+    "mentors": [
+      { "name": "Prof. Sergei Gleyzer", "github": "", "githubUrl": "" },
+      { "name": "Prof. Xabier Granja", "github": "", "githubUrl": "" },
+      { "name": "Prof. Emanuele Usai", "github": "", "githubUrl": "" },
+      { "name": "Prof. Despina Stavrinos", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:human-ai@cern.ch",
+        "label": "HumanAI GSoC Admin Email"
+      }
+    ],
+    "tip": "Contact admins at human-ai@cern.ch or join the Gitter/Matrix channel at https://matrix.to/#/#humanai-foundation:gitter.im",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "INCF": {

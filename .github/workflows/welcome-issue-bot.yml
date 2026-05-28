@@ -7,116 +7,168 @@ on:
 
 permissions:
   issues: write
+  contents: read
+
+concurrency:
+  group: issue-welcome-${{ github.event.issue.number }}
+  cancel-in-progress: true
 
 jobs:
   welcome:
+    if: github.event.issue.pull_request == null && github.event.issue.user.type != 'Bot'
     runs-on: ubuntu-latest
 
     steps:
       - name: Welcome contributor
         uses: actions/github-script@v8
+
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const issue = context.payload.issue;
 
+            if (!issue) return;
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issue_number = issue.number;
             const username = issue.user.login;
 
-            const body = `
-            ## 👋 Thanks for opening an issue, @${username}!
+            const MARKER =
+              '<!-- issue-welcome-bot -->';
 
-            Our maintainers will review this issue shortly 🚀
+            // Prevent duplicate welcome comments
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number,
+                  per_page: 100
+                }
+              );
 
-            ---
+            const alreadyWelcomed =
+              comments.some(c =>
+                c.body &&
+                c.body.includes(MARKER)
+              );
 
-            ## 📘 Before Contributing
+            if (alreadyWelcomed) {
+              core.info('Welcome already posted');
+              return;
+            }
 
-            Please read the contribution guide carefully before requesting assignment:
+            const body = [
+              MARKER,
+              ``,
+              `# 👋 Welcome @${username}`,
+              ``,
+              `Thanks for opening an issue in **${repo}** 🚀`,
+              ``,
+              `Our automation system will now:`,
+              ``,
+              `- classify the issue`,
+              `- apply labels`,
+              `- check issue quality`,
+              `- detect duplicates`,
+              `- prepare assignment eligibility`,
+              ``,
+              `---`,
+              ``,
+              `# 📘 Contributor Guides`,
+              ``,
+              `| Program | Guide |`,
+              `|---|---|`,
+              `| GSSoC'26 Contributors | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
+              `| GSSoC'26 Mentors | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_MENTOR_GUIDE.md |`,
+              `| NSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md |`,
+              `| General Contributors | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
+              ``,
+              `---`,
+              ``,
+              `# 🧭 Assignment Flow`,
+              ``,
+              `After triage completes and the issue is eligible, request assignment using:`,
+              ``,
+              '```',
+              `/assign`,
+              '```',
+              ``,
+              `The assignment workflow will automatically:`,
+              ``,
+              `- validate issue eligibility`,
+              `- check assignment availability`,
+              `- select 2 active mentors`,
+              `- queue your assignment request`,
+              `- ping mentors for approval`,
+              ``,
+              `Mentors have a 24-hour approval window.`,
+              `If mentors do not respond in time, the system automatically rotates to new active mentors.`,
+              ``,
+              `Once approved, you will be officially assigned to the issue.`,
+              ``,
+              `---`,
+              ``,
+              `# 🔍 Pull Request Review Pipeline`,
+              ``,
+              `All pull requests go through a 3-stage governance pipeline:`,
+              ``,
+              `1. Automated validation`,
+              `2. Mentor review`,
+              `3. Maintainer approval`,
+              ``,
+              `Mentor reviewers are selected automatically based on mentor activity and review quality scores.`,
+              ``,
+              `---`,
+              ``,
+              `# ✍️ DCO Sign-off Required`,
+              ``,
+              `All commits must include a Signed-off-by line.`,
+              ``,
+              `Use:`,
+              ``,
+              '```bash',
+              'git commit -s -m "fix: your message"',
+              '```',
+              ``,
+              `For existing commits:`,
+              ``,
+              '```bash',
+              'git rebase --signoff HEAD~<n>',
+              'git push --force-with-lease',
+              '```',
+              ``,
+              `---`,
+              ``,
+              `# ⚠️ Important Rules`,
+              ``,
+              `- Do NOT start work before assignment approval`,
+              `- Maximum active assignments: 3`,
+              `- Low-quality or AI-spam PRs may be rejected`,
+              `- Inactive assignments may be automatically removed`,
+              `- Do not repeatedly ping mentors or maintainers`,
+              `- Follow repository contribution guidelines carefully`,
+              ``,
+              `Happy contributing 💙`
+            ].join('\n');
 
-            👉 https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/blob/main/CONTRIBUTING.md
+            try {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
 
-            ---
-
-            ## 🏷️ NSoC'26 / GSSoC'26 Requirement
-
-            Please clearly mention whether you are contributing via:
-
-            - \`NSoC'26\`
-            - \`GSSoC'26\`
-            - or as a regular contributor
-
-            Example:
-
-            \`\`\`
-            I am contributing under NSoC'26
-            \`\`\`
-
-            or
-
-            \`\`\`
-            I am contributing under GSSoC'26
-            \`\`\`
-
-            ⚠️ Assignment requests without this information may be rejected automatically.
-
-            ---
-
-            ## ⏳ GSSoC Assignment Restriction
-
-            GSSoC contributors will only be allowed to take issue assignments after:
-
-            ### 🗓️ May 15th, 12:00 AM IST
-
-            Before that date, assignment requests from GSSoC contributors will be automatically blocked by the assignment workflow.
-
-            ---
-
-            ## 🤖 Assignment System
-
-            To request assignment, comment:
-
-            \`\`\`
-            /assign
-            \`\`\`
-
-            or
-
-            \`\`\`
-            assign me
-            \`\`\`
-
-            The smart assignment workflow automatically validates:
-
-            - contributor eligibility
-            - NSoC/GSSoC participation mention
-            - active issue assignment limits
-            - contribution level eligibility
-            - repository contribution rules
-
-            ---
-
-            ## ⚠️ Important Repository Rules
-
-            - Do not start working before assignment
-            - Maximum 3 active assigned issues per contributor
-            - Contributors are encouraged to combine related fixes into 1–2 quality PRs instead of many small PRs
-            - Level 3 issues require previous merged PRs
-            - PRs without assignment may be closed
-            - Spam or low-quality PRs may be rejected
-            - Follow the zero-build, zero-dependency philosophy
-
-            ---
-
-            ## 🔗 Repository
-
-            https://github.com/S3DFX-CYBER/GSoC-Org-Finder-
-
-            Happy contributing 🎉
-            `;
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              body
-            });
+              core.info(
+                `Posted welcome message on issue #${issue_number}`
+              );
+            } catch (error) {
+              core.warning(
+                `Failed to post welcome comment: ${error.message}`
+              );
+            }

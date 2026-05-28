@@ -1153,10 +1153,7 @@
       <div class="space-y-6">
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
-          </div>
+          <div id="upcoming-deadlines" class="space-y-4"></div>
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
@@ -4269,6 +4266,102 @@ if (logoLink) {
     }
   });
 }
+</script>
+<script>
+  const deadlines = [
+    {
+      date: new Date("2026-02-19"),
+      title: "Accepted Orgs Announced",
+      description: "Organizations accepted into GSoC are announced"
+    },
+    {
+      date: new Date("2026-03-16"),
+      title: "Contributor Proposals Open",
+      description: "Students can start to submit proposals"
+    },
+    {
+      date: new Date("2026-03-31"),
+      title: "Proposal Submission Deadline",
+      description: "Ensure your final proposals are submitted by 18:00 UTC"
+    },
+    {
+      date: new Date("2026-05-01"),
+      title: "Accepted Projects Announced",
+      description: "Selected projects are announced"
+    },
+    {
+      date: new Date("2026-05-25"),
+      title: "Coding Officially Begins",
+      description: "You can start coding!"
+    },
+    {
+      date: new Date("2026-07-06"),
+      title: "Midterm Evaluations Begin",
+      description: "Mentors and contributors submit midterm evaluations"
+    },
+    {
+      date: new Date("2026-07-10"),
+      title: "Midterm Evaluations Deadline",
+      description: "Midterm evaluations must be submitted by this date"
+    },
+    {
+      date: new Date("2026-08-17"),
+      title: "Final Submissions Begin",
+      description: "Mentors and contributors submit their final evaluations"
+    },
+    {
+      date: new Date("2026-08-24"),
+      title: "Final Submission Deadline (Standard)",
+      description: "Contributors final evaluations must be submitted by this date"
+    },
+    {
+      date: new Date("2026-08-31"),
+      title: "Mentor Final Evaluation Due (Standard)",
+      description: "Mentors must submit their final evaluations by this date"
+    },
+    {
+      date: new Date("2026-11-02"),
+      title: "Extended Timeline Final Deadline",
+      description: "Contributors final evaluations must be submitted by this date"
+    },
+    {
+      date: new Date("2026-11-02"),
+      title: "Extended Mentor Evaluation Due",
+      description: "Mentors must submit their final evaluations by this date"
+    }
+  ];
+
+  const today = new Date();
+
+  const upcomingDeadlines = deadlines
+    .filter(deadline => deadline.date >= today)
+    .slice(0, 2);
+
+  const container = document.getElementById("upcoming-deadlines");
+
+  upcomingDeadlines.forEach(deadline => {
+    const item = document.createElement("div");
+
+    item.innerHTML = `
+      <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">
+        ${deadline.date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        }).toUpperCase()}
+      </p>
+
+      <p class="text-sm font-bold">
+        ${deadline.title}
+      </p>
+
+      <p class="text-xs text-zinc-500">
+        ${deadline.description}
+      </p>
+    `;
+
+    container.appendChild(item);
+  });
 </script>
 
 </body>

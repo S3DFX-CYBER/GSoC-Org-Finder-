@@ -25,7 +25,6 @@
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
-body.modal-open{overflow:hidden;  height:100vh;}
 
 /* ── NAV ── */
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
@@ -34,7 +33,9 @@ body.modal-open{overflow:hidden;  height:100vh;}
 .gsoc-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBBC04,var(--orange));border-radius:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.04em;box-shadow:0 2px 8px rgba(244,107,14,.3)}
 .nav-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;transition:color .3s}
 .nav-title em{font-style:italic;color:var(--orange)}
-.nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.nav-right{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+.nav-right  > a:not(.btn-contribute) { color: var(--ink);text-decoration: none;transition: color 0.2s ease;}
+.nav-right  > a:not(.btn-contribute):hover {color: var(--orange);}
 
 /* ── COUNTDOWN BANNER ── */
 .countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}

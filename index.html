@@ -706,11 +706,22 @@
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
-    <!-- Organizations will be rendered here dynamically -->
-    <div class="col-span-full py-20 text-center animate-pulse">
-      <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
+ <div class="w-full max-h-[720px] overflow-y-auto animate-rainbow-bg border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
+    
+    <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="orgGrid">
     </div>
+
+    <div class="absolute top-4 right-2 bottom-4 w-2 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-full hidden transition-all duration-300">
+        <div class="w-full bg-teal-500 rounded-full cursor-pointer hover:bg-teal-600 active:bg-teal-700 transition-colors duration-200 absolute top-0 left-0" style="height: 40px;"></div>
+    </div>
+
+    <div class="mt-10 mb-4 flex justify-center w-full" id="loadMoreContainer">
+        <button id="loadMoreBtn" class="px-12 py-4 bg-teal-500 text-white font-headline font-bold rounded-full text-sm hover:bg-teal-600 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-lg shadow-teal-500/20 flex items-center gap-3" onclick="loadMoreOrgs()">
+            View More Organizations 
+            <span class="material-symbols-outlined text-lg animate-bounce">expand_more</span>
+        </button>
+    </div>
+
   </div>
 
   <!-- Empty State -->
@@ -723,11 +734,7 @@
     </button>
   </div>
 
-  <div class="mt-12 flex justify-center" id="loadMoreContainer" style="display:none">
-    <button id="loadMoreBtn" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      View More Organizations <span class="material-symbols-outlined text-lg">expand_more</span>
-    </button>
-  </div>
+
 </section>
 
 <!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
@@ -944,11 +951,12 @@
         </select>
       </div>
     </div>
-
+    <div class="w-full max-h-[720px] overflow-y-auto animate-rainbow-bg border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
+    </div>
     </div>
   </div>
 </section>

@@ -95,7 +95,7 @@
     .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
     .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    .fade-up{animation:fadeUp .6s ease-out both}
+    .fade-up, .animate-fade-up{animation:fadeUp .6s ease-out both}
     @keyframes pulse-dot{0%,100%{opacity:.4}50%{opacity:1}}
     .pulse-dot{animation:pulse-dot 2s infinite}
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -351,7 +351,7 @@
 
     /* Base mobile-first styles */
     body { width: 100%; overflow-x: hidden; }
-    html { width: 100%; scroll-behavior: smooth; }
+    html { width: 100%; }
     
     /* Scroll offset for fixed header */
     #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
@@ -970,7 +970,7 @@
 </section>
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
-<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
+<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20 fade-up">
   <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
@@ -1031,7 +1031,7 @@
 </section>
 
 <!-- ═══════════════════ AI RECOMMENDER ═══════════════════ -->
-<section id="ai-recommender" class="px-6 max-w-7xl mx-auto py-20 border-t border-zinc-100 dark:border-zinc-800">
+<section id="ai-recommender" class="px-6 max-w-7xl mx-auto py-20 border-t border-zinc-100 dark:border-zinc-800 fade-up">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">AI-Powered</span>
     <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Personalized Org Suggestions</h2>
@@ -1096,7 +1096,7 @@
 
 <!-- ═══════════════════ WATCHLIST ═══════════════════ -->
 <section id="watchlist" class="bg-surface-container-low py-20 px-6">
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl mx-auto fade-up">
     <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
       <div>
         <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
@@ -1150,7 +1150,7 @@
 </section>
 
 <!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
-<section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
+<section id="issues" class="py-20 px-6 max-w-7xl mx-auto fade-up">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
     <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
@@ -1221,7 +1221,7 @@
 
 <!-- ═══════════════════ MENTOR FINDER ═══════════════════ -->
 <section id="mentors" class="py-20 px-6 bg-surface-container-low">
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl mx-auto fade-up">
     <div class="mb-12">
       <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Mentor Outreach</span>
       <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Mentor Finder</h2>
@@ -1269,7 +1269,7 @@
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
-<section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
+<section id="guide" class="py-20 px-6 max-w-7xl mx-auto fade-up">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
     <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
@@ -3017,7 +3017,7 @@ sections.forEach(sectionId => {
     // ── Empty state ───────────────────────────────────────────────────────────
     if (bookmarks.length === 0) {
       container.innerHTML = `
-        <div class="py-16 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
+        <div class="py-16 text-center border-2 border-dashed border-zinc-200 rounded-2xl animate-fade-up">
           <span class="material-symbols-outlined text-4xl text-zinc-300 mb-4 block">bookmark_border</span>
           <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
           <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
@@ -3026,7 +3026,7 @@ sections.forEach(sectionId => {
     }
 
     // ── Render one card per bookmarked org ────────────────────────────────────
-    bookmarks.forEach(org => {
+    bookmarks.forEach((org, index) => {
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl     = githubOwner
         ? `https://github.com/${githubOwner}.png?size=80`
@@ -3039,6 +3039,7 @@ sections.forEach(sectionId => {
 
       const item = document.createElement('div');
       item.className = 'bg-white rounded-2xl p-5 border border-zinc-100 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
+      item.style.animationDelay = `${(index % 10) * 50}ms`;
       item.dataset.watchlistOrg = org.name;
 
       item.innerHTML = `
@@ -3249,13 +3250,14 @@ sections.forEach(sectionId => {
       overflowBadge.classList.toggle('hidden', overflowCount === 0);
     }
 
-    recentlyViewed.slice(0, RECENTLY_VIEWED_LIMIT).forEach(name => {
+    recentlyViewed.slice(0, RECENTLY_VIEWED_LIMIT).forEach((name, index) => {
       const org = ORGS.find(o => o.name === name);
       if (!org) return;
       const category = getCategoryMeta(org.cat);
 
       const card = document.createElement('div');
-      card.className = 'bg-white rounded-lg p-4 border border-zinc-100 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
+      card.className = 'bg-white rounded-lg p-4 border border-zinc-100 hover:border-primary transition-colors cursor-pointer flex items-center justify-between animate-fade-up';
+      card.style.animationDelay = `${(index % 10) * 50}ms`;
       card.innerHTML = `
         <div class="flex-1 min-w-0">
           <h4 class="font-bold text-sm mb-1">${escapeHtml(org.name)}</h4>
@@ -4249,6 +4251,14 @@ if (logoLink) {
     }
   });
 }
+
+// Enable smooth scrolling only after initial load to prevent jarring scroll animations on refresh
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+  }, 100);
+});
+
 </script>
 
 </body>

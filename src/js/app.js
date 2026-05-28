@@ -21,18 +21,18 @@ function escapeHtml(value) {
 }
 
 globalThis.toggleTheme = function(){
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
-};
+  const toggle = () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  };
 
-function updateThemeIcon(){
-  const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
-  if(icon){
-    const isDark = document.documentElement.classList.contains('dark');
-    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+  // use View Transitions API if supported and motion isn't restricted
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.startViewTransition(toggle);
+  } else {
+    toggle(); // fallback for older browsers
   }
-}
+};
 
 // ══════════════════════════════════════════════
 // COUNTDOWN

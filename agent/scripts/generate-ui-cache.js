@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = './data';
+const DATA_DIR = path.resolve(__dirname, 'data');
 const ISSUES_FILE = path.join(DATA_DIR, 'issues.json');
 const UI_SUMMARY_FILE = path.join(DATA_DIR, 'ui-summary.json');
 

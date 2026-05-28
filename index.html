@@ -2660,7 +2660,8 @@ sections.forEach(sectionId => {
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
-    document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
+    document.getElementById('loadMoreContainer').style.display = 'none';
+    _attachInfiniteScrollSentinel(grid);
   }
 
   // Attach listeners to elements created from org templates.
@@ -3520,10 +3521,39 @@ if(org.ideas){
     applyFilters();
     updateLanguageModeHint();
   });
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    visibleCount += 12;
-    renderOrgs(false);
-  });
+  let _infiniteObserver = null;
+
+  function _attachInfiniteScrollSentinel(grid) {
+    if (_infiniteObserver) {
+      _infiniteObserver.disconnect();
+      _infiniteObserver = null;
+    }
+    const old = document.getElementById('infinite-scroll-sentinel');
+    if (old) old.remove();
+
+    if (visibleCount >= filteredOrgs.length) return;
+
+    const sentinel = document.createElement('div');
+    sentinel.id = 'infinite-scroll-sentinel';
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'height:1px;width:100%;grid-column:1/-1;';
+    grid.appendChild(sentinel);
+
+    requestAnimationFrame(() => {
+      if (!sentinel.isConnected || visibleCount >= filteredOrgs.length) return;
+
+      _infiniteObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredOrgs.length) {
+          _infiniteObserver.disconnect();
+          _infiniteObserver = null;
+          visibleCount += 12;
+          renderOrgs(false);
+        }
+      }, { rootMargin: '200px' });
+
+      _infiniteObserver.observe(sentinel);
+    });
+  }
 
   // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);

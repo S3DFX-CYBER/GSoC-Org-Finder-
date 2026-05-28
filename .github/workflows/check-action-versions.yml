@@ -44,6 +44,7 @@ jobs:
             "actions/github-script"
             "peter-evans/create-pull-request"
             "peakoss/anti-slop"
+            "actions/setup-python"
           )
 
           for ACTION in "${ACTIONS[@]}"; do

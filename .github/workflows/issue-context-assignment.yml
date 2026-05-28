@@ -26,7 +26,6 @@ jobs:
       github.event.issue.pull_request == null &&
       github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
@@ -77,8 +76,8 @@ jobs:
           steps.cmd.outputs.is_approve != 'true'
         env:
           ISSUE_CLAIMANT: ${{ github.event.issue.user.login }}
-          MAX_MENTORS: '2'
-          RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 
@@ -274,8 +273,8 @@ jobs:
           steps.validate.outputs.eligible == 'true'
         env:
           ISSUE_CLAIMANT: ${{ steps.validate.outputs.claimant }}
-          MAX_MENTORS: '2'
-          RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 

@@ -1165,16 +1165,59 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "GNU Mailman": {
-    "org": "GNU Mailman",
-    "ideasUrl": "https://wiki.list.org/DEV/Google%20Summer%20of%20Code%202026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"GNU Mailman": {
+  "org": "GNU Mailman",
+  "ideasUrl": "https://wiki.list.org/DEV/Google-Summer-of-Code-2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://libera.chat/",
+      "label": "#mailman on Libera.Chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Abhilash Raj",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Stephen J. Turnbull",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Mark Sapiro",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Daniel Toe",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Victoriano Giralt",
+      "github": "",
+      "githubUrl": ""
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "mailto:mailman-developers@python.org",
+      "label": "Mailman Developers"
+    },
+    {
+      "type": "Mailing list",
+      "url": "mailto:mailman-users@mailman3.org",
+      "label": "Mailman 3 Users"
+    }
+  ],
+  "tip": "Primary mentor communication happens through the Mailman Developers mailing list or #mailman IRC.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "GNU Octave": {
     "org": "GNU Octave",
     "ideasUrl": "https://wiki.octave.org/Summer_of_Code_-_Getting_Started",

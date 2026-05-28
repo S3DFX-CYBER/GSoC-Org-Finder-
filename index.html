@@ -706,7 +706,7 @@
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
- <div class="w-full max-h-[720px] overflow-y-auto animate-rainbow-bg border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
+ <div class="w-full max-h-[720px] overflow-y-auto border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
     
     <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="orgGrid">
     </div>
@@ -723,6 +723,12 @@
     </div>
 
   </div>
+  <button id="scrollTopBtn" 
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+        class="fixed bottom-6 right-6 z-[9999] p-4 bg-teal-500 text-white rounded-full shadow-xl hidden hover:bg-teal-600 transition-all duration-300"
+        aria-label="Scroll to top">
+    <span class="material-symbols-outlined">arrow_upward</span>
+</button>
 
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
@@ -951,7 +957,7 @@
         </select>
       </div>
     </div>
-    <div class="w-full max-h-[720px] overflow-y-auto animate-rainbow-bg border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
+    <div class="w-full max-h-[720px] overflow-y-auto border border-zinc-200 dark:border-zinc-800 rounded-2xl my-8 p-6 shadow-xl transition-all duration-500 relative">
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
@@ -2353,6 +2359,15 @@
     }
     refreshVisibleBookmarkButtons();
   }
+
+  window.onscroll = function() {
+        const btn = document.getElementById("scrollTopBtn");
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            btn.classList.remove("hidden");
+        } else {
+            btn.classList.add("hidden");
+        }
+    };
 
   /**
    * Single source-of-truth writer for bookmarks.

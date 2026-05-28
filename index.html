@@ -847,7 +847,7 @@
         </div>
         <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
       </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors" aria-label="Close menu">
         <span class="material-symbols-outlined text-zinc-600">close</span>
       </button>
     </div>
@@ -1477,7 +1477,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeModal()" aria-label="Close modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1570,7 +1570,7 @@
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeCompareModal()" aria-label="Close compare modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
       <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
@@ -1585,7 +1585,7 @@
 
 <div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
-    <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeAn()" aria-label="Close analytics modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <div class="flex items-center justify-between">
         <div>
@@ -4093,7 +4093,7 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" onclick="closeHelpModal()" aria-label="Close help modal">
       <span class="material-symbols-outlined">close</span>
     </button>
 

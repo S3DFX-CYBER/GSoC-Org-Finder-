@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Detect command
         id: cmd
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           script: |
             const body = (context.payload.comment.body || '').trim();
@@ -74,7 +74,7 @@ jobs:
 
       - name: Queue assignment and ping mentors
         if: steps.cmd.outputs.is_assign == 'true' && steps.validate.outputs.eligible == 'true'
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           ISSUE_NUMBER:     ${{ steps.validate.outputs.issue_number }}
           CLAIMANT:         ${{ steps.validate.outputs.claimant }}
@@ -137,7 +137,7 @@ jobs:
       - name: Process mentor approval
         id: process_approval
         if: steps.cmd.outputs.is_approve == 'true'
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           TARGET_USER: ${{ steps.cmd.outputs.target_user }}
         with:

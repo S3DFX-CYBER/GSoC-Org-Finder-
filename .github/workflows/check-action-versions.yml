@@ -15,7 +15,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Check and update action versions
         id: update
@@ -60,18 +62,49 @@ jobs:
 
             # Search all workflow files for this action and update if needed
             for FILE in $WORKFLOW_FILES; do
-              # Match lines using this action with any version tag
+              # Match lines using this action with any version tag or SHA
               if grep -qE "uses: ${ACTION}@" "$FILE"; then
-                CURRENT=$(grep -E "uses: ${ACTION}@" "$FILE" | head -1 | sed 's/.*@//' | tr -d ' ')
+
+                # FIX 1: Extract the tag from the inline comment (#vX.X.X)
+                # Handles both bare tags (@v1.0.0) and SHA-pinned lines (@SHA #v1.0.0)
+                CURRENT=$(grep -E "uses: ${ACTION}@" "$FILE" | head -1 | sed 's/.*#//' | tr -d ' ')
+
+                # Fallback: if no comment found, extract version after @
+                if [ -z "$CURRENT" ] || echo "$CURRENT" | grep -qE "^[0-9a-f]{40}$"; then
+                  CURRENT=$(grep -E "uses: ${ACTION}@" "$FILE" | head -1 | sed 's/.*@//' | sed 's/ .*//' | tr -d ' ')
+                fi
 
                 if [ "$CURRENT" != "$LATEST" ]; then
                   echo "Updating ${ACTION} from ${CURRENT} to ${LATEST} in ${FILE}"
 
-                  # Replace old version with latest
-                  sed -i "s|uses: ${ACTION}@.*|uses: ${ACTION}@${LATEST}|g" "$FILE"
+                  # FIX 2: Resolve annotated tags to the actual commit SHA
+                  # Step 1: Get the object the tag points to
+                  TAG_INFO=$(gh api "/repos/${ACTION}/git/ref/tags/${LATEST}" --jq '.object | {sha: .sha, type: .type}' 2>/dev/null || echo "")
+
+                  if [ -z "$TAG_INFO" ]; then
+                    echo "Could not resolve SHA for ${ACTION}@${LATEST}, skipping"
+                    continue
+                  fi
+
+                  OBJ_TYPE=$(echo "$TAG_INFO" | jq -r '.type')
+                  SHA=$(echo "$TAG_INFO" | jq -r '.sha')
+
+                  # Step 2: If it's an annotated tag object, dereference to get the commit SHA
+                  if [ "$OBJ_TYPE" = "tag" ]; then
+                    SHA=$(gh api "/repos/${ACTION}/git/tags/${SHA}" --jq '.object.sha' 2>/dev/null || echo "")
+                    if [ -z "$SHA" ]; then
+                      echo "Could not dereference annotated tag for ${ACTION}@${LATEST}, skipping"
+                      continue
+                    fi
+                  fi
+
+                  echo "Resolved ${LATEST} -> commit SHA: ${SHA}"
+
+                  # Writes both commit SHA + tag as comment
+                  sed -i "s|uses: ${ACTION}@.*|uses: ${ACTION}@${SHA} #${LATEST}|g" "$FILE"
 
                   CHANGES=true
-                  SUMMARY="${SUMMARY}\n- \`${ACTION}\`: \`${CURRENT}\` → \`${LATEST}\` in \`${FILE}\`"
+                  SUMMARY="${SUMMARY}\n- \`${ACTION}\`: \`${CURRENT}\` → \`${LATEST}\` (\`${SHA:0:7}\`) in \`${FILE}\`"
                 else
                   echo "${ACTION} already at ${LATEST} in ${FILE}"
                 fi
@@ -95,7 +128,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update.outputs.changes == 'true'
-        uses: peter-evans/create-pull-request@v8.1.1
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 #v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: bump GitHub Actions to latest versions"
@@ -114,7 +147,8 @@ jobs:
 
             ### Verification
             - Versions fetched directly from GitHub Releases API
-            - No manual version lookup needed
+            - All actions pinned to immutable commit SHAs (not mutable tags)
+            - Annotated tags are dereferenced to their actual commit SHA
           branch: chore/bump-action-versions
           delete-branch: true
           labels: |

@@ -992,7 +992,16 @@
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="flex items-center justify-between mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <div class="flex items-center gap-3 flex-wrap">
+      <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+      <!-- Export buttons — CSV exports the current filtered list, JSON exports bookmarks only -->
+      <button onclick="exportFilteredCSV()" title="Download current filtered list as CSV" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-bold text-zinc-600 hover:border-primary hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-sm">download</span> Export CSV (<span id="csvCount">184</span>)
+      </button>
+      <button onclick="exportBookmarksJSON()" title="Download bookmarked organizations as JSON" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-bold text-zinc-600 hover:border-primary hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-sm">bookmark</span> JSON
+      </button>
+    </div>
     <div class="flex items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
@@ -2660,6 +2669,9 @@ sections.forEach(sectionId => {
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
+    // keep the CSV button count in sync with the org count (added for issue #697)
+    const csvCountEl = document.getElementById('csvCount');
+    if (csvCountEl) csvCountEl.textContent = filteredOrgs.length;
     document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
   }
 
@@ -4072,6 +4084,55 @@ if(org.ideas){
   renderCompare();
   // Wire up Recently Viewed clear button
   document.getElementById('clearRecentlyViewedBtn')?.addEventListener('click', clearRecentlyViewed);
+
+  // ══════════════════════════════════════════════
+  // EXPORT  (added for issue #697)
+  // ══════════════════════════════════════════════
+
+  // shared helper — one org → flat row, used by both CSV and JSON so fields stay in sync
+  function orgToExportRow(o) {
+    const path = githubPathFromValue(o.github);
+    return {
+      Name: o.name,
+      Category: o.cat,
+      Years: o.years,
+      'First Year': o.firstYear,
+      Competition: o.competition,
+      'GitHub URL': path ? `https://github.com/${path}` : '',
+      'Ideas URL': o.ideas || '',
+      Tags: (o.tags || []).join('; '),
+    };
+  }
+
+  // triggers a file download from a Blob 
+  function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // exports the current filtered list — respects active search/filters at click time
+  globalThis.exportFilteredCSV = function() {
+    if (!filteredOrgs.length) { alert('No organizations to export.'); return; }
+    const headers = ['Name','Category','Years','First Year','Competition','GitHub URL','Ideas URL','Tags'];
+    const esc = v => `"${String(v).replaceAll('"', '""')}"`; // RFC 4180: quote fields, double internal quotes
+    const rows = filteredOrgs.map(o => {
+      const r = orgToExportRow(o);
+      return headers.map(h => esc(r[h])).join(',');
+    });
+    const csv = [headers.map(esc).join(','), ...rows].join('\r\n');
+    triggerDownload(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), `gsoc-orgs-filtered-${Date.now()}.csv`);
+  };
+
+  // exports only bookmarked orgs as JSON — handy for offline use or sharing a curated list
+  globalThis.exportBookmarksJSON = function() {
+    const orgs = ORGS.filter(o => bookmarkedSet.has(o.name)).map(orgToExportRow);
+    if (!orgs.length) { alert('No bookmarked organizations to export.'); return; }
+    triggerDownload(new Blob([JSON.stringify(orgs, null, 2)], { type: 'application/json' }), `gsoc-bookmarks-${Date.now()}.json`);
+  };
 
   // Export helpers to global scope
   globalThis.toggleCompare = toggleCompare;

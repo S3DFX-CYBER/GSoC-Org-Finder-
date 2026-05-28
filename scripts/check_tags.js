@@ -1,4 +1,4 @@
-const fs=require('fs');
+const fs=require('node:fs');
 const s=fs.readFileSync('index.html','utf8');
 const start=s.indexOf('<section id="watchlist"');
 if(start===-1){console.error('watchlist start not found'); process.exit(2);}
@@ -18,12 +18,12 @@ while((m=tagRe.exec(snippet))){
   if(isClose){
     if(stack.length===0){ console.log('Unmatched closing',tag,'at line',line+1); }
     else{
-      const top=stack[stack.length-1];
+            const top=stack.at(-1);
       if(top.tag===tag){ stack.pop(); }
       else{ console.log('Mismatched closing',tag,'at line',line+1,'expected',top.tag); const idx=stack.map(x=>x.tag).lastIndexOf(tag); if(idx>=0){ stack.splice(idx); } }
     }
   } else {
-    const selfClosing = /\/$/.test(rest) || voids.has(tag);
+        const selfClosing = rest.endsWith('/') || voids.has(tag);
     if(!selfClosing){ stack.push({tag,line:line+1}); }
   }
 }

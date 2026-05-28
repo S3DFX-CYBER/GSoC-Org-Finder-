@@ -428,7 +428,7 @@ function renderCompareSlots(){
       html+=`<div class="compare-slot filled">
         <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
         <span class="slot-name">${escapeHtml(o.name)}</span>
-        <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">✕ Remove</button>
+        <button class="slot-remove" onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();" aria-label="Remove compare slot">✕ Remove</button>
       </div>`;
     } else {
       html+=`<div class="compare-slot"><span class="slot-empty">+ Add org</span><span style="font-size:10px;color:var(--muted)">Click ⚖️ on any card</span></div>`;
@@ -783,7 +783,7 @@ function renderGrid(orgs){
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
+        <button onclick="resetFilters()" class="btn-clear-filters" aria-label="Clear all filters">Clear All Filters</button>
       </div>`;
     return;
   }
@@ -815,7 +815,7 @@ function renderGrid(orgs){
           <div class="card-top-line">
             <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
-              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}" aria-label="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
               <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
@@ -959,7 +959,7 @@ function renderSelectedLanguages(){
     </span>`;
   }).join('');
 
-  const clearAll=`<button class="clear-all-langs-btn" onclick="clearAllLanguages()">Clear all</button>`;
+  const clearAll=`<button class="clear-all-langs-btn" onclick="clearAllLanguages()" aria-label="Clear all languages">Clear all</button>`;
 
   container.innerHTML=badges+clearAll;
 }

@@ -661,6 +661,13 @@
     .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
     .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
 
+    /* Footer dark mode */
+    .dark footer { background: #18181b !important; border-color: #3f3f46 !important; }
+    .dark footer .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark footer .text-zinc-400 { color: #71717a !important; }
+    .dark footer a { color: #a1a1aa !important; }
+    .dark footer a:hover { color: #fb923c !important; }
+
     /* Selected Languages Strip */
     #selectedLangsStrip {
       display: flex;
@@ -1454,21 +1461,21 @@
 </section>
 
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
+<footer class="w-full border-t border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 pb-48">
   <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
+        <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">FindMyGSoC</span>
       </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200" href="privacy.html">Privacy</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200" href="#contact">Contact</a>
     </nav>
   </div>
 </footer>

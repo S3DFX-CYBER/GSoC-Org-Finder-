@@ -280,12 +280,31 @@ async function checkAPI(){
   }
 }
 
+function showRateLimitBanner(message, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `
+    <div class="rate-limit-banner" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#B91C1C;padding:24px;border-radius:12px;text-align:center;margin:20px 0;grid-column:1/-1">
+      <div style="font-size:32px;margin-bottom:12px">⏳</div>
+      <h3 style="margin:0 0 8px 0;font-weight:700">API Rate Limit Reached</h3>
+      <p style="margin:0;font-size:14px;opacity:.9">${escapeHtml(message || 'GitHub API rate limit exceeded. Please try again in an hour.')}</p>
+      <button onclick="location.reload()" style="margin-top:16px;background:#B91C1C;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px">Try Again</button>
+    </div>
+  `;
+}
+
 async function fetchGH(repo){
   if(!repo)return null;
   if(cache[repo]&&Date.now()-cache[repo].ts<3600000)return cache[repo];
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
-    if(!r.ok)return null;
+    if(!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      if (r.status === 429 || d.rateLimit) {
+        showRateLimitBanner(d.message, 'orgGrid');
+      }
+      return null;
+    }
     const d=await r.json();
     if(d.error)return null;
     d.ts=Date.now();
@@ -302,7 +321,13 @@ async function fetchGFI(repo){
   if(hit&&Date.now()-hit.ts<3600000&&hit.count!==null&&hit.count!==undefined)return hit.count;
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
-    if(!r.ok)return null;
+    if(!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      if (r.status === 429 || d.rateLimit) {
+        showRateLimitBanner(d.message, 'orgGrid');
+      }
+      return null;
+    }
     const d=await r.json();
     if(d.gfi===null||d.gfi===undefined)return null;
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
@@ -319,7 +344,9 @@ async function fetchAll(){
   for(const o of ORGS){
     if(o.github){
       txt.textContent=`${++done}/${ORGS.length}…`;
-      const d=await fetchGH(o.github);if(d)o._gh=d;
+      const d=await fetchGH(o.github);
+      if(d) o._gh=d;
+      else if(done > 1 && !d) break; // Stop loop if we hit a rate limit error mid-way
       await new Promise(r=>setTimeout(r,85));
     }
   }
@@ -351,7 +378,10 @@ async function fetchModalGH(){
     }
     applyFilters();
     renderCompareTable();
-  }else document.getElementById('mFetchBtn').textContent='✗ Failed';
+  }else {
+    document.getElementById('mFetchBtn').textContent='✗ Failed';
+    // If it was a rate limit, the fetchGH already triggered the banner
+  }
 }
 
 function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n);}
@@ -1144,31 +1174,45 @@ async function fetchAllIssues(){
   const btn=document.getElementById('fetchIssuesBtn');
   const spin=document.getElementById('fetchIssuesSpin');
   const txt=document.getElementById('fetchIssuesTxt');
-  btn.disabled=true; spin.style.display='inline-block';
+  if (btn) btn.disabled=true; 
+  if (spin) spin.style.display='inline-block';
 
   allIssues=[];
   const orgsWithGithub=ORGS.filter(o=>o.github);
   let done=0;
   let found=0;
 
-  document.getElementById('issuesContainer').innerHTML=`
-    <div class="fetch-progress">
-      <div style="font-size:14px;font-weight:600;color:var(--ink)">Fetching Good First Issues…</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px" id="fpStatus">Checking 0 / ${orgsWithGithub.length} orgs</div>
-      <div class="fp-bar-wrap"><div class="fp-bar" id="fpBar" style="width:0%"></div></div>
-      <div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600" id="fpFound">0 issues found so far</div>
-    </div>`;
+  const container = document.getElementById('issuesContainer');
+  if (container) {
+    container.innerHTML=`
+      <div class="fetch-progress">
+        <div style="font-size:14px;font-weight:600;color:var(--ink)">Fetching Good First Issues…</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px" id="fpStatus">Checking 0 / ${orgsWithGithub.length} orgs</div>
+        <div class="fp-bar-wrap"><div class="fp-bar" id="fpBar" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600" id="fpFound">0 issues found so far</div>
+      </div>`;
+  }
 
   // Batch in groups of 5 to avoid hammering the proxy
   const BATCH=5;
+  let rateLimited = false;
   for(let i=0;i<orgsWithGithub.length;i+=BATCH){
+    if (rateLimited) break;
     const batch=orgsWithGithub.slice(i,i+BATCH);
     await Promise.all(batch.map(async o=>{
+      if (rateLimited) return;
       try{
         const r=await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
-        if(!r.ok)return;
+        if(!r.ok) {
+          const d = await r.json().catch(() => ({}));
+          if (r.status === 429 || d.rateLimit) {
+            rateLimited = true;
+            showRateLimitBanner(d.message, 'issuesContainer');
+          }
+          return;
+        }
         const data=await r.json();
-        if(data.items?.length){
+        if(data && Array.isArray(data.items) && data.items.length){
           const owner=githubOwnerFromValue(o.github);
           const logo=owner ? `https://github.com/${owner}.png?size=64` : '';
           data.items.forEach(issue=>{
@@ -1188,7 +1232,7 @@ async function fetchAllIssues(){
           });
           found+=data.items.length;
         }
-        const gfiCount=data.total??data.gfi;
+        const gfiCount=data ? (data.total??data.gfi) : null;
         if(gfiCount!==null&&gfiCount!==undefined){
           if(!o._gh)o._gh={};
           o._gh.gfi=gfiCount;
@@ -1198,6 +1242,9 @@ async function fetchAllIssues(){
       }
       done++;
     }));
+    
+    if (rateLimited) break;
+
     // Update progress UI
     const pct=Math.round(done/orgsWithGithub.length*100);
     const fpStatus=document.getElementById('fpStatus');
@@ -1206,15 +1253,25 @@ async function fetchAllIssues(){
     if(fpStatus)fpStatus.textContent=`Checking ${done} / ${orgsWithGithub.length} orgs`;
     if(fpBar)fpBar.style.width=pct+'%';
     if(fpFound)fpFound.textContent=`${found} issues found so far`;
-    txt.textContent=`${done}/${orgsWithGithub.length}…`;
+    if(txt) txt.textContent=`${done}/${orgsWithGithub.length}…`;
     await new Promise(r=>setTimeout(r,60));
+  }
+
+  if (rateLimited) {
+    issuesFetching=false;
+    if (btn) btn.disabled=false; 
+    if (spin) spin.style.display='none'; 
+    if (txt) txt.textContent='✗ Limit Reached';
+    return;
   }
 
   // Sort: newest first
   allIssues.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 
   issuesFetching=false;
-  btn.disabled=false; spin.style.display='none'; txt.textContent='↻ Refresh';
+  if (btn) btn.disabled=false; 
+  if (spin) spin.style.display='none'; 
+  if (txt) txt.textContent='↻ Refresh';
 
   filterIssues();
   renderGrid(filteredOrgs);

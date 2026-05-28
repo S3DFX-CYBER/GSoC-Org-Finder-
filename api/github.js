@@ -64,6 +64,20 @@ export default async function handler(req) {
     return res;
   };
 
+  const isRateLimited = (res) => {
+    return res.status === 403 || res.status === 429 || res.headers.get('x-ratelimit-remaining') === '0';
+  };
+
+  const rateLimitResponse = (res) => {
+    const reset = res.headers.get('x-ratelimit-reset');
+    return new Response(JSON.stringify({
+      error: true,
+      rateLimit: true,
+      message: "GitHub API rate limit exceeded. Please try again later.",
+      resetTime: reset ? parseInt(reset) * 1000 : null
+    }), { status: 429, headers });
+  };
+
   // MODE: ?user=username → return user profile analysis for AI recommender
   if (user) {
     const cacheKey = 'user__' + user;
@@ -81,6 +95,7 @@ export default async function handler(req) {
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
+          if (isRateLimited(res)) return rateLimitResponse(res);
           if (!res.ok) {
             if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
             break;
@@ -155,6 +170,7 @@ export default async function handler(req) {
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
       );
+      if (isRateLimited(res)) return rateLimitResponse(res);
       if (!res.ok) {
         return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
       }
@@ -188,6 +204,7 @@ export default async function handler(req) {
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
       );
+      if (isRateLimited(res)) return rateLimitResponse(res);
       if (!res.ok) {
         return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
       }
@@ -211,6 +228,9 @@ export default async function handler(req) {
       fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
       fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
     ]);
+
+    if (isRateLimited(repoRes)) return rateLimitResponse(repoRes);
+    if (isRateLimited(commitsRes)) return rateLimitResponse(commitsRes);
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));

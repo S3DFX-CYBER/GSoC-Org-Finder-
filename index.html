@@ -2122,8 +2122,8 @@ sections.forEach(sectionId => {
   }
 
   function getPrimaryMentorContact(entry) {
-    if (entry.channels.length > 0) return entry.channels[0];
-    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
+    if ((entry.channels || []).length > 0) return entry.channels[0];
+    if ((entry.mailingLists || []).length > 0) return entry.mailingLists[0];
     return null;
   }
 
@@ -2225,7 +2225,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
+    if (entry.status === 'ok' && (entry.mailingLists || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>

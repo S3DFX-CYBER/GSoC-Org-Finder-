@@ -15,10 +15,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      with:
+        persist-credentials: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b
       with:
         node-version: '20'
         cache: 'npm'
@@ -28,3 +30,9 @@ jobs:
 
     - name: Run Linters
       run: npm run lint
+
+    - name: Build
+      run: npm run build --if-present
+
+    - name: Test
+      run: npm test --if-present

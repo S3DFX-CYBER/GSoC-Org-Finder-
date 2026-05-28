@@ -207,6 +207,25 @@ vercel --prod
 ```
 Or connect the repo to Vercel and it deploys automatically on every push.
 
+### Environment Setup for Local API Testing
+To run the Edge Functions locally and fetch GitHub stats, you need the Vercel CLI and a local environment file.
+
+1. **Install Vercel CLI:**
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Login to Vercel:**
+   ```bash
+   vercel login
+   ```
+
+3. **Set up environment variables:**
+   Create a `.env.local` file in the root directory and add your GitHub token:
+   ```env
+   GITHUB_TOKEN=ghp_your_token_here
+   ```
+
 ### 4. Run Locally
 ```bash
 open index.html   # macOS — works without API (GitHub stats won't load)

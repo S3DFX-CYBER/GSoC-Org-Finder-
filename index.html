@@ -2463,13 +2463,13 @@ sections.forEach(sectionId => {
     // Soften banner background to neutral
     if (issuesBanner) {
       issuesBanner.classList.remove('bg-green-50', 'border-green-200');
-      issuesBanner.classList.add('bg-zinc-50', 'border-zinc-200');
+      issuesBanner.classList.add("bg-zinc-50","dark:bg-zinc-800","border-zinc-200","dark:border-zinc-700");
       const title = document.getElementById('issuesBannerTitle');
-      if (title) { title.classList.remove('text-green-800'); title.classList.add('text-zinc-800'); }
+      if (title) { title.classList.remove('text-green-800'); title.classList.add("text-zinc-800", "dark:text-zinc-100"); }
       const subtitle = document.getElementById('issuesBannerSubtitle');
-      if (subtitle) { subtitle.classList.remove('text-green-600'); subtitle.classList.add('text-zinc-500'); }
+      if (subtitle) { subtitle.classList.remove('text-green-600'); subtitle.classList.add("text-zinc-500", "dark:text-zinc-400"); }
       const lastUpdated = document.getElementById('issuesLastUpdated');
-      if (lastUpdated) { lastUpdated.classList.remove('text-green-600'); lastUpdated.classList.add('text-zinc-500'); }
+      if (lastUpdated) { lastUpdated.classList.remove('text-green-600'); lastUpdated.classList.add("text-zinc-500", "dark:text-zinc-400"); }
     }
 
     // --- Mentor Finder banner ---

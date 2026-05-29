@@ -1,0 +1,111 @@
+name: 📢 Discord Guidance
+
+on:
+  issues:
+    types:
+      - opened
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: discord-guidance-${{ github.event_name }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  discord-guidance:
+    if: |
+      github.actor != 'github-actions[bot]' &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post or update Discord guidance comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+
+            const isPR = context.eventName === 'pull_request';
+
+            const number = isPR
+              ? context.payload.pull_request.number
+              : context.payload.issue.number;
+
+            const author = isPR
+              ? context.payload.pull_request.user.login
+              : context.payload.issue.user.login;
+
+            const marker = '<!-- discord-guidance -->';
+
+            const body = [
+              marker,
+              '',
+              '## 💬 Faster Reviews & Assignments',
+              '',
+              `Hi @${author}, for faster coordination and smoother communication, consider joining our Discord community:`,
+              '',
+              '👉 https://discord.gg/MmZGG2ee',
+              '',
+              '### Useful Channels',
+              '',
+              '- `#issue-links-for-assignment` → Share issue links for assignment help',
+              '- `#pr-links-for-review` → Share PR links for mentor/maintainer review',
+              '',
+              '> Please avoid spamming channels or repeatedly pinging mentors/maintainers.'
+            ].join('\n');
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner,
+                repo,
+                issue_number: number,
+                per_page: 100
+              }
+            );
+
+            const existing = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body &&
+              comment.body.includes(marker)
+            );
+
+            // Prevent spam:
+            // - Issues: comment only once
+            // - PRs: update existing comment on synchronize instead of creating new ones
+
+            if (existing) {
+
+              if (existing.body.trim() === body.trim()) {
+                core.info('Discord guidance already up to date');
+                return;
+              }
+
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body
+              });
+
+              core.info('Updated existing Discord guidance comment');
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body
+            });
+
+            core.info('Created Discord guidance comment');

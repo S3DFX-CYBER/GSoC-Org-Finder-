@@ -3336,6 +3336,7 @@ btn.__orgListenerAttached = true;
     document.getElementById('mDesc').textContent = org.desc;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+    resetModalStats();
 
     // Timeline
     let timelineHtml = '';
@@ -3688,36 +3689,100 @@ if(org.ideas){
     }
   }
 
-  // Live GitHub Stats Mock/Fetch
+  function formatGitHubStat(value) {
+    if (value === null || value === undefined || value === '') return '---';
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return String(value);
+    if (numeric >= 1000000) return `${(numeric / 1000000).toFixed(1)}m`;
+    if (numeric >= 1000) return `${(numeric / 1000).toFixed(1)}k`;
+    return String(numeric);
+  }
+
+  function setModalActivity(activity) {
+    const activityEl = document.getElementById('mActivity');
+    const activityWrap = activityEl?.closest('.gh-stat-item');
+    if (!activityEl || !activityWrap) return;
+
+    activityWrap.classList.remove('text-green-400', 'text-yellow-400', 'text-blue-400', 'text-zinc-400', 'text-red-400');
+
+    const normalized = String(activity || '').toLowerCase();
+    if (normalized === 'active') {
+      activityEl.textContent = 'Active';
+      activityWrap.classList.add('text-green-400');
+    } else if (normalized === 'moderate') {
+      activityEl.textContent = 'Moderate';
+      activityWrap.classList.add('text-yellow-400');
+    } else if (normalized === 'low') {
+      activityEl.textContent = 'Low';
+      activityWrap.classList.add('text-zinc-400');
+    } else {
+      activityEl.textContent = '---';
+      activityWrap.classList.add('text-zinc-400');
+    }
+  }
+
+  function resetModalStats() {
+    document.getElementById('mStars').textContent = '---';
+    document.getElementById('mForks').textContent = '---';
+    document.getElementById('mIssues').textContent = '---';
+    setModalActivity(null);
+
+    const btn = document.getElementById('mFetchBtn');
+    if (btn) {
+      btn.textContent = 'Fetch Live Stats';
+      btn.disabled = false;
+    }
+  }
+
+  function isCurrentModalOrg(name) {
+    return document.querySelector('#mHeader h2')?.textContent === name;
+  }
+
+  // Live GitHub Stats Fetch
   async function fetchStats() {
     const btn = document.getElementById('mFetchBtn');
-    const orgName = document.querySelector('#mHeader h2').textContent;
+    const orgName = document.querySelector('#mHeader h2')?.textContent;
     const org = ORGS.find(o => o.name === orgName);
-    if (!org) return;
+    if (!btn || !org) return;
 
     btn.textContent = 'Fetching...';
     btn.disabled = true;
 
     try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
-      document.getElementById('mForks').textContent = forks;
-      document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
+      const repo = githubPathFromValue(org.github);
+      if (!repo || !repo.includes('/')) {
+        throw new Error('No repository configured for this organization');
+      }
+
+      const response = await fetch(`/api/github?repo=${encodeURIComponent(repo)}`);
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || `GitHub API request failed with ${response.status}`);
+      }
+
+      if (!isCurrentModalOrg(orgName)) return;
+
+      org._gh = { ...(org._gh || {}), ...data };
+
+      document.getElementById('mStars').textContent = formatGitHubStat(data.stars);
+      document.getElementById('mForks').textContent = formatGitHubStat(data.forks);
+      document.getElementById('mIssues').textContent = formatGitHubStat(data.issues);
+      setModalActivity(data.activity);
+
       btn.textContent = 'Stats Updated!';
     } catch (e) {
-      btn.textContent = 'Error';
+      if (!isCurrentModalOrg(orgName)) return;
+
+      document.getElementById('mStars').textContent = '---';
+      document.getElementById('mForks').textContent = '---';
+      document.getElementById('mIssues').textContent = '---';
+      setModalActivity(null);
+      btn.textContent = 'Stats Unavailable';
+      console.error('Live stats fetch failed:', e);
     } finally {
       setTimeout(() => {
+        if (!isCurrentModalOrg(orgName)) return;
         btn.textContent = 'Fetch Live Stats';
         btn.disabled = false;
       }, 3000);

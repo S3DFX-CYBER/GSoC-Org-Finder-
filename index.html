@@ -2123,9 +2123,9 @@ sections.forEach(sectionId => {
   }
 
   function formatRelativeRefresh(isoString) {
-    if (!isoString) return 'Last updated: unavailable';
+    if (!isoString) return 'Issue data is being refreshed';
     const timestamp = new Date(isoString).getTime();
-    if (Number.isNaN(timestamp)) return 'Last updated: unavailable';
+    if (Number.isNaN(timestamp)) return 'Issue data is being refreshed';
     const minutes = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
     if (minutes < 60) return `Last updated: ${minutes} min ago`;
     const hours = Math.floor(minutes / 60);
@@ -2210,7 +2210,8 @@ sections.forEach(sectionId => {
 
     const entry = getMentorEntry(org.name);
     if (!entry) {
-      container.innerHTML = '<p class="text-sm text-zinc-500">Mentor data unavailable right now.</p>';
+      container.innerHTML =
+  '<p class="text-sm text-zinc-500">Mentor contact information is not available at the moment. Please check back later.</p>';
       return;
     }
 
@@ -2259,7 +2260,7 @@ sections.forEach(sectionId => {
     if (sections.length === 0) {
       let message = 'No contact info parsed yet.';
       if (entry.status === 'fetch-failed') {
-        message = 'Mentor data unavailable right now.';
+        message = 'Mentor contact information is currently unavailable. Please try again later.';
       }
       container.innerHTML = `
         <div class="rounded-2xl border border-dashed border-zinc-200 p-5">
@@ -2307,11 +2308,16 @@ sections.forEach(sectionId => {
     if (mentorDataState === 'error') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
-          <p class="font-bold text-zinc-900 mb-2">Mentor data unavailable right now.</p>
-          <p class="text-sm text-zinc-600">The cached mentor snapshot could not be loaded. Please try again later.</p>
+         <p class="font-bold text-zinc-900 mb-2">
+  Mentor information is temporarily unavailable
+</p>
+
+<p class="text-sm text-zinc-600">
+  We couldn't load mentor contact details right now. Please try again in a few moments.
+</p>
         </div>
       `;
-      if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
+      if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Issue data is being refreshed';
       return;
     }
 
@@ -2393,7 +2399,7 @@ sections.forEach(sectionId => {
       } else if (entry.status === 'no-contact-found') {
         bodyHtml = '<p class="text-sm text-zinc-600">No mentor contact info parsed yet for this org.</p>';
       } else {
-        bodyHtml = '<p class="text-sm text-zinc-600">Mentor data unavailable right now.</p>';
+        bodyHtml = '<p class="text-sm text-zinc-600">Mentor contact information is currently unavailable. Please try again later..</p>';
       }
 
       const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);
@@ -3671,7 +3677,7 @@ if(org.ideas){
           const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
-          lastUpdatedEl.textContent = 'Last updated: unavailable';
+          lastUpdatedEl.textContent = 'Issue data is being refreshed';
         }
       }
 
@@ -3706,15 +3712,17 @@ if(org.ideas){
       console.error("GFI render failed:", e);
       const container = document.querySelector('#issues .grid');
       if (container) {
-        container.innerHTML = `
-          <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
-            <p class="text-sm font-bold text-zinc-900 mb-2">Unable to load pre-fetched issues</p>
-            <p class="text-sm text-zinc-600 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
-          </div>`;
-      }
+    container.innerHTML = `
+      <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
+        <p class="text-sm font-bold text-zinc-900 mb-2">Issues are temporarily unavailable</p>
+        <p class="text-sm text-zinc-600 max-w-xl mx-auto">
+          We couldn't load the latest issues right now. Please try again in a few moments.
+        </p>
+      </div>`;
+  }
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');
       if (lastUpdatedEl) {
-        lastUpdatedEl.textContent = 'Last updated: unavailable';
+        lastUpdatedEl.textContent = 'Issue data is being refreshed';
       }
     }
   }

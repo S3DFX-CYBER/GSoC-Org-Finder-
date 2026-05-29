@@ -37,7 +37,8 @@ globalThis.toggleTheme = function(){
         console.warn('Could not save theme to localStorage', e);
       }
 
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // Temporary debug: Bypass prefers-reduced-motion to see if it's the culprit
+      if (false && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         updateThemeIcon();
         document.documentElement.classList.remove('theme-transition');
         isThemeToggling = false;

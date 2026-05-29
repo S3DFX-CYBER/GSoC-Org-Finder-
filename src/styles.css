@@ -748,11 +748,11 @@ html.theme-transition #theme-toggle-btn .theme-icon-wrapper {
   html.theme-transition .header,
   html.theme-transition .content,
   html.theme-transition button,
-  html.theme-transition input,
   html.theme-transition a,
-  html.theme-transition .card,
-  #theme-toggle-btn,
-  html.theme-transition #theme-toggle-btn .theme-icon-wrapper {
+  html.theme-transition .card
+  /* Temporary debug: Bypass prefers-reduced-motion for the button */
+  /* #theme-toggle-btn,
+  html.theme-transition #theme-toggle-btn .theme-icon-wrapper */ {
     transition: none !important;
     animation: none !important;
   }

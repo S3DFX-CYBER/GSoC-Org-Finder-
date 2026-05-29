@@ -788,13 +788,22 @@
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
     
+      <div id="a11y-warning" style="display: none; background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 8px; font-weight: bold;">
+        Windows Animations Disabled!
+      </div>
+      <script>
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.getElementById('a11y-warning').style.display = 'block';
+          console.warn("User has OS-level reduced motion enabled. Animations are intentionally disabled.");
+        }
+      </script>
+    
       <button id="theme-toggle-btn" onclick="toggleTheme()"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-        <div class="theme-icon-wrapper" style="display:inline-flex; align-items:center; justify-content:center;">
-          <span class="material-symbols-outlined text-zinc-600">
-            dark_mode
-          </span>
+        <div class="theme-icon-wrapper" style="display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; position:relative;">
+          <span class="material-symbols-outlined text-zinc-600 icon-dark" style="position:absolute; top:0; left:0; opacity:1;">dark_mode</span>
+          <span class="material-symbols-outlined text-zinc-600 icon-light" style="position:absolute; top:0; left:0; opacity:0;">light_mode</span>
         </div>
       </button>
     
@@ -1725,10 +1734,17 @@
 
   function updateThemeIcon(){
     const btn = document.getElementById('theme-toggle-btn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
+    if(btn){
       const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      const iconDark = btn.querySelector('.icon-dark');
+      const iconLight = btn.querySelector('.icon-light');
+      if (iconDark && iconLight) {
+        iconDark.style.opacity = isDark ? '0' : '1';
+        iconLight.style.opacity = isDark ? '1' : '0';
+      } else {
+        const icon = btn.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      }
       btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
       btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');

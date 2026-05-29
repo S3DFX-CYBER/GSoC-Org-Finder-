@@ -23,6 +23,8 @@ const ReadinessRadarChart = (function() {
       activity: { label: 'GitHub Velocity', color: 'bg-green-500' }
     };
     
+    if (!data || !data.metrics) return;
+
     Object.keys(data.metrics).forEach(key => {
       const value = data.metrics[key];
       // Max values based on ReadinessAnalyzer: skills(40), experience(30), activity(30)

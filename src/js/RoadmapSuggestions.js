@@ -17,6 +17,8 @@ const RoadmapSuggestions = (function() {
     const list = document.createElement('ol');
     list.className = 'space-y-3 relative border-l-2 border-blue-200 dark:border-blue-800 ml-3 pl-4';
     
+    if (!readinessData) return;
+
     const suggestions = generateSuggestions(readinessData);
     
     suggestions.forEach((step, index) => {

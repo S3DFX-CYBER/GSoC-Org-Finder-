@@ -35,7 +35,15 @@ const WeaknessBreakdown = (function() {
       } else {
         message = w.details[0];
       }
-      li.innerHTML = `<span class="material-symbols-outlined text-[16px] mt-0.5">error</span> <span>${message}</span>`;
+      const icon = document.createElement('span');
+      icon.className = 'material-symbols-outlined text-[16px] mt-0.5';
+      icon.textContent = 'error';
+
+      const text = document.createElement('span');
+      text.textContent = message.replace(/<[^>]*>?/gm, '');
+
+      li.appendChild(icon);
+      li.appendChild(text);
       list.appendChild(li);
     });
     

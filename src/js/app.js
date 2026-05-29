@@ -372,7 +372,46 @@ function catBdg(c){return'cb-'+(c||'other');}
 // ══════════════════════════════════════════════
 // COMPARE
 // ══════════════════════════════════════════════
+const COMPARE_STORAGE_KEY = 'gaf_compare';
 const compareSet=new Set(); // stores ORGS indices
+
+/**
+ * Saves the current compareSet to localStorage as an array of org names.
+ * Using names (not indices) ensures persistence is stable even if ORGS order changes.
+ */
+function saveCompareState() {
+  try {
+    const names = [...compareSet].map(i => ORGS[i]?.name).filter(Boolean);
+    if (names.length > 0) {
+      localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(names));
+    } else {
+      localStorage.removeItem(COMPARE_STORAGE_KEY);
+    }
+  } catch (err) {
+    console.warn('Failed to persist compare state:', err);
+  }
+}
+
+/**
+ * Restores compareSet from localStorage on page load.
+ * Must be called after ORGS is available.
+ * Silently ignores unknown org names or invalid data.
+ */
+function restoreCompareState() {
+  try {
+    const raw = localStorage.getItem(COMPARE_STORAGE_KEY);
+    if (!raw) return;
+    const names = JSON.parse(raw);
+    if (!Array.isArray(names)) return;
+    const restored = names
+      .slice(0, 3) // enforce max 3
+      .map(name => ORGS.findIndex(o => o.name === name))
+      .filter(idx => idx !== -1);
+    restored.forEach(idx => compareSet.add(idx));
+  } catch (err) {
+    console.warn('Failed to restore compare state:', err);
+  }
+}
 
 function toggleCompare(idx,e){
   if(e){e.stopPropagation();}
@@ -382,6 +421,7 @@ function toggleCompare(idx,e){
     if(compareSet.size>=3){showCompareToast('Max 3 orgs for comparison');return;}
     compareSet.add(idx);
   }
+  saveCompareState();
   updateCompareBadge();
   renderGrid(filteredOrgs); // refresh cards
   renderCompareTable();
@@ -1356,8 +1396,11 @@ function showMoreIssues(){
 }
 
 ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github];});
+// Restore persisted compare selections from localStorage (resolves #1546)
+restoreCompareState();
 showSkeletons();
 updateStats();
+updateCompareBadge();
 renderSelectedLanguages();
 
 // Initialize match mode toggle listener

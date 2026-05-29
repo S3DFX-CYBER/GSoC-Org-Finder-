@@ -1494,7 +1494,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -2956,7 +2956,7 @@ btn.__orgListenerAttached = true;
   });
 
   document.getElementById('orgModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'orgModal') closeModal();
+    if (e.target.id === 'orgModal') closeOrgModal();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -2966,7 +2966,7 @@ btn.__orgListenerAttached = true;
     } else if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-      closeModal();
+      closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
     }
@@ -3424,7 +3424,7 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
+  function closeOrgModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';

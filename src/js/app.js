@@ -1001,7 +1001,7 @@ function clearAllLanguages(){
 globalThis.clearAllLanguages = clearAllLanguages;
 
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
-const CHIP_TOOLTIPS = {
+const _CHIP_TOOLTIPS = {
   veteran: 'Organizations that participated in GSoC for many years',
   newcomer: 'Good for first-time contributors and beginners',
   hot: 'Highly competitive organizations with many applicants',

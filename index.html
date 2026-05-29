@@ -3440,8 +3440,26 @@ if(org.ideas){
   }
 
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
+  function getSearchQuery() {
+    return (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  }
+
+  function syncSearchInputs(value) {
+    const normalizedValue = value || '';
+    const searchInput = document.getElementById('searchInput');
+    const heroSearch = document.getElementById('hero-search');
+
+    if (searchInput && searchInput.value !== normalizedValue) {
+      searchInput.value = normalizedValue;
+    }
+
+    if (heroSearch && heroSearch.value !== normalizedValue) {
+      heroSearch.value = normalizedValue;
+    }
+  }
+
   function applyFilters() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const query = getSearchQuery();
     const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
     const cat = categoryValue === 'all' ? '' : categoryValue;
     const comp = document.getElementById('complexityFilter').value;
@@ -3504,13 +3522,12 @@ if(org.ideas){
   }
 
   window.clearAllFilters = function() {
-    document.getElementById('searchInput').value = '';
+    syncSearchInputs('');
     document.getElementById('categoryFilter').value = 'all';
     document.getElementById('complexityFilter').value = 'all';
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
-    const heroSearch = document.getElementById('hero-search');
-    if (heroSearch) heroSearch.value = '';
-  
+    activeChip = null;
+
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -3521,9 +3538,10 @@ if(org.ideas){
     renderOrgs(true);
   };
 
-  document.getElementById('searchInput').addEventListener('input', () => {
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    syncSearchInputs(e.target.value);
     // Track search badge when user types a search query
-    const query = document.getElementById('searchInput').value.trim();
+    const query = e.target.value.trim();
     if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
@@ -3569,9 +3587,9 @@ if(org.ideas){
   // Hero Search Link
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    syncSearchInputs(document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '');
     heroSearch.addEventListener('input', (e) => {
-      document.getElementById('searchInput').value = e.target.value;
+      syncSearchInputs(e.target.value);
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
       
       // Track search badge when user types in hero search

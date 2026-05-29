@@ -30,22 +30,33 @@ globalThis.toggleTheme = function(){
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      
+      try {
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      } catch (e) {
+        console.warn('Could not save theme to localStorage', e);
+      }
 
-      setTimeout(() => {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         updateThemeIcon();
-      }, 180);
-
-      setTimeout(() => {
         document.documentElement.classList.remove('theme-transition');
         isThemeToggling = false;
-      }, 400);
+      } else {
+        setTimeout(() => {
+          updateThemeIcon();
+        }, 180);
+
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transition');
+          isThemeToggling = false;
+        }, 400);
+      }
     });
   });
 };
 
 function updateThemeIcon(){
-  const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
+  const icon = document.querySelector('#theme-toggle-btn .material-symbols-outlined');
   if(icon){
     const isDark = document.documentElement.classList.contains('dark');
     icon.textContent = isDark ? 'light_mode' : 'dark_mode';

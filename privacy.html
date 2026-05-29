@@ -6,91 +6,527 @@
   <title>Privacy Policy | FindMyGSoC</title>
   <meta name="description" content="Privacy Policy for FindMyGSoC." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/privacy.html" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" integrity="sha384-9gQ8upeWZQ9/fPKaAGJuDpTMaZdwDhECBPX+H6i9vVTa3EllQ1skSXUr6bXADJRW" crossorigin="anonymous" />
-  <script>
-    // Tailwind Configuration
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            primary: { DEFAULT: '#f97316', container: '#ffedd5' },
-            surface: { DEFAULT: '#ffffff', 'container-low': '#f4f4f5' }
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            headline: ['"Space Grotesk"', 'sans-serif'],
-            mono: ['"Fira Code"', 'monospace']
-          }
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f97316;
+      --orange-light: #ffedd5;
+      --orange-glow: rgba(249,115,22,0.15);
+      --bg: #0a0a0b;
+      --bg2: #111114;
+      --bg3: #18181d;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(249,115,22,0.4);
+      --text: #f0f0f5;
+      --text-muted: #888896;
+      --text-dim: #555562;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── Ambient glow blobs ── */
+    .glow-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .glow-blob-1 {
+      width: 600px; height: 600px;
+      background: var(--orange);
+      top: -200px; right: -200px;
+    }
+    .glow-blob-2 {
+      width: 400px; height: 400px;
+      background: #7c3aed;
+      bottom: 10%; left: -150px;
+    }
+
+    /* ── Header ── */
+    header {
+      position: fixed;
+      top: 0; width: 100%;
+      z-index: 50;
+      padding: 0 2rem;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,11,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--orange), #fb923c);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px rgba(249,115,22,0.4);
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--orange); }
+
+    nav { display: flex; gap: 2rem; align-items: center; }
+    nav a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    .btn-star {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-star:hover {
+      border-color: var(--border-hover);
+      color: var(--orange);
+    }
+    .btn-star .material-symbols-outlined { font-size: 14px; }
+
+    /* ── Page layout ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 140px 2rem 100px;
+    }
+
+    /* ── Hero header ── */
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--orange-glow);
+      border: 1px solid rgba(249,115,22,0.25);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    .page-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 7vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 40%, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .last-updated {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .toc::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--orange), transparent);
+    }
+    .toc-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .toc ol {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toc ol li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toc ol li .num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--orange);
+      min-width: 20px;
+    }
+    .toc ol li a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .toc ol li a:hover { color: var(--text); }
+
+    /* ── Sections ── */
+    .policy-section {
+      margin-bottom: 2.5rem;
+      padding: 2rem 2rem 2rem 2.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .policy-section:hover {
+      border-color: rgba(249,115,22,0.2);
+    }
+    .policy-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--orange);
+      border-radius: 3px 0 0 3px;
+      transition: height 0.4s ease;
+    }
+    .policy-section:hover::before { height: 100%; }
+
+    .section-number {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--orange);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.6rem;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+    }
+
+    .policy-section p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .policy-section a {
+      color: var(--orange);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(249,115,22,0.3);
+      transition: border-color 0.2s;
+    }
+    .policy-section a:hover {
+      border-color: var(--orange);
+    }
+
+    /* ── Tag chips ── */
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .footer-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
       }
     }
-  </script>
-</head>
-<body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
+    .footer-brand {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .footer-icon {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--orange), #fb923c);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.65rem;
+      color: #fff;
+    }
+    .footer-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .footer-nav a {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--orange); }
 
-<header class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
-  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg shadow-orange-500/20">
-        <span class="text-white font-extrabold text-xl">G</span>
-      </div>
-      <a href="index.html" class="font-extrabold text-xl tracking-tight font-headline">FindMy<span class="text-primary">GSoC</span></a>
-    </div>
-    <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
-      <a href="index.html#orgs" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
-      <a href="index.html#guide" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
-      <a href="index.html#issues" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
-    </nav>
-    <div class="flex items-center gap-4">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
-      </a>
-    </div>
-  </div>
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      nav { display: none; }
+      .btn-star .label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow-blob glow-blob-1"></div>
+<div class="glow-blob glow-blob-2"></div>
+
+<header>
+  <a href="index.html" class="logo-wrap">
+    <div class="logo-icon">G</div>
+    <span class="logo-text">FindMy<span>GSoC</span></span>
+  </a>
+  <nav>
+    <a href="index.html#orgs">Organizations</a>
+    <a href="index.html#guide">Guide</a>
+    <a href="index.html#issues">Issues</a>
+  </nav>
+  <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="btn-star">
+    <span class="material-symbols-outlined">star</span>
+    <span class="label">Star &amp; Contribute</span>
+  </a>
 </header>
 
-<main class="pt-32 pb-20 px-6 max-w-4xl mx-auto">
-  <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8">Privacy Policy</h1>
-  <div class="prose prose-zinc prose-orange max-w-none">
-    <p class="text-zinc-600 mb-6">Last updated: May 14, 2026</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">1. Information We Collect</h2>
-    <p class="text-zinc-600 mb-4">FindMyGSoC is a static site built for the open-source community. We do not directly collect, store, or process any personal data. All search and filtering operations occur locally in your browser. However, please note that we use third-party Content Delivery Networks (CDNs) for assets like fonts and styling, which may receive standard network metadata (such as your IP address) when you load the page.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">2. Local Storage</h2>
-    <p class="text-zinc-600 mb-4">We use your browser's local storage solely to save your organization bookmarks (Watchlist) and your theme preference (Light/Dark mode). This data never leaves your device.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">3. External Links</h2>
-    <p class="text-zinc-600 mb-4">Our site contains links to external websites (e.g., GitHub, GSoC official site, organization pages). We are not responsible for the privacy practices of these external sites.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">4. Open Source and Transparency</h2>
-    <p class="text-zinc-600 mb-4">The entire source code of this project is public. You can review it on <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub</a> to verify how it operates.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">5. Changes to This Policy</h2>
-    <p class="text-zinc-600 mb-4">We may update this Privacy Policy from time to time. Any changes will be reflected on this page.</p>
+<main>
+  <div class="page-eyebrow">Legal Document</div>
+  <h1>Privacy<br>Policy</h1>
+  <p class="last-updated">// Last updated: May 14, 2026</p>
+
+  <!-- TOC -->
+  <div class="toc reveal">
+    <p class="toc-label">// Table of Contents</p>
+    <ol>
+      <li><span class="num">01</span><a href="#s1">Information We Collect</a></li>
+      <li><span class="num">02</span><a href="#s2">Local Storage</a></li>
+      <li><span class="num">03</span><a href="#s3">External Links</a></li>
+      <li><span class="num">04</span><a href="#s4">Open Source &amp; Transparency</a></li>
+      <li><span class="num">05</span><a href="#s5">Changes to This Policy</a></li>
+    </ol>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="policy-section reveal" id="s1">
+    <p class="section-number">// 01</p>
+    <h2>Information We Collect</h2>
+    <p>FindMyGSoC is a static site built for the open-source community. We do not directly collect, store, or process any personal data. All search and filtering operations occur locally in your browser. However, please note that we use third-party Content Delivery Networks (CDNs) for assets like fonts and styling, which may receive standard network metadata (such as your IP address) when you load the page.</p>
+    <div class="tag-row">
+      <span class="tag">no-tracking</span>
+      <span class="tag">client-side-only</span>
+      <span class="tag">zero-data-collection</span>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="policy-section reveal" id="s2">
+    <p class="section-number">// 02</p>
+    <h2>Local Storage</h2>
+    <p>We use your browser's local storage solely to save your organization bookmarks (Watchlist) and your theme preference (Light/Dark mode). This data never leaves your device.</p>
+    <div class="tag-row">
+      <span class="tag">browser-only</span>
+      <span class="tag">stays-on-device</span>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="policy-section reveal" id="s3">
+    <p class="section-number">// 03</p>
+    <h2>External Links</h2>
+    <p>Our site contains links to external websites (e.g., GitHub, GSoC official site, organization pages). We are not responsible for the privacy practices of these external sites.</p>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="policy-section reveal" id="s4">
+    <p class="section-number">// 04</p>
+    <h2>Open Source &amp; Transparency</h2>
+    <p>The entire source code of this project is public. You can review it on <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a> to verify how it operates.</p>
+    <div class="tag-row">
+      <span class="tag">open-source</span>
+      <span class="tag">fully-auditable</span>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="policy-section reveal" id="s5">
+    <p class="section-number">// 05</p>
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page.</p>
   </div>
 </main>
 
-<footer class="w-full border-t border-zinc-200 bg-zinc-100">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <div class="footer-icon">G</div>
+        <span class="footer-name">FindMyGSoC</span>
       </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
+      <p class="footer-copy">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
-    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="index.html#contact">Contact</a>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="index.html#contact">Contact</a>
     </nav>
   </div>
 </footer>
 
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
 </body>
 </html>

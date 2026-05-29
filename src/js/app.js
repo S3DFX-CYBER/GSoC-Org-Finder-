@@ -26,9 +26,6 @@ globalThis.toggleTheme = function(){
   isThemeToggling = true;
 
   document.documentElement.classList.add('theme-transition');
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) btn.classList.add('theme-animating');
-
   const isDark = document.documentElement.classList.toggle('dark');
   
   try {
@@ -40,16 +37,11 @@ globalThis.toggleTheme = function(){
   if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
     updateThemeIcon();
     document.documentElement.classList.remove('theme-transition');
-    if (btn) btn.classList.remove('theme-animating');
     isThemeToggling = false;
   } else {
-    setTimeout(() => {
-      updateThemeIcon();
-    }, 180);
-
+    updateThemeIcon();
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transition');
-      if (btn) btn.classList.remove('theme-animating');
       isThemeToggling = false;
     }, 400);
   }
@@ -59,15 +51,7 @@ function updateThemeIcon(){
   const btn = document.getElementById('theme-toggle-btn');
   if(btn){
     const isDark = document.documentElement.classList.contains('dark');
-    const iconDark = btn.querySelector('.icon-dark');
-    const iconLight = btn.querySelector('.icon-light');
-    if (iconDark && iconLight) {
-      iconDark.style.opacity = isDark ? '0' : '1';
-      iconLight.style.opacity = isDark ? '1' : '0';
-    } else {
-      const icon = btn.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-    }
+    // Opacity and transforms are now handled purely by CSS based on html.dark
     btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
     btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');

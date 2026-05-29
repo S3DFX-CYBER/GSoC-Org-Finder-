@@ -562,7 +562,13 @@
   "CGAL Project": {
     "org": "CGAL Project",
     "ideasUrl": "https://github.com/CGAL/cgal/wiki/Project-Ideas-for-GSOC-2026",
-    "channels": [],
+    "channels": [
+     {
+    "type": "StackOverflow",
+    "url": "https://stackoverflow.com/questions/tagged/cgal",
+    "label": "CGAL on Stack Overflow"
+     }
+    ],
     "mentors": [
       { "name": "Sebastien Loriot", "github": "", "githubUrl": "" },
       { "name": "Andreas Fabri", "github": "", "githubUrl": "" },

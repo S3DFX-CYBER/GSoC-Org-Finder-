@@ -1291,6 +1291,12 @@
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
     </div>
+
+    <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
+      <button type="button" id="loadMoreMentorBtn" aria-label="View More Mentors" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
+      </button>
+    </div>
   </div>
 </section>
  
@@ -1917,6 +1923,7 @@ sections.forEach(sectionId => {
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
+  let visibleMentorCount = 12;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2278,10 +2285,15 @@ sections.forEach(sectionId => {
     }));
   }
 
-  function renderMentorFinder() {
+  function renderMentorFinder(reset = true) {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
     if (!grid) return;
+
+    if (reset) {
+      grid.innerHTML = '';
+      visibleMentorCount = 12;
+    }
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
@@ -2331,10 +2343,15 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
+      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+      if (loadMoreContainer) {
+        loadMoreContainer.style.display = 'none';
+      }
       return;
     }
 
-    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
+    slice.forEach(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2382,24 +2399,33 @@ sections.forEach(sectionId => {
       const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);
       const safeContactHref = sanitizeHrefUrl(contactHref);
 
-      return `
-        <article class="mentor-card">
-          <div class="flex items-start justify-between gap-3 mb-4">
-            <div>
-              <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
-              <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
-            </div>
-            <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+      const article = document.createElement('article');
+      article.className = 'mentor-card';
+      article.innerHTML = `
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
+            <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
           </div>
-          ${bodyHtml}
-          <div class="mt-5 pt-4 border-t border-zinc-100">
-            ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
-            <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
-          </div>
-        </article>
+          <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+        </div>
+        ${bodyHtml}
+        <div class="mt-5 pt-4 border-t border-zinc-100">
+          ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
+          <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
+        </div>
       `;
-    }).join('');
+      grid.appendChild(article);
+    });
 
+    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+    if (loadMoreContainer) {
+      if (visibleMentorCount < filteredRecords.length) {
+        loadMoreContainer.style.display = 'flex';
+      } else {
+        loadMoreContainer.style.display = 'none';
+      }
+    }
     attachOrgCardListeners(grid);
   }
 
@@ -3530,6 +3556,11 @@ if(org.ideas){
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
+  });
+
+  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
+    visibleMentorCount += 12;
+    renderMentorFinder(false);
   });
 
   // Surprise button event listener

@@ -56,10 +56,21 @@ globalThis.toggleTheme = function(){
 };
 
 function updateThemeIcon(){
-  const icon = document.querySelector('#theme-toggle-btn .material-symbols-outlined');
-  if(icon){
+  const btn = document.getElementById('theme-toggle-btn');
+  if(btn){
     const isDark = document.documentElement.classList.contains('dark');
-    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    const iconDark = btn.querySelector('.icon-dark');
+    const iconLight = btn.querySelector('.icon-light');
+    if (iconDark && iconLight) {
+      iconDark.style.opacity = isDark ? '0' : '1';
+      iconLight.style.opacity = isDark ? '1' : '0';
+    } else {
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }
+    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
   }
 }
 

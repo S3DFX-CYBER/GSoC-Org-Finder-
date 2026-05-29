@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const path = require('node:path');
 
 const DATA_DIR = path.resolve(__dirname, '../../data');

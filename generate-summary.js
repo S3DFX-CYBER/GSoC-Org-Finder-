@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const DATA_DIR = './data';
 const ISSUES_FILE = path.join(DATA_DIR, 'issues.json');

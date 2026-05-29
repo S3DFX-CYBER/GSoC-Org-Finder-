@@ -1,40 +1,41 @@
-name: 📢 Discord Guidance
+name: 💬 Discord Guidance
 
 on:
   issues:
     types:
       - opened
 
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - synchronize
+      - reopened
+      - edited
 
 permissions:
   issues: write
   pull-requests: write
 
 concurrency:
-  group: discord-guidance-${{ github.event_name }}-${{ github.event.number }}
+  group: discord-guidance-${{ github.event.pull_request.number || github.event.issue.number }}
   cancel-in-progress: true
 
 jobs:
-  discord-guidance:
-    if: |
-      github.actor != 'github-actions[bot]' &&
-      github.actor != 'dependabot[bot]'
+  comment:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Post or update Discord guidance comment
+      - name: Post Discord guidance
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
           script: |
             const owner = context.repo.owner;
             const repo  = context.repo.repo;
 
-            const isPR = context.eventName === 'pull_request';
+            const isPR = context.eventName.startsWith('pull_request');
 
             const number = isPR
               ? context.payload.pull_request.number
@@ -78,10 +79,6 @@ jobs:
               comment.body &&
               comment.body.includes(marker)
             );
-
-            // Prevent spam:
-            // - Issues: comment only once
-            // - PRs: update existing comment on synchronize instead of creating new ones
 
             if (existing) {
 

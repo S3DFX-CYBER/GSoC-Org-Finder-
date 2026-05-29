@@ -730,10 +730,10 @@ html.theme-transition .card {
 }
 
 @keyframes iconSwipeRotate {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; filter: blur(0px); }
-  49% { transform: translateY(-12px) rotate(90deg) scale(0.8); opacity: 0; filter: blur(2px); }
-  51% { transform: translateY(12px) rotate(270deg) scale(0.8); opacity: 0; filter: blur(2px); }
-  100% { transform: translateY(0) rotate(360deg); opacity: 1; filter: blur(0px); }
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  49% { transform: rotate(90deg) scale(0.5); opacity: 0; }
+  51% { transform: rotate(270deg) scale(0.5); opacity: 0; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
 }
 
 #theme-toggle-btn.theme-animating .theme-icon-wrapper {

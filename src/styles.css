@@ -711,14 +711,21 @@ footer a:hover{text-decoration:underline}
 
 /* --- THEME TOGGLE TRANSITIONS --- */
 html.theme-transition, 
-html.theme-transition * {
+html.theme-transition body,
+html.theme-transition .app,
+html.theme-transition .header,
+html.theme-transition .content,
+html.theme-transition button,
+html.theme-transition input,
+html.theme-transition a,
+html.theme-transition .card {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, fill 0.4s ease, stroke 0.4s ease, box-shadow 0.4s ease;
 }
 
-#themeToggleBtn {
+#theme-toggle-btn {
   transition: transform 0.3s ease-in-out, background-color 0.18s, border-color 0.18s;
 }
-#themeToggleBtn:active {
+#theme-toggle-btn:active {
   transform: scale(0.92);
 }
 
@@ -729,16 +736,23 @@ html.theme-transition * {
   100% { transform: translateY(0) rotate(360deg); opacity: 1; filter: blur(0px); }
 }
 
-html.theme-transition #themeToggleBtn .material-symbols-outlined {
+html.theme-transition #theme-toggle-btn .material-symbols-outlined {
   animation: iconSwipeRotate 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   html.theme-transition, 
-  html.theme-transition *, 
-  #themeToggleBtn,
-  html.theme-transition #themeToggleBtn .material-symbols-outlined {
+  html.theme-transition body,
+  html.theme-transition .app,
+  html.theme-transition .header,
+  html.theme-transition .content,
+  html.theme-transition button,
+  html.theme-transition input,
+  html.theme-transition a,
+  html.theme-transition .card,
+  #theme-toggle-btn,
+  html.theme-transition #theme-toggle-btn .material-symbols-outlined {
     transition: none !important;
     animation: none !important;
   }

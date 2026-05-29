@@ -856,7 +856,7 @@
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
     
-      <button id="themeToggleBtn" onclick="toggleTheme()"
+      <button id="theme-toggle-btn" onclick="toggleTheme()"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
     
@@ -1800,7 +1800,7 @@
   };
 
   function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
+    const btn = document.getElementById('theme-toggle-btn');
     const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
     if(icon){
       const isDark = document.documentElement.classList.contains('dark');

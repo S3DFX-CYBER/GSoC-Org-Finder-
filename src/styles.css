@@ -722,39 +722,6 @@ html.theme-transition .card {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, fill 0.4s ease, stroke 0.4s ease, box-shadow 0.4s ease;
 }
 
-#theme-toggle-btn {
-  transition: transform 0.3s ease-in-out, background-color 0.18s, border-color 0.18s;
-}
-#theme-toggle-btn:active {
-  transform: scale(0.92);
-}
-
-/* Pure CSS transition for the theme icons */
-#theme-toggle-btn .icon-dark,
-#theme-toggle-btn .icon-light {
-  transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-/* Light Mode State (Not Dark) */
-html:not(.dark) #theme-toggle-btn .icon-dark {
-  opacity: 1;
-  transform: translateY(0) rotate(0deg) scale(1);
-}
-html:not(.dark) #theme-toggle-btn .icon-light {
-  opacity: 0;
-  transform: translateY(12px) rotate(-90deg) scale(0.5);
-}
-
-/* Dark Mode State */
-html.dark #theme-toggle-btn .icon-dark {
-  opacity: 0;
-  transform: translateY(-12px) rotate(90deg) scale(0.5);
-}
-html.dark #theme-toggle-btn .icon-light {
-  opacity: 1;
-  transform: translateY(0) rotate(0deg) scale(1);
-}
-
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   html.theme-transition, 

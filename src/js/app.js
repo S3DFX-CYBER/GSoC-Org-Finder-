@@ -25,33 +25,27 @@ globalThis.toggleTheme = function(){
   if (isThemeToggling) return;
   isThemeToggling = true;
 
+  // Add global transition class to crossfade backgrounds/text
   document.documentElement.classList.add('theme-transition');
   const isDark = document.documentElement.classList.toggle('dark');
   
   try {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  } catch (e) {
-    console.warn('Could not save theme to localStorage', e);
-  }
+  } catch (err) {}
 
-  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-    updateThemeIcon();
+  updateThemeIcon();
+
+  // The button transitions itself via Tailwind. Remove global transition after 400ms.
+  setTimeout(() => {
     document.documentElement.classList.remove('theme-transition');
     isThemeToggling = false;
-  } else {
-    updateThemeIcon();
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transition');
-      isThemeToggling = false;
-    }, 400);
-  }
+  }, 400);
 };
 
 function updateThemeIcon(){
   const btn = document.getElementById('theme-toggle-btn');
   if(btn){
     const isDark = document.documentElement.classList.contains('dark');
-    // Opacity and transforms are now handled purely by CSS based on html.dark
     btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
     btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');

@@ -3339,7 +3339,7 @@ btn.__orgListenerAttached = true;
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
-    addRecentlyViewed(name);
+    addRecentlyViewed(org.name);
 
     // Track badge progress for org views
     if (typeof BadgeSystem !== 'undefined') {

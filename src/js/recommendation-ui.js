@@ -81,10 +81,9 @@ function handleCompareAction(e, btn, card) {
   const name = btn.dataset.compareOrg;
   if (typeof toggleCompare !== 'function') return;
 
-  // Core engine handles constraints and updates globalThis.compareList synchronously
-  toggleCompare(e, name);
-  
-  // Read the authoritative application state to govern local visual treatment
+  const idx = ORGS.findIndex(o => o.name === name);
+  if (idx < 0) return;
+  toggleCompare(e, idx);
   const currentCompareList = globalThis.compareList || [];
   const isNowComparing = currentCompareList.includes(name);
 

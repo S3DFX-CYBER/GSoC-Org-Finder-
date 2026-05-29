@@ -26,8 +26,6 @@ globalThis.toggleTheme = function(){
   isThemeToggling = true;
 
   document.documentElement.classList.add('theme-transition');
-
-  document.documentElement.classList.add('theme-transition');
   const btn = document.getElementById('theme-toggle-btn');
   if (btn) btn.classList.add('theme-animating');
 
@@ -39,8 +37,7 @@ globalThis.toggleTheme = function(){
     console.warn('Could not save theme to localStorage', e);
   }
 
-  // Temporary debug: Bypass prefers-reduced-motion to see if it's the culprit
-  if (false && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
     updateThemeIcon();
     document.documentElement.classList.remove('theme-transition');
     if (btn) btn.classList.remove('theme-animating');

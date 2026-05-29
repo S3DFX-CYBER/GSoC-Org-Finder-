@@ -1692,25 +1692,32 @@
     if (isThemeToggling) return;
     isThemeToggling = true;
 
-    // Step 1: Add the transition class
     document.documentElement.classList.add('theme-transition');
 
-    // Step 2: Use double requestAnimationFrame to force the browser to compute 
-    // the transition styles *before* we toggle the actual dark mode.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        try {
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        } catch (err) {
+          console.warn('Theme persistence failed:', err);
+        }
 
-        // Update the icon midway through the CSS animation when it's invisible
-        setTimeout(() => {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           updateThemeIcon();
-        }, 180);
-
-        setTimeout(() => {
           document.documentElement.classList.remove('theme-transition');
           isThemeToggling = false;
-        }, 400);
+        } else {
+          setTimeout(() => {
+            updateThemeIcon();
+          }, 180);
+
+          setTimeout(() => {
+            document.documentElement.classList.remove('theme-transition');
+            isThemeToggling = false;
+          }, 400);
+        }
       });
     });
   };

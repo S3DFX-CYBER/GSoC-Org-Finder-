@@ -87,12 +87,15 @@ function renderScoreBreakdownPanel(scoreBreakdown, panelId) {
     .map((domain) => `<span class="match-pill match-pill-domain">${safeEscapeHtml(domain)}</span>`)
     .join('');
 
-  const tagsHtml = (langPills || domainPills)
-    ? `<div class="match-pill-groups">
-        ${langPills ? `<div class="match-pill-group"><span class="match-pill-heading">Languages</span><div class="match-pill-list">${langPills}</div></div>` : ''}
-        ${domainPills ? `<div class="match-pill-group"><span class="match-pill-heading">Domains</span><div class="match-pill-list">${domainPills}</div></div>` : ''}
-       </div>`
-    : '';
+  let tagsHtml = '';
+  if (langPills || domainPills) {
+    const langGroupHtml = langPills ? `<div class="match-pill-group"><span class="match-pill-heading">Languages</span><div class="match-pill-list">${langPills}</div></div>` : '';
+    const domainGroupHtml = domainPills ? `<div class="match-pill-group"><span class="match-pill-heading">Domains</span><div class="match-pill-list">${domainPills}</div></div>` : '';
+    tagsHtml = `<div class="match-pill-groups">
+        ${langGroupHtml}
+        ${domainGroupHtml}
+       </div>`;
+  }
 
   return `
     <div class="match-breakdown-panel hidden" id="${panelId}" aria-hidden="true">

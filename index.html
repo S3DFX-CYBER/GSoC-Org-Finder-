@@ -2664,6 +2664,14 @@ sections.forEach(sectionId => {
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
             <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+            <div class="relative flex items-center justify-center">
+              <button class="share-btn text-zinc-300 hover:text-primary transition-all duration-200 flex items-center justify-center p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" data-share-org="${escapeHtml(org.name)}" title="Copy details to clipboard" aria-label="Copy organization details for ${escapeHtml(org.name)}">
+                <span class="material-symbols-outlined text-lg">content_copy</span>
+              </button>
+              <div class="share-tooltip absolute bottom-full mb-2 hidden bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none transition-all duration-200 z-10">
+                Copied!
+              </div>
+            </div>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
@@ -2715,6 +2723,16 @@ sections.forEach(sectionId => {
       btn.__orgListenerAttached = true;
     });
 
+    // share buttons
+    (root.querySelectorAll ? root.querySelectorAll('.share-btn[data-share-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyOrgToClipboard(e, btn.dataset.shareOrg);
+      });
+      btn.__orgListenerAttached = true;
+    });
+
     // compare buttons
     (root.querySelectorAll ? root.querySelectorAll('[data-compare-org]') : []).forEach(btn => {
       if (btn.__orgListenerAttached) return;
@@ -2732,6 +2750,72 @@ sections.forEach(sectionId => {
 btn.__orgListenerAttached = true;
     });
   }
+
+  function copyOrgToClipboard(e, name) {
+    if (e) e.stopPropagation();
+    const org = ORGS.find(o => o.name === name);
+    if (!org) return;
+
+    const techStack = (org.tags || []).join(', ');
+    const githubOwner = githubOwnerFromValue(org.github);
+    const repoHref = githubOwner ? `https://github.com/${githubOwner}` : '';
+    
+    let shareText = `Check out ${org.name} on GSoC! Tech Stack: ${techStack}.`;
+    if (org.ideas) {
+      shareText += ` Ideas List: ${org.ideas}`;
+    } else if (repoHref) {
+      shareText += ` GitHub: ${repoHref}`;
+    }
+
+    const btn = e.currentTarget;
+    const icon = btn.querySelector('.material-symbols-outlined');
+    const tooltip = btn.querySelector('.share-tooltip') || btn.nextElementSibling;
+
+    function showFeedback() {
+      if (icon) {
+        icon.textContent = 'check';
+        icon.classList.add('text-green-500');
+        icon.classList.remove('text-zinc-300');
+      }
+      if (tooltip) {
+        tooltip.classList.remove('hidden');
+      }
+      setTimeout(() => {
+        if (icon) {
+          icon.textContent = 'content_copy';
+          icon.classList.remove('text-green-500');
+          icon.classList.add('text-zinc-300');
+        }
+        if (tooltip) {
+          tooltip.classList.add('hidden');
+        }
+      }, 2000);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareText).then(() => {
+        showFeedback();
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareText;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showFeedback();
+      } catch (err) {
+        console.error('Fallback copy failed: ', err);
+      }
+      document.body.removeChild(textArea);
+    }
+  }
+
+  globalThis.copyOrgToClipboard = copyOrgToClipboard;
 
   function toggleCompare(e, name) {
     if (e) e.stopPropagation();

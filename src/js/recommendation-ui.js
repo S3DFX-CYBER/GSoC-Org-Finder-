@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark, copyOrgToClipboard */
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
@@ -54,6 +54,14 @@ const safeEscapeHtml = (str) => {
     .replaceAll("'", '&#039;');
 };
 
+
+function handleShareAction(e, btn) {
+  e.stopPropagation();
+  const name = btn.dataset.shareOrg;
+  if (typeof copyOrgToClipboard === 'function') {
+    copyOrgToClipboard(e, name);
+  }
+}
 
 function handleBookmarkAction(e, btn) {
   e.stopPropagation();
@@ -182,6 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsContainer.addEventListener('click', (e) => {
       const target = e.target;
       
+      const shareBtn = target.closest('[data-share-org]');
+      if (shareBtn) {
+        e.stopPropagation();
+        return handleShareAction(e, shareBtn);
+      }
+      
       const bookmarkBtn = target.closest('[data-bookmark-org]');
       if (bookmarkBtn) {
         return handleBookmarkAction(e, bookmarkBtn);
@@ -250,6 +264,17 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           
           <div class="flex items-center gap-2 mt-2">
+             <div class="relative flex items-center justify-center">
+               <button class="share-btn text-zinc-300 hover:text-primary transition-all duration-200 flex items-center justify-center p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" 
+                       data-share-org="${safeEscapeHtml(o.name)}" 
+                       title="Copy details to clipboard"
+                       aria-label="Copy organization details for ${safeEscapeHtml(o.name)}">
+                  <span class="material-symbols-outlined text-lg">content_copy</span>
+               </button>
+               <div class="share-tooltip absolute bottom-full mb-2 hidden bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none transition-all duration-200 z-10">
+                 Copied!
+               </div>
+             </div>
              <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
                      data-bookmark-org="${safeEscapeHtml(o.name)}" 
                      title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">

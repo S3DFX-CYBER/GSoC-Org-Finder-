@@ -771,6 +771,71 @@ function isBookmarked(orgName) {
   return saved.includes(orgName);
 }
 
+function copyOrgToClipboard(e, globalIdx) {
+  if (e) e.stopPropagation();
+  const org = ORGS[globalIdx];
+  if (!org) return;
+
+  const techStack = (org.tags || []).join(', ');
+  const repoHref = repoUrl(org);
+  
+  let shareText = `Check out ${org.name} on GSoC! Tech Stack: ${techStack}.`;
+  if (org.ideas) {
+    shareText += ` Ideas List: ${org.ideas}`;
+  } else if (repoHref) {
+    shareText += ` GitHub: ${repoHref}`;
+  }
+
+  const btn = e.currentTarget;
+  const icon = btn.querySelector('.material-symbols-outlined');
+  const tooltip = btn.querySelector('.share-tooltip') || btn.nextElementSibling;
+
+  function showFeedback() {
+    if (icon) {
+      icon.textContent = 'check';
+      icon.classList.add('text-green-500');
+      icon.classList.remove('text-zinc-300');
+    }
+    if (tooltip) {
+      tooltip.classList.remove('hidden');
+    }
+    setTimeout(() => {
+      if (icon) {
+        icon.textContent = 'content_copy';
+        icon.classList.remove('text-green-500');
+        icon.classList.add('text-zinc-300');
+      }
+      if (tooltip) {
+        tooltip.classList.add('hidden');
+      }
+    }, 2000);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareText).then(() => {
+      showFeedback();
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  } else {
+    const textArea = document.createElement("textarea");
+    textArea.value = shareText;
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showFeedback();
+    } catch (err) {
+      console.error('Fallback copy failed: ', err);
+    }
+    document.body.removeChild(textArea);
+  }
+}
+
+globalThis.copyOrgToClipboard = copyOrgToClipboard;
+
 function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
   return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
@@ -826,6 +891,14 @@ function renderGrid(orgs){
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
+              <div class="relative flex items-center justify-center">
+                <button type="button" onclick="copyOrgToClipboard(event, ${globalIdx})" class="share-btn text-zinc-300 hover:text-primary transition-all duration-200 flex items-center justify-center p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" title="Copy details to clipboard" aria-label="Copy organization details for ${escapeHtml(o.name)}">
+                  <span class="material-symbols-outlined text-lg">content_copy</span>
+                </button>
+                <div class="share-tooltip absolute bottom-full mb-2 hidden bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg whitespace-nowrap pointer-events-none transition-all duration-200 z-10">
+                  Copied!
+                </div>
+              </div>
               <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
                   <path

@@ -28,6 +28,9 @@ globalThis.toggleTheme = function(){
   document.documentElement.classList.add('theme-transition');
 
   document.documentElement.classList.add('theme-transition');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.classList.add('theme-animating');
+
   const isDark = document.documentElement.classList.toggle('dark');
   
   try {
@@ -40,6 +43,7 @@ globalThis.toggleTheme = function(){
   if (false && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     updateThemeIcon();
     document.documentElement.classList.remove('theme-transition');
+    if (btn) btn.classList.remove('theme-animating');
     isThemeToggling = false;
   } else {
     setTimeout(() => {
@@ -48,6 +52,7 @@ globalThis.toggleTheme = function(){
 
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transition');
+      if (btn) btn.classList.remove('theme-animating');
       isThemeToggling = false;
     }, 400);
   }

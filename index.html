@@ -2751,9 +2751,16 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  function copyOrgToClipboard(e, name) {
-    if (e) e.stopPropagation();
-    const org = ORGS.find(o => o.name === name);
+  function copyOrgToClipboard(e, identifier, btnOverride) {
+    if (e) {
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    }
+    let org = null;
+    if (typeof identifier === 'number') {
+      org = ORGS[identifier];
+    } else if (typeof identifier === 'string') {
+      org = ORGS.find(o => o.name === identifier);
+    }
     if (!org) return;
 
     const techStack = (org.tags || []).join(', ');
@@ -2767,9 +2774,9 @@ btn.__orgListenerAttached = true;
       shareText += ` GitHub: ${repoHref}`;
     }
 
-    const btn = e.currentTarget;
-    const icon = btn.querySelector('.material-symbols-outlined');
-    const tooltip = btn.querySelector('.share-tooltip') || btn.nextElementSibling;
+    const btn = btnOverride || (e ? e.currentTarget : null);
+    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+    const tooltip = btn ? (btn.querySelector('.share-tooltip') || btn.nextElementSibling) : null;
 
     function showFeedback() {
       if (icon) {

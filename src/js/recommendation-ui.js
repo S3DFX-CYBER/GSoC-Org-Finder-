@@ -59,7 +59,7 @@ function handleShareAction(e, btn) {
   e.stopPropagation();
   const name = btn.dataset.shareOrg;
   if (typeof copyOrgToClipboard === 'function') {
-    copyOrgToClipboard(e, name);
+    copyOrgToClipboard(e, name, btn);
   }
 }
 

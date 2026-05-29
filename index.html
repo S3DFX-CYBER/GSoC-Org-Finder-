@@ -984,18 +984,19 @@
   </div>
   <div class="mt-2 flex items-center gap-2">
     <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" />
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
       <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
     </label>
+    <span id="languageLogicHint" 
+    class="text-xs text-primary font-medium italic">
+    </span>
   </div>
 </section>
 
-<!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
-<section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
-  <div class="flex items-center justify-between mb-8">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
-      <select id="categoryFilter" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
         <option value="programming">Programming</option>
@@ -1497,37 +1498,21 @@
           </div>
         </div>
 
-        <div
-          id="mentorGrid"
-          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-        >
-          <div
-            class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center"
-          >
-            <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
-          </div>
-        </div>
+    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
+        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
-    </section>
-
-    <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
-    <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
-      <div class="mb-12">
-        <span
-          class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary"
-          >Contributor Guide</span
-        >
-        <h2
-          class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2"
-        >
-          Start Contributing with Confidence
-        </h2>
-        <p class="text-zinc-600 mt-4 max-w-3xl">
-          New to open source or this project? Follow this quick path: learn the
-          basics, set up locally, find a good first issue, and open your first
-          PR.
-        </p>
-      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
+<section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
+  <div class="mb-12">
+    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
+    <p class="text-zinc-600 mt-4 max-w-3xl">New to open source or this project? Follow this quick path: learn the basics, set up locally, find a good first issue, and open your first PR.</p>
+  </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <article
@@ -2257,10 +2242,10 @@
       // NOTE: For JS-string contexts inside inline event handlers,
       // we must also escape quotes. Prefer removing inline handlers.
 
-      // ══════════════════════════════════════════════
-      // MAIN APP LOGIC
-      // ══════════════════════════════════════════════
-      let visibleCount = 12;
+  // ══════════════════════════════════════════════
+  // MAIN APP LOGIC
+  // ══════════════════════════════════════════════
+  let visibleCount = 12;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2463,11 +2448,11 @@
         return `Last updated: ${days} day${days === 1 ? "" : "s"} ago`;
       }
 
-      function getPrimaryMentorContact(entry) {
-        if (entry.channels.length > 0) return entry.channels[0];
-        if (entry.mailingLists.length > 0) return entry.mailingLists[0];
-        return null;
-      }
+  function getPrimaryMentorContact(entry) {
+    if (entry.channels.length > 0) return entry.channels[0];
+    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
+    return null;
+  }
 
       function buildChannelChips(records) {
         return records
@@ -2557,9 +2542,9 @@
             : "";
         })();
 
-        const sections = [];
-        if (entry.status === "ok" && entry.channels.length > 0) {
-          sections.push(`
+    const sections = [];
+    if (entry.status === 'ok' && entry.channels.length > 0) {
+      sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
           <div class="flex flex-wrap gap-2">${buildChannelChips(entry.channels)}</div>
@@ -2567,8 +2552,8 @@
       `);
         }
 
-        if (entry.status === "ok" && entry.mentors.length > 0) {
-          sections.push(`
+    if (entry.status === 'ok' && entry.mentors.length > 0) {
+      sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
           <div class="flex flex-wrap gap-2">${buildMentorChips(entry.mentors)}</div>
@@ -2576,8 +2561,8 @@
       `);
         }
 
-        if (entry.status === "ok" && entry.mailingLists.length > 0) {
-          sections.push(`
+    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
+      sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
           <div class="flex flex-wrap gap-2">${buildChannelChips(entry.mailingLists.map((list) => ({ ...list, type: "Mailing list" })))}</div>
@@ -2623,10 +2608,10 @@
         }));
       }
 
-      function renderMentorFinder() {
-        const grid = document.getElementById("mentorGrid");
-        const lastUpdatedEl = document.getElementById("mentorLastUpdated");
-        if (!grid) return;
+  function renderMentorFinder() {
+    const grid = document.getElementById('mentorGrid');
+    const lastUpdatedEl = document.getElementById('mentorLastUpdated');
+    if (!grid) return;
 
         if (mentorDataState === "loading" || mentorDataState === "idle") {
           grid.innerHTML = `
@@ -2697,27 +2682,26 @@
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
-          return;
-        }
+      return;
+    }
 
-        grid.innerHTML = filteredRecords
-          .map(({ org, entry }) => {
-            const primary = getPrimaryMentorContact(entry);
-            const mentorPreview = entry.mentors
-              .slice(0, 3)
-              .filter((mentor) => mentor.github || mentor.name)
-              .map((mentor) => ({
-                ...mentor,
-                displayLabel: mentor.github ? `@${mentor.github}` : mentor.name,
-              }));
-            const mentorPreviewHtml = buildMentorPreviewChips(mentorPreview);
-            const primaryType = primary?.type || "Not specified";
-            let statusClass = "bg-red-100 text-red-700";
-            if (entry.status === "ok") {
-              statusClass = "bg-green-100 text-green-700";
-            } else if (entry.status === "no-contact-found") {
-              statusClass = "bg-zinc-100 text-zinc-600";
-            }
+    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+      const primary = getPrimaryMentorContact(entry);
+      const mentorPreview = entry.mentors
+        .slice(0, 3)
+        .filter((mentor) => mentor.github || mentor.name)
+        .map((mentor) => ({
+          ...mentor,
+          displayLabel: mentor.github ? `@${mentor.github}` : mentor.name
+        }));
+      const mentorPreviewHtml = buildMentorPreviewChips(mentorPreview);
+      const primaryType = primary?.type || 'Not specified';
+      let statusClass = 'bg-red-100 text-red-700';
+      if (entry.status === 'ok') {
+        statusClass = 'bg-green-100 text-green-700';
+      } else if (entry.status === 'no-contact-found') {
+        statusClass = 'bg-zinc-100 text-zinc-600';
+      }
 
             const contactLabel =
               entry.status === "ok" ? "Contact" : "Ideas page";
@@ -2757,7 +2741,7 @@
               primary?.url || org.ideas || githubUrlFromValue(org.github);
             const safeContactHref = sanitizeHrefUrl(contactHref);
 
-            return `
+      return `
         <article class="mentor-card">
           <div class="flex items-start justify-between gap-3 mb-4">
             <div>
@@ -2773,11 +2757,10 @@
           </div>
         </article>
       `;
-          })
-          .join("");
+    }).join('');
 
-        attachOrgCardListeners(grid);
-      }
+    attachOrgCardListeners(grid);
+  }
 
       async function loadMentorData() {
         mentorDataState = "loading";
@@ -3123,13 +3106,13 @@
                 <span class="material-symbols-outlined text-sm">${isComparing ? "check_circle" : "compare_arrows"}</span> ${isComparing ? "Comparing" : "Compare"}
              </button>
           </div>
-           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
       `;
-          grid.appendChild(card);
-          // Attach per-card listeners for non-bubbling events and data-driven actions
-          attachOrgCardListeners(card);
-        });
+      grid.appendChild(card);
+        // Attach per-card listeners for non-bubbling events and data-driven actions
+        attachOrgCardListeners(card);
+    });
 
         document.getElementById("orgCount").textContent = filteredOrgs.length;
         document.getElementById("loadMoreContainer").style.display =
@@ -3175,19 +3158,16 @@
           btn.__orgListenerAttached = true;
         });
 
-        // open modal buttons
-        (root.querySelectorAll
-          ? root.querySelectorAll("[data-open-org]")
-          : []
-        ).forEach((btn) => {
-          if (btn.__orgListenerAttached) return;
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            openModal(btn.dataset.openOrg);
-          });
-          btn.__orgListenerAttached = true;
-        });
-      }
+    // open modal buttons
+    (root.querySelectorAll ? root.querySelectorAll('[data-open-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(btn.dataset.openOrg);
+      });
+      btn.__orgListenerAttached = true;
+    });
+  }
 
       function toggleCompare(e, name) {
         if (e) e.stopPropagation();
@@ -3942,6 +3922,11 @@ if(org.ideas){
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
+  });
+
+  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
+    visibleMentorCount += 12;
+    renderMentorFinder(false);
   });
 
       // Surprise button event listener

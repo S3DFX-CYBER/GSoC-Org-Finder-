@@ -239,12 +239,34 @@
   "AOSSIE": {
     "org": "AOSSIE",
     "ideasUrl": "https://github.com/AOSSIE-Org/Info/blob/main/GSoC-Ideas/2026/index.md",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/aossie",
+        "label": "AOSSIE Discord"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Bruno Woltzenlogel Paleo",
+        "github": "Zahnentferner",
+        "githubUrl": "https://github.com/Zahnentferner"
+      },
+      {
+        "name": "Jaideep Prasad",
+        "github": "jddeep",
+        "githubUrl": "https://github.com/jddeep"
+      },
+      {
+        "name": "Garv Agarwal",
+        "github": "SharkyBytes",
+        "githubUrl": "https://github.com/SharkyBytes"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join the AOSSIE Discord server and discuss ideas publicly in project-specific channels.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T09:04:30.000Z"
   },
   "Apache Software Foundation": {
     "org": "Apache Software Foundation",
@@ -3716,11 +3738,39 @@
   "The ns-3 Network Simulator Project": {
     "org": "The ns-3 Network Simulator Project",
     "ideasUrl": "https://www.nsnam.org/wiki/GSOC2026Projects",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://ns-3.zulipchat.com/",
+        "label": "Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Tommaso Pecorella",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Mohit Prakash Tahiliani",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Biljana Bojovic",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/ns-developers",
+        "label": "ns-developers"
+      }
+    ],
+    "tip": "Contact developers through the mailing list or Zulip chat before refining proposals.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The OpenROAD Initiative": {
@@ -3847,11 +3897,28 @@
   "Tiled": {
     "org": "Tiled",
     "ideasUrl": "https://github.com/mapeditor/tiled/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.mapeditor.org/",
+        "label": "Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Thorbjørn Lindeijer",
+        "github": "bjorn",
+        "githubUrl": "https://github.com/bjorn"
+      },
+      {
+        "name": "",
+        "github": "dogboydog",
+        "githubUrl": "https://github.com/dogboydog"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Introduce yourself on the forum and mention your project interest.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Typelevel": {

@@ -31,7 +31,9 @@ globalThis.toggleTheme = function(){
   
   try {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  } catch (err) {}
+  } catch (err) {
+    console.warn('Theme persistence failed:', err);
+  }
 
   updateThemeIcon();
 

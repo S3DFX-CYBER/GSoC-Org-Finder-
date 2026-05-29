@@ -736,7 +736,7 @@ html.theme-transition .card {
   100% { transform: translateY(0) rotate(360deg); opacity: 1; filter: blur(0px); }
 }
 
-html.theme-transition #theme-toggle-btn .material-symbols-outlined {
+html.theme-transition #theme-toggle-btn .theme-icon-wrapper {
   animation: iconSwipeRotate 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 
@@ -752,7 +752,7 @@ html.theme-transition #theme-toggle-btn .material-symbols-outlined {
   html.theme-transition a,
   html.theme-transition .card,
   #theme-toggle-btn,
-  html.theme-transition #theme-toggle-btn .material-symbols-outlined {
+  html.theme-transition #theme-toggle-btn .theme-icon-wrapper {
     transition: none !important;
     animation: none !important;
   }

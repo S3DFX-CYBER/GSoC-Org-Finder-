@@ -737,7 +737,7 @@ html.theme-transition .card {
   100% { transform: translateY(0) rotate(360deg); opacity: 1; filter: blur(0px); }
 }
 
-html.theme-transition #theme-toggle-btn .theme-icon-wrapper {
+#theme-toggle-btn.theme-animating .theme-icon-wrapper {
   animation: iconSwipeRotate 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 

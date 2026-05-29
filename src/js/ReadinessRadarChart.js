@@ -33,18 +33,21 @@ const ReadinessRadarChart = (function() {
       
       const percentage = Math.min(100, Math.round((value / max) * 100));
       
+      const metricConfig = metricsMap[key];
+      if (!metricConfig) return;
+      
       const barWrapper = document.createElement('div');
       barWrapper.className = 'mb-3 last:mb-0';
       
       const labelRow = document.createElement('div');
       labelRow.className = 'flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1';
-      labelRow.innerHTML = `<span>${metricsMap[key].label}</span><span>${percentage}%</span>`;
+      labelRow.innerHTML = `<span>${metricConfig.label}</span><span>${percentage}%</span>`;
       
       const track = document.createElement('div');
       track.className = 'w-full h-2 bg-zinc-100 dark:bg-zinc-700 rounded-full overflow-hidden';
       
       const fill = document.createElement('div');
-      fill.className = `h-full ${metricsMap[key].color} rounded-full transition-all duration-1000`;
+      fill.className = `h-full ${metricConfig.color} rounded-full transition-all duration-1000`;
       fill.style.width = '0%';
       
       // Animate width

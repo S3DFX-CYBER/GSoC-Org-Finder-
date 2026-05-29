@@ -3589,39 +3589,25 @@
       </div>
     </footer>
 
-    <!-- ═══════════════════ MODAL ═══════════════════ -->
-    <div class="modal-bg" id="orgModal">
-      <div class="modal">
-        <button class="close-btn" onclick="closeModal()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-        <div class="modal-header" id="mHeader">
-          <!-- Injected: Category, Name, Tagline -->
-        </div>
-        <div class="modal-body">
-          <div class="metrics-grid mb-8" id="mMetrics">
-            <!-- Injected: Years, Competition, First Year, etc. -->
-          </div>
-
-          <div class="github-stats-container mb-8">
-            <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
-            <div class="gh-stat-item">
-              <span class="material-symbols-outlined text-sm">star</span>
-              <span id="mStars">---</span>
-            </div>
-            <div class="gh-stat-item">
-              <span class="material-symbols-outlined text-sm">fork_right</span>
-              <span id="mForks">---</span>
-            </div>
-            <div class="gh-stat-item">
-              <span class="material-symbols-outlined text-sm">bug_report</span>
-              <span id="mIssues">---</span>
-            </div>
-            <div class="gh-stat-item text-blue-400">
-              <span class="material-symbols-outlined text-sm">history</span>
-              <span id="mActivity">Moderate</span>
-            </div>
-          </div>
+<!-- ═══════════════════ MODAL ═══════════════════ -->
+<div class="modal-bg" id="orgModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header" id="mHeader">
+      <!-- Injected: Category, Name, Tagline -->
+    </div>
+    <div class="modal-body">
+      <div class="metrics-grid mb-8" id="mMetrics">
+        <!-- Injected: Years, Competition, First Year, etc. -->
+      </div>
+      
+      <div class="github-stats-container mb-8">
+        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
+        <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
+        <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
+      </div>
 
           <div class="section-title">Description</div>
           <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
@@ -5606,30 +5592,23 @@
           if (e.target.id === "compareModal") closeCompareModal();
         });
 
-      document.getElementById("orgModal")?.addEventListener("click", (e) => {
-        if (e.target.id === "orgModal") closeModal();
-      });
+  document.getElementById('orgModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'orgModal') closeModal();
+  });
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key !== "Escape") return;
-        if (
-          document.getElementById("proposalModal")?.classList.contains("open")
-        ) {
-          closeProposalBuilder();
-        } else if (
-          document.getElementById("compareModal")?.classList.contains("open")
-        ) {
-          closeCompareModal();
-        } else if (
-          document.getElementById("orgModal")?.classList.contains("open")
-        ) {
-          closeModal();
-        } else if (
-          document.getElementById("anBg")?.classList.contains("open")
-        ) {
-          closeAn();
-        }
-      });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('proposalModal')?.classList.contains('open')) {
+      closeProposalBuilder();
+    } else if (document.getElementById('compareModal')?.classList.contains('open')) {
+      closeCompareModal();
+    } else if (document.getElementById('orgModal')?.classList.contains('open')) {
+      closeModal();
+    } else if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
+    }
+  });
+  
 
       function applyFiltersPreservingVisibleCount() {
         const savedCount = visibleCount;
@@ -6184,12 +6163,12 @@
         document.body.style.overflow = "hidden";
       }
 
-      function closeModal() {
-        document.getElementById("orgModal").classList.remove("open");
-        document.body.classList.remove("modal-open");
-        document.documentElement.style.overflow = "";
-        document.body.style.overflow = "";
-      }
+  function closeModal() {
+    document.getElementById('orgModal').classList.remove('open');
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
 
       function openRandomOrg() {
         const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;

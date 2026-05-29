@@ -20,10 +20,28 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+let isThemeToggling = false;
 globalThis.toggleTheme = function(){
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
+  if (isThemeToggling) return;
+  isThemeToggling = true;
+
+  document.documentElement.classList.add('theme-transition');
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+      setTimeout(() => {
+        updateThemeIcon();
+      }, 180);
+
+      setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+        isThemeToggling = false;
+      }, 400);
+    });
+  });
 };
 
 function updateThemeIcon(){

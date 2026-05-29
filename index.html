@@ -1771,10 +1771,32 @@
     updateThemeIcon();
   })();
 
+  let isThemeToggling = false;
   window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
+    if (isThemeToggling) return;
+    isThemeToggling = true;
+
+    // Step 1: Add the transition class
+    document.documentElement.classList.add('theme-transition');
+
+    // Step 2: Use double requestAnimationFrame to force the browser to compute 
+    // the transition styles *before* we toggle the actual dark mode.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+        // Update the icon midway through the CSS animation when it's invisible
+        setTimeout(() => {
+          updateThemeIcon();
+        }, 180);
+
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transition');
+          isThemeToggling = false;
+        }, 400);
+      });
+    });
   };
 
   function updateThemeIcon(){

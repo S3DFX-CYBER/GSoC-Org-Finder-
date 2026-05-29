@@ -708,3 +708,38 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* --- THEME TOGGLE TRANSITIONS --- */
+html.theme-transition, 
+html.theme-transition * {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, fill 0.4s ease, stroke 0.4s ease, box-shadow 0.4s ease;
+}
+
+#themeToggleBtn {
+  transition: transform 0.3s ease-in-out, background-color 0.18s, border-color 0.18s;
+}
+#themeToggleBtn:active {
+  transform: scale(0.92);
+}
+
+@keyframes iconSwipeRotate {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; filter: blur(0px); }
+  49% { transform: translateY(-12px) rotate(90deg) scale(0.8); opacity: 0; filter: blur(2px); }
+  51% { transform: translateY(12px) rotate(270deg) scale(0.8); opacity: 0; filter: blur(2px); }
+  100% { transform: translateY(0) rotate(360deg); opacity: 1; filter: blur(0px); }
+}
+
+html.theme-transition #themeToggleBtn .material-symbols-outlined {
+  animation: iconSwipeRotate 0.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition, 
+  html.theme-transition *, 
+  #themeToggleBtn,
+  html.theme-transition #themeToggleBtn .material-symbols-outlined {
+    transition: none !important;
+    animation: none !important;
+  }
+}

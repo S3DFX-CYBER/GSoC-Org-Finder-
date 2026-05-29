@@ -1744,12 +1744,39 @@
 },
   "LibreHealth": {
     "org": "LibreHealth",
-    "ideasUrl": "https://wiki.librehealth.io/GSoC_2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/librehealth",
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forums.librehealth.io/",
+        "label": "LibreHealth Forum"
+      },
+      {
+        "type": "Chat",
+        "url": "https://chat.librehealth.io/channel/gsoc",
+        "label": "LibreHealth Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Mua Rachmann",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "sunbiz",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Rohan Satya Isaac",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Project ideas are discussed and updated on the LibreHealth Forum. Engage with the community early and seek feedback on your proposal ideas.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "LibreOffice": {
@@ -1829,11 +1856,37 @@
         "type": "Discord",
         "url": "https://discord.gg/xS7Z362",
         "label": "Discord chat"
+      },
+      {
+        "type": "Discourse Forum",
+        "url": "https://discourse.llvm.org/",
+        "label": "LLVM Discourse Forum"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Michael Spencer",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Gábor Horváth",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "John Hui",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Henrik Olsson",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "Introduce yourself in the public channel before asking project-specific questions.",
+    "tip" : "To contribute to the LLVM Project take a look at its Contribution Guide",
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },

@@ -1703,7 +1703,7 @@
     updateThemeIcon();
 
     // The button transitions itself via Tailwind. Remove global transition after 400ms.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.documentElement.classList.remove('theme-transition');
       isThemeToggling = false;
     } else {

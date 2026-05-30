@@ -452,12 +452,30 @@
   "CERN-HSF": {
     "org": "CERN-HSF",
     "ideasUrl": "https://hepsoftwarefoundation.org/activities/gsoc.html",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [  {
+        "type": "Gitter",
+        "url": " https://app.gitter.im/#/room/#HSF_HSF-GSoC:gitter.im?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge",
+        "label": "CERN-HSF contributors gitter channel "
+      }],
+    "mentors": [  {
+        "name": "Maciej Szymanski ",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Tatiana Ovsiannikova ",
+        "github": "",
+        "githubUrl": ""
+      }],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:hsf-gsoc-admin@googlegroups.com",
+        "label": "CERN HSF GSoC Maintainers Mailing List "
+      }],
+    "tip": "Please avoid posting extended information about yourself in the chat channel and reserve this for the direct exchange with the mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-31T09:51:14.520Z"
   },
   "CGAL Project": {
     "org": "CGAL Project",

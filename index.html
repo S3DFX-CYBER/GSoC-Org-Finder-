@@ -471,8 +471,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-      </nav>
+       </nav>
     </div>
     
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
@@ -539,10 +538,7 @@
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
-        <span class="material-symbols-outlined text-lg">auto_awesome</span>
-        AI Recommender
-      </a>
+      
       <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
@@ -2335,27 +2331,21 @@
 
   document.getElementById('compareModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'compareModal') closeCompareModal();
-  });
 
-<<<<<<< HEAD
-=======
   document.getElementById('orgModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'orgModal') closeOrgModal();
   });
 
->>>>>>> 9406ecc (resolve index.html conflict)
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-<<<<<<< HEAD
+
       closeModal();
-=======
       closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
->>>>>>> 9406ecc (resolve index.html conflict)
     }
   });
   
@@ -3215,6 +3205,54 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="w-full border-t border-zinc-200 bg-zinc-100 dark:bg-zinc-900 dark:border-zinc-800">
+  <div class="flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 md:px-8 py-8 md:py-12 gap-4 md:gap-6 max-w-7xl mx-auto text-center md:text-left">
 
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-2 justify-center md:justify-start">
+        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+          <span class="text-white font-bold text-[10px]">G</span>
+        </div>
+
+        <span class="text-lg font-bold text-zinc-900 dark:text-white">
+          FindMyGSoC
+        </span>
+      </div>
+
+      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+        © 2026 S3DFX-CYBER · Built for the Open Source Community
+      </p>
+    </div>
+
+    <nav class="flex flex-wrap gap-6 justify-center" aria-label="Footer navigation">
+
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+         href="https://summerofcode.withgoogle.com/programs/2026/organizations"
+         target="_blank"
+         rel="noopener noreferrer">
+         GSoC 2026
+      </a>
+
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+         href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+         target="_blank"
+         rel="noopener noreferrer">
+         GitHub
+      </a>
+
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+         href="privacy.html">
+         Privacy
+      </a>
+
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+         href="#contact">
+         Contact
+      </a>
+
+    </nav>
+  </div>
+</footer>
 </body>
 </html>

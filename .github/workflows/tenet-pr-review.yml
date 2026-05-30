@@ -1,7 +1,7 @@
 name: 🤖 TENET Agent - PR Review
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -13,7 +13,13 @@ jobs:
   tenet-review:
     name: TENET Security Review
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]' && github.actor != 'coderabbitai[bot]'
+   if: github.event.pull_request.user.login != 'github-actions[bot]' && github.event.pull_request.user.login != 'coderabbitai[bot]'
+
+    # SECURITY: Do NOT add `ref: github.event.pull_request.head.sha` here.
+    # pull_request_target runs with repository secrets.
+    # Checking out fork code could expose secrets.
+    # TENET reads PR diffs through the GitHub API using HEAD_SHA.
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

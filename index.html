@@ -1126,16 +1126,49 @@
   <div class="flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 md:px-8 py-8 md:py-12 gap-4 md:gap-6 max-w-7xl mx-auto text-center md:text-left">
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
+        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+          <span class="text-white font-bold text-[10px]">G</span>
+        </div>
         <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
       </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
+
+      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+        © 2026 S3DFX-CYBER · Built for the Open Source Community
+      </p>
     </div>
+
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+      <a
+        class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+        href="https://summerofcode.withgoogle.com/programs/2026/organizations"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GSoC 2026
+      </a>
+
+      <a
+        class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+        href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+
+      <a
+        class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+        href="privacy.html"
+      >
+        Privacy
+      </a>
+
+      <a
+        class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all"
+        href="#contact"
+      >
+        Contact
+      </a>
     </nav>
   </div>
 </footer>
@@ -1143,7 +1176,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -2304,12 +2337,25 @@
     if (e.target.id === 'compareModal') closeCompareModal();
   });
 
+<<<<<<< HEAD
+=======
+  document.getElementById('orgModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'orgModal') closeOrgModal();
+  });
+
+>>>>>>> 9406ecc (resolve index.html conflict)
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
+<<<<<<< HEAD
       closeModal();
+=======
+      closeOrgModal();
+    } else if (document.getElementById('anBg')?.classList.contains('open')) {
+      closeAn();
+>>>>>>> 9406ecc (resolve index.html conflict)
     }
   });
   
@@ -2677,7 +2723,7 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
+  function closeOrgModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';

@@ -527,11 +527,19 @@
     "org": "CCExtractor Development",
     "ideasUrl": "https://github.com/CCExtractor/ccextractor/wiki/Google-Summer-of-Code-2026",
     "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "mentors": [ {
+        "name": "Carlos Fernandez Sanz",
+        "github": "cfsmp3",
+        "githubUrl": "https://github.com/cfsmp3"
+      }],
+    "mailingLists": [ {
+        "type": "Mailing list",
+        "url": "mailto:carlos@sanz.dev",
+        "label": "CCExtractor Maintainer mail list"
+      }],
+    "tip": "Carlos is the main contact for CCExtractor",
+    "status": "ok",
+    "lastFetched": "2026-06-30T16:45:00.000Z"
   },
 "Ceph": {
     "org": "Ceph",
@@ -574,12 +582,30 @@
   "CERN-HSF": {
     "org": "CERN-HSF",
     "ideasUrl": "https://hepsoftwarefoundation.org/activities/gsoc.html",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [  {
+        "type": "Gitter",
+        "url": " https://app.gitter.im/#/room/#HSF_HSF-GSoC:gitter.im?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge",
+        "label": "CERN-HSF contributors gitter channel "
+      }],
+    "mentors": [  {
+        "name": "Maciej Szymanski ",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Tatiana Ovsiannikova ",
+        "github": "",
+        "githubUrl": ""
+      }],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:hsf-gsoc-admin@googlegroups.com",
+        "label": "CERN HSF GSoC Maintainers Mailing List "
+      }],
+    "tip": "Please avoid posting extended information about yourself in the chat channel and reserve this for the direct exchange with the mentors.",
+    "status": "ok",
+    "lastFetched": "2026-05-31T09:51:14.520Z"
   },
   "CGAL Project": {
     "org": "CGAL Project",
@@ -1712,13 +1738,24 @@
   },
   "Internet Archive": {
     "org": "Internet Archive",
-    "ideasUrl": "https://github.com/internetarchive/openlibrary/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://docs.google.com/document/d/1EjzrHVapOZuzdI_Qqd_ravaTgiDWnxlMRbjjbzfd_-I/edit?tab=t.0",
+    "channels": [
+        {
+            "type": "Slack",
+            "url": "https://internetarchive.slack.com"
+        }
+    ],
+    "mentors": [
+        { "name": "Mark Graham", "github": "", "githubUrl": "" },
+        { "name": "Sawood Alam", "github": "ibnesayeed", "githubUrl": "https://github.com/ibnesayeed" },
+        { "name": "Will Howes", "github": "", "githubUrl": "" },
+        { "name": "Mek Karpeles", "github": "mekarpeles", "githubUrl": "https://github.com/mekarpeles" },
+        { "name": "Drini Cami", "github": "", "githubUrl": "" }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Mentors collaborate via Slack. Use the interest form on the ideas page to connect with them before submitting your proposal.",
+    "status": "ok",
+    "lastFetched": "2026-05-16T12:00:00.000Z"
   },
   "Invesalius": {
     "org": "Invesalius",

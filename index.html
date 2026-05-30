@@ -405,32 +405,23 @@
       color: #f46b0e;
       background: #fff4ec;
     }
-    /* Dark mode */
-    .dark #selectedLangsStrip .empty-state { color: #8a6a45; }
-    .dark .selected-lang-badge {
-      background: #1c0f05;
-      border-color: #2a1508;
-      color: #f97316;
+    /* Dark mode - Contribution section inline-style overrides */
+    .dark #progressTrack {
+      background: #3f3f46 !important;
+      border-color: #52525b !important;
     }
-    .dark .unselect-lang-btn {
-      background: #2a1508;
-      color: #f97316;
+
+    .dark #difficultySelect {
+      background: #27272a !important;
+      border-color: #3f3f46 !important;
+      color: #e5e7eb !important;
     }
-    .dark .unselect-lang-btn:hover {
-      background: #fb923c;
-      color: white;
+
+    .dark #generateRoadmapBtn {
+      background: linear-gradient(135deg, #7c2d12, #f97316) !important;
     }
-    .dark .clear-all-langs-btn {
-      border-color: #2e1e0a;
-      color: #8a6a45;
-    }
-    .dark .clear-all-langs-btn:hover {
-      border-color: #f97316;
-      color: #fb923c;
-      background: #1c0f05;
-    }
-    #notificationList {
-      min-height: 60px;
+    .dark input[type="checkbox"].roadmap-check {
+      color-scheme: dark;
     }
   </style>
   <link rel="manifest" href="manifest.json" />
@@ -1077,6 +1068,30 @@
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
         <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
       </div>
+
+      <div class="section-title">Contribution Difficulty</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
+        <select id="difficultySelect" style="padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;background:#f9f9f9;font-size:13px;font-weight:600;color:#1a1c1c;outline:none;cursor:pointer;min-width:160px;">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <button id="generateRoadmapBtn" style="padding:10px 18px;border:none;border-radius:10px;background:linear-gradient(135deg,#9d4300,#f97316);color:white;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:all .2s;box-shadow:0 2px 8px rgba(157,67,0,.25);">
+          ✦ Generate Contribution Path
+        </button>
+      </div>
+
+      <div class="section-title" style="margin-top:20px;">Progress</div>
+      <div id="progressTrack" style="width:100%;height:10px;background:#f0f0f0;border-radius:999px;overflow:hidden;margin-bottom:8px;border:1px solid #e8e8e8;">
+        <div id="progressBar" style="width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:999px;transition:width 0.4s ease;"></div>
+      </div>
+      <p id="progressText" style="font-size:12px;color:#888;margin-bottom:4px;">Click "Generate" to start your contribution path</p>
+
+      <div class="section-title" style="margin-top:20px;">Checklist</div>
+      <div id="contributionChecklist" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+      <div class="section-title" style="margin-top:20px;">Contribution Roadmap</div>
+      <div id="learningRoadmap" style="display:flex;flex-direction:column;gap:10px;"></div>
 
       <div class="section-title">Description</div>
       <p id="mDesc" class="text-sm text-zinc-600 leading-relaxed mb-6"></p>
@@ -2202,79 +2217,310 @@
     `;
   }
 
-  function openModal(name) {
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
+ function openModal(name) {
+  const org = ORGS.find(o => o.name === name);
+  if (!org) return;
 
-    document.getElementById('mHeader').innerHTML = `
-      <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
-      <h2>${escapeHtml(org.name)}</h2>
-      <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
-    `;
+  document.getElementById('mHeader').innerHTML = `
+    <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
+    <h2>${escapeHtml(org.name)}</h2>
+    <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+  `;
 
-    document.getElementById('mMetrics').innerHTML = `
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
-    `;
+  document.getElementById('mMetrics').innerHTML = `
+    <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
+    <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
+    <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
+    <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+  `;
 
-    document.getElementById('mDesc').textContent = org.desc;
-    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
-    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+  document.getElementById('mDesc').textContent = org.desc;
+  document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
+  document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
 
-    // Timeline
-    let timelineHtml = '';
-    for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
-    }
-    document.getElementById('mTimeline').innerHTML = timelineHtml;
+  let timelineHtml = '';
+  for(let y=2020; y<=2026; y++) {
+    const active = (y >= org.firstYear);
+    timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
+  }
+  document.getElementById('mTimeline').innerHTML = timelineHtml;
 
-    // Sanitize and set idea/repo links
-    const ideasUrl = sanitizeHrefUrl(org.ideas);
-    const repoUrl = sanitizeHrefUrl(`https://github.com/${org.github}`);
-    const ideasBtn = document.getElementById('mIdeasBtn');
-    const repoBtn = document.getElementById('mRepoBtn');
-    if (ideasBtn) {
-      if (ideasUrl) ideasBtn.href = ideasUrl; else ideasBtn.removeAttribute('href');
-    }
-    if (repoBtn) {
-      if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href');
-    }
+  const ideasUrl = sanitizeHrefUrl(org.ideas);
+  const repoUrl = sanitizeHrefUrl(`https://github.com/${org.github}`);
+  const ideasBtn = document.getElementById('mIdeasBtn');
+  const repoBtn = document.getElementById('mRepoBtn');
+  if (ideasBtn) { if (ideasUrl) ideasBtn.href = ideasUrl; else ideasBtn.removeAttribute('href'); }
+  if (repoBtn) { if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href'); }
 
-// Copy link button
-const oldCopy = document.getElementById('mIdeasCopyBtn');
-if(oldCopy) oldCopy.remove();
-if(org.ideas){
-  const copyBtn = document.createElement('button');
-  copyBtn.id = 'mIdeasCopyBtn';
-  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-  copyBtn.onclick = function(){
-    navigator.clipboard.writeText(org.ideas).then(()=>{
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-      copyBtn.style.background = '#dcfce7';
-      copyBtn.style.color = '#166534';
-      setTimeout(()=>{
-        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-        copyBtn.style.background = '';
-        copyBtn.style.color = '';
+  const oldCopy = document.getElementById('mIdeasCopyBtn');
+  if(oldCopy) oldCopy.remove();
+  if(org.ideas){
+    const copyBtn = document.createElement('button');
+    copyBtn.id = 'mIdeasCopyBtn';
+    copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+    copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+    copyBtn.onclick = function(){
+      navigator.clipboard.writeText(org.ideas).then(()=>{
+        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+        copyBtn.style.background = '#dcfce7';
+        copyBtn.style.color = '#166534';
+        setTimeout(()=>{
+          copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+          copyBtn.style.background = '';
+          copyBtn.style.color = '';
+        }, 2000);
+      });
+    };
+    document.getElementById('mIdeasBtn').after(copyBtn);
+  }
+
+  renderMentorContactSection(org);
+
+  // ── Contribution Path Generator ──
+  const difficultySelect = document.getElementById('difficultySelect');
+  const roadmapContainer = document.getElementById('learningRoadmap');
+  const checklistContainer = document.getElementById('contributionChecklist');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const generateBtn = document.getElementById('generateRoadmapBtn');
+
+  // Reset state when opening a new org
+  if (roadmapContainer) roadmapContainer.innerHTML = '';
+  if (checklistContainer) checklistContainer.innerHTML = '';
+  if (progressBar) progressBar.style.width = '0%';
+  if (progressText) progressText.textContent = 'Click "Generate" to start your contribution path';
+  if (difficultySelect) difficultySelect.value = 'beginner';
+ const oldNextSection = document.getElementById('nextActionsSection');
+  if (oldNextSection) oldNextSection.remove();
+
+  if (generateBtn) {
+    // Remove old listener by cloning
+    const newBtn = generateBtn.cloneNode(true);
+    generateBtn.parentNode.replaceChild(newBtn, generateBtn);
+
+    newBtn.addEventListener('click', () => {
+      const level = difficultySelect ? difficultySelect.value : 'beginner';
+      const steps = generateContributionPath(level);
+
+      const savedKey = `progress_${org.name}_${level}`;
+      const savedProgress = JSON.parse(localStorage.getItem(savedKey) || '[]');
+      const savedDone = savedProgress.length;
+
+      if (progressBar) progressBar.style.width = (savedDone / steps.length * 100) + '%';
+      if (progressText) {
+        if (savedDone === steps.length && steps.length > 0) {
+          progressText.textContent = `🎉 All ${steps.length} tasks completed!`;
+          progressText.style.color = '#16a34a';
+          progressText.style.fontWeight = '700';
+        } else {
+          progressText.textContent = `${savedDone} of ${steps.length} tasks completed`;
+          progressText.style.color = '#888';
+          progressText.style.fontWeight = '400';
+        }
+      }
+        
+      // Level color config
+      const levelColors = {
+        beginner:     { border: '#22c55e', bg: '#f0fdf4', circle: 'linear-gradient(135deg,#16a34a,#22c55e)', label: '🟢 Beginner Path' },
+        intermediate: { border: '#f97316', bg: '#fff7ed', circle: 'linear-gradient(135deg,#9d4300,#f97316)', label: '🟠 Intermediate Path' },
+        advanced:     { border: '#7c3aed', bg: '#f5f3ff', circle: 'linear-gradient(135deg,#5b21b6,#7c3aed)', label: '🟣 Advanced Path' }
+      };
+      const lc = levelColors[level] || levelColors.beginner;
+
+      // Render styled roadmap cards with level colors
+      if (roadmapContainer) {
+        roadmapContainer.innerHTML = `
+          <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:${lc.bg};border:1.5px solid ${lc.border};border-radius:999px;font-size:11px;font-weight:700;color:#374151;margin-bottom:4px;">
+            ${lc.label} — ${steps.length} steps
+          </div>
+        ` + steps.map((step, i) => `
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:${document.documentElement.classList.contains('dark') ? '#18181b' : '#ffffff'};border:1px solid ${document.documentElement.classList.contains('dark') ? '#3f3f46' : '#e5e7eb'};border-left:4px solid ${lc.border};border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+            <span style="width:32px;height:32px;border-radius:50%;background:${lc.circle};color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i+1}</span>
+          <span style="font-size:13px;color:${document.documentElement.classList.contains('dark')?'#e5e7eb':'#374151'};font-weight:500;">${escapeHtml(step)}</span>
+          </div>
+        `).join('');
+        
+      }
+
+      // Render styled checklist items with matching accent color
+        if (checklistContainer) {
+        checklistContainer.innerHTML = steps.map((step, i) => `
+          <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:${document.documentElement.classList.contains('dark')?'#1f1f23':'#f9f9f9'};border:1px solid ${document.documentElement.classList.contains('dark')?'#3f3f46':'#e5e7eb'};border-radius:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background=document.documentElement.classList.contains('dark')?'#27272a':'#f3f4f6'" onmouseout="this.style.background=document.documentElement.classList.contains('dark')?'#1f1f23':'#f9f9f9'">
+            <input type="checkbox" class="roadmap-check" data-index="${i}" style="width:17px;height:17px;accent-color:${lc.border};cursor:pointer;" onchange="updateProgress('${org.name}','${level}')" ${savedProgress.includes(i) ? 'checked' : ''}>
+            <span style="font-size:13px;color:${document.documentElement.classList.contains('dark')?'#e5e7eb':'#374151'};font-weight:500;">${escapeHtml(step)}</span>
+          </label>
+        `).join('');
+      }
+     updateProgress(org.name, level);
+     
+      // Animate button feedback
+      newBtn.textContent = '✓ Path Generated!';
+      newBtn.style.background = 'linear-gradient(135deg,#16a34a,#22c55e)';
+      setTimeout(() => {
+        newBtn.innerHTML = '✦ Generate Contribution Path';
+        newBtn.style.background = 'linear-gradient(135deg,#9d4300,#f97316)';
       }, 2000);
     });
-  };
-  document.getElementById('mIdeasBtn').after(copyBtn);
-}
-    renderMentorContactSection(org);
-     
-    document.getElementById('orgModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
   }
+
+  // Open the modal
+  document.getElementById('orgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
   function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.style.overflow = 'auto';
   }
+
+  function updateProgress(orgName, level) {
+    const checks = document.querySelectorAll('#contributionChecklist .roadmap-check');
+    const total = checks.length;
+    const done = [...checks].filter(c => c.checked).length;
+    const percentage = total > 0 ? (done / total) * 100 : 0;
+
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    if (progressBar) progressBar.style.width = percentage + '%';
+
+    if (progressText) {
+      if (total === 0) {
+        progressText.textContent = 'Click "Generate" to start your contribution path';
+        progressText.style.color = '#888';
+        progressText.style.fontWeight = '400';
+      } else if (done === total) {
+        progressText.textContent = `🎉 All ${total} tasks completed!`;
+        progressText.style.color = '#16a34a';
+        progressText.style.fontWeight = '700';
+        showNextActions();
+      } else {
+        progressText.textContent = `${done} of ${total} tasks completed`;
+        progressText.style.color = '#888';
+        progressText.style.fontWeight = '400';
+        const nextSection = document.getElementById('nextActionsSection');
+        if (nextSection) nextSection.style.display = 'none';
+      }
+    }
+
+    // Save to localStorage
+    if (orgName && level) {
+      const checkedIndexes = [...checks]
+        .map((c, i) => c.checked ? i : null)
+        .filter(i => i !== null);
+      localStorage.setItem(`progress_${orgName}_${level}`, JSON.stringify(checkedIndexes));
+    }
+  }
+  
+  function showNextActions() {
+  // Don't show twice
+  if (document.getElementById('nextActionsSection')) return;
+
+  const orgName = document.querySelector('#mHeader h2')?.textContent;
+  const org = ORGS.find(o => o.name === orgName);
+  if (!org) return;
+
+  const ideasUrl = sanitizeHrefUrl(org.ideas);
+  const gfiUrl = `https://github.com/${org.github}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22`;
+  const repoUrl = sanitizeHrefUrl(`https://github.com/${org.github}`);
+
+  const section = document.createElement('div');
+  section.id = 'nextActionsSection';
+  section.innerHTML = `
+    <div style="margin-top:20px;padding:18px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #22c55e;border-radius:14px;">
+      <p style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:12px;">
+        🚀 What's Next?
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="${gfiUrl}" target="_blank" rel="noopener noreferrer"
+          style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border:1px solid #bbf7d0;border-radius:10px;text-decoration:none;transition:all .15s;"
+          onmouseover="this.style.borderColor='#22c55e';this.style.transform='translateX(4px)'"
+          onmouseout="this.style.borderColor='#bbf7d0';this.style.transform='translateX(0)'">
+          <span style="font-size:18px;">🐛</span>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:#1a1c1c;margin:0;">Browse Good First Issues</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">Find beginner-friendly issues in ${escapeHtml(org.name)}</p>
+          </div>
+          <span style="margin-left:auto;font-size:12px;color:#22c55e;">→</span>
+        </a>
+
+        ${ideasUrl ? `
+        <a href="${ideasUrl}" target="_blank" rel="noopener noreferrer"
+          style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border:1px solid #bbf7d0;border-radius:10px;text-decoration:none;transition:all .15s;"
+          onmouseover="this.style.borderColor='#22c55e';this.style.transform='translateX(4px)'"
+          onmouseout="this.style.borderColor='#bbf7d0';this.style.transform='translateX(0)'">
+          <span style="font-size:18px;">💡</span>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:#1a1c1c;margin:0;">View Project Ideas Page</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">Explore GSoC project ideas for ${escapeHtml(org.name)}</p>
+          </div>
+          <span style="margin-left:auto;font-size:12px;color:#22c55e;">→</span>
+        </a>` : ''}
+
+        <a href="${repoUrl}" target="_blank" rel="noopener noreferrer"
+          style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border:1px solid #bbf7d0;border-radius:10px;text-decoration:none;transition:all .15s;"
+          onmouseover="this.style.borderColor='#22c55e';this.style.transform='translateX(4px)'"
+          onmouseout="this.style.borderColor='#bbf7d0';this.style.transform='translateX(0)'">
+          <span style="font-size:18px;">📦</span>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:#1a1c1c;margin:0;">Visit Repository</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">Star, fork and start contributing to ${escapeHtml(org.name)}</p>
+          </div>
+          <span style="margin-left:auto;font-size:12px;color:#22c55e;">→</span>
+        </a>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border:1px solid #bbf7d0;border-radius:10px;">
+          <span style="font-size:18px;">✍️</span>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:#1a1c1c;margin:0;">Start Writing Your Proposal</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">You're ready! Draft your GSoC proposal for ${escapeHtml(org.name)}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Insert after the checklist
+  const checklistContainer = document.getElementById('contributionChecklist');
+  if (checklistContainer) {
+    checklistContainer.after(section);
+  }
+}
+
+  function generateContributionPath(level) {
+  const paths = {
+    beginner: [
+      "📖 Read the organization overview and mission",
+      "📋 Read CONTRIBUTING.md and code of conduct",
+      "⚙️ Fork the repo and set up the project locally",
+      "🐛 Find and solve a 'good first issue'",
+      "💬 Introduce yourself in community channels (Slack/Discord/Zulip)",
+      "🔀 Submit your first Pull Request and respond to review feedback"
+    ],
+    intermediate: [
+      "🗺️ Study the overall project architecture and module structure",
+      "🔧 Set up the full development environment with tests passing",
+      "🔍 Read through 5+ existing merged PRs to understand code style",
+      "🐞 Pick and fix a medium-complexity bug or enhancement issue",
+      "👀 Review 2-3 open PRs and leave constructive comments",
+      "📝 Draft your GSoC proposal outline with a mentor's feedback",
+      "🚀 Submit 2-3 quality PRs demonstrating consistent contribution",
+      "📊 Document your contributions and build your proposal narrative"
+    ],
+    advanced: [
+      "🔬 Deep-dive into the codebase — read core modules and tests thoroughly",
+      "🗣️ Engage actively with maintainers on architectural discussions",
+      "🎯 Identify a meaningful gap or improvement in the project",
+      "⚡ Implement a significant feature or major refactor with tests",
+      "🤝 Help onboard newcomers and review beginner PRs",
+      "📐 Design your GSoC project plan with milestones and deliverables",
+      "✍️ Write a detailed, technically strong GSoC proposal",
+      "🏆 Submit the final proposal with mentor endorsement"
+    ]
+  };
+
+  return paths[level] || paths.beginner;
+}
 
   function openRandomOrg() {
     const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;

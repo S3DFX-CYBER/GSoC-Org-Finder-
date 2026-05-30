@@ -707,3 +707,115 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* Contribution Section */
+
+/* ── CONTRIBUTION PATH GENERATOR ── */
+#difficultySelect {
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9f9f9;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1c1c;
+  outline: none;
+  cursor: pointer;
+  min-width: 160px;
+  transition: border-color .18s;
+}
+#difficultySelect:focus { border-color: #f97316; }
+
+#generateRoadmapBtn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .03em;
+  transition: all .2s;
+  box-shadow: 0 2px 8px rgba(157,67,0,.25);
+}
+#generateRoadmapBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(157,67,0,.35);
+}
+
+#progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+#progressText {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+  transition: color .2s;
+}
+
+#contributionChecklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#learningRoadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Dark mode overrides for contribution section */
+[data-theme="dark"] #difficultySelect {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #e5e7eb;
+}
+[data-theme="dark"] #difficultySelect:focus { border-color: #f97316; }
+
+[data-theme="dark"] #generateRoadmapBtn {
+  background: linear-gradient(135deg, #7c2d12, #f97316);
+}
+
+[data-theme="dark"] #contributionChecklist label {
+  background: #1f1f23;
+  border-color: #3f3f46;
+  color: #e5e7eb;
+}
+[data-theme="dark"] #contributionChecklist label:hover {
+  background: #27272a;
+}
+
+[data-theme="dark"] #learningRoadmap > div {
+  background: #18181b !important;
+  border-color: #3f3f46 !important;
+}
+[data-theme="dark"] #learningRoadmap > div span:last-child {
+  color: #e5e7eb !important;
+}
+
+/* Next Actions section dark mode */
+[data-theme="dark"] #nextActionsSection > div {
+  background: linear-gradient(135deg, #052e16, #14532d) !important;
+  border-color: #166534 !important;
+}
+[data-theme="dark"] #nextActionsSection a,
+[data-theme="dark"] #nextActionsSection > div > div > div {
+  background: #18181b !important;
+  border-color: #166534 !important;
+}
+[data-theme="dark"] #nextActionsSection p[style*="color:#1a1c1c"] {
+  color: #f4f4f5 !important;
+}
+[data-theme="dark"] #nextActionsSection p[style*="color:#6b7280"] {
+  color: #a1a1aa !important;
+}
+[data-theme="dark"] #progressTrack {
+  background: #3f3f46 !important;
+  border-color: #52525b !important;
+}

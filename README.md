@@ -441,11 +441,13 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Konarksharma13"><img src="https://github.com/Konarksharma13.png" width="50px" alt="Konarksharma13" /></a>
 <a href="https://github.com/Kuldeeps1505"><img src="https://github.com/Kuldeeps1505.png" width="50px" alt="Kuldeeps1505" /></a>
 <a href="https://github.com/Manasa-2303"><img src="https://github.com/Manasa-2303.png" width="50px" alt="Manasa-2303" /></a>
+<a href="https://github.com/OmkarAKadam"><img src="https://github.com/OmkarAKadam.png" width="50px" alt="OmkarAKadam" /></a>
 <a href="https://github.com/Manav5234"><img src="https://github.com/Manav5234.png" width="50px" alt="Manav5234" /></a>
 <a href="https://github.com/MehtabSandhu11"><img src="https://github.com/MehtabSandhu11.png" width="50px" alt="MehtabSandhu11" /></a>
 <a href="https://github.com/OmkarAKadam"><img src="https://github.com/OmkarAKadam.png" width="50px" alt="OmkarAKadam" /></a>
 <a href="https://github.com/Pranav-IIITM"><img src="https://github.com/Pranav-IIITM.png" width="50px" alt="Pranav-IIITM" /></a>
 <a href="https://github.com/PrincePundir123"><img src="https://github.com/PrincePundir123.png" width="50px" alt="PrincePundir123" /></a>
+
 <a href="https://github.com/S3DFX-CYBER"><img src="https://github.com/S3DFX-CYBER.png" width="50px" alt="S3DFX-CYBER" /></a>
 <a href="https://github.com/SHUBHAM2775"><img src="https://github.com/SHUBHAM2775.png" width="50px" alt="SHUBHAM2775" /></a>
 <a href="https://github.com/Sha-lini3"><img src="https://github.com/Sha-lini3.png" width="50px" alt="Sha-lini3" /></a>
@@ -497,9 +499,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/vaibhavi-vaishnav"><img src="https://github.com/vaibhavi-vaishnav.png" width="50px" alt="vaibhavi-vaishnav" /></a>
 <a href="https://github.com/yuvraj-k-singh"><img src="https://github.com/yuvraj-k-singh.png" width="50px" alt="yuvraj-k-singh" /></a>
 <!-- CONTRIBUTORS_END -->
-
 ## Star History
-
 <a href="https://www.star-history.com/?repos=S3DFX-CYBER%2FGSoC-Org-Finder-&type=date&legend=top-left">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&theme=dark&legend=top-left" />
@@ -507,13 +507,9 @@ These mentors help guide and review contributions for the GSSoC program:
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=S3DFX-CYBER/GSoC-Org-Finder-&type=date&legend=top-left" />
  </picture>
 </a>
-
 ## 📄 License
-
 Apache 2.0 — made for GSoC beginners, by people who've been there.
 Share it with anyone applying! Applications open **March 16, 2026**. 🙌
 <center>
-  
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
-
 </center>

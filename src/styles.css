@@ -708,3 +708,22 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* ── Proposal Generator ─────────────────────────── */
+.proposal-btn{background:var(--purple);color:#fff;border:none;border-radius:10px;padding:11px 20px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:opacity .18s,background .18s;display:inline-flex;align-items:center;gap:8px}
+.proposal-btn:hover{opacity:.88}
+.proposal-btn:disabled{opacity:.55;cursor:not-allowed}
+[data-theme="dark"] .proposal-btn{background:var(--purple)}
+
+#proposal-output{display:none;margin-top:20px;border-top:1.5px solid var(--border);padding-top:16px}
+#proposal-output.visible{display:block}
+
+.proposal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.proposal-header h3{font-size:14px;font-weight:700;color:var(--ink)}
+
+.proposal-copy-btn{background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:inherit;transition:all .18s}
+.proposal-copy-btn:hover{border-color:var(--purple);color:var(--purple);background:var(--orange-pale)}
+
+.proposal-text{white-space:pre-wrap;font-family:inherit;font-size:0.875rem;line-height:1.7;color:var(--ink2);max-height:420px;overflow-y:auto;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px}
+[data-theme="dark"] .proposal-text{background:var(--an-bg)}
+
+@media(max-width:640px){.proposal-btn{font-size:12px;padding:9px 14px}.proposal-text{font-size:0.8rem;max-height:300px}}

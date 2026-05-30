@@ -1408,22 +1408,88 @@
     "ideasUrl": "https://gcc.gnu.org/wiki/SummerOfCode",
     "channels": [
       {
+        "type": "IRC",
+        "url": "https://web.libera.chat/?channel=#gcc",
+        "label": "#gcc on irc.oftc.net"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/?channel=#gccrust",
+        "label": "#gccrust on irc.oftc.net (Rust frontend)"
+      },
+      {
         "type": "Zulip",
         "url": "https://gcc-rust.zulipchat.com/",
-        "label": "Zulip"
+        "label": "gccrs (Rust frontend) Zulip"
       }
     ],
     "mentors": [
       {
         "name": "Tobias Burnus",
-        "github": "",
-        "githubUrl": ""
+        "github": "tob2",
+        "githubUrl": "https://github.com/tob2"
+      },
+      {
+        "name": "David Malcolm",
+        "github": "davidmalcolm",
+        "githubUrl": "https://github.com/davidmalcolm"
+      },
+      {
+        "name": "S. Tucker Taft",
+        "github": "sttaft",
+        "githubUrl": "https://github.com/sttaft"
+      },
+      {
+        "name": "Richard Wai",
+        "github": "Richard-Wai",
+        "githubUrl": "https://github.com/Richard-Wai"
+      },
+      {
+        "name": "Thomas Schwinge",
+        "github": "tschwinge",
+        "githubUrl": "https://github.com/tschwinge"
+      },
+      {
+        "name": "Arthur Cohen",
+        "github": "CohenArthur",
+        "githubUrl": "https://github.com/CohenArthur"
+      },
+      {
+        "name": "Pierre-Emmanuel Patry",
+        "github": "P-E-P",
+        "githubUrl": "https://github.com/P-E-P"
+      },
+      {
+        "name": "Himadri Chhaya-Shailesh",
+        "github": "himadrics",
+        "githubUrl": "https://github.com/himadrics"
+      },
+      {
+        "name": "Andrea Righi",
+        "github": "arighi",
+        "githubUrl": "https://github.com/arighi"
+      },
+      {
+        "name": "Martin Jambor",
+        "github": "jamborm",
+        "githubUrl": "https://github.com/jamborm"
       }
     ],
-    "mailingLists": [],
-    "tip": "Post a new topic in the GSoC stream with your background and interest.",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://gcc.gnu.org/ml/gcc/",
+        "label": "gcc@gcc.gnu.org — primary GSoC discussion (put 'GSoC' in subject)"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://gcc.gnu.org/ml/gcc-rust/",
+        "label": "gcc-rust@gcc.gnu.org — Rust frontend discussion"
+      }
+    ],
+    "tip": "Email gcc@gcc.gnu.org with 'GSoC' in the subject to introduce yourself and discuss your project idea. For gccrs (Rust frontend) projects, use the Zulip or #gccrust IRC channel on irc.oftc.net instead.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-30T00:00:00.000Z"
   },
   "GNU Image Manipulation Program": {
     "org": "GNU Image Manipulation Program",

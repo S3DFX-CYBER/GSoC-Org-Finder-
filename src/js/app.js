@@ -254,6 +254,54 @@ const pills=new Set();
 const chips=new Set();
 let matchAllLanguages=false; // false = OR (any), true = AND (all)
 
+// ══════════════════════════════════════════════
+// FILTER STATE MANAGEMENT
+// ══════════════════════════════════════════════
+let filterState = {
+  search: '',
+  type: [],
+  language: [],
+  category: 'all',
+  complexity: 'all',
+  sort: 'alpha'
+};
+
+// Initialize filter state from URL on page load
+function loadFilterStateFromUrl(){
+  const params = new URLSearchParams(location.search);
+  const search = params.get('q') || '';
+  const category = params.get('cat') || 'all';
+  const complexity = params.get('complexity') || 'all';
+  const sort = params.get('sort') || 'alpha';
+  const langStr = params.get('lang');
+  const languages = langStr ? langStr.split(',') : [];
+
+  filterState = {search, type: [], language: languages, category, complexity, sort};
+  return filterState;
+}
+
+// ══════════════════════════════════════════════
+// DEBOUNCED SEARCH
+// ══════════════════════════════════════════════
+function debounce(func, delay) {
+  let timeoutId;
+  return function(...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+}
+
+const debouncedSearch = debounce((searchValue) => {
+  filterState.search = searchValue.toLowerCase();
+  applyFilters();
+}, 300); // 300ms debounce delay
+
+function handleSearchInput(e) {
+  const value = e.target.value;
+  document.getElementById('searchInput').value = value;
+  debouncedSearch(value);
+}
+
 // Expose to global scope for HTML onclick handlers and debugging
 globalThis.pills = pills;
 globalThis.matchAllLanguages = matchAllLanguages;
@@ -499,21 +547,50 @@ function showCompareToast(msg){
 function showSkeletons(count = 12) {
   const grid = document.getElementById('orgGrid');
   if (!grid) return;
+  
+  // ════════════════════════════════════════════════════════════════
+  // ENHANCED LOADING STATE (Issue #4 Fix)
+  // Replace plain text loading with visual skeleton card placeholders
+  // Includes shimmer animation for better perceived performance
+  // ════════════════════════════════════════════════════════════════
+  
   grid.innerHTML = Array.from({ length: count }, () => `
-    <div class="skeleton-card" aria-hidden="true">
+    <div class="skeleton-card animate-pulse" aria-hidden="true">
       <div class="skeleton-head">
-        <div class="skeleton-logo"></div>
+        <div class="skeleton-logo bg-gradient-to-br from-zinc-200 to-zinc-300 rounded-lg"></div>
         <div class="skeleton-lines">
-          <div class="skeleton-line skeleton-title"></div>
-          <div class="skeleton-line skeleton-subtitle"></div>
+          <div class="skeleton-line skeleton-title bg-zinc-200 rounded"></div>
+          <div class="skeleton-line skeleton-subtitle bg-zinc-100 rounded" style="width:75%"></div>
         </div>
       </div>
-      <div class="skeleton-line skeleton-body"></div>
+      <div class="skeleton-line skeleton-body bg-zinc-100 rounded" style="height:50px;width:100%"></div>
       <div class="skeleton-tags">
-        <div class="skeleton-pill"></div>
-        <div class="skeleton-pill"></div>
-        <div class="skeleton-pill"></div>
+        <div class="skeleton-pill bg-zinc-100 rounded-full"></div>
+        <div class="skeleton-pill bg-zinc-100 rounded-full" style="width:65%"></div>
+        <div class="skeleton-pill bg-zinc-100 rounded-full" style="width:80%"></div>
       </div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <div class="skeleton-pill bg-zinc-100 rounded" style="width:60px;height:24px"></div>
+        <div class="skeleton-pill bg-zinc-100 rounded" style="width:80px;height:24px"></div>
+        <div class="skeleton-pill bg-zinc-100 rounded" style="width:70px;height:24px"></div>
+      </div>
+      <style>
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+        .skeleton-card {
+          background: linear-gradient(90deg, #f3f3f3 0%, #ffffff 50%, #f3f3f3 100%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton-card {
+            animation: none;
+            background: #f3f3f3;
+          }
+        }
+      </style>
     </div>
   `).join('');
 }
@@ -634,8 +711,6 @@ function applyFilters(){
     });
   }
 
-
-
   // Apply other sorting if no search
   if(!search){
     res.sort((a,b) => applySecondarySort(a, b, sort));
@@ -644,7 +719,12 @@ function applyFilters(){
   filteredOrgs=res;
   focusedIdx=-1;
   renderGrid(res);
-  document.getElementById('orgCount').textContent = res.length;
+  
+  // ════════════════════════════════════════════════════════════════
+  // DYNAMIC ORG COUNT (Issue #2 Fix)
+  // Update org count based on filtered results, not hardcoded value
+  // ════════════════════════════════════════════════════════════════
+  updateDynamicOrgCount(res.length);
 
   // Sync filter state to URL
   const params = new URLSearchParams();
@@ -654,6 +734,26 @@ function applyFilters(){
   if (selectedLangs.length)    params.set('lang', selectedLangs.join(','));
   if (sort && sort !== 'alpha')    params.set('sort',sort);
   history.replaceState(null,'',params.toString()?'?'+params.toString():location.pathname);
+}
+
+/**
+ * Update the org count display dynamically based on filtered results
+ * Fixes issue where count was hardcoded to 184 regardless of filters
+ */
+function updateDynamicOrgCount(filteredCount) {
+  const countElement = document.getElementById('orgCount');
+  const totalCount = ORGS.length;
+  if (countElement) {
+    countElement.textContent = filteredCount;
+    // Add visual feedback if filtered results differ from total
+    if (filteredCount !== totalCount) {
+      countElement.style.color = '#9d4300';
+      countElement.style.fontWeight = '700';
+    } else {
+      countElement.style.color = 'inherit';
+      countElement.style.fontWeight = 'inherit';
+    }
+  }
 }
 
 function applySecondarySort(a, b, sortType) {
@@ -1397,13 +1497,12 @@ requestAnimationFrame(()=>{
 const heroSearch = document.getElementById('hero-search');
 if (heroSearch) {
   heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-  heroSearch.addEventListener('input', (e) => {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-      searchInput.value = e.target.value;
-      applyFilters();
-    }
-  });
+  // ════════════════════════════════════════════════════════════════
+  // DEBOUNCED SEARCH INPUT (Issue #1 Fix)
+  // Use handleSearchInput which debounces to prevent performance issues
+  // from triggering applyFilters() on every keystroke
+  // ════════════════════════════════════════════════════════════════
+  heroSearch.addEventListener('input', handleSearchInput);
 }
 
 // Event listeners for selects

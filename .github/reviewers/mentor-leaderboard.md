@@ -5,7 +5,7 @@
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
 | 🥇 | @TarunyaProgrammer | 13 | 53 |
-| 🥈 | @nitinog10 | 10 | 42 |
+| 🥈 | @nitinog10 | 12 | 49 |
 | 🥉 | @4f4d | 7 | 37 |
 | 4 | @KUMARNiru007 | 9 | 31 |
 | 5 | @deepak0x | 5 | 20 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Fri, 29 May 2026 06:03:21 GMT
+Last updated: Fri, 29 May 2026 20:11:39 GMT

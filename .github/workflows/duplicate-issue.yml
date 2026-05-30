@@ -21,11 +21,15 @@ jobs:
       github.actor != 'github-actions[bot]'
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Analyze Issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fs = require('fs');
             const issue = context.payload.issue;
 
             const owner = context.repo.owner;
@@ -49,13 +53,50 @@ jobs:
               return;
             }
 
+            // Skip repository owner
+            if (username === owner) {
+              core.info('Skipping owner issue');
+              return;
+            }
+
+            // Skip maintainers
+            const association =
+              issue.author_association || '';
+
+            if (
+              ['OWNER', 'MEMBER', 'COLLABORATOR']
+                .includes(association)
+            ) {
+              core.info('Skipping maintainer issue');
+              return;
+            }
+
+            // Skip mentors
+            try {
+              if (fs.existsSync('.github/reviewers/gssoc-mentors.json')) {
+                const mentorsData = JSON.parse(
+                  fs.readFileSync('.github/reviewers/gssoc-mentors.json', 'utf8')
+                );
+                const mentors = (mentorsData.reviewers || [])
+                  .map(m => m.toLowerCase());
+                
+                if (mentors.includes(username.toLowerCase())) {
+                  core.info('Skipping mentor issue');
+                  return;
+                }
+              }
+            } catch (err) {
+              core.warning('Mentor list check failed: ' + err.message);
+            }
+
             const labels = (issue.labels || [])
               .map(l => l.name.toLowerCase());
 
             // Ignore exempt labels
             if (
               labels.includes('research') ||
-              labels.includes('meta')
+              labels.includes('meta') ||
+              labels.includes('maintainer-task')
             ) {
               core.info('Skipping exempt issue');
               return;
@@ -70,6 +111,24 @@ jobs:
             // Ignore weak issues
             if (title.length < 12) {
               core.info('Title too short');
+              return;
+            }
+
+            // Allowlist structured series
+            const ALLOWLIST_PREFIXES = [
+              'Data Research Task:',
+              'Fix mentor contact info for',
+              '[MAINTAINER TASK]',
+              'chore:',
+              'docs:'
+            ];
+
+            if (
+              ALLOWLIST_PREFIXES.some(prefix =>
+                title.startsWith(prefix)
+              )
+            ) {
+              core.info('Skipping allowlisted structured issue');
               return;
             }
 
@@ -197,7 +256,8 @@ jobs:
 
               if (
                 existingLabels.includes('research') ||
-                existingLabels.includes('meta')
+                existingLabels.includes('meta') ||
+                existingLabels.includes('maintainer-task')
               ) {
                 continue;
               }
@@ -235,10 +295,10 @@ jobs:
                 `Issue #${existing.number} score=${finalScore.toFixed(2)} overlap=${keywordOverlap}`
               );
 
-              // Conservative thresholds
+              // Stricter thresholds (90%+)
               if (
-                finalScore >= 0.82 &&
-                keywordOverlap >= 3
+                finalScore >= 0.90 &&
+                keywordOverlap >= 4
               ) {
 
                 if (finalScore > bestScore) {

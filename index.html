@@ -747,6 +747,73 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    
+    /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
+    .timeline-border-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 20;
+      overflow: visible;
+    }
+
+    .timeline-border-rect {
+      stroke-dasharray: 25 75;
+      stroke-dashoffset: 100;
+      animation: draw-border 4s linear infinite;
+      rx: 16px;
+      ry: 16px;
+      x: 0.75px;
+      y: 0.75px;
+      width: calc(100% - 1.5px);
+      height: calc(100% - 1.5px);
+      stroke: #f97316;
+      stroke-width: 1.5;
+    }
+
+    .dark .timeline-border-rect {
+      stroke: #fb923c;
+    }
+
+    @media (min-width: 640px) {
+      /* Keep standard responsive corner rounding for the timeline card */
+      #timeline .timeline-border-rect {
+        rx: 24px;
+        ry: 24px;
+      }
+    }
+
+    @keyframes draw-border {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Respect accessibility preferences for reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .timeline-border-rect {
+        animation: none;
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Smooth fading for search bar active animation on focus */
+    .search-bar-container:focus-within .timeline-border-svg {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    /* Solid color outline transition on focus */
+    .search-bar-container:focus-within .search-border-outer {
+      background: #f97316;
+    }
+    .dark .search-bar-container:focus-within .search-border-outer {
+      background: #fb923c;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -905,9 +972,18 @@
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+      <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
+        <div class="relative rounded-2xl p-[1.5px] bg-zinc-200 dark:bg-zinc-800 transition-all duration-300 search-border-outer">
+          <!-- SVG Flowing Border Effect -->
+          <svg class="timeline-border-svg" fill="none">
+            <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
+          </svg>
+          <!-- Inner Input Layer -->
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+          </div>
+        </div>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -934,16 +1010,23 @@
     </div>
     <!-- Timeline Card -->
     <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+      <div class="relative rounded-2xl sm:rounded-3xl p-[1.5px] bg-zinc-200 dark:bg-zinc-700 transition-colors duration-300">
+        <!-- SVG Flowing Border Effect -->
+        <svg class="timeline-border-svg" fill="none">
+          <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
+        </svg>
+        <!-- Inner Card Content Layer -->
+        <div class="relative z-10 bg-white rounded-[calc(1rem-1.5px)] sm:rounded-[calc(1.5rem-1.5px)] p-6 sm:p-8 h-full w-full">
+          <div class="flex items-center justify-between mb-6 sm:mb-8">
+            <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
+            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+          </div>
+          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
+              <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+            </div>
           </div>
         </div>
       </div>
@@ -2649,7 +2732,7 @@ sections.forEach(sectionId => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up flex flex-col h-full';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);
@@ -2671,13 +2754,13 @@ sections.forEach(sectionId => {
         </div>
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 flex-grow">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 mt-auto">
           <div class="flex items-center gap-3">
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}

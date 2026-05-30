@@ -239,12 +239,34 @@
   "AOSSIE": {
     "org": "AOSSIE",
     "ideasUrl": "https://github.com/AOSSIE-Org/Info/blob/main/GSoC-Ideas/2026/index.md",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/aossie",
+        "label": "AOSSIE Discord"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Bruno Woltzenlogel Paleo",
+        "github": "Zahnentferner",
+        "githubUrl": "https://github.com/Zahnentferner"
+      },
+      {
+        "name": "Jaideep Prasad",
+        "github": "jddeep",
+        "githubUrl": "https://github.com/jddeep"
+      },
+      {
+        "name": "Garv Agarwal",
+        "github": "SharkyBytes",
+        "githubUrl": "https://github.com/SharkyBytes"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join the AOSSIE Discord server and discuss ideas publicly in project-specific channels.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T09:04:30.000Z"
   },
   "Apache Software Foundation": {
     "org": "Apache Software Foundation",
@@ -562,21 +584,68 @@
   "CGAL Project": {
     "org": "CGAL Project",
     "ideasUrl": "https://github.com/CGAL/cgal/wiki/Project-Ideas-for-GSOC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+     {
+    "type": "Stack Overflow",
+    "url": "https://stackoverflow.com/questions/tagged/cgal",
+    "label": "CGAL on Stack Overflow"
+     }
+    ],
+    "mentors": [
+      { "name": "Sebastien Loriot", "github": "", "githubUrl": "" },
+      { "name": "Andreas Fabri", "github": "", "githubUrl": "" },
+      { "name": "Efi Fogel", "github": "", "githubUrl": "" },
+      { "name": "Jane Tournois", "github": "", "githubUrl": "" },
+      { "name": "Mael Rouxel-Labbé", "github": "", "githubUrl": "" },
+      { "name": "Sven Oesau", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:gsoc-cgal@inria.fr",
+        "label": "CGAL GSoC Mailing List"
+      },
+      {
+        "type": "Email",
+        "url": "mailto:cgal-discuss@inria.fr",
+        "label": "CGAL Public Discussion List"
+      }
+    ],
+    "tip": "Email gsoc-cgal@inria.fr for GSoC queries. For general discussion join cgal-discuss@inria.fr. Ideas page at https://github.com/CGAL/cgal/wiki/Project-Ideas-for-GSOC-2026",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "checkstyle": {
     "org": "checkstyle",
     "ideasUrl": "https://github.com/checkstyle/checkstyle/wiki/GSoC-2026-Project-Ideas",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.gg/F6MkcwvZT8",
+        "label": "Checkstyle Discord Server"
+      }
+    ],
+    "mentors": [
+      { "name": "Roman Ivanov", "github": "romani", "githubUrl": "https://github.com/romani" },
+      { "name": "Ruslan Diachenko", "github": "", "githubUrl": "" },
+      { "name": "Mohamed Mahfouz", "github": "", "githubUrl": "" },
+      { "name": "Mauryan Kansara", "github": "", "githubUrl": "" },
+      { "name": "Baratali Izmailov", "github": "", "githubUrl": "" },
+      { "name": "Andrei Paikin", "github": "", "githubUrl": "" },
+      { "name": "Daniel Mühlbachler", "github": "", "githubUrl": "" },
+      { "name": "stoyan", "github": "", "githubUrl": "" },
+      { "name": "kkoutsilis", "github": "", "githubUrl": "" },
+      { "name": "Mohit", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:checkstyle-devel@googlegroups.com",
+        "label": "Checkstyle Developer Mailing List"
+      }
+    ],
+    "tip": "Join the Discord server at https://discord.gg/F6MkcwvZT8. Each project idea has its own Discord QnA channel with invite link on the ideas page. Mailing list: checkstyle-devel@googlegroups.com",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "CircuitVerse.org": {
@@ -726,13 +795,46 @@
   },
   "Cuneiform Digital Library Initiative (CDLI)": {
     "org": "Cuneiform Digital Library Initiative (CDLI)",
-    "ideasUrl": "https://cdli-gh.github.io/pages/gsoc.html",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/cuneiform-digital-library-initiative-cdli",
+    "channels": [
+      {
+        "type":"Chat",
+        "url":"https://gitlab.com/cdli/framework/-/wikis/Join-the-Community-and-GSoC-Contact",
+        "label":"CDLI Chat"
+      },
+      {
+        "type":"Blog",
+        "url":"https://www.linkedin.com/company/cuneiform-digital-library-initiative/",
+        "label":"CDLI Blog"
+
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Nisheal John",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Vedant Wakalkar",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Vishv Kakadiya",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Daksh Paleria",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Read GSoC proposal writing guide and discuss your ideas with mentors before submitting a proposal",
+    "status": "ok",
+    "lastFetched": "2026-05-29T15:20:00.000Z"
   },
   "D Language Foundation": {
     "org": "D Language Foundation",
@@ -757,22 +859,96 @@
   "Data for the Common Good": {
     "org": "Data for the Common Good",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/data-for-the-common-good",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Email",
+        "url": "mailto:lgraglia@uchicago.edu",
+        "label": "Data for the Common Good contact Email"
+      },
+      {
+        "type": "X",
+        "url": "https://x.com/PedsDataCommons",
+        "label": "Data for the Common Good on X"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Brian Furner",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Steve Krasinsky",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Tianyun Zhang",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Paul Murdoch",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Jooho Lee",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "To contribute to the Project take a look at its Contribution Guidance in the GSoC organisation page.",
+    "status": "ok",
+    "lastFetched": "2026-05-29T15:10:00.000Z"
   },
   "DBpedia": {
     "org": "DBpedia",
     "ideasUrl": "https://github.com/dbpedia/databus/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type":"Discord",
+        "url":"https://discord.gg/fB8byAPP7e",
+        "label":"DBpedia Discord"
+      },
+      {
+        "type":"Forum",
+        "url":"https://forum.dbpedia.org/",
+        "label":"DBpedia Community Forum"
+      },
+      {
+        "type":"Email",
+        "url":"mailto:dbpedia@infai.org",
+        "label":"DBpedia contact Email"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Tommaso Soru",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Ronit Banerjee",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Ricardo Usbeck",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Tilahun Abedissa",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join the Discord dev channel or contact the Databus team via email.",
+    "status": "ok",
+    "lastFetched": "2026-05-29T15:00:00.000Z"
   },
   "Debian": {
     "org": "Debian",
@@ -835,18 +1011,90 @@
   "Django Software Foundation": {
     "org": "Django Software Foundation",
     "ideasUrl": "https://code.djangoproject.com/wiki/SummerOfCode2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forum.djangoproject.com/c/internals/mentorship/10",
+        "label": "Django Forum - Mentorship channel"
+      },
+      {
+        "type": "Discord",
+        "url": "https://chat.djangoproject.com",
+        "label": "Django Discord"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django-dev",
+        "label": "#django-dev on Libera.Chat"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django",
+        "label": "#django on Libera.Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Andrew Miller",
+        "github": "nanorepublica",
+        "githubUrl": "https://github.com/nanorepublica"
+      },
+      {
+        "name": "Sarah Boyce",
+        "github": "sarahboyce",
+        "githubUrl": "https://github.com/sarahboyce"
+      },
+      {
+        "name": "Bhuvnesh Sharma",
+        "github": "DevilsAutumn",
+        "githubUrl": "https://github.com/DevilsAutumn"
+      },
+      {
+        "name": "Jacob Walls",
+        "github": "jacobtylerwalls",
+        "githubUrl": "https://github.com/jacobtylerwalls"
+      },
+      {
+        "name": "Saptak Sengupta",
+        "github": "SaptakS",
+        "githubUrl": "https://github.com/saptaks"
+      },
+      {
+        "name": "Sarah Abderemane",
+        "github": "sabderemane",
+        "githubUrl": "https://github.com/sabderemane"
+      },
+      {
+        "name": "Apoorv Garg",
+        "github": "Apoorvgarg-creator",
+        "githubUrl": "https://github.com/Apoorvgarg-creator"
+      },
+      {
+        "name": "Thibaut Decombe",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Sage Abdullah",
+        "github": "laymonage",
+        "githubUrl": "https://github.com/laymonage"
+      },
+      {
+        "name": "Simon Charette",
+        "github": "charettes",
+        "githubUrl": "https://github.com/charettes"
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://groups.google.com/g/django-developers/c/at-G0hZrfXE",
-        "label": "​ https://groups.google.com/g/django-developers/c/at-G0hZrfXE"
+        "url": "https://groups.google.com/g/django-developers",
+        "label": "django-developers Google Group"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Post your draft proposal to the Django Forum Mentorship channel for feedback. Start contributing to Django before applying to become a known contributor.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-29T00:00:00.000Z"
   },
   "dora-rs": {
     "org": "dora-rs",
@@ -1352,11 +1600,28 @@
   "HumanAI": {
     "org": "HumanAI",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/humanai",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#humanai-foundation:gitter.im",
+        "label": "HumanAI Gitter/Matrix"
+      }
+    ],
+    "mentors": [
+      { "name": "Prof. Sergei Gleyzer", "github": "", "githubUrl": "" },
+      { "name": "Prof. Xabier Granja", "github": "", "githubUrl": "" },
+      { "name": "Prof. Emanuele Usai", "github": "", "githubUrl": "" },
+      { "name": "Prof. Despina Stavrinos", "github": "", "githubUrl": "" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:human-ai@cern.ch",
+        "label": "HumanAI GSoC Admin Email"
+      }
+    ],
+    "tip": "Contact admins at human-ai@cern.ch or join the Gitter/Matrix channel at https://matrix.to/#/#humanai-foundation:gitter.im",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "INCF": {

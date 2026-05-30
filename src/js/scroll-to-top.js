@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let isScrolling = false;
   const handleScroll = () => {
     if (!isScrolling) {
-      window.requestAnimationFrame(() => {
-        if (window.scrollY > 300) {
+      globalThis.requestAnimationFrame(() => {
+        if (globalThis.scrollY > 300) {
           button.classList.remove('translate-y-4', 'opacity-0', 'pointer-events-none');
           button.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
         } else {
@@ -44,12 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Smooth scroll back to top
   button.addEventListener('click', () => {
-    window.scrollTo({
+    globalThis.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   });
 
-  // Attach window scroll listener
-  window.addEventListener('scroll', handleScroll);
+  // Attach globalThis scroll listener
+  globalThis.addEventListener('scroll', handleScroll);
 });

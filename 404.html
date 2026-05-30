@@ -3,11 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <title>Page Not Found — FindMyGSoC</title>
+  <link rel="stylesheet" href="src/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    (function(){
+      try {
+        const saved = localStorage.getItem('theme');
+        const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = saved === 'dark' || (!saved && sysDark);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.classList.toggle('dark', isDark);
+      } catch (e) {
+        console.warn('Theme restoration failed:', e);
+      }
+    })();
+  </script>
 
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -16,19 +31,26 @@
       gap: 12px;
       text-align: center;
       padding: 16px;
+      background: var(--bg);
+      color: var(--ink);
+      transition: background .3s, color .3s;
     }
 
     h1 {
       margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.04em;
     }
 
     p {
       margin: 0;
+      color: var(--ink2);
     }
 
     a {
       text-decoration: none;
       font-weight: bold;
+      color: var(--orange);
     }
   </style>
 </head>

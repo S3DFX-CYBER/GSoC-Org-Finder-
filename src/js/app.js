@@ -5,9 +5,10 @@
 // THEME
 // ══════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.classList.toggle('dark', saved === 'dark');
-  updateThemeIcon();
+  const saved = localStorage.getItem('theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved === 'dark' || (!saved && sysDark);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
 })();
 
 // Shared escaping helper for this script (prevents HTML injection)
@@ -20,19 +21,17 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
-globalThis.toggleTheme = function(){
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
-};
-
-function updateThemeIcon(){
-  const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
-  if(icon){
-    const isDark = document.documentElement.classList.contains('dark');
-    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', (e) => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
   }
-}
+});
 
 // ══════════════════════════════════════════════
 // COUNTDOWN

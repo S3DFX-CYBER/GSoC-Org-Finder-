@@ -37,36 +37,6 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js" integrity="sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7" crossorigin="anonymous"></script>
-  <script>
-    if (typeof marked === 'undefined') {
-      const s = document.createElement('script');
-      s.src = "https://unpkg.com/marked@9.1.6/marked.min.js";
-      s.integrity = "sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7";
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.0/dist/purify.min.js" integrity="sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7" crossorigin="anonymous"></script>
-  <script>
-    if (typeof DOMPurify === 'undefined') {
-      const s = document.createElement('script');
-      s.src = "https://unpkg.com/dompurify@3.4.0/dist/purify.min.js";
-      s.integrity = "sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7";
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js" integrity="sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY" crossorigin="anonymous"></script>
-  <script>
-    if (typeof html2pdf === 'undefined') {
-      const s = document.createElement('script');
-      s.src = "https://unpkg.com/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js";
-      s.integrity = "sha384-EaWTV/aVUkLz3tfwg3+5ycX7Q/d9ET9ruOKUgUuFIRUCfzHO1eo2J62a844iWPmY";
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-  </script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -249,6 +219,7 @@
     .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
     .modal-repo-link { background: white; color: #1a1c1c; border: 1px solid #ddd; }
     .modal-repo-link:hover { background: #f0f0f0; }
+
     .modal-proposal-link { background: linear-gradient(135deg, #c2410c, #9a3412); color: white; border: none; cursor: pointer; }
     .modal-proposal-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(154, 52, 18, 0.45); }
 
@@ -404,17 +375,7 @@
     .dark .border-zinc-200 { border-color: #3f3f46 !important; }
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
-    .dark .proposal-workspace { background: #18181b; }
-    .dark .proposal-header { background: #0f0f10; border-color: #27272a; }
-    .dark .proposal-editor { background: #18181b; border-color: #27272a; }
-    .dark .proposal-preview { background: #1f1f23; color: #d4d4d8; }
-    .dark .proposal-textarea { color: #d4d4d8; }
-    .dark .proposal-preview code { background: #3f3f46; color: #f4f4f5; }
-    .dark .proposal-preview pre { background: #27272a; }
-    .dark .proposal-preview blockquote { border-color: #3f3f46; color: #a1a1aa; }
-    .dark .proposal-btn { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
-    .dark .proposal-btn:hover { background: #3f3f46; }
-    .dark .proposal-autosave { color: #a1a1aa; }
+ 
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -843,7 +804,7 @@
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#timeline" class="flex items-center gap-2" id="logoLink">
+      <a href="#" class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
@@ -1044,55 +1005,49 @@
   </div>
 </section>
 
+<!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
+<section class="px-6 max-w-7xl mx-auto mb-6 fade-up" style="animation-delay:.3s">
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
+    <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
+    <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
+    <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
+    <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
+    <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
+    <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
+  </div>
+  <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
+    <span class="empty-state">No languages selected</span>
+  </div>
+  <div class="mt-2 flex items-center gap-2">
+    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+      <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
+      <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
+    </label>
+    <span id="languageLogicHint" 
+    class="text-xs text-primary font-medium italic">
+    </span>
+  </div>
+</section>
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
-  <div class="mb-12">
-    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Find projects that fit you</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Organizations</h2>
-    <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Browse and filter GSoC 2026 organizations by tech stack, difficulty level, and interests to discover projects that match your skills and goals.</p>
-  </div>
-  <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-  <div class="mb-6 fade-up" style="animation-delay:.3s">
-    <div class="flex flex-wrap gap-2 mb-4">
-      <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-      <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-      <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-      <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-      <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-      <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
-    </div>
-    <div class="flex flex-wrap gap-2">
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
-      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
-    </div>
-    <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
-      <span class="empty-state">No languages selected</span>
-    </div>
-    <div class="mt-2 flex items-center gap-2">
-      <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-        <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
-        <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
-      </label>
-      <span id="languageLogicHint" 
-        class="text-xs text-primary font-medium italic">
-      </span>
-    </div>
-  </div>
-
-  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+  <div class="flex items-center justify-between mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
-    <div class="flex flex-wrap items-center gap-4">
+    <div class="flex items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -1254,13 +1209,54 @@
       </div>
       <!-- Sidebar -->
       <div class="space-y-6">
-        <div class="bg-white rounded-2xl p-6 border border-zinc-100">
-          <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
-          </div>
-        </div>
+  <div class="bg-white rounded-2xl p-6 border border-zinc-100">
+    <h4 class="font-bold mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines
+    </h4>
+    
+    <div id="dynamic-deadlines-container" class="space-y-4">
+      <div class="deadline-node" data-date="2026-03-31">
+        <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p>
+        <p class="text-sm font-bold text-zinc-800">Proposal Submission Deadline</p>
+        <p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p>
+      </div>
+      <div class="deadline-node" data-date="2026-04-21">
+        <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p>
+        <p class="text-sm font-bold text-zinc-800">Review Period Starts</p>
+        <p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p>
+      </div>
+    </div>
+
+    <p id="deadlines-empty-fallback" class="text-xs text-zinc-400 italic hidden mt-4">No upcoming deadlines.</p>
+  </div>
+
+  <script>
+    (function runtimeDeadlineFilter() {
+      const now = new Date();
+      const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+      const container = document.getElementById('dynamic-deadlines-container');
+      if (!container) return;
+      const elements = container.querySelectorAll('.deadline-node');
+      let activeCount = 0;
+      elements.forEach(node => {
+        const dateStr = node.dataset.date;
+        if (!dateStr) return;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+        const nodeUTC = Date.UTC(year, month - 1, day);
+        if (nodeUTC < todayUTC) {
+          node.style.display = 'none';
+        } else {
+          node.style.display = 'block';
+          activeCount++;
+        }
+      });
+      const fallback = document.getElementById('deadlines-empty-fallback');
+      if (fallback) {
+        fallback.style.display = activeCount === 0 ? 'block' : 'none';
+      }
+    })();
+  </script>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
           <h4 class="font-bold mb-3">AI Application Insight</h4>
@@ -1271,7 +1267,6 @@
     </div>
   </div>
 </section>
-
 <!-- ═══════════════════ GOOD FIRST ISSUES ═══════════════════ -->
 <section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
@@ -1387,12 +1382,6 @@
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
-    </div>
-
-    <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
-      <button type="button" id="loadMoreMentorBtn" aria-label="View More Mentors" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-        View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
-      </button>
     </div>
   </div>
 </section>
@@ -1573,11 +1562,14 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#">Privacy</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank">Community</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
 </footer>
@@ -1585,7 +1577,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1625,9 +1617,6 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" id="mDraftBtn" class="modal-cta modal-proposal-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">edit_document</span> Open Proposal Builder
-      </button>
       <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
       </a>
@@ -1637,7 +1626,6 @@
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════ PROPOSAL BUILDER ═══════════════════ -->
 <dialog class="proposal-bg" id="proposalModal" aria-labelledby="pwOrgName">
   <div class="proposal-workspace">
@@ -1674,7 +1662,6 @@
     </div>
   </div>
 </dialog>
-
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
@@ -1840,63 +1827,43 @@
     }
   }
 
-window.setActiveMenu = function(clickedLink) {
-  // Remove active class from all menu links
-  const allLinks = document.querySelectorAll('.mobile-menu-link');
-
-  allLinks.forEach(link => {
-    link.classList.remove(
-      'bg-orange-50',
-      'text-orange-600',
-      'font-bold'
-    );
-
-    link.classList.add(
-      'text-zinc-700',
-      'font-medium'
-    );
-  });
-
-  // Add active class to clicked link
-  clickedLink.classList.remove(
-    'text-zinc-700',
-    'font-medium'
-  );
-
-  clickedLink.classList.add(
-    'bg-orange-50',
-    'text-orange-600',
-    'font-bold'
-  );
-
-  // Close menu
-  toggleMenu();
-};
+  // Set active menu item and update UI
+  window.setActiveMenu = function(clickedLink){
+    // Remove active class from all menu links
+    const allLinks = document.querySelectorAll('.mobile-menu-link');
+    allLinks.forEach(link => {
+      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+    });
+    
+    // Add active class to clicked link
+    clickedLink.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+    clickedLink.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+    
+    // Close menu after a short delay
+    setTimeout(() => {
+      toggleMenu();
+    }, 300);
+  };
 
   // Update active state based on scroll position
   function updateActiveSection() {
     const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 80; // Offset for fixed header
+    const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
-let currentSection = 'timeline';
-
-sections.forEach(sectionId => {
-    const section = document.getElementById(sectionId);
-
-    if (section) {
+    let currentSection = 'orgs'; // Default
+    
+    sections.forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (section) {
         const sectionTop = section.offsetTop;
         const sectionBottom = sectionTop + section.offsetHeight;
-
-        const triggerPoint = window.innerHeight / 2;
-
-        if (
-            sectionTop <= scrollPosition + triggerPoint &&
-            sectionBottom > scrollPosition + triggerPoint
-        ) {
-            currentSection = sectionId;
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          currentSection = sectionId;
         }
-    }
-});
+      }
+    });
     
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
@@ -2020,7 +1987,6 @@ sections.forEach(sectionId => {
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
-  let visibleMentorCount = 12;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2232,8 +2198,8 @@ sections.forEach(sectionId => {
   }
 
   function getPrimaryMentorContact(entry) {
-    if ((entry.channels || []).length > 0) return entry.channels[0];
-    if ((entry.mailingLists || []).length > 0) return entry.mailingLists[0];
+    if (entry.channels.length > 0) return entry.channels[0];
+    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
     return null;
   }
 
@@ -2317,7 +2283,7 @@ sections.forEach(sectionId => {
     })();
 
     const sections = [];
-    if (entry.status === 'ok' && (entry.channels || []).length > 0) {
+    if (entry.status === 'ok' && entry.channels.length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
@@ -2326,7 +2292,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && (entry.mentors || []).length > 0) {
+    if (entry.status === 'ok' && entry.mentors.length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
@@ -2335,7 +2301,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && (entry.mailingLists || []).length > 0) {
+    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
@@ -2382,15 +2348,10 @@ sections.forEach(sectionId => {
     }));
   }
 
-  function renderMentorFinder(reset = true) {
+  function renderMentorFinder() {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
     if (!grid) return;
-
-    if (reset) {
-      grid.innerHTML = '';
-      visibleMentorCount = 12;
-    }
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
@@ -2440,15 +2401,10 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
-      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-      if (loadMoreContainer) {
-        loadMoreContainer.style.display = 'none';
-      }
       return;
     }
 
-    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
-    slice.forEach(({ org, entry }) => {
+    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2496,33 +2452,24 @@ sections.forEach(sectionId => {
       const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);
       const safeContactHref = sanitizeHrefUrl(contactHref);
 
-      const article = document.createElement('article');
-      article.className = 'mentor-card';
-      article.innerHTML = `
-        <div class="flex items-start justify-between gap-3 mb-4">
-          <div>
-            <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
-            <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
+      return `
+        <article class="mentor-card">
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
+              <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
           </div>
-          <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
-        </div>
-        ${bodyHtml}
-        <div class="mt-5 pt-4 border-t border-zinc-100">
-          ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
-          <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
-        </div>
+          ${bodyHtml}
+          <div class="mt-5 pt-4 border-t border-zinc-100">
+            ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
+            <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
+          </div>
+        </article>
       `;
-      grid.appendChild(article);
-    });
+    }).join('');
 
-    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-    if (loadMoreContainer) {
-      if (visibleMentorCount < filteredRecords.length) {
-        loadMoreContainer.style.display = 'flex';
-      } else {
-        loadMoreContainer.style.display = 'none';
-      }
-    }
     attachOrgCardListeners(grid);
   }
 
@@ -2780,13 +2727,12 @@ sections.forEach(sectionId => {
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
-       `;
-    card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
-
-   grid.appendChild(card);
-   attachOrgCardListeners(card);
+      `;
+      grid.appendChild(card);
+        // Attach per-card listeners for non-bubbling events and data-driven actions
+        attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
@@ -2826,7 +2772,7 @@ sections.forEach(sectionId => {
         e.stopPropagation();
         openModal(btn.dataset.openOrg);
       });
-btn.__orgListenerAttached = true;
+      btn.__orgListenerAttached = true;
     });
   }
 
@@ -3051,18 +2997,12 @@ btn.__orgListenerAttached = true;
     if (e.target.id === 'compareModal') closeCompareModal();
   });
 
-  document.getElementById('orgModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'orgModal') closeOrgModal();
-  });
-
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (document.getElementById('proposalModal')?.classList.contains('open')) {
-      closeProposalBuilder();
-    } else if (document.getElementById('compareModal')?.classList.contains('open')) {
+    if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-      closeOrgModal();
+      closeModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
     }
@@ -3538,11 +3478,6 @@ if(org.ideas){
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
     renderMentorContactSection(org);
-
-    const draftBtn = document.getElementById('mDraftBtn');
-    if (draftBtn) {
-      draftBtn.onclick = () => ProposalBuilder.open(org.name);
-    }
      
     document.getElementById('orgModal').classList.add('open');
     document.body.classList.add('modal-open');
@@ -3550,7 +3485,7 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function closeOrgModal() {
+  function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
@@ -3708,11 +3643,6 @@ if(org.ideas){
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
-  });
-
-  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
-    visibleMentorCount += 12;
-    renderMentorFinder(false);
   });
 
   // Surprise button event listener
@@ -3909,290 +3839,6 @@ if(org.ideas){
 
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
-  // Proposal
-  let currentProposalOrg = '';
-  let proposalFocusReturn = null;
-  let proposalAutosaveTimer = null;
-  const inMemoryDrafts = {};
-  let localStorageAvailable = true;
-  const PROPOSAL_AUTOSAVE_KEY = 'gaf_proposal_autosave';
-
-  const GSOC_TEMPLATE = `# GSoC 2026 Proposal: [Project Title]
-**Organization:** [Organization Name]
-**Applicant:** [Your Name]
-
-## 1. Contact Information
-* **Email:** [your.email@example.com]
-* **GitHub:** [https://github.com/your-username]
-* **Timezone:** [Your Timezone]
-
-## 2. Abstract
-[Provide a short summary of what you intend to do, why it is useful, and the expected outcome.]
-
-## 3. Architecture and Implementation
-[Detail your technical approach, libraries, design patterns, and any API changes you plan to make.]
-
-## 4. Timeline
-* **Community Bonding:** [Pre-coding activities]
-* **Week 1-2:** [Tasks]
-* **Week 3-4:** [Tasks]
-* **Midterm Evaluation:** [Deliverables at this stage]
-* **Week 5-6:** [Tasks]
-* **Week 7-8:** [Tasks]
-* **Final Evaluation:** [Final deliverables and documentation]
-
-## 5. Deliverables
-[List what will be completed and merged by the end of the program.]
-
-## 6. About Me
-[Your background, relevant skills, and past contributions to open source.]
-`;
-
-  function proposalStorageKey(orgName) {
-    return 'gaf_proposal_' + orgName;
-  }
-
-  function isAutosaveEnabled() {
-    if (!localStorageAvailable) return false;
-    try {
-      return localStorage.getItem(PROPOSAL_AUTOSAVE_KEY) === 'true';
-    } catch {
-      localStorageAvailable = false;
-      return false;
-    }
-  }
-
-  function syncAutosaveToggle() {
-    const toggle = document.getElementById('pwAutosaveToggle');
-    if (toggle) toggle.checked = isAutosaveEnabled();
-  }
-
-  function setAutosaveEnabled(enabled) {
-    if (localStorageAvailable) {
-      try {
-        localStorage.setItem(PROPOSAL_AUTOSAVE_KEY, enabled ? 'true' : 'false');
-      } catch {
-        localStorageAvailable = false;
-      }
-    }
-    syncAutosaveToggle();
-  }
-
-  function getDraft(orgName) {
-    if (Object.hasOwn(inMemoryDrafts, orgName)) {
-      return inMemoryDrafts[orgName];
-    }
-    if (!localStorageAvailable) return null;
-    try {
-      const stored = localStorage.getItem(proposalStorageKey(orgName));
-      if (stored !== null) {
-        inMemoryDrafts[orgName] = stored;
-        return stored;
-      }
-    } catch {
-      localStorageAvailable = false;
-    }
-    return null;
-  }
-
-  function saveDraft(orgName, content) {
-    inMemoryDrafts[orgName] = content;
-    if (!localStorageAvailable) return;
-    try {
-      localStorage.setItem(proposalStorageKey(orgName), content);
-    } catch {
-      localStorageAvailable = false;
-    }
-  }
-
-  function clearDraft(orgName) {
-    delete inMemoryDrafts[orgName];
-    if (!localStorageAvailable) return;
-    try {
-      localStorage.removeItem(proposalStorageKey(orgName));
-    } catch {
-      localStorageAvailable = false;
-    }
-  }
-
-  function getTemplateForOrg(orgName) {
-    return GSOC_TEMPLATE.replaceAll('[Organization Name]', orgName);
-  }
-
-  function renderPreview() {
-    const editor = document.getElementById('pwEditor');
-    const preview = document.getElementById('pwPreview');
-    if (!editor || !preview) return;
-    if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
-      preview.innerHTML = DOMPurify.sanitize(marked.parse(editor.value));
-    } else {
-      preview.innerHTML = '<p class="proposal-preview-error">Markdown preview unavailable. Check your connection and reload the page.</p>';
-    }
-  }
-
-  function openProposalBuilder(orgName) {
-    currentProposalOrg = orgName;
-    const modal = document.getElementById('proposalModal');
-    const orgModal = document.getElementById('orgModal');
-    const editor = document.getElementById('pwEditor');
-    if (!modal || !editor) return;
-
-    document.getElementById('pwOrgName').textContent = orgName + ' Proposal';
-    syncAutosaveToggle();
-
-    const saved = getDraft(orgName);
-    if (saved === null) {
-      editor.value = getTemplateForOrg(orgName);
-    } else {
-      editor.value = saved;
-    }
-    renderPreview();
-
-    proposalFocusReturn = document.getElementById('mDraftBtn');
-    if (orgModal) orgModal.setAttribute('aria-hidden', 'true');
-
-    modal.classList.add('open');
-    modal.setAttribute('open', '');
-    document.body.classList.add('modal-open');
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
-    const closeBtn = document.getElementById('pwCloseBtn');
-    if (closeBtn) closeBtn.focus();
-  }
-
-  function closeProposalBuilder() {
-    const modal = document.getElementById('proposalModal');
-    const orgModal = document.getElementById('orgModal');
-    if (!modal) return;
-
-    modal.classList.remove('open');
-    modal.removeAttribute('open');
-    if (orgModal) orgModal.removeAttribute('aria-hidden');
-
-    if (!orgModal?.classList.contains('open')) {
-      document.body.classList.remove('modal-open');
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    }
-
-    if (proposalFocusReturn) {
-      proposalFocusReturn.focus();
-      proposalFocusReturn = null;
-    }
-  }
-
-  function clearProposalDraft() {
-    if (!currentProposalOrg) return;
-    if (!confirm('Clear this proposal draft? This removes the saved copy from this device.')) return;
-    clearDraft(currentProposalOrg);
-    const editor = document.getElementById('pwEditor');
-    if (editor) {
-      editor.value = getTemplateForOrg(currentProposalOrg);
-      renderPreview();
-    }
-  }
-
-  function exportProposalMD() {
-    if (!currentProposalOrg) return;
-    const content = document.getElementById('pwEditor')?.value || '';
-    const blob = new Blob([content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'GSoC_Proposal_' + currentProposalOrg.replace(/\s+/g, '_') + '.md';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function exportProposalPDF() {
-    if (!currentProposalOrg) return;
-    if (typeof html2pdf !== 'function') {
-      alert('PDF export is unavailable. Check your connection and reload the page.');
-      return;
-    }
-    const element = document.getElementById('pwPreview');
-    if (!element) return;
-
-    const printElement = element.cloneNode(true);
-    printElement.style.padding = '40px';
-    printElement.style.background = 'white';
-    printElement.style.color = 'black';
-    printElement.style.width = '800px';
-    printElement.querySelectorAll('code, pre').forEach((node) => {
-      node.style.background = '#f4f4f4';
-      node.style.color = '#333';
-    });
-    document.body.appendChild(printElement);
-
-    const opt = {
-      margin: 15,
-      filename: 'GSoC_Proposal_' + currentProposalOrg.replace(/\s+/g, '_') + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-
-    html2pdf()
-      .set(opt)
-      .from(printElement)
-      .save()
-      .then(() => printElement.remove())
-      .catch((err) => {
-        console.error('PDF export failed:', err);
-        printElement.remove();
-        alert('PDF export failed. Try exporting Markdown instead.');
-      });
-  }
-
-  document.getElementById('pwEditor')?.addEventListener('input', (e) => {
-    renderPreview();
-    if (!currentProposalOrg || !isAutosaveEnabled()) return;
-    clearTimeout(proposalAutosaveTimer);
-    proposalAutosaveTimer = setTimeout(() => {
-      saveDraft(currentProposalOrg, e.target.value);
-    }, 300);
-  });
-
-  document.getElementById('pwAutosaveToggle')?.addEventListener('change', (e) => {
-    setAutosaveEnabled(e.target.checked);
-    if (e.target.checked && currentProposalOrg) {
-      const editor = document.getElementById('pwEditor');
-      if (editor) saveDraft(currentProposalOrg, editor.value);
-    }
-  });
-
-  document.getElementById('proposalModal')?.addEventListener('keydown', (e) => {
-    if (e.key !== 'Tab' || !document.getElementById('proposalModal')?.classList.contains('open')) return;
-    const modal = document.getElementById('proposalModal');
-    const focusable = modal.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const list = [...focusable].filter((el) => !el.disabled && el.offsetParent !== null);
-    if (list.length === 0) return;
-    const first = list[0];
-    const last = list[list.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  });
-
-  document.getElementById('pwClearBtn')?.addEventListener('click', clearProposalDraft);
-  document.getElementById('pwExportMDBtn')?.addEventListener('click', exportProposalMD);
-  document.getElementById('pwExportPDFBtn')?.addEventListener('click', exportProposalPDF);
-  document.getElementById('pwCloseBtn')?.addEventListener('click', closeProposalBuilder);
-
-  globalThis.ProposalBuilder = {
-    open: openProposalBuilder,
-    close: closeProposalBuilder
-  };
-
   // Initialize
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
@@ -4366,11 +4012,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (e.key === 'Escape') {
-      if (document.getElementById('proposalModal')?.classList.contains('open')) {
-        globalThis.ProposalBuilder?.close?.();
-      } else {
-        closeHelpModal();
-      }
+      closeHelpModal();
     }
 
   });
@@ -4384,82 +4026,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
-
-<script>
-const logoLink = document.getElementById("logoLink");
-
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
-
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
-
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-    }
-
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-    });
-
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
-
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-    }
-  });
-}
-</script>
 
 </body>
 </html>

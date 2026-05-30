@@ -673,6 +673,7 @@ function applyFilters(){
   // Improved search ranking: exact matches first, then startsWith, then partial
   if(search){
     res.sort((a,b)=>{
+
       const nameA=a.name.toLowerCase();
       const nameB=b.name.toLowerCase();
       
@@ -692,10 +693,9 @@ function applyFilters(){
       // Neither starts with, sort by selected sort option or alphabetically
       return applySecondarySort(a, b, sort);
     });
-    if (matchAllLanguages)
+    // Optional AND/OR language mode flag (used elsewhere)
+    // no-op here
   }
-
-
 
   // Apply other sorting if no search
   if(!search){

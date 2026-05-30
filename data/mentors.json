@@ -239,12 +239,34 @@
   "AOSSIE": {
     "org": "AOSSIE",
     "ideasUrl": "https://github.com/AOSSIE-Org/Info/blob/main/GSoC-Ideas/2026/index.md",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/aossie",
+        "label": "AOSSIE Discord"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Bruno Woltzenlogel Paleo",
+        "github": "Zahnentferner",
+        "githubUrl": "https://github.com/Zahnentferner"
+      },
+      {
+        "name": "Jaideep Prasad",
+        "github": "jddeep",
+        "githubUrl": "https://github.com/jddeep"
+      },
+      {
+        "name": "Garv Agarwal",
+        "github": "SharkyBytes",
+        "githubUrl": "https://github.com/SharkyBytes"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join the AOSSIE Discord server and discuss ideas publicly in project-specific channels.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T09:04:30.000Z"
   },
   "Apache Software Foundation": {
     "org": "Apache Software Foundation",
@@ -835,18 +857,90 @@
   "Django Software Foundation": {
     "org": "Django Software Foundation",
     "ideasUrl": "https://code.djangoproject.com/wiki/SummerOfCode2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forum.djangoproject.com/c/internals/mentorship/10",
+        "label": "Django Forum - Mentorship channel"
+      },
+      {
+        "type": "Discord",
+        "url": "https://chat.djangoproject.com",
+        "label": "Django Discord"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django-dev",
+        "label": "#django-dev on Libera.Chat"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django",
+        "label": "#django on Libera.Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Andrew Miller",
+        "github": "nanorepublica",
+        "githubUrl": "https://github.com/nanorepublica"
+      },
+      {
+        "name": "Sarah Boyce",
+        "github": "sarahboyce",
+        "githubUrl": "https://github.com/sarahboyce"
+      },
+      {
+        "name": "Bhuvnesh Sharma",
+        "github": "DevilsAutumn",
+        "githubUrl": "https://github.com/DevilsAutumn"
+      },
+      {
+        "name": "Jacob Walls",
+        "github": "jacobtylerwalls",
+        "githubUrl": "https://github.com/jacobtylerwalls"
+      },
+      {
+        "name": "Saptak Sengupta",
+        "github": "SaptakS",
+        "githubUrl": "https://github.com/saptaks"
+      },
+      {
+        "name": "Sarah Abderemane",
+        "github": "sabderemane",
+        "githubUrl": "https://github.com/sabderemane"
+      },
+      {
+        "name": "Apoorv Garg",
+        "github": "Apoorvgarg-creator",
+        "githubUrl": "https://github.com/Apoorvgarg-creator"
+      },
+      {
+        "name": "Thibaut Decombe",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Sage Abdullah",
+        "github": "laymonage",
+        "githubUrl": "https://github.com/laymonage"
+      },
+      {
+        "name": "Simon Charette",
+        "github": "charettes",
+        "githubUrl": "https://github.com/charettes"
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://groups.google.com/g/django-developers/c/at-G0hZrfXE",
-        "label": "​ https://groups.google.com/g/django-developers/c/at-G0hZrfXE"
+        "url": "https://groups.google.com/g/django-developers",
+        "label": "django-developers Google Group"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Post your draft proposal to the Django Forum Mentorship channel for feedback. Start contributing to Django before applying to become a known contributor.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-29T00:00:00.000Z"
   },
   "dora-rs": {
     "org": "dora-rs",

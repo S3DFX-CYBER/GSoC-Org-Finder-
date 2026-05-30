@@ -112,44 +112,43 @@ AN.trackVisit();
 // URL VALIDATION & SANITIZATION
 // ══════════════════════════════════════════════
 /**
- * Validates and sanitizes project ideas URLs for safe display
- * Ensures only http/https protocols are allowed to prevent XSS attacks
- * Automatically prepends https:// if no protocol is specified
- * 
+ * Generic URL validator — ensures only http/https protocols are allowed.
+ * Does NOT auto-prepend a protocol. The caller must pass a fully-formed URL.
+ *
+ * @param {string} url - A fully-formed URL string to validate
+ * @returns {string|null} - The trimmed URL if valid, null otherwise
+ */
+function validateUrl(url) {
+  if (!url || !url.trim()) return null;
+  try {
+    const trimmed = url.trim();
+    const urlObj = new URL(trimmed);
+    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+      return trimmed;
+    }
+    console.warn('Rejected non-HTTP(S) URL:', url);
+    return null;
+  } catch (e) {
+    console.warn('Invalid URL format:', url, e);
+    return null;
+  }
+}
+
+/**
+ * Validates and sanitizes project ideas URLs for safe display.
+ * Automatically prepends https:// if no protocol is specified.
+ * Delegates to validateUrl() for the actual protocol check.
+ *
  * @param {string} ideasUrl - The raw URL string from organization data
  * @returns {string|null} - Sanitized URL if valid, null otherwise
  */
 function validateIdeasUrl(ideasUrl) {
-  // Return null for empty or whitespace-only strings
-  if (!ideasUrl || !ideasUrl.trim()) {
-    return null;
+  if (!ideasUrl || !ideasUrl.trim()) return null;
+  let url = ideasUrl.trim();
+  if (!url.includes('://')) {
+    url = 'https://' + url;
   }
-  
-  try {
-    let url = ideasUrl.trim();
-    
-    // Prepend https:// only if no protocol scheme is present
-    // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
-    if (!url.includes('://')) {
-      url = 'https://' + url;
-    }
-    
-    // Parse and validate URL
-    const urlObj = new URL(url);
-    
-    // Security: Only allow http and https protocols
-    // This prevents javascript:, data:, file:, and other potentially dangerous schemes
-    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
-      return url;
-    }
-    
-    console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
-    return null;
-  } catch (e) {
-    // Invalid URL format
-    console.warn('Invalid ideas URL format:', ideasUrl, e);
-    return null;
-  }
+  return validateUrl(url);
 }
 
 // ══════════════════════════════════════════════
@@ -207,6 +206,49 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // ══════════════════════════════════════════════
 const API='/api/github';
 const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
+
+/**
+ * Saves cache to localStorage with quota exceeded error recovery.
+ * If quota is exceeded, clears the cache and retries.
+ * @param {string} key - Cache key to save
+ * @param {object} value - Value to cache
+ */
+function saveCache(key, value) {
+  try {
+    localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      console.warn('LocalStorage quota exceeded, clearing GitHub cache...');
+      for (const k in cache) delete cache[k];
+      if (key && value !== undefined) cache[key] = value;
+      try {
+        localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+      } catch (err) {
+        console.error('Failed to save even after clearing cache', err);
+      }
+    }
+  }
+}
+
+/**
+ * Garbage collects cache by removing entries older than 24 hours.
+ * Removes entries with missing or invalid timestamps as well.
+ */
+function cleanCache() {
+  const now = Date.now();
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  let changed = false;
+  for (const key in cache) {
+    const entry = cache[key];
+    if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
+      delete cache[key];
+      changed = true;
+    }
+  }
+  if (changed) saveCache();
+}
+cleanCache();
+
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
@@ -246,7 +288,10 @@ async function fetchGH(repo){
     if(!r.ok)return null;
     const d=await r.json();
     if(d.error)return null;
-    cache[repo]=d;localStorage.setItem('gaf_ghc',JSON.stringify(cache));return d;
+    d.ts=Date.now();
+    cache[repo]=d;
+    saveCache(repo, d);
+    return d;
   }catch{return null;}
 }
 
@@ -261,7 +306,7 @@ async function fetchGFI(repo){
     const d=await r.json();
     if(d.gfi===null||d.gfi===undefined)return null;
     cache[cacheKey]={count:d.gfi,ts:Date.now()};
-    localStorage.setItem('gaf_ghc',JSON.stringify(cache));
+    saveCache(cacheKey, cache[cacheKey]);
     return d.gfi;
   }catch{return null;}
 }
@@ -635,8 +680,33 @@ const UMBRELLA_ORGS=new Set([
 ]);
 
 function orgLogoOwner(o){
-  if(!o.github)return'';
-  return o.github.includes('/')?o.github.split('/')[0]:o.github;
+  return githubOwnerFromValue(o.github);
+}
+function trimGitHubPathSlashes(path){
+  let start=0;
+  let end=path.length;
+  while(start<end&&path[start]==='/')start+=1;
+  while(end>start&&path[end-1]==='/')end-=1;
+  return path.slice(start,end);
+}
+function githubPathFromValue(value){
+  const github=String(value||'').trim();
+  if(!github)return'';
+  try{
+    const url=new URL(github);
+    const hostname=url.hostname.toLowerCase();
+    if(hostname!=='github.com'&&hostname!=='www.github.com')return'';
+    return trimGitHubPathSlashes(url.pathname);
+  }catch{
+    return trimGitHubPathSlashes(github);
+  }
+}
+function githubOwnerFromValue(value){
+  return githubPathFromValue(value).split('/')[0]||'';
+}
+function githubUrlFromValue(value){
+  const path=githubPathFromValue(value);
+  return path?`https://github.com/${path}`:'';
 }
 function imgErr(img){
   img.onerror=null;
@@ -653,18 +723,20 @@ function orgLogo(o){
 }
 function repoUrl(o){
   if(!o.github)return'';
-  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
+  const owner=githubOwnerFromValue(o.github);
+  const path=githubPathFromValue(o.github);
   // Umbrella orgs → link to their org page; single-project orgs → their specific repo
-  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
-    return`https://github.com/${owner}`;
-  return`https://github.com/${o.github}`;
+  if(UMBRELLA_ORGS.has(o.name)||!path.includes('/'))
+    return owner ? `https://github.com/${owner}` : '';
+  return githubUrlFromValue(o.github);
 }
 function repoLinkLabel(o){
   if(!o.github)return'';
-  const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
-  if(UMBRELLA_ORGS.has(o.name)||!o.github.includes('/'))
+  const owner=githubOwnerFromValue(o.github);
+  const path=githubPathFromValue(o.github);
+  if(UMBRELLA_ORGS.has(o.name)||!path.includes('/'))
     return owner+' (org)';
-  return o.github;
+  return path;
 }
 
 function getBookmarks() {
@@ -688,6 +760,10 @@ function toggleBookmark(event, orgIdx) {
   else saved.splice(idx, 1);
   localStorage.setItem('bookmarks', JSON.stringify(saved));
   applyFilters();
+  // Notify the Watchlist panel (index.html inline script) about the change so
+  // renderWatchlist() and updateAIInsights() stay in sync across both bookmark
+  // systems without tight coupling between the two scripts.
+  document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail: { name: orgName } }));
 }
 
 function isBookmarked(orgName) {
@@ -713,7 +789,16 @@ function renderGrid(orgs){
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+    const orgTags = o.tags || [];
+    let tags = '';
+    if (orgTags.length > 3) {
+      const visible = orgTags.slice(0, 3);
+      const hidden = orgTags.slice(3);
+      tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
+             `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
+    } else {
+      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    }
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
@@ -725,6 +810,7 @@ function renderGrid(orgs){
     const isFocused=focusedIdx===i;
     const logo=orgLogo(o);
     const repoHref=repoUrl(o);
+    const repoPath=githubPathFromValue(o.github);
     // shortRepo now handled by repoLinkLabel()
     return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
       role="article"
@@ -754,7 +840,7 @@ function renderGrid(orgs){
             </div>
           </div>
           ${repoHref?`<a class="card-repo-link" href="${escapeHtml(repoHref)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(repoHref)}">
-            ${UMBRELLA_ORGS.has(o.name)||!o.github.includes('/')?
+            ${UMBRELLA_ORGS.has(o.name)||!repoPath.includes('/')?
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>':
               '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.912.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>'}
             ${repoLinkLabel(o)}
@@ -987,9 +1073,10 @@ function openModal(idx){
   // Smart link: umbrella orgs → org page, single-project → specific repo
   const mLinkEl=document.getElementById('mLink');
   if(mLinkEl&&o.github){
-    const owner=o.github.includes('/')?o.github.split('/')[0]:o.github;
-    const isUmbrella=UMBRELLA_ORGS.has(o.name)||!o.github.includes('/');
-    mLinkEl.href=isUmbrella?`https://github.com/${owner}`:`https://github.com/${o.github}`;
+    const owner=githubOwnerFromValue(o.github);
+    const path=githubPathFromValue(o.github);
+    const isUmbrella=UMBRELLA_ORGS.has(o.name)||!path.includes('/');
+    mLinkEl.href=isUmbrella?(owner ? `https://github.com/${owner}` : ''):githubUrlFromValue(o.github);
     mLinkEl.textContent=isUmbrella?'View GitHub Org →':'View Repository →';
   }
   
@@ -1091,8 +1178,8 @@ async function fetchAllIssues(){
         if(!r.ok)return;
         const data=await r.json();
         if(data.items?.length){
-          const owner=o.github.split('/')[0];
-          const logo=`https://github.com/${owner}.png?size=64`;
+          const owner=githubOwnerFromValue(o.github);
+          const logo=owner ? `https://github.com/${owner}.png?size=64` : '';
           data.items.forEach(issue=>{
             const labelNames=(issue.labels||[]).map(l=>typeof l==='string'?l:(l.name||''));
             allIssues.push({
@@ -1157,7 +1244,7 @@ async function loadCachedIssues(){
     allIssues=data.issues.map(issue=>{
       const key=issue.github?.toLowerCase()||issue.repo?.toLowerCase()||issue.org?.toLowerCase();
       const orgMeta=orgByGithub.get(key)||orgByName.get(issue.org?.toLowerCase());
-      const owner=(issue.github||issue.repo||'').split('/')[0]||'';
+      const owner=githubOwnerFromValue(issue.github||issue.repo);
       return{
         title:issue.title||'',
         url:issue.url||'',
@@ -1238,8 +1325,8 @@ function renderIssueCard(iss){
   const gfiNames=['good first issue','good-first-issue'];
   const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
     .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
-  const safeHref = validateIdeasUrl(iss.url);
-  const imgSrc = validateIdeasUrl(iss.logo);
+  const safeHref = validateUrl(iss.url);
+  const imgSrc = validateUrl(iss.logo);
   const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
   const hrefEnd = safeHref ? '</a>' : '</div>';
   return `${hrefStart}

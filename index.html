@@ -747,6 +747,60 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Scroll-to-Top Button */
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 90;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9d4300, #f97316);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(157, 67, 0, 0.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px) scale(0.8);
+      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    }
+    #scrollToTopBtn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+    #scrollToTopBtn:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 8px 24px rgba(157, 67, 0, 0.45);
+    }
+    #scrollToTopBtn:active {
+      transform: translateY(0) scale(0.95);
+    }
+    #scrollToTopBtn:focus-visible {
+      outline: 2px solid #f97316;
+      outline-offset: 3px;
+    }
+    @media (max-width: 640px) {
+      #scrollToTopBtn {
+        bottom: 18px;
+        right: 18px;
+        width: 44px;
+        height: 44px;
+      }
+    }
+    .dark #scrollToTopBtn {
+      background: linear-gradient(135deg, #c2410c, #ea580c);
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35);
+    }
+    .dark #scrollToTopBtn:hover {
+      box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5);
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -756,6 +810,11 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+
+<!-- ═══════════════════ SCROLL TO TOP ═══════════════════ -->
+<button id="scrollToTopBtn" aria-label="Scroll to top" title="Scroll to top">
+  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
+</button>
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -4307,6 +4366,45 @@ if (logoLink) {
     }
   });
 }
+</script>
+
+<script>
+// ═══════════════════ SCROLL TO TOP ═══════════════════
+(function () {
+  const btn = document.getElementById('scrollToTopBtn');
+  if (!btn) return;
+  const THRESHOLD = 300;
+  let ticking = false;
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(function () {
+        if (window.scrollY > THRESHOLD) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Keyboard support — Enter and Space already fire click on <button>,
+  // but ensure focus returns to the page top.
+  btn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+})();
 </script>
 
 </body>

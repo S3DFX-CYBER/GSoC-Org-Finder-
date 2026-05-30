@@ -37,6 +37,10 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Font Awesome (used for Contribution Path step icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
@@ -223,9 +227,115 @@
     html { scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
+    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact, #contribution-path {
       scroll-margin-top: 80px;
     }
+    
+    /* ── Contribution Path ── */
+    #cpOrgSelect,
+    #cpLevelSelect {
+      outline: none;
+      border: 1.5px solid #e5e7eb;
+      background-color: #ffffff !important;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239d4300' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+      position: relative;
+    }
+    #cpOrgSelect:focus,
+    #cpLevelSelect:focus {
+      border-color: #9d4300;
+      box-shadow: 0 0 0 3px rgba(157, 67, 0, 0.15);
+    }
+
+    /* Ensure dropdown stacking order is correct in the CP form */
+    #cpOrgSelect { z-index: 2; }
+    #cpLevelSelect { z-index: 1; }
+
+    #cpOrgSelect.cp-select-opened,
+    #cpLevelSelect.cp-select-opened {
+      z-index: 50;
+    }
+
+    /* Dark mode: keep dropdown background/chevron readable when focused/open */
+    .dark #cpOrgSelect.cp-select-opened,
+    .dark #cpLevelSelect.cp-select-opened {
+      background-color: #27272a !important;
+      color: #d4d4d8 !important;
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a1a1aa' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    }
+
+
+    #cpFormCard {
+      position: relative;
+      z-index: 10;
+      background: #ffffff !important;
+      border-color: #e5e7eb !important;
+    }
+    #contribution-path {
+      position: relative;
+      z-index: 1;
+    }
+    /* CP dark mode */
+    .dark #cpFormCard {
+      background: #18181b !important;
+      border-color: #3f3f46 !important;
+    }
+    .dark #cpFormCard label {
+      color: #a1a1aa !important;
+    }
+    .dark #cpOrgSelect,
+    .dark #cpLevelSelect {
+      background-color: #27272a !important;
+      color: #d4d4d8 !important;
+      border-color: #3f3f46 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a1a1aa' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    }
+    .dark #cpOrgSelect:focus,
+    .dark #cpLevelSelect:focus {
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    }
+    
+    .cp-custom-select{position:relative;width:100%}
+    .cp-custom-select .trigger{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:0.75rem;background:#fff;cursor:pointer;font-size:14px;color:#374151;user-select:none;transition:border-color 0.15s}
+    .cp-custom-select .trigger:hover{border-color:#d1d5db}
+    .cp-custom-select .trigger.open{border-color:#9d4300;box-shadow:0 0 0 3px rgba(157,67,0,0.15)}
+    .cp-custom-select .trigger .chevron{transition:transform 0.2s;color:#9ca3af;font-size:16px;flex-shrink:0}
+    .cp-custom-select .trigger.open .chevron{transform:rotate(180deg)}
+    .cp-custom-select .listbox{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #d1d5db;border-radius:0.75rem;z-index:9999;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+    .cp-custom-select .listbox.hidden{display:none}
+    .cp-custom-select .listbox::-webkit-scrollbar{width:4px}
+    .cp-custom-select .listbox::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:4px}
+    .cp-custom-select .option{padding:9px 14px;font-size:13px;cursor:pointer;color:#374151}
+    .cp-custom-select .option:hover,.cp-custom-select .option.focused{background:#f3f4f6}
+    .cp-custom-select .option.selected{color:#9d4300;font-weight:600}
+    .cp-custom-select .search-box{padding:8px 10px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:6px}
+    .cp-custom-select .search-box input{border:none;outline:none;background:transparent;font-size:13px;color:#374151;width:100%;padding:0}
+    .cp-custom-select .search-box input::placeholder{color:#9ca3af}
+    /* dark mode */
+    .dark .cp-custom-select .trigger{background:#27272a;border-color:#3f3f46;color:#d4d4d8}
+    .dark .cp-custom-select .listbox{background:#27272a;border-color:#3f3f46}
+    .dark .cp-custom-select .option{color:#d4d4d8}
+    .dark .cp-custom-select .option:hover,.dark .cp-custom-select .option.focused{background:#3f3f46}
+    .dark .cp-custom-select .search-box{border-color:#3f3f46}
+    .dark .cp-custom-select .search-box input{color:#d4d4d8}
+
+    /* CP roadmap output dark mode */
+    .dark #cpRoadmapTitle { color: #f4f4f5 !important; }
+    .dark #cpRoadmapSub   { color: #a1a1aa !important; }
+    .dark #cpBadgeETA     { background: #27272a !important; color: #a1a1aa !important; }
+    .dark #cpTechBar      { background: #18181b !important; border-color: #3f3f46 !important; }
+    .dark #cpTimeline .bg-white { background: #18181b !important; border-color: #3f3f46 !important; }
+    .dark #cpTimeline h4  { color: #f4f4f5 !important; }
+    .dark #cpTimeline p   { color: #a1a1aa !important; }
 
     /* Minimal dark-mode support */
     .dark body { background: #0f0f10; color: #e5e7eb; }
@@ -461,6 +571,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#contribution-path" data-section="contribution-path">Path</a>
       </nav>
     </div>
     
@@ -544,8 +655,11 @@
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
+      <a href="#contribution-path" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="contribution-path">
+        <span class="material-symbols-outlined text-lg">timeline</span>
+        Contribution Path
+      </a>
     </div>
-    
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-base">star</span> Star & Contribute
@@ -848,6 +962,102 @@
     </div>
   </div>
 </section>
+
+<!-- ═══════════════════ CONTRIBUTION PATH ═══════════════════ -->
+<section id="contribution-path" class="py-20 px-6 bg-surface-container-low">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="mb-12">
+      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Personalized Roadmap</span>
+      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Contribution Path Generator</h2>
+      <p class="text-zinc-600 mt-4 max-w-2xl">
+        Select an organization and your level. Get a roadmap built from the org's actual tech stack,
+        competition level, and category — with localStorage progress tracking.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div id="cpFormCard" class="bg-white rounded-3xl border border-zinc-100 p-8 shadow-sm mb-8">
+      <div class="grid sm:grid-cols-2 gap-5 mb-6">
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label text-xs font-bold uppercase tracking-widest text-zinc-400">Organization</label>
+          <div class="cp-custom-select" id="cpOrgDropdown">
+            <div class="trigger" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="cpOrgListbox" id="cpOrgTrigger">
+              <span class="selected-label" style="color:#9ca3af">-- Select an organization --</span>
+              <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+            </div>
+            <div class="listbox hidden" id="cpOrgListbox" role="listbox">
+              <div class="search-box">
+                <i class="ti ti-search" style="font-size:14px;color:#9ca3af" aria-hidden="true"></i>
+                <input type="text" placeholder="Search orgs..." id="cpOrgSearch" autocomplete="off" />
+              </div>
+              <div id="cpOrgOptions"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label text-xs font-bold uppercase tracking-widest text-zinc-400">Your Level</label>
+          <div class="cp-custom-select" id="cpLevelDropdown">
+            <div class="trigger" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="cpLevelListbox" id="cpLevelTrigger">
+              <span class="selected-label">Beginner — New to open source</span>
+              <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+            </div>
+            <div class="listbox hidden" id="cpLevelListbox" role="listbox">
+              <div id="cpLevelOptions"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button id="cpGenerateBtn"
+        class="w-full py-3 rounded-2xl bg-primary text-white font-extrabold text-sm uppercase tracking-wide
+               hover:bg-orange-700 active:scale-95 transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        Generate My Roadmap
+      </button>
+    </div>
+
+    <!-- Roadmap output -->
+    <div id="cpRoadmapOutput" class="hidden">
+
+      <!-- Meta row -->
+      <div class="flex flex-wrap items-start gap-3 mb-5">
+        <div class="flex-1 min-w-0">
+          <h3 id="cpRoadmapTitle" class="font-headline font-extrabold text-2xl text-zinc-900"></h3>
+          <p id="cpRoadmapSub" class="text-sm text-zinc-500 mt-1"></p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <span id="cpBadgeComp"  class="px-3 py-1 rounded-full text-xs font-bold border"></span>
+          <span id="cpBadgeETA"   class="px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 text-xs font-bold"></span>
+          <button id="cpResetBtn"
+            class="px-3 py-1.5 rounded-full border border-zinc-200 text-xs font-semibold text-zinc-500
+                   hover:bg-zinc-100 transition-all flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">refresh</span> New
+          </button>
+        </div>
+      </div>
+
+      <!-- Tech stack context bar -->
+      <div id="cpTechBar"
+        class="bg-white rounded-2xl border border-zinc-100 p-4 mb-6 flex flex-wrap items-center gap-3">
+        <span class="font-label text-[10px] font-extrabold uppercase tracking-widest text-zinc-400">Tech to learn:</span>
+        <div id="cpTechTags" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="flex items-center gap-3 mb-8">
+        <span class="font-label text-xs font-bold uppercase tracking-widest text-zinc-400 w-16">Progress</span>
+        <div class="flex-1 h-2 bg-zinc-100 rounded-full overflow-hidden">
+          <div id="cpProgressFill" class="h-full bg-primary rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+        <span id="cpProgressLabel" class="font-mono text-xs font-bold text-zinc-500 w-8 text-right">0%</span>
+      </div>
+
+      <!-- Steps -->
+      <div id="cpTimeline" class="flex flex-col"></div>
+
+    </div>
+  </div>
+</section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
@@ -1082,6 +1292,10 @@
       <a href="#" target="_blank" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">code</span> Repository
       </a>
+      <button id="mPathBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2"
+              style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;">
+        <span class="material-symbols-outlined text-lg">route</span> Contribution Path
+      </button>
     </div>
   </div>
 </div>
@@ -1189,7 +1403,7 @@
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline'];
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'contribution-path'];
     const scrollPosition = window.scrollY + 100; // Offset for fixed header
     
     let currentSection = 'orgs'; // Default
@@ -2655,6 +2869,550 @@ document.addEventListener('DOMContentLoaded', () => {
   window.closeHelpModal = closeHelpModal;
 
 });
+
+
+// CONTRIBUTION PATH GENERATOR
+
+(function () {
+  const BASE_STEPS = {
+    beginner: [
+      {
+        icon: 'description',
+        title: 'Read the Organization Overview',
+        desc: 'Visit the org\'s website, their GSoC page, and their main GitHub repository. Understand what problem they solve.',
+        eta: '1–2 hrs',
+        extra: (org) => `This org works in <strong>${org.cat}</strong>. Their key technologies are: ${org.tags.slice(0,4).map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join(' ')}.`
+      },
+      {
+        icon: 'rule',
+        title: 'Read the Contribution Guidelines',
+        desc: 'Find CONTRIBUTING.md in the repo root. Follow every setup step listed there before writing any code.',
+        eta: '1 hr',
+        extra: (org) => `Look for CONTRIBUTING.md at: <span class="font-mono text-xs bg-zinc-100 px-1 py-0.5 rounded">github.com/${escapeHtml(org.github)}</span>`
+      },
+      {
+        icon: 'terminal',
+        title: 'Set Up the Project Locally',
+        desc: 'Fork the repo, clone it, install all dependencies, and run the project on your machine.',
+        eta: '2–4 hrs',
+        extra: (org) => {
+          const stack = org.tags.map(t => t.toLowerCase());
+          if (stack.some(t => t.includes('python'))) return 'This project uses <strong>Python</strong> — set up a virtual environment first (<span class="font-mono text-xs bg-zinc-100 px-1 rounded">python -m venv venv</span>).';
+          if (stack.some(t => t.includes('javascript') || t.includes('node'))) return 'This project uses <strong>JavaScript/Node</strong> — run <span class="font-mono text-xs bg-zinc-100 px-1 rounded">npm install</span> after cloning.';
+          if (stack.some(t => t.includes('rust'))) return 'This project uses <strong>Rust</strong> — install via <span class="font-mono text-xs bg-zinc-100 px-1 rounded">rustup</span> and run <span class="font-mono text-xs bg-zinc-100 px-1 rounded">cargo build</span>.';
+          if (stack.some(t => t.includes('go'))) return 'This project uses <strong>Go</strong> — make sure your GOPATH is set up correctly.';
+          if (stack.some(t => t.includes('java'))) return 'This project uses <strong>Java</strong> — check the required JDK version in the README.';
+          if (stack.some(t => t.includes('c++') || t.includes('c/c++'))) return 'This project uses <strong>C/C++</strong> — you\'ll need cmake and a compiler like gcc or clang.';
+          return 'Check the README for setup instructions specific to this project\'s stack.';
+        }
+      },
+      {
+        icon: 'search',
+        title: 'Explore the Codebase',
+        desc: 'Browse the folder structure. Read at least 3 source files to understand the code patterns and conventions used.',
+        eta: '2–3 hrs',
+        extra: (org) => `Focus on files related to: ${org.tags.slice(0,3).map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join(' ')}.`
+      },
+      {
+        icon: 'bug_report',
+        title: 'Pick a Good First Issue',
+        desc: 'Go to the GitHub Issues tab and filter by "good-first-issue" or "beginner-friendly" label.',
+        eta: '1 hr',
+        extra: (org) => {
+          const gfiUrl = `https://github.com/${org.github}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22`;
+          const safe = sanitizeHrefUrl(gfiUrl);
+          return safe ? `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">🟢 Browse Good First Issues for ${escapeHtml(org.name)}</a>` : '';
+        }
+      },
+      {
+        icon: 'forum',
+        title: 'Join Community Channels',
+        desc: 'Introduce yourself in the org\'s communication channel. Mention your background and which issue you\'re looking at.',
+        eta: 'Ongoing',
+        extra: (org) => {
+          const entry = MENTOR_DATA[org.name];
+          if (entry && entry.channels && entry.channels.length > 0) {
+            const ch = entry.channels[0];
+            const safe = sanitizeHrefUrl(ch.url);
+            return safe ? `Join their <a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💬 ${escapeHtml(ch.label || ch.type)}</a>` : `Their primary channel is <strong>${escapeHtml(ch.type)}</strong>.`;
+          }
+          return 'Check the org\'s ideas page or README for their communication channel link.';
+        }
+      },
+      {
+        icon: 'upload',
+        title: 'Submit Your First Pull Request',
+        desc: 'Fix the issue you chose. Write a clear PR description explaining what you changed and why. Reference the issue number.',
+        eta: '1–3 days',
+        extra: (org) => org.competition === 'hot'
+          ? '⚠️ This is a <strong>high-competition</strong> org — quality of your first PR really matters. Take your time.'
+          : '✅ This org has <strong>' + (org.competition === 'chill' ? 'low' : 'moderate') + ' competition</strong> — a solid first PR will make you stand out.'
+      },
+      {
+        icon: 'rate_review',
+        title: 'Respond to Review Feedback',
+        desc: 'Maintainers will leave comments. Respond within 24–48 hours, make the requested changes, and push updates.',
+        eta: '1–2 days',
+        extra: () => 'Tip: Never argue with reviewers. Ask clarifying questions instead of defending your approach.'
+      },
+      {
+        icon: 'edit_document',
+        title: 'Start Your GSoC Proposal',
+        desc: 'Browse the org\'s project ideas page. Pick one that excites you and matches your skill set. Start drafting early.',
+        eta: '1 week',
+        extra: (org) => {
+          const safe = sanitizeHrefUrl(org.ideas);
+          return safe
+            ? `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💡 View Project Ideas for ${escapeHtml(org.name)}</a>`
+            : 'Ask in the community channel for a link to their current ideas page.';
+        }
+      },
+    ],
+
+    intermediate: [
+      {
+        icon: 'lab_research',
+        title: 'Deep-dive the Architecture',
+        desc: 'Read any architecture or design docs in the repo. Understand how the major components interact.',
+        eta: '1 day',
+        extra: (org) => `Focus on the <strong>${org.cat}</strong> domain. Key modules will likely involve: ${org.tags.slice(0,3).map(t=>`<span class="tech-tag">${escapeHtml(t)}</span>`).join(' ')}.`
+      },
+      {
+        icon: 'terminal',
+        title: 'Full Dev Environment + Test Suite',
+        desc: 'Get every test passing locally. Read the CI config (.github/workflows) to understand what checks PRs must pass.',
+        eta: '2–3 hrs',
+        extra: (org) => `Check the repo at <span class="font-mono text-xs bg-zinc-100 px-1 rounded">github.com/${escapeHtml(org.github)}/actions</span> to see the CI pipeline.`
+      },
+      {
+        icon: 'bug_report',
+        title: 'Reproduce and Diagnose a Bug',
+        desc: 'Pick a non-trivial open bug. Reproduce it locally, write a failing test that captures it, then fix it.',
+        eta: '1–2 days',
+        extra: (org) => {
+          const url = `https://github.com/${org.github}/issues?q=is%3Aissue+is%3Aopen+label%3Abug`;
+          const safe = sanitizeHrefUrl(url);
+          return safe ? `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">🐛 Browse bug reports for ${escapeHtml(org.name)}</a>` : '';
+        }
+      },
+      {
+        icon: 'build',
+        title: 'Submit a Quality Bug Fix PR',
+        desc: 'Fix the bug with tests, update any affected docs, and write a clear PR description with before/after behaviour.',
+        eta: '2–3 days',
+        extra: (org) => org.competition === 'hot'
+          ? '🔥 <strong>High competition</strong> — make this PR exceptional. Add tests, docs, and a detailed description.'
+          : 'A well-documented bug fix significantly increases your proposal credibility.'
+      },
+      {
+        icon: 'groups',
+        title: 'Become Active in the Community',
+        desc: 'Review other contributors\' PRs. Answer questions in issues. Attend any community calls or office hours.',
+        eta: 'Ongoing',
+        extra: (org) => {
+          const entry = MENTOR_DATA[org.name];
+          if (entry && entry.channels && entry.channels.length > 0) {
+            const ch = entry.channels[0];
+            const safe = sanitizeHrefUrl(ch.url);
+            return safe ? `Be active on <a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💬 ${escapeHtml(ch.label || ch.type)}</a>` : '';
+          }
+          return 'Find the community channel in the org\'s README or ideas page.';
+        }
+      },
+      {
+        icon: 'fitness_center',
+        title: 'Tackle a Medium Complexity Issue',
+        desc: 'Look for issues labeled "help-wanted" or "enhancement". These show maintainers you can handle real work.',
+        eta: '3–5 days',
+        extra: (org) => {
+          const url = `https://github.com/${org.github}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22`;
+          const safe = sanitizeHrefUrl(url);
+          return safe ? `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💪 Help Wanted issues for ${escapeHtml(org.name)}</a>` : '';
+        }
+      },
+      {
+        icon: 'rule',
+        title: 'Improve Documentation',
+        desc: 'Find gaps in the docs — missing examples, outdated guides, unclear explanations. Fix them in a focused PR.',
+        eta: '1–2 days',
+        extra: () => 'Maintainers often love documentation PRs. It shows you understand the project well enough to explain it.'
+      },
+      {
+        icon: 'edit_document',
+        title: 'Draft Your GSoC Proposal',
+        desc: 'Pick a project from the ideas page. Write a detailed proposal with a weekly timeline, deliverables, and milestones.',
+        eta: '1–2 weeks',
+        extra: (org) => {
+          const safe = sanitizeHrefUrl(org.ideas);
+          return safe
+            ? `Start from: <a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💡 ${escapeHtml(org.name)} Ideas Page</a>`
+            : 'Ask in the community channel for their current project ideas list.';
+        }
+      },
+      {
+        icon: 'fact_check',
+        title: 'Get Your Proposal Reviewed',
+        desc: 'Share the draft in the community channel and ask a mentor for feedback at least 1 week before the deadline.',
+        eta: '3–5 days',
+        extra: (org) => org.competition === 'hot'
+          ? '🔥 <strong>Highly competitive org</strong> — getting mentor feedback early is critical. Don\'t wait until the last week.'
+          : 'Even for less competitive orgs, early mentor feedback dramatically improves acceptance rates.'
+      },
+    ],
+
+    advanced: [
+      {
+        icon: 'my_location',
+        title: 'Identify the Highest-Impact Area',
+        desc: 'Read the org\'s roadmap, open milestones, and recent maintainer discussions to find where your contribution matters most.',
+        eta: '1 day',
+        extra: (org) => `Check open milestones at <span class="font-mono text-xs bg-zinc-100 px-1 rounded">github.com/${escapeHtml(org.github)}/milestones</span> and recent discussions.`
+      },
+      {
+        icon: 'bolt',
+        title: 'Land 2–3 Significant PRs',
+        desc: 'Go beyond bug fixes. Add a feature, improve performance, or refactor a module. Quality matters far more than quantity.',
+        eta: '1–2 weeks',
+        extra: (org) => org.competition === 'hot'
+          ? '🔥 <strong>Very competitive org</strong> — you need meaningful merged PRs to be taken seriously as a GSoC applicant.'
+          : `With <strong>${escapeHtml(org.competition)}</strong> competition, 2 solid PRs will make you a top candidate.`
+      },
+      {
+        icon: 'handshake',
+        title: 'Engage Directly with Mentors',
+        desc: 'Discuss specific project ideas directly with mentors. Ask technical questions that show depth of understanding.',
+        eta: 'Ongoing',
+        extra: (org) => {
+          const entry = MENTOR_DATA[org.name];
+          if (entry && entry.mentors && entry.mentors.length > 0) {
+            const chips = entry.mentors.slice(0,3).map(m => {
+              const safe = sanitizeHrefUrl(m.githubUrl);
+              return safe ? `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-handle-chip">🐙 @${escapeHtml(m.github || m.name)}</a>` : '';
+            }).filter(Boolean).join(' ');
+            return chips ? `Known mentors: ${chips}` : 'Find mentor handles on the org\'s ideas page.';
+          }
+          return 'Find mentor handles on the org\'s ideas page or mailing list.';
+        }
+      },
+      {
+        icon: 'architecture',
+        title: 'Design Your Project Architecture',
+        desc: 'Write a technical design doc. Include diagrams, API designs, data models, and how it fits into the existing codebase.',
+        eta: '2–3 days',
+        extra: (org) => `Your design must work within the existing <strong>${org.cat}</strong> architecture using ${org.tags.slice(0,3).map(t=>`<span class="tech-tag">${escapeHtml(t)}</span>`).join(' ')}.`
+      },
+      {
+        icon: 'science',
+        title: 'Build a Proof of Concept',
+        desc: 'Implement a minimal working version of your proposed feature. This proves your proposal is technically feasible.',
+        eta: '3–5 days',
+        extra: () => 'Share the PoC in your community channel — maintainers love seeing working code in a proposal.'
+      },
+      {
+        icon: 'edit_document',
+        title: 'Write a Detailed Proposal',
+        desc: 'Include: problem statement, proposed solution, technical design, weekly milestones, testing plan, and your background.',
+        eta: '1 week',
+        extra: (org) => {
+          const safe = sanitizeHrefUrl(org.ideas);
+          return (safe ? `Reference the ideas page: <a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip">💡 ${escapeHtml(org.name)}</a>. ` : '') +
+            (org.competition === 'hot' ? 'This is a <strong>highly competitive</strong> org — your proposal needs to be exceptional.' : '');
+        }
+      },
+      {
+        icon: 'rate_review',
+        title: 'Peer Review Other Proposals',
+        desc: 'Help other contributors review their drafts. This builds goodwill and makes mentors notice you as a collaborative person.',
+        eta: '2–3 days',
+        extra: () => 'Being helpful to others is one of the strongest signals of a good open-source contributor.'
+      },
+      {
+        icon: 'emoji_events',
+        title: 'Final Polish and Submit',
+        desc: 'Incorporate all mentor feedback. Proofread carefully. Submit at least 24 hours before the deadline — never last minute.',
+        eta: '1–2 days',
+        extra: (org) => org.competition === 'hot'
+          ? '🔥 Deadline: March 31, 2026. <strong>High competition org</strong> — every detail in your proposal counts.'
+          : '📅 Deadline: March 31, 2026 at 18:00 UTC. Double check before submitting.'
+      },
+    ]
+  };
+
+  const CP_ETA = { beginner: '6–8 weeks', intermediate: '4–6 weeks', advanced: '3–4 weeks' };
+  const COMP_BADGE = {
+    hot:      { cls: 'bg-red-50 text-red-700 border-red-200',    label: '🔥 High Competition' },
+    moderate: { cls: 'bg-yellow-50 text-yellow-700 border-yellow-200', label: '⚖️ Moderate Competition' },
+    chill:    { cls: 'bg-green-50 text-green-700 border-green-200',  label: '😊 Low Competition' }
+  };
+
+  // ── Custom dropdown helper ─────────────────────────────
+  function makeDropdown({wrapperId, triggerId, listboxId, searchId, optionsId, items, defaultValue, onSelect}){ 
+  const wrapper   = document.getElementById(wrapperId);
+  const trigger   = document.getElementById(triggerId);
+  const listbox   = document.getElementById(listboxId);
+  const searchEl  = searchId ? document.getElementById(searchId) : null;
+  const optionsEl = document.getElementById(optionsId);
+  let currentItems = [...items];
+  let selectedValue = defaultValue;
+  let focusIdx = -1;
+
+  function renderOptions(list){
+    optionsEl.innerHTML = '';
+    list.forEach((item) => {
+      const div = document.createElement('div');
+      div.className = 'option' + (item.value === selectedValue ? ' selected' : '');
+      div.textContent = item.label;
+      div.setAttribute('role','option');
+      div.setAttribute('aria-selected', item.value === selectedValue ? 'true' : 'false');
+      div.addEventListener('mousedown', e => { e.preventDefault(); choose(item); });
+      optionsEl.appendChild(div);
+    });
+  }
+
+  function open(){
+    listbox.classList.remove('hidden');
+    trigger.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+    renderOptions(currentItems);
+    if(searchEl){ searchEl.value = ''; searchEl.focus(); }
+    focusIdx = -1;
+  }
+
+  function close(){
+    listbox.classList.add('hidden');
+    trigger.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+    focusIdx = -1;
+  }
+
+  function choose(item){
+    selectedValue = item.value;
+    const label = trigger.querySelector('.selected-label');
+    label.textContent = item.label;
+    label.style.color = item.value === '' ? '#9ca3af' : '';
+    close();
+    onSelect(item);
+  }
+
+  trigger.addEventListener('click', () => listbox.classList.contains('hidden') ? open() : close());
+  trigger.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+  });
+  if(searchEl) searchEl.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    currentItems = items.filter(it => it.label.toLowerCase().includes(q));
+    renderOptions(currentItems);
+    focusIdx = -1;
+  });
+  wrapper.addEventListener('keydown', e => {
+    const opts = optionsEl.querySelectorAll('.option');
+    if(e.key === 'ArrowDown'){ e.preventDefault(); opts[focusIdx]?.classList.remove('focused'); focusIdx = Math.min(focusIdx+1, opts.length-1); opts[focusIdx]?.classList.add('focused'); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); opts[focusIdx]?.classList.remove('focused'); focusIdx = Math.max(focusIdx-1,0); opts[focusIdx]?.classList.add('focused'); }
+    else if(e.key === 'Enter' && focusIdx >= 0){ choose(currentItems[focusIdx]); }
+    else if(e.key === 'Escape'){ close(); trigger.focus(); }
+  });
+  document.addEventListener('click', e => { if(!wrapper.contains(e.target)) close(); }, true);
+
+  renderOptions(items);
+  return { getValue: () => selectedValue, setValue: (v) => { const item = items.find(i => i.value === v); if(item) choose(item); } };
+}
+
+// ── Build org dropdown ─────────────────────────────────
+const orgDropdownItems = [
+  {value:'', label:'-- Select an organization --'},
+  ...(typeof ORGS !== 'undefined' ? [...ORGS].sort((a,b) => a.name.localeCompare(b.name)).map(o => ({value:o.name, label:o.name})) : [])
+];
+const levelDropdownItems = [
+  {value:'beginner',      label:'Beginner — New to open source'},
+  {value:'intermediate',  label:'Intermediate — Some PRs merged'},
+  {value:'advanced',      label:'Advanced — Consistent contributor'}
+];
+
+const cpOrgDD = makeDropdown({
+  wrapperId:'cpOrgDropdown', triggerId:'cpOrgTrigger', listboxId:'cpOrgListbox',
+  searchId:'cpOrgSearch', optionsId:'cpOrgOptions',
+  items: orgDropdownItems, defaultValue:'',
+  onSelect(){}
+});
+const cpLevelDD = makeDropdown({
+  wrapperId:'cpLevelDropdown', triggerId:'cpLevelTrigger', listboxId:'cpLevelListbox',
+  searchId:null, optionsId:'cpLevelOptions',
+  items: levelDropdownItems, defaultValue:'beginner',
+  onSelect(){}
+});
+
+  // ── localStorage helpers ───────────────────────────────────
+  function cpKey(org, level) { return 'cp_' + org.replace(/\W+/g, '_') + '_' + level; }
+  function cpLoad(key) { try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch (e) { return new Set(); } }
+  function cpSave(key, set) { try { localStorage.setItem(key, JSON.stringify([...set])); } catch (e) {} }
+
+  // ── Progress bar ───────────────────────────────────────────
+  function cpUpdateProgress(done, total) {
+    const pct = Math.round(done.size / total * 100);
+    document.getElementById('cpProgressFill').style.width = pct + '%';
+    document.getElementById('cpProgressLabel').textContent = pct + '%';
+  }
+
+  // ── Render timeline steps ──────────────────────────────────
+  function cpRenderTimeline(steps, done, key, org) {
+    const timeline = document.getElementById('cpTimeline');
+    timeline.innerHTML = '';
+
+    // Map our step `icon` keys to FontAwesome classes
+    // (Contribution Path step icons: FA 6.5 free solid)
+    const ICON_MAP = {
+      // General/content
+      description: 'fa-solid fa-file-lines',
+      rule: 'fa-solid fa-book',
+      edit_document: 'fa-solid fa-pen-to-square',
+      search: 'fa-solid fa-magnifying-glass',
+
+      // Dev/terminal/build
+      terminal: 'fa-solid fa-terminal',
+      build: 'fa-solid fa-gears',
+      upload: 'fa-solid fa-upload',
+
+      // Codebase/testing/bug
+      bug_report: 'fa-solid fa-bug',
+      rate_review: 'fa-solid fa-comments',
+      lab_research: 'fa-solid fa-flask',
+      fact_check: 'fa-solid fa-circle-check',
+
+      // Community
+      forum: 'fa-solid fa-people-group',
+      groups: 'fa-solid fa-user-group',
+      handshake: 'fa-solid fa-handshake',
+
+      // Roadmap/architecture
+      architecture: 'fa-solid fa-draw-polygon',
+      science: 'fa-solid fa-microscope',
+      emoji_events: 'fa-solid fa-flag-checkered',
+      my_location: 'fa-solid fa-compass',
+
+      // Misc
+      connect: 'fa-solid fa-link',
+      bolt: 'fa-solid fa-bolt',
+      fitness_center: 'fa-solid fa-dumbbell',
+
+      // Timeline/calendar
+      rulebook: 'fa-solid fa-book-open'
+    };
+
+    steps.forEach((step, idx) => {
+      const completed = done.has(idx);
+      const isLast = idx === steps.length - 1;
+
+      // Build extra org-specific advice HTML
+      let extraHtml = '';
+      try { extraHtml = step.extra ? step.extra(org) : ''; } catch (e) { extraHtml = ''; }
+
+      const div = document.createElement('div');
+      div.className = 'flex gap-4';
+      div.style.cssText = 'animation:fadeUp .5s ease-out both;animation-delay:' + (idx * 50) + 'ms';
+
+      div.innerHTML = `
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all
+                      ${completed ? 'bg-primary text-white' : 'bg-white border border-zinc-200 text-zinc-400'}">
+            <span class="text-lg ${completed ? 'icon-fill' : ''}">
+              ${completed ? '<i class="fa-solid fa-check" aria-hidden="true"></i>' : (ICON_MAP[step.icon] ? `<i class="${ICON_MAP[step.icon]}" aria-hidden="true"></i>` : escapeHtml(step.icon))}
+            </span>
+          </div>
+          ${!isLast ? '<div style="width:2px;flex:1;min-height:1.5rem;background:#e4e4e7;margin-top:2px"></div>' : ''}
+        </div>
+        <div class="flex-1 pb-6">
+          <div class="bg-white rounded-2xl border border-zinc-100 p-5 shadow-sm ${completed ? 'opacity-60' : ''}">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-label text-[10px] font-extrabold uppercase tracking-widest text-primary">Step ${idx + 1}</span>
+              <span class="text-xs text-zinc-400 font-medium">⏱ ${escapeHtml(step.eta)}</span>
+            </div>
+            <h4 class="font-headline font-bold text-base text-zinc-900 mb-1">${escapeHtml(step.title)}</h4>
+            <p class="text-sm text-zinc-500 mb-3">${escapeHtml(step.desc)}</p>
+            ${extraHtml ? `<div class="text-xs text-zinc-600 bg-orange-50 border border-orange-100 rounded-xl p-3 mb-3 flex flex-wrap gap-1.5 items-center">${extraHtml}</div>` : ''}
+            <button data-cpidx="${idx}"
+              class="cp-step-btn text-xs font-bold px-3 py-1.5 rounded-full border transition-all
+                     ${completed
+                       ? 'bg-green-50 border-green-200 text-green-700'
+                       : 'border-zinc-200 text-zinc-500 hover:border-primary hover:text-primary'}">
+              ${completed ? '✅ Completed' : 'Mark as Done'}
+            </button>
+          </div>
+        </div>`;
+
+      div.querySelector('.cp-step-btn').addEventListener('click', () => {
+        if (done.has(idx)) done.delete(idx); else done.add(idx);
+        cpSave(key, done);
+        cpRenderTimeline(steps, done, key, org);
+        cpUpdateProgress(done, steps.length);
+      });
+
+      timeline.appendChild(div);
+    });
+  }
+
+  // ── Generate ───────────────────────────────────────────────
+  function cpGenerate(preselectedOrgName) {
+    const orgName = preselectedOrgName || cpOrgDD.getValue();
+    const level   = cpLevelDD.getValue();
+    if (!orgName) { alert('Please select an organization first.'); return; }
+
+    const org = ORGS.find(o => o.name === orgName);
+    if (!org) return;
+
+    const steps = BASE_STEPS[level];
+    const key   = cpKey(orgName, level);
+    const done  = cpLoad(key);
+
+    // Title + subtitle
+    document.getElementById('cpRoadmapTitle').textContent =
+      org.name + ' — ' + level.charAt(0).toUpperCase() + level.slice(1) + ' Path';
+    document.getElementById('cpRoadmapSub').textContent =
+      org.cat.charAt(0).toUpperCase() + org.cat.slice(1) + ' · ' + org.years + ' year GSoC veteran';
+
+    // Competition badge
+    const comp   = COMP_BADGE[org.competition] || COMP_BADGE.moderate;
+    const badge  = document.getElementById('cpBadgeComp');
+    badge.textContent  = comp.label;
+    badge.className    = 'px-3 py-1 rounded-full text-xs font-bold border ' + comp.cls;
+
+    // ETA
+    document.getElementById('cpBadgeETA').textContent = '⏱ Est. ' + CP_ETA[level];
+
+    // Tech stack tags
+    document.getElementById('cpTechTags').innerHTML = org.tags
+      .map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
+
+    cpRenderTimeline(steps, done, key, org);
+    cpUpdateProgress(done, steps.length);
+
+    document.getElementById('cpFormCard').classList.add('hidden');
+    document.getElementById('cpRoadmapOutput').classList.remove('hidden');
+    document.getElementById('contribution-path').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.getElementById('cpGenerateBtn')?.addEventListener('click', () => cpGenerate(null));
+
+  document.getElementById('cpResetBtn')?.addEventListener('click', () => {
+    document.getElementById('cpFormCard').classList.remove('hidden');
+    document.getElementById('cpRoadmapOutput').classList.add('hidden');
+  });
+
+  // ── Modal "Contribution Path" button ──────────────────────
+  // Pre-selects the currently open org and scrolls to the section
+  document.getElementById('mPathBtn')?.addEventListener('click', () => {
+    const orgName = document.querySelector('#mHeader h2')?.textContent?.trim();
+    if (orgName) cpOrgDD.setValue(orgName);
+    closeModal();
+    // Small delay so modal close animation finishes first
+    setTimeout(() => {
+      document.getElementById('cpFormCard').classList.remove('hidden');
+      document.getElementById('cpRoadmapOutput').classList.add('hidden');
+      document.getElementById('contribution-path').scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  });
+
+})();
+
 </script>
 </body>
 

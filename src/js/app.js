@@ -597,6 +597,7 @@ function applyFilters(){
     if(search && !orgName.includes(search)) return false;
 
     // Language pills (multi-select)
+    // Use proper language matching with LANGUAGE_MAP and support AND/OR logic
     if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
  
     // Filter chips
@@ -847,7 +848,7 @@ function renderGrid(orgs){
           </a>`:''}
         </div>
       </div>
-      <div class="org-desc">${o.desc}</div>
+      <div class="org-desc">${escapeHtml(o.desc)}</div>
       <div class="badges">
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
@@ -1363,6 +1364,7 @@ renderSelectedLanguages();
 // Initialize match mode toggle listener
 document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
   matchAllLanguages = e.target.checked;
+  globalThis.matchAllLanguages = matchAllLanguages;
   applyFilters();
 });
 

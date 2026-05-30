@@ -2748,11 +2748,74 @@
   "openSUSE Project": {
     "org": "openSUSE Project",
     "ideasUrl": "https://en.opensuse.org/openSUSE:GSOC",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+    {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#opensuse:opensuse.org",
+      "label": "openSUSE Matrix"
+    },
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#opensuse",
+      "label": "openSUSE IRC Channels"
+    },
+    {
+      "type": "Telegram",
+      "url": "https://t.me/openSUSE_group",
+      "label": "openSUSE Telegram"
+    },
+    {
+      "type": "Discord",
+      "url": "https://discord.gg/opensuse",
+      "label": "openSUSE Discord"
+    }
+  ],
+    "mentors": [
+    {
+      "name": "",
+      "github": "hennevogel",
+      "githubUrl": "https://github.com/hennevogel"
+    },
+    {
+      "name": "",
+      "github": "cornelius",
+      "githubUrl": "https://github.com/cornelius"
+    },
+    {
+      "name": "",
+      "github": "ddemaio",
+      "githubUrl": "https://github.com/ddemaio"
+    },
+    {
+      "name": "",
+      "github": "ChrisBr",
+      "githubUrl": "https://github.com/ChrisBr"
+    }
+  ],
+    "mailingLists": [ 
+      {
+      "type": "Mailing list",
+      "url": "mailto:opensuse-web@opensuse.org",
+      "label": "openSUSE Web Mailing List"
+    },
+       {
+      "type": "Mailing list",
+      "url": "mailto:support@lists.opensuse.org",
+      "label": "openSUSE Support Mailing List"
+    },
+    {
+      "type": "Mailing list",
+      "url": "mailto:project@lists.opensuse.org",
+      "label": "openSUSE Project Mailing List"
+    },
+    {
+      "type": "Mailing list",
+      "url": "mailto:factory@lists.opensuse.org",
+      "label": "openSUSE Factory Mailing List"
+    }
+  ],
     "tip": "",
-    "status": "fetch-failed",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "OpenVINO Toolkit": {

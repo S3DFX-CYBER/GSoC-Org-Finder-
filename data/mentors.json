@@ -1382,13 +1382,18 @@
   "Internet Archive": {
     "org": "Internet Archive",
     "ideasUrl": "https://docs.google.com/document/d/1EjzrHVapOZuzdI_Qqd_ravaTgiDWnxlMRbjjbzfd_-I/edit?tab=t.0",
-    "channels": [],
+    "channels": [
+        {
+            "type": "slack",
+            "url": "https://internetarchive.slack.com"
+        }
+    ],
     "mentors": [
-      { "name": "Mark Graham", "github": "", "githubUrl": "" },
-      { "name": "Sawood Alam", "github": "ibnesayeed", "githubUrl": "https://github.com/ibnesayeed" },
-      { "name": "Will Howes", "github": "", "githubUrl": "" },
-      { "name": "Mek Karpeles", "github": "mekarpeles", "githubUrl": "https://github.com/mekarpeles" },
-      { "name": "Drini Cami", "github": "", "githubUrl": "" }
+        { "name": "Mark Graham", "github": "", "githubUrl": "" },
+        { "name": "Sawood Alam", "github": "ibnesayeed", "githubUrl": "https://github.com/ibnesayeed" },
+        { "name": "Will Howes", "github": "", "githubUrl": "" },
+        { "name": "Mek Karpeles", "github": "mekarpeles", "githubUrl": "https://github.com/mekarpeles" },
+        { "name": "Drini Cami", "github": "", "githubUrl": "" }
     ],
     "mailingLists": [],
     "tip": "Mentors collaborate via Slack. Use the interest form on the ideas page to connect with them before submitting your proposal.",

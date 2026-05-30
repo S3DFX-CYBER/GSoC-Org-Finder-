@@ -14,7 +14,7 @@ const ContributionVelocityChart = (function() {
     
     container.innerHTML = `
       <div class="p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 h-full flex flex-col justify-between">
-        <h4 class="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Contribution Velocity</h4>
+        <h4 class="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2" title="Heuristic proxy based on forks and issues">Heuristic Contribution Velocity</h4>
         <div class="flex items-end gap-2 h-16 mt-2">
           ${[40, 60, 45, 75, velocity].map((val) => `
             <div class="flex-1 bg-gradient-to-t from-orange-200 to-orange-500 dark:from-orange-900 dark:to-orange-600 rounded-t-sm transition-all hover:opacity-80" 

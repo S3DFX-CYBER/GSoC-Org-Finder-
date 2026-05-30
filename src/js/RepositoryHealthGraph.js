@@ -5,13 +5,13 @@ const RepositoryHealthGraph = (function() {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    const watchers = repoData.watchers_count || 0;
+    const subscribers = repoData.subscribers_count || 0;
     const forks = repoData.forks_count || 0;
     const stars = repoData.stargazers_count || 0;
     const issues = repoData.open_issues_count || 0;
     
     // Normalize values to create a "health" score out of 100
-    const healthScore = Math.min(100, Math.round(((stars / 100) + (forks / 50) + (watchers / 20)) / 3 * 100));
+    const healthScore = Math.min(100, Math.round(((stars / 100) + (forks / 50) + (subscribers / 20)) / 3 * 100));
     
     container.innerHTML = `
       <div class="p-4 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 flex items-center gap-6">
@@ -24,7 +24,7 @@ const RepositoryHealthGraph = (function() {
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
             <span class="text-xl font-extrabold text-zinc-900 dark:text-white">${healthScore}</span>
-            <span class="text-[9px] font-bold text-zinc-500 uppercase">Health</span>
+            <span class="text-[9px] font-bold text-zinc-500 uppercase" title="Heuristic proxy based on stars, forks and subscribers">Heuristic Health</span>
           </div>
         </div>
         
@@ -42,8 +42,8 @@ const RepositoryHealthGraph = (function() {
             <span class="text-xs text-zinc-500 font-semibold uppercase tracking-wider">Issues</span>
           </div>
           <div class="flex flex-col">
-            <span class="text-xl font-bold text-zinc-800 dark:text-zinc-200">${watchers.toLocaleString()}</span>
-            <span class="text-xs text-zinc-500 font-semibold uppercase tracking-wider">Watchers</span>
+            <span class="text-xl font-bold text-zinc-800 dark:text-zinc-200">${subscribers.toLocaleString()}</span>
+            <span class="text-xs text-zinc-500 font-semibold uppercase tracking-wider">Subscribers</span>
           </div>
         </div>
       </div>

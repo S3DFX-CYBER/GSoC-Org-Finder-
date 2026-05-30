@@ -25,7 +25,7 @@ const MaintainerActivityCard = (function() {
     
     container.innerHTML = `
       <div class="p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700 h-full">
-        <h4 class="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">Maintainer Status</h4>
+        <h4 class="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3" title="Heuristic proxy based on repo updated_at">Heuristic Maintainer Status</h4>
         
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center">

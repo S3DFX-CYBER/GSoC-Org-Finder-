@@ -19,10 +19,13 @@ const GitHubAnalyticsDashboard = (function() {
       
       clearTimeout(timeoutId);
       
-      if (response.status === 403) {
-        rateLimitExceeded = true;
-        console.warn('GitHub API rate limit exceeded.');
-        return null;
+      if (response.status === 403 || response.status === 429) {
+        const remaining = response.headers.get('x-ratelimit-remaining');
+        if (remaining === '0') {
+          rateLimitExceeded = true;
+          console.warn('GitHub API rate limit exceeded.');
+          return null;
+        }
       }
       
       if (!response.ok) throw new Error(`GitHub API Error: ${response.status}`);

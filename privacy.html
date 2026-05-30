@@ -7,69 +7,331 @@
   <meta name="description" content="Privacy Policy for FindMyGSoC." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/privacy.html" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" integrity="sha384-9gQ8upeWZQ9/fPKaAGJuDpTMaZdwDhECBPX+H6i9vVTa3EllQ1skSXUr6bXADJRW" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script>
-    // Tailwind Configuration
+    (function(){
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {
+        console.warn('Theme restoration failed:', e);
+      }
+    })();
+  </script>
+  <script>
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            primary: { DEFAULT: '#f97316', container: '#ffedd5' },
-            surface: { DEFAULT: '#ffffff', 'container-low': '#f4f4f5' }
+            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
+            "surface-container":"#eeeeee","primary-container":"#f97316",
+            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
+            "on-background":"#1a1c1c","on-primary":"#ffffff",
+            "on-surface":"#1a1c1c","error":"#ba1a1a",
+            "primary":"#9d4300","on-surface-variant":"#584237",
+            "outline":"#8c7164","surface-container-lowest":"#ffffff",
+            "secondary":"#006c47","secondary-container":"#8af5be",
+            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
+            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
+            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
+            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
+            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
+            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
+            "on-primary-container":"#582200","surface-tint":"#9d4300",
           },
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            headline: ['"Space Grotesk"', 'sans-serif'],
-            mono: ['"Fira Code"', 'monospace']
-          }
-        }
-      }
+            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
+            "label":["Space Grotesk"],"mono":["Fira Code"]
+          },
+          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        },
+      },
     }
   </script>
-</head>
-<body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --border: #e5e7eb;
+      --border2: #eee;
+      --muted: #888;
+      --red: #ba1a1a;
+    }
+    .dark {
+      --bg: #27272a;
+      --border: #3f3f46;
+      --border2: #3f3f46;
+      --muted: #a1a1aa;
+      --red: #f87171;
+    }
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+    .glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 
-<header class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
-  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg shadow-orange-500/20">
-        <span class="text-white font-extrabold text-xl">G</span>
-      </div>
-      <a href="index.html" class="font-extrabold text-xl tracking-tight font-headline">FindMy<span class="text-primary">GSoC</span></a>
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .modal-bg.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: white;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      border-radius: 2rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding-top: 1px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-bg.open .modal { transform: scale(1); }
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 99px;
+      background: #f3f3f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
+    .modal-header { padding: 3rem 3rem 1.5rem; }
+    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
+    .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
+    .modal-body { padding: 0 3rem 3rem; overflow-y: auto; flex: 1; }
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #aaa;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+      border-bottom: 1px solid #f3f3f3;
+      padding-bottom: 0.5rem;
+    }
+
+    .badge-card {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border: 2px solid #fed7aa;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .badge-icon { font-size: 32px; margin-bottom: 6px; display: block; }
+    .badge-name { font-size: 12px; font-weight: 700; color: #9d4300; margin-bottom: 4px; }
+    .badge-level { font-size: 10px; font-weight: 600; color: #c2410c; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-progress { margin-top: 6px; height: 4px; background: rgba(157, 67, 0, 0.2); border-radius: 2px; overflow: hidden; }
+    .badge-progress-fill { height: 100%; background: linear-gradient(90deg, #f97316, #fb923c); transition: width 0.3s ease; }
+    .badge-count { font-size: 11px; color: #92600A; margin-top: 4px; }
+    .badge-locked { opacity: 0.5; filter: grayscale(1); }
+    .badge-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      border: 1.5px solid #fed7aa;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #9d4300;
+    }
+
+    .dark body { background: #0f0f10; color: #e5e7eb; }
+    .dark .glass { background: rgba(24, 24, 27, 0.85); }
+    .dark .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
+    .dark .text-on-surface { color: #f4f4f5 !important; }
+    .dark .border-zinc-100, .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    .dark .bg-zinc-100 { background: #27272a !important; }
+    .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
+    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46; }
+    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark header .text-zinc-600 { color: #a1a1aa !important; }
+    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
+    .dark header .hover\:bg-zinc-100\/50:hover { background: rgba(39, 39, 42, 0.5) !important; }
+    .dark .modal { background: #18181b; }
+    .dark .modal-header h2 { color: #f4f4f5; }
+    .dark .modal-header p { color: #a1a1aa; }
+    .dark .section-title { color: #a1a1aa; border-color: #27272a; }
+    .dark .close-btn { background: #27272a; color: #a1a1aa; }
+    .dark .close-btn:hover { background: #3f3f46; color: #f4f4f5; }
+    .dark .badge-card { background: linear-gradient(135deg, #1c0f05 0%, #2a1508 100%); border-color: #3a1f0a; }
+    .dark .badge-name { color: #fb923c; }
+    .dark .badge-level { color: #fdba74; }
+    .dark .badge-count { color: #fb923c; }
+    .dark .badge-indicator { background: linear-gradient(135deg, #1c0f05, #2a1508); border-color: #3a1f0a; color: #fb923c; }
+    .dark #mobileMenu #menuPanel { background: #18181b !important; border-right: 1px solid #3f3f46; }
+    .dark #mobileMenu .border-zinc-100 { border-color: #3f3f46 !important; }
+    .dark #mobileMenu .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark #mobileMenu .text-zinc-700 { color: #e5e7eb !important; }
+    .dark #mobileMenu .hover\:bg-zinc-100:hover { background: #27272a !important; }
+
+    @media (max-width: 640px) {
+      .modal-header { padding: 2rem 1.5rem 1rem; }
+      .modal-body { padding: 0 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body antialiased">
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="material-symbols-outlined text-zinc-600">menu</span>
+      </button>
+
+      <a href="index.html#timeline" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
+          <span class="hidden sm:inline">GSoC 2026 </span>
+          <span class="text-primary italic">Org Finder</span>
+        </span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#timeline">Timeline</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#orgs">Organizations</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#ai-recommender">AI Recommender</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#watchlist">Watchlist</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#issues">Issues</a>
+        <a class="text-zinc-600 hover:text-zinc-900 transition-colors" href="index.html#mentors">Mentors</a>
+      </nav>
     </div>
-    <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
-      <a href="index.html#orgs" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
-      <a href="index.html#guide" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
-      <a href="index.html#issues" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
-    </nav>
-    <div class="flex items-center gap-4">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button id="themeToggleBtn" onclick="toggleTheme()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+        <span class="material-symbols-outlined text-zinc-600">dark_mode</span>
+      </button>
+
+      <button id="analyticsBtn" onclick="openAnalytics()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="View Analytics & Badges"
+        aria-label="View Analytics and Badges">
+        <span class="material-symbols-outlined text-zinc-600">analytics</span>
+      </button>
+
+      <button id="helpBtn"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        title="Keyboard shortcuts (?)"
+        aria-label="Keyboard shortcuts">
+        <span class="material-symbols-outlined text-zinc-600">help</span>
+      </button>
+
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
+        class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-sm">star</span>
+        Star & Contribute
       </a>
     </div>
   </div>
 </header>
 
-<main class="pt-32 pb-20 px-6 max-w-4xl mx-auto">
-  <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8">Privacy Policy</h1>
-  <div class="prose prose-zinc prose-orange max-w-none">
+<!-- Mobile Menu Overlay -->
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
+
+  <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
+    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
+      </div>
+      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors" aria-label="Close menu">
+        <span class="material-symbols-outlined text-zinc-600">close</span>
+      </button>
+    </div>
+
+    <div class="p-4 space-y-1">
+      <a href="index.html#timeline" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Timeline
+      </a>
+      <a href="index.html#orgs" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">business</span>
+        Organizations
+      </a>
+      <a href="index.html#ai-recommender" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        AI Recommender
+      </a>
+      <a href="index.html#watchlist" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">bookmark</span>
+        Watchlist
+      </a>
+      <a href="index.html#issues" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">bug_report</span>
+        Issues
+      </a>
+      <a href="index.html#mentors" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">group</span>
+        Mentors
+      </a>
+      <a href="index.html#guide" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">menu_book</span>
+        Guide
+      </a>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+      </a>
+    </div>
+  </nav>
+</div>
+
+<main class="pt-28 pb-20 px-4 sm:px-6 max-w-4xl mx-auto">
+  <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8 text-zinc-900">Privacy Policy</h1>
+  <div class="max-w-none">
     <p class="text-zinc-600 mb-6">Last updated: May 14, 2026</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">1. Information We Collect</h2>
+
+    <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">1. Information We Collect</h2>
     <p class="text-zinc-600 mb-4">FindMyGSoC is a static site built for the open-source community. We do not directly collect, store, or process any personal data. All search and filtering operations occur locally in your browser. However, please note that we use third-party Content Delivery Networks (CDNs) for assets like fonts and styling, which may receive standard network metadata (such as your IP address) when you load the page.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">2. Local Storage</h2>
+
+    <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">2. Local Storage</h2>
     <p class="text-zinc-600 mb-4">We use your browser's local storage solely to save your organization bookmarks (Watchlist) and your theme preference (Light/Dark mode). This data never leaves your device.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">3. External Links</h2>
+
+    <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">3. External Links</h2>
     <p class="text-zinc-600 mb-4">Our site contains links to external websites (e.g., GitHub, GSoC official site, organization pages). We are not responsible for the privacy practices of these external sites.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">4. Open Source and Transparency</h2>
+
+    <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">4. Open Source and Transparency</h2>
     <p class="text-zinc-600 mb-4">The entire source code of this project is public. You can review it on <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub</a> to verify how it operates.</p>
-    
-    <h2 class="text-2xl font-bold mt-10 mb-4">5. Changes to This Policy</h2>
+
+    <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">5. Changes to This Policy</h2>
     <p class="text-zinc-600 mb-4">We may update this Privacy Policy from time to time. Any changes will be reflected on this page.</p>
   </div>
 </main>
@@ -84,6 +346,7 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
@@ -91,6 +354,306 @@
     </nav>
   </div>
 </footer>
+
+<!-- Analytics Panel -->
+<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
+  <div class="modal w-full max-w-4xl">
+    <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
+    <div class="modal-header pb-4 border-b border-zinc-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-extrabold font-headline">Analytics & Achievements</h2>
+          <p class="text-zinc-500 text-sm mt-1">Your activity stats and unlocked badges</p>
+          <p class="text-zinc-400 text-xs mt-1 flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:14px">info</span>
+            Badges are stored locally in your browser (per-device, cleared with browser data)
+          </p>
+        </div>
+        <span class="badge-indicator" id="badgeIndicator">
+          <span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> 0/16
+        </span>
+      </div>
+    </div>
+    <div class="modal-body p-6">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px">
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aTot">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Total Visits</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aToday">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Today</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aSearches">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Searches</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aViews">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Org Views</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aFilters">0</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Filters Used</div>
+        </div>
+        <div style="background:var(--bg);border:1.5px solid var(--border2);border-radius:11px;padding:11px;text-align:center">
+          <div style="font-size:19px;font-weight:900;margin-bottom:2px" id="aTime">—</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Session Time</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Achievement Badges</h3>
+          <button onclick="if(typeof BadgeSystem !== 'undefined') { BadgeSystem.resetProgress(); renderBadges(); }" style="font-size:10px;font-weight:700;color:var(--red);background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer">Reset Progress</button>
+        </div>
+        <div id="badgesContainer"></div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Top Categories</h3>
+        <div id="catChart"></div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Most Viewed Orgs</h3>
+        <div id="orgChart"></div>
+      </div>
+
+      <div>
+        <h3 style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Recent Searches</h3>
+        <div id="srchTerms"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal-bg" id="helpModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeHelpModal()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="modal-header">
+      <h2>Keyboard Shortcuts</h2>
+      <p>Quick shortcuts for navigation on the main page</p>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">Keyboard Shortcuts</div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b text-left">
+            <th class="py-2">Key</th>
+            <th class="py-2">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="py-2">↑ ↓ ← →</td><td class="py-2">Move focus between cards</td></tr>
+          <tr><td class="py-2">Enter</td><td class="py-2">Open focused card</td></tr>
+          <tr><td class="py-2">C</td><td class="py-2">Toggle compare</td></tr>
+          <tr><td class="py-2">Esc</td><td class="py-2">Close panel</td></tr>
+          <tr><td class="py-2">?</td><td class="py-2">Toggle help dialog</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="src/js/badges-mvp.js"></script>
+<script>
+  (function(){
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.classList.toggle('dark', saved === 'dark');
+    updateThemeIcon();
+  })();
+
+  window.toggleTheme = function(){
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+  };
+
+  function updateThemeIcon(){
+    const btn = document.getElementById('themeToggleBtn');
+    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
+    if(icon){
+      const isDark = document.documentElement.classList.contains('dark');
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+
+  window.toggleMenu = function(){
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+
+    if(menu.classList.contains('hidden')){
+      menu.classList.remove('hidden');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      menuBtn.setAttribute('aria-label', 'Close menu');
+      setTimeout(() => { panel.style.transform = 'translateX(0)'; }, 10);
+      document.addEventListener('keydown', handleMenuEscape);
+    } else {
+      panel.style.transform = 'translateX(-100%)';
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Open menu');
+      document.removeEventListener('keydown', handleMenuEscape);
+      setTimeout(() => { menu.classList.add('hidden'); }, 300);
+    }
+  };
+
+  function handleMenuEscape(e){
+    if(e.key === 'Escape'){
+      const menu = document.getElementById('mobileMenu');
+      if(!menu.classList.contains('hidden')) toggleMenu();
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function catLabel(c){
+    return {science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c] || c;
+  }
+
+  const AN = {
+    g(k,d){ try { return JSON.parse(localStorage.getItem('gaf_'+k)) ?? d; } catch { return d; } },
+    today(){ return new Date().toISOString().slice(0,10); },
+    todayVisits(){ return this.g('daily',{})[this.today()] || 0; },
+    sessionTime(){
+      const s = sessionStorage.getItem('gaf_s');
+      if(!s) return '—';
+      const sec = Math.floor((Date.now() - parseInt(s, 10)) / 1000);
+      return sec < 60 ? sec + 's' : Math.floor(sec / 60) + 'm' + (sec % 60) + 's';
+    },
+    topCats(){ return Object.entries(this.g('cats',{})).sort((a,b) => b[1] - a[1]).slice(0,6); },
+    topOrgs(){ return Object.entries(this.g('orgs',{})).sort((a,b) => b[1] - a[1]).slice(0,5); },
+    topTerms(){
+      const f = {};
+      this.g('sterms',[]).forEach(t => { f[t] = (f[t] || 0) + 1; });
+      return Object.entries(f).sort((a,b) => b[1] - a[1]).slice(0,12);
+    }
+  };
+
+  function populateAnalyticsStats(){
+    document.getElementById('aTot').textContent = AN.g('total', 0).toLocaleString();
+    document.getElementById('aToday').textContent = AN.todayVisits();
+    document.getElementById('aSearches').textContent = AN.g('searches', 0);
+    document.getElementById('aViews').textContent = AN.g('views', 0);
+    document.getElementById('aFilters').textContent = AN.g('filters', 0);
+    document.getElementById('aTime').textContent = AN.sessionTime();
+
+    const tc = AN.topCats(), mx = tc[0]?.[1] || 1;
+    document.getElementById('catChart').innerHTML = tc.length
+      ? tc.map(([c,n]) => `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px"><span style="min-width:80px">${escapeHtml(catLabel(c))}</span><div style="flex:1;height:8px;background:var(--border2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.round(n/mx*100)}%;background:#f97316"></div></div><span>${escapeHtml(String(n))}</span></div>`).join('')
+      : '<span style="color:var(--muted);font-size:12px">Use category filters to track data</span>';
+
+    const to = AN.topOrgs(), mo = to[0]?.[1] || 1;
+    document.getElementById('orgChart').innerHTML = to.length
+      ? to.map(([o,n]) => `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px"><span style="min-width:80px;font-size:10px">${escapeHtml(o.length > 16 ? o.slice(0,16) + '…' : o)}</span><div style="flex:1;height:8px;background:var(--border2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.round(n/mo*100)}%;background:#f97316"></div></div><span>${escapeHtml(String(n))}</span></div>`).join('')
+      : '<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
+
+    const tt = AN.topTerms();
+    document.getElementById('srchTerms').innerHTML = tt.length
+      ? tt.map(([t,c]) => `<span style="display:inline-block;margin:2px 4px;padding:2px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--border);font-size:11px">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
+      : '<span style="color:var(--muted);font-size:12px">No searches yet</span>';
+  }
+
+  let prevFocusBeforeAnalytics = null;
+
+  window.openAnalytics = function(){
+    prevFocusBeforeAnalytics = document.activeElement;
+    populateAnalyticsStats();
+    if (typeof BadgeSystem !== 'undefined') renderBadges();
+    const modal = document.getElementById('anBg');
+    modal?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { modal?.querySelector('.close-btn')?.focus(); }, 100);
+  };
+
+  window.closeAn = function(){
+    document.getElementById('anBg')?.classList.remove('open');
+    document.body.style.overflow = '';
+    if (prevFocusBeforeAnalytics && document.contains(prevFocusBeforeAnalytics)) {
+      prevFocusBeforeAnalytics.focus();
+    }
+    prevFocusBeforeAnalytics = null;
+  };
+
+  window.closeAnEvent = function(e){
+    if (e.target.id === 'anBg') closeAn();
+  };
+
+  function renderBadges(){
+    const badgesContainer = document.getElementById('badgesContainer');
+    if (!badgesContainer || typeof BadgeSystem === 'undefined') return;
+
+    const stats = BadgeSystem.getBadgeStats();
+    const unlockedCount = BadgeSystem.getUnlockedCount();
+    const totalCount = BadgeSystem.getTotalBadgesCount();
+
+    let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:12px">';
+
+    Object.keys(stats).forEach(badgeType => {
+      const badge = stats[badgeType];
+      const isLocked = !badge.level;
+      const icon = badge.name.split(' ')[0];
+      const levelName = badge.level ? badge.level.levelName : 'Locked';
+
+      html += `
+        <div class="badge-card ${isLocked ? 'badge-locked' : ''}">
+          <span class="badge-icon">${icon}</span>
+          <div class="badge-name">${escapeHtml(badge.name.substring(2))}</div>
+          <div class="badge-level">${escapeHtml(levelName)}</div>
+          <div class="badge-count">${badge.count}${badge.nextThreshold ? ' / ' + badge.nextThreshold : ''}</div>
+          <div class="badge-progress">
+            <div class="badge-progress-fill" style="width:${badge.progress}%"></div>
+          </div>
+        </div>`;
+    });
+
+    html += '</div>';
+    badgesContainer.innerHTML = html;
+
+    const badgeIndicator = document.getElementById('badgeIndicator');
+    if (badgeIndicator) {
+      badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${unlockedCount}/${totalCount}`;
+    }
+  }
+
+  function openHelpModal(){
+    document.getElementById('helpModal')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeHelpModal(){
+    document.getElementById('helpModal')?.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  window.closeHelpModal = closeHelpModal;
+
+  document.getElementById('helpBtn')?.addEventListener('click', openHelpModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '?' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+      openHelpModal();
+    }
+    if (e.key === 'Escape') {
+      if (document.getElementById('anBg')?.classList.contains('open')) closeAn();
+      else closeHelpModal();
+    }
+  });
+</script>
 
 </body>
 </html>

@@ -259,7 +259,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
 
   <nav class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-out -translate-x-full" id="menuPanel" aria-label="Main navigation">
@@ -323,7 +323,7 @@
     <p class="text-zinc-600 mb-4">FindMyGSoC is a static site built for the open-source community. We do not directly collect, store, or process any personal data. All search and filtering operations occur locally in your browser. However, please note that we use third-party Content Delivery Networks (CDNs) for assets like fonts and styling, which may receive standard network metadata (such as your IP address) when you load the page.</p>
 
     <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">2. Local Storage</h2>
-    <p class="text-zinc-600 mb-4">We use your browser's local storage solely to save your organization bookmarks (Watchlist) and your theme preference (Light/Dark mode). This data never leaves your device.</p>
+    <p class="text-zinc-600 mb-4">We use your browser's local storage and session storage to save your organization bookmarks (Watchlist), theme preference (Light/Dark mode), optional analytics activity (such as visit counts, searches, and org views), and achievement badge progress. This data never leaves your device.</p>
 
     <h2 class="text-2xl font-bold mt-10 mb-4 text-zinc-900">3. External Links</h2>
     <p class="text-zinc-600 mb-4">Our site contains links to external websites (e.g., GitHub, GSoC official site, organization pages). We are not responsible for the privacy practices of these external sites.</p>
@@ -429,7 +429,7 @@
 </div>
 
 <!-- Help Modal -->
-<div class="modal-bg" id="helpModal">
+<div class="modal-bg" id="helpModal" onclick="closeHelpEvent(event)" tabindex="-1" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
   <div class="modal">
     <button class="close-btn" onclick="closeHelpModal()">
       <span class="material-symbols-outlined">close</span>
@@ -462,14 +462,22 @@
 <script src="src/js/badges-mvp.js"></script>
 <script>
   (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
+    try {
+      const saved = localStorage.getItem('theme') || 'light';
+      document.documentElement.classList.toggle('dark', saved === 'dark');
+      updateThemeIcon();
+    } catch(e) {
+      console.warn('Theme restoration failed:', e);
+    }
   })();
 
   window.toggleTheme = function(){
     const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch(e) {
+      console.warn('Theme save failed:', e);
+    }
     updateThemeIcon();
   };
 
@@ -490,16 +498,18 @@
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
 
+    if (!menu || !panel) return;
+
     if(menu.classList.contains('hidden')){
       menu.classList.remove('hidden');
-      menuBtn.setAttribute('aria-expanded', 'true');
-      menuBtn.setAttribute('aria-label', 'Close menu');
+      menuBtn?.setAttribute('aria-expanded', 'true');
+      menuBtn?.setAttribute('aria-label', 'Close menu');
       setTimeout(() => { panel.style.transform = 'translateX(0)'; }, 10);
       document.addEventListener('keydown', handleMenuEscape);
     } else {
       panel.style.transform = 'translateX(-100%)';
-      menuBtn.setAttribute('aria-expanded', 'false');
-      menuBtn.setAttribute('aria-label', 'Open menu');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+      menuBtn?.setAttribute('aria-label', 'Open menu');
       document.removeEventListener('keydown', handleMenuEscape);
       setTimeout(() => { menu.classList.add('hidden'); }, 300);
     }
@@ -530,10 +540,14 @@
     today(){ return new Date().toISOString().slice(0,10); },
     todayVisits(){ return this.g('daily',{})[this.today()] || 0; },
     sessionTime(){
-      const s = sessionStorage.getItem('gaf_s');
-      if(!s) return '—';
-      const sec = Math.floor((Date.now() - parseInt(s, 10)) / 1000);
-      return sec < 60 ? sec + 's' : Math.floor(sec / 60) + 'm' + (sec % 60) + 's';
+      try {
+        const s = sessionStorage.getItem('gaf_s');
+        if(!s) return '—';
+        const sec = Math.floor((Date.now() - parseInt(s, 10)) / 1000);
+        return sec < 60 ? sec + 's' : Math.floor(sec / 60) + 'm' + (sec % 60) + 's';
+      } catch {
+        return '—';
+      }
     },
     topCats(){ return Object.entries(this.g('cats',{})).sort((a,b) => b[1] - a[1]).slice(0,6); },
     topOrgs(){ return Object.entries(this.g('orgs',{})).sort((a,b) => b[1] - a[1]).slice(0,5); },
@@ -630,14 +644,28 @@
     }
   }
 
+  let prevFocusBeforeHelp = null;
+
   function openHelpModal(){
+    prevFocusBeforeHelp = document.activeElement;
     document.getElementById('helpModal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      document.getElementById('helpModal')?.querySelector('.close-btn')?.focus();
+    }, 100);
   }
 
   function closeHelpModal(){
     document.getElementById('helpModal')?.classList.remove('open');
     document.body.style.overflow = '';
+    if (prevFocusBeforeHelp && document.contains(prevFocusBeforeHelp)) {
+      prevFocusBeforeHelp.focus();
+    }
+    prevFocusBeforeHelp = null;
+  }
+
+  function closeHelpEvent(e){
+    if (e.target.id === 'helpModal') closeHelpModal();
   }
 
   window.closeHelpModal = closeHelpModal;

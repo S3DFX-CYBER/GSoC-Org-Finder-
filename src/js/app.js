@@ -766,6 +766,42 @@ function toggleBookmark(event, orgIdx) {
   document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail: { name: orgName } }));
 }
 
+globalThis.copyOrgSummary = async function(event, idx) {
+  if (event) event.stopPropagation();
+  const o = ORGS[idx];
+  if (!o) return;
+
+  const repoHref = repoUrl(o);
+  const validatedIdeas = validateIdeasUrl(o.ideas);
+
+  let text = `🏢 ${o.name}\n`;
+  text += `📂 Category: ${catLabel(o.cat)}\n`;
+  text += `⏱️ Years in GSoC: ${o.years} years (Since ${o.firstYear})\n`;
+  text += `📊 Competition: ${cLbl(o.competition)}\n`;
+  text += `🛠️ Tech Stack: ${o.tags.join(', ')}\n`;
+  if (validatedIdeas) {
+    text += `💡 Project Ideas: ${validatedIdeas}\n`;
+  }
+  if (repoHref) {
+    text += `💻 Codebase: ${repoHref}\n`;
+  }
+  if (o._gh) {
+    text += `📈 GitHub Stats: ⭐ ${fmt(o._gh.stars)} stars | 🍴 ${fmt(o._gh.forks)} forks`;
+    if (o._gh.gfi !== null && o._gh.gfi !== undefined) {
+      text += ` | 🟢 ${fmt(o._gh.gfi)} Good First Issues`;
+    }
+    text += ` | 🕐 Last commit: ${o._gh.lastCommit}\n`;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    showCompareToast('📋 Shortlist summary copied to clipboard!');
+  } catch (err) {
+    console.error('Failed to copy shortlist summary:', err);
+    showCompareToast('✗ Failed to copy');
+  }
+};
+
 function isBookmarked(orgName) {
   const saved = getBookmarks();
   return saved.includes(orgName);
@@ -825,6 +861,9 @@ function renderGrid(orgs){
             <div class="org-name">${escapeHtml(o.name)}</div>
             <div class="card-actions">
               <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <button type="button" class="btn-card-copy" onclick="copyOrgSummary(event, ${globalIdx})" title="Copy Summary to Clipboard" aria-label="Copy summary of ${escapeHtml(o.name)}" style="background:none; border:none; color:#6B7280; cursor:pointer; padding:2px; display:inline-flex; align-items:center; justify-content:center;">
+                📋
+              </button>
               <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
               <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">

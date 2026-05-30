@@ -1570,7 +1570,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1787,10 +1787,15 @@
     updateThemeIcon();
 
     // The button transitions itself via Tailwind. Remove global transition after 400ms.
-    setTimeout(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.documentElement.classList.remove('theme-transition');
       isThemeToggling = false;
-    }, 400);
+    } else {
+      setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+        isThemeToggling = false;
+      }, 400);
+    }
   };
 
   function updateThemeIcon(){
@@ -3048,7 +3053,7 @@ btn.__orgListenerAttached = true;
   });
 
   document.getElementById('orgModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'orgModal') closeOrgModal();
+    if (e.target.id === 'orgModal') closeModal();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -3058,7 +3063,7 @@ btn.__orgListenerAttached = true;
     } else if (document.getElementById('compareModal')?.classList.contains('open')) {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-      closeOrgModal();
+      closeModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
     }
@@ -3546,7 +3551,7 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function closeOrgModal() {
+  function closeModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';

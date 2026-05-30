@@ -38,10 +38,11 @@ globalThis.toggleTheme = function(){
   updateThemeIcon();
 
   // The button transitions itself via Tailwind. Remove global transition after 400ms.
+  const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 400;
   setTimeout(() => {
     document.documentElement.classList.remove('theme-transition');
     isThemeToggling = false;
-  }, 400);
+  }, delay);
 };
 
 function updateThemeIcon(){

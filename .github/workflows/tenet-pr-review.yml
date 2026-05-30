@@ -13,7 +13,7 @@ jobs:
   tenet-review:
     name: TENET Security Review
     runs-on: ubuntu-latest
-   if: github.event.pull_request.user.login != 'github-actions[bot]' && github.event.pull_request.user.login != 'coderabbitai[bot]'
+    if: github.event.pull_request.user.login != 'github-actions[bot]' && github.event.pull_request.user.login != 'coderabbitai[bot]'
 
     # SECURITY: Do NOT add `ref: github.event.pull_request.head.sha` here.
     # pull_request_target runs with repository secrets.

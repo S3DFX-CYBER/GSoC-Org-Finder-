@@ -4,6 +4,10 @@
  * that allows users to smoothly scroll back to the top of the page.
  */
 document.addEventListener('DOMContentLoaded', () => {
+  // Prevent duplicate button creation
+  if (document.getElementById('scrollToTopBtn')) {
+    return;
+  }
   // Create button element
   const button = document.createElement('button');
   button.id = 'scrollToTopBtn';

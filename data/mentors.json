@@ -239,12 +239,34 @@
   "AOSSIE": {
     "org": "AOSSIE",
     "ideasUrl": "https://github.com/AOSSIE-Org/Info/blob/main/GSoC-Ideas/2026/index.md",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "url": "https://discord.com/invite/aossie",
+        "label": "AOSSIE Discord"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Bruno Woltzenlogel Paleo",
+        "github": "Zahnentferner",
+        "githubUrl": "https://github.com/Zahnentferner"
+      },
+      {
+        "name": "Jaideep Prasad",
+        "github": "jddeep",
+        "githubUrl": "https://github.com/jddeep"
+      },
+      {
+        "name": "Garv Agarwal",
+        "github": "SharkyBytes",
+        "githubUrl": "https://github.com/SharkyBytes"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join the AOSSIE Discord server and discuss ideas publicly in project-specific channels.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T09:04:30.000Z"
   },
   "Apache Software Foundation": {
     "org": "Apache Software Foundation",
@@ -848,30 +870,124 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "DeepChem": {
-    "org": "DeepChem",
-    "ideasUrl": "https://github.com/deepchem/deepchem/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+      "org": "DeepChem",
+      "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/deepchem",
+      "channels": [
+        {
+          "type": "Discord",
+          "url": "https://discord.com/invite/RYTrUY8Ssn",
+          "label": "DeepChem Discord"
+        }
+      ],
+      "mentors": [
+        {
+          "name": "José A. Sigüenza",
+          "github": "JoseAntonioSiguenza",
+          "githubUrl": "https://github.com/JoseAntonioSiguenza"
+        },
+        {
+          "name": "Aryan Amit Barsainyan",
+          "github": "ARY2260",
+          "githubUrl": "https://github.com/ARY2260"
+        },
+        {
+          "name": "Harindhar",
+          "github": "Harindhar10",
+          "githubUrl": "https://github.com/Harindhar10"
+        }
+      ],
+      "mailingLists": [],
+      "tip": "Join the DeepChem Discord server and introduce yourself before reaching out to mentors directly.",
+      "status": "ok",
+      "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "Django Software Foundation": {
     "org": "Django Software Foundation",
     "ideasUrl": "https://code.djangoproject.com/wiki/SummerOfCode2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forum.djangoproject.com/c/internals/mentorship/10",
+        "label": "Django Forum - Mentorship channel"
+      },
+      {
+        "type": "Discord",
+        "url": "https://chat.djangoproject.com",
+        "label": "Django Discord"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django-dev",
+        "label": "#django-dev on Libera.Chat"
+      },
+      {
+        "type": "IRC",
+        "url": "https://web.libera.chat/#django",
+        "label": "#django on Libera.Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Andrew Miller",
+        "github": "nanorepublica",
+        "githubUrl": "https://github.com/nanorepublica"
+      },
+      {
+        "name": "Sarah Boyce",
+        "github": "sarahboyce",
+        "githubUrl": "https://github.com/sarahboyce"
+      },
+      {
+        "name": "Bhuvnesh Sharma",
+        "github": "DevilsAutumn",
+        "githubUrl": "https://github.com/DevilsAutumn"
+      },
+      {
+        "name": "Jacob Walls",
+        "github": "jacobtylerwalls",
+        "githubUrl": "https://github.com/jacobtylerwalls"
+      },
+      {
+        "name": "Saptak Sengupta",
+        "github": "SaptakS",
+        "githubUrl": "https://github.com/saptaks"
+      },
+      {
+        "name": "Sarah Abderemane",
+        "github": "sabderemane",
+        "githubUrl": "https://github.com/sabderemane"
+      },
+      {
+        "name": "Apoorv Garg",
+        "github": "Apoorvgarg-creator",
+        "githubUrl": "https://github.com/Apoorvgarg-creator"
+      },
+      {
+        "name": "Thibaut Decombe",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Sage Abdullah",
+        "github": "laymonage",
+        "githubUrl": "https://github.com/laymonage"
+      },
+      {
+        "name": "Simon Charette",
+        "github": "charettes",
+        "githubUrl": "https://github.com/charettes"
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "https://groups.google.com/g/django-developers/c/at-G0hZrfXE",
-        "label": "​ https://groups.google.com/g/django-developers/c/at-G0hZrfXE"
+        "url": "https://groups.google.com/g/django-developers",
+        "label": "django-developers Google Group"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Post your draft proposal to the Django Forum Mentorship channel for feedback. Start contributing to Django before applying to become a known contributor.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-29T00:00:00.000Z"
   },
   "dora-rs": {
     "org": "dora-rs",
@@ -3212,37 +3328,18 @@
   "Sugar Labs": {
     "org": "Sugar Labs",
     "ideasUrl": "https://github.com/sugarlabs/GSoC/blob/master/Ideas-2026.md",
-    "channels": [],
+    "channels": [
+      {
+        "type": "Matrix",
+        "url": "https://matrix.to/#/#sugar-labs:matrix.org",
+        "label": "Sugar Labs Matrix"
+      }
+    ],
     "mentors": [
-      {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
-      },
-      {
-        "name": "",
-        "github": "benikk",
-        "githubUrl": "https://github.com/benikk"
-      },
       {
         "name": "",
         "github": "walterbender",
         "githubUrl": "https://github.com/walterbender"
-      },
-      {
-        "name": "",
-        "github": "pikurasa",
-        "githubUrl": "https://github.com/pikurasa"
-      },
-      {
-        "name": "",
-        "github": "sum2it",
-        "githubUrl": "https://github.com/sum2it"
-      },
-      {
-        "name": "",
-        "github": "mostlykiguess",
-        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3251,8 +3348,13 @@
       },
       {
         "name": "",
-        "github": "xjuan",
-        "githubUrl": "https://github.com/xjuan"
+        "github": "pikurasa",
+        "githubUrl": "https://github.com/pikurasa"
+      },
+      {
+        "name": "",
+        "github": "mostlykiguess",
+        "githubUrl": "https://github.com/mostlykiguess"
       },
       {
         "name": "",
@@ -3261,13 +3363,18 @@
       },
       {
         "name": "",
-        "github": "Commanderk3",
-        "githubUrl": "https://github.com/Commanderk3"
+        "github": "benikk",
+        "githubUrl": "https://github.com/benikk"
       },
       {
         "name": "",
-        "github": "amannaik247",
-        "githubUrl": "https://github.com/amannaik247"
+        "github": "sum2it",
+        "githubUrl": "https://github.com/sum2it"
+      },
+      {
+        "name": "",
+        "github": "xjuan",
+        "githubUrl": "https://github.com/xjuan"
       },
       {
         "name": "",
@@ -3293,12 +3400,28 @@
         "name": "",
         "github": "mebinthattil",
         "githubUrl": "https://github.com/mebinthattil"
+      },
+      {
+        "name": "",
+        "github": "Commanderk3",
+        "githubUrl": "https://github.com/Commanderk3"
+      },
+      {
+        "name": "",
+        "github": "amannaik247",
+        "githubUrl": "https://github.com/amannaik247"
       }
     ],
-    "mailingLists": [],
-    "tip": "",
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.sugarlabs.org/listinfo/sugar-devel",
+        "label": "sugar-devel mailing list"
+      }
+    ],
+    "tip": "Join the Matrix space at #sugar-labs:matrix.org to introduce yourself before asking project-specific questions.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "SW360": {
     "org": "SW360",
@@ -3751,11 +3874,39 @@
   "The ns-3 Network Simulator Project": {
     "org": "The ns-3 Network Simulator Project",
     "ideasUrl": "https://www.nsnam.org/wiki/GSOC2026Projects",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://ns-3.zulipchat.com/",
+        "label": "Chat"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Tommaso Pecorella",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Mohit Prakash Tahiliani",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Biljana Bojovic",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/ns-developers",
+        "label": "ns-developers"
+      }
+    ],
+    "tip": "Contact developers through the mailing list or Zulip chat before refining proposals.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "The OpenROAD Initiative": {
@@ -3882,11 +4033,28 @@
   "Tiled": {
     "org": "Tiled",
     "ideasUrl": "https://github.com/mapeditor/tiled/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.mapeditor.org/",
+        "label": "Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Thorbjørn Lindeijer",
+        "github": "bjorn",
+        "githubUrl": "https://github.com/bjorn"
+      },
+      {
+        "name": "",
+        "github": "dogboydog",
+        "githubUrl": "https://github.com/dogboydog"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Introduce yourself on the forum and mention your project interest.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Typelevel": {

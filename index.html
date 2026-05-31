@@ -3406,10 +3406,11 @@ btn.__orgListenerAttached = true;
     
     let md = "# My GSoC Watchlist\n\n";
     bookmarks.forEach(org => {
-      md += `## [${org.name}](${org.url || ''})\n\n`;
+      md += `## [${org.name}](${org.ideas || org.url || ''})\n\n`;
+      if (org.desc) md += `- **Description:** ${org.desc}\n`;
       if (org.ideas) md += `- **Ideas List:** ${org.ideas}\n`;
-      if (org.years) md += `- **GSoC Years:** ${org.years.join(', ')}\n`;
-      if (org.tags && org.tags.length) md += `- **Tech Stack:** ${org.tags.join(', ')}\n`;
+      if (org.years) md += `- **GSoC Years:** ${org.years} (since ${org.firstYear})\n`;
+      if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${org.tags.join(', ')}\n`;
       md += '\n';
     });
     

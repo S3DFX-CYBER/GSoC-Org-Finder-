@@ -815,11 +815,10 @@
       background: #fb923c;
     }
 
-    /* Floating section navigation buttons */
-    .section-nav-btn {
+    .section-scroll-btn {
       position: fixed;
-      right: 24px;
-      z-index: 80;
+      right: 20px;
+      z-index: 85;
       width: 48px;
       height: 48px;
       border: none;
@@ -828,53 +827,47 @@
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      background: linear-gradient(135deg, #9d4300, #c2410c);
-      box-shadow: 0 6px 20px rgba(157, 67, 0, 0.35);
+      background: linear-gradient(135deg, #9d4300, #f97316);
+      box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
       cursor: pointer;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(14px) scale(0.92);
-      transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease;
+      transform: translateY(10px) scale(0.92);
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
-    #nextSectionBtn {
-      bottom: 88px;
-    }
-    #prevSectionBtn {
-      bottom: 144px;
-    }
-    .section-nav-btn.visible {
+    .section-scroll-btn.visible {
       opacity: 1;
       visibility: visible;
       transform: translateY(0) scale(1);
     }
-    .section-nav-btn:hover {
+    .section-scroll-btn:hover {
+      box-shadow: 0 10px 26px rgba(157, 67, 0, 0.45);
       transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 10px 24px rgba(157, 67, 0, 0.45);
     }
-    .section-nav-btn:focus-visible {
-      outline: 2px solid #ffffff;
-      outline-offset: 2px;
-      box-shadow: 0 0 0 4px rgba(157, 67, 0, 0.4);
+    #nextSectionBtn {
+      bottom: 24px;
     }
-    .dark .section-nav-btn {
+    #prevSectionBtn {
+      bottom: 82px;
+    }
+    .dark .section-scroll-btn {
       background: linear-gradient(135deg, #c2410c, #ea580c);
-      box-shadow: 0 6px 20px rgba(194, 65, 12, 0.38);
+      box-shadow: 0 8px 24px rgba(194, 65, 12, 0.4);
     }
-    .dark .section-nav-btn:hover {
-      box-shadow: 0 10px 24px rgba(194, 65, 12, 0.52);
+    .dark .section-scroll-btn:hover {
+      box-shadow: 0 10px 26px rgba(194, 65, 12, 0.5);
     }
-
     @media (max-width: 640px) {
-      .section-nav-btn {
-        right: 16px;
+      .section-scroll-btn {
+        right: 14px;
         width: 44px;
         height: 44px;
       }
       #nextSectionBtn {
-        bottom: 78px;
+        bottom: 18px;
       }
       #prevSectionBtn {
-        bottom: 132px;
+        bottom: 68px;
       }
     }
   </style>
@@ -1020,11 +1013,11 @@
   </nav>
 </div>
 
-<button id="prevSectionBtn" class="section-nav-btn" aria-label="Go to previous section" title="Previous section" type="button">
+<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Go to previous section" title="Previous section" type="button">
   <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
 </button>
 
-<button id="nextSectionBtn" class="section-nav-btn" aria-label="Go to next section" title="Next section" type="button">
+<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Go to next section" title="Next section" type="button">
   <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_down</span>
 </button>
 
@@ -4464,47 +4457,39 @@ if (logoLink) {
 </script>
 
 <script>
-// Floating next-section button: scroll through major sections in order.
 (function () {
-  const prevBtn = document.getElementById('prevSectionBtn');
   const nextBtn = document.getElementById('nextSectionBtn');
-  if (!prevBtn || !nextBtn) return;
+  const prevBtn = document.getElementById('prevSectionBtn');
+  if (!nextBtn || !prevBtn) return;
 
-  const orderedIds = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
+  const sectionOrder = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
   let ticking = false;
 
   function getHeaderOffset() {
     const header = document.querySelector('header');
-    return header ? header.offsetHeight + 12 : 80;
+    return (header ? header.offsetHeight : 72) + 12;
   }
 
   function getSections() {
-    return orderedIds
+    return sectionOrder
       .map(id => document.getElementById(id))
       .filter(Boolean)
       .filter(section => section.offsetHeight > 0);
   }
 
-  function hasOpenOverlay() {
-    return Boolean(
-      document.querySelector('.modal-bg.open, dialog.open, #mobileMenu:not(.hidden)')
-    );
-  }
-
   function findNextSection() {
+    const marker = window.scrollY + getHeaderOffset() + 6;
     const sections = getSections();
-    const y = globalThis.scrollY + getHeaderOffset() + 8;
-    return sections.find(section => section.offsetTop > y) || null;
+    return sections.find(section => section.offsetTop > marker) || null;
   }
 
   function findPreviousSection() {
+    const marker = window.scrollY + getHeaderOffset() + 6;
     const sections = getSections();
-    const y = globalThis.scrollY + getHeaderOffset() + 8;
-
     let currentIndex = -1;
 
     for (let i = 0; i < sections.length; i += 1) {
-      if (sections[i].offsetTop <= y) {
+      if (sections[i].offsetTop <= marker) {
         currentIndex = i;
       } else {
         break;
@@ -4514,61 +4499,48 @@ if (logoLink) {
     return currentIndex > 0 ? sections[currentIndex - 1] : null;
   }
 
-  function updateVisibility() {
-    const showNext = !hasOpenOverlay() && Boolean(findNextSection());
-    const showPrev = !hasOpenOverlay() && Boolean(findPreviousSection());
-
-    nextBtn.classList.toggle('visible', showNext);
-    nextBtn.setAttribute('aria-hidden', showNext ? 'false' : 'true');
-    prevBtn.classList.toggle('visible', showPrev);
-    prevBtn.setAttribute('aria-hidden', showPrev ? 'false' : 'true');
-  }
-
-  function scrollToNextSection() {
-    if (hasOpenOverlay()) return;
-
-    const nextSection = findNextSection();
-    if (!nextSection) return;
-
-    const targetTop = nextSection.getBoundingClientRect().top + globalThis.scrollY - getHeaderOffset();
-    const reduceMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    globalThis.scrollTo({
-      top: Math.max(0, targetTop),
+  function scrollToSection(section) {
+    if (!section) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const top = section.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
+    window.scrollTo({
+      top: Math.max(0, top),
       behavior: reduceMotion ? 'auto' : 'smooth'
     });
   }
 
-  function scrollToPreviousSection() {
-    if (hasOpenOverlay()) return;
+  function updateButtons() {
+    const hasNext = Boolean(findNextSection());
+    const hasPrev = Boolean(findPreviousSection());
 
-    const previousSection = findPreviousSection();
-    if (!previousSection) return;
+    nextBtn.classList.toggle('visible', hasNext);
+    nextBtn.setAttribute('aria-hidden', hasNext ? 'false' : 'true');
 
-    const targetTop = previousSection.getBoundingClientRect().top + globalThis.scrollY - getHeaderOffset();
-    const reduceMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    globalThis.scrollTo({
-      top: Math.max(0, targetTop),
-      behavior: reduceMotion ? 'auto' : 'smooth'
-    });
+    prevBtn.classList.toggle('visible', hasPrev);
+    prevBtn.setAttribute('aria-hidden', hasPrev ? 'false' : 'true');
   }
 
   function onScrollOrResize() {
     if (ticking) return;
     ticking = true;
-    globalThis.requestAnimationFrame(function () {
-      updateVisibility();
+    window.requestAnimationFrame(function () {
+      updateButtons();
       ticking = false;
     });
   }
 
-  nextBtn.addEventListener('click', scrollToNextSection);
-  prevBtn.addEventListener('click', scrollToPreviousSection);
-  globalThis.addEventListener('scroll', onScrollOrResize, { passive: true });
-  globalThis.addEventListener('resize', onScrollOrResize);
-  document.addEventListener('DOMContentLoaded', updateVisibility);
-  updateVisibility();
+  nextBtn.addEventListener('click', function () {
+    scrollToSection(findNextSection());
+  });
+
+  prevBtn.addEventListener('click', function () {
+    scrollToSection(findPreviousSection());
+  });
+
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize);
+  document.addEventListener('DOMContentLoaded', updateButtons);
+  updateButtons();
 })();
 </script>
 

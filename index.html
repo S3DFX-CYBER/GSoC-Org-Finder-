@@ -747,60 +747,7 @@
       color: #fb923c;
       background: #1c0f05;
     }
-
-    /* Scroll-to-Top Button */
-    #scrollToTopBtn {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 90;
-      width: 48px;
-      height: 48px;
-      border: none;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #9d4300, #f97316);
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(157, 67, 0, 0.35);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(16px) scale(0.8);
-      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-    }
-    #scrollToTopBtn.visible {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-    #scrollToTopBtn:hover {
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 8px 24px rgba(157, 67, 0, 0.45);
-    }
-    #scrollToTopBtn:active {
-      transform: translateY(0) scale(0.95);
-    }
-    #scrollToTopBtn:focus-visible {
-      outline: 2px solid #f97316;
-      outline-offset: 3px;
-    }
-    @media (max-width: 640px) {
-      #scrollToTopBtn {
-        bottom: 18px;
-        right: 18px;
-        width: 44px;
-        height: 44px;
-      }
-    }
-    .dark #scrollToTopBtn {
-      background: linear-gradient(135deg, #c2410c, #ea580c);
-      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35);
-    }
-    .dark #scrollToTopBtn:hover {
-      box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5);
-    }
+    
     /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
     .timeline-border-svg {
       position: absolute;
@@ -867,6 +814,61 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
+
+    /* Floating next-section button */
+    #nextSectionBtn {
+      position: fixed;
+      right: 24px;
+      bottom: 88px;
+      z-index: 80;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      background: linear-gradient(135deg, #9d4300, #c2410c);
+      box-shadow: 0 6px 20px rgba(157, 67, 0, 0.35);
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px) scale(0.92);
+      transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease;
+    }
+    #nextSectionBtn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+    #nextSectionBtn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 10px 24px rgba(157, 67, 0, 0.45);
+    }
+    #nextSectionBtn:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(157, 67, 0, 0.4);
+    }
+    .dark #nextSectionBtn {
+      background: linear-gradient(135deg, #c2410c, #ea580c);
+      box-shadow: 0 6px 20px rgba(194, 65, 12, 0.38);
+    }
+    .dark #nextSectionBtn:hover {
+      box-shadow: 0 10px 24px rgba(194, 65, 12, 0.52);
+    }
+
+    @media (max-width: 640px) {
+      #nextSectionBtn {
+        right: 16px;
+        width: 44px;
+        height: 44px;
+      }
+      #nextSectionBtn {
+        bottom: 78px;
+      }
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -876,10 +878,6 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
-
-<button id="scrollToTopBtn" aria-label="Scroll to top" title="Scroll to top">
-  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
-</button>
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -1013,6 +1011,10 @@
     </div>
   </nav>
 </div>
+
+<button id="nextSectionBtn" aria-label="Go to next section" title="Next section" type="button">
+  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_down</span>
+</button>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -4315,7 +4317,6 @@ if(org.ideas){
       <td class="py-2">?</td>
       <td class="py-2">Toggle help dialog</td>
     </tr>
-
   </tbody>
 </table>
 
@@ -4451,41 +4452,74 @@ if (logoLink) {
 </script>
 
 <script>
-
+// Floating next-section button: scroll through major sections in order.
 (function () {
-  const btn = document.getElementById('scrollToTopBtn');
-  if (!btn) return;
-  const THRESHOLD = 300;
+  const nextBtn = document.getElementById('nextSectionBtn');
+  if (!nextBtn) return;
+
+  const orderedIds = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
   let ticking = false;
 
-  function onScroll() {
-    if (!ticking) {
-      window.requestAnimationFrame(function () {
-        if (window.scrollY > THRESHOLD) {
-          btn.classList.add('visible');
-        } else {
-          btn.classList.remove('visible');
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
+  function getHeaderOffset() {
+    const header = document.querySelector('header');
+    return header ? header.offsetHeight + 12 : 80;
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  function getSections() {
+    return orderedIds
+      .map(id => document.getElementById(id))
+      .filter(Boolean)
+      .filter(section => section.offsetHeight > 0);
+  }
 
-  btn.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  function hasOpenOverlay() {
+    return Boolean(
+      document.querySelector('.modal-bg.open, dialog.open, #mobileMenu:not(.hidden)')
+    );
+  }
 
+  function findNextSection() {
+    const sections = getSections();
+    const y = globalThis.scrollY + getHeaderOffset() + 8;
+    return sections.find(section => section.offsetTop > y) || null;
+  }
 
-  btn.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
+  function updateVisibility() {
+    const showNext = !hasOpenOverlay() && Boolean(findNextSection());
+
+    nextBtn.classList.toggle('visible', showNext);
+    nextBtn.setAttribute('aria-hidden', showNext ? 'false' : 'true');
+  }
+
+  function scrollToNextSection() {
+    if (hasOpenOverlay()) return;
+
+    const nextSection = findNextSection();
+    if (!nextSection) return;
+
+    const targetTop = nextSection.getBoundingClientRect().top + globalThis.scrollY - getHeaderOffset();
+    const reduceMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    globalThis.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: reduceMotion ? 'auto' : 'smooth'
+    });
+  }
+
+  function onScrollOrResize() {
+    if (ticking) return;
+    ticking = true;
+    globalThis.requestAnimationFrame(function () {
+      updateVisibility();
+      ticking = false;
+    });
+  }
+
+  nextBtn.addEventListener('click', scrollToNextSection);
+  globalThis.addEventListener('scroll', onScrollOrResize, { passive: true });
+  globalThis.addEventListener('resize', onScrollOrResize);
+  document.addEventListener('DOMContentLoaded', updateVisibility);
+  updateVisibility();
 })();
 </script>
 

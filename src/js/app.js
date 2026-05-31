@@ -775,18 +775,35 @@ function renderGfiBadge(gh){
   if(gh?.gfi===null||gh?.gfi===undefined)return '';
   return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
+
+// ══════════════════════════════════════════════
+// RENDER GRID  ← only this function was changed
+// ══════════════════════════════════════════════
 function renderGrid(orgs){
   const g=document.getElementById('orgGrid');
+
+  // ── Empty-state fallback ──────────────────────────────────
   if(!orgs.length){
     g.innerHTML=`
-      <div class="empty">
-        <div class="empty-icon">🔍</div>
-        <h3>No organizations match your current filters.</h3>
-        <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
+      <div class="empty-state" role="status" aria-live="polite">
+        <div class="empty-state__icon">🔍</div>
+        <h2 class="empty-state__title">No organizations found</h2>
+        <p class="empty-state__message">
+          No organizations match your current filters.<br>
+          Try removing a tag or resetting your search!
+        </p>
+        <button
+          class="empty-state__reset"
+          onclick="resetFilters()"
+          aria-label="Reset all filters"
+        >
+          ✕ Reset Filters
+        </button>
       </div>`;
     return;
   }
+  // ─────────────────────────────────────────────────────────
+
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
     const orgTags = o.tags || [];
@@ -957,7 +974,7 @@ function renderSelectedLanguages(){
   if(!container)return;
 
   if(pills.size===0){
-    container.innerHTML='<span class="empty-state">No languages selected</span>';
+    container.innerHTML='<span class="empty-state-langs">No languages selected</span>';
     return;
   }
 
@@ -1410,4 +1427,3 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

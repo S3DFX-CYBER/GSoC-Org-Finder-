@@ -201,7 +201,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   background:none;
   border:none;
   cursor:pointer;
-  padding:4px;            /* larger tap target */
+  padding:4px;
   border-radius:6px;
 }
 .bookmark-btn:focus-visible{
@@ -280,13 +280,77 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 [data-theme="dark"] .cb-os{background:rgba(100,116,139,.15);color:#9CA3AF}
 [data-theme="dark"] .cb-other{background:rgba(255,255,255,.05);color:var(--muted)}
 
-/* ── EMPTY ── */
+/* ── EMPTY (legacy — kept for any other uses) ── */
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}
 .empty h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--ink);margin-bottom:8px}
 .empty p{font-size:14px;margin-bottom:24px}
 .btn-clear-filters{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--ink);color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif}
 .btn-clear-filters:hover{background:var(--orange);color:white;transform:translateY(-1px);box-shadow:0 4px 12px rgb(244 107 14 / 0.2)}
+
+/* ── EMPTY STATE (grid no-results card) ── */
+.empty-state{
+  grid-column:1 / -1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:5rem 2rem;
+  gap:1rem;
+  animation:emptyFadeIn .35s ease;
+}
+.empty-state__icon{
+  font-size:3.5rem;
+  line-height:1;
+}
+.empty-state__title{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;
+  font-weight:700;
+  color:var(--ink);
+  margin:0;
+  transition:color .3s;
+}
+.empty-state__message{
+  font-size:.95rem;
+  color:var(--ink3);
+  line-height:1.7;
+  max-width:380px;
+  margin:0;
+}
+.empty-state__reset{
+  margin-top:.5rem;
+  padding:.6rem 1.5rem;
+  border:2px solid var(--blue);
+  border-radius:999px;
+  background:transparent;
+  color:var(--blue);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.9rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.empty-state__reset:hover,
+.empty-state__reset:focus-visible{
+  background:var(--blue);
+  color:#fff;
+  outline:none;
+}
+[data-theme="dark"] .empty-state__reset{
+  border-color:var(--blue);
+  color:var(--blue);
+}
+[data-theme="dark"] .empty-state__reset:hover,
+[data-theme="dark"] .empty-state__reset:focus-visible{
+  background:var(--blue);
+  color:#0F0A05;
+}
+@keyframes emptyFadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
 /* ── MODAL ── */
 .modal-bg{position:fixed;inset:0;z-index:100;background:rgba(28,16,8,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
@@ -424,8 +488,6 @@ footer a:hover{text-decoration:underline}
   .compare-slots{grid-template-columns:1fr 1fr}
 }
 
-/* ── MOBILE ── */
-
 /* ═══════════════════════════════════════════
    RESPONSIVE — Tablet (≤900px)
 ═══════════════════════════════════════════ */
@@ -545,6 +607,12 @@ footer a:hover{text-decoration:underline}
   /* Analytics */
   .an-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   .an-num{font-size:22px}
+
+  /* Empty state on mobile */
+  .empty-state{padding:3rem 1.5rem}
+  .empty-state__icon{font-size:2.8rem}
+  .empty-state__title{font-size:1.15rem}
+  .empty-state__message{font-size:.88rem}
 }
 
 /* ═══════════════════════════════════════════
@@ -590,14 +658,14 @@ footer a:hover{text-decoration:underline}
    SELECTED LANGUAGES STRIP
 ═══════════════════════════════════════════ */
 
-/* Empty state text */
-.selected-langs-strip .empty-state {
+/* Empty placeholder text inside the strip (renamed to avoid collision) */
+.selected-langs-strip .empty-state-langs {
   color: var(--muted);
   font-style: italic;
   font-size: 12px;
 }
 
-[data-theme="dark"] .selected-langs-strip .empty-state {
+[data-theme="dark"] .selected-langs-strip .empty-state-langs {
   color: var(--muted);
 }
 

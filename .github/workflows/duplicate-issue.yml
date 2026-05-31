@@ -21,18 +21,44 @@ jobs:
       github.actor != 'github-actions[bot]'
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Analyze Issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
+            const association = issue.author_association;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
             const issue_number = issue.number;
             const username = issue.user.login;
+
+            // Skip for maintainers
+            if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
+              core.info('Skipping maintainer issue');
+              return;
+            }
+
+            // Skip for mentors
+            try {
+              const fs = require('fs');
+              const mentorsPath = '.github/reviewers/gssoc-mentors.json';
+              if (fs.existsSync(mentorsPath)) {
+                const mentorsData = JSON.parse(fs.readFileSync(mentorsPath, 'utf8'));
+                const mentors = new Set((mentorsData.reviewers || []).map(m => m.toLowerCase()));
+                if (mentors.has(username.toLowerCase())) {
+                  core.info('Skipping mentor issue');
+                  return;
+                }
+              }
+            } catch (err) {
+              core.warning(`Error checking mentors: ${err.message}`);
+            }
 
             // Ignore bots
             if (
@@ -66,6 +92,20 @@ jobs:
 
             const body =
               (issue.body || '').trim();
+
+            // Skip common maintainer task prefixes
+            const ALLOWLIST_PREFIXES = [
+              'Data Research Task:',
+              'Fix mentor contact info for',
+              'Update mentor stats:',
+              'Refresh leaderboard:',
+              'Update pending assignments:'
+            ];
+
+            if (ALLOWLIST_PREFIXES.some(prefix => title.startsWith(prefix))) {
+              core.info('Skipping allowlisted maintainer task');
+              return;
+            }
 
             // Ignore weak issues
             if (title.length < 12) {
@@ -237,8 +277,8 @@ jobs:
 
               // Conservative thresholds
               if (
-                finalScore >= 0.82 &&
-                keywordOverlap >= 3
+                finalScore >= 0.90 &&
+                keywordOverlap >= 4
               ) {
 
                 if (finalScore > bestScore) {

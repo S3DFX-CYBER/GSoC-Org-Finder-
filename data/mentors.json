@@ -4428,15 +4428,38 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "UC OSPO": {
-    "org": "UC OSPO",
-    "ideasUrl": "https://ucsc-ospo.github.io/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "UC OSPO",
+  "ideasUrl": "https://ucsc-ospo.github.io/osre26/",
+  "channels": [
+    {
+      "type": "Slack",
+      "url": "https://join.slack.com/t/uc-ospo-network/shared_invite/zt-3c6yw4l11-WU2PB4jUwAtXTDK09h8orQ",
+      "label": "UC OSPO Network Slack"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Carlos Maltzahn",
+      "github": "carlosmaltzahn",
+      "githubUrl": "https://github.com/carlosmaltzahn"
+    },
+    {
+      "name": "Stephanie Lieggi",
+      "github": "slieggi",
+      "githubUrl": "https://github.com/slieggi"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Email",
+      "url": "mailto:ospo-info-group@ucsc.edu",
+      "label": "ospo-info-group@ucsc.edu"
+    }
+  ],
+  "tip": "Join the UC OSPO Network Slack and email ospo-info-group@ucsc.edu for any eligibility questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-28T00:00:00.000Z"
+},
   "Unikraft": {
     "org": "Unikraft",
     "ideasUrl": "https://github.com/unikraft/gsoc/blob/staging/gsoc-2026/ideas.md",

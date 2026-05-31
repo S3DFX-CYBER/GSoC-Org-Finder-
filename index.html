@@ -203,7 +203,7 @@
     }
     .close-btn:hover { background: #e8e8e8; color: #1a1c1c; }
     
-    .modal-header { padding: 3rem 3rem 1.5rem; }
+    .modal-header { padding: 3rem 3rem 1.5rem; flex-shrink: 0; }
     .category-tag {
       background: rgba(157, 67, 0, 0.1);
       color: #9d4300;
@@ -215,10 +215,10 @@
       display: inline-block;
       margin-bottom: 1rem;
     }
-    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
+    .modal-header h2 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .modal-header p { color: #584237; font-size: 1rem; line-height: 1.5; }
 
-    .modal-body {padding: 0 3rem 3rem; overflow-y: auto; flex: 1;}
+    .modal-body {padding: 0 3rem 3rem; overflow-y: auto; flex: 1; min-height: 0; }
     .section-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin-bottom: 1rem; margin-top: 2rem; border-bottom: 1px solid #f3f3f3; padding-bottom: 0.5rem; }
     
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
@@ -243,7 +243,7 @@
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
     .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
 
-    .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; }
+    .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; flex-shrink: 0; }
     .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
     .modal-ideas-link { background: #9d4300; color: white; }
     .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
@@ -468,10 +468,11 @@
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
 
     @media (max-width: 640px) {
-      .modal-header { padding: 2rem 1.5rem 1rem; }
-      .modal-body { padding: 0 1.5rem 2rem; }
-      .modal-footer { padding: 1.5rem; flex-direction: column; }
-      .modal-cta { width: 100%; }
+      .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
+      .modal-header h2 { font-size: 1.6rem; }
+      .modal-body { padding: 0 1.5rem 2rem; min-height: 0; }
+      .modal-footer { padding: 0.75rem 1.5rem; flex-direction: column; flex-shrink: 0; }
+      .modal-cta { width: 100%; padding: 0.6rem 1rem; font-size: 0.85rem; }
     }
     
     /* Dark mode - Modal */

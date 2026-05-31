@@ -3465,6 +3465,7 @@ function handleCopyToClipboard(btn, text, resetLabel) {
       ta.remove();
       setCopyBtnSuccess(btn, resetLabel);
     } catch (e) {
+    console.error('[fetchStats] Failed to fetch live GitHub stats:', e);
       setCopyBtnError(btn, resetLabel);
     }
   }

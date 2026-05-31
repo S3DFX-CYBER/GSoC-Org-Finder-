@@ -2769,168 +2769,228 @@ sections.forEach(sectionId => {
           </div>
            <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
-       `;
+      `;
     card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
 
-   grid.appendChild(card);
-   attachOrgCardListeners(card);
+    grid.appendChild(card);
+    attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
     document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
   }
 
-  // Attach listeners to elements created from org templates.
-  // Uses data-* attributes to avoid injecting user data into inline JS handlers.
-  function attachOrgCardListeners(root = document) {
-    // image error fallback (error doesn't bubble reliably)
-    (root.querySelectorAll ? root.querySelectorAll('img[data-org-name]') : []).forEach(img => {
-      if (img.__orgListenerAttached) return;
-      img.addEventListener('error', (e) => {
-        handleImgError(e.target, e.target.dataset.orgName);
-      });
-      img.__orgListenerAttached = true;
-    });
+  const CompareManager = {
+    maxSlots: 3,
+    get list() { return compareList; },
+    set list(val) { compareList = val; },
 
-    // bookmark buttons
-    (root.querySelectorAll ? root.querySelectorAll('.bookmark-btn[data-bookmark-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => toggleBookmark(e, btn.dataset.bookmarkOrg));
-      btn.__orgListenerAttached = true;
-    });
+    toggle(name, e) {
+      if (e) e.stopPropagation();
+      const idx = this.list.indexOf(name);
+      if (idx > -1) {
+        this.list.splice(idx, 1);
+      } else {
+        if (this.list.length >= this.maxSlots) {
+          alert(`You can only compare up to ${this.maxSlots} organizations at a time.`);
+          return;
+        }
+        this.list.push(name);
+      }
+      globalThis.compareList = this.list;
+      renderOrgs(true);
+      this.render();
+      this.renderModal();
+    },
 
-    // compare buttons
-    (root.querySelectorAll ? root.querySelectorAll('[data-compare-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => toggleCompare(e, btn.dataset.compareOrg));
-      btn.__orgListenerAttached = true;
-    });
+    generateOptions(allOrgNames, currentOrgName) {
+      return allOrgNames.map(opt => `
+         <option value="${escapeHtml(opt)}"
+           ${opt === currentOrgName ? 'selected' : ''}
+           ${(this.list.includes(opt) && opt !== currentOrgName) ? 'disabled' : ''}>
+           ${escapeHtml(opt)}
+         </option>
+      `).join('');
+    },
 
-    // open modal buttons
-    (root.querySelectorAll ? root.querySelectorAll('[data-open-org]') : []).forEach(btn => {
-      if (btn.__orgListenerAttached) return;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openModal(btn.dataset.openOrg);
-      });
-btn.__orgListenerAttached = true;
-    });
-  }
+    handleSlotChange(slotIndex, selectEl) {
+      const newOrgName = selectEl.value;
+      const currentOrg = this.list[slotIndex];
 
-  function toggleCompare(e, name) {
-    if (e) e.stopPropagation();
-    const idx = compareList.indexOf(name);
-    if (idx > -1) {
-      compareList.splice(idx, 1);
-    } else {
-      if (compareList.length >= 3) {
-        alert("You can only compare up to 3 organizations at a time.");
+      if (newOrgName && this.list.some((name, idx) => idx !== slotIndex && name === newOrgName)) {
+        selectEl.value = currentOrg || '';
+        alert("That organization is already selected in another comparison slot.");
         return;
       }
-      compareList.push(name);
-    }
-    renderOrgs(true);
-    renderCompare();
-  }
 
-  function renderCompare() {
-    const container = document.querySelector('#compare .grid');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    compareList.forEach(name => {
-      const org = ORGS.find(o => o.name === name);
-      const githubOwner = githubOwnerFromValue(org.github);
-      const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-      
-      const item = document.createElement('div');
-      item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
-      item.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
-        </div>
-        <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
-        <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
-        <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
+      if (newOrgName) {
+        this.list[slotIndex] = newOrgName;
+      } else {
+        this.list.splice(slotIndex, 1);
+      }
+      this.list = this.list.filter(Boolean);
+      globalThis.compareList = this.list;
+
+      this.render();
+      this.renderModal();
+      if (typeof renderOrgs === 'function') renderOrgs(true);
+    },
+
+    render() {
+      const container = document.querySelector('#compare .grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const allOrgNames = ORGS.map(o => o.name).sort();
+
+      for (let i = 0; i < this.maxSlots; i++) {
+        const name = this.list[i];
+        const item = document.createElement('div');
+
+        if (name) {
+          const org = ORGS.find(o => o.name === name);
+          const githubOwner = githubOwnerFromValue(org.github);
+          const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
+
+          item.className = 'bg-white rounded-xl p-4 border border-zinc-100 relative group flex flex-col items-center justify-center';
+          item.innerHTML = `
+            <div class="absolute top-2 right-2">
+              <button data-compare-org="${escapeHtml(org.name)}" class="text-zinc-300 hover:text-red-500 transition-colors bg-white rounded-full bg-opacity-75" title="Remove">
+                <span class="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+              <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+            </div>
+            <p class="font-bold text-sm truncate w-full text-center">${escapeHtml(org.name)}</p>
+            <p class="text-[10px] text-zinc-500 font-label uppercase mt-1 mb-2">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+            <div class="w-full px-2 mt-auto">
+              <select class="w-full text-[10px] sm:text-xs border-zinc-200 bg-zinc-50 rounded-md focus:ring-primary focus:border-primary p-1 cursor-pointer" data-compare-slot="${i}">
+                  <option value="" disabled>Change org...</option>
+                  ${this.generateOptions(allOrgNames, name)}
+              </select>
+            </div>
+          `;
+          container.appendChild(item);
+        } else {
+          item.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center bg-opacity-50 transition-all hover:bg-zinc-50';
+          item.innerHTML = `
+            <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
+            <p class="text-[10px] text-zinc-400 font-label uppercase mb-2">Slot ${i+1}</p>
+            <div class="w-full px-2 mt-auto">
+              <select class="w-full text-xs border-zinc-200 bg-white rounded-md focus:ring-primary focus:border-primary p-1.5 cursor-pointer shadow-sm" data-compare-slot="${i}">
+                  <option value="" selected>Search & add...</option>
+                  ${this.generateOptions(allOrgNames, null)}
+              </select>
+            </div>
+          `;
+          container.appendChild(item);
+        }
+      }
+    },
+
+    renderModal() {
+      const body = document.getElementById('compareModalBody');
+      if (!body) return;
+
+      const slotIndices = Array.from({length: this.maxSlots}, (_, i) => i);
+      const slots = slotIndices.map(i => ORGS.find(o => o.name === this.list[i]) || null);
+
+      const rows = [
+        ['Category', org => org.cat],
+        ['GSoC Years', org => org.years],
+        ['First Year', org => org.firstYear],
+        ['Competition', org => org.competition],
+        ['Codebase', org => org.codebase],
+        ['Tech Stack', org => org.tags.join(', ')],
+        ['Best Fit', org => org.fit.join(', ')],
+        ['Repository', org => org.github],
+      ];
+
+      const allOrgNames = ORGS.map(o => o.name).sort();
+
+      body.innerHTML = `
+        <table class="w-full min-w-[720px] text-sm table-fixed">
+          <thead>
+            <tr class="border-b border-zinc-200">
+              <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400 w-[150px]">Metric</th>
+              ${slots.map((org, i) => `
+                <th class="text-left py-3 px-4 font-bold w-[250px]">
+                  <select class="w-full text-sm border-zinc-200 bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 rounded-md focus:ring-primary focus:border-primary p-2 cursor-pointer font-normal" data-compare-slot="${i}">
+                    <option value="">-- Select Org --</option>
+                    ${this.generateOptions(allOrgNames, org ? org.name : null)}
+                  </select>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(([label, getValue]) => `
+              <tr class="border-b border-zinc-100 last:border-0 dark:border-zinc-700">
+                <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
+                ${slots.map(org => `
+                  <td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    ${org ? escapeHtml(getValue(org)) : '<span class="text-zinc-300 dark:text-zinc-600">-</span>'}
+                  </td>
+                `).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       `;
-      container.appendChild(item);
-      attachOrgCardListeners(item);
+    }
+  };
+
+  // Legacy globals mapping for compatibility with app.js and other external callers
+  window.toggleCompare = (name, e) => CompareManager.toggle(name, e);
+  window.handleCompareSlotChange = (slotIndex, selectEl) => CompareManager.handleSlotChange(slotIndex, selectEl);
+  window.renderCompare = () => CompareManager.render();
+  window.renderCompareModal = () => CompareManager.renderModal();
+
+  // Set up delegated event listeners for UI interactions
+  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', (e) => {
+      const bookmarkBtn = e.target.closest('.bookmark-btn[data-bookmark-org]');
+      if (bookmarkBtn) {
+        return toggleBookmark(e, bookmarkBtn.dataset.bookmarkOrg);
+      }
+
+      const compareBtn = e.target.closest('[data-compare-org]');
+      if (compareBtn) {
+        return CompareManager.toggle(compareBtn.dataset.compareOrg, e);
+      }
+
+      const openModalBtn = e.target.closest('[data-open-org]');
+      if (openModalBtn) {
+        e.stopPropagation();
+        return openModal(openModalBtn.dataset.openOrg);
+      }
     });
 
-    // Add empty slots
-    for (let i = compareList.length; i < 3; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-        <p class="font-bold text-sm text-zinc-400">Add org</p>
-        <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i+1}</p>
-      `;
-      container.appendChild(empty);
+    document.addEventListener('change', (e) => {
+      const compareSlotSelect = e.target.closest('select[data-compare-slot]');
+      if (compareSlotSelect) {
+        const slotIndex = parseInt(compareSlotSelect.dataset.compareSlot, 10);
+        CompareManager.handleSlotChange(slotIndex, compareSlotSelect);
+      }
+    });
+  });
+
+  // Global capture for non-bubbling image error events
+  document.addEventListener('error', (e) => {
+    if (e.target && e.target.tagName === 'IMG' && e.target.dataset.orgName) {
+      handleImgError(e.target, e.target.dataset.orgName);
     }
-  }
-
-  function renderCompareModal() {
-    const body = document.getElementById('compareModalBody');
-    if (!body) return;
-    const escapeHtml = (value) => String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-
-    const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-    if (selectedOrgs.length < 2) {
-      body.innerHTML = `
-        <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
-          <span class="material-symbols-outlined text-4xl text-zinc-300 mb-3">compare_arrows</span>
-          <p class="font-bold text-zinc-700">Select at least 2 organizations to compare.</p>
-          <p class="text-sm text-zinc-500 mt-2">Use the Compare button on organization cards, then open this tool again.</p>
-        </div>
-      `;
-      return;
-    }
-
-    const rows = [
-      ['Category', org => org.cat],
-      ['GSoC Years', org => org.years],
-      ['First Year', org => org.firstYear],
-      ['Competition', org => org.competition],
-      ['Codebase', org => org.codebase],
-      ['Tech Stack', org => org.tags.join(', ')],
-      ['Best Fit', org => org.fit.join(', ')],
-      ['Repository', org => org.github],
-    ];
-
-    body.innerHTML = `
-      <table class="w-full min-w-[720px] text-sm">
-        <thead>
-          <tr class="border-b border-zinc-200">
-            <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400">Metric</th>
-            ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold">${escapeHtml(org.name)}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map(([label, getValue]) => `
-            <tr class="border-b border-zinc-100 last:border-0">
-              <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700">${escapeHtml(getValue(org))}</td>`).join('')}
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-  }
+  }, true);
 
   function openCompareModal() {
-    renderCompare();
-    renderCompareModal();
+    CompareManager.render();
+    CompareManager.renderModal();
     document.getElementById('compareModal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
 
     // Track badge progress only when comparison is actually opened with 2+ orgs
-    if (typeof BadgeSystem !== 'undefined' && compareList.length >= 2) {
+    if (typeof BadgeSystem !== 'undefined' && compareList.filter(Boolean).length >= 2) {
       BadgeSystem.trackComparison();
     }
   }
@@ -3220,7 +3280,6 @@ btn.__orgListenerAttached = true;
         </div>`;
 
       container.appendChild(item);
-      attachOrgCardListeners(item);
     });
   }
 

@@ -386,7 +386,7 @@
     html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
+    #timeline, #orgs, #ai-recommender, #guide, #watchlist, #issues, #mentors, #contact {
       scroll-margin-top: 80px;
     }
 
@@ -814,62 +814,6 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
-
-    .section-scroll-btn {
-      position: fixed;
-      right: 20px;
-      z-index: 85;
-      width: 48px;
-      height: 48px;
-      border: none;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      background: linear-gradient(135deg, #9d4300, #f97316);
-      box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px) scale(0.92);
-      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .section-scroll-btn.visible {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-    .section-scroll-btn:hover {
-      box-shadow: 0 10px 26px rgba(157, 67, 0, 0.45);
-      transform: translateY(-2px) scale(1.03);
-    }
-    #nextSectionBtn {
-      bottom: 24px;
-    }
-    #prevSectionBtn {
-      bottom: 82px;
-    }
-    .dark .section-scroll-btn {
-      background: linear-gradient(135deg, #c2410c, #ea580c);
-      box-shadow: 0 8px 24px rgba(194, 65, 12, 0.4);
-    }
-    .dark .section-scroll-btn:hover {
-      box-shadow: 0 10px 26px rgba(194, 65, 12, 0.5);
-    }
-    @media (max-width: 640px) {
-      .section-scroll-btn {
-        right: 14px;
-        width: 44px;
-        height: 44px;
-      }
-      #nextSectionBtn {
-        bottom: 18px;
-      }
-      #prevSectionBtn {
-        bottom: 68px;
-      }
-    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -955,6 +899,21 @@
   </div>
 </header>
 
+<!-- Section-wise scroll controls -->
+<div id="sectionNavigator" class="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-30 flex flex-col items-end gap-2 pointer-events-none">
+  <div id="sectionNavigatorLabel" class="pointer-events-auto rounded-full border border-zinc-200 bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600 shadow-lg backdrop-blur dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-300">
+    Timeline
+  </div>
+  <div class="pointer-events-auto flex flex-col items-center gap-2">
+    <button id="sectionPrevBtn" type="button" onclick="prevSectionBtnHandler()" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-lg transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-300" aria-label="Scroll to previous section" title="Previous section">
+      <span class="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
+    </button>
+    <button id="sectionNextBtn" type="button" onclick="nextSectionBtnHandler()" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-lg transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900/90 dark:text-zinc-300" aria-label="Scroll to next section" title="Next section">
+      <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+    </button>
+  </div>
+</div>
+
 <!-- Mobile Menu Overlay -->
 <div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
@@ -1012,14 +971,6 @@
     </div>
   </nav>
 </div>
-
-<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Go to previous section" title="Previous section" type="button">
-  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
-</button>
-
-<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Go to next section" title="Next section" type="button">
-  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_down</span>
-</button>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1924,40 +1875,108 @@ window.setActiveMenu = function(clickedLink) {
 };
 
   // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 80; // Offset for fixed header
-    
-let currentSection = 'timeline';
+  const SECTION_ORDER = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
+  const SECTION_LABELS = {
+    timeline: 'Timeline',
+    orgs: 'Organizations',
+    'ai-recommender': 'AI Recommender',
+    watchlist: 'Watchlist',
+    issues: 'Issues',
+    mentors: 'Mentors',
+    guide: 'Guide',
+    contact: 'Contact'
+  };
+  let currentSection = 'timeline';
 
-sections.forEach(sectionId => {
-    const section = document.getElementById(sectionId);
+  function getVisibleSections() {
+    return SECTION_ORDER.filter(sectionId => document.getElementById(sectionId));
+  }
 
-    if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-
-        const triggerPoint = window.innerHeight / 2;
-
-        if (
-            sectionTop <= scrollPosition + triggerPoint &&
-            sectionBottom > scrollPosition + triggerPoint
-        ) {
-            currentSection = sectionId;
-        }
+  function scrollToSection(sectionId) {
+    if (!sectionId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
-});
-    
+
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      currentSection = sectionId;
+      updateActiveSection();
+    }
+  }
+
+  function scrollSectionwise(direction) {
+    const visibleSections = getVisibleSections();
+    const currentIndex = Math.max(0, visibleSections.indexOf(currentSection));
+    const nextIndex = currentIndex + direction;
+
+    if (nextIndex < 0) {
+      scrollToSection(null);
+      return;
+    }
+
+    if (nextIndex >= visibleSections.length) {
+      return;
+    }
+
+    scrollToSection(visibleSections[nextIndex]);
+  }
+
+  window.scrollSectionwise = scrollSectionwise;
+  window.prevSectionBtnHandler = function() {
+    scrollSectionwise(-1);
+  };
+  window.nextSectionBtnHandler = function() {
+    scrollSectionwise(1);
+  };
+
+  function updateActiveSection() {
+    const scrollPosition = window.scrollY + 80;
+    const triggerPoint = window.innerHeight * 0.45;
+    const visibleSections = getVisibleSections();
+    let activeSection = visibleSections[0] || 'timeline';
+
+    visibleSections.forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      if (sectionTop <= scrollPosition + triggerPoint && sectionBottom > scrollPosition + triggerPoint) {
+        activeSection = sectionId;
+      }
+    });
+
+    currentSection = activeSection;
+
+    const sectionLabel = document.getElementById('sectionNavigatorLabel');
+    if (sectionLabel) {
+      sectionLabel.textContent = SECTION_LABELS[activeSection] || activeSection;
+    }
+
+    const prevBtn = document.getElementById('sectionPrevBtn');
+    const nextBtn = document.getElementById('sectionNextBtn');
+    if (prevBtn) prevBtn.disabled = visibleSections.indexOf(activeSection) <= 0;
+    if (nextBtn) nextBtn.disabled = visibleSections.indexOf(activeSection) >= visibleSections.length - 1;
+
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
       const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+      const isActive = linkSection === activeSection;
+
+      link.classList.toggle('text-orange-600', isActive);
+      link.classList.toggle('bg-orange-50', isActive);
+      link.classList.toggle('font-bold', isActive);
+      link.classList.toggle('text-zinc-700', !isActive);
+      link.classList.toggle('hover:bg-zinc-100', !isActive);
+      link.classList.toggle('font-medium', !isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
       } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+        link.removeAttribute('aria-current');
       }
     });
 
@@ -1965,12 +1984,18 @@ sections.forEach(sectionId => {
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
       const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+      const isActive = linkSection === activeSection;
+
+      link.classList.toggle('text-orange-600', isActive);
+      link.classList.toggle('font-bold', isActive);
+      link.classList.toggle('border-b-2', isActive);
+      link.classList.toggle('border-orange-600', isActive);
+      link.classList.toggle('text-zinc-600', !isActive);
+      link.classList.toggle('hover:text-zinc-900', !isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
       } else {
-        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-        link.classList.add('text-zinc-600', 'hover:text-zinc-900');
+        link.removeAttribute('aria-current');
       }
     });
   }
@@ -4387,161 +4412,9 @@ if (logoLink) {
   logoLink.addEventListener("click", function (e) {
     e.preventDefault();
 
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
-
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-    }
-
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-    });
-
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
-
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-    }
+    scrollToSection("timeline");
   });
 }
-</script>
-
-<script>
-(function () {
-  const nextBtn = document.getElementById('nextSectionBtn');
-  const prevBtn = document.getElementById('prevSectionBtn');
-  if (!nextBtn || !prevBtn) return;
-
-  const sectionOrder = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
-  let ticking = false;
-
-  function getHeaderOffset() {
-    const header = document.querySelector('header');
-    return (header ? header.offsetHeight : 72) + 12;
-  }
-
-  function getSections() {
-    return sectionOrder
-      .map(id => document.getElementById(id))
-      .filter(Boolean)
-      .filter(section => section.offsetHeight > 0);
-  }
-
-  function findNextSection() {
-    const marker = window.scrollY + getHeaderOffset() + 6;
-    const sections = getSections();
-    return sections.find(section => section.offsetTop > marker) || null;
-  }
-
-  function findPreviousSection() {
-    const marker = window.scrollY + getHeaderOffset() + 6;
-    const sections = getSections();
-    let currentIndex = -1;
-
-    for (let i = 0; i < sections.length; i += 1) {
-      if (sections[i].offsetTop <= marker) {
-        currentIndex = i;
-      } else {
-        break;
-      }
-    }
-
-    return currentIndex > 0 ? sections[currentIndex - 1] : null;
-  }
-
-  function scrollToSection(section) {
-    if (!section) return;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const top = section.getBoundingClientRect().top + window.scrollY - getHeaderOffset();
-    window.scrollTo({
-      top: Math.max(0, top),
-      behavior: reduceMotion ? 'auto' : 'smooth'
-    });
-  }
-
-  function updateButtons() {
-    const hasNext = Boolean(findNextSection());
-    const hasPrev = Boolean(findPreviousSection());
-
-    nextBtn.classList.toggle('visible', hasNext);
-    nextBtn.setAttribute('aria-hidden', hasNext ? 'false' : 'true');
-
-    prevBtn.classList.toggle('visible', hasPrev);
-    prevBtn.setAttribute('aria-hidden', hasPrev ? 'false' : 'true');
-  }
-
-  function onScrollOrResize() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(function () {
-      updateButtons();
-      ticking = false;
-    });
-  }
-
-  nextBtn.addEventListener('click', function () {
-    scrollToSection(findNextSection());
-  });
-
-  prevBtn.addEventListener('click', function () {
-    scrollToSection(findPreviousSection());
-  });
-
-  window.addEventListener('scroll', onScrollOrResize, { passive: true });
-  window.addEventListener('resize', onScrollOrResize);
-  document.addEventListener('DOMContentLoaded', updateButtons);
-  updateButtons();
-})();
 </script>
 
 </body>

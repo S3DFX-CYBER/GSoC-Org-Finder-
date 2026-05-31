@@ -17,7 +17,7 @@ permissions:
   pull-requests: write
   issues: write
   contents: read
-  metadata: write
+  metadata: read
 
 concurrency:
   group: pr-stage-manager-${{ github.event.pull_request.number || github.event.review.pull_request.number }}

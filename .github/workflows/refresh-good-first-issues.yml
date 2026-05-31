@@ -40,7 +40,7 @@ jobs:
       - name: Fetch good first issues
         run: node agent/scripts/fetch-issues.js
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Extract mentor contacts
         run: node agent/scripts/extract-mentors.js
@@ -60,7 +60,7 @@ jobs:
             node agent/scripts/refresh-org-stats.js
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Ensure generated files exist
         run: |

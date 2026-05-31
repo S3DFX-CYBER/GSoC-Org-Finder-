@@ -814,6 +814,35 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
+    .pagination-btn {
+  padding: 8px 14px;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  background: white;
+  color: #27272a;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+  background: #f4f4f5;
+}
+
+/* Active page */
+.pagination-btn.active {
+  background: #18181b; /* dark zinc */
+  color: white;
+  border-color: #18181b;
+  font-weight: 700;
+}
+
+/* Disabled prev/next buttons */
+#mentorPrevBtn:disabled,
+#mentorNextBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -1374,11 +1403,22 @@
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
     </div>
+<div id="mentorPagination"
+     class="flex justify-center items-center gap-2 mt-10 flex-wrap">
 
-    <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
-      <button type="button" id="loadMoreMentorBtn" aria-label="View More Mentors" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-        View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
-      </button>
+  <button id="mentorPrevBtn"
+          class="px-4 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 transition">
+    Previous
+  </button>
+
+  <div id="mentorPageNumbers" class="flex gap-2 flex-wrap"></div>
+
+  <button id="mentorNextBtn"
+          class="px-4 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 transition">
+    Next
+  </button>
+
+</div>
     </div>
   </div>
 </section>
@@ -2006,7 +2046,9 @@ sections.forEach(sectionId => {
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
-  let visibleMentorCount = 12;
+  const mentorsPerPage = 12;
+let currentMentorPage = 1;
+
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2374,10 +2416,12 @@ sections.forEach(sectionId => {
     if (!grid) return;
 
     if (reset) {
-      grid.innerHTML = '';
-      visibleMentorCount = 12;
-    }
+  currentMentorPage = 1;
+}
 
+grid.innerHTML = '';
+
+grid.innerHTML = '';
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
@@ -2426,14 +2470,16 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
-      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-      if (loadMoreContainer) {
-        loadMoreContainer.style.display = 'none';
-      }
+      const pagination = document.getElementById('mentorPagination');
+if (pagination) {
+  pagination.style.display = 'none';
+}
       return;
     }
 
-    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
+   const startIndex = (currentMentorPage - 1) * mentorsPerPage;
+const endIndex = startIndex + mentorsPerPage;
+const slice = filteredRecords.slice(startIndex, endIndex);
     slice.forEach(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
@@ -2501,17 +2547,157 @@ sections.forEach(sectionId => {
       grid.appendChild(article);
     });
 
-    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-    if (loadMoreContainer) {
-      if (visibleMentorCount < filteredRecords.length) {
-        loadMoreContainer.style.display = 'flex';
-      } else {
-        loadMoreContainer.style.display = 'none';
-      }
-    }
+    // const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+    // if (loadMoreContainer) {
+    //   if (visibleMentorCount < filteredRecords.length) {
+    //     loadMoreContainer.style.display = 'flex';
+    //   } else {
+    //     loadMoreContainer.style.display = 'none';
+    //   }
+    // }
     attachOrgCardListeners(grid);
+
+renderMentorPagination(filteredRecords.length);
+const pagination = document.getElementById('mentorPagination');
+
+if (pagination) {
+  pagination.style.display =
+    filteredRecords.length > mentorsPerPage ? 'flex' : 'none';
+}
+}
+// function renderMentorPagination(totalRecords) {
+//   const pagination = document.getElementById("mentorPageNumbers");
+//   const prevBtn = document.getElementById("mentorPrevBtn");
+//   const nextBtn = document.getElementById("mentorNextBtn");
+
+//   if (!pagination) return;
+
+//   const totalPages = Math.ceil(totalRecords / mentorsPerPage);
+
+//   pagination.innerHTML = "";
+
+//   for (let i = 1; i <= totalPages; i++) {
+//     const btn = document.createElement("button");
+
+//     btn.textContent = i;
+//     btn.className =
+//       i === currentMentorPage
+//         ? "px-3 py-2 rounded-lg bg-orange-500 text-white"
+//         : "px-3 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100";
+
+//     btn.addEventListener("click", () => {
+//       currentMentorPage = i;
+//       renderMentorFinder(false);
+//     });
+
+//     pagination.appendChild(btn);
+//   }
+
+//   prevBtn.disabled = currentMentorPage === 1;
+//   nextBtn.disabled = currentMentorPage === totalPages;
+
+//   prevBtn.onclick = () => {
+//     if (currentMentorPage > 1) {
+//       currentMentorPage--;
+//       renderMentorFinder(false);
+//     }
+//   };
+
+//   nextBtn.onclick = () => {
+//     if (currentMentorPage < totalPages) {
+//       currentMentorPage++;
+//       renderMentorFinder(false);
+//     }
+//   };
+// }
+  function renderMentorPagination(totalRecords) {
+  const pagination = document.getElementById("mentorPageNumbers");
+  const prevBtn = document.getElementById("mentorPrevBtn");
+  const nextBtn = document.getElementById("mentorNextBtn");
+
+  if (!pagination) return;
+
+  const totalPages = Math.ceil(totalRecords / mentorsPerPage);
+
+  pagination.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+
+    btn.textContent = i;
+
+    btn.className =
+      i === currentMentorPage
+        ? "pagination-btn active"
+        : "pagination-btn";
+
+    btn.addEventListener("click", () => {
+      currentMentorPage = i;
+      renderMentorFinder(false);
+    });
+
+    pagination.appendChild(btn);
   }
 
+  if (prevBtn) prevBtn.disabled = currentMentorPage === 1;
+  if (nextBtn) nextBtn.disabled = currentMentorPage === totalPages;
+}
+document.getElementById("mentorPrevBtn")?.addEventListener("click", () => {
+  if (currentMentorPage > 1) {
+    currentMentorPage--;
+    renderMentorFinder(false);
+  }
+});
+document.getElementById("mentorNextBtn")?.addEventListener("click", () => {
+
+  const search = (document.getElementById("mentorSearchInput")?.value || "")
+    .trim()
+    .toLowerCase();
+
+  const channelFilter =
+    document.getElementById("mentorChannelFilter")?.value || "all";
+
+  const filteredRecords = getMentorFinderRecords().filter(({ org, entry }) => {
+
+    const searchHaystack = [
+      org.name,
+      ...(entry.mentors || []).flatMap((mentor) => [
+        mentor.name || "",
+        mentor.github || "",
+      ]),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch =
+      !search || searchHaystack.includes(search);
+
+    const allContacts = [
+      ...(entry.channels || []),
+      ...(entry.mailingLists || []).map((list) => ({
+        ...list,
+        type: "Mailing list",
+      })),
+    ];
+
+    const matchesChannel =
+      channelFilter === "all" ||
+      allContacts.some(
+        (contact) => contact.type === channelFilter
+      );
+
+    return matchesSearch && matchesChannel;
+  });
+
+  const totalPages = Math.ceil(
+    filteredRecords.length / mentorsPerPage
+  );
+
+  if (currentMentorPage < totalPages) {
+    currentMentorPage++;
+    renderMentorFinder(false);
+  }
+});
   async function loadMentorData() {
     mentorDataState = 'loading';
     renderMentorFinder();

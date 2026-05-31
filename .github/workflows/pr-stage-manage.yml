@@ -34,6 +34,7 @@ jobs:
     steps:
       - name: Evaluate PR Pipeline
         uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
 
         with:
           # Use built-in token instead of PAT
@@ -455,6 +456,14 @@ jobs:
             // FIND EXISTING COMMENT
             // --------------------------------------------------
 
+
+            body +=
+              `**Last updated:** ${new Date().toUTCString()}`;
+
+            // --------------------------------------------------
+            // FIND EXISTING COMMENT
+            // --------------------------------------------------
+
             const { data: comments } =
               await github.rest.issues.listComments({
                 owner,
@@ -525,4 +534,5 @@ jobs:
               core.info(
                 'Created pipeline comment'
               );
+            }
             }

@@ -37,6 +37,8 @@ function setLocalCache(cache) {
 
 async function fetchUserProfileFromAPI(normalizedUsername) {
   const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
+async function fetchUserProfileFromAPI(normalizedUsername, signal) {
+  const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`, { signal });
   let data;
   try {
     data = await response.json();
@@ -60,6 +62,9 @@ async function fetchUserProfileFromAPI(normalizedUsername) {
 }
 
 function handleAnalyzerError(err, username) {
+  if (err.name === 'AbortError') {
+    throw err; // Re-throw AbortError so it can be handled by the UI layer
+  }
   console.error("GitHub Analyzer Error:", err);
 
   const message = err.message || "";
@@ -84,9 +89,12 @@ function handleAnalyzerError(err, username) {
  * Analyzes a GitHub username and returns a standardized UserProfile object.
  * 
  * @param {string} username - The GitHub username to analyze
+ * @param {Object} [options] - Optional settings
+ * @param {AbortSignal} [options.signal] - Signal to abort the request
  * @returns {Promise<Object>} - The UserProfile containing languages, topics, stars, and activity
  */
-async function analyzeGitHubUser(username) {
+async function analyzeGitHubUser(username, options = {}) {
+  const { signal } = options;
   if (!username || username.trim() === '') {
     throw new Error("Username cannot be empty");
   }
@@ -101,6 +109,7 @@ async function analyzeGitHubUser(username) {
 
   try {
     const data = await fetchUserProfileFromAPI(normalizedUsername);
+    const data = await fetchUserProfileFromAPI(normalizedUsername, signal);
 
     // Structure the result
     const userProfile = {

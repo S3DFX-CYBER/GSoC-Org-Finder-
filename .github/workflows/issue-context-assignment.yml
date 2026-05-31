@@ -26,13 +26,17 @@ jobs:
       github.event.issue.pull_request == null &&
       github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Detect commands
         id: cmd
         uses: actions/github-script@v8
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+
+      - name: Detect commands
+        id: cmd
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           script: |
             const body =
@@ -79,6 +83,8 @@ jobs:
           ISSUE_CLAIMANT: ${{ github.event.issue.user.login }}
           MAX_MENTORS: '2'
           RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 
@@ -89,6 +95,7 @@ jobs:
           steps.cmd.outputs.is_assign != 'true' &&
           steps.cmd.outputs.is_approve != 'true'
         uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           SELECTED_MENTORS_JSON: ${{ steps.mentor_select.outputs.result }}
         with:
@@ -216,6 +223,28 @@ jobs:
             const claimant =
               context.payload.comment.user.login;
 
+
+            }
+
+      # ─────────────────────────────────────────────
+      # /assign FLOW
+      # ─────────────────────────────────────────────
+
+      - name: Validate issue assignment
+        id: validate
+        if: steps.cmd.outputs.is_assign == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
+        with:
+          script: |
+            const { owner, repo } =
+              context.repo;
+
+            const issue_number =
+              context.payload.issue.number;
+
+            const claimant =
+              context.payload.comment.user.login;
+
             const issue =
               (
                 await github.rest.issues.get({
@@ -276,6 +305,8 @@ jobs:
           ISSUE_CLAIMANT: ${{ steps.validate.outputs.claimant }}
           MAX_MENTORS: '2'
           RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 
@@ -286,6 +317,7 @@ jobs:
           steps.cmd.outputs.is_assign == 'true' &&
           steps.validate.outputs.eligible == 'true'
         uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           CLAIMANT: ${{ steps.validate.outputs.claimant }}
           SELECTED_MENTORS_JSON: ${{ steps.assign_mentors.outputs.result }}
@@ -293,6 +325,67 @@ jobs:
           script: |
             const { owner, repo } =
               context.repo;
+
+            const issue_number =
+              context.issue.number;
+
+            const claimant =
+              process.env.CLAIMANT;
+
+            let selected = [];
+
+            try {
+
+              selected =
+                JSON.parse(
+                  process.env.SELECTED_MENTORS_JSON || '{}'
+                ).selected || [];
+
+            } catch {
+
+              selected = [];
+
+            }
+
+            const marker =
+              '<!-- assignment-status -->';
+
+            const mentions =
+              selected
+                .map(m => `@${m}`)
+                .join(' • ');
+
+            const avatars =
+              selected
+                .map(
+                  mentor =>
+                    `<a href="https://github.com/${mentor}"><img src="https://github.com/${mentor}.png" width="52px" alt="${mentor}" /></a>`
+                )
+                .join('\n');
+
+            const body = [
+              marker,
+              '',
+              '# ⏳ Assignment Pending Mentor Approval',
+              '',
+              avatars,
+              '',
+              `Requested by @${claimant}`,
+              '',
+              '### Active Mentors',
+              '',
+              mentions,
+              '',
+              '### Approve Using',
+              '',
+              '```',
+              `/approve-assignment @${claimant}`,
+              '```',
+              '',
+              '> Mentors rotate dynamically across issues.',
+              '> If no response occurs within 24h, PA escalation may happen.'
+            ].join('\n');
+
 
             const issue_number =
               context.issue.number;
@@ -415,6 +508,26 @@ jobs:
             const claimant =
               process.env.TARGET_USER;
 
+
+      - name: Process mentor approval
+        if: steps.cmd.outputs.is_approve == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
+        env:
+          TARGET_USER: ${{ steps.cmd.outputs.target_user }}
+        with:
+          script: |
+            const { owner, repo } =
+              context.repo;
+
+            const issue_number =
+              context.issue.number;
+
+            const approver =
+              context.payload.comment.user.login;
+
+            const claimant =
+              process.env.TARGET_USER;
+
             const comments =
               await github.paginate(
                 github.rest.issues.listComments,
@@ -447,6 +560,10 @@ jobs:
 
             const body =
               assignmentComment.body || '';
+
+            const mentorMentioned =
+              body.includes(`@${approver}`);
+
 
             const mentorMentioned =
               body.includes(`@${approver}`);

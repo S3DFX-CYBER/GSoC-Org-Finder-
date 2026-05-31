@@ -747,6 +747,73 @@
       color: #fb923c;
       background: #1c0f05;
     }
+    
+    /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
+    .timeline-border-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 20;
+      overflow: visible;
+    }
+
+    .timeline-border-rect {
+      stroke-dasharray: 25 75;
+      stroke-dashoffset: 100;
+      animation: draw-border 4s linear infinite;
+      rx: 16px;
+      ry: 16px;
+      x: 0.75px;
+      y: 0.75px;
+      width: calc(100% - 1.5px);
+      height: calc(100% - 1.5px);
+      stroke: #f97316;
+      stroke-width: 1.5;
+    }
+
+    .dark .timeline-border-rect {
+      stroke: #fb923c;
+    }
+
+    @media (min-width: 640px) {
+      /* Keep standard responsive corner rounding for the timeline card */
+      #timeline .timeline-border-rect {
+        rx: 24px;
+        ry: 24px;
+      }
+    }
+
+    @keyframes draw-border {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Respect accessibility preferences for reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .timeline-border-rect {
+        animation: none;
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Smooth fading for search bar active animation on focus */
+    .search-bar-container:focus-within .timeline-border-svg {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    /* Solid color outline transition on focus */
+    .search-bar-container:focus-within .search-border-outer {
+      background: #f97316;
+    }
+    .dark .search-bar-container:focus-within .search-border-outer {
+      background: #fb923c;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -908,6 +975,18 @@
       <div class="relative max-w-xl mb-6 sm:mb-8">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
         <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+      <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
+        <div class="relative rounded-2xl p-[1.5px] bg-zinc-200 dark:bg-zinc-800 transition-all duration-300 search-border-outer">
+          <!-- SVG Flowing Border Effect -->
+          <svg class="timeline-border-svg" fill="none">
+            <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
+          </svg>
+          <!-- Inner Input Layer -->
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+          </div>
+        </div>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -934,16 +1013,23 @@
     </div>
     <!-- Timeline Card -->
     <div id="timeline" class="lg:col-span-5 fade-up" style="animation-delay:.2s">
-      <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-100">
-        <div class="flex items-center justify-between mb-6 sm:mb-8">
-          <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
-          <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
-        </div>
-        <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
-        <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
-            <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+      <div class="relative rounded-2xl sm:rounded-3xl p-[1.5px] bg-zinc-200 dark:bg-zinc-700 transition-colors duration-300">
+        <!-- SVG Flowing Border Effect -->
+        <svg class="timeline-border-svg" fill="none">
+          <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
+        </svg>
+        <!-- Inner Card Content Layer -->
+        <div class="relative z-10 bg-white rounded-[calc(1rem-1.5px)] sm:rounded-[calc(1.5rem-1.5px)] p-6 sm:p-8 h-full w-full">
+          <div class="flex items-center justify-between mb-6 sm:mb-8">
+            <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
+            <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
+          </div>
+          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
+              <span id="countdown" class="font-mono text-sm font-bold text-primary">--d --h --m</span>
+            </div>
           </div>
         </div>
       </div>
@@ -991,9 +1077,53 @@
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
-  <div class="flex items-center justify-between mb-8">
+  <div class="mb-12">
+    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Find projects that fit you</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Organizations</h2>
+    <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Browse and filter GSoC 2026 organizations by tech stack, difficulty level, and interests to discover projects that match your skills and goals.</p>
+  </div>
+  <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
+  <div class="mb-6 fade-up" style="animation-delay:.3s">
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
+      <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
+      <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
+      <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
+      <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
+      <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" aria-pressed="false" onclick="togglePill(this)">JavaScript</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" aria-pressed="false" onclick="togglePill(this)">TypeScript</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" aria-pressed="false" onclick="togglePill(this)">C/C++</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" aria-pressed="false" onclick="togglePill(this)">Java</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" aria-pressed="false" onclick="togglePill(this)">Rust</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" aria-pressed="false" onclick="togglePill(this)">Go</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" aria-pressed="false" onclick="togglePill(this)">Ruby</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" aria-pressed="false" onclick="togglePill(this)">Haskell</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" aria-pressed="false" onclick="togglePill(this)">Scala</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" aria-pressed="false" onclick="togglePill(this)">ML/AI</button>
+      <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" aria-pressed="false" onclick="togglePill(this)">Robotics</button>
+    </div>
+    <div id="selectedLangsStrip" class="mt-3 flex flex-wrap items-center gap-2 min-h-[32px]">
+      <span class="empty-state">No languages selected</span>
+    </div>
+    <div class="mt-2 flex items-center gap-2">
+      <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+        <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
+        <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
+      </label>
+      <span id="languageLogicHint" 
+        class="text-xs text-primary font-medium italic">
+      </span>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex items-center gap-4">
+    <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -1285,6 +1415,12 @@
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
     </div>
+
+    <div class="mt-12 flex justify-center" id="loadMoreMentorContainer" style="display:none">
+      <button type="button" id="loadMoreMentorBtn" aria-label="View More Mentors" class="px-10 py-4 bg-primary text-white font-headline font-bold rounded-full text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        View More Mentors <span class="material-symbols-outlined text-lg">expand_more</span>
+      </button>
+    </div>
   </div>
 </section>
  
@@ -1472,6 +1608,11 @@
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
+          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
     </nav>
   </div>
 </footer>
@@ -1479,7 +1620,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1935,6 +2076,7 @@ sections.forEach(sectionId => {
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
   let visibleCount = 12;
+  let visibleMentorCount = 12;
 
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
@@ -2146,8 +2288,8 @@ sections.forEach(sectionId => {
   }
 
   function getPrimaryMentorContact(entry) {
-    if (entry.channels.length > 0) return entry.channels[0];
-    if (entry.mailingLists.length > 0) return entry.mailingLists[0];
+    if ((entry.channels || []).length > 0) return entry.channels[0];
+    if ((entry.mailingLists || []).length > 0) return entry.mailingLists[0];
     return null;
   }
 
@@ -2231,7 +2373,7 @@ sections.forEach(sectionId => {
     })();
 
     const sections = [];
-    if (entry.status === 'ok' && entry.channels.length > 0) {
+    if (entry.status === 'ok' && (entry.channels || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Channels</p>
@@ -2240,7 +2382,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && entry.mentors.length > 0) {
+    if (entry.status === 'ok' && (entry.mentors || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mentors</p>
@@ -2249,7 +2391,7 @@ sections.forEach(sectionId => {
       `);
     }
 
-    if (entry.status === 'ok' && entry.mailingLists.length > 0) {
+    if (entry.status === 'ok' && (entry.mailingLists || []).length > 0) {
       sections.push(`
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Mailing Lists</p>
@@ -2466,10 +2608,15 @@ sections.forEach(sectionId => {
     }));
   }
 
-  function renderMentorFinder() {
+  function renderMentorFinder(reset = true) {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
     if (!grid) return;
+
+    if (reset) {
+      grid.innerHTML = '';
+      visibleMentorCount = 12;
+    }
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
@@ -2519,10 +2666,15 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
+      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+      if (loadMoreContainer) {
+        loadMoreContainer.style.display = 'none';
+      }
       return;
     }
 
-    grid.innerHTML = filteredRecords.map(({ org, entry }) => {
+    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
+    slice.forEach(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2570,24 +2722,33 @@ sections.forEach(sectionId => {
       const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);
       const safeContactHref = sanitizeHrefUrl(contactHref);
 
-      return `
-        <article class="mentor-card">
-          <div class="flex items-start justify-between gap-3 mb-4">
-            <div>
-              <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
-              <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
-            </div>
-            <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+      const article = document.createElement('article');
+      article.className = 'mentor-card';
+      article.innerHTML = `
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
+            <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
           </div>
-          ${bodyHtml}
-          <div class="mt-5 pt-4 border-t border-zinc-100">
-            ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
-            <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
-          </div>
-        </article>
+          <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+        </div>
+        ${bodyHtml}
+        <div class="mt-5 pt-4 border-t border-zinc-100">
+          ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
+          <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
+        </div>
       `;
-    }).join('');
+      grid.appendChild(article);
+    });
 
+    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+    if (loadMoreContainer) {
+      if (visibleMentorCount < filteredRecords.length) {
+        loadMoreContainer.style.display = 'flex';
+      } else {
+        loadMoreContainer.style.display = 'none';
+      }
+    }
     attachOrgCardListeners(grid);
   }
 
@@ -2811,7 +2972,7 @@ sections.forEach(sectionId => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up flex flex-col h-full';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);
@@ -2833,24 +2994,25 @@ sections.forEach(sectionId => {
         </div>
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 flex-grow">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 mt-auto">
           <div class="flex items-center gap-3">
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
-      `;
-      grid.appendChild(card);
-        // Attach per-card listeners for non-bubbling events and data-driven actions
-        attachOrgCardListeners(card);
+       `;
+    card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
+
+   grid.appendChild(card);
+   attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
@@ -2890,7 +3052,7 @@ sections.forEach(sectionId => {
         e.stopPropagation();
         openModal(btn.dataset.openOrg);
       });
-      btn.__orgListenerAttached = true;
+btn.__orgListenerAttached = true;
     });
   }
 
@@ -3110,6 +3272,10 @@ sections.forEach(sectionId => {
     if (e.target.id === 'compareModal') closeCompareModal();
   });
 
+  document.getElementById('orgModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'orgModal') closeOrgModal();
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (document.getElementById('proposalModal')?.classList.contains('open')) {
@@ -3118,6 +3284,7 @@ sections.forEach(sectionId => {
       closeCompareModal();
     } else if (document.getElementById('orgModal')?.classList.contains('open')) {
       closeModal();
+      closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
     }
@@ -3563,6 +3730,11 @@ if(org.ideas){
   document.getElementById('mIdeasBtn').after(copyBtn);
 }
     renderMentorContactSection(org);
+
+    const draftBtn = document.getElementById('mDraftBtn');
+    if (draftBtn) {
+      draftBtn.onclick = () => ProposalBuilder.open(org.name);
+    }
      
     document.getElementById('orgModal').classList.add('open');
     document.body.classList.add('modal-open');
@@ -3570,7 +3742,7 @@ if(org.ideas){
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
+  function closeOrgModal() {
     document.getElementById('orgModal').classList.remove('open');
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
@@ -3708,6 +3880,11 @@ if(org.ideas){
   document.getElementById('loadMoreBtn').addEventListener('click', () => {
     visibleCount += 12;
     renderOrgs(false);
+  });
+
+  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
+    visibleMentorCount += 12;
+    renderMentorFinder(false);
   });
 
   // Surprise button event listener

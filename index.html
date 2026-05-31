@@ -1861,7 +1861,7 @@ window.setActiveMenu = function(clickedLink) {
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    const sections = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide'];
     const scrollPosition = window.scrollY + 80; // Offset for fixed header
     
 let currentSection = 'timeline';
@@ -3574,7 +3574,8 @@ if(org.ideas){
     if (sort && sort !== 'alpha')          params.set('sort', sort);
     if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
     if (activeChip)                        params.set('chip', activeChip);
-    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
+    const newUrl = (params.toString() ? '?' + params.toString() : location.pathname) + (location.hash || '');
+    history.replaceState(null, '', newUrl);
   }
 
   function applySecondarySort(a, b, sortType) {

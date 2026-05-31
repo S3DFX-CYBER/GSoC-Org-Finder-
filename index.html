@@ -1916,7 +1916,7 @@ sections.forEach(sectionId => {
 
     if (!isRestoringScroll) {
       if (globalThis.location.hash !== '#' + currentSection && currentSection !== 'timeline') {
-        history.replaceState(null, null, '#' + currentSection);
+        history.replaceState(null, null, globalThis.location.pathname + globalThis.location.search + '#' + currentSection);
       } else if (currentSection === 'timeline' && globalThis.location.hash !== '') {
         history.replaceState(null, null, globalThis.location.pathname + globalThis.location.search);
       }
@@ -4335,16 +4335,19 @@ document.addEventListener('DOMContentLoaded', () => {
   sections.forEach(sec => observer.observe(sec));
 
   setTimeout(() => {
+    let scrollDelay = 50;
     if (globalThis.location.hash) {
-      const target = document.querySelector(globalThis.location.hash);
+      const hashValue = globalThis.location.hash.substring(1);
+      const target = document.getElementById(hashValue);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
+        scrollDelay = 800;
       }
     }
     setTimeout(() => {
       isRestoringScroll = false;
       updateActiveSection();
-    }, 50);
+    }, scrollDelay);
   }, 100);
 
   const helpModal = document.getElementById('helpModal');

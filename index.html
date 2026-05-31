@@ -2733,7 +2733,7 @@ sections.forEach(sectionId => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up flex flex-col h-full';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);
@@ -2755,13 +2755,13 @@ sections.forEach(sectionId => {
         </div>
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 flex-grow">${escapeHtml(org.desc)}</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
           ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 mt-auto">
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
           <div class="flex items-center gap-3">
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
@@ -3429,12 +3429,42 @@ btn.__orgListenerAttached = true;
     if (typeof BadgeSystem !== 'undefined') {
       BadgeSystem.trackOrgView();
     }
+    const isBookmarked = bookmarkedSet.has(org.name);
 
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
-      <h2>${escapeHtml(org.name)}</h2>
-      <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+      <div class="flex items-start justify-between pr-10">
+        <div>
+          <h2>${escapeHtml(org.name)}</h2>
+          <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+        </div>
+        <button
+          id="modalBookmarkBtn"
+          class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'} flex-shrink-0 mt-1"
+          data-bookmark-org="${escapeHtml(org.name)}"
+          aria-label="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+          title="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+        >
+          <span class="material-symbols-outlined text-2xl ${isBookmarked ? 'icon-fill' : ''}">
+            star
+          </span>
+        </button>
+      </div>
     `;
+    const modalBookmarkBtn = document.getElementById('modalBookmarkBtn');
+    if (modalBookmarkBtn) {
+      modalBookmarkBtn.addEventListener('click', (e) => {
+        toggleBookmark(e, org.name);
+        const nowBookmarked = bookmarkedSet.has(org.name);
+        modalBookmarkBtn.classList.toggle('active', nowBookmarked);
+        modalBookmarkBtn.classList.toggle('text-zinc-300', !nowBookmarked);
+        const icon = modalBookmarkBtn.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.toggle('icon-fill', nowBookmarked);
+        const label = nowBookmarked ? 'Remove bookmark' : 'Add to Watchlist';
+        modalBookmarkBtn.setAttribute('aria-label', label);
+        modalBookmarkBtn.setAttribute('title', label);
+      });
+    }
 
     document.getElementById('mMetrics').innerHTML = `
       <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>

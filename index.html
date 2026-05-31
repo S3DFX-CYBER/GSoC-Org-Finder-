@@ -3380,7 +3380,7 @@ btn.__orgListenerAttached = true;
   }
 
   // ── Import / Export Watchlist ───────────────────────────────────────────────
-  window.exportWatchlistAsJSON = function() {
+  globalThis.exportWatchlistAsJSON = function() {
     const bookmarks = [...bookmarkedSet];
     if (bookmarks.length === 0) {
       alert("Watchlist is empty. Nothing to export.");
@@ -3395,7 +3395,7 @@ btn.__orgListenerAttached = true;
     URL.revokeObjectURL(url);
   };
 
-  window.exportWatchlistAsMarkdown = function() {
+  globalThis.exportWatchlistAsMarkdown = function() {
     const bookmarks = [...bookmarkedSet]
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
@@ -3409,7 +3409,7 @@ btn.__orgListenerAttached = true;
       md += `## [${org.name}](${org.ideas || org.url || ''})\n\n`;
       if (org.desc) md += `- **Description:** ${org.desc}\n`;
       if (org.ideas) md += `- **Ideas List:** ${org.ideas}\n`;
-      if (org.years) md += `- **GSoC Years:** ${org.years} (since ${org.firstYear})\n`;
+      if (org.years) md += `- **GSoC Years:** ${org.years}${org.firstYear ? ` (since ${org.firstYear})` : ''}\n`;
       if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${org.tags.join(', ')}\n`;
       md += '\n';
     });
@@ -3426,15 +3426,30 @@ btn.__orgListenerAttached = true;
   function showToast(title, message) {
     const toast = document.createElement('div');
     toast.className = 'badge-notification flex items-center gap-3';
-    toast.innerHTML = `
-      <div class="badge-notification-icon bg-white/20 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-        <span class="material-symbols-outlined text-white">check_circle</span>
-      </div>
-      <div class="badge-notification-text">
-        <div class="badge-notification-title font-bold text-sm">${title}</div>
-        <div class="badge-notification-desc text-xs text-white/80">${message}</div>
-      </div>
-    `;
+
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'badge-notification-icon bg-white/20 w-10 h-10 rounded-full flex items-center justify-center shrink-0';
+    const icon = document.createElement('span');
+    icon.className = 'material-symbols-outlined text-white';
+    icon.textContent = 'check_circle';
+    iconContainer.appendChild(icon);
+
+    const textContainer = document.createElement('div');
+    textContainer.className = 'badge-notification-text';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'badge-notification-title font-bold text-sm';
+    titleEl.textContent = title;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'badge-notification-desc text-xs text-white/80';
+    messageEl.textContent = message;
+
+    textContainer.appendChild(titleEl);
+    textContainer.appendChild(messageEl);
+
+    toast.appendChild(iconContainer);
+    toast.appendChild(textContainer);
     document.body.appendChild(toast);
     
     requestAnimationFrame(() => {
@@ -3458,8 +3473,9 @@ btn.__orgListenerAttached = true;
         const importedOrgs = JSON.parse(e.target.result);
         if (!Array.isArray(importedOrgs)) throw new Error("Invalid format: Not an array");
         let addedCount = 0;
+        const validOrgNames = new Set(ORGS.map(o => o.name));
         importedOrgs.forEach(orgName => {
-          if (typeof orgName === 'string' && !bookmarkedSet.has(orgName)) {
+          if (typeof orgName === 'string' && !bookmarkedSet.has(orgName) && validOrgNames.has(orgName)) {
             bookmarkedSet.add(orgName);
             addedCount++;
           }

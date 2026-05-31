@@ -815,11 +815,10 @@
       background: #fb923c;
     }
 
-    /* Floating next-section button */
-    #nextSectionBtn {
+    /* Floating section navigation buttons */
+    .section-nav-btn {
       position: fixed;
       right: 24px;
-      bottom: 88px;
       z-index: 80;
       width: 48px;
       height: 48px;
@@ -837,36 +836,45 @@
       transform: translateY(14px) scale(0.92);
       transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease;
     }
-    #nextSectionBtn.visible {
+    #nextSectionBtn {
+      bottom: 88px;
+    }
+    #prevSectionBtn {
+      bottom: 144px;
+    }
+    .section-nav-btn.visible {
       opacity: 1;
       visibility: visible;
       transform: translateY(0) scale(1);
     }
-    #nextSectionBtn:hover {
+    .section-nav-btn:hover {
       transform: translateY(-2px) scale(1.03);
       box-shadow: 0 10px 24px rgba(157, 67, 0, 0.45);
     }
-    #nextSectionBtn:focus-visible {
+    .section-nav-btn:focus-visible {
       outline: 2px solid #ffffff;
       outline-offset: 2px;
       box-shadow: 0 0 0 4px rgba(157, 67, 0, 0.4);
     }
-    .dark #nextSectionBtn {
+    .dark .section-nav-btn {
       background: linear-gradient(135deg, #c2410c, #ea580c);
       box-shadow: 0 6px 20px rgba(194, 65, 12, 0.38);
     }
-    .dark #nextSectionBtn:hover {
+    .dark .section-nav-btn:hover {
       box-shadow: 0 10px 24px rgba(194, 65, 12, 0.52);
     }
 
     @media (max-width: 640px) {
-      #nextSectionBtn {
+      .section-nav-btn {
         right: 16px;
         width: 44px;
         height: 44px;
       }
       #nextSectionBtn {
         bottom: 78px;
+      }
+      #prevSectionBtn {
+        bottom: 132px;
       }
     }
   </style>
@@ -1012,7 +1020,11 @@
   </nav>
 </div>
 
-<button id="nextSectionBtn" aria-label="Go to next section" title="Next section" type="button">
+<button id="prevSectionBtn" class="section-nav-btn" aria-label="Go to previous section" title="Previous section" type="button">
+  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
+</button>
+
+<button id="nextSectionBtn" class="section-nav-btn" aria-label="Go to next section" title="Next section" type="button">
   <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_down</span>
 </button>
 
@@ -4454,8 +4466,9 @@ if (logoLink) {
 <script>
 // Floating next-section button: scroll through major sections in order.
 (function () {
+  const prevBtn = document.getElementById('prevSectionBtn');
   const nextBtn = document.getElementById('nextSectionBtn');
-  if (!nextBtn) return;
+  if (!prevBtn || !nextBtn) return;
 
   const orderedIds = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'guide', 'contact'];
   let ticking = false;
@@ -4484,11 +4497,31 @@ if (logoLink) {
     return sections.find(section => section.offsetTop > y) || null;
   }
 
+  function findPreviousSection() {
+    const sections = getSections();
+    const y = globalThis.scrollY + getHeaderOffset() + 8;
+
+    let currentIndex = -1;
+
+    for (let i = 0; i < sections.length; i += 1) {
+      if (sections[i].offsetTop <= y) {
+        currentIndex = i;
+      } else {
+        break;
+      }
+    }
+
+    return currentIndex > 0 ? sections[currentIndex - 1] : null;
+  }
+
   function updateVisibility() {
     const showNext = !hasOpenOverlay() && Boolean(findNextSection());
+    const showPrev = !hasOpenOverlay() && Boolean(findPreviousSection());
 
     nextBtn.classList.toggle('visible', showNext);
     nextBtn.setAttribute('aria-hidden', showNext ? 'false' : 'true');
+    prevBtn.classList.toggle('visible', showPrev);
+    prevBtn.setAttribute('aria-hidden', showPrev ? 'false' : 'true');
   }
 
   function scrollToNextSection() {
@@ -4498,6 +4531,21 @@ if (logoLink) {
     if (!nextSection) return;
 
     const targetTop = nextSection.getBoundingClientRect().top + globalThis.scrollY - getHeaderOffset();
+    const reduceMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    globalThis.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: reduceMotion ? 'auto' : 'smooth'
+    });
+  }
+
+  function scrollToPreviousSection() {
+    if (hasOpenOverlay()) return;
+
+    const previousSection = findPreviousSection();
+    if (!previousSection) return;
+
+    const targetTop = previousSection.getBoundingClientRect().top + globalThis.scrollY - getHeaderOffset();
     const reduceMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     globalThis.scrollTo({
@@ -4516,6 +4564,7 @@ if (logoLink) {
   }
 
   nextBtn.addEventListener('click', scrollToNextSection);
+  prevBtn.addEventListener('click', scrollToPreviousSection);
   globalThis.addEventListener('scroll', onScrollOrResize, { passive: true });
   globalThis.addEventListener('resize', onScrollOrResize);
   document.addEventListener('DOMContentLoaded', updateVisibility);

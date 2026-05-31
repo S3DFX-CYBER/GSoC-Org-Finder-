@@ -1860,6 +1860,8 @@ window.setActiveMenu = function(clickedLink) {
   toggleMenu();
 };
 
+  let isRestoringScroll = globalThis.location.hash ? true : false;
+
   // Update active state based on scroll position
   function updateActiveSection() {
     const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
@@ -1871,10 +1873,11 @@ sections.forEach(sectionId => {
     const section = document.getElementById(sectionId);
 
     if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top + globalThis.scrollY;
+        const sectionBottom = sectionTop + rect.height;
 
-        const triggerPoint = window.innerHeight / 2;
+        const triggerPoint = globalThis.innerHeight / 2;
 
         if (
             sectionTop <= scrollPosition + triggerPoint &&
@@ -1910,6 +1913,14 @@ sections.forEach(sectionId => {
         link.classList.add('text-zinc-600', 'hover:text-zinc-900');
       }
     });
+
+    if (!isRestoringScroll) {
+      if (globalThis.location.hash !== '#' + currentSection && currentSection !== 'timeline') {
+        history.replaceState(null, null, '#' + currentSection);
+      } else if (currentSection === 'timeline' && globalThis.location.hash !== '') {
+        history.replaceState(null, null, globalThis.location.pathname + globalThis.location.search);
+      }
+    }
   }
 
   // Listen for scroll events
@@ -3605,7 +3616,8 @@ if(org.ideas){
     if (sort && sort !== 'alpha')          params.set('sort', sort);
     if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
     if (activeChip)                        params.set('chip', activeChip);
-    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
+    const currentHash = location.hash;
+    history.replaceState(null, '', (params.toString() ? '?' + params.toString() : location.pathname) + currentHash);
   }
 
   function applySecondarySort(a, b, sortType) {
@@ -4301,6 +4313,39 @@ if(org.ideas){
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
+  // Unified Section Animation System
+  const sections = document.querySelectorAll('section[id]');
+  sections.forEach(sec => sec.classList.add('opacity-0', 'translate-y-6', 'transition-all', 'duration-700', 'ease-out'));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.remove('opacity-0', 'translate-y-6');
+        entry.target.classList.add('opacity-100', 'translate-y-0');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  sections.forEach(sec => observer.observe(sec));
+
+  setTimeout(() => {
+    if (globalThis.location.hash) {
+      const target = document.querySelector(globalThis.location.hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setTimeout(() => {
+      isRestoringScroll = false;
+      updateActiveSection();
+    }, 50);
+  }, 100);
 
   const helpModal = document.getElementById('helpModal');
   const helpBtn = document.getElementById('helpBtn');

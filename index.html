@@ -1860,7 +1860,7 @@ window.setActiveMenu = function(clickedLink) {
   toggleMenu();
 };
 
-  let isRestoringScroll = globalThis.location.hash ? true : false;
+  globalThis.isRestoringScroll = !!globalThis.location.hash;
 
   // Update active state based on scroll position
   function updateActiveSection() {
@@ -1914,7 +1914,7 @@ sections.forEach(sectionId => {
       }
     });
 
-    if (!isRestoringScroll) {
+    if (!globalThis.isRestoringScroll) {
       if (globalThis.location.hash !== '#' + currentSection && currentSection !== 'timeline') {
         history.replaceState(null, null, globalThis.location.pathname + globalThis.location.search + '#' + currentSection);
       } else if (currentSection === 'timeline' && globalThis.location.hash !== '') {
@@ -4345,7 +4345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     setTimeout(() => {
-      isRestoringScroll = false;
+      globalThis.isRestoringScroll = false;
       updateActiveSection();
     }, scrollDelay);
   }, 100);

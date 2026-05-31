@@ -801,42 +801,6 @@
     .dark #scrollToTopBtn:hover {
       box-shadow: 0 8px 24px rgba(234, 88, 12, 0.5);
     }
-    /* Next Section Button */
-    #nextSectionBtn {
-      position: fixed;
-      bottom: 90px;
-      right: 24px;
-      z-index: 90;
-      width: 48px;
-      height: 48px;
-      border: none;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #f97316, #fb923c);
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(16px) scale(0.8);
-      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-    }
-    #nextSectionBtn.visible {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-    #nextSectionBtn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 8px 24px rgba(249, 115, 22, 0.45);
-    }
-    @media (max-width: 640px) {
-      #nextSectionBtn { bottom: 78px; right: 18px; width:44px; height:44px; }
-    }
-    .dark #nextSectionBtn { background: linear-gradient(135deg, #ea580c, #f97316); box-shadow: 0 4px 16px rgba(234,88,12,0.35); }
-    
     /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
     .timeline-border-svg {
       position: absolute;
@@ -915,11 +879,6 @@
 
 <button id="scrollToTopBtn" aria-label="Scroll to top" title="Scroll to top">
   <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_up</span>
-</button>
-
-
-<button id="nextSectionBtn" aria-label="Next section" title="Next section">
-  <span class="material-symbols-outlined" style="font-size:24px">keyboard_arrow_down</span>
 </button>
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
@@ -4356,6 +4315,7 @@ if(org.ideas){
       <td class="py-2">?</td>
       <td class="py-2">Toggle help dialog</td>
     </tr>
+
   </tbody>
 </table>
 
@@ -4513,6 +4473,7 @@ if (logoLink) {
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
   btn.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4523,54 +4484,6 @@ if (logoLink) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-})();
-</script>
-
-<script>
-
-(function(){
-  const btn = document.getElementById('nextSectionBtn');
-  if (!btn) return;
-
-  function getSections(){
-    return Array.from(document.querySelectorAll('section[id]'))
-      .filter(s=>s.offsetHeight>0)
-      .sort((a,b)=>a.offsetTop-b.offsetTop);
-  }
-
-  function updateVisibility(){
-    const sections = getSections();
-    const currentY = window.scrollY + 120; // header offset
-    const hasNext = sections.some(s => s.offsetTop > currentY + 10);
-    btn.classList.toggle('visible', hasNext);
-  }
-
-  function scrollToNext(){
-    const sections = getSections();
-    const currentY = window.scrollY + 120;
-    const next = sections.find(s => s.offsetTop > currentY + 10);
-    if(next){
-      next.scrollIntoView({behavior:'smooth', block:'start'});
-      next.setAttribute('tabindex','-1');
-      next.focus({preventScroll:true});
-      setTimeout(()=>{ next.removeAttribute('tabindex'); }, 1000);
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-  }
-
-  btn.addEventListener('click', scrollToNext);
-  window.addEventListener('scroll', updateVisibility, { passive: true });
-  window.addEventListener('resize', updateVisibility);
-  document.addEventListener('DOMContentLoaded', updateVisibility);
-
-  
-  document.addEventListener('keydown', (e)=>{
-    const active = document.activeElement;
-    if (e.key === 'j' && active && !/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) {
-      scrollToNext();
     }
   });
 })();

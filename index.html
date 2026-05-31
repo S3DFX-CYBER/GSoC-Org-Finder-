@@ -2193,6 +2193,18 @@
       btn.__orgListenerAttached = true;
     });
 
+
+
+
+
+
+
+
+
+
+
+
+
     // compare buttons
     (root.querySelectorAll ? root.querySelectorAll('[data-compare-org]') : []).forEach(btn => {
       if (btn.__orgListenerAttached) return;
@@ -2316,39 +2328,37 @@
       </table>
     `;
   }
-
   function openCompareModal() {
-    renderCompare();
-    renderCompareModal();
-    document.getElementById('compareModal')?.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  renderCompare();
+  renderCompareModal();
+  document.getElementById('compareModal')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCompareModal() {
+  document.getElementById('compareModal')?.classList.remove('open');
+  document.body.style.overflow = 'auto';
+}
+
+document.getElementById('compareModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'compareModal') closeCompareModal();
+});
+
+document.getElementById('orgModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'orgModal') closeOrgModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+
+  if (document.getElementById('compareModal')?.classList.contains('open')) {
+    closeCompareModal();
+  } else if (document.getElementById('orgModal')?.classList.contains('open')) {
+    closeOrgModal();
+  } else if (document.getElementById('anBg')?.classList.contains('open')) {
+    closeAn();
   }
-
-  function closeCompareModal() {
-    document.getElementById('compareModal')?.classList.remove('open');
-    document.body.style.overflow = 'auto';
-  }
-
-  document.getElementById('compareModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'compareModal') closeCompareModal();
-
-  document.getElementById('orgModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'orgModal') closeOrgModal();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (document.getElementById('compareModal')?.classList.contains('open')) {
-      closeCompareModal();
-    } else if (document.getElementById('orgModal')?.classList.contains('open')) {
-
-      closeModal();
-      closeOrgModal();
-    } else if (document.getElementById('anBg')?.classList.contains('open')) {
-      closeAn();
-    }
-  });
-  
+});
 
   function applyFiltersPreservingVisibleCount() {
     const savedCount = visibleCount;

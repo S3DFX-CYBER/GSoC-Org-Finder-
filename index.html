@@ -2546,15 +2546,6 @@ const slice = filteredRecords.slice(startIndex, endIndex);
       `;
       grid.appendChild(article);
     });
-
-    // const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-    // if (loadMoreContainer) {
-    //   if (visibleMentorCount < filteredRecords.length) {
-    //     loadMoreContainer.style.display = 'flex';
-    //   } else {
-    //     loadMoreContainer.style.display = 'none';
-    //   }
-    // }
     attachOrgCardListeners(grid);
 
 renderMentorPagination(filteredRecords.length);
@@ -2565,51 +2556,6 @@ if (pagination) {
     filteredRecords.length > mentorsPerPage ? 'flex' : 'none';
 }
 }
-// function renderMentorPagination(totalRecords) {
-//   const pagination = document.getElementById("mentorPageNumbers");
-//   const prevBtn = document.getElementById("mentorPrevBtn");
-//   const nextBtn = document.getElementById("mentorNextBtn");
-
-//   if (!pagination) return;
-
-//   const totalPages = Math.ceil(totalRecords / mentorsPerPage);
-
-//   pagination.innerHTML = "";
-
-//   for (let i = 1; i <= totalPages; i++) {
-//     const btn = document.createElement("button");
-
-//     btn.textContent = i;
-//     btn.className =
-//       i === currentMentorPage
-//         ? "px-3 py-2 rounded-lg bg-orange-500 text-white"
-//         : "px-3 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100";
-
-//     btn.addEventListener("click", () => {
-//       currentMentorPage = i;
-//       renderMentorFinder(false);
-//     });
-
-//     pagination.appendChild(btn);
-//   }
-
-//   prevBtn.disabled = currentMentorPage === 1;
-//   nextBtn.disabled = currentMentorPage === totalPages;
-
-//   prevBtn.onclick = () => {
-//     if (currentMentorPage > 1) {
-//       currentMentorPage--;
-//       renderMentorFinder(false);
-//     }
-//   };
-
-//   nextBtn.onclick = () => {
-//     if (currentMentorPage < totalPages) {
-//       currentMentorPage++;
-//       renderMentorFinder(false);
-//     }
-//   };
-// }
   function renderMentorPagination(totalRecords) {
   const pagination = document.getElementById("mentorPageNumbers");
   const prevBtn = document.getElementById("mentorPrevBtn");
@@ -3409,15 +3355,6 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  // ── updateAIInsights ─────────────────────────────────────────────────────────
-  /**
-   * Analyses the bookmarked orgs across three dimensions:
-   *   1. Most frequent category  → domain-specific advice
-   *   2. Top 3 tags (tech stack) → technology-specific tool recommendations
-   *   3. Competition level blend → acceptance-strategy advice
-   *
-   * Updates #aiInsightText with a rich, personalised HTML message.
-   */
   function updateAIInsights() {
     const el = document.getElementById('aiInsightText');
     if (!el) return;

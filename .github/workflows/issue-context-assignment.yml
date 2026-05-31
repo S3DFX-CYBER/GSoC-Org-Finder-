@@ -73,7 +73,8 @@ jobs:
         id: mentor_select
         if: |
           steps.cmd.outputs.is_assign != 'true' &&
-          steps.cmd.outputs.is_approve != 'true'
+          steps.cmd.outputs.is_approve != 'true' &&
+          !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
         env:
           ISSUE_CLAIMANT: ${{ github.event.issue.user.login }}
           MAX_MENTORS: "2"
@@ -86,7 +87,8 @@ jobs:
       - name: Post mentor review request
         if: |
           steps.cmd.outputs.is_assign != 'true' &&
-          steps.cmd.outputs.is_approve != 'true'
+          steps.cmd.outputs.is_approve != 'true' &&
+          !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           SELECTED_MENTORS_JSON: ${{ steps.mentor_select.outputs.result }}

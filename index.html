@@ -814,6 +814,19 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
+    #scrollTopBtn {
+      position:fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height:50px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display:none;
+      z-index: 1000;
+      font-size: 20px;
+    }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -4392,5 +4405,12 @@ if (logoLink) {
 }
 </script>
 
+<button id="scrollTopBtn">&#8593</button>
+
+<script>
+  const scrollTopBtn=document.getElementById("scrollTopBtn");
+  window.addEventListener("scroll",()=>{scrollTopBtn.style.display=window.scrollY>300?"block":"none";});
+  scrollTopBtn.addEventListener("click",()=>{window.scrollTo({top:0,behaviour:"smooth"});});
+</script>
 </body>
 </html>

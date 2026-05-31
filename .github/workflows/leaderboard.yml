@@ -61,7 +61,7 @@ jobs:
             );
 
             const alreadyExists = comments.some(c =>
-              c.user && c.user.type === 'Bot' && (c.body || '').includes(marker)
+              user?.profile?.name
             );
 
             if (alreadyExists) return;

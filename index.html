@@ -1892,19 +1892,9 @@
     }
   }
 
-window.setActiveMenu = function(clickedLink) {
-  document.querySelectorAll('.mobile-menu-link').forEach(link => {
-    link.classList.remove('bg-orange-50', 'text-orange-600', 'font-bold');
-    link.classList.add('text-zinc-700', 'font-medium');
-  });
-  clickedLink.classList.remove('text-zinc-700', 'font-medium');
-  clickedLink.classList.add('bg-orange-50', 'text-orange-600', 'font-bold');
-  toggleMenu();
-};
-
 function setDesktopNavState(activeSection) {
   document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    const linkSection = link.getAttribute('data-section');
+    const linkSection = link.dataset.section;
     if (linkSection === activeSection) {
       link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
       link.classList.add('text-orange-600', 'is-active');
@@ -1915,41 +1905,10 @@ function setDesktopNavState(activeSection) {
   });
 }
 
-function updateActiveSection() {
-  const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-  const scrollPosition = window.scrollY + 80;
-  let currentSection = 'timeline';
-
-  sections.forEach(sectionId => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      const sectionTop = section.offsetTop;
-      const sectionBottom = sectionTop + section.offsetHeight;
-      const triggerPoint = window.innerHeight / 2;
-      if (sectionTop <= scrollPosition + triggerPoint && sectionBottom > scrollPosition + triggerPoint) {
-        currentSection = sectionId;
-      }
-    }
-  });
-
-  document.querySelectorAll('.mobile-menu-link').forEach(link => {
-    const linkSection = link.getAttribute('data-section');
-    if (linkSection === currentSection) {
-      link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-      link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-    } else {
-      link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-      link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-    }
-  });
-
-  setDesktopNavState(currentSection);
-}
-
   function setMobileNavState(activeSection){
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset.section;
       if(linkSection === activeSection){
         link.classList.remove('text-zinc-700', 'hover:bg-zinc-100');
         link.classList.add('text-orange-600', 'bg-orange-50');
@@ -1968,7 +1927,7 @@ function updateActiveSection() {
   function getTrackedSections(){
     const sectionIds = Array.from(new Set(
       Array.from(document.querySelectorAll('.desktop-nav-link, .mobile-menu-link'))
-        .map(link => link.getAttribute('data-section'))
+        .map(link => link.dataset.section)
         .filter(Boolean)
     ));
 
@@ -1981,8 +1940,8 @@ function updateActiveSection() {
   let pendingSection = null;
 
   // Set active menu item and update UI
-  window.setActiveMenu = function(clickedLink){
-    pendingSection = clickedLink.getAttribute('data-section');
+  globalThis.setActiveMenu = function(clickedLink){
+    pendingSection = clickedLink.dataset.section;
     setActiveNavSection(pendingSection);
 
     setTimeout(() => {
@@ -1992,7 +1951,7 @@ function updateActiveSection() {
 
   document.querySelectorAll('.desktop-nav-link').forEach(link => {
     link.addEventListener('click', () => {
-      pendingSection = link.getAttribute('data-section');
+      pendingSection = link.dataset.section;
       setActiveNavSection(pendingSection);
     });
   });

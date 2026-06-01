@@ -2633,14 +2633,14 @@ sections.forEach(sectionId => {
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
@@ -2654,6 +2654,11 @@ sections.forEach(sectionId => {
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      if (currentMilestone) {
+      container.scrollTop =
+        currentMilestone.offsetTop - container.offsetTop - container.clientHeight / 2 + currentMilestone.clientHeight / 2;
+      }
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }

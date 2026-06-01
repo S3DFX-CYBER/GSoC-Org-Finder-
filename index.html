@@ -3638,12 +3638,19 @@ if(org.ideas){
       activeChip = null;
     }
 
+    // Reset matchAllLanguages
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = false;
+    const toggle = document.getElementById('matchAllLanguagesToggle');
+    if (toggle) toggle.checked = false;
+    if (typeof updateLanguageModeHint === 'function') updateLanguageModeHint();
+
     // Reset selected languages
     if (typeof selectedLanguages !== 'undefined') {
       selectedLanguages.clear();
       if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
       document.querySelectorAll('.pill').forEach(pill => {
-        pill.classList.remove('bg-primary', 'text-white', 'border-primary');
+        pill.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
         pill.classList.add('bg-surface-container-high', 'border-zinc-200');
         pill.setAttribute('aria-pressed', 'false');
       });

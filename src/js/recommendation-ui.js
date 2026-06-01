@@ -2,18 +2,23 @@
 
 /* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
 
+let currentAbortController = null;
+let currentRequestId = 0;
+
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
-async function analyzeProfile(username, resume) {
+async function analyzeProfile(username, resume, options = {}) {
+  const { signal } = options;
   let githubProfile = null;
   let skills = [];
 
   if (username) {
     try {
-      githubProfile = await analyzeGitHubUser(username);
+      githubProfile = await analyzeGitHubUser(username, { signal });
     } catch (err) {
+      if (err.name === 'AbortError') throw err;
       console.warn("GitHub Analysis Failed:", err);
       if (!resume) throw err; // Only bubble up error if we possess no alternate datasource
     }
@@ -65,7 +70,7 @@ function handleBookmarkAction(e, btn) {
     btn.classList.toggle('active', isNowBookmarked);
     btn.classList.toggle('text-orange-500', isNowBookmarked);
     btn.classList.toggle('text-zinc-300', !isNowBookmarked);
-    
+
     const icon = btn.querySelector('.material-symbols-outlined');
     if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
   }
@@ -78,7 +83,7 @@ function handleCompareAction(e, btn, card) {
 
   // Core engine handles constraints and updates globalThis.compareList synchronously
   toggleCompare(e, name);
-  
+
   // Read the authoritative application state to govern local visual treatment
   const currentCompareList = globalThis.compareList || [];
   const isNowComparing = currentCompareList.includes(name);
@@ -111,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ghInput = document.getElementById('aiGhUsername');
   const resumeText = document.getElementById('aiResumeText');
   const fileUpload = document.getElementById('aiResumeFile');
-  
+
   const loadingState = document.getElementById('aiLoadingState');
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
@@ -156,14 +161,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
+    const requestId = ++currentRequestId;
+
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume);
+      const recommendations = await analyzeProfile(username, resume, { signal });
+
+      if (requestId !== currentRequestId) return;
+
       renderRecommendations(recommendations);
     } catch (err) {
+      if (requestId !== currentRequestId || err.name === 'AbortError') return;
       showError(err.message || "An unexpected error occurred during analysis.");
     } finally {
-      setAnalysisStateUI(false);
+      if (requestId === currentRequestId) {
+        setAnalysisStateUI(false);
+      }
     }
   });
 
@@ -181,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resultsContainer) {
     resultsContainer.addEventListener('click', (e) => {
       const target = e.target;
-      
+
       const bookmarkBtn = target.closest('[data-bookmark-org]');
       if (bookmarkBtn) {
         return handleBookmarkAction(e, bookmarkBtn);
@@ -192,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareBtn && card) {
         return handleCompareAction(e, compareBtn, card);
       }
-      
+
       if (card) {
         return handleCardActivation(card);
       }
@@ -212,14 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const o = rec.org;
       const githubOwner = o.github ? o.github.split('/')[0] : '';
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-      
+
       const inCompare = currentCompareList.includes(o.name);
-      const isBookmarked = typeof currentBookmarkedSet.has === 'function' 
-        ? currentBookmarkedSet.has(o.name) 
+      const isBookmarked = typeof currentBookmarkedSet.has === 'function'
+        ? currentBookmarkedSet.has(o.name)
         : false;
-      
+
       const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`).join('');
-      
+
       let matchedSkillsHtml = '';
       if (rec.matchedSkills.length > 0) {
          const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`).join('');
@@ -228,16 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       // Defined explicitly outside string to eliminate linting issues with nested template literals
-      const logoHtml = logoUrl 
+      const logoHtml = logoUrl
         ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
         : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
 
 
       return `
-      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
+      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
                data-org-name="${safeEscapeHtml(o.name)}">
-        
+
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
           <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
@@ -248,10 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden">
             ${logoHtml}
           </div>
-          
+
           <div class="flex items-center gap-2 mt-2">
-             <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
+             <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}"
+                     data-bookmark-org="${safeEscapeHtml(o.name)}"
                      title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
                 <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
              </button>
@@ -262,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="flex-1">
           <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
           <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
-          
+
           <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
 
           <!-- Insights Box -->
@@ -279,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
-          
+
           <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
             View <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </button>

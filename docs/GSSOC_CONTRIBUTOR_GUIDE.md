@@ -2,7 +2,7 @@
 
 Welcome to the **GirlScript Summer of Code 2026** contribution track for FindMyGSoC!
 
-GirlScript Summer of Code (GSSoC) is a 3-month open-source program conducted by the GirlScript Foundation. It helps beginners get started with open-source development while gaining real-world experience.
+GirlScript Summer of Code (GSSoC) is a 3-month open-source program conducted by the GirlScript Foundation. This repository focuses on meaningful open-source contributions, fair assignment workflows, and maintainable code quality.
 
 ---
 
@@ -12,52 +12,90 @@ GirlScript Summer of Code (GSSoC) is a 3-month open-source program conducted by 
 
 - A GitHub account
 - Basic understanding of Git (fork, clone, branch, commit, push)
-- Familiarity with HTML/CSS/JavaScript (our core stack)
+- Familiarity with HTML/CSS/JavaScript
 
-### Step 1 — Find an Issue
+---
 
-Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter by:
+## Step 1 — Find an Issue
 
-- `gssoc26` label for GSSoC-specific issues
-- `level:beginner` for beginner-friendly tasks
-- `level:intermediate` for intermediate tasks
-- `level:advanced` for advanced tasks
-- `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement` for specific types
+Browse the repository **Issues** tab and filter using labels:
 
-New issues are **automatically triaged by our AI bot** which applies difficulty and type labels. You can filter by these labels to find issues that match your skill level.
+- `gssoc26`
+- `level:beginner`
+- `level:intermediate`
+- `level:advanced`
+- `type:bug`
+- `type:ui`
+- `type:api`
+- `type:docs`
+- `type:enhancement`
 
-### Step 2 — Request Assignment
+Issues are manually categorized using difficulty and type labels to help contributors choose tasks matching their experience level.
+
+---
+
+## Step 2 — Request Assignment
 
 Comment on the issue with:
 
-```bash
+```
 /assign gssoc
 ```
 
-You **must** include `gssoc` in your assignment command.
+> You **must** include `gssoc` in the command.
 
-### Step 3 — Assignment Processing
+**Example:**
 
-The automated system validates:
+```
+/assign gssoc
+```
 
-- The issue is available (not already assigned)
-- Your active assignment count is under the maximum (**3 issues** for GSSoC)
-- No recent spam/AI-slop flags on your account
-- GSSoC assignments are open (opened **15 May 2026, 12:00 AM IST**)
-- Level-specific eligibility (see table below)
+> Do **NOT** self-assign issues using the GitHub UI.
+> Assignments are handled only through repository automation.
 
-**Auto-assignment rules by difficulty (on verified issues):**
+---
+
+## Step 3 — Assignment Processing
+
+The assignment system validates:
+
+- The issue is unassigned
+- You are under the active assignment limit
+- GSSoC assignments are currently open
+- Difficulty eligibility requirements are satisfied
+
+### Assignment Eligibility Rules
 
 | Issue Level | Requirement |
 |-------------|-------------|
-| `level:beginner` | Anyone can self-assign immediately (no restrictions) |
-| `level:intermediate` | Account must be at least **30 days old** for auto-assignment |
-| `level:advanced` | Must have at least **1 merged PR** in this repository |
+| `level:beginner` | No restrictions |
+| `level:intermediate` | GitHub account must be at least 30 days old |
+| `level:advanced` | At least 1 previously merged PR in this repository |
 
-- If the issue is not yet verified, a maintainer approves via `/approve-assignment`
-- If you don't meet the requirements for a level, you can still request assignment and a maintainer can manually approve
+If requirements are not met, your request may remain queued and mentors or maintainers may manually approve.
 
-Do **NOT** start working until the bot confirms your assignment.
+> Do **NOT** start working until assignment confirmation appears on the issue.
+
+---
+
+## Mentor-Based Assignment Queue
+
+For issues requiring approval:
+
+1. Your assignment request is queued
+2. Two active mentors are randomly selected
+3. Selected mentors are notified automatically
+4. Mentors have **24 hours** to approve
+5. If mentors do not respond:
+   - Inactive mentors are rotated
+   - New active mentors are selected
+   - The Project Admin may intervene manually
+
+Mentors approve assignments using:
+
+```
+/approve-assignment @username
+```
 
 ---
 
@@ -65,26 +103,35 @@ Do **NOT** start working until the bot confirms your assignment.
 
 | Date | Status |
 |------|--------|
-| Before 15 May 2026 | GSSoC assignments **blocked** |
-| 15 May 2026 onwards | GSSoC assignments **open** |
+| Before 15 May 2026 | Assignments blocked |
+| 15 May 2026 onwards | Assignments open |
 
-NSoC contributors are unaffected by this restriction.
+> NSoC contributors are unaffected by this restriction.
 
 ---
 
 ## Contribution Levels & Points
 
-GSSoC uses a level-based points system:
-
 | Level | Label | Points | Examples |
 |-------|-------|--------|----------|
-| Beginner | `level:beginner` | 10 pts | UI tweaks, docs, small bug fixes |
-| Intermediate | `level:intermediate` | 25 pts | Filter logic, caching, API improvements |
-| Advanced | `level:advanced` | 45 pts | Architecture changes, performance, security |
+| Beginner | `level:beginner` | 10 pts | Docs, UI fixes, small bugs |
+| Intermediate | `level:intermediate` | 25 pts | API fixes, filters, caching |
+| Advanced | `level:advanced` | 45 pts | Performance, architecture, security |
 
-Points are tracked on the GSSoC leaderboard throughout the program. The leaderboard only updates when PRs are **merged**.
+Leaderboards update only after PRs are merged.
 
-**Advanced issues** require at least 1 previously merged PR in this repository. **Intermediate issues** require an account at least 30 days old for auto-assignment. **Beginner issues** have no restrictions — anyone can start here.
+---
+
+## Repository Philosophy
+
+This project follows a zero-build, minimal-dependency, lightweight frontend, static-first architecture philosophy.
+
+Avoid:
+
+- Unnecessary frameworks
+- Heavy dependencies
+- Overengineering
+- Large unrelated refactors
 
 ---
 
@@ -103,53 +150,70 @@ cd GSoC-Org-Finder-
 git checkout -b feat/your-feature-name
 ```
 
-### 3. Make Your Changes
+### 3. Make Changes
 
-Follow the project's zero-build, zero-dependency philosophy. Do not add frameworks or build tools.
+Keep changes focused, minimal, and maintainable. Avoid unrelated modifications.
 
 ### 4. Commit with Sign-Off
 
 ```bash
-git commit -s -m "feat: your descriptive message"
+git commit -s -m "feat: improve issue filtering"
 ```
 
-Use [Conventional Commits](https://www.conventionalcommits.org/) format:
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation
-- `style:` for UI/styling
-- `refactor:` for code cleanup
-- `perf:` for performance improvements
-
-### 5. Push and Open a PR
+### 5. Push Changes
 
 ```bash
 git push origin feat/your-feature-name
 ```
 
-When opening your PR, select the **GSSoC PR Template** and fill in all sections.
+### 6. Open Pull Request
 
-### 6. Link Your Issue
-
-Your PR body **must** include:
+Use the GSSoC PR template. Your PR **must** include:
 
 ```
 Closes #issue-number
 ```
 
+**Example:**
+
+```
+Closes #142
+```
+
+> PRs without linked issues may be closed.
+
 ---
 
-## GSSoC PR Template
+## Conventional Commit Format
 
-When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMPLATE/gssoc.md`. It requires:
+**Format:**
 
-- Program declaration (GSSoC)
-- Description of changes
-- Related issue link
-- Type of change
-- Testing steps
-- Screenshots (for UI changes)
-- Checklist confirmation
+```
+type: short description
+```
+
+**Examples:**
+
+```
+feat: add dark mode toggle
+fix: resolve navbar overflow
+docs: update setup instructions
+style: improve mobile spacing
+refactor: simplify search logic
+```
+
+### Allowed Commit Types
+
+| Type | Purpose |
+|------|---------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation |
+| `style` | UI/styling |
+| `refactor` | Internal cleanup |
+| `perf` | Performance |
+| `ci` | Workflow/config |
+| `chore` | Maintenance |
 
 ---
 
@@ -157,85 +221,165 @@ When creating a PR, use the GSSoC template located at `.github/PULL_REQUEST_TEMP
 
 ### Do
 
-- Write clean, readable code
-- Test changes locally before submitting
-- Keep PRs focused and minimal
-- Follow the existing code style
-- Respond to review feedback promptly
-- Be respectful to mentors and other contributors
+- Write clean code
+- Test changes locally
+- Keep PRs focused
+- Follow repository architecture
+- Respond to review feedback
+- Be respectful to contributors and mentors
 
-### Don't
+### Do NOT
 
-- Self-assign issues via GitHub UI (use the bot)
-- Start working before assignment is confirmed
-- Submit AI-generated code without understanding it
-- Open multiple tiny PRs for point farming
-- Copy contributions from other PRs
-- Ping maintainers repeatedly for reviews
-- Add unnecessary dependencies or build tools
+- Self-assign through GitHub UI
+- Submit copied code
+- Spam maintainers
+- Open multiple tiny PRs
+- Add unnecessary dependencies
+- Submit code you do not understand
+- Claim issues without intention to work
 
 ---
 
-## Review Process (3-Stage Pipeline)
+## Review Pipeline
 
-Your PR goes through an automated 3-stage pipeline:
+All PRs go through a **3-stage review process**:
 
-| Stage | What Happens | Labels Applied |
-|-------|-------------|----------------|
-| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
-| **Stage 2** — Mentor Review | A GSSoC mentor reviews code quality | `needs-mentor-review` → `mentor-approved` + `pa-review-required` |
-| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
+| Stage | Reviewer | Purpose |
+|-------|----------|---------|
+| Stage 1 | Automation | DCO, formatting, PR validation |
+| Stage 2 | Mentor Review | Code quality & correctness |
+| Stage 3 | Project Admin | Final approval & merge |
 
-The **LLM PR Analysis** bot will automatically verify that your PR:
-- Links to a valid issue
-- Actually addresses the linked issue
-- Does not include out-of-scope changes
+### Stage 1 — Automated Validation
 
-### How Mentor Review Works
+Automation checks:
 
-1. After Stage 1 passes, mentors are automatically assigned from our mentor pool
-2. Labels `needs-mentor-review` and `mentor-review-requested` are applied
-3. Mentors have **24 hours** to review — if they don't respond, they are automatically replaced with another active mentor
-4. When a mentor approves (via GitHub review approval or commenting `/approve-pr` or `/lgtm`), the bot applies `mentor-approved` and `pa-review-required`
-5. The maintainer is then notified for final review
+- DCO sign-off
+- PR formatting
+- Linked issue presence
+- Repository rule compliance
+- Duplicate PR detection
+- PR size validation
 
-### Expected Review Times
+Labels may be automatically applied during validation.
 
-- Mentor review: **24 hours** (auto-rotation if no response)
-- Maintainer review: 24–72 hours
-- Please do not ping for faster reviews
+### Stage 2 — Mentor Review
+
+After Stage 1 passes:
+
+1. Active mentors are selected automatically
+2. Mentors are assigned dynamically
+3. Mentors have **24 hours** to review
+4. Inactive mentors are rotated automatically
+
+Mentors may approve using `/approve-pr` or `/lgtm`.
+
+Successful mentor review applies: `mentor-approved`, `pa-review-required`.
+
+### Stage 3 — Maintainer Review
+
+The Project Admin performs final review before merge. Maintainers may:
+
+- Request changes
+- Reject low-quality PRs
+- Relabel PRs/issues
+- Close spam contributions
+
+---
+
+## Review Timelines
+
+| Review Type | Typical Time |
+|-------------|--------------|
+| Assignment Approval | Instant → 24 hours |
+| Mentor Review | ~24 hours |
+| Maintainer Review | 24–72 hours |
+
+> Please avoid excessive pings.
 
 ---
 
 ## Inactivity Policy
 
-- Assigned issues with no progress for **7 days** will be auto-unassigned
-- "Progress" means posting a comment OR opening a non-draft PR linked to the issue
-- Maintainers and collaborators with write access are exempt
-- After being unassigned, you must wait **24 hours** before re-requesting
-- If you cannot complete an issue, comment `/unassign` to release it for others
+Assignments may be removed after **7 days** of inactivity.
+
+Progress includes: issue comments, linked PR creation, or meaningful updates.
+
+After unassignment, wait **24 hours** before reclaiming.
+
+To release an issue manually:
+
+```
+/unassign
+```
+
+---
+
+## Duplicate & Spam Protection
+
+The repository includes automation for:
+
+- Duplicate issue detection
+- Duplicate PR detection
+- Spam filtering
+- Low-effort contribution detection
+
+Repeated spam or abuse may result in assignment restrictions, PR rejection, or label restrictions.
+
+---
+
+## Leaderboards
+
+Automated leaderboards track contributor merges, mentor reviews, and review activity.
+
+Leaderboard comments may include GitHub avatars, contribution scores, rankings, and merged PR counts. Leaderboards update automatically after merges and reviews.
+
+---
+
+## Pull Request Checklist
+
+Before submitting:
+
+- [ ] Issue assigned to me
+- [ ] PR links issue using `Closes #N`
+- [ ] Changes are tested
+- [ ] No unnecessary dependencies added
+- [ ] Changes are focused
+- [ ] Screenshots attached (if UI changes)
+- [ ] Commit messages follow conventional commits
+- [ ] DCO sign-off included
 
 ---
 
 ## Code of Conduct
 
-All GSSoC participants must follow the project's [Code of Conduct](../CODE_OF_CONDUCT.md) and the GSSoC program guidelines. Violations may result in disqualification from the program.
+All contributors must follow repository rules, GitHub Community Guidelines, and GSSoC program guidelines. Violations may result in assignment removal or disqualification.
 
 ---
 
 ## Resources
 
-- [GSSoC Official Website](https://gssoc.girlscript.org/)
-- [GSSoC Contributor Guidelines](https://gssoc.girlscript.org/guidelines/contributor)
-- [Project Discord](https://discord.gg/mgWV3xSV7)
-- [Project Contributing Guide](../CONTRIBUTING.md)
+- [GSSoC Official Website](https://gssoc.girlscript.tech)
+- [GSSoC Contributor Guidelines](https://gssoc.girlscript.tech/guidelines)
+- Project Discord
+- [Main CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ---
 
 ## Need Help?
 
-- Ask questions on GitHub Issues or Discussions
-- Join our [Discord server](https://discord.gg/mgWV3xSV7)
-- Tag your question with `gssoc` for program-specific queries
+- Open a GitHub Discussion
+- Ask on Discord
+- Comment on issues politely
 
-Happy contributing!
+> Please avoid DM-spamming maintainers or mentors.
+
+---
+
+## Final Notes
+
+This repository prioritizes quality over quantity, meaningful contributions, maintainable code, and fair contribution workflows.
+
+Not all PRs are guaranteed to be merged.
+
+Happy contributing 🚀

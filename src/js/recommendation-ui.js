@@ -71,6 +71,9 @@ function handleBookmarkAction(e, btn) {
     btn.classList.toggle('text-orange-500', isNowBookmarked);
     btn.classList.toggle('text-zinc-300', !isNowBookmarked);
     
+    // Ensure aria-label is synchronized with button state
+    btn.setAttribute('aria-label', isNowBookmarked ? 'Remove bookmark' : 'Add bookmark');
+    
     const icon = btn.querySelector('.material-symbols-outlined');
     if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
   }
@@ -92,11 +95,13 @@ function handleCompareAction(e, btn, card) {
      btn.classList.add('text-primary');
      btn.classList.remove('text-zinc-400');
      btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing';
+     btn.setAttribute('aria-label', 'Remove from compare');
      card.classList.add('ring-2', 'ring-primary/30');
   } else {
      btn.classList.remove('text-primary');
      btn.classList.add('text-zinc-400');
      btn.innerHTML = '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
+     btn.setAttribute('aria-label', 'Add to compare');
      card.classList.remove('ring-2', 'ring-primary/30');
   }
 }

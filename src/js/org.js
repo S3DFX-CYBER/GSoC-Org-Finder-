@@ -1,5 +1,8 @@
 /* global module */
 
+
+
+
 const ORGS = [
   { name:"52°North Spatial Information Research GmbH", cat:"science", years:11, firstYear:2016, competition:"moderate", codebase:"intermediate", github:"52North/SOS", tags:["python","javascript","java","gis","geospatial"], desc:"Innovative ideas & technologies in geoinformatics.", fit:["GIS enthusiasts","Python/Java devs"], ideas:"https://52north.org/outreach-dissemination/google-summer-of-code/project-ideas/" },
   { name:"AboutCode", cat:"security", years:7, firstYear:2017, competition:"chill", codebase:"beginner", github:"nexB/scancode-toolkit", tags:["python","javascript","c","shell script"], desc:"Scan code for origin, license and vulnerabilities.", fit:["Python devs","Open source compliance"], ideas:"https://github.com/aboutcode-org/aboutcode/wiki/GSOC-2026-project-ideas" },

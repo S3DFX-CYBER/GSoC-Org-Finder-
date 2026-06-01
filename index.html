@@ -2744,6 +2744,53 @@ sections.forEach(sectionId => {
             <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
+
+          <div class="radar-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <h4>🚀 Contribution Radar</h4>
+
+    <span class="${
+      radar.badge === 'Hot'
+        ? 'radar-hot'
+        : radar.badge === 'Trending'
+        ? 'radar-trending'
+        : ''
+    }">
+      ${radar.badge}
+    </span>
+  </div>
+
+  <div class="radar-metrics">
+    <div>
+      <strong>${radar.activityScore}</strong>
+      <p>Activity Score</p>
+    </div>
+
+    <div>
+      <strong>${radar.recentIssues}</strong>
+      <p>Recent Issues</p>
+    </div>
+
+    <div>
+      <strong>${radar.beginnerIssues}</strong>
+      <p>Good First Issues</p>
+    </div>
+
+    <div>
+      <strong>${radar.mergedPRs}</strong>
+      <p>Merged PRs</p>
+    </div>
+  </div>
+
+  <div class="radar-footer">
+    ⏱ Avg Merge Time:
+    <strong>
+      ${radar.avgMergeDays ?? 'N/A'} days
+    </strong>
+  </div>
+</div>
+
+
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
             <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
@@ -3422,6 +3469,24 @@ btn.__orgListenerAttached = true;
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
+
+    let radar = null;
+
+try {
+  if (org.github) {
+    const repo = org.github
+      .replace('https://github.com/', '')
+      .replace('http://github.com/', '')
+      .replace(/\/$/, '');
+
+    radar = fetch(
+      `/api/github?repo=${repo}&radar=1`
+    ).then(r => r.json());
+  }
+} catch (err) {
+  console.error('Radar fetch failed', err);
+}
+
     addRecentlyViewed(name);
 
     // Track badge progress for org views
@@ -3435,16 +3500,119 @@ btn.__orgListenerAttached = true;
       <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
     `;
 
-    document.getElementById('mMetrics').innerHTML = `
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
-    `;
+   document.getElementById('mMetrics').innerHTML = `
+  <div class="metric-card">
+    <p class="metric-value">${escapeHtml(String(org.years))}</p>
+    <p class="metric-label">Years In</p>
+  </div>
+
+  <div class="metric-card">
+    <p class="metric-value">${escapeHtml(String(org.firstYear))}</p>
+    <p class="metric-label">First Year</p>
+  </div>
+
+  <div class="metric-card">
+    <p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p>
+    <p class="metric-label">Competition</p>
+  </div>
+
+  <div class="metric-card">
+    <p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p>
+    <p class="metric-label">Codebase</p>
+  </div>
+
+  ${
+    radar
+      ? `
+      <div class="metric-card">
+        <p class="metric-value">${radar.activityScore ?? 0}</p>
+        <p class="metric-label">Activity Score</p>
+      </div>
+
+      <div class="metric-card">
+        <p class="metric-value">${radar.recentIssues ?? 0}</p>
+        <p class="metric-label">Recent Issues</p>
+      </div>
+
+      <div class="metric-card">
+        <p class="metric-value">${radar.mergedPRs ?? 0}</p>
+        <p class="metric-label">Merged PRs</p>
+      </div>
+
+      <div class="metric-card">
+        <p class="metric-value">${radar.badge ?? 'Low'}</p>
+        <p class="metric-label">Radar Status</p>
+      </div>
+      `
+      : ''
+  }
+`;
+
+
+
 
     document.getElementById('mDesc').textContent = org.desc;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+
+  
+
+document.getElementById('mRadar').innerHTML = `
+  <div class="mt-4 p-4 rounded-lg bg-zinc-800">
+    <h3 class="font-bold mb-3">Live Contribution Radar</h3>
+
+    <div class="space-y-2 text-sm">
+
+      <div>
+        Maintainer Responsiveness
+        <div class="w-full bg-zinc-700 rounded h-2">
+          <div class="bg-green-500 h-2 rounded"
+               style="width:${radar.responsiveness}%">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        Beginner Issue Activity
+        <div class="w-full bg-zinc-700 rounded h-2">
+          <div class="bg-blue-500 h-2 rounded"
+               style="width:${radar.issueActivity}%">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        PR Merge Velocity
+        <div class="w-full bg-zinc-700 rounded h-2">
+          <div class="bg-yellow-500 h-2 rounded"
+               style="width:${radar.mergeVelocity}%">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        Contribution Trend
+        <div class="w-full bg-zinc-700 rounded h-2">
+          <div class="bg-purple-500 h-2 rounded"
+               style="width:${radar.contributionTrend}%">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        Maintainer Activity
+        <div class="w-full bg-zinc-700 rounded h-2">
+          <div class="bg-red-500 h-2 rounded"
+               style="width:${radar.maintainerActivity}%">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+`;
+
+
 
     // Timeline
     let timelineHtml = '';
@@ -3568,7 +3736,7 @@ if(org.ideas){
 
     // Persist filter state to URL so it survives page refresh
     const params = new URLSearchParams();
-    if (query)                              params.set('q', query);
+    if (query)                             params.set('q', query);
     if (cat)                               params.set('cat', cat);
     if (comp && comp !== 'all')            params.set('comp', comp);
     if (sort && sort !== 'alpha')          params.set('sort', sort);

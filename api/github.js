@@ -29,6 +29,8 @@ export default async function handler(req) {
   const user = searchParams.get('user');
   const gfiMode = searchParams.get('gfi') === '1';
   const issuesMode = searchParams.get('issues') === '1';
+  const radarMode = searchParams.get('radar') === '1';
+
 
   if (!repo && !user) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
@@ -205,6 +207,113 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
     }
   }
+
+
+  // MODE: ?radar=1
+if (radarMode) {
+  const cacheKey = repo + '__radar';
+
+  const cached = CACHE.get(cacheKey);
+
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    return new Response(
+      JSON.stringify({ ...cached, cached: true }),
+      { status: 200, headers }
+    );
+  }
+
+  try {
+    const [issuesRes, pullsRes] = await Promise.all([
+      fetchWithFallback(
+        `https://api.github.com/repos/${repo}/issues?state=open&per_page=30`,
+        { headers: ghHeaders }
+      ),
+      fetchWithFallback(
+        `https://api.github.com/repos/${repo}/pulls?state=closed&per_page=30`,
+        { headers: ghHeaders }
+      )
+    ]);
+
+    const issues = issuesRes.ok ? await issuesRes.json() : [];
+    const pulls = pullsRes.ok ? await pullsRes.json() : [];
+
+    const now = Date.now();
+
+    let recentIssues = 0;
+    let beginnerIssues = 0;
+
+    issues.forEach(issue => {
+      const age =
+        (now - new Date(issue.created_at)) /
+        (1000 * 60 * 60 * 24);
+
+      if (age <= 7) recentIssues++;
+
+      if (
+        issue.labels?.some(
+          l =>
+            l.name.toLowerCase() === 'good first issue'
+        )
+      ) {
+        beginnerIssues++;
+      }
+    });
+
+    let mergedPRs = 0;
+    let avgMergeDays = 0;
+
+    pulls.forEach(pr => {
+      if (pr.merged_at) {
+        mergedPRs++;
+
+        avgMergeDays +=
+          (new Date(pr.merged_at) -
+            new Date(pr.created_at)) /
+          (1000 * 60 * 60 * 24);
+      }
+    });
+
+    avgMergeDays =
+      mergedPRs > 0
+        ? Number((avgMergeDays / mergedPRs).toFixed(1))
+        : null;
+
+    let activityScore =
+      recentIssues * 2 +
+      beginnerIssues * 3 +
+      mergedPRs;
+
+    let badge = 'Low';
+
+    if (activityScore > 40) badge = 'Hot';
+    else if (activityScore > 20) badge = 'Trending';
+
+    const result = {
+      recentIssues,
+      beginnerIssues,
+      mergedPRs,
+      avgMergeDays,
+      activityScore,
+      badge,
+      ts: Date.now()
+    };
+
+    safeCacheSet(cacheKey, result);
+
+    return new Response(
+      JSON.stringify(result),
+      { status: 200, headers }
+    );
+  } catch (err) {
+    return new Response(
+      JSON.stringify({
+        error: err.message
+      }),
+      { status: 500, headers }
+    );
+  }
+}
+
 
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
   const cached = CACHE.get(repo);

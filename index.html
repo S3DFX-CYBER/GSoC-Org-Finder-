@@ -826,6 +826,8 @@
       display:none;
       z-index: 1000;
       font-size: 20px;
+      background: #333;
+      color: white;
     }
   </style>
   <link rel="manifest" href="manifest.json" />
@@ -4410,7 +4412,7 @@ if (logoLink) {
 <script>
   const scrollTopBtn=document.getElementById("scrollTopBtn");
   window.addEventListener("scroll",()=>{scrollTopBtn.style.display=window.scrollY>300?"block":"none";});
-  scrollTopBtn.addEventListener("click",()=>{window.scrollTo({top:0,behaviour:"smooth"});});
+  scrollTopBtn.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"});});
 </script>
 </body>
 </html>

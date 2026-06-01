@@ -1059,7 +1059,7 @@ function openModal(idx){
   document.getElementById('mFit').innerHTML=o.fit.map(f=>`<span class="m-tag">${escapeHtml(f)}</span>`).join('');
   let tl='';
   for(let y=o.firstYear;y<=2026;y++){
-    const cur=y===2026;
+    const cur = y === 2026;
     tl+=`<span style="margin-right:10px;color:${cur?'var(--orange)':'var(--ink3)'};font-weight:${cur?700:400}">${escapeHtml(cur?'⭐':'✓')} ${escapeHtml(String(y))}</span>`;}
   document.getElementById('mTimeline').innerHTML=tl;
   // Smart link: umbrella orgs → org page, single-project → specific repo
@@ -1403,13 +1403,10 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 
-window.addEventListener("load", () => {
-  const container = document.getElementById("mTimeline");
-  const current = container?.querySelector(".current-year");
+const container = document.getElementById("mTimeline");
+const current = container?.querySelector(".current-milestone");
 
-  if (!container || !current) return;
-
-  // wait for layout paint
+if (container && current) {
   requestAnimationFrame(() => {
     const offset =
       current.offsetLeft -
@@ -1421,4 +1418,4 @@ window.addEventListener("load", () => {
       behavior: "smooth"
     });
   });
-});
+}

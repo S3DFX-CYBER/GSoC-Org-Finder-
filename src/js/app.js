@@ -252,7 +252,7 @@ cleanCache();
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
-let matchAllLanguages=true; // false = OR (any), true = AND (all)
+let matchAllLanguages=false; // false = OR (any), true = AND (all)
 
 // Expose to global scope for HTML onclick handlers and debugging
 globalThis.pills = pills;

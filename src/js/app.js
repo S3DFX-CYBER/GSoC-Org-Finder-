@@ -204,8 +204,10 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // ══════════════════════════════════════════════
 // GITHUB API
 // ══════════════════════════════════════════════
-const API='/api/github';
-const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
+const API = (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '3001')
+  ? 'http://localhost:3000/api/github'
+  : '/api/github';
+const cache = JSON.parse(localStorage.getItem('gaf_ghc') || '{}');
 
 /**
  * Saves cache to localStorage with quota exceeded error recovery.
@@ -1410,4 +1412,133 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+// ══════════════════════════════════════════════
+// LIVE CONTRIBUTION RADAR
+// ══════════════════════════════════════════════
+
+function computeActivityScore(gh, org) {
+  if (!gh) return 0;
+  let score = 0;
+  // Recency: commits in last 7 days score highest
+  if (gh.lastCommit) {
+    const days = (Date.now() - new Date(gh.lastCommit).getTime()) / 86400000;
+    if (days <= 7)       score += 40;
+    else if (days <= 14) score += 30;
+    else if (days <= 30) score += 20;
+    else if (days <= 60) score += 10;
+  }
+  // Beginner issues
+  const gfi = gh.gfi ?? 0;
+  score += Math.min(gfi * 3, 30);
+  // Size signal (log scale so big orgs don't dominate)
+  score += Math.min(Math.log10((gh.stars || 0) + 1) * 3, 10);
+  // Activity badge from existing API
+  if (gh.activity === 'active')   score += 20;
+  if (gh.activity === 'moderate') score += 10;
+  return Math.round(score);
+}
+
+function radarBadge(score) {
+  if (score >= 70) return { label: '🔥 Hot',    cls: 'bg-red-100 text-red-700'     };
+  if (score >= 40) return { label: '⚡ Rising', cls: 'bg-orange-100 text-orange-700' };
+  return              { label: '💤 Quiet',  cls: 'bg-zinc-100 text-zinc-500'     };
+}
+
+function renderRadarCard(o, score, rank) {
+  const badge  = radarBadge(score);
+  const logo   = orgLogo(o);
+  const href   = repoUrl(o);
+  const gfi    = o._gh?.gfi ?? 0;
+  const stars  = o._gh?.stars ?? 0;
+  const commit = o._gh?.lastCommit ?? '—';
+  const pct    = Math.min(Math.round(score / 100 * 100), 100);
+  const globalIdx = ORGS.indexOf(o);
+
+  return `<div class="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-orange-200 transition-all cursor-pointer group"
+    onclick="openModal(${globalIdx})">
+    <div class="flex items-start justify-between mb-3">
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <span class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-zinc-800 text-white text-[9px] font-extrabold flex items-center justify-center z-10">${rank}</span>
+          ${logo ? `<img src="${escapeHtml(logo)}" alt="${escapeHtml(o.name)}" class="w-10 h-10 rounded-xl object-cover" loading="lazy" onerror="imgErr(this)">` : `<div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-bold text-primary">${escapeHtml(o.name[0])}</div>`}
+        </div>
+        <div>
+          <p class="font-bold text-sm text-zinc-900 group-hover:text-primary transition-colors leading-tight">${escapeHtml(o.name.length > 22 ? o.name.slice(0,22)+'…' : o.name)}</p>
+          <p class="text-[10px] text-zinc-400 font-label uppercase tracking-wider">${escapeHtml(catLabel(o.cat))}</p>
+        </div>
+      </div>
+      <span class="text-[10px] font-bold px-2 py-1 rounded-full ${badge.cls} radar-pulse">${badge.label}</span>
+    </div>
+
+    <!-- Activity bar -->
+    <div class="mb-3">
+      <div class="flex justify-between text-[10px] text-zinc-400 mb-1">
+        <span>Activity score</span><span class="font-bold text-zinc-700">${score}</span>
+      </div>
+      <div class="w-full bg-zinc-100 rounded-full h-1.5">
+        <div class="h-1.5 rounded-full ${score >= 70 ? 'bg-red-500' : score >= 40 ? 'bg-orange-400' : 'bg-zinc-300'}" style="width:${pct}%"></div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="flex gap-3 text-[11px] text-zinc-500 flex-wrap">
+      <span>⭐ ${escapeHtml(fmt(stars))}</span>
+      <span>🟢 ${escapeHtml(String(gfi))} GFI</span>
+      <span>🕐 ${escapeHtml(String(commit))}</span>
+    </div>
+  </div>`;
+}
+
+async function initRadar(forceRefresh = false) {
+  const grid = document.getElementById('radarGrid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="col-span-full py-12 text-center text-zinc-400 text-sm animate-pulse">Fetching activity data…</div>`;
+
+  // Pick top 30 orgs by star count as candidates (already in cache or fetch them)
+  const candidates = [...ORGS]
+    .filter(o => o.github)
+    .sort((a, b) => (b._gh?.stars || 0) - (a._gh?.stars || 0))
+    .slice(0, 30);
+
+  // Fetch any missing data (max 15 to avoid rate limits)
+  const toFetch = candidates.filter(o => !o._gh || forceRefresh).slice(0, 15);
+  await Promise.all(toFetch.map(async o => {
+    const d = await fetchGH(o.github);
+    if (d) o._gh = d;
+    // Also get GFI count if missing
+    if (o._gh && (o._gh.gfi === null || o._gh.gfi === undefined)) {
+      const gfi = await fetchGFI(o.github);
+      if (gfi !== null) o._gh.gfi = gfi;
+    }
+  }));
+
+  // Score and rank all candidates
+  const scored = candidates
+    .filter(o => o._gh)
+    .map(o => ({ o, score: computeActivityScore(o._gh, o) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 12);
+
+  if (!scored.length) {
+    grid.innerHTML = `<div class="col-span-full py-12 text-center text-zinc-400 text-sm">No data yet — click Refresh to load activity.</div>`;
+    return;
+  }
+
+  // Render cards
+  grid.innerHTML = scored.map(({ o, score }, i) => renderRadarCard(o, score, i + 1)).join('');
+
+  // Update summary stats
+  const hot     = scored.filter(x => x.score >= 70).length;
+  const active  = scored.filter(x => x.score >= 40).length;
+  const totalGfi = scored.reduce((sum, x) => sum + (x.o._gh?.gfi ?? 0), 0);
+
+  document.getElementById('radarHotCount').textContent     = hot;
+  document.getElementById('radarActiveCount').textContent  = active;
+  document.getElementById('radarGfiCount').textContent     = totalGfi;
+  document.getElementById('radarTrackedCount').textContent = scored.length;
+}
+
+// Auto-init radar after other data loads
+requestAnimationFrame(() => setTimeout(initRadar, 1500));
+globalThis.initRadar = initRadar;
 

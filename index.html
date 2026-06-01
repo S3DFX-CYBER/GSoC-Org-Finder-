@@ -814,6 +814,11 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
+    /* scroll offset for radar */
+#radar { scroll-margin-top: 80px; }
+/* radar card pulse badge */
+@keyframes radar-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.radar-pulse { animation: radar-pulse 2s infinite; }
   </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
@@ -843,6 +848,7 @@
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#radar" data-section="radar">🔥 Radar</a>
         <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
@@ -936,9 +942,15 @@
         Watchlist
       </a>
       <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
-        <span class="material-symbols-outlined text-lg">bug_report</span>
-        Issues
-      </a>
+  <span class="material-symbols-outlined text-lg">bug_report</span>
+  Issues
+</a>
+
+<!-- ADD HERE -->
+<a href="#radar" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="radar">
+  <span class="material-symbols-outlined text-lg">local_fire_department</span>
+  Radar
+</a>
       <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
@@ -1036,6 +1048,103 @@
 
 
 <!-- ═══════════════════ ORG DIRECTORY ═══════════════════ -->
+ <!-- ═══════════════════ LIVE CONTRIBUTION RADAR ═══════════════════ -->
+<section id="radar" class="py-20 px-6 max-w-7xl mx-auto border-t border-zinc-100">
+  <div class="mb-10">
+    <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Live Activity</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Contribution Radar</h2>
+    <p class="text-zinc-600 mt-4 max-w-2xl">Organizations ranked by real-time activity — recent commits, beginner issues, and maintainer responsiveness.</p>
+  </div>
+
+  <!-- Radar Summary Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    <div class="bg-white rounded-2xl border border-zinc-100 p-5 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-primary" id="radarHotCount">3</p>
+      <p class="text-xs text-zinc-500 font-label uppercase tracking-wider mt-1">🔥 Hot Orgs</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-100 p-5 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-green-600" id="radarActiveCount">3</p>
+      <p class="text-xs text-zinc-500 font-label uppercase tracking-wider mt-1">⚡ Active This Week</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-100 p-5 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-blue-600" id="radarGfiCount">0</p>
+      <p class="text-xs text-zinc-500 font-label uppercase tracking-wider mt-1">🟢 Beginner Issues</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-100 p-5 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-zinc-700" id="radarTrackedCount">3</p>
+      <p class="text-xs text-zinc-500 font-label uppercase tracking-wider mt-1">📡 Orgs Tracked</p>
+    </div>
+  </div>
+
+  <!-- Top Orgs by Activity -->
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="font-bold text-lg">Top Active Organizations</h3>
+    <button onclick="initRadar(true)" class="flex items-center gap-1 px-4 py-2 rounded-full bg-surface-container-low text-xs font-bold text-zinc-600 hover:bg-orange-50 hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-sm">refresh</span> Refresh
+    </button>
+  </div>
+
+  <div id="radarGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+    <div class="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-bold text-primary">L</div>
+          <div>
+            <p class="font-bold text-sm text-zinc-900">The Linux Foundation</p>
+            <p class="text-[10px] text-zinc-400 font-label uppercase tracking-wider">OS</p>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-700">🔥 Hot</span>
+      </div>
+      <div class="mb-3">
+        <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Activity score</span><span class="font-bold text-zinc-700">92</span></div>
+        <div class="w-full bg-zinc-100 rounded-full h-1.5"><div class="h-1.5 rounded-full bg-red-500" style="width:92%"></div></div>
+      </div>
+      <div class="flex gap-3 text-[11px] text-zinc-500 flex-wrap"><span>⭐ 160k</span><span>🟢 0 GFI</span><span>🕐 Live unavailable</span></div>
+    </div>
+    <div class="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-bold text-primary">L</div>
+          <div>
+            <p class="font-bold text-sm text-zinc-900">LLVM Compiler Infrastructure</p>
+            <p class="text-[10px] text-zinc-400 font-label uppercase tracking-wider">Programming</p>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-700">🔥 Hot</span>
+      </div>
+      <div class="mb-3">
+        <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Activity score</span><span class="font-bold text-zinc-700">80</span></div>
+        <div class="w-full bg-zinc-100 rounded-full h-1.5"><div class="h-1.5 rounded-full bg-red-500" style="width:80%"></div></div>
+      </div>
+      <div class="flex gap-3 text-[11px] text-zinc-500 flex-wrap"><span>⭐ 145k</span><span>🟢 0 GFI</span><span>🕐 Live unavailable</span></div>
+    </div>
+    <div class="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-bold text-primary">P</div>
+          <div>
+            <p class="font-bold text-sm text-zinc-900">Python Software Foundation</p>
+            <p class="text-[10px] text-zinc-400 font-label uppercase tracking-wider">Programming</p>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-700">🔥 Hot</span>
+      </div>
+      <div class="mb-3">
+        <div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Activity score</span><span class="font-bold text-zinc-700">72</span></div>
+        <div class="w-full bg-zinc-100 rounded-full h-1.5"><div class="h-1.5 rounded-full bg-red-500" style="width:72%"></div></div>
+      </div>
+      <div class="flex gap-3 text-[11px] text-zinc-500 flex-wrap"><span>⭐ 160k</span><span>🟢 0 GFI</span><span>🕐 Live unavailable</span></div>
+    </div>
+  </div>
+
+  <!-- Activity Score Legend -->
+  <div class="mt-8 flex flex-wrap gap-4 text-xs text-zinc-500">
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-red-500"></span> 🔥 Hot — very active (score 70+)</span>
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-orange-400"></span> ⚡ Rising — active (score 40–69)</span>
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-zinc-300"></span> 💤 Quiet — low activity</span>
+  </div>
+</section>
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Find projects that fit you</span>
@@ -4390,7 +4499,278 @@ if (logoLink) {
     }
   });
 }
+function computeActivityScore(gh,org){if(!gh)return 0;let score=0;if(gh.lastCommit){const days=(Date.now()-new Date(gh.lastCommit).getTime())/86400000;if(days<=7)score+=40;else if(days<=14)score+=30;else if(days<=30)score+=20;else if(days<=60)score+=10;}const gfi=gh.gfi??0;score+=Math.min(gfi*3,30);score+=Math.min(Math.log10((gh.stars||0)+1)*3,10);if(gh.activity==='active')score+=20;if(gh.activity==='moderate')score+=10;return Math.round(score);}
+function radarBadge(score){if(score>=70)return{label:'🔥 Hot',cls:'bg-red-100 text-red-700'};if(score>=40)return{label:'⚡ Rising',cls:'bg-orange-100 text-orange-700'};return{label:'💤 Quiet',cls:'bg-zinc-100 text-zinc-500'};}
+function orgLogo(o){if(!o)return null;return null;}
+function renderRadarCard(o,score,rank){const badge=radarBadge(score);const logo=orgLogo(o);const gfi=o._gh?.gfi??0;const stars=o._gh?.stars??0;const commit=o._gh?.lastCommit??'—';const pct=Math.min(Math.round(score/100*100),100);const globalIdx=ORGS.indexOf(o);return`<div class="bg-white border border-zinc-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-orange-200 transition-all cursor-pointer group" onclick="openModal(${globalIdx})"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="relative"><span class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-zinc-800 text-white text-[9px] font-extrabold flex items-center justify-center z-10">${rank}</span>${logo?`<img src="${escapeHtml(logo)}" alt="${escapeHtml(o.name)}" class="w-10 h-10 rounded-xl object-cover" loading="lazy" onerror="imgErr(this)">`:`<div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-bold text-primary">${escapeHtml(o.name[0])}</div>`}</div><div><p class="font-bold text-sm text-zinc-900 group-hover:text-primary transition-colors leading-tight">${escapeHtml(o.name.length>22?o.name.slice(0,22)+'…':o.name)}</p><p class="text-[10px] text-zinc-400 font-label uppercase tracking-wider">${escapeHtml(o.cat || 'Unknown')}</p></div></div><span class="text-[10px] font-bold px-2 py-1 rounded-full ${badge.cls} radar-pulse">${badge.label}</span></div><div class="mb-3"><div class="flex justify-between text-[10px] text-zinc-400 mb-1"><span>Activity score</span><span class="font-bold text-zinc-700">${score}</span></div><div class="w-full bg-zinc-100 rounded-full h-1.5"><div class="h-1.5 rounded-full ${score>=70?'bg-red-500':score>=40?'bg-orange-400':'bg-zinc-300'}" style="width:${pct}%"></div></div></div><div class="flex gap-3 text-[11px] text-zinc-500 flex-wrap"><span>⭐ ${escapeHtml(fmt(stars))}</span><span>🟢 ${escapeHtml(String(gfi))} GFI</span><span>🕐 ${escapeHtml(String(commit))}</span></div></div>`;}
+const API = (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '3001')
+  ? 'http://localhost:3001/api/github'
+  : '/api/github';
+const cache = JSON.parse(localStorage.getItem('gaf_ghc') || '{}');
+
+function saveCache(key, value) {
+  try {
+    localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      console.warn('LocalStorage quota exceeded, clearing GitHub cache...');
+      for (const k in cache) delete cache[k];
+      if (key && value !== undefined) cache[key] = value;
+      try {
+        localStorage.setItem('gaf_ghc', JSON.stringify(cache));
+      } catch (err) {
+        console.error('Failed to save even after clearing cache', err);
+      }
+    }
+  }
+}
+
+function cleanCache() {
+  const now = Date.now();
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  let changed = false;
+  for (const key in cache) {
+    const entry = cache[key];
+    if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
+      delete cache[key];
+      changed = true;
+    }
+  }
+  if (changed) saveCache();
+}
+
+function cleanCacheIfNeeded() {
+  cleanCache();
+}
+cleanCacheIfNeeded();
+
+function renderRadarFallback(grid) {
+  const fallbackOrgs = [
+    {
+      name: 'The Linux Foundation',
+      cat: 'os',
+      github: 'torvalds/linux',
+      desc: 'Non-profit consortium fostering growth of Linux.',
+      _gh: { stars: 160000, gfi: 4, lastCommit: 'Live unavailable' }
+    },
+    {
+      name: 'LLVM Compiler Infrastructure',
+      cat: 'programming',
+      github: 'llvm/llvm-project',
+      desc: 'Industry standard compiler infrastructure.',
+      _gh: { stars: 145000, gfi: 2, lastCommit: 'Live unavailable' }
+    },
+    {
+      name: 'Python Software Foundation',
+      cat: 'programming',
+      github: 'python/cpython',
+      desc: 'The Python programming language core development.',
+      _gh: { stars: 160000, gfi: 3, lastCommit: 'Live unavailable' }
+    }
+  ];
+  const fallbackScores = [92, 80, 72];
+
+  grid.innerHTML = `
+    <div class="col-span-full rounded-3xl border border-orange-100 bg-orange-50 p-5 text-sm text-orange-900 mb-5">
+      Live activity fetch is unavailable. Showing manual top active organizations instead.
+    </div>
+  ` + fallbackOrgs
+    .map((o, i) => renderRadarCard(o, fallbackScores[i] || 60, i + 1))
+    .join('');
+
+  document.getElementById('radarHotCount').textContent = fallbackScores.filter(s => s >= 70).length;
+  document.getElementById('radarActiveCount').textContent = fallbackScores.filter(s => s >= 40).length;
+  document.getElementById('radarGfiCount').textContent = 0;
+  document.getElementById('radarTrackedCount').textContent = fallbackOrgs.length;
+}
+
+async function fetchGH(repo) {
+  if (!repo) return null;
+  if (cache[repo] && Date.now() - cache[repo].ts < 3600000) return cache[repo];
+  try {
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d.error) return null;
+    d.ts = Date.now();
+    cache[repo] = d;
+    saveCache(repo, d);
+    return d;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchGFI(repo) {
+  if (!repo) return null;
+  const cacheKey = repo + '__gfi';
+  const hit = cache[cacheKey];
+  if (hit && Date.now() - hit.ts < 3600000 && hit.gfi !== null && hit.gfi !== undefined) return hit.gfi;
+  try {
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d.gfi === null || d.gfi === undefined) return null;
+    cache[cacheKey] = { gfi: d.gfi, ts: Date.now() };
+    saveCache(cacheKey, cache[cacheKey]);
+    return d.gfi;
+  } catch {
+    return null;
+  }
+}
+
+async function initRadar(forceRefresh=false){
+  const grid = document.getElementById('radarGrid');
+  if (!grid) return;
+  renderRadarFallback(grid);
+  const candidates = [...ORGS].filter(o => o.github).sort((a,b)=>(b._gh?.stars||0)-(a._gh?.stars||0)).slice(0,30);
+  const toFetch = candidates.filter(o => !o._gh || forceRefresh).slice(0,15);
+
+  await Promise.all(toFetch.map(async o => {
+    const d = await fetchGH(o.github);
+    if (d) o._gh = d;
+    if (o._gh && (o._gh.gfi === null || o._gh.gfi === undefined)) {
+      const gfi = await fetchGFI(o.github);
+      if (gfi !== null) o._gh.gfi = gfi;
+    }
+  }));
+
+  const scored = candidates
+    .filter(o => o._gh)
+    .map(o => ({ o, score: computeActivityScore(o._gh, o) }))
+    .sort((a,b) => b.score - a.score)
+    .slice(0,12);
+
+  if (!scored.length) {
+    renderRadarFallback(grid);
+    return;
+  }
+
+  grid.innerHTML = scored.map(({o,score},i) => renderRadarCard(o, score, i + 1)).join('');
+  const hot = scored.filter(x => x.score >= 70).length;
+  const active = scored.filter(x => x.score >= 40).length;
+  const totalGfi = scored.reduce((sum, x) => sum + (x.o._gh?.gfi ?? 0), 0);
+  document.getElementById('radarHotCount').textContent = hot;
+  document.getElementById('radarActiveCount').textContent = active;
+  document.getElementById('radarGfiCount').textContent = totalGfi;
+  document.getElementById('radarTrackedCount').textContent = scored.length;
+}
+requestAnimationFrame(() => setTimeout(initRadar, 1500));
+globalThis.initRadar = initRadar;
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2831,6 +2831,7 @@ btn.__orgListenerAttached = true;
     }
     renderOrgs(true);
     renderCompare();
+    renderWatchlist();
   }
 
   function renderCompare() {
@@ -3169,6 +3170,7 @@ btn.__orgListenerAttached = true;
         ? `https://github.com/${githubOwner}.png?size=80`
         : '';
       const category = getCategoryMeta(org.cat);
+      const isComparing = compareList.includes(org.name);
 
       const topTags = (org.tags || []).slice(0, 4)
         .map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded text-zinc-600">${escapeHtml(t)}</span>`)
@@ -3211,11 +3213,18 @@ btn.__orgListenerAttached = true;
                 ${escapeHtml(org.competition || '—')}
               </span>
             </div>
-            <button data-bookmark-org="${escapeHtml(org.name)}"
-                    class="bookmark-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
-              <span class="material-symbols-outlined text-xs">bookmark_remove</span>
-              Remove
-            </button>
+            <div class="flex items-center gap-3">
+              <button onclick="event.stopPropagation(); toggleCompare(event, '${escapeHtml(org.name)}')"
+                      class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-green-600' : 'text-primary'} hover:text-zinc-900 flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-xs">${isComparing ? 'check_circle' : 'compare_arrows'}</span>
+                ${isComparing ? 'Comparing' : 'Compare'}
+              </button>
+              <button data-bookmark-org="${escapeHtml(org.name)}"
+                      class="bookmark-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-xs">bookmark_remove</span>
+                Remove
+              </button>
+            </div>
           </div>
         </div>`;
 

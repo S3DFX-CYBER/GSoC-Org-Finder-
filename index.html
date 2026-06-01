@@ -890,6 +890,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#feedback"data-section="feedback">Feedback</a>
       </nav>
     </div>
     
@@ -984,6 +985,11 @@
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
+      <a href="#feedback" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="feedback">
+        <span class="material-symbols-outlined text-lg">feedback</span>
+        Feedback
+      </a>
+
       <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
@@ -1423,6 +1429,78 @@
     </div>
   </div>
 </section>
+
+<!-- ═══════════════════ FEEDBACK ═══════════════════ -->
+
+<section id="feedback" class="py-20 px-6 bg-surface-container-low">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="mb-12 text-center">
+      <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">
+        Community Feedback
+      </span>
+
+      <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">
+        Feedback
+      </h2>
+
+      <p class="text-zinc-600 mt-4">
+        Share suggestions, report bugs, or tell us how we can improve.
+      </p>
+    </div>
+
+    <div class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+
+      <form id="feedbackForm">
+
+        <input
+          id="feedbackName"
+          type="text"
+          placeholder="Your Name"
+          required
+          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary">
+
+        <input
+          id="feedbackEmail"
+          type="email"
+          placeholder="Your Email"
+          required
+          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary">
+
+        <textarea
+          id="feedbackMessage"
+          rows="5"
+          placeholder="Write your feedback..."
+          required
+          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+
+        <button
+          type="submit"
+          class="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:opacity-90 transition">
+          Submit Feedback
+        </button>
+
+      </form>
+
+      <p
+        id="feedbackSuccess"
+        class="hidden mt-4 text-green-600 font-medium">
+        ✓ Thank you for your feedback! This is currently a frontend demo and submissions are not stored.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<script>
+document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  document.getElementById("feedbackSuccess").classList.remove("hidden");
+
+  this.reset();
+});
+</script>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
@@ -1902,7 +1980,7 @@ window.setActiveMenu = function(clickedLink) {
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors','feedback','timeline', 'ai-recommender'];
     const scrollPosition = window.scrollY + 80; // Offset for fixed header
     
 let currentSection = 'timeline';
@@ -4432,54 +4510,5 @@ if (logoLink) {
   });
 }
 </script>
-
-<section class="feedback-section">
-  <h2 class="feedback-title">Feedback & Suggestions</h2>
-
-  <p class="feedback-desc">
-    Found a bug or have an idea? Let us know.
-  </p>
-
-  <form id="feedbackForm">
-    <input
-      type="text"
-      class="feedback-input"
-      placeholder="Your Name"
-      required
-    >
-
-    <input
-      type="email"
-      class="feedback-input"
-      placeholder="Your Email"
-    >
-
-    <textarea
-      class="feedback-textarea"
-      rows="5"
-      placeholder="Write your feedback..."
-      required
-    ></textarea>
-
-    <button type="submit" class="feedback-btn">
-      Submit Feedback
-    </button>
-  </form>
-
-  <p id="feedbackMsg" style="display:none;color:green;margin-top:10px;">
-    Thank you for your feedback!
-  </p>
-</section>
-
-<script>
-document.getElementById("feedbackForm").addEventListener("submit", function(e){
-  e.preventDefault();
-
-  document.getElementById("feedbackMsg").style.display = "block";
-
-  this.reset();
-});
-</script>
-
 </body>
 </html>

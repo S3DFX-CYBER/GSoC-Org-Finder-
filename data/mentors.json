@@ -1245,16 +1245,44 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "FFmpeg": {
-    "org": "FFmpeg",
-    "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"FFmpeg": {
+  "org": "FFmpeg",
+  "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#ffmpeg-devel",
+      "label": "#ffmpeg-devel on Libera.Chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Michael Niedermayer",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Reynaldo Verdejo",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Thilo Borgmann",
+      "github": "",
+      "githubUrl": ""
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://lists.ffmpeg.org/mailman3/lists/ffmpeg-devel.ffmpeg.org/",
+      "label": "ffmpeg-devel@ffmpeg.org"
+    }
+  ],
+  "tip": "Read the developer documentation and introduce yourself on the mailing list before applying.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "FLARE": {
     "org": "FLARE",
     "ideasUrl": "https://github.com/mandiant/flare-vm/wiki/GSoC-2026",
@@ -2699,12 +2727,50 @@
   "Open Robotics": {
     "org": "Open Robotics",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/open-robotics",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://openrobotics.zulipchat.com/",
+        "label": "Open Robotics Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Kimberly N. McGuire",
+        "github": "knmcguire",
+        "githubUrl": "https://github.com/knmcguire"
+      },
+      {
+        "name": "Skyler Medeiros",
+        "github": "skyegalaxy",
+        "githubUrl": "https://github.com/skyegalaxy"
+      },
+      {
+        "name": "Grey",
+        "github": "mxgrey",
+        "githubUrl": "https://github.com/mxgrey"
+      },
+      {
+        "name": "Scott K Logan",
+        "github": "cottsay",
+        "githubUrl": "https://github.com/cottsay"
+      },
+      {
+        "name": "Sai Kishor Kothakota",
+        "github": "saikishor",
+        "githubUrl": "https://github.com/saikishor"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:gsoc@openrobotics.org",
+        "label": "GSoC Contact Email"
+      }
+    ],
+    "tip": "Join the Open Robotics Zulip community, introduce yourself, and discuss your interests publicly before sending mentor inquiries.",
+    "status": "ok",
+    "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "Open Science Initiative for Perfusion Imaging": {
     "org": "Open Science Initiative for Perfusion Imaging",
@@ -4404,15 +4470,38 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "UC OSPO": {
-    "org": "UC OSPO",
-    "ideasUrl": "https://ucsc-ospo.github.io/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "UC OSPO",
+  "ideasUrl": "https://ucsc-ospo.github.io/osre26/",
+  "channels": [
+    {
+      "type": "Slack",
+      "url": "https://join.slack.com/t/uc-ospo-network/shared_invite/zt-3c6yw4l11-WU2PB4jUwAtXTDK09h8orQ",
+      "label": "UC OSPO Network Slack"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Carlos Maltzahn",
+      "github": "carlosmaltzahn",
+      "githubUrl": "https://github.com/carlosmaltzahn"
+    },
+    {
+      "name": "Stephanie Lieggi",
+      "github": "slieggi",
+      "githubUrl": "https://github.com/slieggi"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Email",
+      "url": "mailto:ospo-info-group@ucsc.edu",
+      "label": "ospo-info-group@ucsc.edu"
+    }
+  ],
+  "tip": "Join the UC OSPO Network Slack and email ospo-info-group@ucsc.edu for any eligibility questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-28T00:00:00.000Z"
+},
   "Unikraft": {
     "org": "Unikraft",
     "ideasUrl": "https://github.com/unikraft/gsoc/blob/staging/gsoc-2026/ideas.md",

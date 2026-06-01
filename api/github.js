@@ -242,7 +242,7 @@ if (radarMode) {
     let recentIssues = 0;
     let beginnerIssues = 0;
 
-    issues.forEach(issue => {
+    issues.filter(issue => !issue.pull_request).forEach(issue => {
       const age =
         (now - new Date(issue.created_at)) /
         (1000 * 60 * 60 * 24);

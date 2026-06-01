@@ -709,11 +709,19 @@ function githubUrlFromValue(value){
   return path?`https://github.com/${path}`:'';
 }
 function imgErr(img){
-  img.onerror=null;
-  const p=document.createElement('div');
-  p.className='org-logo-placeholder';
-  p.textContent=(img.alt||'?')[0].toUpperCase();
-  img.parentNode.replaceChild(p,img);
+  if(!img) return;
+
+  img.onerror = null;
+
+  const fallback = document.createElement('div');
+  fallback.className = 'org-logo-placeholder';
+
+  const letter = (img.alt || '?')[0].toUpperCase();
+  fallback.textContent = letter;
+
+  if(img.parentNode){
+    img.parentNode.replaceChild(fallback, img);
+  }
 }
 function orgLogo(o){
   const owner=orgLogoOwner(o);

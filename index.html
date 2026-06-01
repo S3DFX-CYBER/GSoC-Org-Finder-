@@ -2831,6 +2831,8 @@ btn.__orgListenerAttached = true;
     }
     renderOrgs(true);
     renderCompare();
+
+    document.dispatchEvent(new CustomEvent('compareListChanged'));
   }
 
   function renderCompare() {
@@ -2861,6 +2863,9 @@ btn.__orgListenerAttached = true;
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
       empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
+      empty.onclick = () =>{
+        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
+      };
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>

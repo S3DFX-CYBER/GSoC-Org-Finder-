@@ -1,0 +1,373 @@
+name: 🧭 Program Classification Validator
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: program-classification-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-program:
+    name: Validate PR Program Classification
+
+    if: |
+      github.event.pull_request.draft == false &&
+      github.actor != 'github-actions[bot]'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
+        with:
+          node-version: "24"
+
+      - name: Validate classification
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const pr = context.payload.pull_request;
+            const issue_number = pr.number;
+
+            const body = (pr.body || '').toLowerCase();
+            const branch = (pr.head.ref || '').toLowerCase();
+
+            const labels =
+              (pr.labels || [])
+                .map(l => l.name.toLowerCase());
+
+            const MARKER =
+              '<!-- program-classification -->';
+
+            const VALID_LABELS = [
+              'gssoc26',
+              'nsoc26',
+              'general-contribution'
+            ];
+
+            const MISSING_LABEL =
+              'missing-program-classification';
+
+            const INVALID_LABEL =
+              'invalid-program-classification';
+
+            // ----------------------------------------
+            // DETECTION HELPERS
+            // ----------------------------------------
+
+            function detectProgram() {
+              const detected = new Set();
+
+              // ------------------------------------
+              // Metadata
+              // ------------------------------------
+
+              if (
+                body.includes('program: gssoc') ||
+                body.includes('- [x] gssoc')
+              ) {
+                detected.add('gssoc');
+              }
+
+              if (
+                body.includes('program: nsoc') ||
+                body.includes('- [x] nsoc')
+              ) {
+                detected.add('nsoc');
+              }
+
+              if (
+                body.includes('program: general') ||
+                body.includes('- [x] general contribution')
+              ) {
+                detected.add('general');
+              }
+
+              // ------------------------------------
+              // Labels
+              // ------------------------------------
+
+              if (labels.includes('gssoc26')) {
+                detected.add('gssoc');
+              }
+
+              if (labels.includes('nsoc26')) {
+                detected.add('nsoc');
+              }
+
+              if (
+                labels.includes('general-contribution')
+              ) {
+                detected.add('general');
+              }
+
+              // ------------------------------------
+              // Branch hints
+              // ------------------------------------
+
+              if (branch.includes('gssoc')) {
+                detected.add('gssoc');
+              }
+
+              if (branch.includes('nsoc')) {
+                detected.add('nsoc');
+              }
+
+              return [...detected];
+            }
+
+            const detectedPrograms =
+              detectProgram();
+
+            // ----------------------------------------
+            // LABEL HELPERS
+            // ----------------------------------------
+
+            async function addLabels(list) {
+              if (!list.length) return;
+
+              try {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number,
+                  labels: list
+                });
+              } catch (e) {
+                core.warning(e.message);
+              }
+            }
+
+            async function removeLabel(name) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name
+                });
+              } catch (e) {}
+            }
+
+            async function clearValidationLabels() {
+              await removeLabel(MISSING_LABEL);
+              await removeLabel(INVALID_LABEL);
+            }
+
+            async function clearProgramLabels() {
+              for (const label of VALID_LABELS) {
+                await removeLabel(label);
+              }
+            }
+
+            // ----------------------------------------
+            // STICKY COMMENT HELPERS
+            // ----------------------------------------
+
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number,
+                  per_page: 100
+                }
+              );
+
+            const existing =
+              comments.find(c =>
+                c.user &&
+                c.user.type === 'Bot' &&
+                (c.body || '').includes(MARKER)
+              );
+
+            async function upsertComment(body) {
+
+              if (
+                existing &&
+                existing.body.trim() === body.trim()
+              ) {
+                core.info(
+                  'Comment already up-to-date'
+                );
+                return;
+              }
+
+              if (existing) {
+
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body
+                });
+
+                return;
+              }
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }
+
+            // ----------------------------------------
+            // MISSING PROGRAM
+            // ----------------------------------------
+
+            if (detectedPrograms.length === 0) {
+
+              await clearProgramLabels();
+
+              await addLabels([
+                MISSING_LABEL
+              ]);
+
+              const comment =
+                `${MARKER}
+
+            ## ⚠️ Program Classification Required
+
+            Your PR does not currently specify a valid contribution program.
+
+            Please edit your PR description and select exactly ONE:
+
+            - GSSOC
+            - NSOC
+            - General Contribution
+
+            ### Example
+
+            \`\`\`md
+            program: gssoc
+            \`\`\`
+
+            or use the PR template checkboxes.
+
+            Once updated, this validation will automatically re-run.
+
+            > Stage-2 review routing is temporarily paused until classification is resolved.
+            `;
+
+              await upsertComment(comment);
+
+              core.setFailed(
+                'Missing program classification'
+              );
+
+              return;
+            }
+
+            // ----------------------------------------
+            // MULTIPLE PROGRAMS
+            // ----------------------------------------
+
+            if (detectedPrograms.length > 1) {
+
+              await clearProgramLabels();
+
+              await addLabels([
+                INVALID_LABEL
+              ]);
+
+              const comment =
+                `${MARKER}
+
+            ## ⚠️ Invalid Program Classification
+
+            Multiple contribution programs were detected in this PR.
+
+            Please keep ONLY ONE classification:
+
+            - GSSOC
+            - NSOC
+            - General Contribution
+
+            Detected:
+
+            ${detectedPrograms
+              .map(p => `- ${p}`)
+              .join('\n')}
+
+            After editing your PR body, validation will automatically re-run.
+
+            > Stage-2 review routing is temporarily paused until this is fixed.
+            `;
+
+              await upsertComment(comment);
+
+              core.setFailed(
+                'Multiple program classifications detected'
+              );
+
+              return;
+            }
+
+            // ----------------------------------------
+            // VALID PROGRAM
+            // ----------------------------------------
+
+            const program =
+              detectedPrograms[0];
+
+            await clearValidationLabels();
+            await clearProgramLabels();
+
+            let finalLabel =
+              'general-contribution';
+
+            if (program === 'gssoc') {
+              finalLabel = 'gssoc26';
+            }
+
+            if (program === 'nsoc') {
+              finalLabel = 'nsoc26';
+            }
+
+            await addLabels([finalLabel]);
+
+            const successComment =
+              `${MARKER}
+
+            ## ✅ Program Classification Verified
+
+            Detected contribution program:
+
+            - ${program.toUpperCase()}
+
+            Program-aware automation and routing are now enabled for this PR.
+            `;
+
+            await upsertComment(successComment);
+
+            core.info(
+              `Validated program: ${program}`
+            );

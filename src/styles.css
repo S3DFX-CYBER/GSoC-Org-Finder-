@@ -33,7 +33,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .gsoc-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBBC04,var(--orange));border-radius:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:white;letter-spacing:-0.04em;box-shadow:0 2px 8px rgba(244,107,14,.3)}
 .nav-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;transition:color .3s}
 .nav-title em{font-style:italic;color:var(--orange)}
-.nav-right{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.nav-right{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+.nav-right  > a:not(.btn-contribute) { color: var(--ink);text-decoration: none;transition: color 0.2s ease;}
+.nav-right  > a:not(.btn-contribute):hover {color: var(--orange);}
 
 /* ── COUNTDOWN BANNER ── */
 .countdown-banner{background:linear-gradient(135deg,var(--orange-pale),var(--orange-mid));border-bottom:1px solid var(--orange-border);padding:8px 24px;text-align:center;font-size:12px;font-weight:600;color:var(--orange-deep);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
@@ -153,8 +155,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 /* ── GRID ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-bottom:60px}
 
-/* ── CARD ── */
-.org-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;position:relative;overflow:hidden;animation:fadeUp .25s ease forwards;transition:border-color .18s,box-shadow .18s,transform .15s,background .3s}
+.org-card{display:flex;flex-direction:column;height:100%;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;position:relative;overflow:hidden;animation:fadeUp .25s ease forwards;transition:border-color .18s,box-shadow .18s,transform .15s,background .3s}
 .org-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--orange),#FBBC04);opacity:0;transition:opacity .2s}
 .org-card:hover,.org-card.focused{border-color:var(--orange-border);box-shadow:0 4px 20px rgba(244,107,14,.1);transform:translateY(-2px)}
 .org-card:hover::after,.org-card.focused::after{opacity:1}
@@ -170,7 +171,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .card-actions{display:flex;gap:4px;flex-shrink:0;align-items:flex-start}
 .org-logo-info{flex:1;min-width:0}
 .cat-pill{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;white-space:nowrap}
-.org-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.org-desc{flex:1;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
 .badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
 .b{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;border:1px solid transparent}
 .bv{background:rgba(194,65,12,.07);color:#C2410C;border-color:rgba(194,65,12,.2)}
@@ -484,12 +485,12 @@ footer a:hover{text-decoration:underline}
 
   /* Grid */
   .grid{grid-template-columns:1fr;gap:10px;margin-bottom:40px}
-  .org-card{padding:14px;animation:none;opacity:1}
+  .org-card{display:flex;flex-direction:column;height:100%;padding:14px;animation:none;opacity:1}
   .org-card:hover{transform:none}
   .card-header-row{gap:10px}
   .org-logo{width:40px;height:40px}
   .org-name{font-size:13px}
-  .org-desc{font-size:12px;-webkit-line-clamp:2;line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .org-desc{-webkit-line-clamp:2;line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
   .tags{gap:4px}
   .tag{font-size:10px;padding:2px 7px}
   .badges{gap:4px}
@@ -555,7 +556,7 @@ footer a:hover{text-decoration:underline}
   .cd-num{font-size:18px}
   .stat-num{font-size:15px}
   .stat-lbl{font-size:8px}
-  .org-card{padding:12px}
+  .org-card{display:flex;flex-direction:column;height:100%;padding:12px}
   .org-logo{width:34px;height:34px}
   .org-name{font-size:12px}
 }

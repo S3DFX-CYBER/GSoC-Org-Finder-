@@ -84,15 +84,17 @@ if (mentor.review_ids.includes(reviewId)) {
 
 mentor.reviews++;
 
-if (reviewState === 'APPROVED') {
+ const reviewState =
+  process.env.REVIEW_STATE;
+const normalizedReviewState =
+  (reviewState || '').toUpperCase();
+if (normalizedReviewState === 'APPROVED') {
   mentor.approvals++;
 }
-
-if (reviewState === 'CHANGES_REQUESTED') {
+if (normalizedReviewState === 'CHANGES_REQUESTED') {
   mentor.changes_requested++;
 }
-
-if (reviewState === 'COMMENTED') {
+if (normalizedReviewState === 'COMMENTED') {
   mentor.comments++;
 }
 

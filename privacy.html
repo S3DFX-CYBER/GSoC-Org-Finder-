@@ -7,37 +7,75 @@
   <meta name="description" content="Privacy Policy for FindMyGSoC." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/privacy.html" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" integrity="sha384-9gQ8upeWZQ9/fPKaAGJuDpTMaZdwDhECBPX+H6i9vVTa3EllQ1skSXUr6bXADJRW" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script>
-    // Tailwind Configuration
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: "class",
       theme: {
         extend: {
+          screens: {
+            'xs': '480px',
+            'sm': '640px',
+            'md': '768px',
+            'lg': '1024px',
+            'xl': '1280px',
+            '2xl': '1536px',
+          },
           colors: {
-            primary: { DEFAULT: '#f97316', container: '#ffedd5' },
-            surface: { DEFAULT: '#ffffff', 'container-low': '#f4f4f5' }
+            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
+            "surface-container":"#eeeeee","primary-container":"#f97316",
+            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
+            "on-background":"#1a1c1c","on-primary":"#ffffff",
+            "on-surface":"#1a1c1c","error":"#ba1a1a",
+            "primary":"#9d4300","on-surface-variant":"#584237",
+            "outline":"#8c7164","surface-container-lowest":"#ffffff",
+            "secondary":"#006c47","secondary-container":"#8af5be",
+            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
+            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
+            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
+            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
+            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
+            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
+            "on-primary-container":"#582200","surface-tint":"#9d4300",
           },
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            headline: ['"Space Grotesk"', 'sans-serif'],
-            mono: ['"Fira Code"', 'monospace']
-          }
-        }
-      }
+            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
+            "label":["Space Grotesk"],"mono":["Fira Code"]
+          },
+          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        },
+      },
     }
   </script>
+<style>
+.glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+</style>
 </head>
-<body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
+<body class="bg-background text-zinc-900 font-body antialiased">
 
-<header class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
-  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg shadow-orange-500/20">
-        <span class="text-white font-extrabold text-xl">G</span>
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+        <span class="text-white font-bold text-sm">G</span>
       </div>
-      <a href="index.html" class="font-extrabold text-xl tracking-tight font-headline">FindMy<span class="text-primary">GSoC</span></a>
+      <a href="index.html" class="flex items-center gap-2">
+  <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
+    <span class="hidden sm:inline">GSoC 2026 </span>
+    <span class="text-primary italic">Org Finder</span>
+  </span>
+</a>
     </div>
     <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
       <a href="index.html#orgs" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
@@ -74,7 +112,7 @@
   </div>
 </main>
 
-<footer class="w-full border-t border-zinc-200 bg-zinc-100">
+<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
   <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
@@ -84,6 +122,7 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
     <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+      <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>

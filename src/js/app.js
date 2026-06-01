@@ -1403,3 +1403,22 @@ if (heroSearch) {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
 
+window.addEventListener("load", () => {
+  const container = document.getElementById("mTimeline");
+  const current = container?.querySelector(".current-year");
+
+  if (!container || !current) return;
+
+  // wait for layout paint
+  requestAnimationFrame(() => {
+    const offset =
+      current.offsetLeft -
+      container.offsetWidth / 2 +
+      current.offsetWidth / 2;
+
+    container.scrollTo({
+      left: offset,
+      behavior: "smooth"
+    });
+  });
+});

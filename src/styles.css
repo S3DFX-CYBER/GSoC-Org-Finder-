@@ -708,3 +708,9 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+.timeline-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}

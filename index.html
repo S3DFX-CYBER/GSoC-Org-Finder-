@@ -4431,13 +4431,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('keydown', (e) => {
+  const active = document.activeElement;
+if (
+    active &&
+    (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
+        active.id === 'searchInput'
+    )
+) {
+        return;
+    }
 
     // Help modal
     if(e.key==='?'){
         e.preventDefault();
         openHelpModal();
     }
-
+  
     if(e.key==='Escape'){
         e.preventDefault();
         
@@ -4483,18 +4493,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset filters
     if(e.key.toLowerCase()==='r'){
-        e.preventDefault();
+    e.preventDefault();
 
-        document.getElementById('searchInput').value='';
+    document.getElementById('searchInput').value='';
 
-        if(typeof pills!=="undefined"){
-            pills.clear();
-        }
+    document.getElementById('categoryFilter').value='all';
+    document.getElementById('complexityFilter').value='all';
 
-        if(typeof applyFilters==="function"){
-            applyFilters();
-        }
+    const sortSelect = document.getElementById('sortSelect');
+
+if(sortSelect){
+    sortSelect.value = 'alpha';
+}
+    if(typeof selectedLanguages!=="undefined"){
+        selectedLanguages.clear();
     }
+
+    if(typeof pills!=="undefined"){
+        pills.clear();
+    }
+
+    if(typeof activeChip!=="undefined"){
+        activeChip = '';
+    }
+
+    applyFilters();
+}
 
     // Focus search
     if(e.key==='/'){

@@ -958,6 +958,11 @@ if(e.key.toLowerCase()==='h'){
 
     window.scrollTo({
         top:0,
+          behavior: 'smooth'
+    });
+
+    return;
+}
 if(e.key.toLowerCase()==='r'){
     e.preventDefault();
     resetFilters();

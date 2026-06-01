@@ -390,31 +390,117 @@
       scroll-margin-top: 80px;
     }
 
-    /* Minimal dark-mode support */
-    .dark body { background: #0f0f10; color: #e5e7eb; }
-    .dark .glass { background: rgba(24, 24, 27, 0.85); }
-    .dark .bg-white { background: #18181b !important; }
-    .dark .bg-surface-container-low { background: #27272a !important; color: #d4d4d8 !important; }
-    .dark .text-zinc-900 { color: #f4f4f5 !important; }
-    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: #a1a1aa !important; }
-    .dark .text-zinc-300 { color: #a1a1aa !important; }
-    .dark .text-on-surface { color: #f4f4f5 !important; }
-    .dark .text-on-surface-variant { color: #a1a1aa !important; }
-    .dark .border-zinc-100 { border-color: #3f3f46 !important; }
-    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+    /* ── Dark-mode support (resolves #1211) ── */
+    /* Smooth transitions for all theme-sensitive properties */
+    *, *::before, *::after {
+      transition: background-color 0.3s ease, color 0.3s ease,
+                  border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* CSS Variables for theming */
+    :root {
+      --bg-primary:   #ffffff;
+      --bg-secondary: #f4f4f5;
+      --bg-card:      #ffffff;
+      --text-primary: #09090b;
+      --text-muted:   #71717a;
+      --border-color: #e4e4e7;
+      --shadow-color: rgba(0,0,0,0.06);
+    }
+    .dark {
+      --bg-primary:   #0f0f10;
+      --bg-secondary: #18181b;
+      --bg-card:      #1c1c1f;
+      --text-primary: #f4f4f5;
+      --text-muted:   #a1a1aa;
+      --border-color: #3f3f46;
+      --shadow-color: rgba(0,0,0,0.4);
+    }
+
+    .dark body { background: var(--bg-primary); color: var(--text-primary); }
+    .dark .glass { background: rgba(24, 24, 27, 0.88); backdrop-filter: blur(12px); }
+    .dark .bg-white { background: var(--bg-card) !important; }
+    .dark .bg-surface-container-low { background: #27272a !important; color: var(--text-muted) !important; }
+    .dark .text-zinc-900 { color: var(--text-primary) !important; }
+    .dark .text-zinc-600, .dark .text-zinc-500, .dark .text-zinc-400 { color: var(--text-muted) !important; }
+    .dark .text-zinc-300 { color: var(--text-muted) !important; }
+    .dark .text-on-surface { color: var(--text-primary) !important; }
+    .dark .text-on-surface-variant { color: var(--text-muted) !important; }
+    .dark .border-zinc-100 { border-color: var(--border-color) !important; }
+    .dark .border-zinc-200 { border-color: var(--border-color) !important; }
     .dark #timeline-milestones .bg-zinc-200 { background-color: #3f3f46 !important; }
     .dark .hover\:bg-zinc-100\/50:hover { background: rgba(63, 63, 70, 0.45) !important; }
-    .dark .proposal-workspace { background: #18181b; }
-    .dark .proposal-header { background: #0f0f10; border-color: #27272a; }
-    .dark .proposal-editor { background: #18181b; border-color: #27272a; }
-    .dark .proposal-preview { background: #1f1f23; color: #d4d4d8; }
-    .dark .proposal-textarea { color: #d4d4d8; }
-    .dark .proposal-preview code { background: #3f3f46; color: #f4f4f5; }
+    .dark .proposal-workspace { background: var(--bg-secondary); }
+    .dark .proposal-header { background: var(--bg-primary); border-color: var(--border-color); }
+    .dark .proposal-editor { background: var(--bg-secondary); border-color: var(--border-color); }
+    .dark .proposal-preview { background: #1f1f23; color: var(--text-muted); }
+    .dark .proposal-textarea { color: var(--text-muted); }
+    .dark .proposal-preview code { background: #3f3f46; color: var(--text-primary); }
     .dark .proposal-preview pre { background: #27272a; }
-    .dark .proposal-preview blockquote { border-color: #3f3f46; color: #a1a1aa; }
-    .dark .proposal-btn { background: #27272a; color: #e5e7eb; border-color: #3f3f46; }
+    .dark .proposal-preview blockquote { border-color: var(--border-color); color: var(--text-muted); }
+    .dark .proposal-btn { background: #27272a; color: #e5e7eb; border-color: var(--border-color); }
     .dark .proposal-btn:hover { background: #3f3f46; }
-    .dark .proposal-autosave { color: #a1a1aa; }
+    .dark .proposal-autosave { color: var(--text-muted); }
+
+    /* ── Theme Toggle Button ── */
+    #themeToggleBtn {
+      position: relative;
+      width: 56px;
+      height: 28px;
+      padding: 0;
+      border-radius: 999px;
+      border: 2px solid #d4d4d8;
+      background: #f4f4f5;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
+      flex-shrink: 0;
+    }
+    #themeToggleBtn:hover {
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    #themeToggleBtn:focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+    .dark #themeToggleBtn {
+      background: #3730a3;
+      border-color: #4f46e5;
+    }
+
+    /* Knob */
+    #themeToggleBtn .toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #71717a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.3s ease;
+    }
+    .dark #themeToggleBtn .toggle-knob {
+      transform: translateX(28px);
+      background: #e0e7ff;
+    }
+
+    /* Icons inside knob */
+    #themeToggleBtn .toggle-knob .material-symbols-outlined {
+      font-size: 13px;
+      line-height: 1;
+      color: #fff;
+      transition: color 0.3s ease;
+    }
+    .dark #themeToggleBtn .toggle-knob .material-symbols-outlined {
+      color: #3730a3;
+    }
+    /* Hide inactive icon */
+    #themeToggleBtn .icon-sun  { display: none; }
+    #themeToggleBtn .icon-moon { display: block; }
+    .dark #themeToggleBtn .icon-sun  { display: block; }
+    .dark #themeToggleBtn .icon-moon { display: none; }
 
     /* Light mode - Language pills active state */
     .pill.active {
@@ -857,11 +943,10 @@
     <div class="flex items-center gap-2 sm:gap-3">
     
       <button id="themeToggleBtn" onclick="toggleTheme()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          dark_mode
+        <span class="toggle-knob">
+          <span class="material-symbols-outlined icon-sun">light_mode</span>
+          <span class="material-symbols-outlined icon-moon">dark_mode</span>
         </span>
       </button>
     
@@ -1766,27 +1851,34 @@
   // THEME
   // ══════════════════════════════════════════════
   (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
+  let saved = 'light';
+  try {
+    const item = localStorage.getItem('theme');
+    if (item) saved = item;
+  } catch {
+    // Ignore localStorage errors, fallback to default
+  }
+  document.documentElement.classList.toggle('dark', saved === 'dark');
+  updateThemeBtn();
+})();
 
   window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
+  const isDark = document.documentElement.classList.toggle('dark');
+  try {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
+  } catch (e) {
+    console.warn('Failed to persist theme:', e);
+  }
+  updateThemeBtn();
+};
 
-  function updateThemeIcon(){
+  function updateThemeBtn(){
     const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
+    if(!btn) return;
+    const isDark = document.documentElement.classList.contains('dark');
+    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.setAttribute('title',      isDark ? 'Switch to light theme' : 'Switch to dark theme');
   }
 
   // ══════════════════════════════════════════════
@@ -1937,7 +2029,7 @@ sections.forEach(sectionId => {
     try {
       const u = new URL(String(url).trim());
       if (u.protocol === 'http:' || u.protocol === 'https:') return u.toString();
-    } catch (e) {
+    } catch {
       // invalid URL
     }
     return null;
@@ -3860,6 +3952,7 @@ if(org.ideas){
       
       btn.textContent = 'Stats Updated!';
     } catch (e) {
+      console.error('Failed to fetch github stats:', e);
       btn.textContent = 'Error';
     } finally {
       setTimeout(() => {

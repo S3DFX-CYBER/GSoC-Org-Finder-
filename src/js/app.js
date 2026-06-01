@@ -1361,10 +1361,12 @@ updateStats();
 renderSelectedLanguages();
 
 // Initialize match mode toggle listener
-document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
-  matchAllLanguages = e.target.checked;
-  applyFilters();
-});
+document.getElementById('matchAllLanguagesToggle')
+  ?.addEventListener('change', (e) => {
+    matchAllLanguages = e.target.checked;
+    globalThis.matchAllLanguages = e.target.checked;
+    applyFilters();
+  });
 
 requestAnimationFrame(()=>{
   const params = new URLSearchParams(location.search);

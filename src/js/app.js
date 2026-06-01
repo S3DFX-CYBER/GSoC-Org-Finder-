@@ -893,10 +893,13 @@ const defaultShortcuts = {
   close: 'Escape'
 };
 
-const shortcuts =
-JSON.parse(localStorage.getItem('shortcuts'))
-|| defaultShortcuts;
-
+const shortcuts = (() => {
+  try {
+    return JSON.parse(localStorage.getItem('shortcuts')) || defaultShortcuts;
+  } catch {
+    return defaultShortcuts;
+  }
+})();
 document.addEventListener('keydown', e => {
    //console.log("Key pressed:", e.key);
   // Close modals first

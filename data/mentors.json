@@ -1179,13 +1179,60 @@
   },
   "GNU Image Manipulation Program": {
     "org": "GNU Image Manipulation Program",
-    "ideasUrl": "https://wiki.gimp.org/wiki/Hacking:Developer_FAQ#Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://developer.gimp.org/core/internship/ideas/",
+    "channels": [
+      {
+        "type": "IRC",
+        "url": "https://www.gimp.org/discuss.html",
+        "label": "#gimp on GIMPNet (irc.gimp.org)"
+      },
+      {
+        "type": "Discourse",
+        "url": "https://discourse.gnome.org/tag/gimp",
+        "label": "GNOME Discourse (gimp tag)"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jehan Pagès",
+        "github": "Jehan",
+        "githubUrl": "https://github.com/Jehan"
+      },
+      {
+        "name": "Alx Sa",
+        "github": "cmyk-student",
+        "githubUrl": "https://github.com/cmyk-student"
+      },
+      {
+        "name": "Aryeom Han",
+        "github": "aryeom",
+        "githubUrl": "https://github.com/aryeom"
+      },
+      {
+        "name": "Liam Quin",
+        "github": "barefootliam",
+        "githubUrl": "https://github.com/barefootliam"
+      },
+      {
+        "name": "Jacob Boerema",
+        "github": "Wormnest",
+        "githubUrl": "https://github.com/Wormnest"
+      },
+      {
+        "name": "Øyvind Kolås",
+        "github": "hodefoting",
+        "githubUrl": "https://github.com/hodefoting"
+      },
+      {
+        "name": "drc",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Join #gimp on GIMPNet IRC before applying — GIMP expects you to discuss your idea with a mentor there first. Mailing lists were retired in 2022; use GNOME Discourse (gimp tag) for longer-form discussion.",
+    "status": "ok",
+    "lastFetched": "2026-06-01T00:00:00.000Z"
   },
 "GNU Mailman": {
   "org": "GNU Mailman",

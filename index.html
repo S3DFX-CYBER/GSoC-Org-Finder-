@@ -3562,7 +3562,36 @@ if(org.ideas){
     const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
     filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query);
+      // Full-text search: organization name, technologies, description, and category
+      let matchSearch = false;
+      if (query) {
+        // Search in organization name
+        matchSearch = o.name.toLowerCase().includes(query);
+        
+        // Search in technology tags
+        if (!matchSearch && o.tags) {
+          matchSearch = o.tags.some(tag => String(tag).toLowerCase().includes(query));
+        }
+        
+        // Search in category
+        if (!matchSearch && o.cat) {
+          matchSearch = String(o.cat).toLowerCase().includes(query);
+        }
+        
+        // Search in description
+        if (!matchSearch && o.desc) {
+          matchSearch = String(o.desc).toLowerCase().includes(query);
+        }
+        
+        // Search in fit categories
+        if (!matchSearch && o.fit) {
+          matchSearch = o.fit.some(fit => String(fit).toLowerCase().includes(query));
+        }
+      } else {
+        // If query is empty, match all
+        matchSearch = true;
+      }
+      
       const matchCat = !cat || o.cat === cat;
       const matchComp = comp === 'all' || o.codebase === comp;
       const tags = (o.tags || []).map(t => String(t).toLowerCase());
@@ -3583,12 +3612,49 @@ if(org.ideas){
 
     if(query){
       filteredOrgs.sort((a,b)=>{
-        const nameA=a.name.toLowerCase();
-        const nameB=b.name.toLowerCase();
-        if(nameA===query && nameB!==query) return -1;
-        if(nameB===query && nameA!==query) return 1;
-        if(nameA.startsWith(query) && !nameB.startsWith(query)) return -1;
-        if(nameB.startsWith(query) && !nameA.startsWith(query)) return 1;
+        // Helper to calculate relevance score for an organization
+        const getRelevanceScore = (org) => {
+          let score = 0;
+          const orgName = org.name.toLowerCase();
+          
+          // Exact name match: highest priority (1000)
+          if(orgName === query) score += 1000;
+          
+          // Name starts with query (500)
+          if(orgName.startsWith(query)) score += 500;
+          
+          // Tag exact match (300)
+          if(org.tags && org.tags.some(tag => String(tag).toLowerCase() === query)) {
+            score += 300;
+          }
+          
+          // Tag contains query (200)
+          if(org.tags && org.tags.some(tag => String(tag).toLowerCase().includes(query))) {
+            score += 200;
+          }
+          
+          // Category contains query (100)
+          if(org.cat && String(org.cat).toLowerCase().includes(query)) {
+            score += 100;
+          }
+          
+          // Fit category contains query (80)
+          if(org.fit && org.fit.some(fit => String(fit).toLowerCase().includes(query))) {
+            score += 80;
+          }
+          
+          // Description contains query (50)
+          if(org.desc && String(org.desc).toLowerCase().includes(query)) {
+            score += 50;
+          }
+          
+          return score;
+        };
+        
+        const scoreA = getRelevanceScore(a);
+        const scoreB = getRelevanceScore(b);
+        
+        if(scoreA !== scoreB) return scoreB - scoreA;
         return applySecondarySort(a, b, sort);
       });
     } else {

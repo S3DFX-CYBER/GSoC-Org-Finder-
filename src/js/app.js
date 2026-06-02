@@ -781,8 +781,8 @@ function renderGrid(orgs){
     g.innerHTML=`
       <div class="empty">
         <div class="empty-icon">🔍</div>
-        <h3>No organizations match your current filters.</h3>
-        <p>Try adjusting your search or clearing some filters.</p>
+        <h3>No organizations match your current filters</h3>
+        <p>Try removing a language, changing the category, or clearing all filters to see more results.</p>
         <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
       </div>`;
     return;
@@ -1298,12 +1298,12 @@ function renderIssues(){
   const loadMore=document.getElementById('loadMoreWrap');
 
   if(!allIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to fetch Good First Issues from all GSoC orgs.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to browse beginner-friendly issues from all 184 GSoC organizations..</p></div>`;
     statsDiv.style.display='none';loadMore.style.display='none';return;
   }
 
   if(!filteredIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try adjusting the search or category.</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🔍</div><h3>No issues match your filters</h3><p>Try broadening your search or selecting a different category — new issues are added regularly</p></div>`;
     statsDiv.style.display='flex';loadMore.style.display='none';
   } else {
     shownIssues=Math.min(shownIssues+ISSUES_PAGE_SIZE,filteredIssues.length);

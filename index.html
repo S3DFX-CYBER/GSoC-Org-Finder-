@@ -1042,8 +1042,8 @@
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
-    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your current filters.</h3>
-    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try adjusting your search or clearing some filters.</p>
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">No organizations match your filters</h3>
+    <p class="text-zinc-500 dark:text-zinc-400 mb-8">Try removing a language pill, changing the category, or clearing all filters</p>
     <button onclick="clearAllFilters()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-primary/20">
       Clear All Filters
     </button>
@@ -1105,7 +1105,7 @@
       <!-- Error State -->
       <div id="aiErrorState" aria-live="assertive" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 text-center block">
         <span class="material-symbols-outlined text-red-500 text-4xl mb-2">error</span>
-        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Analysis Failed</h3>
+        <h3 class="text-red-800 dark:text-red-400 font-bold mb-1">Couldn't load recommendations</h3>
         <p id="aiErrorMsg" class="text-red-600 dark:text-red-300 text-sm"></p>
       </div>
 
@@ -1113,7 +1113,7 @@
       <div id="aiResultsContainer" class="org-grid w-full">
         <div class="flex flex-col items-center justify-center py-20 text-center text-zinc-400 dark:text-zinc-500">
           <span class="material-symbols-outlined text-6xl mb-4 opacity-50">magic_button</span>
-          <p class="font-bold">Provide your details to see personalized matches.</p>
+          <p class="font-bold">Enter your GitHub username or resume above to see your best-fit organizations.</p>
         </div>
       </div>
     </div>
@@ -1192,10 +1192,10 @@
       </div>
     </div>
     <div class="ml-auto text-right">
-      <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: pending refresh</span>
+      <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: data not yet available</span>
       <span id="issuesStaleNote" class="hidden ml-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
     </div>
-  </div>
+  </di
   <!-- Issue Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer issue-fallback-card" data-url="https://github.com/rust-lang/rust/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
@@ -1263,7 +1263,7 @@
         </div>
       </div>
       <div class="ml-auto text-right">
-        <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500">Last updated: pending refresh</span>
+        <span id="mentorLastUpdated" class="text-xs font-mono text-zinc-500">Last updated:  data not yet available</span>
         <span id="mentorStaleNote" class="hidden ml-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">ℹ GSoC selection complete. Data won't update frequently.</span>
       </div>
     </div>
@@ -1288,7 +1288,7 @@
 
     <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+        <p class="text-sm text-zinc-500">Mentor contact details are being loaded — if nothing appears, data may not be available yet..</p>
       </div>
     </div>
 
@@ -1524,7 +1524,7 @@
 
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">
-        <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+        <p class="text-sm text-zinc-500">Mentor contact details are being loaded — if nothing appears, data may not be available yet</p>
       </div>
     </div>
     <div class="modal-footer">
@@ -2204,7 +2204,7 @@ sections.forEach(sectionId => {
     if (!container) return;
 
     if (mentorDataState === 'idle' || mentorDataState === 'loading') {
-      container.innerHTML = '<p class="text-sm text-zinc-500">Loading mentor contact data...</p>';
+      container.innerHTML = '<p class="text-sm text-zinc-500">Mentor contact details are being loaded — if nothing appears, data may not be available yet</p>';
       return;
     }
 
@@ -2298,7 +2298,7 @@ sections.forEach(sectionId => {
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
-          <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
+          <p class="text-sm text-zinc-500">Mentor contact details are being loaded — if nothing appears, data may not be available yet</p>
         </div>
       `;
       return;
@@ -3426,6 +3426,7 @@ if(org.ideas){
   }
 
   function openRandomOrg() {
+
     const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
     
     if (!orgsToUse.length) {
@@ -3631,7 +3632,7 @@ if(org.ideas){
 
     const notice = document.createElement('p');
     notice.className = 'col-span-full text-sm text-zinc-500';
-    notice.textContent = 'Live pre-fetched issues are still syncing. Browse open Good First Issues for all organizations below.';
+    notice.textContent = 'Live issues are temporarily unavailable. Browse Good First Issues directly on GitHub for each organization below.';
     container.appendChild(notice);
 
     orgsWithGithub.forEach(org => {

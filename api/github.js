@@ -4,6 +4,112 @@ const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_SIZE = 1000;
 
+const RATE_LIMIT = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; 
+const RATE_LIMIT_MAX = 60; // requests per window per IP (best-effort)
+const RATE_LIMIT_MAX_SIZE = 10000;
+
+function getClientIp(req) {
+  const candidates = [
+    'x-vercel-forwarded-for',
+    'x-forwarded-for',
+    'x-real-ip',
+    'cf-connecting-ip',
+    'fastly-client-ip',
+    'true-client-ip',
+    'x-client-ip',
+  ];
+
+  for (const headerName of candidates) {
+    const raw = req.headers.get(headerName);
+    if (!raw) continue;
+    if (headerName === 'x-forwarded-for') {
+      const first = raw.split(',')[0]?.trim();
+      if (first) return first;
+      continue;
+    }
+    return raw.trim();
+  }
+
+  return '0.0.0.0';
+}
+
+function rateLimitCheck(ip) {
+  const now = Date.now();
+  const entry = RATE_LIMIT.get(ip);
+
+  if (!entry) {
+    if (RATE_LIMIT.size >= RATE_LIMIT_MAX_SIZE) {
+      const firstKey = RATE_LIMIT.keys().next().value;
+      RATE_LIMIT.delete(firstKey);
+    }
+    RATE_LIMIT.set(ip, { timestamps: [now] });
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1, resetMs: now + RATE_LIMIT_WINDOW_MS };
+  }
+
+  const timestamps = entry.timestamps || [];
+  const threshold = now - RATE_LIMIT_WINDOW_MS;
+  if (timestamps.length && timestamps[timestamps.length - 1] < threshold) {
+    timestamps.length = 0;
+  }
+  while (timestamps.length && timestamps[0] < threshold) timestamps.shift();
+
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    const resetMs = (timestamps[0] || now) + RATE_LIMIT_WINDOW_MS;
+    return { allowed: false, remaining: 0, resetMs };
+  }
+
+  timestamps.push(now);
+  entry.timestamps = timestamps;
+  RATE_LIMIT.set(ip, entry);
+  const oldest = timestamps[0] || now;
+  return { allowed: true, remaining: Math.max(0, RATE_LIMIT_MAX - timestamps.length), resetMs: oldest + RATE_LIMIT_WINDOW_MS };
+}
+
+function getAllowedOrigins(req) {
+  const env = process.env.CORS_ALLOW_ORIGINS || process.env.ALLOWED_ORIGINS || '';
+  const fromEnv = env
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  // Always allow same-origin for this request host.
+  // Note: request URL host reflects the deployed domain (incl. preview/custom domains).
+  const { protocol, host } = new URL(req.url);
+  const sameOrigin = `${protocol}//${host}`;
+
+  const set = new Set(fromEnv);
+  set.add(sameOrigin);
+  return set;
+}
+
+function buildCorsHeaders(req) {
+  const origin = req.headers.get('origin');
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  // Always vary by Origin to keep CDN/shared caches safe.
+  headers['Vary'] = 'Origin';
+
+  if (!origin) return { headers, originAllowed: true };
+
+  const allowedOrigins = getAllowedOrigins(req);
+  const originAllowed = allowedOrigins.has(origin);
+
+  if (originAllowed) {
+    headers['Access-Control-Allow-Origin'] = origin;
+    headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS';
+    headers['Access-Control-Max-Age'] = '86400';
+
+    const reqHeaders = req.headers.get('access-control-request-headers');
+    headers['Access-Control-Allow-Headers'] = reqHeaders || 'Content-Type';
+    headers['Vary'] = 'Origin, Access-Control-Request-Headers';
+  }
+
+  return { headers, originAllowed };
+}
+
 function safeCacheSet(key, value) {
   if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
     const firstKey = CACHE.keys().next().value;
@@ -13,15 +119,37 @@ function safeCacheSet(key, value) {
 }
 
 export default async function handler(req) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
+  const { headers, originAllowed } = buildCorsHeaders(req);
+
+  if (!originAllowed) {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+      status: 403,
+      headers,
+    });
+  }
+
+  const ip = getClientIp(req);
+  const limit = rateLimitCheck(ip);
+  headers['RateLimit-Limit'] = String(RATE_LIMIT_MAX);
+  headers['RateLimit-Remaining'] = String(limit.remaining);
+  headers['RateLimit-Reset'] = String(Math.ceil(limit.resetMs / 1000));
+  if (!limit.allowed) {
+    headers['Retry-After'] = String(Math.max(0, Math.ceil((limit.resetMs - Date.now()) / 1000)));
+    headers['Cache-Control'] = 'no-store';
+    return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
+      status: 429,
+      headers,
+    });
+  }
 
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers });
+  }
+
+  if (req.method !== 'GET') {
+    headers['Allow'] = 'GET, OPTIONS';
+    headers['Cache-Control'] = 'no-store';
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers });
   }
 
   const { searchParams } = new URL(req.url);
@@ -31,14 +159,17 @@ export default async function handler(req) {
   const issuesMode = searchParams.get('issues') === '1';
 
   if (!repo && !user) {
+    headers['Cache-Control'] = 'no-store';
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
   if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+    headers['Cache-Control'] = 'no-store';
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
 
   if (user && !/^[\w.-]+$/.test(user)) {
+    headers['Cache-Control'] = 'no-store';
     return new Response(JSON.stringify({ error: 'Invalid user' }), { status: 400, headers });
   }
 
@@ -75,6 +206,7 @@ export default async function handler(req) {
     const cacheKey = 'user__' + user;
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
     }
 
@@ -88,7 +220,10 @@ export default async function handler(req) {
             signal: AbortSignal.timeout(5000)
           });
           if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            if (page === 1) {
+              headers['Cache-Control'] = 'no-store';
+              return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            }
             break;
           }
           const pageRepos = await res.json();
@@ -141,9 +276,11 @@ export default async function handler(req) {
       };
       
       safeCacheSet(cacheKey, result);
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (err) {
+      headers['Cache-Control'] = 'no-store';
       return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
     }
   }
@@ -153,6 +290,7 @@ export default async function handler(req) {
     const cacheKey = repo + '__issues';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
     try {
@@ -162,6 +300,7 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       if (!res.ok) {
+        headers['Cache-Control'] = 'public, s-maxage=60';
         return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
       }
       const data = await res.json();
@@ -175,8 +314,10 @@ export default async function handler(req) {
       }));
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify({ total, items }), { status: 200, headers });
     } catch (err) {
+      headers['Cache-Control'] = 'public, s-maxage=60';
       return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
     }
   }
@@ -186,6 +327,7 @@ export default async function handler(req) {
     const cacheKey = repo + '__gfi';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
     try {
@@ -195,13 +337,16 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       if (!res.ok) {
+        headers['Cache-Control'] = 'public, s-maxage=60';
         return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
+      headers['Cache-Control'] = 'public, s-maxage=3600';
       return new Response(JSON.stringify({ gfi }), { status: 200, headers });
     } catch (err) {
+      headers['Cache-Control'] = 'public, s-maxage=60';
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
     }
   }
@@ -209,6 +354,7 @@ export default async function handler(req) {
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
   const cached = CACHE.get(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    headers['Cache-Control'] = 'public, s-maxage=3600';
     return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
   }
 
@@ -220,6 +366,7 @@ export default async function handler(req) {
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));
+      headers['Cache-Control'] = 'no-store';
       return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
     }
 
@@ -255,9 +402,11 @@ export default async function handler(req) {
     };
 
     safeCacheSet(repo, result);
+    headers['Cache-Control'] = 'public, s-maxage=3600';
     return new Response(JSON.stringify(result), { status: 200, headers });
 
   } catch (err) {
+    headers['Cache-Control'] = 'no-store';
     return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
   }
 }

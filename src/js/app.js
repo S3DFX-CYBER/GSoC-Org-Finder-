@@ -1298,7 +1298,7 @@ function renderIssues(){
   const loadMore=document.getElementById('loadMoreWrap');
 
   if(!allIssues.length){
-    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to browse beginner-friendly issues from all 184 GSoC organizations..</p></div>`;
+    container.innerHTML=`<div class="issue-empty"><div class="ei">🟢</div><h3>Ready to find your first issue?</h3><p>Click "Load Issues" to browse beginner-friendly issues from all 184 GSoC organizations.</p></div>`;
     statsDiv.style.display='none';loadMore.style.display='none';return;
   }
 

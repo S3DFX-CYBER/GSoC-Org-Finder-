@@ -709,3 +709,37 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* ══════════════════════════════════════════════
+   COMMUNITY ACTIVITY BADGES & MODAL SECTION
+══════════════════════════════════════════════ */
+.bca {
+  /* base — shares existing .b sizing */
+}
+.bca-very   { background:rgba(0,135,90,.09);   color:var(--green);  border-color:rgba(0,135,90,.25); }
+.bca-active { background:rgba(26,86,219,.08);  color:var(--blue);   border-color:rgba(26,86,219,.25); }
+.bca-mod    { background:rgba(251,191,36,.10); color:#92600A;       border-color:rgba(251,191,36,.35); }
+.bca-low    { background:rgba(197,48,48,.07);  color:var(--red);    border-color:rgba(197,48,48,.2); }
+
+[data-theme="dark"] .bca-mod { background:rgba(251,191,36,.15); color:#FBBC04; }
+
+/* Community activity rows inside the modal */
+.ca-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  transition: background .3s, border-color .3s;
+}
+.ca-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.ca-label { color: var(--muted); font-weight: 500; }
+.ca-value { color: var(--ink); font-family: 'Fira Code', monospace; font-size: 11px; }

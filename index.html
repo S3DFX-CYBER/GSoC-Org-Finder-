@@ -981,6 +981,7 @@
     <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
     <button id="chip-community" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> 🟢 Active Communities</button>
     <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+    <button class="chip" id="chip-active-community" onclick="toggleChip('active-community')">🟢 Active Communities</button>
   </div>
   <div class="flex flex-wrap gap-2">
     <button class="pill px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
@@ -1047,6 +1048,7 @@
         <option value="comp-low">Competition (Chill First)</option>
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
+        <option value="activity-score">🟢 Most Active</option>
         <option value="most-active">Most Active</option>
       </select>
     </div>
@@ -1544,6 +1546,7 @@
 
       <div class="section-title">Participation Timeline</div>
       <div class="timeline-grid" id="mTimeline"></div>
+      <div id="mCommunity"></div> 
 
       <div class="section-title">Mentors &amp; Contact</div>
       <div id="mMentorSection" class="space-y-4">

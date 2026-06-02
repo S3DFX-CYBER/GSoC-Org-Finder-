@@ -252,6 +252,43 @@ cleanCache();
 let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
 const chips=new Set();
+
+// ══════════════════════════════════════════════
+// COMMUNITY ACTIVITY DATA
+// ══════════════════════════════════════════════
+let communityActivity = {};   // will hold the parsed community_activity.json
+
+async function loadCommunityActivity() {
+  try {
+    const res = await fetch('/data/community_activity.json');
+    if (!res.ok) return;
+    communityActivity = await res.json();
+  } catch (e) {
+    console.warn('community_activity.json not yet available:', e);
+  }
+}
+
+function getCommunityBadge(org) {
+  if (!org.github) return '';
+  const slug = org.github.replace(/^\/|\/$/g, '');
+  const d = communityActivity[slug];
+  if (!d || d.score === undefined) return '';   // no data → hide badge entirely
+  const map = {
+    'very-active': { dot: '🟢', label: 'Very Active',   cls: 'bca-very' },
+    'active':      { dot: '🔵', label: 'Active',        cls: 'bca-active' },
+    'moderate':    { dot: '🟡', label: 'Moderate',      cls: 'bca-mod' },
+    'low':         { dot: '🔴', label: 'Low Activity',  cls: 'bca-low' },
+  };
+  const tier = map[d.tier] || map['low'];
+  return `<span class="b bca ${tier.cls}" title="Community Activity Score: ${d.score}/100">${tier.dot} ${tier.label}</span>`;
+}
+
+function getCommunityData(org) {
+  if (!org.github) return null;
+  const slug = org.github.replace(/^\/|\/$/g, '');
+  return communityActivity[slug] || null;
+}
+
 let matchAllLanguages=false; // false = OR (any), true = AND (all)
 
 // Expose to global scope for HTML onclick handlers and debugging
@@ -606,6 +643,10 @@ function applyFilters(){
     if(chips.has('chill') && o.competition !== 'chill') return false;
     if(chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
     if(chips.has('bookmarked') && !isBookmarked(o.name)) return false;
+    if(chips.has('active-community')) {
+      const d = getCommunityData(o);
+      if (!d || d.score < 60) return false;
+    }
     
     return true;
   });
@@ -662,6 +703,11 @@ function applySecondarySort(a, b, sortType) {
   if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
   if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
   if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  if(sortType==='activity-score') {
+    const sa = getCommunityData(a)?.score ?? -1;
+    const sb = getCommunityData(b)?.score ?? -1;
+    return sb - sa;
+  }
   return a.name.localeCompare(b.name);
 }
 
@@ -852,6 +898,7 @@ function renderGrid(orgs){
         <span class="b ${yBdg(o.years)}">${yLbl(o.years)} · ${o.years}y</span>
         <span class="b ${cBdg(o.competition)}">${cLbl(o.competition)}</span>
         <span class="b ${aBdg(act)}">${aLbl(act)}</span>
+        ${getCommunityBadge(o)}
         ${o._gh?.gfi>0?`<span class="b bgfi">🟢 ${o._gh.gfi} GFI</span>`:''}
       </div>
       <div class="tags">${tags}</div>
@@ -1000,7 +1047,7 @@ function clearAllLanguages(){
 }
 globalThis.clearAllLanguages = clearAllLanguages;
 
-const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb', 'active-community':'cac'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
@@ -1099,6 +1146,33 @@ function openModal(idx){
     mIdeasText.style.display=validatedUrl?'none':'block';
   }
   
+  // Community Activity section in modal
+  const mCommunity = document.getElementById('mCommunity');
+  if (mCommunity) {
+    const cd = getCommunityData(o);
+    if (cd) {
+      const tierMap = {
+        'very-active': '🟢 Very Active',
+        'active':      '🔵 Active',
+        'moderate':    '🟡 Moderate',
+        'low':         '🔴 Low Activity',
+      };
+      mCommunity.style.display = 'block';
+      mCommunity.innerHTML = `
+        <div class="ms-title" style="margin-top:16px">Community Activity</div>
+        <div class="ca-grid">
+          <div class="ca-row"><span class="ca-label">Overall Score</span><span class="ca-value" style="font-weight:700;color:var(--orange)">${cd.score} / 100</span></div>
+          <div class="ca-row"><span class="ca-label">Tier</span><span class="ca-value">${tierMap[cd.tier] || cd.tier}</span></div>
+          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.issueResponseHours != null ? cd.issueResponseHours + ' hrs' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">Commits (90 days)</span><span class="ca-value">${cd.commitsLast90 != null ? cd.commitsLast90 : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.prMergeRate != null ? Math.round(cd.prMergeRate * 100) + '%' : '—'}</span></div>
+          <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastFetched || '—'}</span></div>
+        </div>`;
+    } else {
+      mCommunity.style.display = 'none';
+    }
+  }
+
   updateModalCompareBtn();
   document.getElementById('modalBg').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1366,6 +1440,7 @@ document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (
   applyFilters();
 });
 
+loadCommunityActivity();
 requestAnimationFrame(()=>{
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');

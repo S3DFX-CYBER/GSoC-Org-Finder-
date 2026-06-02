@@ -3617,20 +3617,24 @@ if(org.ideas){
           let score = 0;
           const orgName = org.name.toLowerCase();
           
-          // Exact name match: highest priority (1000)
-          if(orgName === query) score += 1000;
-          
-          // Name starts with query (500)
-          if(orgName.startsWith(query)) score += 500;
-          
-          // Tag exact match (300)
-          if(org.tags && org.tags.some(tag => String(tag).toLowerCase() === query)) {
-            score += 300;
+          // Exact name match: highest priority (1000) - short-circuit
+          if(orgName === query) {
+            score += 1000;
+          } else if(orgName.startsWith(query)) {
+            // Name starts with query (500)
+            score += 500;
           }
           
-          // Tag contains query (200)
-          if(org.tags && org.tags.some(tag => String(tag).toLowerCase().includes(query))) {
-            score += 200;
+          // Tag matching with short-circuit logic
+          if(org.tags) {
+            const tagExactMatch = org.tags.some(tag => String(tag).toLowerCase() === query);
+            if(tagExactMatch) {
+              // Tag exact match (300)
+              score += 300;
+            } else if(org.tags.some(tag => String(tag).toLowerCase().includes(query))) {
+              // Tag contains query (200)
+              score += 200;
+            }
           }
           
           // Category contains query (100)

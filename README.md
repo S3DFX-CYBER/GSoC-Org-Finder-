@@ -420,8 +420,11 @@ These mentors help guide and review contributions for the GSSoC program:
 <!-- CONTRIBUTORS_START -->
 <a href="https://github.com/0000001abhishek-debug"><img src="https://github.com/0000001abhishek-debug.png" width="50px" alt="0000001abhishek-debug" /></a>
 <a href="https://github.com/4f4d"><img src="https://github.com/4f4d.png" width="50px" alt="4f4d" /></a>
+<a href="https://github.com/AAKASH22269796"><img src="https://github.com/AAKASH22269796.png" width="50px" alt="AAKASH22269796" /></a>
+<a href="https://github.com/ANKITDANDOTIYA"><img src="https://github.com/ANKITDANDOTIYA.png" width="50px" alt="ANKITDANDOTIYA" /></a>
 <a href="https://github.com/Aditya-debugs141"><img src="https://github.com/Aditya-debugs141.png" width="50px" alt="Aditya-debugs141" /></a>
 <a href="https://github.com/Aditya8369"><img src="https://github.com/Aditya8369.png" width="50px" alt="Aditya8369" /></a>
+<a href="https://github.com/AdityaM-IITH"><img src="https://github.com/AdityaM-IITH.png" width="50px" alt="AdityaM-IITH" /></a>
 <a href="https://github.com/Akshayaqueen"><img src="https://github.com/Akshayaqueen.png" width="50px" alt="Akshayaqueen" /></a>
 <a href="https://github.com/Ashish241"><img src="https://github.com/Ashish241.png" width="50px" alt="Ashish241" /></a>
 <a href="https://github.com/Ashusf90"><img src="https://github.com/Ashusf90.png" width="50px" alt="Ashusf90" /></a>
@@ -459,6 +462,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Sha-lini3"><img src="https://github.com/Sha-lini3.png" width="50px" alt="Sha-lini3" /></a>
 <a href="https://github.com/ShailiBoddula"><img src="https://github.com/ShailiBoddula.png" width="50px" alt="ShailiBoddula" /></a>
 <a href="https://github.com/Shivansh181003"><img src="https://github.com/Shivansh181003.png" width="50px" alt="Shivansh181003" /></a>
+<a href="https://github.com/Soquixx"><img src="https://github.com/Soquixx.png" width="50px" alt="Soquixx" /></a>
 <a href="https://github.com/Taru-Sharma0503"><img src="https://github.com/Taru-Sharma0503.png" width="50px" alt="Taru-Sharma0503" /></a>
 <a href="https://github.com/ThePrabhu"><img src="https://github.com/ThePrabhu.png" width="50px" alt="ThePrabhu" /></a>
 <a href="https://github.com/Trrr10"><img src="https://github.com/Trrr10.png" width="50px" alt="Trrr10" /></a>
@@ -470,6 +474,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/ajitkumarsaini02"><img src="https://github.com/ajitkumarsaini02.png" width="50px" alt="ajitkumarsaini02" /></a>
 <a href="https://github.com/angelina-2206"><img src="https://github.com/angelina-2206.png" width="50px" alt="angelina-2206" /></a>
 <a href="https://github.com/anirudh645"><img src="https://github.com/anirudh645.png" width="50px" alt="anirudh645" /></a>
+<a href="https://github.com/anshul23102"><img src="https://github.com/anshul23102.png" width="50px" alt="anshul23102" /></a>
 <a href="https://github.com/anushka146"><img src="https://github.com/anushka146.png" width="50px" alt="anushka146" /></a>
 <a href="https://github.com/arghya29"><img src="https://github.com/arghya29.png" width="50px" alt="arghya29" /></a>
 <a href="https://github.com/arushiranjan"><img src="https://github.com/arushiranjan.png" width="50px" alt="arushiranjan" /></a>
@@ -478,6 +483,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/bhavyanjain3004"><img src="https://github.com/bhavyanjain3004.png" width="50px" alt="bhavyanjain3004" /></a>
 <a href="https://github.com/bipinchaudhary28899"><img src="https://github.com/bipinchaudhary28899.png" width="50px" alt="bipinchaudhary28899" /></a>
 <a href="https://github.com/charu2210"><img src="https://github.com/charu2210.png" width="50px" alt="charu2210" /></a>
+<a href="https://github.com/chavanGaneshDatta"><img src="https://github.com/chavanGaneshDatta.png" width="50px" alt="chavanGaneshDatta" /></a>
 <a href="https://github.com/ckprojects77"><img src="https://github.com/ckprojects77.png" width="50px" alt="ckprojects77" /></a>
 <a href="https://github.com/deekshithayadav-16"><img src="https://github.com/deekshithayadav-16.png" width="50px" alt="deekshithayadav-16" /></a>
 <a href="https://github.com/dishamaurya081-create"><img src="https://github.com/dishamaurya081-create.png" width="50px" alt="dishamaurya081-create" /></a>

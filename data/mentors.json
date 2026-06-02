@@ -1245,16 +1245,44 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "FFmpeg": {
-    "org": "FFmpeg",
-    "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"FFmpeg": {
+  "org": "FFmpeg",
+  "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#ffmpeg-devel",
+      "label": "#ffmpeg-devel on Libera.Chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Michael Niedermayer",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Reynaldo Verdejo",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Thilo Borgmann",
+      "github": "",
+      "githubUrl": ""
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://lists.ffmpeg.org/mailman3/lists/ffmpeg-devel.ffmpeg.org/",
+      "label": "ffmpeg-devel@ffmpeg.org"
+    }
+  ],
+  "tip": "Read the developer documentation and introduce yourself on the mailing list before applying.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "FLARE": {
     "org": "FLARE",
     "ideasUrl": "https://github.com/mandiant/flare-vm/wiki/GSoC-2026",

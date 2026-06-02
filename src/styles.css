@@ -23,6 +23,42 @@
   --input-bg:#1A1108;--tag-bg:#0F0A05;--modal-bg:#1A1108;--an-bg:#0F0A05;
   --skeleton-base:#2a2a3a;--skeleton-shine:#33334a;
 }
+[data-theme="sepia"]{
+  --bg:#F5EEDC;--white:#FFFBF0;
+  --orange:#D45800;--orange-deep:#9D4300;--orange-pale:#EBE3CE;--orange-mid:#DCCCAB;--orange-border:#CBA983;
+  --ink:#3A2010;--ink2:#5A3015;--ink3:#7A5030;--muted:#9A6C4A;
+  --border:#DCCCAB;--border2:#E5D6BB;
+  --green:#006C47;--red:#9B2C2C;--blue:#1E40AF;--purple:#553C9A;
+  --shadow:0 1px 4px rgba(58,32,16,.08),0 6px 20px rgba(58,32,16,.06);
+  --shadow-lg:0 12px 40px rgba(58,32,16,.15);
+  --card-bg:#FFFBF0;--nav-bg:rgba(245,238,220,.93);--toggle-bg:#DCCCAB;--toggle-knob:#FFFBF0;
+  --input-bg:#F5EEDC;--tag-bg:#F5EEDC;--modal-bg:#FFFBF0;--an-bg:#F5EEDC;
+  --skeleton-base:#e5d6bb;--skeleton-shine:#f1e6d4;
+}
+[data-theme="nord"]{
+  --bg:#2E3440;--white:#3B4252;
+  --orange:#88C0D0;--orange-deep:#8FBCBB;--orange-pale:#2E3440;--orange-mid:#3B4252;--orange-border:#4C566A;
+  --ink:#ECEFF4;--ink2:#E5E9F0;--ink3:#D8DEE9;--muted:#D8DEE9;
+  --border:#434C5E;--border2:#4C566A;
+  --green:#A3BE8C;--red:#BF616A;--blue:#81A1C1;--purple:#B48EAD;
+  --shadow:0 1px 4px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.2);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.4);
+  --card-bg:#3B4252;--nav-bg:rgba(46,52,64,.93);--toggle-bg:#434C5E;--toggle-knob:#88C0D0;
+  --input-bg:#3B4252;--tag-bg:#2E3440;--modal-bg:#3B4252;--an-bg:#2E3440;
+  --skeleton-base:#434C5E;--skeleton-shine:#4C566A;
+}
+[data-theme="high-contrast"]{
+  --bg:#000000;--white:#000000;
+  --orange:#FFFF00;--orange-deep:#FFCC00;--orange-pale:#000000;--orange-mid:#222222;--orange-border:#FFFF00;
+  --ink:#FFFFFF;--ink2:#FFFFFF;--ink3:#DDDDDD;--muted:#AAAAAA;
+  --border:#FFFF00;--border2:#FFFF00;
+  --green:#00FF00;--red:#FF0000;--blue:#00FFFF;--purple:#FF00FF;
+  --shadow:none;
+  --shadow-lg:none;
+  --card-bg:#000000;--nav-bg:rgba(0,0,0,1);--toggle-bg:#333333;--toggle-knob:#FFFF00;
+  --input-bg:#000000;--tag-bg:#000000;--modal-bg:#000000;--an-bg:#000000;
+  --skeleton-base:#333333;--skeleton-shine:#666666;
+}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 

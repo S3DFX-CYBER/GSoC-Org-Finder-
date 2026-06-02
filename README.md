@@ -27,6 +27,9 @@ No sign-up. No install. No build step. Just open and explore.
 - [Deploy Your Own](#-deploy-your-own)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+  - [Beginner Quick Start](#-beginner-quick-start)
+  - [Assignment Process](#assignment-process)
+  - [PR Review Pipeline](#pr-review-pipeline)
 - [Project Admin](#-project-admin)
 - [GSSoC Mentors](#-gssoc-mentors)
 - [Key Dates](#-gsoc-2026-key-dates)
@@ -226,6 +229,21 @@ For full functionality locally, run `vercel dev` to start the Edge Function.
 
 **Issues page empty?**
 - GitHub API might be rate-limited; wait 1 hour and refresh
+
+---
+
+## 🌱 Beginner Quick Start
+
+1. Fork the repository
+2. Clone your fork locally
+3. Run `vercel dev` (optional for documentation contributors)
+4. Pick a beginner-friendly issue
+5. Comment `/assign gssoc` or `/assign nsoc`
+6. Wait for assignment confirmation
+7. Create a new branch
+8. Make your changes
+9. Commit using conventional commits
+10. Open a PR with `Closes #issue-number`
 
 ---
 

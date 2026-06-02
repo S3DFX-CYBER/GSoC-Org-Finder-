@@ -2787,7 +2787,6 @@ if(org.ideas){
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
       applyFilters();
     });
   }

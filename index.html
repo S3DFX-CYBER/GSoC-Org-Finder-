@@ -1559,25 +1559,92 @@
 </section>
 
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
+<footer class="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+  <div class="max-w-7xl mx-auto px-6 sm:px-8 py-12">
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+
+      <div class="max-w-md">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+          <span class="text-white font-bold text-sm">G</span>
+          </div>
+
+          <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+            FindMyGSoC
+          </span>
+        </div>
+
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Discover Google Summer of Code organizations, explore project ideas,
+          connect with mentors, and streamline your open-source journey.
+        </p>
       </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
+
+      <nav
+        aria-label="Footer navigation"
+        class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium"
+      >
+        <a
+          href="https://discord.gg/mgWV3xSV7"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors"
+        >
+          Community
+        </a>
+
+        <a
+          href="https://summerofcode.withgoogle.com/programs/2026/organizations"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors"
+        >
+          GSoC 2026
+        </a>
+
+        <a
+          href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors"
+        >
+          GitHub
+        </a>
+
+        <a
+          href="privacy.html"
+          class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors"
+        >
+          Privacy
+        </a>
+
+        <a
+          href="#contact"
+          class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors"
+        >
+          Contact
+        </a>
+      </nav>
+
     </div>
-    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
-    </nav>
+
+    <div class="mt-10 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+
+        <p class="text-sm text-zinc-500 dark:text-zinc-500 text-center sm:text-left">
+          © 2026 S3DFX-CYBER. Built for the Open Source Community.
+        </p>
+
+        <p class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+          Open Source • Community Driven
+        </p>
+
+      </div>
+    </div>
+
   </div>
 </footer>
-
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">

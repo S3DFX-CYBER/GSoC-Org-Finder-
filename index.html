@@ -748,6 +748,153 @@
       color: #fb923c;
       background: #1c0f05;
     }
+
+    .watchlist-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .watchlist-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      min-height: 2.25rem;
+      padding: 0.5rem 0.9rem;
+      border: 1px solid #e4e4e7;
+      border-radius: 999px;
+      background: #fff;
+      color: #52525b;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+      white-space: nowrap;
+    }
+    .watchlist-action-btn:hover,
+    .watchlist-action-btn:focus-visible {
+      border-color: #f97316;
+      background: #fff7ed;
+      color: #c2410c;
+    }
+    .watchlist-action-btn:focus-visible {
+      outline: 2px solid rgba(249, 115, 22, 0.4);
+      outline-offset: 2px;
+    }
+    .watchlist-action-primary {
+      border-color: #f97316;
+      background: #f97316;
+      color: #fff;
+    }
+    .watchlist-action-primary:hover,
+    .watchlist-action-primary:focus-visible {
+      background: #ea580c;
+      color: #fff;
+    }
+    .watchlist-action-danger {
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+    .watchlist-action-danger:hover,
+    .watchlist-action-danger:focus-visible {
+      border-color: #dc2626;
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .toast-container {
+      position: fixed;
+      right: 1.125rem;
+      bottom: 1.125rem;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.625rem;
+      pointer-events: none;
+    }
+    .app-toast {
+      max-width: min(22.5rem, calc(100vw - 2rem));
+      padding: 0.75rem 0.9rem;
+      border: 1px solid #e4e4e7;
+      border-left: 4px solid #f97316;
+      border-radius: 0.75rem;
+      background: #fff;
+      color: #18181b;
+      box-shadow: 0 18px 40px rgba(24, 24, 27, 0.18);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(0.5rem);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .app-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .app-toast-success { border-left-color: #16a34a; }
+    .app-toast-error { border-left-color: #dc2626; }
+    .app-toast-warning { border-left-color: #f59e0b; }
+    .dark .watchlist-action-btn {
+      background: #18181b;
+      border-color: #3f3f46;
+      color: #d4d4d8;
+    }
+    .dark .watchlist-action-btn:hover,
+    .dark .watchlist-action-btn:focus-visible {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.12);
+      color: #fb923c;
+    }
+    .dark .watchlist-action-primary {
+      background: #f97316;
+      border-color: #f97316;
+      color: #fff;
+    }
+    .dark .watchlist-action-primary:hover,
+    .dark .watchlist-action-primary:focus-visible {
+      background: #fb923c;
+      color: #fff;
+    }
+    .dark .watchlist-action-danger {
+      color: #fca5a5;
+      border-color: rgba(252, 165, 165, 0.35);
+    }
+    .dark .watchlist-action-danger:hover,
+    .dark .watchlist-action-danger:focus-visible {
+      background: rgba(248, 113, 113, 0.12);
+      border-color: #f87171;
+      color: #fca5a5;
+    }
+    .dark .app-toast {
+      background: #18181b;
+      border-color: #3f3f46;
+      color: #f4f4f5;
+    }
+    @media (max-width: 640px) {
+      .watchlist-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .watchlist-action-btn {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 8.5rem;
+      }
+      .toast-container {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        align-items: stretch;
+      }
+      .app-toast {
+        max-width: none;
+      }
+    }
     
     /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
     .timeline-border-svg {
@@ -1213,12 +1360,27 @@
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="watchlist-actions mt-8" aria-label="Watchlist actions">
+        <button type="button" id="exportBookmarksBtn" class="watchlist-action-btn" title="Export bookmarks">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export
+        </button>
+        <button type="button" id="importBookmarksBtn" class="watchlist-action-btn" title="Import bookmarks">
+          <span class="material-symbols-outlined text-sm">upload</span>
+          Import
+        </button>
+        <button type="button" id="shareBookmarksBtn" class="watchlist-action-btn watchlist-action-primary" title="Copy share link">
+          <span class="material-symbols-outlined text-sm">ios_share</span>
+          Share Link
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="hidden watchlist-action-btn watchlist-action-danger"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+        <input type="file" id="importBookmarksInput" class="sr-only" accept="application/json,.json">
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-6">
@@ -1950,6 +2112,30 @@ sections.forEach(sectionId => {
     } catch {
       return [];
     }
+  }
+
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container';
+      container.setAttribute('aria-live', 'polite');
+      container.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `app-toast app-toast-${type}`;
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 220);
+    }, 3200);
   }
 
   function trimGitHubPathSlashes(path) {
@@ -3096,10 +3282,7 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-    refreshOrgGridAfterBookmarkChange();
-    renderWatchlist();
-    updateAIInsights();
+    persistBookmarksAndNotify({ name: orgName, source: 'toggle' });
   }
 
   function toggleBookmark(e, name) {
@@ -3107,6 +3290,146 @@ btn.__orgListenerAttached = true;
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
     syncBookmark(orgName, !bookmarkedSet.has(orgName));
+  }
+
+  function getMatchingOrgNames(names) {
+    const orgNames = new Set(ORGS.map(org => org.name));
+    return [...new Set(names
+      .filter(name => typeof name === 'string')
+      .map(name => name.trim())
+      .filter(name => name && orgNames.has(name)))];
+  }
+
+  function persistBookmarksAndNotify(detail = {}) {
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail }));
+  }
+
+  function exportBookmarks() {
+    const orgs = [...bookmarkedSet];
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: '1.0',
+      source: 'FindMyGSoC',
+      orgs,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `findmygsoc-bookmarks-${stamp}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast(orgs.length ? `Exported ${orgs.length} bookmark${orgs.length === 1 ? '' : 's'}.` : 'Exported an empty bookmark file.', 'success');
+  }
+
+  function readImportedBookmarks(file) {
+    if (!file) return;
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      let data;
+      try {
+        data = JSON.parse(String(reader.result || ''));
+      } catch {
+        showToast('Import failed: the selected file is not valid JSON.', 'error');
+        return;
+      }
+
+      if (!data || typeof data !== 'object' || Array.isArray(data) || !Array.isArray(data.orgs)) {
+        showToast('Import failed: expected a bookmark export with an orgs array.', 'error');
+        return;
+      }
+
+      const incoming = getMatchingOrgNames(data.orgs);
+      if (!incoming.length) {
+        showToast('No matching organizations were found in that file.', 'warning');
+        return;
+      }
+
+      const before = bookmarkedSet.size;
+      incoming.forEach(name => bookmarkedSet.add(name));
+      const added = bookmarkedSet.size - before;
+      persistBookmarksAndNotify({ source: 'import', added });
+
+      showToast(
+        added
+          ? `Imported ${added} new bookmark${added === 1 ? '' : 's'}.`
+          : 'Import complete. All bookmarks were already saved.',
+        added ? 'success' : 'info'
+      );
+    };
+
+    reader.onerror = () => showToast('Import failed: could not read that file.', 'error');
+    reader.readAsText(file);
+  }
+
+  function encodeSharedBookmarks(names) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(names))))
+      .replaceAll('+', '-')
+      .replaceAll('/', '_')
+      .replaceAll('=', '');
+  }
+
+  function decodeSharedBookmarks(value) {
+    const padded = value.replaceAll('-', '+').replaceAll('_', '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+    return JSON.parse(decodeURIComponent(escape(atob(padded))));
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const input = document.createElement('textarea');
+    input.value = text;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.left = '-9999px';
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    input.remove();
+  }
+
+  async function shareBookmarks() {
+    const url = new URL(location.href);
+    url.searchParams.set('bookmarks', encodeSharedBookmarks([...bookmarkedSet]));
+    try {
+      await copyText(url.toString());
+      showToast(bookmarkedSet.size ? 'Share link copied to clipboard.' : 'Share link copied for an empty watchlist.', 'success');
+    } catch (err) {
+      console.warn('Failed to copy share link:', err);
+      showToast('Could not copy the share link. Please try again.', 'error');
+    }
+  }
+
+  function loadSharedBookmarks() {
+    const url = new URL(location.href);
+    const encoded = url.searchParams.get('bookmarks');
+    if (!encoded) return;
+
+    try {
+      const decoded = decodeSharedBookmarks(encoded);
+      if (!Array.isArray(decoded)) throw new Error('Shared bookmarks must be an array.');
+      const matches = getMatchingOrgNames(decoded);
+      const before = bookmarkedSet.size;
+      matches.forEach(name => bookmarkedSet.add(name));
+      if (matches.length) {
+        persistBookmarksAndNotify({ source: 'share', added: bookmarkedSet.size - before });
+      }
+      showToast(matches.length ? `Loaded ${matches.length} shared bookmark${matches.length === 1 ? '' : 's'}.` : 'Shared link did not contain matching organizations.', matches.length ? 'success' : 'warning');
+    } catch (err) {
+      console.warn('Failed to load shared bookmarks:', err);
+      showToast('Could not load bookmarks from this share link.', 'error');
+    } finally {
+      url.searchParams.delete('bookmarks');
+      history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+    }
   }
 
   // Listen for bookmarks toggled by app.js (the other org-grid script).
@@ -3125,15 +3448,23 @@ btn.__orgListenerAttached = true;
 
   // Wire up "Clear All" button
   document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
+  document.getElementById('exportBookmarksBtn')?.addEventListener('click', exportBookmarks);
+  document.getElementById('shareBookmarksBtn')?.addEventListener('click', shareBookmarks);
+  document.getElementById('importBookmarksBtn')?.addEventListener('click', () => {
+    document.getElementById('importBookmarksInput')?.click();
+  });
+  document.getElementById('importBookmarksInput')?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    readImportedBookmarks(file);
+    e.target.value = '';
+  });
 
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
-    applyFilters();
-    renderWatchlist();
-    updateAIInsights();
+    persistBookmarksAndNotify({ source: 'clear' });
+    showToast('Cleared all bookmarks.', 'success');
   }
 
   // ── renderWatchlist ─────────────────────────────────────────────────────────
@@ -4215,6 +4546,7 @@ if(org.ideas){
 
     applyFilters();
   })();
+  loadSharedBookmarks();
   renderOrgs();
   renderWatchlist();
   renderRecentlyViewed();

@@ -708,3 +708,184 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* Watchlist import/export/share actions */
+.watchlist-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.watchlist-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink3);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s, transform .18s;
+  white-space: nowrap;
+}
+
+.watchlist-action-btn:hover,
+.watchlist-action-btn:focus-visible {
+  border-color: var(--orange);
+  background: var(--orange-pale);
+  color: var(--orange);
+}
+
+.watchlist-action-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.watchlist-action-primary {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #fff;
+}
+
+.watchlist-action-primary:hover,
+.watchlist-action-primary:focus-visible {
+  background: var(--orange-deep);
+  color: #fff;
+}
+
+.watchlist-action-danger {
+  border-color: rgba(197, 48, 48, .24);
+  color: var(--red);
+}
+
+.watchlist-action-danger:hover,
+.watchlist-action-danger:focus-visible {
+  border-color: var(--red);
+  background: rgba(197, 48, 48, .07);
+  color: var(--red);
+}
+
+.toast-container {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.app-toast {
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--orange);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .2s, transform .2s;
+}
+
+.app-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.app-toast-success { border-left-color: var(--green); }
+.app-toast-error { border-left-color: var(--red); }
+.app-toast-warning { border-left-color: #FBBC04; }
+
+[data-theme="dark"] .watchlist-action-btn,
+.dark .watchlist-action-btn {
+  background: #18181b;
+  border-color: #3f3f46;
+  color: #d4d4d8;
+}
+
+[data-theme="dark"] .watchlist-action-btn:hover,
+[data-theme="dark"] .watchlist-action-btn:focus-visible,
+.dark .watchlist-action-btn:hover,
+.dark .watchlist-action-btn:focus-visible {
+  border-color: var(--orange);
+  background: rgba(249, 115, 22, .12);
+  color: var(--orange);
+}
+
+[data-theme="dark"] .watchlist-action-primary,
+.dark .watchlist-action-primary {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+[data-theme="dark"] .watchlist-action-primary:hover,
+[data-theme="dark"] .watchlist-action-primary:focus-visible,
+.dark .watchlist-action-primary:hover,
+.dark .watchlist-action-primary:focus-visible {
+  background: var(--orange-deep);
+  color: #fff;
+}
+
+[data-theme="dark"] .watchlist-action-danger,
+.dark .watchlist-action-danger {
+  color: var(--red);
+  border-color: rgba(252, 129, 129, .3);
+}
+
+[data-theme="dark"] .watchlist-action-danger:hover,
+[data-theme="dark"] .watchlist-action-danger:focus-visible,
+.dark .watchlist-action-danger:hover,
+.dark .watchlist-action-danger:focus-visible {
+  background: rgba(252, 129, 129, .12);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+[data-theme="dark"] .app-toast,
+.dark .app-toast {
+  background: #18181b;
+  border-color: #3f3f46;
+  color: #f4f4f5;
+}
+
+@media(max-width:640px) {
+  .watchlist-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .watchlist-action-btn {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 136px;
+  }
+
+  .toast-container {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    align-items: stretch;
+  }
+
+  .app-toast {
+    max-width: none;
+  }
+}

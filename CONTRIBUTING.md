@@ -16,6 +16,23 @@ The rest of this document covers the shared rules, architecture, workflows, auto
 
 ---
 
+## 📚 Documentation Index
+
+In addition to this guide, the following technical references are available:
+
+| Document | Purpose |
+|----------|---------|
+| [docs/index.md](docs/index.md) | Documentation navigation hub — start here |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Folder structure, module responsibilities, data flow |
+| [docs/WORKFLOWS.md](docs/WORKFLOWS.md) | All 37 GitHub Actions workflows explained |
+| [docs/AGENTS.md](docs/AGENTS.md) | Agent scripts and AI PR review agent |
+| [docs/DATA.md](docs/DATA.md) | Data file schemas and refresh process |
+| [docs/gamification.md](docs/gamification.md) | Badge system documentation |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community standards |
+| [SECURITY.md](SECURITY.md) | Security vulnerability reporting |
+
+---
+
 ## Project Philosophy
 
 This repository follows a:

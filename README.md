@@ -22,10 +22,14 @@ No sign-up. No install. No build step. Just open and explore.
 - [What is this?](#-what-is-this)
 - [Features](#-features)
 - [Flowchart](#-flowchart)
-- [Project Structure](#-project-structure)
+- [Tech Stack](#️-tech-stack)
+- [Project Structure](#️-project-structure)
 - [URL Validation](#-url-validation)
 - [Deploy Your Own](#-deploy-your-own)
+- [Run Locally](#4-run-locally)
+- [Linting](#-linting)
 - [Troubleshooting](#-troubleshooting)
+- [API Reference](#-api-reference-apigithubjs)
 - [Contributing](#-contributing)
 - [Project Admin](#-project-admin)
 - [GSSoC Mentors](#-gssoc-mentors)
@@ -148,25 +152,56 @@ No sign-up. No install. No build step. Just open and explore.
 
 ---
 
-## 📁 Project Structure
+## 🗂️ Project Structure
 
 ```
-gsoc-2026-org-finder/
-├── index.html                    # Main frontend HTML
-├── api/github.js                 # Vercel Edge Function — GitHub API proxy
+GSoC-Org-Finder-/
+├── index.html                         # Main single-page application (SPA)
+├── 404.html                           # Custom 404 error page
+├── sw.js                              # Service Worker — PWA offline support
+├── manifest.json                      # PWA manifest
+├── vercel.json                        # Vercel deployment config
+├── package.json                       # Dev tooling (lint scripts)
+│
+├── api/
+│   └── github.js                      # Vercel Edge Function — GitHub API proxy
+│
 ├── src/
-│   ├── assets/og-image.jpeg      # Social preview image
-│   ├── js/app.js                 # Application logic
-│   ├── js/org.js                 # Organization data source
-│   └── styles.css                # Styling
+│   ├── styles.css                     # All application CSS
+│   ├── assets/
+│   │   └── og-image.jpeg              # Social preview image
+│   └── js/
+│       ├── app.js                     # Core application logic & UI orchestration
+│       ├── org.js                     # ORGS array — 184 organization entries
+│       ├── recommender.js             # AI org recommendation engine
+│       ├── skillExtractor.js          # GitHub profile skill extraction
+│       ├── githubAnalyzer.js          # GitHub repo analysis utilities
+│       ├── recommendation-ui.js       # Recommendation panel UI
+│       └── badges-mvp.js              # Gamification badge system
+│
+├── data/
+│   ├── issues.json                    # Cached Good First Issues
+│   ├── mentors.json                   # Mentor profiles
+│   ├── last-updated.json              # Data refresh timestamp
+│   ├── org-stats.json                 # Cached org statistics
+│   └── ui-summary.json                # Pre-computed UI data
+│
 ├── agent/
-│   ├── scripts/                  # Automation and helper scripts
-│   └── tenet_agent/              # TENET PR review agent
-├── data/issues.json
-└── README.md
+│   ├── scripts/                       # Node.js automation scripts
+│   └── tenet_agent/                   # Python AI PR review agent
+│
+└── docs/
+    ├── index.md                       # Documentation navigation hub
+    ├── ARCHITECTURE.md                # Module responsibilities & data flow
+    ├── WORKFLOWS.md                   # GitHub Actions workflows reference
+    ├── AGENTS.md                      # Agent scripts documentation
+    ├── DATA.md                        # Data file schemas
+    └── *.md                           # Program-specific contributor guides
 ```
 
-No `node_modules`. No build step. No bundler. Just deploy.
+No frontend framework. No bundler. No build step. Just open and deploy.
+
+> 📖 For a detailed breakdown of every module's responsibility and how they connect, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ---
 
@@ -208,10 +243,45 @@ vercel --prod
 Or connect the repo to Vercel and it deploys automatically on every push.
 
 ### 4. Run Locally
+
+**Without API** (GitHub stats won't load — but the app works):
 ```bash
-open index.html   # macOS — works without API (GitHub stats won't load)
+# macOS / Linux
+open index.html
+
+# Windows
+start index.html
+
+# Or serve with a local server (any OS)
+npx serve .
 ```
-For full functionality locally, run `vercel dev` to start the Edge Function.
+
+**With full API functionality** (GitHub stats, Good First Issues):
+```bash
+vercel dev
+```
+This simulates the Vercel Edge runtime locally, including `api/github.js`.
+
+---
+
+## 🧹 Linting
+
+The project uses ESLint, Stylelint, and HTMLHint for code quality. Install dev dependencies first:
+
+```bash
+npm install
+```
+
+Then run:
+
+```bash
+npm run lint        # Run all linters
+npm run lint:js     # ESLint — JavaScript files
+npm run lint:css    # Stylelint — src/styles.css
+npm run lint:html   # HTMLHint — index.html
+```
+
+Linting is also enforced automatically via the `code-quality.yml` GitHub Actions workflow on every PR.
 
 ---
 
@@ -258,7 +328,7 @@ This repo uses a **maintainer-verified** assignment system:
 ### Quick Start
 
 1. Fork the repo
-2. Edit the `ORGS` array in `index.html`
+2. Edit the `ORGS` array in `src/js/org.js`
 3. Open a pull request using the appropriate template
 
 Each org entry looks like this:

@@ -1,0 +1,165 @@
+name: Mentor Label Fallback
+
+# When a PR is merged OR an issue is closed, check if any mentor:* label
+# is present. If NONE is found, apply mentor:Ayushh-Sharmaa as the default
+# fallback to ensure every closed item is always attributed to a mentor.
+
+on:
+  pull_request_target:
+    types:
+      - closed          # fires for both merged and just-closed PRs
+
+  issues:
+    types:
+      - closed
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+concurrency:
+  group: mentor-label-fallback-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 1 — Fallback for MERGED PRs only
+  # ─────────────────────────────────────────────────────────────────────────
+  fallback-pr:
+    name: Apply fallback mentor label on merged PR
+    runs-on: ubuntu-latest
+
+    # Only run when the PR was actually merged (not just closed/abandoned)
+    if: >
+      github.event_name == 'pull_request_target' &&
+      github.event.pull_request.merged == true
+
+    steps:
+      - name: Check for existing mentor label and apply fallback
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner       = context.repo.owner;
+            const repo        = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Fetch current labels on the PR
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+
+            const labelNames = labels.map(l => l.name);
+            core.info(`Current labels on PR #${issue_number}: ${labelNames.join(', ') || '(none)'}`);
+
+            // Check if any mentor:* label is already present
+            const hasMentorLabel = labelNames.some(name => name.startsWith('mentor:'));
+
+            if (hasMentorLabel) {
+              core.info('Mentor label already present. No fallback needed.');
+              return;
+            }
+
+            core.info('No mentor label found on merged PR. Applying fallback: mentor:Ayushh-Sharmaa');
+
+            // Ensure the label exists in the repo (create if missing)
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: 'mentor:Ayushh-Sharmaa' });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo,
+                  name:        'mentor:Ayushh-Sharmaa',
+                  color:       '0075ca',
+                  description: 'Mentor assigned: Ayushh-Sharmaa'
+                });
+                core.info('Created label: mentor:Ayushh-Sharmaa');
+              } else {
+                throw e;
+              }
+            }
+
+            // Apply the fallback label
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number,
+              labels: ['mentor:Ayushh-Sharmaa']
+            });
+
+            core.info(`Fallback label mentor:Ayushh-Sharmaa applied to merged PR #${issue_number}`);
+
+            // Post an informational comment on the PR
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: [
+                '> **ℹ️ Mentor Attribution Note**',
+                '>',
+                '> No mentor label was found on this PR at the time of merge.',
+                '> The fallback label `mentor:Ayushh-Sharmaa` has been applied automatically.',
+                '> If a different mentor reviewed this PR, please update the label accordingly.'
+              ].join('\n')
+            });
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 2 — Fallback for CLOSED ISSUES
+  # ─────────────────────────────────────────────────────────────────────────
+  fallback-issue:
+    name: Apply fallback mentor label on closed issue
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'issues' &&
+      github.event.action == 'closed'
+
+    steps:
+      - name: Check for existing mentor label and apply fallback
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner        = context.repo.owner;
+            const repo         = context.repo.repo;
+            const issue_number = context.payload.issue.number;
+
+            // Fetch current labels on the issue
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+
+            const labelNames = labels.map(l => l.name);
+            core.info(`Current labels on issue #${issue_number}: ${labelNames.join(', ') || '(none)'}`);
+
+            // Check if any mentor:* label is already present
+            const hasMentorLabel = labelNames.some(name => name.startsWith('mentor:'));
+
+            if (hasMentorLabel) {
+              core.info('Mentor label already present. No fallback needed.');
+              return;
+            }
+
+            core.info('No mentor label found on closed issue. Applying fallback: mentor:Ayushh-Sharmaa');
+
+            // Ensure the label exists in the repo (create if missing)
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: 'mentor:Ayushh-Sharmaa' });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo,
+                  name:        'mentor:Ayushh-Sharmaa',
+                  color:       '0075ca',
+                  description: 'Mentor assigned: Ayushh-Sharmaa'
+                });
+                core.info('Created label: mentor:Ayushh-Sharmaa');
+              } else {
+                throw e;
+              }
+            }
+
+            // Apply the fallback label
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number,
+              labels: ['mentor:Ayushh-Sharmaa']
+            });
+
+            core.info(`Fallback label mentor:Ayushh-Sharmaa applied to closed issue #${issue_number}`);

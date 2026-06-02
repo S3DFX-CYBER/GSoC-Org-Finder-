@@ -362,7 +362,7 @@ All contributors must follow repository rules, GitHub Community Guidelines, and 
 - [GSSoC Official Website](https://gssoc.girlscript.tech)
 - [GSSoC Contributor Guidelines](https://gssoc.girlscript.tech/guidelines)
 - Project Discord
-- [Main CONTRIBUTING.md](./CONTRIBUTING.md)
+- [Main CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ---
 

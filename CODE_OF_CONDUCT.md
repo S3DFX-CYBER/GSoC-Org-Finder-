@@ -87,3 +87,12 @@ This Code of Conduct is adapted from the [Contributor Covenant](https://www.cont
 Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity).
 
 For answers to common questions about this Code of Conduct, see the FAQ at https://www.contributor-covenant.org/faq.
+
+---
+
+## 🔗 Related Documents
+
+- [README.md](README.md) — Project overview
+- [CONTRIBUTING.md](CONTRIBUTING.md) — How to contribute
+- [SECURITY.md](SECURITY.md) — Security vulnerability reporting
+- [docs/index.md](docs/index.md) — Documentation navigation hub

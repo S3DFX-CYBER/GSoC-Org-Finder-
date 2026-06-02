@@ -1,0 +1,183 @@
+name: Mentor Label Auto-Apply
+
+# Triggers:
+# 1. PR review requested — when Ayushh-Sharmaa is added as reviewer → apply mentor label
+# 2. PR review submitted — when Ayushh-Sharmaa submits a review → apply mentor label
+# 3. Issue assigned     — when Ayushh-Sharmaa is assigned to an issue → apply mentor label
+
+on:
+  pull_request_target:
+    types:
+      - review_requested
+      - ready_for_review
+      - labeled
+
+  pull_request_review:
+    types:
+      - submitted
+
+  issues:
+    types:
+      - assigned
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+concurrency:
+  group: mentor-label-apply-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 1 — Apply label when Ayushh-Sharmaa is added as a PR reviewer
+  # ─────────────────────────────────────────────────────────────────────────
+  apply-label-on-pr-review-request:
+    name: Apply mentor label on PR review request
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'pull_request_target' &&
+      github.event.action == 'review_requested' &&
+      github.event.requested_reviewer.login == 'Ayushh-Sharmaa'
+
+    steps:
+      - name: Apply mentor:Ayushh-Sharmaa label to PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Ensure the label exists before applying (create if missing)
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: 'mentor:Ayushh-Sharmaa' });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo,
+                  name:        'mentor:Ayushh-Sharmaa',
+                  color:       '0075ca',
+                  description: 'Mentor assigned: Ayushh-Sharmaa'
+                });
+                core.info('Created label: mentor:Ayushh-Sharmaa');
+              }
+            }
+
+            // Check if label already applied
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+            const already = labels.some(l => l.name === 'mentor:Ayushh-Sharmaa');
+            if (already) {
+              core.info('Label already present, skipping.');
+              return;
+            }
+
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number,
+              labels: ['mentor:Ayushh-Sharmaa']
+            });
+            core.info(`Applied label mentor:Ayushh-Sharmaa to PR #${issue_number}`);
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 2 — Apply label when Ayushh-Sharmaa submits a PR review
+  # ─────────────────────────────────────────────────────────────────────────
+  apply-label-on-pr-review-submit:
+    name: Apply mentor label when Ayushh-Sharmaa reviews PR
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'pull_request_review' &&
+      github.event.review.user.login == 'Ayushh-Sharmaa'
+
+    steps:
+      - name: Apply mentor:Ayushh-Sharmaa label to reviewed PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Ensure label exists
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: 'mentor:Ayushh-Sharmaa' });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo,
+                  name:        'mentor:Ayushh-Sharmaa',
+                  color:       '0075ca',
+                  description: 'Mentor assigned: Ayushh-Sharmaa'
+                });
+              }
+            }
+
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+            if (labels.some(l => l.name === 'mentor:Ayushh-Sharmaa')) {
+              core.info('Label already present, skipping.');
+              return;
+            }
+
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number,
+              labels: ['mentor:Ayushh-Sharmaa']
+            });
+            core.info(`Applied label mentor:Ayushh-Sharmaa to PR #${issue_number} after review`);
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 3 — Apply label when Ayushh-Sharmaa is assigned to an issue
+  # ─────────────────────────────────────────────────────────────────────────
+  apply-label-on-issue-assign:
+    name: Apply mentor label when Ayushh-Sharmaa is assigned to issue
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'issues' &&
+      github.event.action == 'assigned' &&
+      github.event.assignee.login == 'Ayushh-Sharmaa'
+
+    steps:
+      - name: Apply mentor:Ayushh-Sharmaa label to issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+            const issue_number = context.payload.issue.number;
+
+            // Ensure label exists
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: 'mentor:Ayushh-Sharmaa' });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo,
+                  name:        'mentor:Ayushh-Sharmaa',
+                  color:       '0075ca',
+                  description: 'Mentor assigned: Ayushh-Sharmaa'
+                });
+              }
+            }
+
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number
+            });
+            if (labels.some(l => l.name === 'mentor:Ayushh-Sharmaa')) {
+              core.info('Label already present, skipping.');
+              return;
+            }
+
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number,
+              labels: ['mentor:Ayushh-Sharmaa']
+            });
+            core.info(`Applied label mentor:Ayushh-Sharmaa to issue #${issue_number}`);

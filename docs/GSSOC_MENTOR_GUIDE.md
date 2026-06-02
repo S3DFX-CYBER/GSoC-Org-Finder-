@@ -338,7 +338,7 @@ Leaderboard updates automatically.
 
 - [GSSoC Official Website](https://gssoc.girlscript.tech)
 - [GSSoC Mentor Guidelines](https://gssoc.girlscript.tech/guidelines)
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [CONTRIBUTING.md](../CONTRIBUTING.md)
 - Project Discord
 
 ---

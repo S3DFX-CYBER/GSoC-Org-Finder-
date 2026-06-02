@@ -22,7 +22,9 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Analyze Issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
@@ -57,7 +59,8 @@ jobs:
                 }
               }
             } catch (err) {
-              core.warning(`Error checking mentors: ${err.message}`);
+              core.setFailed(`Failed to load mentor list — skipping is not safe: ${err.message}`);
+              return;
             }
 
             // Ignore bots
@@ -93,16 +96,17 @@ jobs:
             const body =
               (issue.body || '').trim();
 
-            // Skip common maintainer task prefixes
+            // Skip known maintainer structured task prefixes (case-insensitive)
             const ALLOWLIST_PREFIXES = [
-              'Data Research Task:',
-              'Fix mentor contact info for',
-              'Update mentor stats:',
-              'Refresh leaderboard:',
-              'Update pending assignments:'
+              'data research task:',
+              'fix mentor contact info for',
+              'update mentor stats:',
+              'refresh leaderboard:',
+              'update pending assignments:'
             ];
 
-            if (ALLOWLIST_PREFIXES.some(prefix => title.startsWith(prefix))) {
+            const titleLower = title.toLowerCase();
+            if (ALLOWLIST_PREFIXES.some(prefix => titleLower.startsWith(prefix))) {
               core.info('Skipping allowlisted maintainer task');
               return;
             }
@@ -166,10 +170,13 @@ jobs:
               const setB =
                 new Set(tokenize(b));
 
-              if (
-                setA.size === 0 ||
-                setB.size === 0
-              ) {
+              // Both empty → perfect match (avoids false-negative on title-only issues)
+              if (setA.size === 0 && setB.size === 0) {
+                return 1;
+              }
+
+              // One empty, other not → no meaningful overlap
+              if (setA.size === 0 || setB.size === 0) {
                 return 0;
               }
 

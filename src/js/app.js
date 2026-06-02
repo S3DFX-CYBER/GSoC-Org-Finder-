@@ -1313,6 +1313,87 @@ globalThis.clearAllFilters = function () {
 
 // ══════════════════════════════════════════════
 // LIVE GITHUB STATS - API INTEGRATED FLOW
+
+// CONTACT FORM
+// ══════════════════════════════════════════════
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+function initContactForm() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+
+  const submitBtn = document.getElementById('contactSubmit');
+  const submitText = document.getElementById('submitText');
+  const submitSpinner = document.getElementById('submitSpinner');
+  const statusDiv = document.getElementById('contactStatus');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Reset status
+    statusDiv.className = 'hidden p-4 rounded-xl text-sm font-medium text-center';
+    statusDiv.textContent = '';
+    
+    // Simple validation
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+
+    if (!name || !email || !subject || !message) {
+      showStatus('Please fill in all fields.', 'error');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      showStatus('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    // Show loading state
+    setLoading(true);
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      showStatus('Thank you! Your message has been sent successfully. (Simulated Demo)', 'success');
+      form.reset();
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      showStatus('Something went wrong. Please try again later.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  function setLoading(isLoading) {
+    if (isLoading) {
+      submitBtn.disabled = true;
+      submitText.textContent = 'Sending...';
+      submitSpinner.classList.remove('hidden');
+      submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+    } else {
+      submitBtn.disabled = false;
+      submitText.textContent = 'Send Message';
+      submitSpinner.classList.add('hidden');
+      submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+    }
+  }
+
+  function showStatus(msg, type) {
+    statusDiv.classList.remove('hidden');
+    statusDiv.textContent = msg;
+    if (type === 'success') {
+      statusDiv.classList.add('bg-green-100', 'text-green-700', 'dark:bg-green-900/30', 'dark:text-green-400');
+    } else {
+      statusDiv.classList.add('bg-red-100', 'text-red-700', 'dark:bg-red-900/30', 'dark:text-red-400');
+    }
+  }
+}
 // ══════════════════════════════════════════════
 function updateModalGHStats(org, d, gfi) {
   org._gh = d;
@@ -2607,6 +2688,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Initialize contact form
+  initContactForm();
 });
 
 // ══════════════════════════════════════════════

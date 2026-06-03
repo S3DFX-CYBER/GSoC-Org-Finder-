@@ -888,7 +888,8 @@
       <!-- HELP BUTTON -->
       <button id="helpBtn"
         class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        title="Keyboard shortcuts (?)">
+        title="Keyboard shortcuts (?)"
+        aria-label="Open keyboard shortcuts">
     
         <span class="material-symbols-outlined text-zinc-600">
           help
@@ -923,7 +924,7 @@
         </div>
         <span class="font-extrabold tracking-tight text-zinc-900">Menu</span>
       </div>
-      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+      <button onclick="toggleMenu()" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors" aria-label="Close menu">
         <span class="material-symbols-outlined text-zinc-600">close</span>
       </button>
     </div>
@@ -1585,7 +1586,7 @@
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
   <div class="modal">
-    <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeOrgModal()" aria-label="Close organization modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
       <!-- Injected: Category, Name, Tagline -->
     </div>
@@ -1678,7 +1679,7 @@
 <!-- ═══════════════════ COMPARE MODAL ═══════════════════ -->
 <div class="modal-bg compare-bg" id="compareModal">
   <div class="modal w-full max-w-5xl">
-    <button class="close-btn" onclick="closeCompareModal()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeCompareModal()" aria-label="Close compare modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <h2 class="text-3xl font-extrabold font-headline">Compare Organizations</h2>
       <p class="text-zinc-500 text-sm mt-1">Side-by-side comparison of your selected projects</p>
@@ -1693,7 +1694,7 @@
 
 <div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
-    <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
+    <button class="close-btn" onclick="closeAn()" aria-label="Close analytics modal"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
       <div class="flex items-center justify-between">
         <div>
@@ -2862,7 +2863,7 @@ btn.__orgListenerAttached = true;
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(org.name)} logo" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
@@ -4282,7 +4283,7 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" onclick="closeHelpModal()" aria-label="Close help modal">
       <span class="material-symbols-outlined">close</span>
     </button>
 

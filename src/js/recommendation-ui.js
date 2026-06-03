@@ -72,6 +72,9 @@ function handleBookmarkAction(e, btn) {
     btn.classList.toggle('text-orange-500', isNowBookmarked);
     btn.classList.toggle('text-zinc-300', !isNowBookmarked);
     
+    // Ensure aria-label is synchronized with button state
+    btn.setAttribute('aria-label', isNowBookmarked ? 'Remove bookmark' : 'Add bookmark');
+    
     const icon = btn.querySelector('.material-symbols-outlined');
     if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
   }
@@ -93,11 +96,13 @@ function handleCompareAction(e, btn, card) {
      btn.classList.add('text-primary');
      btn.classList.remove('text-zinc-400');
      btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing';
+     btn.setAttribute('aria-label', 'Remove from compare');
      card.classList.add('ring-2', 'ring-primary/30');
   } else {
      btn.classList.remove('text-primary');
      btn.classList.add('text-zinc-400');
      btn.innerHTML = '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
+     btn.setAttribute('aria-label', 'Add to compare');
      card.classList.remove('ring-2', 'ring-primary/30');
   }
 }
@@ -278,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="flex items-center gap-2 mt-2">
              <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
                      data-bookmark-org="${safeEscapeHtml(o.name)}" 
-                     title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
+                     title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
                 <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
              </button>
           </div>
@@ -302,11 +307,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Bottom: Action Bar -->
         <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
+          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors" aria-label="${inCompare ? 'Remove from compare' : 'Add to compare'}">
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           
-          <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+          <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all" aria-label="View organization details">
             View <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </button>
         </div>

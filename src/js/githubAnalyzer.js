@@ -41,13 +41,67 @@ function createGitHubError(message, status) {
   return error;
 }
 
+async function fetchUserProfileFromAPI(normalizedUsername, signal) {
+  const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`, { signal });
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    // Handle case where response is not valid JSON
+  }
+
+  if (!response.ok) {
+    const msg = data?.message || data?.error || `Failed to fetch user data: ${response.status}`;
+    const status = data?.status || response.status;
+    throw createGitHubError(msg, status);
+  }
+
+  if (!data) {
+    throw new Error("No response data returned from server");
+  }
+
+  if (data.error) {
+    throw createGitHubError(data.message || data.error || 'GitHub API error', data.status || 500);
+  }
+
+  return data;
+}
+
+function handleAnalyzerError(err, username) {
+  if (err.name === 'AbortError') {
+    throw err;
+  }
+  console.error("GitHub Analyzer Error:", err);
+
+  const message = err.message || "";
+  const status = err.status;
+
+  if (status === 404 || message.includes("GitHub 404")) {
+    throw createGitHubError(`GitHub user '${username}' not found. Please ensure the username is correct.`, 404);
+  }
+  if (status === 403 || message.includes("GitHub 403")) {
+    throw createGitHubError("GitHub API rate limit reached. Please try again later.", 403);
+  }
+  if (status === 401 || message.includes("GitHub 401") || message.includes("Failed to fetch user data: 401") || message.includes("401 Unauthorized")) {
+    throw createGitHubError("GitHub API authorization failed. Please check the API token configuration or try again.", 401);
+  }
+  if (message === "Invalid user") {
+    throw createGitHubError(`The username '${username}' is not in a valid GitHub format.`, 400);
+  }
+
+  throw createGitHubError(message || `Could not analyze GitHub profile for '${username}'.`, status || 500);
+}
+
 /**
  * Analyzes a GitHub username and returns a standardized UserProfile object.
  * 
  * @param {string} username - The GitHub username to analyze
+ * @param {Object} [options] - Optional settings
+ * @param {AbortSignal} [options.signal] - Signal to abort the request
  * @returns {Promise<Object>} - The UserProfile containing languages, topics, stars, and activity
  */
-async function analyzeGitHubUser(username) {
+async function analyzeGitHubUser(username, options = {}) {
+  const { signal } = options;
   if (!username || username.trim() === '') {
     throw new Error("Username cannot be empty");
   }
@@ -61,27 +115,7 @@ async function analyzeGitHubUser(username) {
   }
 
   try {
-    const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      // Handle case where response is not valid JSON
-    }
-
-    if (!response.ok) {
-      const status = data?.status || response.status;
-      const msg = data?.message || data?.error || `Failed to fetch user data: ${status}`;
-      throw createGitHubError(msg, status);
-    }
-
-    if (!data) {
-      throw new Error("No response data returned from server");
-    }
-
-    if (data.error) {
-      throw createGitHubError(data.message || data.error || 'GitHub API error', data.status);
-    }
+    const data = await fetchUserProfileFromAPI(normalizedUsername, signal);
 
     // Structure the result
     const userProfile = {
@@ -100,27 +134,7 @@ async function analyzeGitHubUser(username) {
 
     return userProfile;
   } catch (err) {
-    console.error("GitHub Analyzer Error:", err);
-
-    const message = err.message || "";
-    if (err.status === 404 || message.includes("GitHub 404")) {
-      throw createGitHubError(
-        `GitHub user '${username}' not found. Please ensure the username is correct.`,
-        404
-      );
-    }
-    if (err.status === 403 || message.includes("GitHub 403")) {
-      throw createGitHubError("GitHub API rate limit reached. Please try again later.", 403);
-    }
-    if (message === "Invalid user") {
-      throw createGitHubError(`The username '${username}' is not in a valid GitHub format.`, 400);
-    }
-
-    // Propagate operational errors directly instead of masking them
-    throw createGitHubError(
-      message || `Could not analyze GitHub profile for '${username}'.`,
-      err.status
-    );
+    handleAnalyzerError(err, username);
   }
 }
 

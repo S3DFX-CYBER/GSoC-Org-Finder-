@@ -122,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+  const recommendHint = document.getElementById('recommend-hint');
 
   document.addEventListener('compareListChanged',() => {
     if(lastRecommendations.length){
@@ -185,7 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
       renderRecommendations(recommendations);
     } catch (err) {
       if (requestId !== currentRequestId || err.name === 'AbortError') return;
-      showError(err.message || "An unexpected error occurred during analysis.");
+      const msg = err.message || "An unexpected error occurred during analysis.";
+      const status = err.status;
+      let hint = '';
+      if (status === 401) {
+        hint = 'The server\'s GitHub token is invalid. Public profile analysis is unavailable right now. You can still enter your skills manually in the Resume field.';
+      } else if (status === 403) {
+        hint = 'Too many requests to GitHub. Please wait a few minutes and try again.';
+      } else if (status === 404) {
+        const username = ghInput?.value?.trim() || '';
+        hint = username ? `Username "${username}" was not found on GitHub. Check for typos.` : 'The GitHub username was not found. Check for typos.';
+      }
+      showError(msg, hint);
     } finally {
       if (requestId === currentRequestId) {
         setAnalysisStateUI(false);
@@ -193,10 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function showError(msg) {
+  function showError(msg, hint) {
     errorMsg.textContent = msg;
     errorState.classList.remove('hidden');
     resultsContainer.innerHTML = '';
+    if (recommendHint) {
+      if (hint) {
+        recommendHint.textContent = hint;
+        recommendHint.style.display = 'block';
+      } else {
+        recommendHint.style.display = 'none';
+      }
+    }
   }
 
 

@@ -2,8 +2,10 @@
   "version": 2,
   "framework": null,
   "outputDirectory": ".",
-  "buildCommand": "",
-  "devCommand": "npx serve . -l $PORT",
+  "buildCommand": null,
+  "devCommand": "serve . -l $PORT",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     { "source": "/api/github", "destination": "/api/github.js" }
   ],
@@ -11,7 +13,9 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Origin", "value": "https://your-domain.vercel.app" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" },
         { "key": "Cache-Control", "value": "s-maxage=3600" }
       ]
     },

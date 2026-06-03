@@ -1076,6 +1076,10 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
+        <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+        Clear Filters
+      </button>
     </div>
   </div>
   
@@ -3601,9 +3605,29 @@ if(org.ideas){
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
+    if (typeof activeChip !== 'undefined') {
+      activeChip = null;
+    }
 
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    // Reset matchAllLanguages
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = false;
+    const toggle = document.getElementById('matchAllLanguagesToggle');
+    if (toggle) toggle.checked = false;
+    if (typeof updateLanguageModeHint === 'function') updateLanguageModeHint();
+
+    // Reset selected languages
+    if (typeof selectedLanguages !== 'undefined') {
+      selectedLanguages.clear();
+      if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
+      document.querySelectorAll('.pill').forEach(pill => {
+        pill.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
+        pill.classList.add('bg-surface-container-high', 'border-zinc-200');
+        pill.setAttribute('aria-pressed', 'false');
+      });
+    }
+
+    applyFilters();
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {

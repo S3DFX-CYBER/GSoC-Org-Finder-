@@ -226,8 +226,8 @@
     .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
     .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
 
-    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; }
-    .gh-fetch { position: absolute; top: 1rem; right: 1rem; background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; justify-content: space-between; }
+    .gh-fetch { background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
     .gh-fetch:hover { background: #444; color: #fff; }
     .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
 
@@ -298,7 +298,7 @@
       align-items: center;
       background: #f9f9f9;
     }
-    .proposal-header-title { flex: 1; min-width: 200px; }
+    .proposal-header-title { min-width: 200px; }
     .proposal-header-title h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
     .proposal-header-title p { font-size: 0.75rem; color: #888; margin: 0.25rem 0 0; }
     .proposal-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
@@ -323,7 +323,7 @@
     .proposal-btn-primary:hover { background: #7a3500; }
     .proposal-btn-danger { color: #ba1a1a; border-color: #fecaca; }
     .proposal-btn-danger:hover { background: #fef2f2; }
-    .proposal-autosave { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #666; cursor: pointer; user-select: none; }
+    .proposal-autosave { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #666; cursor: pointer; user-select: none; border: 1px solid #ddd; padding: 0.3rem 0.55rem; border-radius: 0.75rem; }
     .proposal-body { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
     @media (min-width: 768px) { .proposal-body { flex-direction: row; } }
     .proposal-editor, .proposal-preview {
@@ -473,6 +473,15 @@
       .modal-body { padding: 0 1.5rem 2rem; min-height: 0; }
       .modal-footer { padding: 0.75rem 1.5rem; flex-direction: column; flex-shrink: 0; }
       .modal-cta { width: 100%; padding: 0.6rem 1rem; font-size: 0.85rem; }
+      .proposal-header { padding: 0.6rem 1rem; gap: 0.4rem; position: relative; }
+      .proposal-header-title { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+      .proposal-header-title h2 { font-size: 0.95rem; }
+      .proposal-header-title p { display: inline; font-size: 0.65rem; }
+      .proposal-autosave { font-size: 0.7rem; background: white; border: 1px solid #ddd; padding: 0.3rem 0.55rem; border-radius: 0.75rem; align-self: flex-start; }
+      .proposal-btn { padding: 0.3rem 0.55rem; font-size: 0.7rem; }
+      #pwCloseBtn { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.3rem; }
+      #pwCloseBtn span + * { display: none; }
+
     }
     
     /* Dark mode - Modal */
@@ -1110,6 +1119,10 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
+        <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+        Clear Filters
+      </button>
     </div>
   </div>
   
@@ -1582,11 +1595,11 @@
       </div>
       
       <div class="github-stats-container mb-8">
-        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
         <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
+        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
       </div>
 
       <div class="section-title">Description</div>
@@ -1631,12 +1644,12 @@
     <header class="proposal-header">
       <div class="proposal-header-title">
         <h2 id="pwOrgName">Organization Proposal</h2>
-        <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+          <label class="proposal-autosave">
+            <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
+            Enable autosave
+            <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+          </label>
       </div>
-      <label class="proposal-autosave">
-        <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
-        Enable autosave
-      </label>
       <div class="proposal-toolbar">
         <button type="button" id="pwClearBtn" class="proposal-btn proposal-btn-danger" aria-label="Clear proposal draft">
           <span class="material-symbols-outlined text-sm">delete</span> Clear
@@ -1646,9 +1659,9 @@
         </button>
         <button type="button" id="pwExportPDFBtn" class="proposal-btn proposal-btn-primary" aria-label="Download proposal as PDF">
           <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
-        </button>
+        </button> 
         <button type="button" id="pwCloseBtn" class="proposal-btn" aria-label="Close proposal builder">
-          <span class="material-symbols-outlined text-sm">close</span> Close
+          <span class="material-symbols-outlined text-sm">close</span>
         </button>
       </div>
     </header>
@@ -2831,6 +2844,8 @@ btn.__orgListenerAttached = true;
     }
     renderOrgs(true);
     renderCompare();
+
+    document.dispatchEvent(new CustomEvent('compareListChanged'));
   }
 
   function renderCompare() {
@@ -2861,6 +2876,9 @@ btn.__orgListenerAttached = true;
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
       empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
+      empty.onclick = () =>{
+        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
+      };
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
@@ -3630,9 +3648,29 @@ if(org.ideas){
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
+    if (typeof activeChip !== 'undefined') {
+      activeChip = null;
+    }
 
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
+    // Reset matchAllLanguages
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = false;
+    const toggle = document.getElementById('matchAllLanguagesToggle');
+    if (toggle) toggle.checked = false;
+    if (typeof updateLanguageModeHint === 'function') updateLanguageModeHint();
+
+    // Reset selected languages
+    if (typeof selectedLanguages !== 'undefined') {
+      selectedLanguages.clear();
+      if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
+      document.querySelectorAll('.pill').forEach(pill => {
+        pill.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
+        pill.classList.add('bg-surface-container-high', 'border-zinc-200');
+        pill.setAttribute('aria-pressed', 'false');
+      });
+    }
+
+    applyFilters();
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {

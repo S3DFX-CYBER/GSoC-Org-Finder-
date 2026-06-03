@@ -134,47 +134,6 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
-    .feedback-section{
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  margin: 40px auto;
-  max-width: 800px;
-  box-shadow: var(--shadow);
-}
-
-.feedback-title{
-  color: var(--ink);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.feedback-desc{
-  color: var(--ink3);
-  margin-bottom: 24px;
-}
-
-.feedback-input,
-.feedback-textarea{
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.feedback-btn{
-  background: var(--orange);
-  color: brown;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
     /* Screen reader only - for accessibility */
     .sr-only {
       position: absolute;
@@ -900,7 +859,7 @@
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#feedback"data-section="feedback">Feedback</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#feedback" data-section="feedback">Feedback</a>
       </nav>
     </div>
     
@@ -1463,7 +1422,7 @@
       </p>
     </div>
 
-    <div class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+    <div class="bg-surface-container-low border border-zinc-100 rounded-3xl p-8 shadow-sm">
 
       <form id="feedbackForm">
 
@@ -1472,21 +1431,35 @@
           type="text"
           placeholder="Your Name"
           required
-          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary">
+          class="w-full mb-4 pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
 
         <input
           id="feedbackEmail"
           type="email"
           placeholder="Your Email"
           required
-          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary">
+          class="w-full mb-4 pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all">
+        
+        <label class="block mb-2 font-medium dark:text-white">
+          Rating
+       </label>
+
+        <div class="flex gap-2 mb-4 text-3xl" id="starRating">
+          <span class="star cursor-pointer text-zinc-400" data-value="1">★</span>
+          <span class="star cursor-pointer text-zinc-400" data-value="2">★</span>
+          <span class="star cursor-pointer text-zinc-400" data-value="3">★</span>
+          <span class="star cursor-pointer text-zinc-400" data-value="4">★</span>
+          <span class="star cursor-pointer text-zinc-400" data-value="5">★</span>
+        </div>
+        
+<input type="hidden" id="feedbackRating" value="">
 
         <textarea
           id="feedbackMessage"
-          rows="5"
+          rows="6"
           placeholder="Write your feedback..."
           required
-          class="w-full mb-4 px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+          class="w-full mb-4 pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all"></textarea>
 
         <button
           type="submit"
@@ -1507,12 +1480,67 @@
 </section>
 
 <script>
+// Star Rating
+const stars = document.querySelectorAll(".star");
+const ratingInput = document.getElementById("feedbackRating");
+
+stars.forEach(star => {
+  star.addEventListener("click", () => {
+    const value = star.dataset.value;
+    ratingInput.value = value;
+
+    stars.forEach(s => {
+      if (s.dataset.value <= value) {
+        s.classList.remove("text-zinc-400");
+        s.classList.add("text-yellow-400");
+      } else {
+        s.classList.remove("text-yellow-400");
+        s.classList.add("text-zinc-400");
+      }
+    });
+  });
+});
+
+// Form Submit
 document.getElementById("feedbackForm").addEventListener("submit", function(e) {
   e.preventDefault();
+const name = document.getElementById("feedbackName").value.trim();
+const email = document.getElementById("feedbackEmail").value.trim();
+const message = document.getElementById("feedbackMessage").value.trim();
+
+if (name.length < 3) {
+  alert("Name must be at least 3 characters long.");
+  return;
+}
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailPattern.test(email)) {
+  alert("Please enter a valid email address.");
+  return;
+}
+
+if (message.length < 10) {
+  alert("Feedback must be at least 10 characters long.");
+  return;
+}
+  const rating = document.getElementById("feedbackRating").value;
+
+  if (!rating) {
+    alert("Please select a rating.");
+    return;
+  }
 
   document.getElementById("feedbackSuccess").classList.remove("hidden");
 
   this.reset();
+
+  stars.forEach(s => {
+    s.classList.remove("text-yellow-400");
+    s.classList.add("text-zinc-400");
+  });
+
+  ratingInput.value = "";
 });
 </script>
  
@@ -1994,7 +2022,7 @@ window.setActiveMenu = function(clickedLink) {
 
   // Update active state based on scroll position
   function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors','feedback','timeline', 'ai-recommender'];
+    const sections = ['timeline', 'orgs', 'ai-recommender', 'watchlist', 'issues', 'mentors', 'feedback', 'guide'];
     const scrollPosition = window.scrollY + 80; // Offset for fixed header
     
 let currentSection = 'timeline';

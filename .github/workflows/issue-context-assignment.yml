@@ -48,14 +48,22 @@ jobs:
                 /^\/approve-assignment\s+@?([\w-]+)/i
               );
 
+            const is_assign = assignMatch;
+            const is_approve = !!approveMatch;
+            const issueUser = context.payload.issue.user.login;
+            const repoOwner = context.repo.owner;
+            const association = context.payload.issue.author_association;
+            const is_maintainer = ['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association);
+            const should_review = !is_assign && !is_approve && issueUser !== repoOwner && !is_maintainer;
+
             core.setOutput(
               'is_assign',
-              String(assignMatch)
+              String(is_assign)
             );
 
             core.setOutput(
               'is_approve',
-              String(!!approveMatch)
+              String(is_approve)
             );
 
             core.setOutput(
@@ -65,17 +73,18 @@ jobs:
                 : ''
             );
 
+            core.setOutput(
+              'should_review',
+              String(should_review)
+            );
+
       # ─────────────────────────────────────────────
       # ACTIVE MENTOR CONTEXT REVIEW
       # ─────────────────────────────────────────────
 
       - name: Select rotating active mentors
         id: mentor_select
-        if: |
-          steps.cmd.outputs.is_assign != 'true' &&
-          steps.cmd.outputs.is_approve != 'true' &&
-          github.event.issue.user.login != github.repository_owner &&
-          !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
+        if: steps.cmd.outputs.should_review == 'true'
         env:
           ISSUE_CLAIMANT: ${{ github.event.issue.user.login }}
           MAX_MENTORS: "2"
@@ -86,11 +95,7 @@ jobs:
           echo "result=$RESULT" >> "$GITHUB_OUTPUT"
 
       - name: Post mentor review request
-        if: |
-          steps.cmd.outputs.is_assign != 'true' &&
-          steps.cmd.outputs.is_approve != 'true' &&
-          github.event.issue.user.login != github.repository_owner &&
-          !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
+        if: steps.cmd.outputs.should_review == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           SELECTED_MENTORS_JSON: ${{ steps.mentor_select.outputs.result }}

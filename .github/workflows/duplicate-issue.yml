@@ -7,6 +7,7 @@ on:
 
 permissions:
   issues: write
+  contents: read
 
 concurrency:
   group: duplicate-issue-${{ github.event.issue.number }}
@@ -22,7 +23,9 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Analyze Issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
@@ -49,8 +52,23 @@ jobs:
               const fs = require('fs');
               const mentorsPath = '.github/reviewers/gssoc-mentors.json';
               if (fs.existsSync(mentorsPath)) {
-                const mentorsData = JSON.parse(fs.readFileSync(mentorsPath, 'utf8'));
-                const mentors = new Set((mentorsData.reviewers || []).map(m => m.toLowerCase()));
+                let mentorsData;
+                try {
+                  mentorsData = JSON.parse(fs.readFileSync(mentorsPath, 'utf8'));
+                } catch (parseErr) {
+                  core.warning(`Failed to parse mentors JSON: ${parseErr.message}`);
+                  return;
+                }
+                const reviewers = mentorsData.reviewers || [];
+                const mentors = new Set(
+                  reviewers
+                    .map(m => {
+                      if (typeof m === 'string') return m.toLowerCase();
+                      if (m && typeof m === 'object' && typeof m.login === 'string') return m.login.toLowerCase();
+                      return null;
+                    })
+                    .filter(Boolean)
+                );
                 if (mentors.has(username.toLowerCase())) {
                   core.info('Skipping mentor issue');
                   return;
@@ -176,6 +194,10 @@ jobs:
 
               const setB =
                 new Set(tokenize(b));
+
+              if (setA.size === 0 && setB.size === 0) {
+                return 1.0;
+              }
 
               if (
                 setA.size === 0 ||

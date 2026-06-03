@@ -736,7 +736,7 @@ footer a:hover{text-decoration:underline}
 }
 .recent-card:hover {
   border-color: var(--orange-border);
-  box-shadow: 0 6px 24px rgba(244, 107, 14, .12);
+  box-shadow: 0 6px 24px rgb(244 107 14 / 12%);
   transform: translateY(-3px);
 }
 .recent-card:hover::before {
@@ -758,7 +758,7 @@ footer a:hover{text-decoration:underline}
   flex-shrink: 0;
 }
 [data-theme="dark"] .recent-logo {
-  border-color: rgba(255,255,255,.12);
+  border-color: rgb(255 255 255 / 12%);
 }
 .recent-logo-placeholder {
   width: 32px;

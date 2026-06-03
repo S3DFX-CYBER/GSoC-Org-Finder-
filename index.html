@@ -2730,7 +2730,7 @@ sections.forEach(sectionId => {
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}"alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>

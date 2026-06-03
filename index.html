@@ -3688,6 +3688,9 @@ if(org.ideas){
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
+
+    if (typeof clearAllLanguages === 'function') clearAllLanguages();
+    if (typeof activeChip !== 'undefined') activeChip = '';
   
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -3697,6 +3700,7 @@ if(org.ideas){
 
     filteredOrgs = [...ORGS];
     renderOrgs(true);
+    applyFilters(); // to reset URL params
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {
@@ -4431,6 +4435,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+    return;
+}
   const active = document.activeElement;
 if (
     active &&
@@ -4492,43 +4499,11 @@ if (
     }
 
     // Reset filters
-    if(e.key.toLowerCase()==='r'){
+if(e.key.toLowerCase()==='r'){
     e.preventDefault();
-
-    document.getElementById('searchInput').value='';
-
-    document.getElementById('categoryFilter').value='all';
-    document.getElementById('complexityFilter').value='all';
-
-    const sortSelect = document.getElementById('sortSelect');
-
-if(sortSelect){
-    sortSelect.value = 'alpha';
+    window.clearAllFilters();
+    return;
 }
-    if(typeof selectedLanguages!=="undefined"){
-        selectedLanguages.clear();
-    }
-
-    if(typeof pills!=="undefined"){
-        pills.clear();
-    }
-
-    if(typeof activeChip!=="undefined"){
-        activeChip = '';
-    }
-
-    applyFilters();
-}
-
-    // Focus search
-    if(e.key==='/'){
-        e.preventDefault();
-
-        document
-        .getElementById('searchInput')
-        ?.focus();
-    }
-
 });
 
   window.closeHelpModal = closeHelpModal;
@@ -4540,8 +4515,6 @@ if(sortSelect){
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
-
-<script src="src/js/app.js"></script>
 <script>
 const logoLink = document.getElementById("logoLink");
 

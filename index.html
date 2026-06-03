@@ -581,10 +581,19 @@
         Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
-      <div class="relative max-w-xl mb-6 sm:mb-8">
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <input id="hero-search" type="text" placeholder="Search organization names..." class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
-      </div>
+<div class="flex flex-col sm:flex-row gap-3 max-w-xl mb-6 sm:mb-8">
+  <div class="relative w-full">
+    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
+    <input id="hero-search" type="text" placeholder="Search organization names..."
+           onkeydown="if(event.key === 'Enter') { event.preventDefault(); const target = document.getElementById('orgs') || document.getElementById('orgGrid'); if(target) target.scrollIntoView({ behavior: 'smooth' }); }"
+           class="w-full bg-white border-2 border-zinc-100 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all shadow-lg shadow-zinc-200/50" />
+  </div>
+  <button id="searchScrollBtn" type="button"
+          onclick="const target = document.getElementById('orgs') || document.getElementById('orgGrid'); if(target) target.scrollIntoView({ behavior: 'smooth' });"
+          class="bg-primary text-white px-8 py-3 sm:py-4 rounded-2xl font-bold hover:opacity-90 transition-all flex-shrink-0 shadow-lg shadow-primary/30">
+    Search
+  </button>
+</div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
         <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">

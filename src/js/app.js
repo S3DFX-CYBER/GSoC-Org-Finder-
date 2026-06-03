@@ -1342,15 +1342,22 @@ requestAnimationFrame(()=>{
 // Sync hero search with hidden search input and initialize on load
 const heroSearch = document.getElementById('hero-search');
 if (heroSearch) {
-  heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-  heroSearch.addEventListener('input', (e) => {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-      searchInput.value = e.target.value;
-      applyFilters();
-    }
-  });
+    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    
+    // Live filter update as user types
+    heroSearch.addEventListener('input', (e) => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.value = e.target.value;
+            applyFilters();
+        }
+    });
 }
+
+// Event listeners for selects
+['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => applyFilters());
+});
 
 // Event listeners for selects
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {

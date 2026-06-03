@@ -76,11 +76,11 @@ Built with a responsive and lightweight architecture, the platform delivers a se
 
 ---
 
-# 🚀 Features
+# 🎯 Features
 
 <div align="center">
 
-## 🚀 Features at a Glance
+## 🎯 Features at a Glance
 
 | ✨ Feature | 📖 Description |
 |-----------|----------------|

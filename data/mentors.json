@@ -1245,16 +1245,44 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "FFmpeg": {
-    "org": "FFmpeg",
-    "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"FFmpeg": {
+  "org": "FFmpeg",
+  "ideasUrl": "https://trac.ffmpeg.org/wiki/SponsoringPrograms/GSoC/2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#ffmpeg-devel",
+      "label": "#ffmpeg-devel on Libera.Chat"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Michael Niedermayer",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Reynaldo Verdejo",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Thilo Borgmann",
+      "github": "",
+      "githubUrl": ""
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://lists.ffmpeg.org/mailman3/lists/ffmpeg-devel.ffmpeg.org/",
+      "label": "ffmpeg-devel@ffmpeg.org"
+    }
+  ],
+  "tip": "Read the developer documentation and introduce yourself on the mailing list before applying.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "FLARE": {
     "org": "FLARE",
     "ideasUrl": "https://github.com/mandiant/flare-vm/wiki/GSoC-2026",
@@ -1594,17 +1622,68 @@
     "org": "GNU Project",
     "ideasUrl": "https://www.gnu.org/software/soc-projects/ideas-2026.html",
     "channels": [],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Zoltán Kovács (GNU XaoS, GNU Aris)",
+        "github": "kovzol",
+        "githubUrl": "https://github.com/kovzol"
+      },
+      {
+        "name": "Simon Sobisch (GnuCOBOL)",
+        "github": "GitMensch",
+        "githubUrl": "https://github.com/GitMensch"
+      },
+      {
+        "name": "Nicolas Berthier (GnuCOBOL)",
+        "github": "nberth",
+        "githubUrl": "https://github.com/nberth"
+      },
+      {
+        "name": "Rocky Bernstein (libcdio)",
+        "github": "rocky",
+        "githubUrl": "https://github.com/rocky"
+      },
+      {
+        "name": "Sean O'Brien (GNU Boot)",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Adrien Bourmault / neox (GNU Boot)",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
-        "url": "http://lists.gnu.org/mailman/listinfo/summer-of-code/",
-        "label": "GNU Project Mailing list"
+        "url": "mailto:summer-of-code@gnu.org",
+        "label": "summer-of-code@gnu.org — GNU GSoC umbrella discussion"
+      },
+      {
+        "type": "Mailing list",
+        "url": "https://lists.gnu.org/mailman/listinfo/summer-of-code",
+        "label": "summer-of-code list subscription/archive"
+      },
+      {
+        "type": "Mailing list",
+        "url": "mailto:gnucobol-dev@gnu.org",
+        "label": "gnucobol-dev@gnu.org — GnuCOBOL sub-project"
+      },
+      {
+        "type": "Mailing list",
+        "url": "mailto:bug-aris@gnu.org",
+        "label": "bug-aris@gnu.org — GNU Aris sub-project"
+      },
+      {
+        "type": "Mailing list",
+        "url": "mailto:libcdio-devel@gnu.org",
+        "label": "libcdio-devel@gnu.org — Libcdio sub-project"
       }
     ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
+    "tip": "Email summer-of-code@gnu.org to introduce yourself. Sub-project contacts: GnuCOBOL → gnucobol-dev@gnu.org; GNU Aris → bug-aris@gnu.org; Libcdio → libcdio-devel@gnu.org; GNU XaoS → github.com/xaos-project; GNU Boot → git.savannah.gnu.org/cgit/gnuboot.git.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-06-02T00:00:00.000Z"
   },
   "GNU Radio": {
     "org": "GNU Radio",
@@ -2699,12 +2778,50 @@
   "Open Robotics": {
     "org": "Open Robotics",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/open-robotics",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://openrobotics.zulipchat.com/",
+        "label": "Open Robotics Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Kimberly N. McGuire",
+        "github": "knmcguire",
+        "githubUrl": "https://github.com/knmcguire"
+      },
+      {
+        "name": "Skyler Medeiros",
+        "github": "skyegalaxy",
+        "githubUrl": "https://github.com/skyegalaxy"
+      },
+      {
+        "name": "Grey",
+        "github": "mxgrey",
+        "githubUrl": "https://github.com/mxgrey"
+      },
+      {
+        "name": "Scott K Logan",
+        "github": "cottsay",
+        "githubUrl": "https://github.com/cottsay"
+      },
+      {
+        "name": "Sai Kishor Kothakota",
+        "github": "saikishor",
+        "githubUrl": "https://github.com/saikishor"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:gsoc@openrobotics.org",
+        "label": "GSoC Contact Email"
+      }
+    ],
+    "tip": "Join the Open Robotics Zulip community, introduce yourself, and discuss your interests publicly before sending mentor inquiries.",
+    "status": "ok",
+    "lastFetched": "2026-05-28T00:00:00.000Z"
   },
   "Open Science Initiative for Perfusion Imaging": {
     "org": "Open Science Initiative for Perfusion Imaging",

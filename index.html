@@ -3724,7 +3724,6 @@ if(org.ideas){
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
       
       // Track search badge when user types in hero search
       const query = e.target.value.trim();
@@ -4384,6 +4383,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+<script src="src/js/scroll-to-top.js"></script>
 
 <script>
 const logoLink = document.getElementById("logoLink");

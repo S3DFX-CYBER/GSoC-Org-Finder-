@@ -2835,12 +2835,30 @@ btn.__orgListenerAttached = true;
   if (!t) {
     t = document.createElement('div');
     t.id = 'compareToast';
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;transition:opacity .3s;white-space:nowrap';
+    t.style.cssText = `
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background:var(--ink);
+      color:var(--bg);
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 99999;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      pointer-events: none;
+    `;
     document.body.appendChild(t);
   }
   t.textContent = msg;
   t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 2200);
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(() => t.style.opacity = '0', 2200);
   }
 
 

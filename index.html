@@ -3385,28 +3385,53 @@ btn.__orgListenerAttached = true;
       return;
     }
 
-    const input = document.createElement('textarea');
-    input.value = text;
-    input.setAttribute('readonly', '');
-    input.style.position = 'fixed';
-    input.style.left = '-9999px';
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand('copy');
-    input.remove();
+   const input = document.createElement('textarea');
+input.value = text;
+input.setAttribute('readonly', '');
+input.style.position = 'fixed';
+input.style.left = '-9999px';
+document.body.appendChild(input);
+input.select();
+
+const copied = document.execCommand('copy');
+input.remove();
+
+if (!copied) {
+  throw new Error('Failed to copy text');
+}
   }
 
   async function shareBookmarks() {
-    const url = new URL(location.href);
-    url.searchParams.set('bookmarks', encodeSharedBookmarks([...bookmarkedSet]));
-    try {
-      await copyText(url.toString());
-      showToast(bookmarkedSet.size ? 'Share link copied to clipboard.' : 'Share link copied for an empty watchlist.', 'success');
-    } catch (err) {
-      console.warn('Failed to copy share link:', err);
-      showToast('Could not copy the share link. Please try again.', 'error');
-    }
+  const url = new URL(location.href);
+  url.searchParams.set('bookmarks', encodeSharedBookmarks([...bookmarkedSet]));
+
+  const shareUrl = url.toString();
+
+  // Prevent extremely long URLs
+  if (shareUrl.length > 2000) {
+    showToast(
+      'Watchlist is too large to share via URL. Please export it instead.',
+      'warning'
+    );
+    return;
   }
+
+  try {
+    await copyText(shareUrl);
+    showToast(
+      bookmarkedSet.size
+        ? 'Share link copied to clipboard.'
+        : 'Share link copied for an empty watchlist.',
+      'success'
+    );
+  } catch (err) {
+    console.warn('Failed to copy share link:', err);
+    showToast(
+      'Could not copy the share link. Please try again.',
+      'error'
+    );
+  }
+}
 
   function loadSharedBookmarks() {
     const url = new URL(location.href);

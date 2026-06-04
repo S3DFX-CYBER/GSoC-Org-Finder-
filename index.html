@@ -1513,7 +1513,7 @@ if (name.length < 3) {
   return;
 }
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
 
 if (!emailPattern.test(email)) {
   alert("Please enter a valid email address.");

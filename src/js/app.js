@@ -890,7 +890,7 @@ function initFooter(){
 
     const b = document.getElementById('backToTop');
     if(b){
-      function showHide(){ if(window.scrollY>300) b.classList.remove('hidden'); else b.classList.add('hidden'); }
+      const showHide = () => { if(window.scrollY>300) b.classList.remove('hidden'); else b.classList.add('hidden'); };
       window.addEventListener('scroll', showHide, {passive:true});
       b.addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
       showHide();

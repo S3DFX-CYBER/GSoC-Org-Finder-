@@ -152,6 +152,66 @@ function validateIdeasUrl(ideasUrl) {
 }
 
 // ══════════════════════════════════════════════
+// TOP 3 POPULAR PROJECTS
+// ══════════════════════════════════════════════
+function renderTop3(){
+  const grid = document.getElementById('top3Grid');
+  if(!grid) return;
+
+  // Get orgs that have GitHub stats fetched
+  const withStats = ORGS.filter(o => o._gh && typeof o._gh.stars === 'number');
+
+  if(!withStats.length){
+    grid.innerHTML = `<div class="col-span-full text-center py-8 text-zinc-400 text-sm">
+      Fetch GitHub stats to see top projects — click <strong>Fetch All Stats</strong> in the org directory.
+    </div>`;
+    return;
+  }
+
+  // Sort by stars descending, take top 3
+  const top3 = [...withStats].sort((a,b) => b._gh.stars - a._gh.stars).slice(0,3);
+
+  const medals = ['🥇','🥈','🥉'];
+  const colors = ['border-yellow-300','border-zinc-300','border-orange-300'];
+
+  grid.innerHTML = top3.map((o, i) => {
+    const owner = githubOwnerFromValue(o.github);
+    const logo = owner ? `https://github.com/${owner}.png?size=80` : '';
+    const stars = fmt(o._gh.stars);
+    const forks = fmt(o._gh.forks);
+    const gfi   = o._gh.gfi !== null && o._gh.gfi !== undefined ? fmt(o._gh.gfi) : '—';
+    const act   = o._gh.activity || '—';
+
+    return `<div class="bg-white dark:bg-[#18181b] rounded-2xl p-6 border-2 ${colors[i]} shadow-sm hover:shadow-lg transition-all cursor-pointer group"
+      onclick="openModal(${ORGS.indexOf(o)})">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-2xl">${medals[i]}</span>
+        ${logo ? `<img src="${escapeHtml(logo)}" alt="${escapeHtml(o.name)}" class="w-10 h-10 rounded-xl object-contain bg-zinc-50" onerror="imgErr(this)">` : ''}
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">${escapeHtml(o.name)}</p>
+          <span class="text-[10px] font-label uppercase tracking-wider text-primary">${escapeHtml(catLabel(o.cat))}</span>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-4">${escapeHtml(o.desc)}</p>
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2">
+          <p class="text-xs font-bold text-zinc-900 dark:text-zinc-100">⭐ ${escapeHtml(stars)}</p>
+          <p class="text-[10px] text-zinc-400">Stars</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2">
+          <p class="text-xs font-bold text-zinc-900 dark:text-zinc-100">🍴 ${escapeHtml(forks)}</p>
+          <p class="text-[10px] text-zinc-400">Forks</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2">
+          <p class="text-xs font-bold text-zinc-900 dark:text-zinc-100">🟢 ${escapeHtml(gfi)}</p>
+          <p class="text-[10px] text-zinc-400">GFI</p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
 // TRENDING
 // ══════════════════════════════════════════════
 function renderTrending(){
@@ -323,8 +383,8 @@ async function fetchAll(){
       await new Promise(r=>setTimeout(r,85));
     }
   }
-  spin.style.display='none';btn.disabled=false;txt.textContent='✓ Done';fetching=false;
-  applyFilters();updateStats();
+ spin.style.display='none';btn.disabled=false;txt.textContent='✓ Done';fetching=false;
+  applyFilters();updateStats();renderTop3();
 }
 
 async function fetchModalGH(){
@@ -1389,6 +1449,7 @@ requestAnimationFrame(()=>{
   }
   applyFilters();
   renderTrending();
+  renderTop3();
   loadCachedIssues();
   checkAPI();
 });

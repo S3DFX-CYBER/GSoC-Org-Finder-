@@ -388,7 +388,7 @@
     html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #ai-recommender, #contact {
+    #timeline, #orgs, #guide, #watchlist, #tracker, #issues, #mentors, #ai-recommender, #contact {
       scroll-margin-top: 80px;
     }
 
@@ -4750,10 +4750,10 @@ if (logoLink) {
 
     Object.values(columns).forEach(col => { if (col) col.innerHTML = ''; });
 
-    Object.keys(globalThis.trackedOrgs).forEach(orgName => {
+    for (const orgName of Object.keys(globalThis.trackedOrgs)) {
       const data = globalThis.trackedOrgs[orgName];
       const col = columns[data.status];
-      if (!col) return;
+      if (!col) continue;
       counts[data.status]++;
 
       const card = document.createElement('div');
@@ -4761,7 +4761,7 @@ if (logoLink) {
       card.draggable = true;
       card.dataset.org = orgName;
 
-      const orgObj = typeof ORGS !== 'undefined' ? ORGS.find(o => o.name === orgName) : null;
+      const orgObj = typeof ORGS === 'undefined' ? null : ORGS.find(o => o.name === orgName);
       const owner = (orgObj && typeof githubOwnerFromValue === 'function') ? githubOwnerFromValue(orgObj.github) : '';
       const logoUrl = owner ? `https://github.com/${owner}.png?size=48` : '';
 
@@ -4771,7 +4771,7 @@ if (logoLink) {
             ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" class="w-6 h-6 rounded-md object-contain" alt="logo"/>` : ''}
             <h4 class="font-bold text-sm text-zinc-900 truncate max-w-[120px]" title="${escapeHtml(orgName)}">${escapeHtml(orgName)}</h4>
           </div>
-          <button class="remove-track-btn opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker">
+          <button class="remove-track-btn opacity-0 group-hover:opacity-100 focus:opacity-100 focus-within:opacity-100 text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
             <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
@@ -4822,12 +4822,12 @@ if (logoLink) {
       });
 
       col.appendChild(card);
-    });
+    }
 
-    Object.keys(counts).forEach(status => {
+    for (const status of Object.keys(counts)) {
       const countEl = document.querySelector(`.kanban-column[data-status="${status}"] .kanban-count`);
       if (countEl) countEl.textContent = counts[status];
-    });
+    }
   };
 
   document.querySelectorAll('.kanban-column').forEach(col => {
@@ -4891,16 +4891,16 @@ if (logoLink) {
     if (trackBtn && trackBtn.id !== 'modalTrackBtn') {
       e.preventDefault();
       e.stopPropagation();
-      const orgName = trackBtn.getAttribute('data-track-btn-org');
+      const orgName = trackBtn.dataset.trackBtnOrg;
       globalThis.toggleTracker(orgName);
     }
   });
 
   document.addEventListener('DOMContentLoaded', () => {
     globalThis.renderTracker();
-    Object.keys(globalThis.trackedOrgs).forEach(orgName => {
+    for (const orgName of Object.keys(globalThis.trackedOrgs)) {
       updateTrackerButtons(orgName);
-    });
+    }
   });
 })();
 </script>

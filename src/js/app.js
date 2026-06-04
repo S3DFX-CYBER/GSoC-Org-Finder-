@@ -1408,10 +1408,6 @@ if (heroSearch) {
     });
 }
 
-// Event listeners for selects
-['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', () => applyFilters());
-});
 
 // Event listeners for selects
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {

@@ -1697,12 +1697,40 @@
   },
   "gprMax": {
     "org": "gprMax",
-    "ideasUrl": "https://github.com/gprMax/gprMax/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "ideasUrl": "https://github.com/gprMax/GSoC/blob/main/project-ideas-2026.md",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://gprmax.zulipchat.com/",
+        "label": "gprMax Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Craig Warren",
+        "github": "craig-warren",
+        "githubUrl": "https://github.com/craig-warren"
+      },
+      {
+        "name": "Antonis Giannopoulos",
+        "github": "agianno",
+        "githubUrl": "https://github.com/agianno"
+      },
+      {
+        "name": "Zach Wilson",
+        "github": "eczachly",
+        "githubUrl": "https://github.com/eczachly"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/gprmax",
+        "label": "gprMax Mailing list"
+      }
+    ],
+    "tip": "Introduce yourself before starting chat on Zulip.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
 "GRAME": {
@@ -3599,12 +3627,29 @@
   },
   "St. Jude Children's Research Hospital": {
     "org": "St. Jude Children's Research Hospital",
-    "ideasUrl": "https://github.com/stjudecloud/gsoc",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://gist.github.com/claymcleod/ee8e62831a4975cba2032d888bb52080",
+    "channels": [
+      {
+        "type": "email",
+        "url": "https://gist.github.com/claymcleod/ee8e62831a4975cba2032d888bb52080",
+        "label": "View GSoC 2026 Ideas"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Clay McLeod",
+        "github": "claymcleod",
+        "githubUrl": "https://github.com/claymcleod"
+      },
+      {
+        "name": "Ari Frantz",
+        "github": "a-frantz",
+        "githubUrl": "https://github.com/a-frantz"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
+    "tip": "Email clay.mcleod@stjude.org and stephanie.sandor@stjude.org with [GSoC] in the subject line. St. Jude works on Rust-based bioinformatics tooling — Sprocket (WDL workflow engine), omics (genomics primitives), and crankshaft (execution engine). Projects involve Rust, WDL, Python bindings (PyO3), SIMD, and genomic data structures.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "stdlib": {
@@ -3935,12 +3980,29 @@
   },
   "Synfig": {
     "org": "Synfig",
-    "ideasUrl": "https://github.com/synfig/synfig/wiki/GSoC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/synfig/synfig-docs-dev/blob/master/docs/gsoc/2026/ideas.rst",
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forums.synfig.org/t/google-summer-of-code-2026/16911",
+        "label": "Synfig Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Mohamed Adham",
+        "github": "mohamedAdhamc",
+        "githubUrl": "https://github.com/mohamedAdhamc"
+      },
+      {
+        "name": "Rodolfo Ribeiro",
+        "github": "rodolforg",
+        "githubUrl": "https://github.com/rodolforg"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Check the forum for regular updates",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "TARDIS RT Collaboration": {

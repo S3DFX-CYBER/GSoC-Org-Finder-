@@ -755,3 +755,11 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+
+/* -- TRACKER (KANBAN) -- */
+.kanban-board { min-height: 400px; }
+.kanban-column { transition: background-color 0.2s ease; }
+.kanban-card { transition: all 0.2s ease; }
+.kanban-card.opacity-50 { opacity: 0.5; }
+.kanban-dropzone { min-height: 150px; }
+

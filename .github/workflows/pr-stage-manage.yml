@@ -16,7 +16,7 @@ on:
 permissions:
   pull-requests: write
   issues: write
-  contents: write
+  contents: read
   metadata: write
 
 concurrency:

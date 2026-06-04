@@ -2,6 +2,25 @@
 
 > **Find your perfect Google Summer of Code 2026 organization — filtered by tech stack, domain, competition level, and live GitHub activity.**
 <img width="1896" height="800" alt="image" src="https://github.com/user-attachments/assets/414e4b55-ec50-4290-97a6-678f23e7c96e" />
+## Find your perfect Google Summer of Code 2026 organization
+
+Discover organizations based on **tech stack, domains, competition level, GitHub activity, and beginner-friendly issues** — all in one place.
+
+<p align="center">
+  <a href="https://findmygsoc.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Project-blue?style=for-the-badge" alt="Live Demo badge">
+  </a>
+  
+  <a href="https://discord.gg/Kwj76sCzp">
+    <img src="https://img.shields.io/badge/💬_Discord-Join_Community-5865F2?style=for-the-badge" alt = "Discord badge">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Stars"/>
+  <img src="https://img.shields.io/github/forks/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Forks"/>
+  <img src="https://img.shields.io/github/issues/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub Issues"/>
+  <img src="https://img.shields.io/github/license/S3DFX-CYBER/GSoC-Org-Finder-?style=flat-square" alt = "GitHub License"/>
 
 **Live site → [https://findmygsoc.vercel.app/](https://findmygsoc.vercel.app/)**
 

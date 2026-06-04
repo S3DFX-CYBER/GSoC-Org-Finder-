@@ -50,7 +50,7 @@ Comment on the issue with:
 /assign gssoc
 ```
 
-> Do **NOT** self-assign issues using the GitHub UI.
+> Do **NOT** self-assign issues using the GitHub UI.  
 > Assignments are handled only through repository automation.
 
 ---

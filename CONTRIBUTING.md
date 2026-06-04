@@ -4,11 +4,11 @@
 
 If you are contributing under a specific program, refer to the dedicated guide for your track:
 
-| Track | Guide |
- |-------|-------|
- | GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |
- | GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) |
- | NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) |
+| Track | Guide | 
+ |-------|-------| 
+ | GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) | 
+ | GSSoC'26 Mentors | [GSSoC Mentor Guide](docs/GSSOC_MENTOR_GUIDE.md) | 
+ | NSoC'26 Contributors | [NSoC Guide](docs/NSOC_GUIDE.md) | 
  | General Contributors | [General Contributor Guide](docs/GENERAL_CONTRIBUTOR_GUIDE.md) |
 
 
@@ -152,7 +152,7 @@ The triage system:
 
 This repository uses a **mentor-assisted assignment pipeline**.
 
-> Assignments are **NOT** handled manually through the GitHub UI.
+> Assignments are **NOT** handled manually through the GitHub UI.  
 > All issue assignment requests are processed through repository automation.
 
 ### Requesting Assignment

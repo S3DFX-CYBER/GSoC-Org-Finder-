@@ -890,6 +890,7 @@
     /* Scroll offset for fixed header */
     #timeline,
     #orgs,
+    #ai-recommender,
     #guide,
     #watchlist,
     #issues,
@@ -1721,7 +1722,7 @@
           <span class="material-symbols-outlined text-zinc-600">menu</span>
         </button>
 
-        <a href="#timeline" class="flex items-center gap-2" id="logoLink">
+        <a href="#orgs" class="flex items-center gap-2" id="logoLink">
           <div
             class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
             <span class="text-white font-bold text-sm">G</span>
@@ -1732,10 +1733,12 @@
             <span class="text-primary italic">Org Finder</span>
           </span>
         </a>
-        <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-          <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors"
+           <!-- Keep `Organizations` as the default active nav: footer formatting
+             change should not alter primary entry point or UX. -->
+           <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors"
             href="#timeline" data-section="timeline">Timeline</a>
-          <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs"
+          <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#orgs"
             data-section="orgs">Organizations</a>
           <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender"
             data-section="ai-recommender">AI Recommender</a>
@@ -1819,14 +1822,16 @@
       </div>
 
       <div class="p-4 space-y-1">
-        <a href="#timeline" onclick="setActiveMenu(this)"
+           <!-- Mobile menu: `Organizations` is pre-marked active for consistency
+             with desktop default. -->
+           <a href="#timeline" onclick="setActiveMenu(this)"
           class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
           data-section="timeline">
           <span class="material-symbols-outlined text-lg">schedule</span>
           Timeline
         </a>
         <a href="#orgs" onclick="setActiveMenu(this)"
-          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors"
+          class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-orange-600 bg-orange-50 font-bold text-sm transition-colors"
           data-section="orgs">
           <span class="material-symbols-outlined text-lg">business</span>
           Organizations

@@ -867,6 +867,37 @@ function updateStats(){
   document.getElementById('visitorStat').textContent=AN.todayVisits();
 }
 
+// Initialize footer stats and Back-to-Top behavior
+function initFooter(){
+  try{
+    const orgCount = (window.ORGS && Array.isArray(window.ORGS)) ? window.ORGS.length : null;
+    if(orgCount!==null){ const i=document.getElementById('orgsStatOrgs'); if(i) i.textContent = orgCount; }
+
+    fetch('data/issues.json').then(r=>r.ok? r.json():null).then(d=>{
+      if(d && typeof d.total_issues!=='undefined'){
+        const i2=document.getElementById('orgsStatIssues'); if(i2) i2.textContent = d.total_issues;
+      }
+      if(d && typeof d.source_org_count!=='undefined' && !orgCount){ const io=document.getElementById('orgsStatOrgs'); if(io) io.textContent = d.source_org_count; }
+    }).catch(()=>{});
+
+    fetch('data/mentors.json').then(r=>r.ok? r.json():null).then(d=>{
+      if(!d) return;
+      const contribCount = Object.values(d).reduce((acc,entry)=>acc + (Array.isArray(entry.mentors)? entry.mentors.length:0),0);
+      const ic=document.getElementById('orgsStatContribs'); if(ic) ic.textContent = contribCount;
+    }).catch(()=>{});
+
+    const b = document.getElementById('backToTop');
+    if(b){
+      function showHide(){ if(window.scrollY>300) b.classList.remove('hidden'); else b.classList.add('hidden'); }
+      window.addEventListener('scroll', showHide, {passive:true});
+      b.addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
+      showHide();
+    }
+  }catch(e){console.warn('Footer init error',e);}  
+}
+
+globalThis.initFooter = initFooter;
+
 // ══════════════════════════════════════════════
 // KEYBOARD NAVIGATION
 // ══════════════════════════════════════════════

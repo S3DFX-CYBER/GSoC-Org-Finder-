@@ -112,44 +112,43 @@ AN.trackVisit();
 // URL VALIDATION & SANITIZATION
 // ══════════════════════════════════════════════
 /**
- * Validates and sanitizes project ideas URLs for safe display
- * Ensures only http/https protocols are allowed to prevent XSS attacks
- * Automatically prepends https:// if no protocol is specified
- * 
+ * Generic URL validator — ensures only http/https protocols are allowed.
+ * Does NOT auto-prepend a protocol. The caller must pass a fully-formed URL.
+ *
+ * @param {string} url - A fully-formed URL string to validate
+ * @returns {string|null} - The trimmed URL if valid, null otherwise
+ */
+function validateUrl(url) {
+  if (!url || !url.trim()) return null;
+  try {
+    const trimmed = url.trim();
+    const urlObj = new URL(trimmed);
+    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+      return trimmed;
+    }
+    console.warn('Rejected non-HTTP(S) URL:', url);
+    return null;
+  } catch (e) {
+    console.warn('Invalid URL format:', url, e);
+    return null;
+  }
+}
+
+/**
+ * Validates and sanitizes project ideas URLs for safe display.
+ * Automatically prepends https:// if no protocol is specified.
+ * Delegates to validateUrl() for the actual protocol check.
+ *
  * @param {string} ideasUrl - The raw URL string from organization data
  * @returns {string|null} - Sanitized URL if valid, null otherwise
  */
 function validateIdeasUrl(ideasUrl) {
-  // Return null for empty or whitespace-only strings
-  if (!ideasUrl || !ideasUrl.trim()) {
-    return null;
+  if (!ideasUrl || !ideasUrl.trim()) return null;
+  let url = ideasUrl.trim();
+  if (!url.includes('://')) {
+    url = 'https://' + url;
   }
-  
-  try {
-    let url = ideasUrl.trim();
-    
-    // Prepend https:// only if no protocol scheme is present
-    // This prevents converting malicious URLs like javascript:alert(1) to https://javascript:alert(1)
-    if (!url.includes('://')) {
-      url = 'https://' + url;
-    }
-    
-    // Parse and validate URL
-    const urlObj = new URL(url);
-    
-    // Security: Only allow http and https protocols
-    // This prevents javascript:, data:, file:, and other potentially dangerous schemes
-    if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
-      return url;
-    }
-    
-    console.warn('Rejected non-HTTP(S) URL:', ideasUrl);
-    return null;
-  } catch (e) {
-    // Invalid URL format
-    console.warn('Invalid ideas URL format:', ideasUrl, e);
-    return null;
-  }
+  return validateUrl(url);
 }
 
 // ══════════════════════════════════════════════
@@ -790,7 +789,16 @@ function renderGrid(orgs){
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+    const orgTags = o.tags || [];
+    let tags = '';
+    if (orgTags.length > 3) {
+      const visible = orgTags.slice(0, 3);
+      const hidden = orgTags.slice(3);
+      tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
+             `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
+    } else {
+      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    }
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
@@ -1317,8 +1325,8 @@ function renderIssueCard(iss){
   const gfiNames=['good first issue','good-first-issue'];
   const otherLabels=iss.labels.filter(l=>!gfiNames.includes(String(l).toLowerCase())).slice(0,2)
     .map(l=>`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${escapeHtml(l)}</span>`).join('');
-  const safeHref = validateIdeasUrl(iss.url);
-  const imgSrc = validateIdeasUrl(iss.logo);
+  const safeHref = validateUrl(iss.url);
+  const imgSrc = validateUrl(iss.logo);
   const hrefStart = safeHref ? `<a class="issue-card" href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">` : `<div class="issue-card">`;
   const hrefEnd = safeHref ? '</a>' : '</div>';
   return `${hrefStart}

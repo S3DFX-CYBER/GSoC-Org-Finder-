@@ -3673,7 +3673,9 @@ btn.__orgListenerAttached = true;
       column.addEventListener('drop', (e) => {
         e.preventDefault();
         column.classList.remove('drag-over');
-        if (trackerDragName) setTrackerStatus(trackerDragName, stage.key);
+        const draggedName = e.dataTransfer?.getData('text/plain') || trackerDragName;
+        if (draggedName) setTrackerStatus(draggedName, stage.key);
+        trackerDragName = null;
       });
 
       board.appendChild(column);
@@ -3682,7 +3684,14 @@ btn.__orgListenerAttached = true;
     // ── Wire per-card controls ────────────────────────────────────────────────
     board.querySelectorAll('.tracker-card').forEach(card => {
       const name = card.dataset.trackerOrg;
-      card.addEventListener('dragstart', () => { trackerDragName = name; card.classList.add('dragging'); });
+      card.addEventListener('dragstart', (e) => {
+        trackerDragName = name;
+        card.classList.add('dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', name);
+        }
+      });
       card.addEventListener('dragend',   () => { trackerDragName = null; card.classList.remove('dragging'); });
     });
     board.querySelectorAll('[data-tracker-status]').forEach(sel => {

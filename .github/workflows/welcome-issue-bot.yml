@@ -15,11 +15,12 @@ concurrency:
 
 jobs:
   welcome:
+    if: github.event.issue.pull_request == null && github.event.issue.user.type != 'Bot'
     runs-on: ubuntu-latest
 
     steps:
       - name: Welcome contributor
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
 
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -28,8 +29,6 @@ jobs:
             const issue = context.payload.issue;
 
             if (!issue) return;
-            if (issue.pull_request) return;
-            if (issue.user.type === 'Bot') return;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
@@ -84,50 +83,92 @@ jobs:
               ``,
               `| Program | Guide |`,
               `|---|---|`,
-              `| GSSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
+              `| GSSoC'26 Contributors | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_CONTRIBUTOR_GUIDE.md |`,
+              `| GSSoC'26 Mentors | https://github.com/${owner}/${repo}/blob/main/docs/GSSOC_MENTOR_GUIDE.md |`,
               `| NSoC'26 | https://github.com/${owner}/${repo}/blob/main/docs/NSOC_GUIDE.md |`,
-              `| General | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
+              `| General Contributors | https://github.com/${owner}/${repo}/blob/main/docs/GENERAL_CONTRIBUTOR_GUIDE.md |`,
               ``,
               `---`,
               ``,
               `# 🧭 Assignment Flow`,
               ``,
-              `After triage completes, request assignment using:`,
+              `After triage completes and the issue is eligible, request assignment using:`,
               ``,
               '```',
-              `/assign gssoc`,
-              `/assign nsoc`,
+              `/assign`,
               '```',
               ``,
-              `Depending on issue difficulty and verification status,`,
-              `assignment may be:`,
+              `The assignment workflow will automatically:`,
               ``,
-              `- automatic`,
-              `- mentor-approved`,
-              `- maintainer-reviewed`,
+              `- validate issue eligibility`,
+              `- check assignment availability`,
+              `- select 2 active mentors`,
+              `- queue your assignment request`,
+              `- ping mentors for approval`,
               ``,
-              `Two mentors may be requested automatically for validation.`,
+              `Mentors have a 24-hour approval window.`,
+              `If mentors do not respond in time, the system automatically rotates to new active mentors.`,
+              ``,
+              `Once approved, you will be officially assigned to the issue.`,
               ``,
               `---`,
               ``,
-              `# ⚠️ Important`,
+              `# 🔍 Pull Request Review Pipeline`,
               ``,
-              `- Do NOT start work before assignment confirmation`,
+              `All pull requests go through a 3-stage governance pipeline:`,
+              ``,
+              `1. Automated validation`,
+              `2. Mentor review`,
+              `3. Maintainer approval`,
+              ``,
+              `Mentor reviewers are selected automatically based on mentor activity and review quality scores.`,
+              ``,
+              `---`,
+              ``,
+              `# ✍️ DCO Sign-off Required`,
+              ``,
+              `All commits must include a Signed-off-by line.`,
+              ``,
+              `Use:`,
+              ``,
+              '```bash',
+              'git commit -s -m "fix: your message"',
+              '```',
+              ``,
+              `For existing commits:`,
+              ``,
+              '```bash',
+              'git rebase --signoff HEAD~<n>',
+              'git push --force-with-lease',
+              '```',
+              ``,
+              `---`,
+              ``,
+              `# ⚠️ Important Rules`,
+              ``,
+              `- Do NOT start work before assignment approval`,
               `- Maximum active assignments: 3`,
               `- Low-quality or AI-spam PRs may be rejected`,
               `- Inactive assignments may be automatically removed`,
+              `- Do not repeatedly ping mentors or maintainers`,
               `- Follow repository contribution guidelines carefully`,
               ``,
               `Happy contributing 💙`
             ].join('\n');
 
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body
-            });
+            try {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
 
-            core.info(
-              `Posted welcome message on issue #${issue_number}`
-            );
+              core.info(
+                `Posted welcome message on issue #${issue_number}`
+              );
+            } catch (error) {
+              core.warning(
+                `Failed to post welcome comment: ${error.message}`
+              );
+            }

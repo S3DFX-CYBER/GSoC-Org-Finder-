@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <link rel="icon" type="image/png" href="src/assets/icon-512.png">
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
@@ -77,11 +78,9 @@
       document.head.appendChild(s);
     }
   </script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function () {
@@ -4417,7 +4416,15 @@
         <div class="py-16 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
           <span class="material-symbols-outlined text-4xl text-zinc-300 mb-4 block">bookmark_border</span>
           <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
-          <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
+          <p class="text-sm text-zinc-400 mb-6">Click the ★ on any organization card to start tracking it here.</p>
+          <button
+            id="browseOrgsBtn"
+            onclick="document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' })"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full text-sm font-bold hover:bg-orange-600 hover:scale-105 transition-all duration-200 shadow-md shadow-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2"
+            aria-label="Browse Organizations - scroll to the organization directory">
+            <span class="material-symbols-outlined text-sm">travel_explore</span>
+            Browse Organizations
+          </button>
         </div>`;
         return;
       }

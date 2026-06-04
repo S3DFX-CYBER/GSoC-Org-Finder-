@@ -2559,7 +2559,7 @@ function setDesktopNavState(activeSection) {
       mentorCurrentPage
     );
     grid.innerHTML = '';
-    grid.innerHTML = paginatedRecords.map(({ org, entry }) => {
+    paginatedRecords.forEach(({ org, entry }) => {
 
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
@@ -2975,10 +2975,11 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
        `;
     card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
+    card.querySelector('[data-open-org]').dataset.openOrg = org.name;
 
    grid.appendChild(card);
    attachOrgCardListeners(card);

@@ -6,8 +6,9 @@
 // ══════════════════════════════════════════════
 (function(){
   const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.classList.toggle('dark', saved === 'dark');
-  updateThemeIcon();
+  document.documentElement.setAttribute('data-theme', saved);
+  document.documentElement.classList.toggle('dark', ['dark', 'nord', 'high-contrast'].includes(saved));
+  updateThemeSelector(saved);
 })();
 
 // Shared escaping helper for this script (prevents HTML injection)
@@ -20,17 +21,17 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
-globalThis.toggleTheme = function(){
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
+globalThis.setTheme = function(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.classList.toggle('dark', ['dark', 'nord', 'high-contrast'].includes(theme));
+  localStorage.setItem('theme', theme);
+  updateThemeSelector(theme);
 };
 
-function updateThemeIcon(){
-  const icon = document.querySelector('#themeToggleBtn .material-symbols-outlined');
-  if(icon){
-    const isDark = document.documentElement.classList.contains('dark');
-    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+function updateThemeSelector(theme){
+  const select = document.getElementById('themeSelect');
+  if(select && select.value !== theme){
+    select.value = theme;
   }
 }
 

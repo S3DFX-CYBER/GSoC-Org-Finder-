@@ -1,53 +1,126 @@
 const fs = require('fs');
 
-const statsPath =
-  '.github/reviewers/mentor-stats.json';
-
-const mentorsPath =
-  '.github/reviewers/gssoc-mentors.json';
+const statsPath = '.github/reviewers/mentor-stats.json';
+const mentorsPath = '.github/reviewers/gssoc-mentors.json';
 
 // --------------------------------------------------
 // ENV
 // --------------------------------------------------
 
-const reviewer =
-  process.env.REVIEWER;
+const reviewer = String(process.env.REVIEWER || '')
+  .trim()
+  .toLowerCase();
 
-const reviewState =
-  process.env.REVIEW_STATE;
+const reviewState = String(process.env.REVIEW_STATE || '')
+  .trim()
+  .toLowerCase();
 
-const reviewId =
-  process.env.REVIEW_ID;
+const reviewId = String(process.env.REVIEW_ID || '').trim();
+
+const reviewedAt =
+  process.env.REVIEWED_AT ||
+  new Date().toISOString();
+
+const isMerged =
+  process.env.PR_MERGED === 'true';
+
+const isPriority =
+  process.env.IS_PRIORITY === 'true';
+
+const isAssignmentApproval =
+  process.env.IS_ASSIGNMENT_APPROVAL === 'true';
+
+const lowEffort =
+  process.env.IS_LOW_EFFORT === 'true';
 
 // --------------------------------------------------
-// LOAD FILES
+// HELPERS
 // --------------------------------------------------
 
-const mentorsData = JSON.parse(
-  fs.readFileSync(mentorsPath, 'utf8')
+function readJson(path, fallback) {
+
+  try {
+
+    return JSON.parse(
+      fs.readFileSync(path, 'utf8')
+    );
+
+  } catch (error) {
+
+    if (
+      error &&
+      error.code === 'ENOENT'
+    ) {
+      return fallback;
+    }
+
+    throw error;
+  }
+}
+
+// --------------------------------------------------
+// LOAD MENTORS
+// --------------------------------------------------
+
+const mentorData = readJson(
+  mentorsPath,
+  { reviewers: [] }
 );
 
-const statsData = JSON.parse(
-  fs.readFileSync(statsPath, 'utf8')
+const mentors = new Set(
+  (mentorData.reviewers || [])
+    .map(m =>
+      String(m)
+        .trim()
+        .toLowerCase()
+    )
 );
 
 // --------------------------------------------------
-// VALIDATE MENTOR
+// VALIDATE REVIEWER
 // --------------------------------------------------
 
-const validMentors =
-  new Set(mentorsData.reviewers || []);
+if (!reviewer || !mentors.has(reviewer)) {
 
-if (!validMentors.has(reviewer)) {
   console.log(
-    `${reviewer} is not a registered mentor`
+    `${reviewer || 'unknown'} is not a registered mentor`
   );
 
   process.exit(0);
 }
 
 // --------------------------------------------------
-// INIT
+// LOAD STATS
+// --------------------------------------------------
+
+const statsData = readJson(
+  statsPath,
+  { mentors: {} }
+);
+
+statsData.mentors =
+  statsData.mentors || {};
+
+// --------------------------------------------------
+// NORMALIZE EXISTING KEYS
+// --------------------------------------------------
+
+const normalizedMentors = {};
+
+for (const [key, value] of Object.entries(statsData.mentors)) {
+
+  normalizedMentors[
+    String(key)
+      .trim()
+      .toLowerCase()
+  ] = value;
+}
+
+statsData.mentors =
+  normalizedMentors;
+
+// --------------------------------------------------
+// INIT MENTOR
 // --------------------------------------------------
 
 if (!statsData.mentors[reviewer]) {
@@ -57,7 +130,11 @@ if (!statsData.mentors[reviewer]) {
     approvals: 0,
     changes_requested: 0,
     comments: 0,
-    last_reviewed_at: null,
+    merged_reviews: 0,
+    assignment_approvals: 0,
+    priority_reviews: 0,
+    review_quality_score: 0,
+    last_reviewed_at: '',
     review_ids: []
   };
 }
@@ -66,10 +143,25 @@ const mentor =
   statsData.mentors[reviewer];
 
 // --------------------------------------------------
-// PREVENT DUPLICATES
+// REVIEW IDS
 // --------------------------------------------------
 
-if (mentor.review_ids.includes(reviewId)) {
+mentor.review_ids = Array.isArray(
+  mentor.review_ids
+)
+  ? mentor.review_ids.map(id =>
+      String(id)
+    )
+  : [];
+
+// --------------------------------------------------
+// DEDUPE
+// --------------------------------------------------
+
+if (
+  !reviewId ||
+  mentor.review_ids.includes(reviewId)
+) {
 
   console.log(
     `Review ${reviewId} already tracked`
@@ -82,36 +174,100 @@ if (mentor.review_ids.includes(reviewId)) {
 // UPDATE STATS
 // --------------------------------------------------
 
-mentor.reviews++;
+mentor.reviews =
+  (mentor.reviews || 0) + 1;
 
-if (reviewState === 'APPROVED') {
-  mentor.approvals++;
+if (reviewState === 'approved') {
+
+  mentor.approvals =
+    (mentor.approvals || 0) + 1;
 }
 
-if (reviewState === 'CHANGES_REQUESTED') {
-  mentor.changes_requested++;
+if (reviewState === 'changes_requested') {
+
+  mentor.changes_requested =
+    (mentor.changes_requested || 0) + 1;
 }
 
-if (reviewState === 'COMMENTED') {
-  mentor.comments++;
+if (reviewState === 'commented') {
+
+  mentor.comments =
+    (mentor.comments || 0) + 1;
 }
+
+if (isMerged) {
+
+  mentor.merged_reviews =
+    (mentor.merged_reviews || 0) + 1;
+}
+
+if (isAssignmentApproval) {
+
+  mentor.assignment_approvals =
+    (mentor.assignment_approvals || 0) + 1;
+}
+
+if (isPriority) {
+
+  mentor.priority_reviews =
+    (mentor.priority_reviews || 0) + 1;
+}
+
+// --------------------------------------------------
+// QUALITY SCORE
+// --------------------------------------------------
+
+const qualityDelta = lowEffort
+  ? -1.5
+  : reviewState === 'approved'
+    ? 1.2
+    : 0.8;
+
+mentor.review_quality_score = Number(
+  (
+    (mentor.review_quality_score || 0) +
+    qualityDelta
+  ).toFixed(2)
+);
+
+// --------------------------------------------------
+// FINALIZE
+// --------------------------------------------------
 
 mentor.last_reviewed_at =
-  new Date().toISOString();
+  reviewedAt;
 
 mentor.review_ids.push(reviewId);
 
-// Limit stored IDs
 mentor.review_ids =
   mentor.review_ids.slice(-200);
+
+// --------------------------------------------------
+// SORT KEYS
+// --------------------------------------------------
+
+const ordered = Object.keys(
+  statsData.mentors
+)
+  .sort()
+  .reduce((acc, key) => {
+
+    acc[key] =
+      statsData.mentors[key];
+
+    return acc;
+
+  }, {});
 
 // --------------------------------------------------
 // SAVE
 // --------------------------------------------------
 
+statsData.mentors = ordered;
+
 fs.writeFileSync(
   statsPath,
-  JSON.stringify(statsData, null, 2)
+  JSON.stringify(statsData, null, 2) + '\n'
 );
 
 console.log(

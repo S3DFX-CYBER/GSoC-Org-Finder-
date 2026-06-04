@@ -4,6 +4,7 @@
 
 let currentAbortController = null;
 let currentRequestId = 0;
+let lastRecommendations = [];
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
@@ -122,6 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
 
+  document.addEventListener('compareListChanged',() => {
+    if(lastRecommendations.length){
+      renderRecommendations(lastRecommendations);
+    }
+  });
+
   // Handle file upload
   if (fileUpload) {
     fileUpload.addEventListener('change', (e) => {
@@ -174,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (requestId !== currentRequestId) return;
       
+      lastRecommendations = recommendations; 
       renderRecommendations(recommendations);
     } catch (err) {
       if (requestId !== currentRequestId || err.name === 'AbortError') return;

@@ -2399,7 +2399,7 @@ sections.forEach(sectionId => {
       } else if (entry.status === 'no-contact-found') {
         bodyHtml = '<p class="text-sm text-zinc-600">No mentor contact info parsed yet for this org.</p>';
       } else {
-        bodyHtml = '<p class="text-sm text-zinc-600">Mentor contact information is currently unavailable. Please try again later..</p>';
+        bodyHtml = '<p class="text-sm text-zinc-600">Mentor contact information is currently unavailable. Please try again later.</p>';
       }
 
       const contactHref = primary?.url || org.ideas || githubUrlFromValue(org.github);

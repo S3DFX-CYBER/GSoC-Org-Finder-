@@ -425,7 +425,14 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ── MOBILE ── */
+/* ── STICKY FILTER CONTROLS ── */
 
+.sticky-controls{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
 /* ═══════════════════════════════════════════
    RESPONSIVE — Tablet (≤900px)
 ═══════════════════════════════════════════ */
@@ -476,6 +483,27 @@ footer a:hover{text-decoration:underline}
   .chip{font-size:11px;padding:5px 10px}
   .pills-section{gap:6px}
   .pill{font-size:11px;padding:4px 10px}
+
+  /* ── STICKY FILTER CONTROLS ── */
+
+
+/* Mobile responsiveness */
+  .sticky-controls{
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.sticky-controls .flex.items-center.gap-4{
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 10px;
+}
+
+.sticky-controls select{
+  width: 100%;
+}
+
 
   /* Results row */
   .results-row{flex-direction:column;gap:6px;align-items:flex-start}

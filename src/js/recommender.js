@@ -1,171 +1,175 @@
 // src/js/recommender.js
 
-/**
- * recommender.js
- * 
- * Takes user skills (from resume) and GitHub profile data to calculate a match score 
- * against all GSoC organizations, returning the top 5 matches.
- */
-
 /* global ORGS */
 
 /**
- * Generates recommendations for GSoC organizations.
+ * Retrieves the top 6 recommended organizations based on skills and profile.
  * 
- * @param {Array<string>} resumeSkills - Extracted skills from the user's resume
- * @param {Object} githubProfile - Parsed data from githubAnalyzer.js
- * @returns {Array<Object>} - Top 5 recommended orgs with match metadata
+ * @param {Array<string>} resumeSkills - Unique set of extracted resume skills
+ * @param {Object|null} githubProfile - Optional GitHub profile metrics
+ * @returns {Array<Object>} - Top 6 recommended organizations sorted by score
  */
 function getRecommendations(resumeSkills = [], githubProfile = null) {
   if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) {
-    console.error("ORGS array is not defined. Ensure org.js is loaded first.");
+    console.error("ORGS is not defined.");
     return [];
   }
 
-  // Combine skills to form a unified user profile
+  const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();
   const userTopics = new Set();
-  
+
   if (githubProfile) {
-    (githubProfile.languages || []).forEach(l => userLanguages.add(l.toLowerCase()));
-    (githubProfile.topics || []).forEach(t => userTopics.add(t.toLowerCase()));
+    (githubProfile.languages || []).forEach(l => userLanguages.add(normalize(l.toLowerCase())));
+    (githubProfile.topics || []).forEach(t => userTopics.add(normalize(t.toLowerCase())));
   }
-  
+
   resumeSkills.forEach(s => {
-    userLanguages.add(s.toLowerCase());
-    userTopics.add(s.toLowerCase()); // Resume skills can act as topics/domains too
+    const skill = normalize(s.toLowerCase());
+    userLanguages.add(skill);
+    userTopics.add(skill);
   });
 
   const scoredOrgs = ORGS.map((org, index) => 
     calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile)
   );
   
-  // Sort by rawScore descending
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
-
-  // Return Top 5
-  return scoredOrgs.slice(0, 5);
-}
-
-/**
- * Core engine logic extracted to achieve manageable cyclomatic & cognitive complexity.
- * Optimizes string list lookups with Set semantics and reduces nested conditionals.
- */
-/**
- * Core engine orchestrator. Sums metrics derived from specialized scoring primitives.
- * Extremely low cognitive cyclomatic path threshold for superior auditability and evolution.
- */
-function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile) {
-    const matchReasons = [];
-    const matchedSkills = [];
-    const orgTags = new Set((org.tags || []).map(t => t.toLowerCase()));
-    const orgCat = org.cat ? org.cat.toLowerCase() : '';
-
-    let score = 0;
-    score += calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
-    score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
-    score += calculateActivityScore(githubProfile, org, matchReasons);
-    score += calculateExperienceScore(githubProfile, org, matchReasons);
-
-    // Cap and mix-in deterministic tiebreak
-    score = Math.min(score, 100);
-    score += (org.name.length % 100) / 100;
-
-    // Safeguard: Provide a contextually relevant fallback explanation if array empty
-    if (matchReasons.length === 0) {
-      const categoryLabel = orgCat || 'open source ecosystem';
-      matchReasons.push(`Relevant fit within ${categoryLabel}`);
-    }
-
-    return {
-      orgIndex: index,
-      org: org,
-      score: Math.floor(score), 
-      rawScore: score,
-      matchedSkills: [...new Set(matchedSkills)],
-      reasons: matchReasons
-    };
+  return scoredOrgs.slice(0, 6);
 }
 
 function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons) {
-    let matches = 0;
-    userLanguages.forEach(lang => {
-      if (orgTags.has(lang) || orgCat === lang) {
-        matches++;
-        matchedSkills.push(lang);
-      }
-    });
-    
-    let delta = 0;
-    if (matches === 1) delta = 20;
-    else if (matches >= 2) delta = 40;
-    
-    if (delta > 0) matchReasons.push(`Uses your languages (${matches} matched)`);
-    return delta;
+  const primaryLangs = [];
+  userLanguages.forEach(lang => {
+    if (orgTags.has(lang) || orgCat === lang) {
+      matchedSkills.push(lang);
+      primaryLangs.push(lang);
+    }
+  });
+
+  const langMatches = primaryLangs.length;
+  if (langMatches === 0) return 0;
+
+  let langDelta = 0;
+  if (langMatches >= 1) langDelta += 15;
+  if (langMatches >= 2) langDelta += 12;
+  if (langMatches >= 3) langDelta += 8;
+  if (langMatches >= 4) langDelta += 5;
+
+  const displayLangs = primaryLangs.slice(0, 2).join(", ");
+  matchReasons.push(`Strong stack match: ${displayLangs}${primaryLangs.length > 2 ? '...' : ''}`);
+  return Math.min(langDelta, 40);
 }
 
 function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons) {
-    let matches = 0;
-    userTopics.forEach(topic => {
-      if (!matchedSkills.includes(topic) && (orgTags.has(topic) || orgCat === topic)) {
-        matches++;
-        matchedSkills.push(topic);
-      }
-    });
-    
-    let delta = 0;
-    if (matches === 1) delta = 15;
-    else if (matches >= 2) delta = 30;
-    
-    if (delta > 0) matchReasons.push(`Aligns with your domain interests`);
-    return delta;
+  const matchedTopics = [];
+  userTopics.forEach(topic => {
+    if (!matchedSkills.includes(topic) && (orgTags.has(topic) || orgCat === topic)) {
+      matchedTopics.push(topic);
+      matchedSkills.push(topic);
+    }
+  });
+
+  const topicMatches = matchedTopics.length;
+  if (topicMatches === 0) return 0;
+
+  let topicDelta = 0;
+  if (topicMatches >= 1) topicDelta += 12;
+  if (topicMatches >= 2) topicDelta += 10;
+  if (topicMatches >= 3) topicDelta += 8;
+
+  matchReasons.push(`Fits your interests in ${matchedTopics[0]}`);
+  return Math.min(topicDelta, 30);
 }
 
-function calculateActivityScore(profile, org, matchReasons) {
-    if (!profile) return 5; // Baseline score with no specific reasons
+function calculateActivityScore(githubProfile, org, matchReasons) {
+  if (!githubProfile) return 8;
 
-    const userAct = (profile.activity || 'low').toLowerCase();
-    const orgAct = (org._gh?.activity || org.activity || 'low').toLowerCase();
-    
-    if (userAct === 'high' && (orgAct === 'active' || orgAct === 'high')) {
-      matchReasons.push(`Both you and this org are highly active`);
-      return 15;
-    } 
-    
-    if (userAct === 'medium' && (orgAct === 'moderate' || orgAct === 'medium')) {
-      matchReasons.push(`Good match for moderate activity levels`);
-      return 15;
-    }
-    
-    if (userAct === 'low' && orgAct === 'low') {
-      matchReasons.push(`Pacing matches your recent activity`);
-      return 10;
-    }
+  const userAct = (githubProfile.activity || 'low').toLowerCase();
+  const orgAct = (org._gh?.activity || org.activity || org.competition || 'low').toLowerCase();
+  const isHigh = orgAct === 'active' || orgAct === 'high' || orgAct === 'hot';
+  const isMed = orgAct === 'moderate' || orgAct === 'medium';
+  const isLow = orgAct === 'low' || orgAct === 'chill';
 
+  if (userAct === 'high' && isHigh) {
+    matchReasons.push("Matches your high activity pace");
+    return 15;
+  }
+  if (userAct === 'medium' && (isMed || isHigh)) {
+    matchReasons.push("Sustainable pace for your activity level");
+    return 12;
+  }
+  if (userAct === 'low' && isLow) {
+    matchReasons.push("Good entry point with manageable pacing");
+    return 15;
+  }
+  return 5;
+}
+
+function calculateExperienceScore(githubProfile, org, matchReasons) {
+  const userStars = githubProfile?.stars || 0;
+  const userLangCount = githubProfile?.languages?.length || 0;
+  const isExperienced = userStars > 50 || userLangCount > 5;
+  const isBeginner = !githubProfile || (userStars < 10 && userLangCount < 3);
+  const orgCodebase = (org.codebase || 'intermediate').toLowerCase();
+
+  if (isBeginner && orgCodebase === 'beginner') {
+    matchReasons.push("Very beginner-friendly codebase");
+    return 25;
+  }
+  if (isExperienced && orgCodebase === 'advanced') {
+    matchReasons.push("Challenging project for your experience");
+    return 20;
+  }
+  if (orgCodebase === 'intermediate') {
+    return 15;
+  }
+  return 10;
+}
+
+function calculateStabilityBonus(org, matchReasons) {
+  const years = org.years || 0;
+  if (years >= 10) {
+    matchReasons.push(`GSoC Veteran (${years} years)`);
+    return 10;
+  }
+  if (years >= 5) {
     return 5;
+  }
+  return 0;
 }
 
+function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfile) {
+  const matchReasons = [];
+  const matchedSkills = [];
+  const orgNormalize = globalThis.normalizeSkill || (s => s);
+  const orgTags = new Set((org.tags || []).map(t => orgNormalize(t.toLowerCase())));
+  const orgCat = org.cat ? orgNormalize(org.cat.toLowerCase()) : '';
 
-function calculateExperienceScore(profile, org, matchReasons) {
-    let delta = 0;
-    const hasWeakProfile = !profile || (profile.stars < 10 && (profile.languages?.length || 0) < 3);
-    
-    if (hasWeakProfile) {
-      if (org.codebase === 'beginner') {
-        matchReasons.push(`Great for newcomers (beginner-friendly codebase)`);
-        delta = 15;
-      } else if (org.codebase === 'intermediate') {
-        delta = 5;
-      }
-    } else if (org.codebase === 'advanced') {
-      matchReasons.push(`Challenging, fits your experience level`);
-      delta = 15;
-    } else if (org.codebase === 'intermediate') {
-      delta = 10;
-    }
-    
-    return delta;
+  let score = 0;
+  
+  score += calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons);
+  score += calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchReasons);
+  score += calculateActivityScore(githubProfile, org, matchReasons);
+  score += calculateExperienceScore(githubProfile, org, matchReasons);
+  score += calculateStabilityBonus(org, matchReasons);
+
+  const cappedScore = Math.min(Math.round(score), 99);
+  const tieBreaker = (org.name.length % 10) / 100 + (index % 100) / 10000;
+  const finalRawScore = score + tieBreaker;
+
+  if (matchReasons.length === 0) {
+    matchReasons.push("Matches your general developer profile");
+  }
+
+  return {
+    orgIndex: index,
+    org: org,
+    score: cappedScore, 
+    rawScore: finalRawScore,
+    matchedSkills: [...new Set(matchedSkills)],
+    reasons: matchReasons
+  };
 }
 
-// Export for global usage
 globalThis.getRecommendations = getRecommendations;

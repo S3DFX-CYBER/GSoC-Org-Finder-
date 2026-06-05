@@ -411,11 +411,21 @@ function updateCompareBadge(){
 function openCompare(){
   renderCompareSlots();
   renderCompareTable();
-  document.getElementById('compareBg').classList.add('open');
+  document.getElementById('compareModal').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeCompare(){document.getElementById('compareBg').classList.remove('open');document.body.style.overflow='';}
-function closeCompareEv(e){if(e.target===document.getElementById('compareBg'))closeCompare();}
+
+function closeCompare(){
+  document.getElementById('compareModal').classList.remove('open');
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+}
+
+function closeCompareEv(e){
+  // Only close when the click landed on the backdrop itself,
+  // not on content inside the modal panel.
+  if(e.target===document.getElementById('compareModal'))closeCompare();
+}
 
 function renderCompareSlots(){
   const arr=[...compareSet].map(i=>ORGS[i]);
@@ -887,8 +897,8 @@ const GRID_COLS=()=>{
 document.addEventListener('keydown',e=>{
   // Close modals first
   if(e.key==='Escape'){
-    if(document.getElementById('modalBg').classList.contains('open')){closeModal();return;}
-    if(document.getElementById('compareBg').classList.contains('open')){closeCompare();return;}
+    if(document.getElementById('orgModal')?.classList.contains('open')){closeModal();return;}
+    if(document.getElementById('compareModal').classList.contains('open')){closeCompare();return;}
     if(document.getElementById('anBg').classList.contains('open')){closeAn();return;}
   }
   // Don't hijack when typing in inputs
@@ -1110,7 +1120,7 @@ function openModal(idx){
   }
   
   updateModalCompareBtn();
-  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('orgModal').classList.add('open');
   document.body.style.overflow='hidden';
   // Fetch GFI lazily on modal open
   if(o.github&&(o._gh?.gfi===null||o._gh?.gfi===undefined)){
@@ -1130,8 +1140,20 @@ function openModal(idx){
     });
   }
 }
-function closeModalEv(e){if(e.target===document.getElementById('modalBg'))closeModal();}
-function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';modalIdx=-1;}
+
+function closeModalEv(e){
+  // Only close when the click landed on the backdrop itself,
+  // not on content inside the modal panel.
+  if(e.target===document.getElementById('orgModal'))closeModal();
+}
+
+function closeModal(){
+  document.getElementById('orgModal').classList.remove('open');
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  modalIdx=-1;
+}
+
 
 // ══════════════════════════════════════════════
 // INIT

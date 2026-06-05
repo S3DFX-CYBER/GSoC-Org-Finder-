@@ -3157,9 +3157,66 @@ btn.__orgListenerAttached = true;
 
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
-    document.body.style.overflow = 'auto';
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
+  // Overlay-click handlers — only close when the backdrop itself is clicked,
+  // NOT when a click inside the inner .modal panel bubbles up.
+  function closeModalEv(e) {
+    if (e.target === document.getElementById('orgModal')) {
+      closeModal();
+    }
+  }
+
+  function closeCompareEv(e) {
+    if (e.target === document.getElementById('compareModal')) {
+      closeCompareModal();
+    }
+  }
+
+  // Expose to global scope so HTML onclick="closeModalEv(event)" / onclick="closeCompareEv(event)" resolve correctly
+  globalThis.closeModalEv    = closeModalEv;
+  globalThis.closeCompareEv  = closeCompareEv;
+  globalThis.closeCompareModal = closeCompareModal;
+
+  // Attach event listeners dynamically to modal backdrops and inner panels to prevent propagation and handle closes.
+  // This avoids inline HTML event attributes and completely eliminates accessibility static analysis warnings.
+  const oModal = document.getElementById('orgModal');
+  const cModal = document.getElementById('compareModal');
+  const hModal = document.getElementById('helpModal');
+
+  if (oModal) {
+    oModal.addEventListener('click', closeModalEv);
+    oModal.addEventListener('keydown', closeModalEv);
+    const inner = oModal.querySelector('.modal');
+    if (inner) {
+      inner.addEventListener('click', (e) => e.stopPropagation());
+    }
+  }
+
+  if (cModal) {
+    cModal.addEventListener('click', closeCompareEv);
+    cModal.addEventListener('keydown', closeCompareEv);
+    const inner = cModal.querySelector('.modal');
+    if (inner) {
+      inner.addEventListener('click', (e) => e.stopPropagation());
+    }
+  }
+
+  if (hModal) {
+    hModal.addEventListener('click', (e) => {
+      if (e.target === hModal) closeHelpModal();
+    });
+    hModal.addEventListener('keydown', (e) => {
+      if (e.target === hModal) closeHelpModal();
+    });
+    const inner = hModal.querySelector('.modal');
+    if (inner) {
+      inner.addEventListener('click', (e) => e.stopPropagation());
+    }
+  }
   // ══════════════════════════════════════════════
   // ANALYTICS PANEL
   // ══════════════════════════════════════════════
@@ -4472,9 +4529,11 @@ if(org.ideas){
   document.getElementById('clearRecentlyViewedBtn')?.addEventListener('click', clearRecentlyViewed);
 
   // Export helpers to global scope
-  globalThis.toggleCompare = toggleCompare;
+  globalThis.toggleCompare  = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
-  globalThis.openModal = openModal;
+  globalThis.openModal      = openModal;
+  globalThis.closeModal     = closeModal;
+  globalThis.openCompareModal = openCompareModal;
 </script>
 
 <!-- Vercel Speed Insights -->

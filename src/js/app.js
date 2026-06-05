@@ -563,6 +563,7 @@ function orgMatchesLanguages(org, selectedLanguages) {
 }
 
 function applyFilters(){
+  // const prevScrollY = window.scrollY;
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || '';
   const cat = categoryValue === 'all' ? '' : categoryValue;
@@ -645,7 +646,6 @@ function applyFilters(){
   focusedIdx=-1;
   renderGrid(res);
   document.getElementById('orgCount').textContent = res.length;
-
   // Sync filter state to URL
   const params = new URLSearchParams();
   if (search)    params.set('q',search);

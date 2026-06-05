@@ -1420,3 +1420,30 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+// =========================================
+// Scroll to Top Logic
+// =========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const scrollToTopBtn = document.getElementById('scroll-to-top-btn');
+
+  if (scrollToTopBtn) {
+    // Fade in/out based on 400px threshold
+    const updateScrollToTopBtn = () => {
+      if (window.scrollY > 400) {
+        scrollToTopBtn.classList.add('show');
+      } else {
+        scrollToTopBtn.classList.remove('show');
+      }
+    };
+    window.addEventListener('scroll', updateScrollToTopBtn);
+    updateScrollToTopBtn();
+
+    // Smooth scroll to top on click
+    scrollToTopBtn.addEventListener('click', () => {
+      globalThis.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+});

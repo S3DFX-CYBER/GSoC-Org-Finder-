@@ -1393,24 +1393,64 @@ requestAnimationFrame(()=>{
   checkAPI();
 });
 
-// Sync hero search with hidden search input and initialize on load
-const heroSearch = document.getElementById('hero-search');
-if (heroSearch) {
+// scroll logic & search EVENT LISTENERS
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // Sync hero search with hidden search input and initialize on load
+  const heroSearch = document.getElementById('hero-search');
+  if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     
-    // Live filter update as user types
     heroSearch.addEventListener('input', (e) => {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.value = e.target.value;
-            applyFilters();
-        }
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.value = e.target.value;
+      }
+      applyFilters();
     });
-}
 
+    // Edge-Safe Enter Key Logic + IME Composition Guard
+    heroSearch.addEventListener('keydown', (e) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        const target = document.getElementById('orgs');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  // Button Click Logic
+  const searchScrollBtn = document.getElementById('searchScrollBtn');
+  if (searchScrollBtn) {
+    searchScrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.getElementById('orgs');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // Event listeners for selects
+  ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => applyFilters());
+  });
+
+});
+
+// Scroll button click listener
+const searchScrollBtn = document.getElementById('searchScrollBtn');
+if (searchScrollBtn) {
+  searchScrollBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.getElementById('orgs');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+}
 
 // Event listeners for selects
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

@@ -983,30 +983,24 @@
       </p>
       <!-- Search Bar -->
 <div class="flex flex-col sm:flex-row gap-3 max-w-xl mb-6 sm:mb-8">
-  <!-- Maintainer's animated border container -->
   <div class="relative w-full search-bar-container">
     <div class="relative rounded-2xl p-[1.5px] bg-zinc-200 dark:bg-zinc-800 transition-all duration-300 search-border-outer">
-      <!-- SVG Flowing Border Effect -->
       <svg class="timeline-border-svg" fill="none">
         <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
       </svg>
-      <!-- Inner Input Layer -->
       <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-        <!-- Input with your Enter logic -->
         <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" 
-               onkeydown="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('orgs').scrollIntoView({ behavior: 'smooth', block: 'start' }); }"
                class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
       </div>
     </div>
   </div>
   
-  <!-- Your Search Button -->
   <button id="searchScrollBtn" type="button" 
-          onclick="document.getElementById('orgs').scrollIntoView({ behavior: 'smooth', block: 'start' });"
           class="bg-primary text-white px-8 py-3 sm:py-4 rounded-2xl font-bold hover:opacity-90 transition-all flex-shrink-0 shadow-lg shadow-primary/30">
     Search
   </button>
+</div>
 </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -3728,26 +3722,52 @@ if(org.ideas){
     renderMentorFinder(false);
   });
 
-  // Surprise button event listener
+ // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
-  // Hero Search Link
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      document.getElementById('searchInput').value = e.target.value;
+  // ══════════════════════════════════════════════
+  // SCROLL LOGIC & SEARCH EVENT LISTENERS
+  // ══════════════════════════════════════════════
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    // Hero Search Link
+    const heroSearch = document.getElementById('hero-search');
+    if (heroSearch) {
+      heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+      
+      heroSearch.addEventListener('input', (e) => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.value = e.target.value;
+        }
+        const query = e.target.value.trim();
+        if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+          BadgeSystem.trackSearch();
+        }
+        applyFilters();
+      });
 
+      // Edge-Safe Enter Key Logic + IME Composition Guard
+      heroSearch.addEventListener('keydown', (e) => {
+        if (e.isComposing || e.keyCode === 229) return;
+        if (e.key === 'Enter' || e.keyCode === 13) {
+          e.preventDefault();
+          const target = document.getElementById('orgs');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
 
-      // Track search badge when user types in hero search
-      const query = e.target.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-
-      applyFilters();
-    });
-  }
+    // Button Click Logic
+    const searchScrollBtn = document.getElementById('searchScrollBtn');
+    if (searchScrollBtn) {
+      searchScrollBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById('orgs');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  });
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
   // language pills, search, and dropdown filters. applyFilters() reads activeChip.

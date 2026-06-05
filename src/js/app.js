@@ -31,16 +31,15 @@ const bookmarkedSet = new Set(parseStoredBookmarks());
 const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
 const RECENTLY_VIEWED_LIMIT = 8;
 let recentlyViewed = (() => {
-  let parsed = [];
+  let data = null;
   try {
     const raw = (typeof safeStorage !== 'undefined' ? safeStorage.get(RECENTLY_VIEWED_KEY) : localStorage.getItem(RECENTLY_VIEWED_KEY));
-    if (raw) parsed = JSON.parse(raw);
+    if (raw) data = JSON.parse(raw);
   } catch (error) {
     console.warn('Failed to parse storage data:', error.message);
-    parsed = [];
+    data = null;
   }
-  if (!Array.isArray(parsed)) return [];
-  return (parsed || []).filter(name => name && typeof name === 'string');
+  return (data || []).filter(name => name && typeof name === 'string');
 })();
 })();
 
@@ -479,14 +478,17 @@ const API='/api/github';
 <<<<<<< HEAD
 let gaf_ghc = {};
 try {
-  const cached = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null))?.getItem('github_analytics_filter_cache');
+  const ss = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null));
+  const cached = ss?.getItem ? ss.getItem('github_analytics_filter_cache') : null;
   if (cached) {
+    let data = null;
     try {
-      gaf_ghc = JSON.parse(cached);
+      data = JSON.parse(cached);
     } catch (error) {
       console.warn('Failed to parse storage data:', error.message);
-      gaf_ghc = {};
+      data = null;
     }
+    gaf_ghc = data || {};
   }
 } catch (e) {
   console.warn('Failed to access cache:', e);
@@ -495,14 +497,16 @@ try {
 =======
 const cache = (() => {
   try {
-    const raw = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null))?.get('gaf_ghc');
-    let parsed = {};
+    const ss = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null));
+    const raw = ss?.get ? ss.get('gaf_ghc') : null;
+    let data = null;
     try {
-      if (raw) parsed = JSON.parse(raw);
+      if (raw) data = JSON.parse(raw);
     } catch (error) {
       console.warn('Failed to parse storage data:', error.message);
-      parsed = {};
+      data = null;
     }
+    const parsed = data;
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
   } catch (e) {
     console.warn('Failed to parse GitHub cache data:', e);
@@ -510,14 +514,15 @@ const cache = (() => {
 const API = '/api/github';
 const ghCache = (() => {
   try {
-    let parsed = {};
+    let data = null;
     try {
       const raw = localStorage.getItem('gaf_ghc');
-      if (raw) parsed = JSON.parse(raw);
+      if (raw) data = JSON.parse(raw);
     } catch (error) {
       console.warn('Failed to parse storage data:', error.message);
-      parsed = {};
+      data = null;
     }
+    const parsed = data;
     return parsed || {};
   } catch {
         main

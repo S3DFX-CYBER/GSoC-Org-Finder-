@@ -783,8 +783,10 @@ function renderGrid(orgs){
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
-      </div>`;
+        <button onclick="resetFilters()" class="btn-clear-filters" title="Reset all selected filters">
+  Clear All Filters
+</button>     
+ </div>`;
     return;
   }
   g.innerHTML=orgs.map((o,i)=>{
@@ -1001,6 +1003,14 @@ function clearAllLanguages(){
 globalThis.clearAllLanguages = clearAllLanguages;
 
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+const _CHIP_TOOLTIPS = {
+  veteran: 'Organizations that participated in GSoC for many years',
+  newcomer: 'Good for first-time contributors and beginners',
+  hot: 'Highly competitive organizations with many applicants',
+  chill: 'Organizations with relatively fewer applicants',
+  active: 'Organizations with recent GitHub activity',
+  bookmarked: 'Organizations you saved for later'
+};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
@@ -1393,10 +1403,12 @@ requestAnimationFrame(()=>{
   checkAPI();
 });
 
-// scroll logic & search EVENT LISTENERS
+// ══════════════════════════════════════════════
+// SCROLL LOGIC & SEARCH EVENT LISTENERS
+// ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   
-  // Sync hero search with hidden search input and initialize on load
+  // Hero Search Link
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
@@ -1406,16 +1418,27 @@ document.addEventListener('DOMContentLoaded', () => {
       if (searchInput) {
         searchInput.value = e.target.value;
       }
+
+      // Track search badge when user types in hero search
+      const query = e.target.value.trim();
+      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+        BadgeSystem.trackSearch();
+      }
+
       applyFilters();
     });
 
     // Edge-Safe Enter Key Logic + IME Composition Guard
     heroSearch.addEventListener('keydown', (e) => {
-      if (e.isComposing || e.keyCode === 229) return;
+      if (e.isComposing || e.keyCode === 229) {
+        return;
+      }
       if (e.key === 'Enter' || e.keyCode === 13) {
         e.preventDefault();
         const target = document.getElementById('orgs');
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
     });
   }
@@ -1426,14 +1449,18 @@ document.addEventListener('DOMContentLoaded', () => {
     searchScrollBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const target = document.getElementById('orgs');
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   }
 
   // Event listeners for selects
   ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('change', () => applyFilters());
+    if (el) {
+      el.addEventListener('change', () => applyFilters());
+    }
   });
 
 });
@@ -1453,4 +1480,7 @@ if (searchScrollBtn) {
 // Event listeners for selects
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
+
 });
+
+

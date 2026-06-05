@@ -4728,7 +4728,20 @@ if (logoLink) {
   let initialTrackedOrgs = {};
   try {
     const stored = localStorage.getItem('trackedOrgs');
-    if (stored) { const parsed = JSON.parse(stored); if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) initialTrackedOrgs = parsed; }
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        for (const key of Object.keys(parsed)) {
+          if (!parsed[key] || typeof parsed[key] !== 'object') {
+            parsed[key] = { status: 'interested', note: '' };
+          } else {
+            if (!parsed[key].status) parsed[key].status = 'interested';
+            if (typeof parsed[key].note !== 'string') parsed[key].note = '';
+          }
+        }
+        initialTrackedOrgs = parsed;
+      }
+    }
   } catch (e) {
     console.error('Tracker init err:', e);
   }
@@ -4771,7 +4784,7 @@ if (logoLink) {
             ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" class="w-6 h-6 rounded-md object-contain" alt="logo"/>` : ''}
             <h4 class="font-bold text-sm text-zinc-900 truncate max-w-[120px]" title="${escapeHtml(orgName)}">${escapeHtml(orgName)}</h4>
           </div>
-          <button class="remove-track-btn opacity-0 group-hover:opacity-100 focus:opacity-100 focus-within:opacity-100 text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
+          <button class="remove-track-btn focus:outline-none focus:ring-2 focus:ring-red-500 rounded text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
             <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
@@ -4867,7 +4880,7 @@ if (logoLink) {
   function updateTrackerButtons(orgName) {
     const isTracked = !!globalThis.trackedOrgs[orgName];
     // Use CSS.escape to prevent querySelectorAll from breaking with special characters in orgName
-    const escapedSelector = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(orgName) : orgName.replace(/"/g, '\\"');
+    const escapedSelector = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(orgName) : orgName.replaceAll('"', String.raw`\"`);
     document.querySelectorAll(`button[data-track-btn-org="${escapedSelector}"]`).forEach(btn => {
       if (btn.id === 'modalTrackBtn') {
         btn.classList.toggle('active', isTracked);

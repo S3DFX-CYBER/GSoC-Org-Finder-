@@ -1305,7 +1305,7 @@
   </div>
 </section>
 
-<!-- ═══════════════════ TRACKER ═══════════════════ -->
+<!-- TRACKER SECTION -->
 <section id="tracker" class="bg-surface-container-low py-20 px-6 border-t border-zinc-100">
   <div class="max-w-7xl mx-auto">
     <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
@@ -4728,7 +4728,7 @@ if (logoLink) {
   let initialTrackedOrgs = {};
   try {
     const stored = localStorage.getItem('trackedOrgs');
-    if (stored) initialTrackedOrgs = JSON.parse(stored);
+    if (stored) { const parsed = JSON.parse(stored); if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) initialTrackedOrgs = parsed; }
   } catch (e) {
     console.error('Tracker init err:', e);
   }
@@ -4736,7 +4736,7 @@ if (logoLink) {
   let draggedOrgName = null;
 
   function saveTrackerState() {
-    localStorage.setItem('trackedOrgs', JSON.stringify(globalThis.trackedOrgs));
+    try { localStorage.setItem('trackedOrgs', JSON.stringify(globalThis.trackedOrgs)); } catch (e) { console.warn('Tracker save error:', e); }
   }
 
   globalThis.renderTracker = function() {
@@ -4866,7 +4866,9 @@ if (logoLink) {
 
   function updateTrackerButtons(orgName) {
     const isTracked = !!globalThis.trackedOrgs[orgName];
-    document.querySelectorAll(`button[data-track-btn-org="${escapeHtml(orgName)}"]`).forEach(btn => {
+    // Use CSS.escape to prevent querySelectorAll from breaking with special characters in orgName
+    const escapedSelector = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(orgName) : orgName.replace(/"/g, '\\"');
+    document.querySelectorAll(`button[data-track-btn-org="${escapedSelector}"]`).forEach(btn => {
       if (btn.id === 'modalTrackBtn') {
         btn.classList.toggle('active', isTracked);
         btn.classList.toggle('text-zinc-300', !isTracked);
@@ -4906,4 +4908,5 @@ if (logoLink) {
 </script>
 </body>
 </html>
+
 

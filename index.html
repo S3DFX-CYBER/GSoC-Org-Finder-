@@ -4725,31 +4725,102 @@ if (logoLink) {
 
 <script>
 (function() {
-  let initialTrackedOrgs = {};
-  try {
-    const stored = localStorage.getItem('trackedOrgs');
-    if (stored) {
+  function loadTrackerState() {
+    try {
+      const stored = localStorage.getItem('trackedOrgs');
+      if (!stored) return {};
       const parsed = JSON.parse(stored);
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        for (const key of Object.keys(parsed)) {
-          if (!parsed[key] || typeof parsed[key] !== 'object') {
-            parsed[key] = { status: 'interested', note: '' };
-          } else {
-            if (!parsed[key].status) parsed[key].status = 'interested';
-            if (typeof parsed[key].note !== 'string') parsed[key].note = '';
-          }
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+      for (const key of Object.keys(parsed)) {
+        if (!parsed[key] || typeof parsed[key] !== 'object') {
+          parsed[key] = { status: 'interested', note: '' };
+        } else {
+          if (!parsed[key].status) parsed[key].status = 'interested';
+          if (typeof parsed[key].note !== 'string') parsed[key].note = '';
         }
-        initialTrackedOrgs = parsed;
       }
+      return parsed;
+    } catch (e) {
+      console.error('Tracker init err:', e);
+      return {};
     }
-  } catch (e) {
-    console.error('Tracker init err:', e);
   }
+
+  let initialTrackedOrgs = loadTrackerState();
   globalThis.trackedOrgs = initialTrackedOrgs;
   let draggedOrgName = null;
 
   function saveTrackerState() {
     try { localStorage.setItem('trackedOrgs', JSON.stringify(globalThis.trackedOrgs)); } catch (e) { console.warn('Tracker save error:', e); }
+  }
+
+  function createKanbanCard(orgName, data) {
+    const card = document.createElement('div');
+    card.className = 'kanban-card bg-white p-3 rounded-xl border border-zinc-200 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-all group';
+    card.draggable = true;
+    card.dataset.org = orgName;
+
+    const orgObj = typeof ORGS === 'undefined' ? null : ORGS.find(o => o.name === orgName);
+    const owner = (orgObj && typeof githubOwnerFromValue === 'function') ? githubOwnerFromValue(orgObj.github) : '';
+    const logoUrl = owner ? `https://github.com/${owner}.png?size=48` : '';
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" class="w-6 h-6 rounded-md object-contain" alt="logo"/>` : ''}
+          <h4 class="font-bold text-sm text-zinc-900 truncate max-w-[120px]" title="${escapeHtml(orgName)}">${escapeHtml(orgName)}</h4>
+        </div>
+        <button class="remove-track-btn focus:outline-none focus:ring-2 focus:ring-red-500 rounded text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      </div>
+      <div class="mb-2">
+        <select class="w-full text-xs bg-zinc-50 border border-zinc-100 rounded p-1 text-zinc-600 focus:ring-1 focus:ring-primary status-select">
+          <option value="interested" ${data.status === 'interested' ? 'selected' : ''}>Interested</option>
+          <option value="researching" ${data.status === 'researching' ? 'selected' : ''}>Researching</option>
+          <option value="drafting" ${data.status === 'drafting' ? 'selected' : ''}>Drafting Proposal</option>
+          <option value="submitted" ${data.status === 'submitted' ? 'selected' : ''}>Submitted</option>
+        </select>
+      </div>
+      <textarea class="w-full text-xs text-zinc-600 bg-zinc-50 border border-zinc-100 rounded p-2 resize-none focus:ring-1 focus:ring-primary focus:border-primary transition-all note-textarea" rows="2" placeholder="Add a note...">${escapeHtml(data.note || '')}</textarea>
+    `;
+
+    const statusSelect = card.querySelector('.status-select');
+    statusSelect.addEventListener('change', (e) => {
+      if (globalThis.trackedOrgs[orgName]) {
+        globalThis.trackedOrgs[orgName].status = e.target.value;
+        saveTrackerState();
+        globalThis.renderTracker();
+      }
+    });
+
+    card.addEventListener('dragstart', (e) => {
+      draggedOrgName = orgName;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => card.classList.add('opacity-50'), 0);
+    });
+
+    card.addEventListener('dragend', () => {
+      draggedOrgName = null;
+      card.classList.remove('opacity-50');
+    });
+
+    card.querySelector('.remove-track-btn').addEventListener('click', () => {
+      delete globalThis.trackedOrgs[orgName];
+      saveTrackerState();
+      globalThis.renderTracker();
+      updateTrackerButtons(orgName);
+    });
+
+    const textarea = card.querySelector('.note-textarea');
+    textarea.addEventListener('input', (e) => {
+      if (globalThis.trackedOrgs[orgName]) {
+        globalThis.trackedOrgs[orgName].note = e.target.value;
+        saveTrackerState();
+      }
+    });
+
+    return card;
   }
 
   globalThis.renderTracker = function() {
@@ -4768,73 +4839,7 @@ if (logoLink) {
       const col = columns[data.status];
       if (!col) continue;
       counts[data.status]++;
-
-      const card = document.createElement('div');
-      card.className = 'kanban-card bg-white p-3 rounded-xl border border-zinc-200 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-all group';
-      card.draggable = true;
-      card.dataset.org = orgName;
-
-      const orgObj = typeof ORGS === 'undefined' ? null : ORGS.find(o => o.name === orgName);
-      const owner = (orgObj && typeof githubOwnerFromValue === 'function') ? githubOwnerFromValue(orgObj.github) : '';
-      const logoUrl = owner ? `https://github.com/${owner}.png?size=48` : '';
-
-      card.innerHTML = `
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" class="w-6 h-6 rounded-md object-contain" alt="logo"/>` : ''}
-            <h4 class="font-bold text-sm text-zinc-900 truncate max-w-[120px]" title="${escapeHtml(orgName)}">${escapeHtml(orgName)}</h4>
-          </div>
-          <button class="remove-track-btn focus:outline-none focus:ring-2 focus:ring-red-500 rounded text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
-            <span class="material-symbols-outlined text-[16px]">close</span>
-          </button>
-        </div>
-        <div class="mb-2">
-          <select class="w-full text-xs bg-zinc-50 border border-zinc-100 rounded p-1 text-zinc-600 focus:ring-1 focus:ring-primary status-select">
-            <option value="interested" ${data.status === 'interested' ? 'selected' : ''}>Interested</option>
-            <option value="researching" ${data.status === 'researching' ? 'selected' : ''}>Researching</option>
-            <option value="drafting" ${data.status === 'drafting' ? 'selected' : ''}>Drafting Proposal</option>
-            <option value="submitted" ${data.status === 'submitted' ? 'selected' : ''}>Submitted</option>
-          </select>
-        </div>
-        <textarea class="w-full text-xs text-zinc-600 bg-zinc-50 border border-zinc-100 rounded p-2 resize-none focus:ring-1 focus:ring-primary focus:border-primary transition-all note-textarea" rows="2" placeholder="Add a note...">${escapeHtml(data.note || '')}</textarea>
-      `;
-
-      const statusSelect = card.querySelector('.status-select');
-      statusSelect.addEventListener('change', (e) => {
-        if (globalThis.trackedOrgs[orgName]) {
-          globalThis.trackedOrgs[orgName].status = e.target.value;
-          saveTrackerState();
-          globalThis.renderTracker();
-        }
-      });
-
-      card.addEventListener('dragstart', (e) => {
-        draggedOrgName = orgName;
-        e.dataTransfer.effectAllowed = 'move';
-        setTimeout(() => card.classList.add('opacity-50'), 0);
-      });
-
-      card.addEventListener('dragend', () => {
-        draggedOrgName = null;
-        card.classList.remove('opacity-50');
-      });
-
-      card.querySelector('.remove-track-btn').addEventListener('click', () => {
-        delete globalThis.trackedOrgs[orgName];
-        saveTrackerState();
-        globalThis.renderTracker();
-        updateTrackerButtons(orgName);
-      });
-
-      const textarea = card.querySelector('.note-textarea');
-      textarea.addEventListener('input', (e) => {
-        if (globalThis.trackedOrgs[orgName]) {
-          globalThis.trackedOrgs[orgName].note = e.target.value;
-          saveTrackerState();
-        }
-      });
-
-      col.appendChild(card);
+      col.appendChild(createKanbanCard(orgName, data));
     }
 
     for (const status of Object.keys(counts)) {

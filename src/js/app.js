@@ -783,13 +783,24 @@ function renderGrid(orgs){
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
-      </div>`;
+        <button onclick="resetFilters()" class="btn-clear-filters" title="Reset all selected filters">
+  Clear All Filters
+</button>     
+ </div>`;
     return;
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+    const orgTags = o.tags || [];
+    let tags = '';
+    if (orgTags.length > 3) {
+      const visible = orgTags.slice(0, 3);
+      const hidden = orgTags.slice(3);
+      tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
+             `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
+    } else {
+      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    }
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
@@ -992,6 +1003,14 @@ function clearAllLanguages(){
 globalThis.clearAllLanguages = clearAllLanguages;
 
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+const _CHIP_TOOLTIPS = {
+  veteran: 'Organizations that participated in GSoC for many years',
+  newcomer: 'Good for first-time contributors and beginners',
+  hot: 'Highly competitive organizations with many applicants',
+  chill: 'Organizations with relatively fewer applicants',
+  active: 'Organizations with recent GitHub activity',
+  bookmarked: 'Organizations you saved for later'
+};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
@@ -1401,4 +1420,3 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
-

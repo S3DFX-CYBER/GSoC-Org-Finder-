@@ -3306,11 +3306,7 @@ sections.forEach(sectionId => {
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
-  document.getElementById('mStars').textContent = '---';
-  document.getElementById('mForks').textContent = '---';
-  document.getElementById('mIssues').textContent = '---';
-  document.getElementById('mActivity').textContent = '---';
-  document.getElementById('mActivity').className = 'gh-stat-item text-blue-400';
+    resetGithubStats();
     addRecentlyViewed(name);
 
     // Track badge progress for org views
@@ -3687,7 +3683,16 @@ if(org.ideas){
   }
 
   // Live GitHub Stats Mock/Fetch
- async function fetchStats() {
+ // Resets all GitHub stat display elements to loading state
+function resetGithubStats() {
+    document.getElementById('mStars').textContent = '---';
+    document.getElementById('mForks').textContent = '---';
+    document.getElementById('mIssues').textContent = '---';
+    document.getElementById('mActivity').textContent = '---';
+    document.getElementById('mActivity').className = 'gh-stat-item text-blue-400';
+}
+
+async function fetchStats() {
     const btn = document.getElementById('mFetchBtn');
     const orgName = document.querySelector('#mHeader h2').textContent;
     const org = ORGS.find(o => o.name === orgName);
@@ -3696,15 +3701,11 @@ if(org.ideas){
     btn.textContent = 'Fetching...';
     btn.disabled = true;
 
-    // Reset karo fetch shuru hote hi
-    document.getElementById('mStars').textContent = '---';
-    document.getElementById('mForks').textContent = '---';
-    document.getElementById('mIssues').textContent = '---';
-    document.getElementById('mActivity').textContent = '---';
-    document.getElementById('mActivity').className = 'gh-stat-item text-blue-400';
+    // Reset all stats to loading state before fetch
+    resetGithubStats();
 
     try {
-      // GitHub API se REAL data fetch karo
+      // Fetch real-time data from GitHub API
       const githubPath = githubPathFromValue(org.github);
       if (!githubPath) throw new Error('No GitHub repo found');
 
@@ -3712,12 +3713,12 @@ if(org.ideas){
       if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
       const data = await res.json();
 
-      // Real data se calculate karo
+      // Extract stats from API response
       const stars = data.stargazers_count || 0;
       const forks = data.forks_count || 0;
       const issues = data.open_issues_count || 0;
 
-      // Last commit se REAL activity calculate karo
+      // Calculate activity level based on last push date
       const lastPush = new Date(data.pushed_at);
       const daysSince = Math.floor((Date.now() - lastPush.getTime()) / 86400000);
 

@@ -829,7 +829,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<dialog id="mobileMenu" class="fixed inset-0 z-40 hidden" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -884,7 +884,7 @@
       </a>
     </div>
   </nav>
-</div>
+</dialog>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1671,7 +1671,7 @@
     updateThemeIcon();
   })();
 
-  window.toggleTheme = function(){
+  globalThis.toggleTheme = function(){
     const isDark = document.documentElement.classList.toggle('dark');
     safeStorage.set('theme', isDark ? 'dark' : 'light');
     updateThemeIcon();
@@ -1692,7 +1692,7 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
+  globalThis.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
@@ -1727,7 +1727,7 @@
     }
   }
 
-window.setActiveMenu = function(clickedLink) {
+globalThis.setActiveMenu = function(clickedLink) {
   // Remove active class from all menu links
   const allLinks = document.querySelectorAll('.mobile-menu-link');
 
@@ -1763,7 +1763,7 @@ window.setActiveMenu = function(clickedLink) {
   // Update active state based on scroll position
   function updateActiveSection() {
     const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 80; // Offset for fixed header
+    const scrollPosition = globalThis.scrollY + 80; // Offset for fixed header
     
 let currentSection = 'timeline';
 
@@ -1774,7 +1774,7 @@ sections.forEach(sectionId => {
         const sectionTop = section.offsetTop;
         const sectionBottom = sectionTop + section.offsetHeight;
 
-        const triggerPoint = window.innerHeight / 2;
+        const triggerPoint = globalThis.innerHeight / 2;
 
         if (
             sectionTop <= scrollPosition + triggerPoint &&
@@ -1813,7 +1813,7 @@ sections.forEach(sectionId => {
   }
 
   // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
+  globalThis.addEventListener('scroll', updateActiveSection);
   
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', updateActiveSection);
@@ -2045,7 +2045,7 @@ sections.forEach(sectionId => {
     container.innerHTML = badges + clearAll;
   }
 
-  window.unselectLanguage = function(lang) {
+  globalThis.unselectLanguage = function(lang) {
     selectedLanguages.delete(lang);
     const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
     if (pillBtn) {
@@ -2056,7 +2056,7 @@ sections.forEach(sectionId => {
     applyFilters();
   }
 
-  window.clearAllLanguages = function() {
+  globalThis.clearAllLanguages = function() {
     selectedLanguages.clear();
     document.querySelectorAll('.pill.active').forEach(p => {
       p.classList.remove('active');
@@ -2069,7 +2069,7 @@ sections.forEach(sectionId => {
   // NOTE: toggleLanguageMode removed — the matchAllLanguagesToggle checkbox
   // uses a direct event listener (line ~1538) and does not use onclick=.
 
-  window.togglePill = function(el) {
+  globalThis.togglePill = function(el) {
     const langDisplay = el.dataset.lang || '';
     const langKey = langDisplay.trim().toLowerCase();
     if (!langKey) return;
@@ -2573,7 +2573,7 @@ sections.forEach(sectionId => {
   }
 
   // Organizational Logo Fallbacks
-  window.handleImgError = function(img, orgName) {
+  globalThis.handleImgError = function(img, orgName) {
     if (!img.dataset.triedClearbit) {
       img.dataset.triedClearbit = 'true';
       const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
@@ -2824,7 +2824,7 @@ sections.forEach(sectionId => {
   // ══════════════════════════════════════════════
   let prevFocusBeforeAnalytics = null;
 
-  window.openAnalytics = function() {
+  globalThis.openAnalytics = function() {
     // Save current focus
     prevFocusBeforeAnalytics = document.activeElement;
 
@@ -2844,7 +2844,7 @@ sections.forEach(sectionId => {
     }, 100);
   };
 
-  window.closeAn = function() {
+  globalThis.closeAn = function() {
     document.getElementById('anBg')?.classList.remove('open');
     document.body.style.overflow = 'auto';
 
@@ -2855,7 +2855,7 @@ sections.forEach(sectionId => {
     prevFocusBeforeAnalytics = null;
   };
 
-  window.closeAnEvent = function(e) {
+  globalThis.closeAnEvent = function(e) {
     if (e.target.id === 'anBg') {
       closeAn();
     }
@@ -3462,7 +3462,7 @@ if(org.ideas){
     return a.name.localeCompare(b.name);
   }
 
-  window.clearAllFilters = function() {
+  globalThis.clearAllFilters = function() {
     document.getElementById('searchInput').value = '';
     document.getElementById('categoryFilter').value = 'all';
     document.getElementById('complexityFilter').value = 'all';
@@ -3639,7 +3639,7 @@ if(org.ideas){
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
         const safeUrl = sanitizeHrefUrl(issue.url);
-        if (safeUrl) card.onclick = () => window.open(safeUrl, '_blank');
+        if (safeUrl) card.onclick = () => globalThis.open(safeUrl, '_blank');
         const safeRepo = escapeHtml(issue.repo || '');
         const safeTitle = escapeHtml(issue.title || '');
         const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
@@ -4075,7 +4075,7 @@ if(org.ideas){
 <script type="module" src="agent/scripts/speed-insights.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    globalThis.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
     });
   }
@@ -4177,7 +4177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   });
 
-  window.closeHelpModal = closeHelpModal;
+  globalThis.closeHelpModal = closeHelpModal;
 
 });
 </script>

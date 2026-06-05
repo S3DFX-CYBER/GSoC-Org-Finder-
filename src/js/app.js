@@ -34,12 +34,12 @@ let recentlyViewed = (() => {
   let data = null;
   try {
     const raw = (typeof safeStorage !== 'undefined' ? safeStorage.get(RECENTLY_VIEWED_KEY) : localStorage.getItem(RECENTLY_VIEWED_KEY));
-    if (raw) data = JSON.parse(raw);
+    if (raw && typeof raw === 'string') data = JSON.parse(raw);
   } catch (error) {
-    console.warn('Failed to parse storage data:', error.message);
+    console.warn('Storage data corrupted');
     data = null;
   }
-  return (data || []).filter(name => name && typeof name === 'string');
+  return (Array.isArray(data) ? data : []).filter(name => name && typeof name === 'string' && name.length < 100);
 })();
 })();
 
@@ -263,43 +263,33 @@ function updateCountdown() {
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
-        bugs
-const AN={
-  g(k,d){
-    let data = null;
-    try {
-      const raw = safeStorage.get('gaf_'+k);
-      if (raw) data = JSON.parse(raw);
-    } catch (error) {
-      console.warn('Failed to parse storage data:', error.message);
-      data = null;
-    }
-    return data ?? d;
-  },
-  s(k,v){
-    safeStorage.set('gaf_'+k,JSON.stringify(v));
-
 const AN = {
   g(k, d) {
     let data = null;
     try {
       const raw = localStorage.getItem('gaf_' + k);
-      if (raw) data = JSON.parse(raw);
+      if (raw && typeof raw === 'string') data = JSON.parse(raw);
     } catch (error) {
-      console.warn('Failed to parse storage data:', error.message);
+      console.warn('Analytics parse failed');
       data = null;
     }
+    // Type validation
+    if (Array.isArray(d) && !Array.isArray(data)) return d;
+    if (typeof d === 'object' && (data === null || typeof data !== 'object')) return d;
     return data ?? d;
   },
   s(k, v) {
     try {
+      if (k === '__proto__' || k === 'constructor' || k === 'prototype') return;
       localStorage.setItem('gaf_' + k, JSON.stringify(v));
     } catch (err) {
-      console.warn('Analytics storage write failed for key:', k, err);
+      console.warn('Analytics save failed');
     }
-        main
   },
-  inc(k) { this.s(k, (this.g(k, 0) + 1)); },
+  inc(k) { 
+    const val = this.g(k, 0);
+    this.s(k, (typeof val === 'number' ? val : 0) + 1); 
+  },
   push(k, v, max = 20) { const a = this.g(k, []); a.unshift(v); this.s(k, a.slice(0, max)); },
   today() { return new Date().toISOString().slice(0, 10); },
   trackVisit() {
@@ -346,10 +336,10 @@ globalThis.openAnalytics = function () {
   const aTot = document.getElementById('aTot');
   if (!aTot) return;
   aTot.textContent = AN.g('total', 0).toLocaleString();
-  document.getElementById('aToday').textContent = AN.todayVisits();
-  document.getElementById('aSearches').textContent = AN.g('searches', 0);
-  document.getElementById('aViews').textContent = AN.g('views', 0);
-  document.getElementById('aFilters').textContent = AN.g('filters', 0);
+  document.getElementById('aToday').textContent = String(AN.todayVisits());
+  document.getElementById('aSearches').textContent = String(AN.g('searches', 0));
+  document.getElementById('aViews').textContent = String(AN.g('views', 0));
+  document.getElementById('aFilters').textContent = String(AN.g('filters', 0));
   document.getElementById('aTime').textContent = AN.sessionTime();
   const tc = AN.topCats(), mx = tc[0]?.[1] || 1;
   document.getElementById('catChart').innerHTML = tc.length
@@ -517,50 +507,43 @@ const ghCache = (() => {
     let data = null;
     try {
       const raw = localStorage.getItem('gaf_ghc');
-      if (raw) data = JSON.parse(raw);
+      if (raw && typeof raw === 'string') data = JSON.parse(raw);
     } catch (error) {
-      console.warn('Failed to parse storage data:', error.message);
+      console.warn('Cache parse failed');
       data = null;
     }
-    const parsed = data;
-    return parsed || {};
+    return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
   } catch {
-        main
     return {};
   }
 })();
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
 
-        bugs
 /**
  * Saves the entire in-memory cache to safeStorage.
  * Handles quota exceeded errors via safeStorage implementation.
  */
-function saveCache() {
-  const ss = globalThis.safeStorage || safeStorage;
-<<<<<<< HEAD
-  if (!ss.setItem('github_analytics_filter_cache', JSON.stringify(gaf_ghc))) {
-    console.warn('Cache write failed, filtering will not persist');
-=======
-  if (!ss.set('gaf_ghc', JSON.stringify(cache))) {
-    console.warn('GitHub cache persistence unavailable; keeping in-memory cache only.');
-
 function saveCache(key, value) {
   try {
+    const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+    if (key && DANGEROUS_KEYS.includes(key)) return;
+    
     localStorage.setItem('gaf_ghc', JSON.stringify(ghCache));
   } catch (e) {
     if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-      console.warn('LocalStorage quota exceeded, clearing GitHub cache...');
-      for (const k in ghCache) delete ghCache[k];
-      if (key && value !== undefined) ghCache[key] = value;
+      console.warn('Storage quota exceeded');
+      const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+      for (const k in ghCache) {
+        if (Object.prototype.hasOwnProperty.call(ghCache, k) && !DANGEROUS_KEYS.includes(k)) {
+          delete ghCache[k];
+        }
+      }
+      if (key && value !== undefined && !DANGEROUS_KEYS.includes(key)) ghCache[key] = value;
       try {
         localStorage.setItem('gaf_ghc', JSON.stringify(ghCache));
       } catch (err) {
-        console.error('Failed to save even after clearing cache', err);
+        console.warn('Storage write failed');
       }
     }
-        main
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
   }
 }
 
@@ -568,17 +551,16 @@ function cleanCache() {
   const now = Date.now();
   const ONE_DAY = 24 * 60 * 60 * 1000;
   let changed = false;
-<<<<<<< HEAD
-  for (const key in gaf_ghc) {
-    const entry = gaf_ghc[key];
-    if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
-      delete gaf_ghc[key];
-=======
+  const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
   for (const key in ghCache) {
+    if (DANGEROUS_KEYS.includes(key)) {
+      delete ghCache[key];
+      changed = true;
+      continue;
+    }
     const entry = ghCache[key];
     if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
       delete ghCache[key];
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
       changed = true;
     }
   }
@@ -587,8 +569,11 @@ function cleanCache() {
 cleanCache();
 
 async function checkAPI() {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
   try {
-    const r = await fetch(`${API}?repo=django/django`);
+    const r = await fetch(`${API}?repo=django/django`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     const banner = document.getElementById('apiBanner');
     if (!banner) return;
     if (r.ok) {
@@ -602,7 +587,8 @@ async function checkAPI() {
       document.getElementById('apiStrong').textContent = '⚠ API Error';
       document.getElementById('apiText').textContent = 'Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
     }
-  } catch {
+  } catch (err) {
+    clearTimeout(timeoutId);
     const banner = document.getElementById('apiBanner');
     if (banner) {
       document.getElementById('apiStrong').textContent = '○ Running Locally';
@@ -611,63 +597,51 @@ async function checkAPI() {
   }
 }
 
-<<<<<<< HEAD
-async function fetchGH(repo){
-  if(!repo)return null;
-  if(gaf_ghc[repo]&&Date.now()-gaf_ghc[repo].ts<3600000)return gaf_ghc[repo];
-  try{
-    const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
-    if(!r.ok)return null;
-    const d=await r.json();
-    if(d.error)return null;
-    d.ts=Date.now();
-    gaf_ghc[repo]=d;
-=======
 async function fetchGH(repo) {
-  if (!repo) return null;
+  if (!repo || typeof repo !== 'string') return null;
   if (ghCache[repo] && Date.now() - ghCache[repo].ts < 3600000) return ghCache[repo];
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  
   try {
-    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!r.ok) return null;
     const d = await r.json();
-    if (d.error) return null;
+    if (!d || d.error) return null;
     d.ts = Date.now();
     ghCache[repo] = d;
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
     saveCache(repo, d);
     return d;
-  } catch { return null; }
+  } catch { 
+    clearTimeout(timeoutId);
+    return null; 
+  }
 }
 
-<<<<<<< HEAD
-async function fetchGFI(repo){
-  if(!repo)return null;
-  const cacheKey=repo+'__gfi';
-  const hit=gaf_ghc[cacheKey];
-  if(hit&&Date.now()-hit.ts<3600000&&hit.count!==null&&hit.count!==undefined)return hit.count;
-  try{
-    const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
-    if(!r.ok)return null;
-    const d=await r.json();
-    if(d.gfi===null||d.gfi===undefined)return null;
-    gaf_ghc[cacheKey]={count:d.gfi,ts:Date.now()};
-    saveCache(cacheKey, gaf_ghc[cacheKey]);
-=======
 async function fetchGFI(repo) {
-  if (!repo) return null;
+  if (!repo || typeof repo !== 'string') return null;
   const cacheKey = repo + '__gfi';
   const hit = ghCache[cacheKey];
   if (hit && Date.now() - hit.ts < 3600000 && hit.count !== null && hit.count !== undefined) return hit.count;
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  
   try {
-    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
+    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!r.ok) return null;
     const d = await r.json();
-    if (d.gfi === null || d.gfi === undefined) return null;
+    if (!d || d.gfi === null || d.gfi === undefined) return null;
     ghCache[cacheKey] = { count: d.gfi, ts: Date.now() };
     saveCache(cacheKey, ghCache[cacheKey]);
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
     return d.gfi;
-  } catch { return null; }
+  } catch { 
+    clearTimeout(timeoutId);
+    return null; 
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1385,7 +1359,10 @@ function searchComparator(a, b, search, sort) {
 }
 
 function applyFilters() {
-  const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const rawSearch = (document.getElementById('searchInput')?.value || '').trim();
+  // Basic sanitization: remove potential HTML tags and limit length
+  const search = rawSearch.replace(/[<>"']/g, '').toLowerCase().slice(0, 100);
+  
   const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
   const cat = categoryValue === 'all' ? '' : categoryValue;
   const compF = document.getElementById('complexityFilter')?.value || 'all';

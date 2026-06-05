@@ -1,9 +1,8 @@
-        bugs
 /* global safeStorage */
 /* global ORGS */
 
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
-        main
+
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 /**
@@ -15,7 +14,6 @@
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
-        bugs
 (function(){
   const saved = (typeof safeStorage !== 'undefined' && safeStorage.get('theme')) || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
@@ -463,57 +461,20 @@ function getCategoryMeta(category) {
 // ══════════════════════════════════════════════
 // GITHUB API CLIENT
 // ══════════════════════════════════════════════
-        bugs
-const API='/api/github';
-<<<<<<< HEAD
-let gaf_ghc = {};
-try {
-  const ss = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null));
-  const cached = ss?.getItem ? ss.getItem('github_analytics_filter_cache') : null;
-  if (cached) {
-    let data = null;
-    try {
-      data = JSON.parse(cached);
-    } catch (error) {
-      console.warn('Failed to parse storage data:', error.message);
-      data = null;
-    }
-    gaf_ghc = data || {};
-  }
-} catch (e) {
-  console.warn('Failed to access cache:', e);
-  gaf_ghc = {};
-}
-=======
-const cache = (() => {
-  try {
-    const ss = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null));
-    const raw = ss?.get ? ss.get('gaf_ghc') : null;
-    let data = null;
-    try {
-      if (raw) data = JSON.parse(raw);
-    } catch (error) {
-      console.warn('Failed to parse storage data:', error.message);
-      data = null;
-    }
-    const parsed = data;
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
-  } catch (e) {
-    console.warn('Failed to parse GitHub cache data:', e);
-
 const API = '/api/github';
-const ghCache = (() => {
+let ghCache = (() => {
   try {
+    const raw = localStorage.getItem('gaf_ghc');
     let data = null;
     try {
-      const raw = localStorage.getItem('gaf_ghc');
       if (raw && typeof raw === 'string') data = JSON.parse(raw);
     } catch (error) {
-      console.warn('Cache parse failed');
+      console.warn('Failed to parse storage data:', error.message);
       data = null;
     }
     return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
-  } catch {
+  } catch (e) {
+    console.warn('Failed to access cache:', e);
     return {};
   }
 })();
@@ -664,65 +625,6 @@ function openModalElement(modalId, triggerElement = null) {
       menuBtn.setAttribute('aria-expanded', 'true');
       menuBtn.setAttribute('aria-label', 'Close menu');
     }
-<<<<<<< HEAD
-  }
-  spin.style.display='none';btn.disabled=false;txt.textContent='✓ Done';fetching=false;
-  applyFilters();updateStats();
-}
-
-async function fetchModalGH(){
-  const o=ORGS[modalIdx];if(!o?.github)return;
-  document.getElementById('mFetchBtn').textContent='Loading…';
-  delete gaf_ghc[o.github];
-  delete gaf_ghc[o.github+'__gfi'];
-  const d=await fetchGH(o.github);
-  if(d){
-    o._gh=d;
-    document.getElementById('ghStars').textContent=fmt(d.stars);
-    document.getElementById('ghForks').textContent=fmt(d.forks);
-    document.getElementById('ghIssues').textContent=fmt(d.issues);
-    document.getElementById('ghCommit').textContent=d.lastCommit;
-    document.getElementById('mFetchBtn').textContent='↻ Refresh';
-    document.getElementById('ghGFI').textContent='…';
-    const gfi=await fetchGFI(o.github);
-    const gfiTxt=gfi!==null?fmt(gfi):'—';
-    document.getElementById('ghGFI').textContent=gfiTxt;
-    if(gfi!==null){
-      o._gh.gfi=gfi;
-      const cells=document.getElementById('mMetrics')?.querySelectorAll('.mv');
-      if(cells&&cells[3])cells[3].textContent=gfiTxt;
-    }
-    applyFilters();
-    renderCompareTable();
-  }else document.getElementById('mFetchBtn').textContent='✗ Failed';
-}
-
-function fmt(n){return(!n&&n!==0)?'—':n>=1000?(n/1000).toFixed(1)+'k':String(n);}
-
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
-function yCls(y){return y>=8?'veteran':y>=4?'experienced':'newcomer';}
-function yLbl(y){return y>=8?'🏆 Veteran':y>=4?'⭐ Experienced':'🌱 Newcomer';}
-function yBdg(y){return y>=8?'bv':y>=4?'be':'bn';}
-function cLbl(c){return c==='hot'?'🔥 High':c==='moderate'?'🟡 Moderate':'😎 Low';}
-function cBdg(c){return c==='hot'?'bh':c==='moderate'?'bm':'bc';}
-function aLbl(a){return a==='active'?'⚡ Active':a==='moderate'?'📊 Moderate':a==='low'?'💤 Low':'○ —';}
-function aBdg(a){return a==='active'?'bac':a==='moderate'?'bam':a==='low'?'bal':'bna';}
-function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c;}
-function catBdg(c){return'cb-'+(c||'other');}
-
-// ══════════════════════════════════════════════
-// COMPARE
-// ══════════════════════════════════════════════
-const compareSet=new Set(); // stores ORGS indices
-
-function toggleCompare(idx,e){
-  if(e){e.stopPropagation();}
-  if(compareSet.has(idx)){
-    compareSet.delete(idx);
-=======
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
   } else {
     modal.classList.add('open');
   }
@@ -1002,7 +904,7 @@ function refreshOrgGridAfterBookmarkChange() {
   refreshVisibleBookmarkButtons();
 }
 
-       bugs
+
 function getBookmarks() {
   const raw = safeStorage.get('bookmarks');
   if (!raw) return [];
@@ -1626,7 +1528,6 @@ function updateModalGHStats(org, d, gfi) {
   }
 }
 
-        bugs
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
@@ -2439,12 +2340,10 @@ function updateStats() {
   document.getElementById('visitorStat').textContent = String(AN.todayVisits());
 }
 
-<<<<<<< HEAD
-ORGS.forEach(o=>{if(o.github&&gaf_ghc[o.github])o._gh=gaf_ghc[o.github];});
-showSkeletons();
+ORGS.forEach(o => { if (o.github && ghCache[o.github]) o._gh = ghCache[o.github]; });
 updateStats();
 renderSelectedLanguages();
-=======
+
 // ══════════════════════════════════════════════
 // UTILITIES FOR CARD ATTRIBUTES MAPPING
 // ══════════════════════════════════════════════
@@ -2455,7 +2354,6 @@ function trimGitHubPathSlashes(path) {
   while (end > start && path[end - 1] === '/') end -= 1;
   return path.slice(start, end);
 }
->>>>>>> df67fc9e84dd2b000c2c4580dd856ac94fb7fba4
 
 function githubPathFromValue(value) {
   const github = String(value || '').trim();
@@ -2890,7 +2788,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-        bugs
 
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY

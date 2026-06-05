@@ -1801,7 +1801,7 @@ sections.forEach(sectionId => {
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset.section;
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
         link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');

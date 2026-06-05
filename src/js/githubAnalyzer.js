@@ -28,7 +28,8 @@ function getLocalCache() {
       return cache;
     }
     return {};
-  } catch {
+  } catch (err) {
+    console.error('Failed to access local cache:', err);
     return {};
   }
 }
@@ -38,7 +39,7 @@ function setLocalCache(cache) {
     if (!cache || typeof cache !== 'object') return;
     safeStorage.setItem(GITHUB_ANALYZER_CACHE_KEY, JSON.stringify(cache));
   } catch (err) {
-    console.warn('Storage write failed');
+    console.error('Storage write failed:', err);
   }
 }
 

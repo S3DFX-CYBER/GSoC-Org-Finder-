@@ -25,7 +25,6 @@ jobs:
     # ----------------------------------------
 
     if: |
-      github.event.pull_request.head.repo.full_name == github.repository &&
       github.actor != 'github-actions[bot]'
 
     runs-on: ubuntu-latest

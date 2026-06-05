@@ -26,3 +26,5 @@ jobs:
         run: npm run lint:css
       - name: Lint HTML
         run: npm run lint:html
+      - name: Run Automated Tests
+        run: npm test

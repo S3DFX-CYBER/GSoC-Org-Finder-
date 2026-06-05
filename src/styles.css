@@ -327,6 +327,24 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 [data-theme="dark"] .cb-os{background:rgba(100,116,139,.15);color:#9CA3AF}
 [data-theme="dark"] .cb-other{background:rgba(255,255,255,.05);color:var(--muted)}
 
+/* ── TAG SUGGESTIONS ── */
+/* stylelint-disable selector-id-pattern */
+#tagSuggestions {
+  scrollbar-width: thin;
+}
+#tagSuggestions::-webkit-scrollbar {
+  width: 4px;
+}
+#tagSuggestions::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+/* stylelint-enable selector-id-pattern */
+.tag-suggestion:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
 /* ── EMPTY ── */
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
 .empty-icon{font-size:44px;margin-bottom:14px}

@@ -25,9 +25,14 @@ let recentlyViewed = (() => {
 
 const selectedLanguages = new Set();
 let matchAllLanguages = false;
-let activeChip = null; // quick-filter chip key
+let activeChip = null;
 let visibleCount = 12;
-let focusedIdx = -1; // for keyboard card navigation
+let focusedIdx = -1;
+let orgSizeFilter = '';
+let mentorshipFilter = '';
+const selectedTags = new Set();
+let allTags = [];
+const filterCache = new Map();
 
 // Expose globals for external components (recommender, recommendation-ui, etc.)
 globalThis.pills = selectedLanguages;
@@ -78,6 +83,36 @@ const LANGUAGE_MAP = {};
   });
 })();
 globalThis.LANGUAGE_MAP = LANGUAGE_MAP;
+
+const ORG_SIZE_LARGE_THRESHOLD = 8;
+const ORG_SIZE_MEDIUM_THRESHOLD = 4;
+const MENTORSHIP_HIGH_THRESHOLD = 5;
+const MENTORSHIP_MEDIUM_THRESHOLD = 2;
+const FILTER_CACHE_MAX = 50;
+
+function getOrgSize(org) {
+  if (org.years >= ORG_SIZE_LARGE_THRESHOLD) return 'large';
+  if (org.years >= ORG_SIZE_MEDIUM_THRESHOLD) return 'medium';
+  return 'small';
+}
+
+function getMentorshipLevel(org) {
+  const mentors = MENTOR_DATA[org.name];
+  const count = Array.isArray(mentors) ? mentors.length : 0;
+  if (count >= MENTORSHIP_HIGH_THRESHOLD) return 'high';
+  if (count >= MENTORSHIP_MEDIUM_THRESHOLD) return 'medium';
+  return 'low';
+}
+
+function compileAllTags() {
+  const tagSet = new Set();
+  ORGS.forEach(o => (o.tags || []).forEach(t => tagSet.add(t)));
+  allTags = [...tagSet].sort((a, b) => a.localeCompare(b));
+}
+
+function resetFilterCache() {
+  filterCache.clear();
+}
 
 const UMBRELLA_ORGS = new Set([
   'Apache Software Foundation', 'CNCF', 'Eclipse Foundation', 'FOSSASIA', 'GNOME Foundation',
@@ -1051,6 +1086,12 @@ function matchesFilters(o, cat, compF, search) {
   if (compF && compF !== 'all' && o.codebase !== compF) return false;
   if (search && !orgName.includes(search)) return false;
   if (selectedLanguages.size > 0 && !orgMatchesLanguages(o, selectedLanguages)) return false;
+  if (orgSizeFilter && getOrgSize(o) !== orgSizeFilter) return false;
+  if (mentorshipFilter && getMentorshipLevel(o) !== mentorshipFilter) return false;
+  if (selectedTags.size > 0) {
+    const orgTags = new Set((o.tags || []).map(t => t.toLowerCase().trim()));
+    if (![...selectedTags].every(t => orgTags.has(t.toLowerCase().trim()))) return false;
+  }
 
   if (activeChip) {
     if (activeChip === 'bookmarked' && !bookmarkedSet.has(o.name)) return false;
@@ -1080,10 +1121,29 @@ function applyFilters() {
   const cat = categoryValue === 'all' ? '' : categoryValue;
   const compF = document.getElementById('complexityFilter')?.value || 'all';
   const sort = document.getElementById('sortSelect')?.value || 'alpha';
+  orgSizeFilter = document.getElementById('orgSizeFilter')?.value || '';
+  if (orgSizeFilter === 'all') orgSizeFilter = '';
+  mentorshipFilter = document.getElementById('mentorshipFilter')?.value || '';
+  if (mentorshipFilter === 'all') mentorshipFilter = '';
+
+  const cacheKey = JSON.stringify({ search, cat, compF, sort, orgSizeFilter, mentorshipFilter, selectedLanguages: [...selectedLanguages].sort((a, b) => a.localeCompare(b)), activeChip, selectedTags: [...selectedTags].sort((a, b) => a.localeCompare(b)) });
+  const cached = filterCache.get(cacheKey);
+  if (cached) {
+    filterCache.delete(cacheKey);
+    filterCache.set(cacheKey, cached);
+    filteredOrgs = cached;
+    renderOrgs(true);
+    syncFilterUrl(search, cat, compF, sort);
+    return;
+  }
 
   filteredOrgs = ORGS.filter(o => matchesFilters(o, cat, compF, search));
+  filterCache.set(cacheKey, filteredOrgs);
+  if (filterCache.size > FILTER_CACHE_MAX) {
+    const firstKey = filterCache.keys().next().value;
+    filterCache.delete(firstKey);
+  }
 
-  // Smart sorting: Exact match first, startsWith second, alphabetic/secondary sort third
   if (search) {
     filteredOrgs.sort((a, b) => searchComparator(a, b, search, sort));
   } else {
@@ -1091,8 +1151,10 @@ function applyFilters() {
   }
 
   renderOrgs(true);
+  syncFilterUrl(search, cat, compF, sort);
+}
 
-  // Sync state to URL
+function syncFilterUrl(search, cat, compF, sort) {
   const params = new URLSearchParams();
   if (search) params.set('q', search);
   if (cat) params.set('cat', cat);
@@ -1100,6 +1162,9 @@ function applyFilters() {
   if (sort && sort !== 'alpha') params.set('sort', sort);
   if (selectedLanguages.size) params.set('lang', [...selectedLanguages].join(','));
   if (activeChip) params.set('chip', activeChip);
+  if (orgSizeFilter) params.set('size', orgSizeFilter);
+  if (mentorshipFilter) params.set('mentor', mentorshipFilter);
+  if (selectedTags.size) params.set('tags', [...selectedTags].join(','));
   if (typeof history !== 'undefined' && typeof history.replaceState === 'function' && typeof location !== 'undefined') {
     history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
   }
@@ -1111,6 +1176,10 @@ function applySecondarySort(a, b, sortType) {
   if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition) - ['chill', 'moderate', 'hot'].indexOf(b.competition);
   if (sortType === 'stars') return (b._gh?.stars || 0) - (a._gh?.stars || 0);
   if (sortType === 'gfi') return (b._gh?.gfi || 0) - (a._gh?.gfi || 0);
+  if (sortType === 'activity') {
+    const actOrder = { active: 3, high: 3, moderate: 2, low: 1, inactive: 0 };
+    return (actOrder[b._gh?.activity] || 0) - (actOrder[a._gh?.activity] || 0);
+  }
   return a.name.localeCompare(b.name);
 }
 
@@ -1293,6 +1362,20 @@ globalThis.clearAllFilters = function () {
   if (complexityFilter) complexityFilter.value = 'all';
   const sortSelect = document.getElementById('sortSelect');
   if (sortSelect) sortSelect.value = 'alpha';
+  const orgSizeEl = document.getElementById('orgSizeFilter');
+  if (orgSizeEl) orgSizeEl.value = 'all';
+  const mentorshipEl = document.getElementById('mentorshipFilter');
+  if (mentorshipEl) mentorshipEl.value = 'all';
+
+  orgSizeFilter = '';
+  mentorshipFilter = '';
+  selectedTags.clear();
+  const tagStrip = document.getElementById('selectedTagsStrip');
+  if (tagStrip) tagStrip.innerHTML = '<span class="empty-state">No tags selected</span>';
+  const tagInput = document.getElementById('tagFilterInput');
+  if (tagInput) tagInput.value = '';
+  const tagSuggestions = document.getElementById('tagSuggestions');
+  if (tagSuggestions) tagSuggestions.classList.add('hidden');
 
   // Reset chips
   document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -1307,6 +1390,7 @@ globalThis.clearAllFilters = function () {
     p.setAttribute('aria-pressed', 'false');
   });
 
+  resetFilterCache();
   renderSelectedLanguages();
   applyFilters();
 };
@@ -1693,6 +1777,64 @@ function renderSelectedLanguages() {
 
   const clearAll = safeHTML`<button class="clear-all-langs-btn">Clear all</button>`;
   container.innerHTML = badges + clearAll;
+}
+
+// ══════════════════════════════════════════════
+// TAG FILTERING SYSTEM
+// ══════════════════════════════════════════════
+function renderTagSuggestions(query) {
+  const container = document.getElementById('tagSuggestions');
+  if (!container) return;
+  if (!query || query.length < 1) {
+    container.classList.add('hidden');
+    return;
+  }
+  const q = query.toLowerCase().trim();
+  const matches = allTags.filter(t => t.toLowerCase().includes(q) && !selectedTags.has(t));
+  if (!matches.length) {
+    container.classList.add('hidden');
+    return;
+  }
+  container.classList.remove('hidden');
+  container.innerHTML = matches.slice(0, 10).map(tag =>
+    `<button type="button" class="tag-suggestion px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-primary w-full text-left rounded transition-colors" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`
+  ).join('');
+}
+
+function selectTagFn(tag) {
+  if (selectedTags.has(tag)) return;
+  selectedTags.add(tag);
+  const tagInput = document.getElementById('tagFilterInput');
+  if (tagInput) tagInput.value = '';
+  const tagSuggestions = document.getElementById('tagSuggestions');
+  if (tagSuggestions) tagSuggestions.classList.add('hidden');
+  renderSelectedTags();
+  resetFilterCache();
+  applyFilters();
+}
+globalThis.selectTag = selectTagFn;
+
+function unselectTagFn(tag) {
+  selectedTags.delete(tag);
+  renderSelectedTags();
+  resetFilterCache();
+  applyFilters();
+}
+globalThis.unselectTag = unselectTagFn;
+
+function renderSelectedTags() {
+  const container = document.getElementById('selectedTagsStrip');
+  if (!container) return;
+  if (!selectedTags.size) {
+    container.innerHTML = '<span class="empty-state">No tags selected</span>';
+    return;
+  }
+  container.innerHTML = [...selectedTags].map(tag =>
+    `<span class="selected-lang-badge" data-tag="${escapeHtml(tag)}">
+      ${escapeHtml(tag)}
+      <button class="unselect-lang-btn" aria-label="Remove ${escapeHtml(tag)}">×</button>
+    </span>`
+  ).join('');
 }
 
 // ══════════════════════════════════════════════
@@ -2206,7 +2348,10 @@ async function loadMentorData() {
     const res = await fetch('/data/mentors.json?v=' + Date.now());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    MENTOR_DATA = data.mentors || {};
+    MENTOR_DATA = {};
+    Object.entries(data).forEach(([name, entry]) => {
+      MENTOR_DATA[name] = Array.isArray(entry) ? entry : (entry.mentors || []);
+    });
     mentorDataState = 'loaded';
     renderMentorFinder();
   } catch (err) {
@@ -2366,6 +2511,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  compileAllTags();
+
   // Restore filter state from URL parameters
   (function restoreFiltersFromURL() {
     const params = new URLSearchParams(location.search);
@@ -2412,6 +2559,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+
+    const sizeParam = params.get('size');
+    if (sizeParam) {
+      orgSizeFilter = sizeParam;
+      const sizeEl = document.getElementById('orgSizeFilter');
+      if (sizeEl) sizeEl.value = sizeParam;
+    }
+
+    const mentorParam = params.get('mentor');
+    if (mentorParam) {
+      mentorshipFilter = mentorParam;
+      const mentorEl = document.getElementById('mentorshipFilter');
+      if (mentorEl) mentorEl.value = mentorParam;
+    }
+
+    const tagsParam = params.get('tags');
+    if (tagsParam) {
+      tagsParam.split(',').map(s => s.trim()).filter(Boolean).forEach(t => selectedTags.add(t));
+      renderSelectedTags();
+    }
   })();
 
   updateCountdown();
@@ -2435,6 +2602,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
+  document.getElementById('orgSizeFilter')?.addEventListener('change', () => { resetFilterCache(); applyFilters(); });
+  document.getElementById('mentorshipFilter')?.addEventListener('change', () => { resetFilterCache(); applyFilters(); });
   document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
   document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
@@ -2447,6 +2616,45 @@ document.addEventListener('DOMContentLoaded', () => {
     visibleCount += 12;
     renderOrgs(false);
   });
+
+  const tagFilterInput = document.getElementById('tagFilterInput');
+  if (tagFilterInput) {
+    let tagInputTimer;
+    tagFilterInput.addEventListener('input', () => {
+      clearTimeout(tagInputTimer);
+      tagInputTimer = setTimeout(() => renderTagSuggestions(tagFilterInput.value), 100);
+    });
+    tagFilterInput.addEventListener('focus', () => {
+      if (tagFilterInput.value.trim()) renderTagSuggestions(tagFilterInput.value);
+    });
+    tagFilterInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        const suggestions = document.getElementById('tagSuggestions');
+        if (suggestions) suggestions.classList.add('hidden');
+      }, 200);
+    });
+  }
+  const tagSuggestions = document.getElementById('tagSuggestions');
+  if (tagSuggestions) {
+    tagSuggestions.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tag-suggestion');
+      if (btn?.dataset?.tag) {
+        selectTagFn(btn.dataset.tag);
+      }
+    });
+  }
+  const selectedTagsStrip = document.getElementById('selectedTagsStrip');
+  if (selectedTagsStrip) {
+    selectedTagsStrip.addEventListener('click', (e) => {
+      const unselectBtn = e.target.closest('.unselect-lang-btn');
+      if (unselectBtn) {
+        const parent = unselectBtn.closest('[data-tag]');
+        if (parent?.dataset?.tag) {
+          unselectTagFn(parent.dataset.tag);
+        }
+      }
+    });
+  }
 
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
@@ -2594,6 +2802,9 @@ if (typeof module !== 'undefined' && module.exports) {
     closeModal,
     safeHTML,
     rawHTML,
-    renderGoodFirstIssues
+    renderGoodFirstIssues,
+    getOrgSize,
+    getMentorshipLevel,
+    compileAllTags
   };
 }

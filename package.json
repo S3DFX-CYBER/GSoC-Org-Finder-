@@ -8,7 +8,8 @@
         "lint:css": "stylelint src/styles.css",
         "lint:html": "htmlhint --config .htmlhintrc index.html",
         "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
-        "validate:data": "node agent/scripts/validate-generated-data.js"
+        "validate:data": "node agent/scripts/validate-generated-data.js",
+        "test": "node --test tests/**/*.test.js"
     },
     "devDependencies": {
         "eslint": "^8.57.0",

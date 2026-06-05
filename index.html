@@ -3743,7 +3743,7 @@ if(org.ideas){
         copyBtn.style.background = '';
         copyBtn.style.color = '';
       }, 2000);
-    });
+    }).catch(err => console.error('Failed to copy link:', err));
   };
   document.getElementById('mIdeasBtn').after(copyBtn);
 }

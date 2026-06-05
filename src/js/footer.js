@@ -45,7 +45,7 @@ function initFooter() {
 function updateFooterStats() {
   if (typeof ORGS !== 'undefined' && Array.isArray(ORGS)) {
     const orgCount = ORGS.length;
-    const vetCount = ORGS.filter(o => o.years >= 8).length;
+    const vetCount = ORGS.filter(o => o.years >= 10).length;
     const newCount = ORGS.filter(o => o.years <= 3).length;
 
     const fOrgEl = document.getElementById('footerOrgCount');

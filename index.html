@@ -4557,9 +4557,11 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" onclick="closeHelpModal()"  aria-label="Close keyboard shortcuts modal">
       <span class="material-symbols-outlined">close</span>
     </button>
+      
+    
 
     <div class="modal-header">
       <h2>Keyboard Shortcuts</h2>
@@ -4693,6 +4695,18 @@ if (
 ) {
         return;
     }
+const helpModalOpen =
+  document.getElementById('helpModal')?.classList.contains('open');
+
+const orgModalOpen =
+  document.getElementById('orgModal')?.classList.contains('open');
+
+const proposalModalOpen =
+  document.getElementById('proposalModal')?.classList.contains('open');
+
+if (helpModalOpen || orgModalOpen || proposalModalOpen) {
+  return;
+}
 
     // Help modal
     if(e.key==='?'){

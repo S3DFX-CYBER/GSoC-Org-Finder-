@@ -31,14 +31,17 @@ const bookmarkedSet = new Set(parseStoredBookmarks());
 const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
 const RECENTLY_VIEWED_LIMIT = 8;
 let recentlyViewed = (() => {
+  let parsed = [];
   try {
-    const parsed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(name => typeof name === 'string');
-  } catch {
-    return [];
+    const raw = (typeof safeStorage !== 'undefined' ? safeStorage.get(RECENTLY_VIEWED_KEY) : localStorage.getItem(RECENTLY_VIEWED_KEY));
+    if (raw) parsed = JSON.parse(raw);
+  } catch (error) {
+    console.warn('Failed to parse storage data:', error.message);
+    parsed = [];
   }
-        main
+  if (!Array.isArray(parsed)) return [];
+  return (parsed || []).filter(name => name && typeof name === 'string');
+})();
 })();
 
 const selectedLanguages = new Set();
@@ -172,24 +175,25 @@ const MILESTONES = [
   { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
   { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
   { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
-].filter(m => !isNaN(m.date.getTime()));
+].filter(m => m && m.date && !isNaN(m.date.getTime()));
 
 function renderTimeline() {
   const container = document.getElementById('timeline-milestones');
-  if (!container || MILESTONES.length === 0) return;
+  if (!container || !MILESTONES || (MILESTONES || []).length === 0) return;
 
   try {
     const now = new Date();
     if (isNaN(now.getTime())) return;
 
-    let activeIdx = MILESTONES.findIndex(m => m.date > now);
-    if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
+    let activeIdx = (MILESTONES || []).findIndex(m => m && m.date && m.date > now);
+    if (activeIdx === -1) activeIdx = (MILESTONES || []).length - 1;
 
-    const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+    const allPast = MILESTONES[MILESTONES.length - 1] && MILESTONES[MILESTONES.length - 1].date <= now;
 
-    container.innerHTML = MILESTONES.map((m, i) => {
+    container.innerHTML = (MILESTONES || []).map((m, i) => {
+      if (!m || !m.date) return '';
       const isActive = i === activeIdx;
-      const isLast = i === MILESTONES.length - 1;
+      const isLast = i === (MILESTONES || []).length - 1;
       const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200 dark:bg-zinc-700"></div>` : '';
       let dateStr;
       try {
@@ -229,13 +233,13 @@ function renderTimeline() {
 function updateCountdown() {
   const countdownEl = document.getElementById('countdown');
   const labelEl = document.getElementById('countdown-label');
-  if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
+  if (!countdownEl || !labelEl || !MILESTONES || (MILESTONES || []).length === 0) return;
 
   try {
     const now = new Date();
     if (isNaN(now.getTime())) return;
 
-    const next = MILESTONES.find(m => m.date > now);
+    const next = (MILESTONES || []).find(m => m && m.date && m.date > now);
 
     if (!next) {
       labelEl.textContent = 'GSoC 2026 selection complete';
@@ -262,12 +266,32 @@ function updateCountdown() {
 // ══════════════════════════════════════════════
         bugs
 const AN={
-  g(k,d){try{return JSON.parse(safeStorage.get('gaf_'+k))??d;}catch{return d;}},
+  g(k,d){
+    let data = null;
+    try {
+      const raw = safeStorage.get('gaf_'+k);
+      if (raw) data = JSON.parse(raw);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      data = null;
+    }
+    return data ?? d;
+  },
   s(k,v){
     safeStorage.set('gaf_'+k,JSON.stringify(v));
 
 const AN = {
-  g(k, d) { try { return JSON.parse(localStorage.getItem('gaf_' + k)) ?? d; } catch { return d; } },
+  g(k, d) {
+    let data = null;
+    try {
+      const raw = localStorage.getItem('gaf_' + k);
+      if (raw) data = JSON.parse(raw);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      data = null;
+    }
+    return data ?? d;
+  },
   s(k, v) {
     try {
       localStorage.setItem('gaf_' + k, JSON.stringify(v));
@@ -455,17 +479,30 @@ const API='/api/github';
 <<<<<<< HEAD
 let gaf_ghc = {};
 try {
-  const cached = (globalThis.safeStorage || safeStorage).getItem('github_analytics_filter_cache');
-  if (cached) gaf_ghc = JSON.parse(cached);
+  const cached = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null))?.getItem('github_analytics_filter_cache');
+  if (cached) {
+    try {
+      gaf_ghc = JSON.parse(cached);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      gaf_ghc = {};
+    }
+  }
 } catch (e) {
-  console.warn('Failed to parse cache:', e);
+  console.warn('Failed to access cache:', e);
   gaf_ghc = {};
 }
 =======
 const cache = (() => {
   try {
-    const raw = (globalThis.safeStorage || safeStorage).get('gaf_ghc');
-    const parsed = JSON.parse(raw || '{}');
+    const raw = (globalThis.safeStorage || (typeof safeStorage !== 'undefined' ? safeStorage : null))?.get('gaf_ghc');
+    let parsed = {};
+    try {
+      if (raw) parsed = JSON.parse(raw);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      parsed = {};
+    }
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
   } catch (e) {
     console.warn('Failed to parse GitHub cache data:', e);
@@ -473,7 +510,15 @@ const cache = (() => {
 const API = '/api/github';
 const ghCache = (() => {
   try {
-    return JSON.parse(localStorage.getItem('gaf_ghc') || '{}');
+    let parsed = {};
+    try {
+      const raw = localStorage.getItem('gaf_ghc');
+      if (raw) parsed = JSON.parse(raw);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      parsed = {};
+    }
+    return parsed || {};
   } catch {
         main
     return {};
@@ -925,19 +970,26 @@ document.addEventListener('keydown', handleGlobalKeydown);
 // BOOKMARK SYSTEM (WATCHLIST)
 // ══════════════════════════════════════════════
 function parseStoredBookmarks() {
+  let parsed = [];
   try {
-    const parsed = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+    const raw = localStorage.getItem('bookmarks');
+    if (raw) parsed = JSON.parse(raw);
+  } catch (error) {
+    console.warn('Failed to parse storage data:', error.message);
+    parsed = [];
   }
+  return Array.isArray(parsed) ? parsed : [];
 }
 
 function syncBookmark(name, shouldAdd) {
   if (!name) return;
   if (shouldAdd) bookmarkedSet.add(name);
   else bookmarkedSet.delete(name);
-  localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  try {
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  } catch (err) {
+    console.warn('Bookmark storage write failed:', err.message);
+  }
 
   refreshOrgGridAfterBookmarkChange();
   renderWatchlist();
@@ -975,12 +1027,14 @@ function refreshOrgGridAfterBookmarkChange() {
 function getBookmarks() {
   const raw = safeStorage.get('bookmarks');
   if (!raw) return [];
+  let parsed = [];
   try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    console.warn('Failed to parse storage data:', error.message);
+    parsed = [];
   }
+  return Array.isArray(parsed) ? parsed : [];
 }
 
 function toggleBookmark(event, orgIdx) {
@@ -1105,13 +1159,14 @@ function renderWatchlist() {
     return;
   }
 
-  bookmarks.forEach(org => {
+  (bookmarks || []).forEach(org => {
+    if (!org) return;
     const githubOwner = githubOwnerFromValue(org.github);
     const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
     const category = getCategoryMeta(org.cat);
 
     const topTags = (org.tags || []).slice(0, 4)
-      .map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
+      .map(t => t ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>` : '');
 
     const item = document.createElement('div');
     item.className = 'bg-white dark:bg-zinc-900 rounded-2xl p-5 border border-zinc-100 dark:border-zinc-800 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
@@ -1127,11 +1182,10 @@ function renderWatchlist() {
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
-          <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${org.name}</h4>
+          <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${org.name || 'Unknown'}</h4>
           <div class="flex items-center gap-2 flex-shrink-0">
             <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
             <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
-        main
           </div>
         </div>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1">${org.desc || ''}</p>
@@ -1140,7 +1194,7 @@ function renderWatchlist() {
           <div class="flex items-center gap-3 text-xs text-zinc-400">
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-xs">calendar_today</span>
-              ${String(org.years)}y in GSoC
+              ${String(org.years || 0)}y in GSoC
             </span>
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-xs">bar_chart</span>
@@ -1166,11 +1220,11 @@ function renderWatchlist() {
 globalThis.toggleCompare = function (e, name) {
   if (e) e.stopPropagation();
   if (!name) return;
-  const idx = compareList.indexOf(name);
+  const idx = (compareList || []).indexOf(name);
   if (idx > -1) {
     compareList.splice(idx, 1);
   } else {
-    if (compareList.length >= 3) {
+    if ((compareList || []).length >= 3) {
       alert("You can only compare up to 3 organizations at a time.");
       return;
     }
@@ -1186,8 +1240,8 @@ function renderCompare() {
   if (typeof document.createElement !== 'function') return;
   container.innerHTML = '';
 
-  compareList.forEach(name => {
-    const org = ORGS.find(o => o.name === name);
+  (compareList || []).forEach(name => {
+    const org = (ORGS || []).find(o => o && o.name === name);
     if (!org) return;
     const githubOwner = githubOwnerFromValue(org.github);
     const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
@@ -1198,8 +1252,8 @@ function renderCompare() {
       <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center mx-auto mb-3 overflow-hidden">
         <img src="${logoUrl}" data-org-name="${org.name}" class="w-full h-full object-contain" />
       </div>
-      <p class="font-bold text-sm truncate">${org.name}</p>
-      <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${String(org.years)}y · ${org.competition}</p>
+      <p class="font-bold text-sm truncate">${org.name || 'Unknown'}</p>
+      <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${String(org.years || 0)}y · ${org.competition || '—'}</p>
       <button data-compare-org="${org.name}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
     `;
     container.appendChild(item);
@@ -1207,7 +1261,7 @@ function renderCompare() {
   });
 
   // Empty slots helper
-  for (let i = compareList.length; i < 3; i++) {
+  for (let i = (compareList || []).length; i < 3; i++) {
     const empty = document.createElement('div');
     empty.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800 border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center opacity-50';
     empty.innerHTML = `
@@ -1223,8 +1277,8 @@ function renderCompareModal() {
   const body = document.getElementById('compareModalBody');
   if (!body) return;
 
-  const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-  if (selectedOrgs.length < 2) {
+  const selectedOrgs = (compareList || []).map(name => (ORGS || []).find(o => o && o.name === name)).filter(Boolean);
+  if ((selectedOrgs || []).length < 2) {
     body.innerHTML = `
       <div class="py-12 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl">
         <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">compare_arrows</span>
@@ -1235,14 +1289,14 @@ function renderCompareModal() {
   }
 
   const rows = [
-    ['Category', org => getCategoryMeta(org.cat).label],
-    ['GSoC Years', org => org.years],
-    ['First Year', org => org.firstYear],
-    ['Competition', org => org.competition],
-    ['Codebase', org => org.codebase],
-    ['Tech Stack', org => org.tags.join(', ')],
-    ['Best Fit', org => org.fit.join(', ')],
-    ['Repository', org => org.github || '—'],
+    ['Category', org => getCategoryMeta(org && org.cat).label],
+    ['GSoC Years', org => org && org.years],
+    ['First Year', org => org && org.firstYear],
+    ['Competition', org => org && org.competition],
+    ['Codebase', org => org && org.codebase],
+    ['Tech Stack', org => org && (org.tags || []).join(', ')],
+    ['Best Fit', org => org && (org.fit || []).join(', ')],
+    ['Repository', org => org && (org.github || '—')],
   ];
 
   body.innerHTML = `
@@ -1250,14 +1304,14 @@ function renderCompareModal() {
       <thead>
         <tr class="border-b border-zinc-200 dark:border-zinc-700">
           <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400">Metric</th>
-          ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(org.name)}</th>`).join('')}
+          ${(selectedOrgs || []).map(org => `<th class="text-left py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(org ? org.name : 'Unknown')}</th>`).join('')}
         </tr>
       </thead>
       <tbody>
-        ${rows.map(([label, getValue]) => `
+        ${(rows || []).map(([label, getValue]) => `
           <tr class="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
             <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-            ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${escapeHtml(String(getValue(org)))}</td>`).join('')}
+            ${(selectedOrgs || []).map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${escapeHtml(String(org ? getValue(org) : '—'))}</td>`).join('')}
           </tr>
         `).join('')}
       </tbody>
@@ -1279,33 +1333,34 @@ globalThis.closeCompareModal = closeCompareModal;
 // FILTER & CARD DIRECTORY RENDERING
 // ══════════════════════════════════════════════
 function orgMatchesLanguages(org, selectedLanguages) {
-  if (!selectedLanguages.size) return true;
-  const orgTags = new Set((org.tags || []).map(t => t.trim().toLowerCase()));
+  if (!org || !selectedLanguages || !selectedLanguages.size) return true;
+  const orgTags = new Set((org.tags || []).map(t => t ? t.trim().toLowerCase() : ''));
 
   if (globalThis.matchAllLanguages) {
     return [...selectedLanguages].every(label => {
-      const aliases = (LANGUAGE_MAP[label] || [label]).map(a => a.trim().toLowerCase());
-      return aliases.some(alias => orgTags.has(alias));
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(a => a ? a.trim().toLowerCase() : '');
+      return aliases.some(alias => alias && orgTags.has(alias));
     });
   } else {
     return [...selectedLanguages].some(label => {
-      const aliases = (LANGUAGE_MAP[label] || [label]).map(a => a.trim().toLowerCase());
-      return aliases.some(alias => orgTags.has(alias));
+      const aliases = (LANGUAGE_MAP[label] || [label]).map(a => a ? a.trim().toLowerCase() : '');
+      return aliases.some(alias => alias && orgTags.has(alias));
     });
   }
 }
 
 function matchesFilters(o, cat, compF, search) {
-  const orgName = o.name.toLowerCase();
+  if (!o) return false;
+  const orgName = (o.name || '').toLowerCase();
   if (cat && o.cat !== cat) return false;
   if (compF && compF !== 'all' && o.codebase !== compF) return false;
   if (search && !orgName.includes(search)) return false;
-  if (selectedLanguages.size > 0 && !orgMatchesLanguages(o, selectedLanguages)) return false;
+  if (selectedLanguages && selectedLanguages.size > 0 && !orgMatchesLanguages(o, selectedLanguages)) return false;
 
   if (activeChip) {
-    if (activeChip === 'bookmarked' && !bookmarkedSet.has(o.name)) return false;
-    if (activeChip === 'veterans' && o.years < 10) return false;
-    if (activeChip === 'newcomers' && o.years > 3) return false;
+    if (activeChip === 'bookmarked' && (!bookmarkedSet || !bookmarkedSet.has(o.name))) return false;
+    if (activeChip === 'veterans' && (o.years || 0) < 10) return false;
+    if (activeChip === 'newcomers' && (o.years || 0) > 3) return false;
     if (activeChip === 'low-competition' && o.competition !== 'chill') return false;
     if (activeChip === 'high-competition' && o.competition !== 'hot') return false;
     if (activeChip === 'active' && (!o._gh || o._gh.activity !== 'active')) return false;
@@ -1315,8 +1370,8 @@ function matchesFilters(o, cat, compF, search) {
 }
 
 function searchComparator(a, b, search, sort) {
-  const nameA = a.name.toLowerCase();
-  const nameB = b.name.toLowerCase();
+  const nameA = (a && a.name || '').toLowerCase();
+  const nameB = (b && b.name || '').toLowerCase();
   if (nameA === search && nameB !== search) return -1;
   if (nameB === search && nameA !== search) return 1;
   if (nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
@@ -1331,7 +1386,7 @@ function applyFilters() {
   const compF = document.getElementById('complexityFilter')?.value || 'all';
   const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
-  filteredOrgs = ORGS.filter(o => matchesFilters(o, cat, compF, search));
+  filteredOrgs = (ORGS || []).filter(o => matchesFilters(o, cat, compF, search));
 
   // Smart sorting: Exact match first, startsWith second, alphabetic/secondary sort third
   if (search) {
@@ -1348,7 +1403,7 @@ function applyFilters() {
   if (cat) params.set('cat', cat);
   if (compF && compF !== 'all') params.set('comp', compF);
   if (sort && sort !== 'alpha') params.set('sort', sort);
-  if (selectedLanguages.size) params.set('lang', [...selectedLanguages].join(','));
+  if (selectedLanguages && selectedLanguages.size) params.set('lang', [...selectedLanguages].join(','));
   if (activeChip) params.set('chip', activeChip);
   if (typeof history !== 'undefined' && typeof history.replaceState === 'function' && typeof location !== 'undefined') {
     history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
@@ -1356,12 +1411,13 @@ function applyFilters() {
 }
 
 function applySecondarySort(a, b, sortType) {
-  if (sortType === 'years-desc') return b.years - a.years;
-  if (sortType === 'years-asc') return a.years - b.years;
-  if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition) - ['chill', 'moderate', 'hot'].indexOf(b.competition);
+  if (!a || !b) return 0;
+  if (sortType === 'years-desc') return (b.years || 0) - (a.years || 0);
+  if (sortType === 'years-asc') return (a.years || 0) - (b.years || 0);
+  if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition || 'moderate') - ['chill', 'moderate', 'hot'].indexOf(b.competition || 'moderate');
   if (sortType === 'stars') return (b._gh?.stars || 0) - (a._gh?.stars || 0);
   if (sortType === 'gfi') return (b._gh?.gfi || 0) - (a._gh?.gfi || 0);
-  return a.name.localeCompare(b.name);
+  return (a.name || '').localeCompare(b.name || '');
 }
 
 function renderOrgs(reset = true) {
@@ -1374,7 +1430,7 @@ function renderOrgs(reset = true) {
     visibleCount = 12;
   }
 
-  if (filteredOrgs.length === 0) {
+  if ((filteredOrgs || []).length === 0) {
     grid.classList.add('hidden');
     if (emptyState) emptyState.classList.remove('hidden');
     document.getElementById('orgCount').textContent = '0';
@@ -1385,16 +1441,17 @@ function renderOrgs(reset = true) {
     if (emptyState) emptyState.classList.add('hidden');
   }
 
-  const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
-  slice.forEach((org, i) => {
-    const isBookmarked = bookmarkedSet.has(org.name);
-    const isComparing = compareList.includes(org.name);
+  const slice = (filteredOrgs || []).slice(visibleCount - 12, visibleCount);
+  (slice || []).forEach((org, i) => {
+    if (!org) return;
+    const isBookmarked = bookmarkedSet && bookmarkedSet.has(org.name);
+    const isComparing = compareList && compareList.includes(org.name);
     const isFocused = focusedIdx === (visibleCount - 12 + i);
     const card = document.createElement('article');
     card.className = `group bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up ${isComparing ? 'ring-2 ring-primary/30' : ''} ${isFocused ? 'ring-2 ring-primary' : ''}`;
     card.dataset.org = org.name;
     card.setAttribute('role', 'article');
-    card.setAttribute('aria-label', `Organization: ${org.name}`);
+    card.setAttribute('aria-label', `Organization: ${org.name || 'Unknown'}`);
     card.setAttribute('tabindex', '0');
 
     const githubOwner = githubOwnerFromValue(org.github);
@@ -1404,8 +1461,8 @@ function renderOrgs(reset = true) {
       ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />`
       : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
 
-    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
-    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
+    const tagsHtml = (org.tags || []).slice(0, 3).map(t => t ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>` : '');
+    const moreTagsHtml = (org.tags || []).length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
 
     const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
     const isBookmarkedStr = isBookmarked ? 'true' : 'false';
@@ -1416,16 +1473,16 @@ function renderOrgs(reset = true) {
           ${logoHtml}
         </div>
         <div class="flex items-center gap-2">
-          <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
-          <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
+          <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years || 0)}y Veteran</span>
+          <span class="complexity-badge ${org.codebase || 'moderate'}">${org.codebase || 'moderate'}</span>
           <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
           </button>
         </div>
       </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${org.name}</h3>
+      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${org.name || 'Unknown'}</h3>
       <span class="category-tag inline-block mb-3">${catLabel}</span>
-      <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${org.desc}</p>
+      <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${org.desc || ''}</p>
       <div class="flex flex-wrap gap-1.5 mb-4">
         ${tagsHtml}
         ${moreTagsHtml}
@@ -1442,8 +1499,8 @@ function renderOrgs(reset = true) {
     attachOrgCardListeners(card);
   });
 
-  document.getElementById('orgCount').textContent = filteredOrgs.length;
-  document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
+  document.getElementById('orgCount').textContent = (filteredOrgs || []).length;
+  document.getElementById('loadMoreContainer').style.display = (visibleCount < (filteredOrgs || []).length) ? 'flex' : 'none';
 }
 
 function attachOrgCardListeners(root) {

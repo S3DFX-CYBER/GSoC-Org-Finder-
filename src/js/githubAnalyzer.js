@@ -17,7 +17,13 @@ function getLocalCache() {
   try {
     const raw = safeStorage.getItem(GITHUB_ANALYZER_CACHE_KEY);
     if (!raw) return {};
-    const cache = JSON.parse(raw);
+    let cache = {};
+    try {
+      cache = JSON.parse(raw);
+    } catch (error) {
+      console.warn('Failed to parse storage data:', error.message);
+      cache = {};
+    }
     if (cache && typeof cache === 'object' && !Array.isArray(cache)) {
       return cache;
     }
@@ -36,33 +42,25 @@ function setLocalCache(cache) {
 }
 
 async function fetchUserProfileFromAPI(normalizedUsername) {
-  const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
-  let data;
   try {
-    data = await response.json();
-  } catch {
-    // Handle case where response is not valid JSON
-  }
+    const response = await fetch(`${USER_API_ENDPOINT}?user=${encodeURIComponent(normalizedUsername)}`);
+    const data = await response.json();
 
-  if (!response.ok) {
-    throw new Error(data?.error || `Failed to fetch user data: ${response.status}`);
-  }
+    if (!response.ok) {
+      throw new Error(data?.error || `Failed to fetch user data: ${response.status}`);
+    }
 
-  if (!data) {
-    throw new Error("No response data returned from server");
+    return (data && data.items) ? data.items : data;
+  } catch (err) {
+    console.warn('GitHub API fetch failed:', err.message);
+    throw err;
   }
-
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  return data;
 }
 
 function handleAnalyzerError(err, username) {
-  console.error("GitHub Analyzer Error:", err);
+  console.warn("GitHub Analyzer Error:", err.message);
 
-  const message = err.message || "";
+  const message = err?.message || "";
   if (message.includes("GitHub 404")) {
     throw new Error(`GitHub user '${username}' not found. Please ensure the username is correct.`);
   }
@@ -87,16 +85,16 @@ function handleAnalyzerError(err, username) {
  * @returns {Promise<Object>} - The UserProfile containing languages, topics, stars, and activity
  */
 async function analyzeGitHubUser(username) {
-  if (!username || username.trim() === '') {
+  if (!username || typeof username !== 'string' || username.trim() === '') {
     throw new Error("Username cannot be empty");
   }
 
   const normalizedUsername = username.trim().toLowerCase();
-  const cache = getLocalCache();
+  const cache = getLocalCache() || {};
 
-  const cachedUser = cache[normalizedUsername];
-  if (cachedUser && Date.now() - cachedUser.ts < CACHE_EXPIRY_MS) {
-    return cachedUser.data;
+  const cachedUser = cache?.[normalizedUsername];
+  if (cachedUser && Date.now() - (cachedUser?.ts || 0) < CACHE_EXPIRY_MS) {
+    return cachedUser?.data;
   }
 
   try {
@@ -104,10 +102,10 @@ async function analyzeGitHubUser(username) {
 
     // Structure the result
     const userProfile = {
-      languages: data.languages || [],
-      topics: data.topics || [],
-      stars: data.stars || 0,
-      activity: data.activity || 'low'
+      languages: data?.languages || [],
+      topics: data?.topics || [],
+      stars: data?.stars || 0,
+      activity: data?.activity || 'low'
     };
 
     // Save to cache

@@ -1,11 +1,18 @@
+/* global safeStorage */
 /* global ORGS */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+
+/**
+ * Robust wrapper for localStorage to prevent synchronous exceptions (e.g. QuotaExceededError)
+ * from crashing the main JavaScript thread.
+ */
+
 
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('theme') || 'light';
+  const saved = (typeof safeStorage !== 'undefined' && safeStorage.get('theme')) || 'light';
   document.documentElement.classList.toggle('dark', saved === 'dark');
   updateThemeIcon();
 })();
@@ -22,7 +29,7 @@ function escapeHtml(value) {
 
 globalThis.toggleTheme = function(){
   const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  safeStorage.set('theme', isDark ? 'dark' : 'light');
   updateThemeIcon();
 };
 
@@ -76,13 +83,9 @@ const cdTimer=setInterval(updateCountdown,1000);
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
 const AN={
-  g(k,d){try{return JSON.parse(localStorage.getItem('gaf_'+k))??d;}catch{return d;}},
+  g(k,d){try{return JSON.parse(safeStorage.get('gaf_'+k))??d;}catch{return d;}},
   s(k,v){
-    try{
-      localStorage.setItem('gaf_'+k,JSON.stringify(v));
-    }catch(err){
-      console.warn('Analytics storage write failed for key:',k,err);
-    }
+    safeStorage.set('gaf_'+k,JSON.stringify(v));
   },
   inc(k){this.s(k,(this.g(k,0)+1));},
   push(k,v,max=20){const a=this.g(k,[]);a.unshift(v);this.s(k,a.slice(0,max));},
@@ -205,28 +208,25 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // GITHUB API
 // ══════════════════════════════════════════════
 const API='/api/github';
-const cache=JSON.parse(localStorage.getItem('gaf_ghc')||'{}');
+const cache = (() => {
+  try {
+    const raw = (globalThis.safeStorage || safeStorage).get('gaf_ghc');
+    const parsed = JSON.parse(raw || '{}');
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch (e) {
+    console.warn('Failed to parse GitHub cache data:', e);
+    return {};
+  }
+})();
 
 /**
- * Saves cache to localStorage with quota exceeded error recovery.
- * If quota is exceeded, clears the cache and retries.
- * @param {string} key - Cache key to save
- * @param {object} value - Value to cache
+ * Saves the entire in-memory cache to safeStorage.
+ * Handles quota exceeded errors via safeStorage implementation.
  */
-function saveCache(key, value) {
-  try {
-    localStorage.setItem('gaf_ghc', JSON.stringify(cache));
-  } catch (e) {
-    if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-      console.warn('LocalStorage quota exceeded, clearing GitHub cache...');
-      for (const k in cache) delete cache[k];
-      if (key && value !== undefined) cache[key] = value;
-      try {
-        localStorage.setItem('gaf_ghc', JSON.stringify(cache));
-      } catch (err) {
-        console.error('Failed to save even after clearing cache', err);
-      }
-    }
+function saveCache() {
+  const ss = globalThis.safeStorage || safeStorage;
+  if (!ss.set('gaf_ghc', JSON.stringify(cache))) {
+    console.warn('GitHub cache persistence unavailable; keeping in-memory cache only.');
   }
 }
 
@@ -740,7 +740,7 @@ function repoLinkLabel(o){
 }
 
 function getBookmarks() {
-  const raw = localStorage.getItem('bookmarks');
+  const raw = safeStorage.get('bookmarks');
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
@@ -758,7 +758,7 @@ function toggleBookmark(event, orgIdx) {
   const idx = saved.indexOf(orgName);
   if (idx === -1) saved.push(orgName);
   else saved.splice(idx, 1);
-  localStorage.setItem('bookmarks', JSON.stringify(saved));
+  safeStorage.set('bookmarks', JSON.stringify(saved));
   applyFilters();
   // Notify the Watchlist panel (index.html inline script) about the change so
   // renderWatchlist() and updateAIInsights() stay in sync across both bookmark
@@ -783,24 +783,13 @@ function renderGrid(orgs){
         <div class="empty-icon">🔍</div>
         <h3>No organizations match your current filters.</h3>
         <p>Try adjusting your search or clearing some filters.</p>
-        <button onclick="resetFilters()" class="btn-clear-filters" title="Reset all selected filters">
-  Clear All Filters
-</button>     
- </div>`;
+        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
+      </div>`;
     return;
   }
   g.innerHTML=orgs.map((o,i)=>{
     const act=o._gh?.activity||null;
-    const orgTags = o.tags || [];
-    let tags = '';
-    if (orgTags.length > 3) {
-      const visible = orgTags.slice(0, 3);
-      const hidden = orgTags.slice(3);
-      tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
-             `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
-    } else {
-      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
-    }
+    const tags=o.tags.slice(0,5).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
     const ghm=o._gh?`<div class="gh-mini">
       <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
       <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
@@ -1003,14 +992,6 @@ function clearAllLanguages(){
 globalThis.clearAllLanguages = clearAllLanguages;
 
 const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
-const _CHIP_TOOLTIPS = {
-  veteran: 'Organizations that participated in GSoC for many years',
-  newcomer: 'Good for first-time contributors and beginners',
-  hot: 'Highly competitive organizations with many applicants',
-  chill: 'Organizations with relatively fewer applicants',
-  active: 'Organizations with recent GitHub activity',
-  bookmarked: 'Organizations you saved for later'
-};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
@@ -1420,3 +1401,4 @@ if (heroSearch) {
 ['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', () => applyFilters());
 });
+

@@ -17,6 +17,10 @@
 // - Filter Pro (filters) - Advanced filtering usage
 // ══════════════════════════════════════════════
 
+const storage = (typeof globalThis !== 'undefined' && globalThis.safeStorage)
+  ? globalThis.safeStorage
+  : { get: () => null, set: () => false, remove: () => false };
+
 const BadgeSystem = (function() {
   const STORAGE_KEY = 'gssoc_badges';
   
@@ -51,7 +55,7 @@ const BadgeSystem = (function() {
   // Get badge data from localStorage
   function getBadgeData() {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
+      const data = storage.get(STORAGE_KEY);
       if (!data) {
         return {
           explorer: 0,
@@ -117,7 +121,7 @@ const BadgeSystem = (function() {
   // Save badge data to localStorage
   function saveBadgeData(data) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      storage.set(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
       console.warn('Failed to save badge data:', e);
     }
@@ -269,16 +273,17 @@ const BadgeSystem = (function() {
   // Reset all badge progress
   function resetProgress() {
     if (confirm('Are you sure you want to reset all badge progress? This cannot be undone.\n\nNote: Badges are stored locally in your browser. Clearing browser data will also reset progress.')) {
-      // Bug 3 fix: Wrap in try/catch for incognito/high-security environments
       try {
-        localStorage.removeItem(STORAGE_KEY);
+        if (storage.remove(STORAGE_KEY)) {
+          // Dispatch event to update UI
+          document.dispatchEvent(new CustomEvent('badgesReset'));
+          return true;
+        }
+        return false;
       } catch (e) {
         console.warn('Failed to reset badge progress — localStorage unavailable:', e);
         return false;
       }
-      // Dispatch event to update UI
-      document.dispatchEvent(new CustomEvent('badgesReset'));
-      return true;
     }
     return false;
   }
@@ -298,6 +303,6 @@ const BadgeSystem = (function() {
 })();
 
 // Make it globally available
-if (typeof window !== 'undefined') {
-  window.BadgeSystem = BadgeSystem;
+if (typeof globalThis !== 'undefined') {
+  globalThis.BadgeSystem = BadgeSystem;
 }

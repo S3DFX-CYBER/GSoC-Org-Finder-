@@ -2,24 +2,18 @@
 
 /* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
 
-let currentAbortController = null;
-let currentRequestId = 0;
-let lastRecommendations = [];
-
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
-async function analyzeProfile(username, resume, options = {}) {
-  const { signal } = options;
+async function analyzeProfile(username, resume) {
   let githubProfile = null;
   let skills = [];
 
   if (username) {
     try {
-      githubProfile = await analyzeGitHubUser(username, { signal });
+      githubProfile = await analyzeGitHubUser(username);
     } catch (err) {
-      if (err.name === 'AbortError') throw err;
       console.warn("GitHub Analysis Failed:", err);
       if (!resume) throw err; // Only bubble up error if we possess no alternate datasource
     }
@@ -123,12 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
 
-  document.addEventListener('compareListChanged',() => {
-    if(lastRecommendations.length){
-      renderRecommendations(lastRecommendations);
-    }
-  });
-
   // Handle file upload
   if (fileUpload) {
     fileUpload.addEventListener('change', (e) => {
@@ -168,28 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (currentAbortController) {
-      currentAbortController.abort();
-    }
-    currentAbortController = new AbortController();
-    const signal = currentAbortController.signal;
-    const requestId = ++currentRequestId;
-
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume, { signal });
-      
-      if (requestId !== currentRequestId) return;
-      
-      lastRecommendations = recommendations; 
+      const recommendations = await analyzeProfile(username, resume);
       renderRecommendations(recommendations);
     } catch (err) {
-      if (requestId !== currentRequestId || err.name === 'AbortError') return;
       showError(err.message || "An unexpected error occurred during analysis.");
     } finally {
-      if (requestId === currentRequestId) {
-        setAnalysisStateUI(false);
-      }
+      setAnalysisStateUI(false);
     }
   });
 

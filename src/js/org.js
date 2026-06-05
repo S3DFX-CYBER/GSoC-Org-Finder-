@@ -1,4 +1,4 @@
-/* global module */
+// src/js/org.js
 
 
 

@@ -208,16 +208,14 @@ function closeAn(){document.getElementById('anBg').classList.remove('open');docu
 // GITHUB API
 // ══════════════════════════════════════════════
 const API='/api/github';
-const cache = (() => {
-  try {
-    const raw = (globalThis.safeStorage || safeStorage).get('gaf_ghc');
-    const parsed = JSON.parse(raw || '{}');
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
-  } catch (e) {
-    console.warn('Failed to parse GitHub cache data:', e);
-    return {};
-  }
-})();
+let gaf_ghc = {};
+try {
+  const cached = (globalThis.safeStorage || safeStorage).getItem('github_analytics_filter_cache');
+  if (cached) gaf_ghc = JSON.parse(cached);
+} catch (e) {
+  console.warn('Failed to parse cache:', e);
+  gaf_ghc = {};
+}
 
 /**
  * Saves the entire in-memory cache to safeStorage.
@@ -225,8 +223,8 @@ const cache = (() => {
  */
 function saveCache() {
   const ss = globalThis.safeStorage || safeStorage;
-  if (!ss.set('gaf_ghc', JSON.stringify(cache))) {
-    console.warn('GitHub cache persistence unavailable; keeping in-memory cache only.');
+  if (!ss.setItem('github_analytics_filter_cache', JSON.stringify(gaf_ghc))) {
+    console.warn('Cache write failed, filtering will not persist');
   }
 }
 
@@ -238,10 +236,10 @@ function cleanCache() {
   const now = Date.now();
   const ONE_DAY = 24 * 60 * 60 * 1000;
   let changed = false;
-  for (const key in cache) {
-    const entry = cache[key];
+  for (const key in gaf_ghc) {
+    const entry = gaf_ghc[key];
     if (!entry || typeof entry.ts !== 'number' || Number.isNaN(entry.ts) || now - entry.ts > ONE_DAY) {
-      delete cache[key];
+      delete gaf_ghc[key];
       changed = true;
     }
   }
@@ -282,14 +280,14 @@ async function checkAPI(){
 
 async function fetchGH(repo){
   if(!repo)return null;
-  if(cache[repo]&&Date.now()-cache[repo].ts<3600000)return cache[repo];
+  if(gaf_ghc[repo]&&Date.now()-gaf_ghc[repo].ts<3600000)return gaf_ghc[repo];
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
     if(!r.ok)return null;
     const d=await r.json();
     if(d.error)return null;
     d.ts=Date.now();
-    cache[repo]=d;
+    gaf_ghc[repo]=d;
     saveCache(repo, d);
     return d;
   }catch{return null;}
@@ -298,15 +296,15 @@ async function fetchGH(repo){
 async function fetchGFI(repo){
   if(!repo)return null;
   const cacheKey=repo+'__gfi';
-  const hit=cache[cacheKey];
+  const hit=gaf_ghc[cacheKey];
   if(hit&&Date.now()-hit.ts<3600000&&hit.count!==null&&hit.count!==undefined)return hit.count;
   try{
     const r=await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
     if(!r.ok)return null;
     const d=await r.json();
     if(d.gfi===null||d.gfi===undefined)return null;
-    cache[cacheKey]={count:d.gfi,ts:Date.now()};
-    saveCache(cacheKey, cache[cacheKey]);
+    gaf_ghc[cacheKey]={count:d.gfi,ts:Date.now()};
+    saveCache(cacheKey, gaf_ghc[cacheKey]);
     return d.gfi;
   }catch{return null;}
 }
@@ -330,8 +328,8 @@ async function fetchAll(){
 async function fetchModalGH(){
   const o=ORGS[modalIdx];if(!o?.github)return;
   document.getElementById('mFetchBtn').textContent='Loading…';
-  delete cache[o.github];
-  delete cache[o.github+'__gfi'];
+  delete gaf_ghc[o.github];
+  delete gaf_ghc[o.github+'__gfi'];
   const d=await fetchGH(o.github);
   if(d){
     o._gh=d;
@@ -1346,7 +1344,7 @@ function showMoreIssues(){
   document.getElementById('issShown').textContent=shownIssues;
 }
 
-ORGS.forEach(o=>{if(o.github&&cache[o.github])o._gh=cache[o.github];});
+ORGS.forEach(o=>{if(o.github&&gaf_ghc[o.github])o._gh=gaf_ghc[o.github];});
 showSkeletons();
 updateStats();
 renderSelectedLanguages();

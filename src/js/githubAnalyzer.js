@@ -1,4 +1,4 @@
-// src/js/githubAnalyzer.js
+const safeStorage = window.safeStorage || { setItem: () => {}, getItem: () => null, removeItem: () => {} };
 
 /**
  * githubAnalyzer.js
@@ -8,10 +8,6 @@
  * where possible, and falls back to local cache.
  */
 
-const storage = (typeof globalThis !== 'undefined' && globalThis.safeStorage)
-  ? globalThis.safeStorage
-  : { get: () => null, set: () => false, remove: () => false };
-
 const GITHUB_ANALYZER_CACHE_KEY = 'gaf_user_cache';
 const USER_API_ENDPOINT = '/api/github';
 
@@ -19,7 +15,7 @@ const CACHE_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 function getLocalCache() {
   try {
-    const raw = storage.get(GITHUB_ANALYZER_CACHE_KEY);
+    const raw = safeStorage.getItem(GITHUB_ANALYZER_CACHE_KEY);
     if (!raw) return {};
     const cache = JSON.parse(raw);
     if (cache && typeof cache === 'object' && !Array.isArray(cache)) {
@@ -33,7 +29,7 @@ function getLocalCache() {
 
 function setLocalCache(cache) {
   try {
-    storage.set(GITHUB_ANALYZER_CACHE_KEY, JSON.stringify(cache));
+    safeStorage.setItem(GITHUB_ANALYZER_CACHE_KEY, JSON.stringify(cache));
   } catch (err) {
     console.warn('Could not write to localStorage for githubAnalyzer', err);
   }

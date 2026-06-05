@@ -113,7 +113,6 @@
 .footer-stat-card {
   background: rgba(0, 0, 0, 0.02);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid #e4e4e7;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -170,7 +169,7 @@
   border-color: #1DA1F2;
   box-shadow: 0 0 12px rgba(29, 161, 242, 0.5);
 }
-#backToTopBtn {
+#back-to-top-btn {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -191,17 +190,17 @@
   transform: translateY(10px) scale(0.9);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-#backToTopBtn.show {
+#back-to-top-btn.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
 }
-#backToTopBtn:hover {
+#back-to-top-btn:hover {
   background: #ea580c;
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
 }
-#backToTopBtn:focus-visible {
+#back-to-top-btn:focus-visible {
   outline: 2px solid #f97316;
   outline-offset: 2px;
 }
@@ -320,13 +319,13 @@
 </footer>
 
 <!-- Floating Back to Top Button -->
-<button id="backToTopBtn" aria-label="Back to top" class="transition-all">
+<button id="back-to-top-btn" aria-label="Back to top" class="transition-all">
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const backToTopBtn = document.getElementById('backToTopBtn');
+  const backToTopBtn = document.getElementById('back-to-top-btn');
   if (backToTopBtn) {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 300) {

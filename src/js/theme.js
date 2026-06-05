@@ -48,7 +48,7 @@ const MILESTONES = [
   { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
   { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
   { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
-].filter(m => !isNaN(m.date.getTime()));
+].filter(m => !Number.isNaN(m.date.getTime()));
 
 function renderTimeline() {
   const container = document.getElementById('timeline-milestones');
@@ -56,17 +56,17 @@ function renderTimeline() {
 
   try {
     const now = new Date();
-    if (isNaN(now.getTime())) return;
+   if (Number.isNaN(now.getTime())) return;
 
     let activeIdx = MILESTONES.findIndex(m => m.date > now);
     if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
 
-    const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
+    const allPast = MILESTONES.at(-1).date <= now;
 
     container.innerHTML = MILESTONES.map((m, i) => {
       const isActive = i === activeIdx;
       const isLast = i === MILESTONES.length - 1;
-      const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200 dark:bg-zinc-700"></div>` : '';
+      const connector = isLast? '': '<div class="w-0.5 h-10 bg-zinc-200 dark:bg-zinc-700"></div>';
       let dateStr;
       try {
         dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -109,7 +109,7 @@ function updateCountdown() {
 
   try {
     const now = new Date();
-    if (isNaN(now.getTime())) return;
+   if (Number.isNaN(now.getTime())) return;
 
     const next = MILESTONES.find(m => m.date > now);
 

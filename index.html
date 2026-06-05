@@ -244,6 +244,10 @@
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
     .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+    .timeline-grid a.timeline-year-link { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .timeline-grid a.timeline-year-link:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
+    .timeline-grid a.timeline-year-link.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+    .timeline-grid a.timeline-year-link.current-year:hover { border-color: #d97706; background: #fef3c7; color: #b45309; }
 
     .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; flex-shrink: 0; }
     .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
@@ -1645,7 +1649,7 @@
         </div>
       </div>
 
-      <div class="section-title">Participation Timeline</div>
+      <div class="section-title">Participation Timeline<span style="font-weight:400;font-size:0.7rem;font-style:italic;color:#888;text-transform:none;letter-spacing:0.02em"> · click a year to explore its projects</span></div>
       <div class="timeline-grid" id="mTimeline"></div>
 
       <div class="section-title">Mentors &amp; Contact</div>
@@ -3707,9 +3711,20 @@ btn.__orgListenerAttached = true;
 
     // Timeline
     let timelineHtml = '';
-    for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
+    for (let y = 2020; y <= 2026; y++) {
+      const active = (y >= org.firstYear);
+      const isCurrent = (y === 2026);
+      let url = null;
+      if (active) {
+        if (y === 2020) url = org['2020_project_url'] || null;
+        else if (y === 2021) url = org['2021_project_url'] || null;
+        else if (org.slug) url = `https://summerofcode.withgoogle.com/programs/${y}/organizations/${org.slug}`;
+      }
+      if (url) {
+        timelineHtml += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="timeline-year-link${isCurrent ? ' current-year' : ''}" title="View ${escapeHtml(org.name)} at GSoC ${y}">${y}</a>`;
+      } else {
+        timelineHtml += `<span class="${isCurrent ? 'current-year ' : ''}${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
+      }
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 

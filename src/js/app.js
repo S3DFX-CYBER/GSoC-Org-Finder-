@@ -593,47 +593,34 @@ function applyFilters(){
       if(!orgMatchesLanguages(o,new Set([langLabel])))return false;
     }
 
-    // Search input (synchronized from hero-search)
-    if(search && !orgName.includes(search)) return false;
+    // Better search ranking
+if (search) {
+  const words = search.split(/\s+/).filter(Boolean);
 
-    // Language pills (multi-select)
-    if(pills.size > 0 && !orgMatchesLanguages(o, pills)) return false;
- 
-    // Filter chips
-    if(chips.has('veteran') && yCls(o.years) !== 'veteran') return false;
-    if(chips.has('newcomer') && yCls(o.years) !== 'newcomer') return false;
-    if(chips.has('hot') && o.competition !== 'hot') return false;
-    if(chips.has('chill') && o.competition !== 'chill') return false;
-    if(chips.has('active') && (!o._gh || o._gh.activity !== 'active')) return false;
-    if(chips.has('bookmarked') && !isBookmarked(o.name)) return false;
-    
-    return true;
-  });
+  const matchScore = (name) => {
+    let score = 0;
 
-  // Improved search ranking: exact matches first, then startsWith, then partial
-  if(search){
-    res.sort((a,b)=>{
-      const nameA=a.name.toLowerCase();
-      const nameB=b.name.toLowerCase();
-      
-      // Exact match gets highest priority
-      if(nameA===search && nameB!==search) return -1;
-      if(nameB===search && nameA!==search) return 1;
-      
-      // Starts with gets second priority  
-      if(nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
-      if(nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
-      
-      // Both start with search, sort by selected sort option or alphabetically
-      if(nameA.startsWith(search) && nameB.startsWith(search)) {
-        return applySecondarySort(a, b, sort);
-      }
-      
-      // Neither starts with, sort by selected sort option or alphabetically
-      return applySecondarySort(a, b, sort);
+    if (name === search) score += 100;
+    if (name.startsWith(search)) score += 50;
+    if (name.includes(search)) score += 25;
+
+    words.forEach(word => {
+      if (name.includes(word)) score += 10;
     });
-  }
 
+    return score;
+  };
+
+  res.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+
+    const scoreA = matchScore(nameA);
+    const scoreB = matchScore(nameB);
+
+    return scoreB - scoreA || applySecondarySort(a, b, sort);
+  });
+}
 
 
   // Apply other sorting if no search

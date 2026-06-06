@@ -260,9 +260,11 @@ let communityActivity = {};   // will hold the parsed community_activity.json
 
 async function loadCommunityActivity() {
   try {
-    const res = await fetch('/data/community_activity.json');
+    const bust = new Date().toISOString().slice(0, 10);
+    const res = await fetch('/data/community_activity.json?v=' + bust);
     if (!res.ok) return;
     communityActivity = await res.json();
+    applyFilters();
   } catch (e) {
     console.warn('community_activity.json not yet available:', e);
   }
@@ -270,8 +272,7 @@ async function loadCommunityActivity() {
 
 function getCommunityBadge(org) {
   if (!org.github) return '';
-  const slug = org.github.replace(/^\/|\/$/g, '');
-  const d = communityActivity[slug];
+  const d = communityActivity[org.name];
   if (!d || d.score === undefined) return '';   // no data → hide badge entirely
   const map = {
     'very-active': { dot: '🟢', label: 'Very Active',   cls: 'bca-very' },
@@ -285,8 +286,7 @@ function getCommunityBadge(org) {
 
 function getCommunityData(org) {
   if (!org.github) return null;
-  const slug = org.github.replace(/^\/|\/$/g, '');
-  return communityActivity[slug] || null;
+  return communityActivity[org.name] || null;
 }
 
 let matchAllLanguages=false; // false = OR (any), true = AND (all)
@@ -1163,11 +1163,10 @@ function openModal(idx){
         <div class="ca-grid">
           <div class="ca-row"><span class="ca-label">Overall Score</span><span class="ca-value" style="font-weight:700;color:var(--orange)">${cd.score} / 100</span></div>
           <div class="ca-row"><span class="ca-label">Tier</span><span class="ca-value">${tierMap[cd.tier] || cd.tier}</span></div>
-          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.issueResponseHours != null ? cd.issueResponseHours + ' hrs' : '—'}</span></div>
-          <div class="ca-row"><span class="ca-label">Commits (90 days)</span><span class="ca-value">${cd.commitsLast90 != null ? cd.commitsLast90 : '—'}</span></div>
-          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.prMergeRate != null ? Math.round(cd.prMergeRate * 100) + '%' : '—'}</span></div>
-          <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastFetched || '—'}</span></div>
-        </div>`;
+          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.signals?.issueResponseDays != null ? cd.signals.issueResponseDays + ' days' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">Commit Frequency (90d)</span><span class="ca-value">${cd.signals?.commitFrequency != null ? cd.signals.commitFrequency + '/day' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.signals?.prMergeRate != null ? cd.signals.prMergeRate + '%' : '—'}</span></div>
+          <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastUpdated || '—'}</span></div>
     } else {
       mCommunity.style.display = 'none';
     }

@@ -19,10 +19,14 @@
           colors: {
             "primary": "#9d4300",
             "primary-container": "#f97316",
+            "surface": "#f9f9f9",
+            "on-surface": "#1a1c1c",
+            "surface-container-low": "#f3f3f3",
           },
           fontFamily: {
-            headline: ['"Plus Jakarta Sans"'],
-            body: ['"Plus Jakarta Sans"'],
+            headline: ['"Plus Jakarta Sans"', 'sans-serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif'],
+            label: ['"Space Grotesk"', 'sans-serif'],
           }
         }
       }
@@ -31,24 +35,68 @@
 </head>
 <body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
 
-<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm" style="border-bottom:1px solid #e4e4e7;">
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-zinc-200">
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <a href="index.html" class="flex items-center gap-2">
-      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#9d4300,#f97316);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <span style="color:white;font-weight:800;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;">G</span>
-      </div>
-      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.1rem;font-weight:800;color:#18181b;letter-spacing:-0.02em;white-space:nowrap;">GSoC 2026 <span style="color:#f97316;font-style:italic;">Org Finder</span></span>
-    </a>
-    <nav class="hidden md:flex items-center gap-6" aria-label="Main navigation">
-      <a href="index.html#orgs" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:500;color:#52525b;">Organizations</a>
-      <a href="index.html#guide" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:500;color:#52525b;">Guide</a>
-      <a href="index.html#issues" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:500;color:#52525b;">Issues</a>
+    <div class="flex items-center gap-3 sm:gap-4">
+      <button id="menuBtn" class="inline-flex md:hidden items-center justify-center p-2 hover:bg-zinc-100 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="material-symbols-outlined text-zinc-600">menu</span>
+      </button>
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="text-white font-bold text-sm font-headline">G</span>
+        </div>
+        <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-headline whitespace-nowrap">
+          GSoC 2026 <span class="text-orange-500 italic">Org Finder</span>
+        </span>
+      </a>
+    </div>
+    <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
+      <a href="index.html#orgs" class="text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
+      <a href="index.html#guide" class="text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
+      <a href="index.html#issues" class="text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
     </nav>
-    <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:#18181b;color:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:700;text-decoration:none;">
-      <span class="material-symbols-outlined" style="font-size:14px;">star</span> Star & Contribute
+    <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+      <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
     </a>
   </div>
 </header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden">
+  <div id="menuBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <nav id="menuPanel" aria-label="Mobile navigation" class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transition-transform duration-300 -translate-x-full">
+    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="text-white font-bold text-sm font-headline">G</span>
+        </div>
+        <span class="font-headline font-extrabold text-zinc-900">Menu</span>
+      </div>
+      <button id="closeMenuBtn" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-zinc-600">close</span>
+      </button>
+    </div>
+    <div class="p-4 space-y-1">
+      <a href="index.html#timeline" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-orange-50 text-orange-600 font-bold text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">schedule</span> Timeline
+      </a>
+      <a href="index.html#orgs" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">business</span> Organizations
+      </a>
+      <a href="index.html#guide" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">menu_book</span> Guide
+      </a>
+      <a href="index.html#issues" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">bug_report</span> Issues
+      </a>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+      </a>
+    </div>
+  </nav>
+</div>
 
 <main class="pt-32 pb-20 px-6 max-w-4xl mx-auto">
   <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8">Privacy Policy</h1>
@@ -77,7 +125,7 @@
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.125rem;font-weight:700;color:#18181b;">FindMyGSoC</span>
+        <span class="text-lg font-bold text-zinc-900 font-headline">FindMyGSoC</span>
       </div>
       <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
     </div>
@@ -92,5 +140,33 @@
 </footer>
 
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+
+    function toggleMenu() {
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        setTimeout(() => { panel.style.transform = 'translateX(0)'; }, 10);
+      } else {
+        panel.style.transform = 'translateX(-100%)';
+        menuBtn.setAttribute('aria-expanded', 'false');
+        setTimeout(() => { menu.classList.add('hidden'); }, 300);
+      }
+    }
+
+    document.getElementById('menuBtn')?.addEventListener('click', toggleMenu);
+    document.getElementById('closeMenuBtn')?.addEventListener('click', toggleMenu);
+    document.getElementById('menuBackdrop')?.addEventListener('click', toggleMenu);
+
+    panel?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', toggleMenu);
+    });
+  });
+</script>
 </body>
 </html>

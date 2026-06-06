@@ -853,6 +853,7 @@
       background: #fb923c;
     }
   </style>
+  <link rel="stylesheet" href="src/styles.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -4688,6 +4689,82 @@ document.addEventListener('DOMContentLoaded', () => {
   globalThis.addEventListener('resize', handleScrollResize, { passive: true });
 })();
 </script>
+<script>
+const logoLink = document.getElementById("logoLink");
+
+if (logoLink) {
+  logoLink.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Scroll to timeline section
+    document.getElementById("timeline").scrollIntoView({
+      behavior: "smooth"
+    });
+
+    // Remove active classes from desktop nav links
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+
+      link.classList.add("text-zinc-600", "hover:text-zinc-900");
+    });
+
+    // Activate Timeline desktop nav link
+    const timelineLink = document.querySelector(
+      '.desktop-nav-link[href="#timeline"]'
+    );
+
+    if (timelineLink) {
+      timelineLink.classList.remove("text-zinc-600");
+
+      timelineLink.classList.add(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+    }
+
+    // Sync mobile menu links
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+
+      link.classList.add(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+    });
+
+    const mobileTimelineLink = document.querySelector(
+      '.mobile-menu-link[data-section="timeline"]'
+    );
+
+    if (mobileTimelineLink) {
+      mobileTimelineLink.classList.remove(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+
+      mobileTimelineLink.classList.add(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+    }
+  });
+}
+</script>
+
 <script>
 const logoLink = document.getElementById("logoLink");
 

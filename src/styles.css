@@ -755,3 +755,36 @@ footer a:hover{text-decoration:underline}
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* ===== RESPONSIVE FIXES — mobile search & grid ===== */
+/* C: Org card grid breakpoints */
+@media (max-width: 900px) {
+  #orgGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 640px) {
+  #orgGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* C: Prevent horizontal overflow on all screens */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ============================================
+   RESPONSIVE FIXES — issue #1171
+   ============================================ */
+
+/* Hero search + Surprise Me — mobile */
+@media (max-width: 640px) {
+  #hero-search {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #surpriseBtn {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+}
+

@@ -436,7 +436,7 @@
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
-    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
+    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #111827 !important; border-color: #fb923c !important; }
 
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
@@ -850,6 +850,10 @@
     .app-toast-error { border-left-color: #dc2626; }
     .app-toast-warning { border-left-color: #f59e0b; }
     .dark .watchlist-action-btn {
+      --watchlist-action-hover-bg: #fb923c;
+      --watchlist-action-hover-text: #111827;
+      --watchlist-danger-hover-bg: #fecaca;
+      --watchlist-danger-hover-text: #7f1d1d;
       background: #18181b;
       border-color: #3f3f46;
       color: #d4d4d8;
@@ -857,8 +861,8 @@
     .dark .watchlist-action-btn:hover,
     .dark .watchlist-action-btn:focus-visible {
       border-color: #f97316;
-      background: #fb923c;
-      color: #111827;
+      background: var(--watchlist-action-hover-bg);
+      color: var(--watchlist-action-hover-text);
     }
     .dark .watchlist-action-primary {
       background: #f97316;
@@ -867,8 +871,8 @@
     }
     .dark .watchlist-action-primary:hover,
     .dark .watchlist-action-primary:focus-visible {
-      background: #fb923c;
-      color: #111827;
+      background: var(--watchlist-action-hover-bg);
+      color: var(--watchlist-action-hover-text);
     }
     .dark .watchlist-action-danger {
       color: #fca5a5;
@@ -876,9 +880,9 @@
     }
     .dark .watchlist-action-danger:hover,
     .dark .watchlist-action-danger:focus-visible {
-      background: #fecaca;
+      background: var(--watchlist-danger-hover-bg);
       border-color: #fca5a5;
-      color: #7f1d1d;
+      color: var(--watchlist-danger-hover-text);
     }
     .dark .app-toast {
       background: #18181b;

@@ -934,7 +934,7 @@ kbd:hover{
       height: var(--section-fab-size);
   border: none;
   border-radius: 50%;
-  z-index: 90;
+      z-index: 30;
   cursor: pointer;
   color: white;
   background: linear-gradient(135deg, #9d4300, #f97316);
@@ -974,7 +974,7 @@ kbd:hover{
         + var(--section-indicator-gap)
         + env(safe-area-inset-bottom)
       );
-  z-index: 90;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1151,7 +1151,7 @@ kbd:hover{
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1170,31 +1170,31 @@ kbd:hover{
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -2154,41 +2154,6 @@ kbd:hover{
       }
     }
   }
-
-globalThis.setActiveMenu = function(clickedLink) {
-  // Remove active class from all menu links
-  const allLinks = document.querySelectorAll('.mobile-menu-link');
-
-  allLinks.forEach(link => {
-    link.classList.remove(
-      'bg-orange-50',
-      'text-orange-600',
-      'font-bold'
-    );
-
-    link.classList.add(
-      'text-zinc-700',
-      'font-medium'
-    );
-  });
-
-  // Add active class to clicked link
-  clickedLink.classList.remove(
-    'text-zinc-700',
-    'font-medium'
-  );
-
-  clickedLink.classList.add(
-    'bg-orange-50',
-    'text-orange-600',
-    'font-bold'
-  );
-
-  // Close menu
-  toggleMenu();
-};
-
-  // (Removed duplicate updateActiveSection — logic consolidated into updateCurrentSection)
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
@@ -4979,83 +4944,6 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 <script>
-const logoLink = document.getElementById("logoLink");
-
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
-
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
-
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-    }
-
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-    });
-
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
-
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-    }
-  });
-}
-</script>
-
-
-<script>
 (function () {
   const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
   const sectionLabels = {
@@ -5130,6 +5018,41 @@ if (logoLink) {
 
     updateSectionIndicator();
   }
+
+  function setCurrentSectionById(sectionId) {
+    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
+
+    if (nextSectionIndex === -1) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
+  }
+
+  const logoLink = document.getElementById("logoLink");
+
+  if (logoLink) {
+    logoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      setCurrentSectionById("timeline");
+      scrollToSectionIndex(currentSection);
+    });
+  }
+
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+    });
+  });
+
+  document.querySelectorAll(".mobile-menu-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+
+      if (typeof globalThis.toggleMenu === "function") {
+        globalThis.toggleMenu();
+      }
+    });
+  });
 
   function updateCurrentSection() {
     const scrollPos = window.scrollY + getSectionDetectionOffset();

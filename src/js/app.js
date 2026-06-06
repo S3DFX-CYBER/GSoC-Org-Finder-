@@ -1167,7 +1167,8 @@ function openModal(idx){
           <div class="ca-row"><span class="ca-label">Commit Frequency (90d)</span><span class="ca-value">${cd.signals?.commitFrequency != null ? escapeHtml(String(cd.signals.commitFrequency)) + '/day' : '—'}</span></div>
           <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.signals?.prMergeRate != null ? escapeHtml(String(cd.signals.prMergeRate)) + '%' : '—'}</span></div>
           <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastUpdated ? escapeHtml(String(cd.lastUpdated)) : '—'}</span></div>
-    } else {
+        </div>`;
+          } else {
       mCommunity.style.display = 'none';
     }
   }

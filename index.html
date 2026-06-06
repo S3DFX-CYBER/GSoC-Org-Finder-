@@ -151,8 +151,14 @@
     .modal-bg {
       position: fixed;
       inset: 0;
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
+      color: inherit;
       z-index: 100;
       display: flex;
       align-items: center;
@@ -165,6 +171,9 @@
     .modal-bg.open {
       opacity: 1;
       pointer-events: auto;
+    }
+    .modal-bg::backdrop {
+      background: transparent;
     }
     .modal {
      background: white;
@@ -804,7 +813,7 @@
     .watchlist-action-danger:focus-visible {
       border-color: #dc2626;
       background: #fef2f2;
-    color: #991b1b;
+      color: #991b1b;
     }
     .toast-container {
       position: fixed;
@@ -848,8 +857,8 @@
     .dark .watchlist-action-btn:hover,
     .dark .watchlist-action-btn:focus-visible {
       border-color: #f97316;
-      background: rgba(249, 115, 22, 0.25);
-      color: #ffffff;
+      background: #fb923c;
+      color: #111827;
     }
     .dark .watchlist-action-primary {
       background: #f97316;
@@ -859,7 +868,7 @@
     .dark .watchlist-action-primary:hover,
     .dark .watchlist-action-primary:focus-visible {
       background: #fb923c;
-     color: #111827;
+      color: #111827;
     }
     .dark .watchlist-action-danger {
       color: #fca5a5;
@@ -867,9 +876,9 @@
     }
     .dark .watchlist-action-danger:hover,
     .dark .watchlist-action-danger:focus-visible {
-    background: rgba(248, 113, 113, 0.25);
-    border-color: #f87171;
-    color: #ffffff;
+      background: #fecaca;
+      border-color: #fca5a5;
+      color: #7f1d1d;
     }
     .dark .app-toast {
       background: #18181b;
@@ -1048,7 +1057,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<dialog id="mobileMenu" class="fixed inset-0 z-40 hidden m-0 p-0 max-w-none max-h-none border-0 bg-transparent" aria-label="Navigation menu" oncancel="event.preventDefault()">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1103,7 +1112,7 @@
       </a>
     </div>
   </nav>
-</div>
+</dialog>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1840,7 +1849,7 @@
 
 <!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
 
-<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
+<dialog class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" oncancel="event.preventDefault(); closeAn()" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
     <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
@@ -1919,7 +1928,7 @@
       </div>
     </div>
   </div>
-</div>
+</dialog>
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
@@ -1954,15 +1963,17 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
- globalThis.toggleMenu = function(){
+  globalThis.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
-    const panel = 
-    document.getElementById('menuPanel');
+    const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
     
     if(menu.classList.contains('hidden')){
       // Open menu
       menu.classList.remove('hidden');
+      if (typeof menu.showModal === 'function' && !menu.open) {
+        menu.showModal();
+      }
       menuBtn.setAttribute('aria-expanded', 'true');
       menuBtn.setAttribute('aria-label', 'Close menu');
       setTimeout(() => {
@@ -1976,6 +1987,9 @@
       menuBtn.setAttribute('aria-label', 'Open menu');
       document.removeEventListener('keydown', handleMenuEscape);
       setTimeout(() => {
+        if (typeof menu.close === 'function' && menu.open) {
+          menu.close();
+        }
         menu.classList.add('hidden');
       }, 300);
     }
@@ -3142,6 +3156,9 @@ btn.__orgListenerAttached = true;
     }
     
     const modal = document.getElementById('anBg');
+    if (typeof modal?.showModal === 'function' && !modal.open) {
+      modal.showModal();
+    }
     modal?.classList.add('open');
     document.body.style.overflow = 'hidden';
 
@@ -3153,7 +3170,11 @@ btn.__orgListenerAttached = true;
   };
 
   window.closeAn = function() {
-    document.getElementById('anBg')?.classList.remove('open');
+    const modal = document.getElementById('anBg');
+    modal?.classList.remove('open');
+    if (typeof modal?.close === 'function' && modal.open) {
+      modal.close();
+    }
     document.body.style.overflow = 'auto';
 
     // Restore focus to the element that opened the modal

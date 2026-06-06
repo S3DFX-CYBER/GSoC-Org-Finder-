@@ -789,12 +789,12 @@
     .watchlist-action-primary {
       border-color: #f97316;
       background: #f97316;
-      color: #fff;
+      color: #111827;
     }
     .watchlist-action-primary:hover,
     .watchlist-action-primary:focus-visible {
       background: #ea580c;
-      color: #fff;
+      color: #111827;
     }
     .watchlist-action-danger {
       border-color: #fecaca;
@@ -804,7 +804,7 @@
     .watchlist-action-danger:focus-visible {
       border-color: #dc2626;
       background: #fef2f2;
-      color: #dc2626;
+    color: #991b1b;
     }
     .toast-container {
       position: fixed;
@@ -849,17 +849,17 @@
     .dark .watchlist-action-btn:focus-visible {
       border-color: #f97316;
       background: rgba(249, 115, 22, 0.12);
-      color: #fb923c;
+      color: #fdba74;
     }
     .dark .watchlist-action-primary {
       background: #f97316;
       border-color: #f97316;
-      color: #fff;
+      color: #111827;
     }
     .dark .watchlist-action-primary:hover,
     .dark .watchlist-action-primary:focus-visible {
       background: #fb923c;
-      color: #fff;
+     color: #111827;
     }
     .dark .watchlist-action-danger {
       color: #fca5a5;
@@ -869,7 +869,7 @@
     .dark .watchlist-action-danger:focus-visible {
       background: rgba(248, 113, 113, 0.12);
       border-color: #f87171;
-      color: #fca5a5;
+      color: #ef4444;
     }
     .dark .app-toast {
       background: #18181b;
@@ -1048,7 +1048,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<dialog id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1103,7 +1103,7 @@
       </a>
     </div>
   </nav>
-</div>
+</dialog>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1954,9 +1954,10 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
+ globalThis.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
-    const panel = document.getElementById('menuPanel');
+    const panel = 
+    document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
     
     if(menu.classList.contains('hidden')){
@@ -1989,7 +1990,7 @@
     }
   }
 
-window.setActiveMenu = function(clickedLink) {
+globalThis.setActiveMenu = function(clickedLink) {
   // Remove active class from all menu links
   const allLinks = document.querySelectorAll('.mobile-menu-link');
 
@@ -2050,7 +2051,7 @@ sections.forEach(sectionId => {
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset('data-section');
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
         link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
@@ -2063,7 +2064,7 @@ sections.forEach(sectionId => {
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset('data-section');
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
         link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
@@ -3323,48 +3324,60 @@ btn.__orgListenerAttached = true;
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    showToast(orgs.length ? `Exported ${orgs.length} bookmark${orgs.length === 1 ? '' : 's'}.` : 'Exported an empty bookmark file.', 'success');
+    let message;
+
+if (orgs.length > 0) {
+  const bookmarkLabel = orgs.length === 1 ? 'bookmark' : 'bookmarks';
+  message = `Exported ${orgs.length} ${bookmarkLabel}.`;
+} else {
+  message = 'Exported an empty bookmark file.';
+}
+
+showToast(message, 'success');
   }
 
-  function readImportedBookmarks(file) {
+  async function readImportedBookmarks(file) {
     if (!file) return;
-    const reader = new FileReader();
 
-    reader.onload = () => {
-      let data;
-      try {
-        data = JSON.parse(String(reader.result || ''));
-      } catch {
-        showToast('Import failed: the selected file is not valid JSON.', 'error');
-        return;
-      }
+    let fileText;
+    try {
+      fileText = await file.text();
+    } catch {
+      showToast('Import failed: could not read that file.', 'error');
+      return;
+    }
 
-      if (!data || typeof data !== 'object' || Array.isArray(data) || !Array.isArray(data.orgs)) {
-        showToast('Import failed: expected a bookmark export with an orgs array.', 'error');
-        return;
-      }
+    let data;
+    try {
+      data = JSON.parse(fileText);
+    } catch {
+      showToast('Import failed: the selected file is not valid JSON.', 'error');
+      return;
+    }
 
-      const incoming = getMatchingOrgNames(data.orgs);
-      if (!incoming.length) {
-        showToast('No matching organizations were found in that file.', 'warning');
-        return;
-      }
+    if (!data || typeof data !== 'object' || Array.isArray(data) || !Array.isArray(data.orgs)) {
+      showToast('Import failed: expected a bookmark export with an orgs array.', 'error');
+      return;
+    }
 
-      const before = bookmarkedSet.size;
-      incoming.forEach(name => bookmarkedSet.add(name));
-      const added = bookmarkedSet.size - before;
-      persistBookmarksAndNotify({ source: 'import', added });
+    const incoming = getMatchingOrgNames(data.orgs);
+    if (!incoming.length) {
+      showToast('No matching organizations were found in that file.', 'warning');
+      return;
+    }
 
-      showToast(
-        added
-          ? `Imported ${added} new bookmark${added === 1 ? '' : 's'}.`
-          : 'Import complete. All bookmarks were already saved.',
-        added ? 'success' : 'info'
-      );
-    };
+    const before = bookmarkedSet.size;
+    incoming.forEach(name => bookmarkedSet.add(name));
+    const added = bookmarkedSet.size - before;
+    persistBookmarksAndNotify({ source: 'import', added });
 
-    reader.onerror = () => showToast('Import failed: could not read that file.', 'error');
-    reader.readAsText(file);
+    const bookmarkLabel = added === 1 ? 'bookmark' : 'bookmarks';
+    const importMessage = added
+      ? `Imported ${added} new ${bookmarkLabel}.`
+      : 'Import complete. All bookmarks were already saved.';
+    const importToastType = added ? 'success' : 'info';
+
+    showToast(importMessage, importToastType);
   }
 
   function encodeSharedBookmarks(names) {
@@ -3447,7 +3460,13 @@ if (!copied) {
       if (matches.length) {
         persistBookmarksAndNotify({ source: 'share', added: bookmarkedSet.size - before });
       }
-      showToast(matches.length ? `Loaded ${matches.length} shared bookmark${matches.length === 1 ? '' : 's'}.` : 'Shared link did not contain matching organizations.', matches.length ? 'success' : 'warning');
+      const bookmarkLabel = matches.length === 1 ? 'bookmark' : 'bookmarks';
+      const sharedMessage = matches.length
+        ? `Loaded ${matches.length} shared ${bookmarkLabel}.`
+        : 'Shared link did not contain matching organizations.';
+      const sharedToastType = matches.length ? 'success' : 'warning';
+
+      showToast(sharedMessage, sharedToastType);
     } catch (err) {
       console.warn('Failed to load shared bookmarks:', err);
       showToast('Could not load bookmarks from this share link.', 'error');

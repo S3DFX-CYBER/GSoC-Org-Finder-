@@ -3008,6 +3008,40 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     });
   });
 }
+
+  async function copyTextToClipboard(text) {
+    if (navigator.clipboard?.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+
+    const tempInput = document.createElement('textarea');
+    tempInput.value = text;
+    tempInput.setAttribute('readonly', 'true');
+    tempInput.style.position = 'fixed';
+    tempInput.style.opacity = '0';
+    tempInput.style.left = '-9999px';
+    document.body.appendChild(tempInput);
+    tempInput.select();
+
+    try {
+      document.execCommand('copy');
+    } finally {
+      tempInput.remove();
+    }
+  }
+
+  function showCopyTooltip(button, message = 'Copied!') {
+    const tooltip = button.querySelector('.copy-org-tooltip');
+    if (!tooltip) return;
+
+    tooltip.textContent = message;
+    tooltip.classList.add('show');
+    clearTimeout(button.__copyTooltipTimer);
+    button.__copyTooltipTimer = setTimeout(() => {
+      tooltip.classList.remove('show');
+    }, 1400);
+  }
+
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
 
@@ -3051,7 +3085,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
             <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap justify-end">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
             <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
@@ -3059,7 +3093,14 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
             </button>
           </div>
         </div>
-        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors min-w-0 flex-1">${escapeHtml(org.name)}</h3>
+          <!-- Attach a copy shortcut for the org title. -->
+          <button type="button" data-copy-org="${escapeHtml(org.name)}" class="copy-org-btn mt-0.5" title="Copy org name" aria-label="Copy org name ${escapeHtml(org.name)}">
+            <span class="material-symbols-outlined text-[15px]">content_copy</span>
+            <span class="copy-org-tooltip" role="status" aria-live="polite">Copied!</span>
+          </button>
+        </div>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
@@ -3109,6 +3150,21 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     (root.querySelectorAll ? root.querySelectorAll('.bookmark-btn[data-bookmark-org]') : []).forEach(btn => {
       if (btn.__orgListenerAttached) return;
       btn.addEventListener('click', (e) => toggleBookmark(e, btn.dataset.bookmarkOrg));
+      btn.__orgListenerAttached = true;
+    });
+
+    (root.querySelectorAll ? root.querySelectorAll('[data-copy-org]') : []).forEach(btn => {
+      if (btn.__orgListenerAttached) return;
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        try {
+          await copyTextToClipboard(btn.dataset.copyOrg);
+          showCopyTooltip(btn);
+        } catch (err) {
+          console.warn('Failed to copy org name:', err);
+          showCopyTooltip(btn, 'Copy failed');
+        }
+      });
       btn.__orgListenerAttached = true;
     });
 

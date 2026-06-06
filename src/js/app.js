@@ -829,6 +829,30 @@ function clearAllBookmarks() {
   bookmarkedSet.clear();
   localStorage.setItem('bookmarks', JSON.stringify([]));
   applyFilters();
+  // Notify the Watchlist panel (index.html inline script) about the change so
+  // renderWatchlist() and updateAIInsights() stay in sync across both bookmark
+  // systems without tight coupling between the two scripts.
+  document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail: { name: orgName } }));
+}
+
+function isBookmarked(orgName) {
+  const saved = getBookmarks();
+  return saved.includes(orgName);
+}
+
+function renderGfiBadge(gh){
+  if(gh?.gfi===null||gh?.gfi===undefined)return '';
+  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
+}
+function renderGrid(orgs){
+  const g=document.getElementById('orgGrid');
+  if(!orgs.length){
+    g.innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <h3>No organizations match your current filters.</h3>
+        <p>Try adjusting your search or clearing some filters.</p>
+        <button onclick="resetFilters()" class="btn-clear-filters">Clear All Filters</button>
   renderWatchlist();
   updateAIInsights();
 }
@@ -1337,6 +1361,20 @@ function updateModalGHStats(org, d, gfi) {
   }
 }
 
+const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+function toggleChip(k){
+  const el=document.getElementById('chip-'+k);
+  if(!el) return;
+  
+  const isActive = !chips.has(k);
+  if(isActive){
+    chips.add(k);
+    el.classList.add('bg-orange-600', 'text-white');
+    el.classList.remove('bg-surface-container-highest');
+  } else {
+    chips.delete(k);
+    el.classList.remove('bg-orange-600', 'text-white');
+    el.classList.add('bg-surface-container-highest');
 globalThis.fetchModalGH = async function () {
   const header = document.querySelector('#orgModal #orgModalTitle');
   if (!header) return;

@@ -17,17 +17,32 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
 
   const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();
-  const userTopics = new Set();
+  const githubTopics = Array.isArray(githubProfile?.topics)
+  ? githubProfile.topics
+  : [];
+  
+  const githubLanguages = Array.isArray(githubProfile?.languages)
+  ? githubProfile.languages
+  : [];
+  
+  const userTopics = new Set(
+  githubTopics
+    .filter(
+      (topic) =>
+        typeof topic === "string" && topic.trim().length > 0
+    )
+    .map((topic) => normalize(topic.trim().toLowerCase())));
 
-  if (githubProfile) {
-    (githubProfile.languages || []).forEach(l => userLanguages.add(normalize(l.toLowerCase())));
-    (githubProfile.topics || []).forEach(t => userTopics.add(normalize(t.toLowerCase())));
+githubLanguages.forEach((lang) => {
+  if (typeof lang === "string" && lang.trim()) {
+    userLanguages.add(normalize(lang.trim().toLowerCase()));
   }
-
-  resumeSkills.forEach(s => {
-    const skill = normalize(s.toLowerCase());
-    userLanguages.add(skill);
-    userTopics.add(skill);
+}); 
+  
+  resumeSkills.forEach(s => { 
+    if (typeof s !== "string" || !s.trim()) return; 
+    const skill = normalize(s.toLowerCase()); // Add once only 
+    userLanguages.add(skill); 
   });
 
   const scoredOrgs = ORGS.map((org, index) => 
@@ -82,11 +97,26 @@ function calculateTopicScore(userTopics, orgTags, orgCat, matchedSkills, matchRe
   return Math.min(topicDelta, 30);
 }
 
-function calculateActivityScore(githubProfile, org, matchReasons) {
-  if (!githubProfile) return 8;
+function calculateActivityScore(githubProfile, org, matchReasons) { 
+  // Neutral fallback when no GitHub profile exists 
+  if (!githubProfile) { return 10; } 
+  const userActivity = typeof githubProfile.activity === "string"
+    ? githubProfile.activity
+    : "medium";
+  
+  let orgActivityRaw = "low";
+  if (typeof org._gh?.activity === "string") {
+    orgActivityRaw = org._gh.activity;
+  }
+  else if (typeof org.activity === "string") {
+    orgActivityRaw = org.activity;
+  }
+  else if (typeof org.competition === "string") {
+  orgActivityRaw = org.competition;
+}
 
-  const userAct = (githubProfile.activity || 'low').toLowerCase();
-  const orgAct = (org._gh?.activity || org.activity || org.competition || 'low').toLowerCase();
+const userAct = userActivity.toLowerCase();
+const orgAct = orgActivityRaw.toLowerCase();
   const isHigh = orgAct === 'active' || orgAct === 'high' || orgAct === 'hot';
   const isMed = orgAct === 'moderate' || orgAct === 'medium';
   const isLow = orgAct === 'low' || orgAct === 'chill';
@@ -110,7 +140,10 @@ function calculateExperienceScore(githubProfile, org, matchReasons) {
   const userStars = githubProfile?.stars || 0;
   const userLangCount = githubProfile?.languages?.length || 0;
   const isExperienced = userStars > 50 || userLangCount > 5;
-  const isBeginner = !githubProfile || (userStars < 10 && userLangCount < 3);
+  const isBeginner =
+  !!githubProfile &&
+  githubProfile.public_repos < 5 &&
+  githubProfile.followers < 10;
   const orgCodebase = (org.codebase || 'intermediate').toLowerCase();
 
   if (isBeginner && orgCodebase === 'beginner') {
@@ -143,8 +176,21 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   const matchReasons = [];
   const matchedSkills = [];
   const orgNormalize = globalThis.normalizeSkill || (s => s);
-  const orgTags = new Set((org.tags || []).map(t => orgNormalize(t.toLowerCase())));
-  const orgCat = org.cat ? orgNormalize(org.cat.toLowerCase()) : '';
+  const orgTags = new Set(
+  (Array.isArray(org.tags) ? org.tags : [])
+    .filter(
+      (tag) =>
+        typeof tag === "string" && tag.trim()
+    )
+    .map((tag) =>
+      orgNormalize(tag.trim().toLowerCase())
+    )
+);
+
+  const orgCat =
+  typeof org.cat === "string"
+    ? orgNormalize(org.cat.toLowerCase())
+    : "";
 
   let score = 0;
   

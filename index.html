@@ -559,6 +559,15 @@ kbd:hover{
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
 
+    :root {
+      --section-fab-right: 24px;
+      --section-fab-bottom: 24px;
+      --section-fab-size: 48px;
+      --section-fab-gap: 10px;
+      --section-indicator-gap: 12px;
+      --section-indicator-width: 240px;
+    }
+
     @media (max-width: 640px) {
       .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
       .modal-header h2 { font-size: 1.6rem; }
@@ -916,7 +925,133 @@ kbd:hover{
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
-  </style>
+  
+/* Section-wise Scroll Buttons */
+    .section-scroll-btn {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      width: var(--section-fab-size);
+      height: var(--section-fab-size);
+  border: none;
+  border-radius: 50%;
+      z-index: 30;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
+  transition: all 0.25s ease;
+}
+.section-scroll-btn:hover { transform: translateY(-2px); }
+    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
+    #prevSectionBtn {
+      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
+    }
+
+/* Dark mode - Section scroll buttons */
+.dark .section-scroll-btn {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
+}
+.dark .section-scroll-btn:hover {
+  box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
+}
+
+.section-scroll-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.section-scroll-indicator {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      bottom: calc(
+        var(--section-fab-bottom)
+        + (var(--section-fab-size) + var(--section-fab-gap)) * 2
+        + var(--section-indicator-gap)
+        + env(safe-area-inset-bottom)
+      );
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+      max-width: min(var(--section-indicator-width), calc(100vw - 32px - env(safe-area-inset-right)));
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  color: #9d4300;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.12);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-scroll-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
+}
+
+.section-scroll-indicator-value {
+  color: #1f1f1f;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+    @media (max-width: 640px) {
+      :root {
+        --section-fab-right: 12px;
+        --section-fab-bottom: 12px;
+        --section-fab-size: 42px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 8px;
+        --section-indicator-width: 180px;
+      }
+
+      .section-scroll-indicator {
+        padding: 7px 10px;
+        gap: 6px;
+        font-size: 10px;
+        line-height: 1;
+      }
+
+      .section-scroll-indicator-value {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .section-scroll-indicator > span:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --section-fab-right: 10px;
+        --section-fab-bottom: 10px;
+        --section-fab-size: 40px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 6px;
+        --section-indicator-width: 160px;
+      }
+
+      .section-scroll-indicator {
+        padding: 6px 9px;
+        border-radius: 999px;
+      }
+    }
+
+</style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -925,6 +1060,20 @@ kbd:hover{
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+
+<!-- Section Navigation Buttons -->
+<div id="sectionScrollIndicator" class="section-scroll-indicator" aria-live="polite" aria-atomic="true">
+  <span class="section-scroll-indicator-dot" aria-hidden="true"></span>
+  <span>Section:</span>
+  <span id="sectionScrollIndicatorValue" class="section-scroll-indicator-value">Timeline</span>
+</div>
+<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Previous Section">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</button>
+<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Next Section">
+  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+</button>
+
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -1002,7 +1151,7 @@ kbd:hover{
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1021,31 +1170,31 @@ kbd:hover{
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -2005,116 +2154,6 @@ kbd:hover{
       }
     }
   }
-
-function setDesktopNavState(activeSection) {
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    const linkSection = link.dataset.section;
-    if (linkSection === activeSection) {
-      link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-      link.classList.add('text-orange-600', 'is-active');
-    } else {
-      link.classList.remove('text-orange-600', 'is-active');
-      link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-    }
-  });
-}
-
-  function setMobileNavState(activeSection){
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.dataset.section;
-      if(linkSection === activeSection){
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100');
-        link.classList.add('text-orange-600', 'bg-orange-50');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100');
-      }
-    });
-  }
-
-  function setActiveNavSection(activeSection){
-    setDesktopNavState(activeSection);
-    setMobileNavState(activeSection);
-  }
-
-  function getTrackedSections(){
-    const sectionIds = Array.from(new Set(
-      Array.from(document.querySelectorAll('.desktop-nav-link, .mobile-menu-link'))
-        .map(link => link.dataset.section)
-        .filter(Boolean)
-    ));
-
-    return sectionIds
-      .map(sectionId => document.getElementById(sectionId))
-      .filter(Boolean)
-      .sort((a, b) => a.offsetTop - b.offsetTop);
-  }
-
-  let pendingSection = null;
-
-  // Set active menu item and update UI
-  globalThis.setActiveMenu = function(clickedLink){
-    pendingSection = clickedLink.dataset.section;
-    setActiveNavSection(pendingSection);
-
-    setTimeout(() => {
-      closeMobileMenu();
-    }, 300);
-  };
-
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      pendingSection = link.dataset.section;
-      setActiveNavSection(pendingSection);
-    });
-  });
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = getTrackedSections();
-    if(!sections.length) return;
-
-    const offset = 100;
-    const topLockThreshold = 24;
-    const scrollPosition = window.scrollY + offset;
-    let currentSection = sections[0].id;
-
-    if(window.scrollY <= topLockThreshold){
-      setActiveNavSection('orgs');
-      return;
-    }
-
-    sections.forEach(section => {
-      if(scrollPosition >= section.offsetTop){
-        currentSection = section.id;
-      }
-    });
-
-    if(pendingSection){
-      const targetSection = document.getElementById(pendingSection);
-      if(targetSection){
-        const targetTop = targetSection.offsetTop - offset;
-        const targetBottom = targetSection.offsetTop + targetSection.offsetHeight - offset;
-        const targetReached = window.scrollY >= targetTop && window.scrollY < targetBottom;
-
-        if(!targetReached){
-          setActiveNavSection(pendingSection);
-          return;
-        }
-      }
-
-      pendingSection = null;
-    }
-
-    setActiveNavSection(currentSection);
-  }
-
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
@@ -4948,79 +4987,144 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 <script>
-const logoLink = document.getElementById("logoLink");
+(function () {
+  const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
+  const sectionLabels = {
+    timeline: "Timeline",
+    orgs: "Organizations",
+    "ai-recommender": "AI Recommender",
+    watchlist: "Watchlist",
+    issues: "Issues",
+    mentors: "Mentors",
+    guide: "Guide",
+    contact: "Contact"
+  };
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const mainHeader = document.querySelector("header.fixed.top-0");
 
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
+  let currentSection = 0;
+  const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
 
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
+  function getSectionDetectionOffset() {
+    return mainHeader?.clientHeight || 0;
+  }
+
+  function scrollToSectionIndex(index) {
+    const targetSection = sections[index];
+
+    if (!targetSection) return;
+
+    const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
+
+    window.scrollTo({
+      top: targetTop,
       behavior: "smooth"
     });
+  }
 
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+  function updateSectionIndicator() {
+    const activeSectionId = sections[currentSection]?.id;
 
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+    if (sectionIndicatorValue) {
+      sectionIndicatorValue.textContent = sectionLabels[activeSectionId] || "Timeline";
     }
+  }
 
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+  function updateNavState() {
+    const activeSectionId = sections[currentSection]?.id;
 
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      const linkSection = link.dataset.section;
+
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-600", "hover:text-zinc-900");
+        link.classList.add("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+      } else {
+        link.classList.remove("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+        link.classList.add("text-zinc-600", "hover:text-zinc-900");
+      }
     });
 
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      const linkSection = link.dataset.section;
 
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+        link.classList.add("text-orange-600", "bg-orange-50", "font-bold");
+      } else {
+        link.classList.remove("text-orange-600", "bg-orange-50", "font-bold");
+        link.classList.add("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+      }
+    });
 
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+    updateSectionIndicator();
+  }
+
+  function setCurrentSectionById(sectionId) {
+    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
+
+    if (nextSectionIndex === -1) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
+  }
+
+  const logoLink = document.getElementById("logoLink");
+
+  if (logoLink) {
+    logoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      setCurrentSectionById("timeline");
+      scrollToSectionIndex(currentSection);
+    });
+  }
+
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+    });
+  });
+
+  document.querySelectorAll(".mobile-menu-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+
+      if (typeof globalThis.toggleMenu === "function") {
+        globalThis.toggleMenu();
+      }
+    });
+  });
+
+  function updateCurrentSection() {
+    const scrollPos = window.scrollY + getSectionDetectionOffset();
+
+    sections.forEach((section, index) => {
+      if (scrollPos >= section.offsetTop) currentSection = index;
+    });
+
+    updateNavState();
+  }
+
+  window.addEventListener("scroll", updateCurrentSection, { passive: true });
+  window.addEventListener("resize", updateCurrentSection);
+  updateCurrentSection();
+
+  document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
+    if (currentSection < sections.length - 1) {
+      scrollToSectionIndex(currentSection + 1);
     }
   });
-}
+
+  document.getElementById("prevSectionBtn")?.addEventListener("click", () => {
+    if (currentSection > 0) {
+      scrollToSectionIndex(currentSection - 1);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+})();
 </script>
 
 </body>

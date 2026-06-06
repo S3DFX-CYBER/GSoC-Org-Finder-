@@ -308,6 +308,45 @@ This script checks:
 
 Run this before committing changes to `src/js/org.js` to catch invalid URLs early.
 
+## 🔒 Hardened Frontend Architecture
+
+To ensure the GSoC Org Finder is extremely secure, accessible, resilient, and maintainable, the codebase has been hardened with a robust vanilla architecture:
+
+### 1. Unified Event-Driven Flow & Delegation (100% Programmatic & CSP-Compliant)
+All frontend scripting, bookmarking, complexity filtering, modal controls, and dynamic templates have been migrated to a 100% programmatic model:
+* **Zero Inline Handlers:** All scattered `onclick` and `onerror` attributes in both static HTML (`index.html`) and dynamic template strings (`app.js`, `recommendation-ui.js`) are completely eliminated.
+* **Global Capturing Image Error Interceptor:** A centralized recapturing `error` listener registered on `document` seamlessly intercepts failed image load events and triggers styled initial-based fallbacks.
+* **Centralized Event Delegation:** Dynamic interactive collections (like trending cards, selected language badges, and mentor contact cards) cleanly route clicks via unified delegated listeners on their parent elements (`#trendingScroll`, `#selectedLangsStrip`, `#mentorsContainer`).
+
+### 2. 🛡️ Safe Rendering & Sanitization (XSS Mitigation)
+* **HTML Escaping:** All dynamic insertions of user-supplied or external API content are safely wrapped via a rigid `escapeHtml()` text filter to block HTML markup injections.
+* **Protocol-Restricted Hrefs:** External anchor elements (like organization repository pages or ideas boards) are strictly validated via `sanitizeHrefUrl()` and `validateIdeasUrl()` to enforce only safe absolute protocols (`http:` and `https:`), explicitly rejecting active protocol wrappers (`javascript:`, `data:`, `vbscript:`).
+
+### 3. ♿ Accessible Modal Management
+All overlays (`orgModal`, `compareModal`, and `helpModal`) implement full semantic accessibility matching the WAI-ARIA standard:
+* Modals are marked up using `role="dialog"`, `aria-modal="true"`, and mapped with specific label headers via `aria-labelledby`.
+* Open/close interactions trigger strict **focus restoration** (returning focus to the activating button upon closing).
+* Modals implement dynamic **focus trapping** ensuring `Tab`/`Shift+Tab` operations cycle exclusively within dialog controls.
+
+### 4. 🛜 Offline Resilience (Service Worker Caching)
+* **Static Manifest:** A robust cache list (`sw.js`) collects and version-controls all essential UI assets, scripts, stylesheets, and custom Google Fonts.
+* **Dual Caching Interceptors:** Intercepted requests deploy **Stale-While-Revalidate** patterns for static assets (for zero-latency responsiveness) and **Network-First** strategies for Edge proxy stats and JSON issue lists (for high data reliability).
+
+### 5. 🧪 Zero-Dependency Testing Suite
+A modular test bed under `/tests` utilizes Node.js's built-in `node:test` framework and mock DOM stubs, covering:
+* `tests/sanitization.test.js`: Validates escaping and URL sanitizers.
+* `tests/skills.test.js`: Validates language aliases and technical context matching for single-letter tags.
+* `tests/recommendation.test.js`: Validates recommender scores and veteran status bonuses.
+* `tests/filtering.test.js`: Validates tag matching.
+* `tests/modal.test.js`: Upgraded interactive test suite validating focus traps, focus restorations, and API fetching.
+* `tests/browser.test.js`: Simulated browser DOM smoke test dry-running page load event bindings.
+* `tests/cache.test.js`: Service Worker offline caching strategy fetch intercept test.
+
+Run the test suite locally:
+```bash
+npm test
+```
+
 ## 🚀 Deploy Your Own
 
 ### 1. Fork & Clone

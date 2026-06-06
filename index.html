@@ -3323,7 +3323,7 @@ btn.__orgListenerAttached = true;
   // WATCHLIST — centralised bookmark sync helper
   // ══════════════════════════════════════════════
   function refreshVisibleBookmarkButtons() {
-    document.querySelectorAll('#orgGrid .bookmark-btn[data-bookmark-org]').forEach(btn => {
+    document.querySelectorAll('.bookmark-btn[data-bookmark-org]').forEach(btn => {
       const isBookmarked = bookmarkedSet.has(btn.dataset.bookmarkOrg);
       btn.classList.toggle('active', isBookmarked);
       btn.classList.toggle('text-zinc-300', !isBookmarked);

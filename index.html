@@ -849,7 +849,7 @@
     .dark .watchlist-action-btn:focus-visible {
       border-color: #f97316;
       background: rgba(249, 115, 22, 0.12);
-      color: #fdba74;
+      color: #ffffff;
     }
     .dark .watchlist-action-primary {
       background: #f97316;
@@ -869,7 +869,7 @@
     .dark .watchlist-action-danger:focus-visible {
       background: rgba(248, 113, 113, 0.12);
       border-color: #f87171;
-      color: #ef4444;
+      color: #fee2e2;
     }
     .dark .app-toast {
       background: #18181b;
@@ -1048,7 +1048,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<dialog id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1103,7 +1103,7 @@
       </a>
     </div>
   </nav>
-</dialog>
+</div>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -2051,7 +2051,7 @@ sections.forEach(sectionId => {
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
-      const linkSection = link.dataset('data-section');
+     const linkSection = link.dataset.section;
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
         link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');

@@ -254,7 +254,11 @@ async function copyTextToClipboard(text) {
   tempInput.select();
 
   try {
-    document.execCommand('copy');
+    const copied = document.execCommand('copy');
+    if (!copied) {
+      throw new Error('document.execCommand("copy") returned false');
+    }
+    return copied;
   } finally {
     tempInput.remove();
   }

@@ -239,6 +239,39 @@ function updateCountdown() {
   }
 }
 
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  const tempInput = document.createElement('textarea');
+  tempInput.value = text;
+  tempInput.setAttribute('readonly', 'true');
+  tempInput.style.position = 'fixed';
+  tempInput.style.opacity = '0';
+  tempInput.style.left = '-9999px';
+  document.body.appendChild(tempInput);
+  tempInput.select();
+
+  try {
+    document.execCommand('copy');
+  } finally {
+    tempInput.remove();
+  }
+}
+
+function showCopyTooltip(button, message = 'Copied!') {
+  const tooltip = button.querySelector('.copy-org-tooltip');
+  if (!tooltip) return;
+
+  tooltip.textContent = message;
+  tooltip.classList.add('show');
+  clearTimeout(button.__copyTooltipTimer);
+  button.__copyTooltipTimer = setTimeout(() => {
+    tooltip.classList.remove('show');
+  }, 1400);
+}
+
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
@@ -1165,7 +1198,11 @@ function renderOrgs(reset = true) {
         <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden border border-zinc-100 dark:border-zinc-700">
           ${logoHtml}
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap justify-end">
+          <button type="button" data-copy-org="${org.name}" class="copy-org-btn" title="Copy org name" aria-label="Copy org name ${org.name}">
+            <span class="material-symbols-outlined text-lg">content_copy</span>
+            <span class="copy-org-tooltip" role="status" aria-live="polite">Copied!</span>
+          </button>
           <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
           <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
           <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
@@ -1213,6 +1250,24 @@ function attachOrgCardListeners(root) {
       e.stopPropagation();
       const name = btn.dataset.bookmarkOrg;
       toggleBookmark(e, name);
+    });
+    btn.__attached = true;
+  });
+
+  // Attach a copy handler to each org-name button.
+  root.querySelectorAll('[data-copy-org]').forEach(btn => {
+    if (btn.__attached) return;
+    // Keep the org name copy action lightweight and easy to spot.
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const name = btn.dataset.copyOrg;
+      try {
+        await copyTextToClipboard(name);
+        showCopyTooltip(btn);
+      } catch (err) {
+        console.warn('Failed to copy org name:', err);
+        showCopyTooltip(btn, 'Copy failed');
+      }
     });
     btn.__attached = true;
   });

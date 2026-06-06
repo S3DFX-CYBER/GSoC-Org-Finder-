@@ -1307,8 +1307,7 @@ async function fetchAllIssues(){
 async function loadCachedIssues(){
   if(allIssues.length||issuesFetching) return;
   try{
-    const bust = new Date().toISOString().slice(0, 10);
-    const res = await fetch('/data/community_activity.json?v=' + bust);
+    const res = await fetch('/data/issues.json');
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data=await res.json();
     if(!Array.isArray(data.issues)) return;

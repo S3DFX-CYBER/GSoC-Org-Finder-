@@ -4181,7 +4181,15 @@ if(org.ideas){
         if (data.updated_at) {
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
           const hours = Math.floor(mins / 60);
-          const relative = mins < 60 ? `${mins} min ago` : hours < 24 ? `${hours} hours ago` : `${Math.floor(hours / 24)} days ago`;
+          const days = Math.floor(hours / 24);
+          let relative;
+          if (mins < 60) {
+            relative = `${mins} min ago`;
+          } else if (hours < 24) {
+            relative = `${hours} hours ago`;
+          } else {
+            relative = `${days} days ago`;
+          }
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';

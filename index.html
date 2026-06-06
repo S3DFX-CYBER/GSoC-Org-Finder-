@@ -1348,10 +1348,44 @@ kbd:hover{
       <div class="space-y-6">
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
+          <div id="dynamic-deadlines-container" class="space-y-4">
+            <div class="deadline-node" data-date="2026-03-31">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p>
+              <p class="text-sm font-bold">Proposal Submission Deadline</p>
+              <p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p>
+            </div>
+            <div class="deadline-node" data-date="2026-04-21">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p>
+              <p class="text-sm font-bold">Review Period Starts</p>
+              <p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p>
+            </div>
           </div>
+          <p id="deadlines-empty-fallback" class="text-xs text-zinc-400 italic hidden mt-4">No upcoming deadlines.</p>
+          <script>
+            (function runtimeDeadlineFilter() {
+              const now = new Date();
+              const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+              const container = document.getElementById('dynamic-deadlines-container');
+              if (!container) return;
+              const nodes = container.querySelectorAll('.deadline-node');
+              let activeCount = 0;
+              nodes.forEach(node => {
+                const dateStr = node.dataset.date;
+                if (!dateStr) return;
+                const [year, month, day] = dateStr.split('-').map(Number);
+                if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+                const nodeUTC = Date.UTC(year, month - 1, day);
+                if (nodeUTC < todayUTC) {
+                  node.style.display = 'none';
+                } else {
+                  node.style.display = 'block';
+                  activeCount++;
+                }
+              });
+              const fallback = document.getElementById('deadlines-empty-fallback');
+              if (fallback) fallback.style.display = activeCount === 0 ? 'block' : 'none';
+            })();
+          </script>
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>

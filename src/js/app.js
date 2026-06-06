@@ -1465,22 +1465,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// Scroll button click listener
-const searchScrollBtn = document.getElementById('searchScrollBtn');
-if (searchScrollBtn) {
-  searchScrollBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = document.getElementById('orgs');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-}
-
-// Event listeners for selects
-['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', () => applyFilters());
-
-});
 
 

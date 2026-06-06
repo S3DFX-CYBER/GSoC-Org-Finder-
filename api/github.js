@@ -11,6 +11,20 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+function addRateLimitHeaders(res, headers) {
+  const map = {
+    'x-ratelimit-limit':     'X-RateLimit-Limit',
+    'x-ratelimit-remaining': 'X-RateLimit-Remaining',
+    'x-ratelimit-reset':     'X-RateLimit-Reset',
+    'retry-after':           'Retry-After',
+  };
+  for (const [src, dst] of Object.entries(map)) {
+    const val = res.headers.get(src);
+    if (val != null) headers[dst] = val;
+  }
+  return headers;
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin':   '*',

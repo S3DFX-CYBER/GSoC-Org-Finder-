@@ -177,7 +177,7 @@ function tick() {
     const job = _queue.dequeue();
     if (!job) break;
     _active++;
-    processJob(job).finally(() => { _active--; _inFlight.delete(job.repo + job.mode); tick(); });
+    processJob(job).finally(() => { _active--; _inFlight.delete(job.jobKey); tick(); });
   }
 }
 
@@ -203,7 +203,7 @@ export function fetchGH(repo, priority = 1) {
     if (hit?.stale) {
       resolve(hit.data);
       _queue.enqueue({
-        repo, mode: 'stats',
+        repo, mode: 'stats', jobKey,
 resolve: (fresh) => { if (fresh) setCache(repo, fresh); resolveInFlight(jobKey, fresh); },
         reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, Math.max(priority, 2));
@@ -211,7 +211,7 @@ resolve: (fresh) => { if (fresh) setCache(repo, fresh); resolveInFlight(jobKey, 
     }
 
     _queue.enqueue({
-      repo, mode: 'stats',
+      repo, mode: 'stats', jobKey,
       resolve: (d) => resolveInFlight(jobKey, d),
       reject:  (e) => rejectInFlight(jobKey, e),
     }, priority);
@@ -233,14 +233,14 @@ export function fetchGFI(repo, priority = 1) {
     if (hit?.stale) {
       resolve(toGfi(hit.data));
       _queue.enqueue({
-        repo, mode: 'gfi',
+        repo, mode: 'gfi', jobKey,
         resolve: (fresh) => { resolveInFlight(jobKey, toGfi(fresh)); },
         reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, 2);
       tick(); return;
     }
     _queue.enqueue({
-      repo, mode: 'gfi',
+      repo, mode: 'gfi', jobKey,
       resolve: (d) => resolveInFlight(jobKey, toGfi(d)),
       reject:  (e) => rejectInFlight(jobKey, e),
     }, priority);
@@ -261,14 +261,14 @@ export function fetchIssues(repo, priority = 2) {
     if (hit?.stale) {
       resolve(hit.data);
       _queue.enqueue({
-        repo, mode: 'issues',
+        repo, mode: 'issues', jobKey,
         resolve: (fresh) => { resolveInFlight(jobKey, fresh); },
         reject:  (e)     => { rejectInFlight(jobKey, e); },
       }, 2);
       tick(); return;
     }
     _queue.enqueue({
-      repo, mode: 'issues',
+      repo, mode: 'issues', jobKey,
       resolve: (d) => resolveInFlight(jobKey, d),
       reject:  (e) => rejectInFlight(jobKey, e),
     }, priority);

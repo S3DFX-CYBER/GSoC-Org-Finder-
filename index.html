@@ -1295,6 +1295,12 @@ kbd:hover{
   <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
   <div class="mb-6 fade-up" style="animation-delay:.3s">
     <div class="flex flex-wrap gap-2 mb-4">
+      <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
+      <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
+      <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
+      <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
+      <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
+      <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
       <button id="chip-veteran" data-tooltip="Organizations that participated in GSoC for many years" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
       <button id="chip-newcomer" data-tooltip="Good for first-time contributors and beginners" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
       <button id="chip-hot" data-tooltip="Highly competitive organizations with many applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
@@ -2244,6 +2250,8 @@ kbd:hover{
   // ══════════════════════════════════════════════
   const ITEMS_PER_PAGE = 9;
   let visibleCount = 12;
+  let visibleMentorCount = 12;
+
   let orgCurrentPage = 1;
   let mentorCurrentPage = 1;
   let filteredOrgs = [...ORGS];
@@ -2616,6 +2624,11 @@ kbd:hover{
       mentorCurrentPage = 1;
     }
 
+    if (reset) {
+      grid.innerHTML = '';
+      visibleMentorCount = 12;
+    }
+
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
       grid.innerHTML = `
         <div class="col-span-full mentor-empty">
@@ -2672,6 +2685,9 @@ kbd:hover{
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
+      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+      if (loadMoreContainer) {
+        loadMoreContainer.style.display = 'none';
 
       if (mentorPagination) {
         mentorPagination.innerHTML = '';
@@ -2697,6 +2713,8 @@ kbd:hover{
     grid.innerHTML = '';
     paginatedRecords.forEach(({ org, entry }) => {
 
+    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
+    slice.forEach(({ org, entry }) => {
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2760,6 +2778,8 @@ kbd:hover{
           <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
         </div>
       `;
+      grid.appendChild(article);
+    });
 
       grid.appendChild(article);
     });
@@ -2769,6 +2789,14 @@ kbd:hover{
       document.getElementById('mentors')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
+    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
+    if (loadMoreContainer) {
+      if (visibleMentorCount < filteredRecords.length) {
+        loadMoreContainer.style.display = 'flex';
+      } else {
+        loadMoreContainer.style.display = 'none';
+      }
+    }
     attachOrgCardListeners(grid);
   }
 
@@ -3124,6 +3152,10 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
+           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+        </div>
+       `;
+    card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
            <button data-open-org="" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
        `;
@@ -4073,6 +4105,11 @@ if(org.ideas){
     globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
     updateLanguageModeHint();
+  });
+
+  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
+    visibleMentorCount += 12;
+    renderMentorFinder(false);
   });
 
   // Surprise button event listener

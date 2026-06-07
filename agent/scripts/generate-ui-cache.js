@@ -1,38 +1,29 @@
-const fs = require('fs');
+const path = require('node:path');
+const { ensureDir, readJsonFile, writeJsonFile, buildSummary } = require('./utils');
 
-const issuesData = JSON.parse(
-  fs.readFileSync('./data/issues.json', 'utf8')
-);
+const DATA_DIR = path.resolve(__dirname, '../../data');
+const ISSUES_FILE = path.join(DATA_DIR, 'issues.json');
+const UI_SUMMARY_FILE = path.join(DATA_DIR, 'ui-summary.json');
 
-const issues = issuesData.issues || [];
+ensureDir(DATA_DIR);
 
-const orgs = new Set();
-const labels = new Set();
-
-for (const issue of issues) {
-  if (issue.org) orgs.add(issue.org);
-
-  if (Array.isArray(issue.labels)) {
-    issue.labels.forEach(label => labels.add(label));
-  }
+let issuesData;
+try {
+  issuesData = readJsonFile(ISSUES_FILE);
+} catch (error) {
+  console.error(`Fatal Error: Failed to read or parse issues data from '${ISSUES_FILE}'.`);
+  console.error(`Details: ${error.message}`);
+  process.exit(1);
 }
 
-const summary = {
-  generatedAt: new Date().toISOString(),
-  totalIssues: issues.length,
-  totalOrgs: orgs.size,
-  totalLabels: labels.size,
-  topOrganizations: [...orgs].slice(0, 10)
-};
+const summary = buildSummary(issuesData.issues || []);
 
-if (!fs.existsSync('./data')) {
-  fs.mkdirSync('./data', { recursive: true });
+try {
+  writeJsonFile(UI_SUMMARY_FILE, summary);
+  console.log('Generated UI cache successfully.');
+  console.log(summary);
+} catch (error) {
+  console.error(`Fatal Error: Failed to write UI cache to '${UI_SUMMARY_FILE}'.`);
+  console.error(`Details: ${error.message}`);
+  process.exit(1);
 }
-
-fs.writeFileSync(
-  './data/ui-summary.json',
-  JSON.stringify(summary, null, 2)
-);
-
-console.log('Generated UI cache');
-console.log(summary);

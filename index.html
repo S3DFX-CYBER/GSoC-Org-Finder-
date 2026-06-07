@@ -901,7 +901,6 @@ kbd:hover{
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
@@ -1210,7 +1209,7 @@ kbd:hover{
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1272,7 +1271,7 @@ kbd:hover{
             <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
             <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div id="timeline-milestones" aria-label="GSoC timeline milestones" class="space-y-4 sm:space-y-5 overflow-y-auto max-h-[50vh] pl-4 no-scrollbar focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg"></div>
           <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
             <div class="flex items-center justify-between">
               <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
@@ -1751,27 +1750,27 @@ kbd:hover{
 </section>
 
 <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
+<section class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
       </div>
     </div>
   </div>
@@ -2894,14 +2893,14 @@ kbd:hover{
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
@@ -2915,6 +2914,19 @@ kbd:hover{
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      requestAnimationFrame(() => { 
+        if (currentMilestone) {
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
+      });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }

@@ -2510,18 +2510,8 @@ const recentSearchesContainer =
 const clearSearchHistoryBtn =
   document.getElementById("clearSearchHistory");
 
-let recentSearches = [];
-
-try {
-  recentSearches =
-    JSON.parse(localStorage.getItem("recentSearches")) || [];
-} catch (error) {
-  console.error("Failed to parse recent searches:", error);
-
-  recentSearches = [];
-
-  localStorage.removeItem("recentSearches");
-}
+let recentSearches =
+  JSON.parse(localStorage.getItem("recentSearches")) || [];
 
 function renderRecentSearches() {
   if (!recentSearchesContainer) return;

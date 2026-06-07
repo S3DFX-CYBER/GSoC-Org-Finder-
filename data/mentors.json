@@ -1697,12 +1697,40 @@
   },
   "gprMax": {
     "org": "gprMax",
-    "ideasUrl": "https://github.com/gprMax/gprMax/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "ideasUrl": "https://github.com/gprMax/GSoC/blob/main/project-ideas-2026.md",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://gprmax.zulipchat.com/",
+        "label": "gprMax Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Craig Warren",
+        "github": "craig-warren",
+        "githubUrl": "https://github.com/craig-warren"
+      },
+      {
+        "name": "Antonis Giannopoulos",
+        "github": "agianno",
+        "githubUrl": "https://github.com/agianno"
+      },
+      {
+        "name": "Zach Wilson",
+        "github": "eczachly",
+        "githubUrl": "https://github.com/eczachly"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://groups.google.com/g/gprmax",
+        "label": "gprMax Mailing list"
+      }
+    ],
+    "tip": "Introduce yourself before starting chat on Zulip.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
 "GRAME": {
@@ -1943,12 +1971,59 @@
   },
   "JBoss Community": {
     "org": "JBoss Community",
-    "ideasUrl": "https://github.com/wildfly/wildfly/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://redhat.atlassian.net/wiki/x/AQLtCg",
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/JBossOutreach/GSoC",
+        "label": "JBoss GSoC Gitter"
+      },
+      {
+        "type": "Google Groups",
+        "url": "https://groups.google.com/g/wildfly",
+        "label": "JBoss Google Group"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Mario Fiore Vitale",
+        "github": "mfvitale",
+        "githubUrl":"https://github.com/mfvitale"
+      },
+      {
+        "name": "Giovanni Panice",
+        "github": "kmos",
+        "githubUrl": "https://github.com/kmos"
+      },
+      {
+        "name": "Diana Krepinska",
+        "github": "skyllarr",
+        "githubUrl":"https://github.com/skyllarr"
+      },
+      {
+        "name": "Chris Cranford",
+        "github": "Naros",
+        "githubUrl": "https://github.com/Naros"
+      },
+      {
+        "name": "Jiri Pechanec",
+        "github": "jpechane",
+        "githubUrl": "https://github.com/jpechane"
+      },
+      {
+        "name": "Vincenzo Santonastaso",
+        "github": "vsantonastaso",
+        "githubUrl": "https://github.com/vsantonastaso"
+      },
+      {
+        "name": "Vojtech",
+        "github": "vjuranek",
+        "githubUrl": "https://github.com/vjuranek"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Channels are about generic doubts. For project-specific doubts you will need to contact project mentors and channels specified in the project description",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "JdeRobot": {
@@ -2287,12 +2362,69 @@
 },
   "Liquid Galaxy project": {
     "org": "Liquid Galaxy project",
-    "ideasUrl": "https://github.com/LiquidGalaxyLAB/liquid-galaxy/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://www.liquidgalaxy.eu/2025/11/GSoC2026.html",
+    "channels": [
+      {
+        "type": "Website",
+        "url": "https://www.liquidgalaxy.eu",
+        "label": "Liquid Galaxy Website"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Andreuibanez",
+        "github": "andreuibanez",
+        "githubUrl": "https://github.com/andreuibanez"
+      },
+      {
+        "name": "Yash Raj",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Sidharth Mudgil",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Deniz Yuksel",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Óscar Carrasco",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Moisés Martínez",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Alfredo Bautista",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "Claudia",
+        "github": "ClaudiaMihaelaDiosan",
+        "githubUrl": "https://github.com/ClaudiaMihaelaDiosan"
+      },
+      {
+        "name": "Victor Carreras",
+        "github": "VictorSB",
+        "githubUrl": "https://github.com/VictorSB"
+      },
+      {
+        "name": "Rosemarie Garcia Lopez",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Visit the contributor guidance page at https://www.liquidgalaxy.eu/2025/11/GSoC2026.html and use the listed public channels there before contacting mentors directly.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "LLVM Compiler Infrastructure": {
@@ -3940,12 +4072,29 @@
   },
   "Synfig": {
     "org": "Synfig",
-    "ideasUrl": "https://github.com/synfig/synfig/wiki/GSoC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/synfig/synfig-docs-dev/blob/master/docs/gsoc/2026/ideas.rst",
+    "channels": [
+      {
+        "type": "Forum",
+        "url": "https://forums.synfig.org/t/google-summer-of-code-2026/16911",
+        "label": "Synfig Forum"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Mohamed Adham",
+        "github": "mohamedAdhamc",
+        "githubUrl": "https://github.com/mohamedAdhamc"
+      },
+      {
+        "name": "Rodolfo Ribeiro",
+        "github": "rodolforg",
+        "githubUrl": "https://github.com/rodolforg"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Check the forum for regular updates",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "TARDIS RT Collaboration": {

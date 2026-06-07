@@ -251,6 +251,40 @@ jobs:
 
             }
 
+            // FIX: block duplicate /assign requests - if a ⏳ pending comment already exists, a second /assign should not overwrite the first claimant
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                { owner, repo, issue_number, per_page: 100 }
+              );
+
+            const pendingExists =
+              comments.find(
+                c =>
+                  c.body &&
+                  c.body.includes('<!-- assignment-status -->') &&
+                  c.body.includes('⏳ Assignment Pending')
+              );
+
+            if (pendingExists) {
+
+              core.setOutput(
+                'eligible',
+                'false'
+              );
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body:
+                  `⚠️ @${claimant} — an assignment request is already pending mentor approval for this issue. Please wait for the current request to be resolved.`
+              });
+
+              return;
+
+            }
+
             core.setOutput(
               'eligible',
               'true'
@@ -314,6 +348,31 @@ jobs:
 
             }
 
+            // FIX: if the script returned no mentors,fall back to repo admins so the pending comment always has someone who can approve it.
+            if (selected.length === 0) {
+
+              try {
+
+                const collabs =
+                  await github.paginate(
+                    github.rest.repos.listCollaborators,
+                    { owner, repo, permission: 'admin', per_page: 100 }
+                  );
+
+                selected =
+                  collabs
+                    .map(c => c.login)
+                    .filter(l => l !== 'github-actions[bot]')
+                    .slice(0, 2);
+
+              } catch {
+
+                selected = [];
+
+              }
+
+            }
+
             const marker =
               '<!-- assignment-status -->';
 
@@ -349,8 +408,7 @@ jobs:
               `/approve-assignment @${claimant}`,
               '```',
               '',
-              '> Mentors rotate dynamically across issues.',
-              '> If no response occurs within 24h, PA escalation may happen.'
+              '> Mentors rotate dynamically across issues.'
             ].join('\n');
 
             const comments =
@@ -458,6 +516,43 @@ jobs:
                 issue_number,
                 body:
                   `⛔ @${approver} is not one of the selected mentors for this issue.`
+              });
+
+              return;
+
+            }
+
+            // FIX: verify the approver actually has write/maintain/admin access, w/o this, any user mentioned in the comment body could self approve.
+            let permissionLevel = 'none';
+
+            try {
+
+              const { data: permData } =
+                await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner,
+                  repo,
+                  username: approver
+                });
+
+              permissionLevel = permData.permission;
+
+            } catch {
+
+              permissionLevel = 'none';
+
+            }
+
+            const allowedRoles =
+              ['admin', 'maintain', 'write'];
+
+            if (!allowedRoles.includes(permissionLevel)) {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body:
+                  `⛔ @${approver} does not have sufficient repository permissions to approve assignments (requires write, maintain, or admin).`
               });
 
               return;

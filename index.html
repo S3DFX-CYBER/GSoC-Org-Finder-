@@ -790,7 +790,6 @@
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
@@ -2658,7 +2657,7 @@ sections.forEach(sectionId => {
       requestAnimationFrame(() => { 
         if (currentMilestone) {
         container.scrollTop =
-          currentMilestone.offsetTop - container.offsetTop - container.clientHeight / 2 + currentMilestone.clientHeight / 2;
+          currentMilestone.offsetTop - container.offsetTop - container.clientHeight / 2 + currentMilestone.clientHeight / 2; behavior: 'smooth';
         }
       });
     } catch (err) {

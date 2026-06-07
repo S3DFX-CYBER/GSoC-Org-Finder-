@@ -2656,9 +2656,15 @@ sections.forEach(sectionId => {
       const currentMilestone = container.querySelector('.current-milestone');
       requestAnimationFrame(() => { 
         if (currentMilestone) {
-        container.scrollTop =
-          currentMilestone.offsetTop - container.offsetTop - container.clientHeight / 2 + currentMilestone.clientHeight / 2; behavior: 'smooth';
-        }
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
       });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);

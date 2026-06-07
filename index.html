@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/png" href="src/assets/icon-512.png">
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
@@ -69,6 +70,7 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
   <script>
     // Theme restoration - runs early to prevent FOUC
     (function(){
@@ -134,6 +136,70 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+
+   /*Keyboard Shortcut Helper Styles*/
+    kbd{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:32px;
+    padding:4px 10px;
+    margin:2px;
+
+    background:#27272a;
+    color:#fff;
+
+    border:1px solid #3f3f46;
+    border-radius:8px;
+
+    font-size:12px;
+    font-weight:600;
+
+    box-shadow:
+    inset 0 -2px 0 rgba(255,255,255,.08),
+    0 2px 4px rgba(0,0,0,.3);
+
+    transition:all .2s ease;
+}
+
+kbd:hover{
+    transform:translateY(-2px);
+}
+.category-row td{
+    padding:16px 0 8px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#f97316;
+}
+
+.shortcut-row{
+    transition:0.2s;
+}
+
+.shortcut-row:hover{
+    background:rgba(255,255,255,0.05);
+    transform:scale(1.01);
+}
+
+.shortcut-row td{
+    padding:12px;
+}
+
+@media(max-width:640px){
+
+    .shortcut-row td{
+        display:block;
+        width:100%;
+    }
+
+    kbd{
+        min-width:28px;
+        font-size:11px;
+    }
+}
     /* Screen reader only - for accessibility */
     .sr-only {
       position: absolute;
@@ -226,8 +292,8 @@
     .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
     .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #888; }
 
-    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; }
-    .gh-fetch { position: absolute; top: 1rem; right: 1rem; background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1.5rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; justify-content: space-between; }
+    .gh-fetch { background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
     .gh-fetch:hover { background: #444; color: #fff; }
     .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
 
@@ -298,7 +364,7 @@
       align-items: center;
       background: #f9f9f9;
     }
-    .proposal-header-title { flex: 1; min-width: 200px; }
+    .proposal-header-title { min-width: 200px; }
     .proposal-header-title h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
     .proposal-header-title p { font-size: 0.75rem; color: #888; margin: 0.25rem 0 0; }
     .proposal-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
@@ -323,7 +389,7 @@
     .proposal-btn-primary:hover { background: #7a3500; }
     .proposal-btn-danger { color: #ba1a1a; border-color: #fecaca; }
     .proposal-btn-danger:hover { background: #fef2f2; }
-    .proposal-autosave { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #666; cursor: pointer; user-select: none; }
+    .proposal-autosave { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #666; cursor: pointer; user-select: none; border: 1px solid #ddd; padding: 0.3rem 0.55rem; border-radius: 0.75rem; }
     .proposal-body { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
     @media (min-width: 768px) { .proposal-body { flex-direction: row; } }
     .proposal-editor, .proposal-preview {
@@ -386,8 +452,34 @@
     html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #contact {
+    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #ai-recommender, #contact {
       scroll-margin-top: 80px;
+    }
+
+    .desktop-nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding-bottom: 0.35rem;
+      text-decoration: none;
+    }
+    .desktop-nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 9999px;
+      background: currentColor;
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+    .desktop-nav-link.is-active::after {
+      opacity: 1;
+      transform: scaleX(1);
     }
 
     /* Minimal dark-mode support */
@@ -467,12 +559,30 @@
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
 
+    :root {
+      --section-fab-right: 24px;
+      --section-fab-bottom: 24px;
+      --section-fab-size: 48px;
+      --section-fab-gap: 10px;
+      --section-indicator-gap: 12px;
+      --section-indicator-width: 240px;
+    }
+
     @media (max-width: 640px) {
       .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
       .modal-header h2 { font-size: 1.6rem; }
       .modal-body { padding: 0 1.5rem 2rem; min-height: 0; }
       .modal-footer { padding: 0.75rem 1.5rem; flex-direction: column; flex-shrink: 0; }
       .modal-cta { width: 100%; padding: 0.6rem 1rem; font-size: 0.85rem; }
+      .proposal-header { padding: 0.6rem 1rem; gap: 0.4rem; position: relative; }
+      .proposal-header-title { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+      .proposal-header-title h2 { font-size: 0.95rem; }
+      .proposal-header-title p { display: inline; font-size: 0.65rem; }
+      .proposal-autosave { font-size: 0.7rem; background: white; border: 1px solid #ddd; padding: 0.3rem 0.55rem; border-radius: 0.75rem; align-self: flex-start; }
+      .proposal-btn { padding: 0.3rem 0.55rem; font-size: 0.7rem; }
+      #pwCloseBtn { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.3rem; }
+      #pwCloseBtn span + * { display: none; }
+
     }
     
     /* Dark mode - Modal */
@@ -791,7 +901,6 @@
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
@@ -815,7 +924,133 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
-  </style>
+  
+/* Section-wise Scroll Buttons */
+    .section-scroll-btn {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      width: var(--section-fab-size);
+      height: var(--section-fab-size);
+  border: none;
+  border-radius: 50%;
+      z-index: 30;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
+  transition: all 0.25s ease;
+}
+.section-scroll-btn:hover { transform: translateY(-2px); }
+    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
+    #prevSectionBtn {
+      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
+    }
+
+/* Dark mode - Section scroll buttons */
+.dark .section-scroll-btn {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
+}
+.dark .section-scroll-btn:hover {
+  box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
+}
+
+.section-scroll-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.section-scroll-indicator {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      bottom: calc(
+        var(--section-fab-bottom)
+        + (var(--section-fab-size) + var(--section-fab-gap)) * 2
+        + var(--section-indicator-gap)
+        + env(safe-area-inset-bottom)
+      );
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+      max-width: min(var(--section-indicator-width), calc(100vw - 32px - env(safe-area-inset-right)));
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  color: #9d4300;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.12);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-scroll-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
+}
+
+.section-scroll-indicator-value {
+  color: #1f1f1f;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+    @media (max-width: 640px) {
+      :root {
+        --section-fab-right: 12px;
+        --section-fab-bottom: 12px;
+        --section-fab-size: 42px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 8px;
+        --section-indicator-width: 180px;
+      }
+
+      .section-scroll-indicator {
+        padding: 7px 10px;
+        gap: 6px;
+        font-size: 10px;
+        line-height: 1;
+      }
+
+      .section-scroll-indicator-value {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .section-scroll-indicator > span:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --section-fab-right: 10px;
+        --section-fab-bottom: 10px;
+        --section-fab-size: 40px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 6px;
+        --section-indicator-width: 160px;
+      }
+
+      .section-scroll-indicator {
+        padding: 6px 9px;
+        border-radius: 999px;
+      }
+    }
+
+</style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -824,6 +1059,20 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+
+<!-- Section Navigation Buttons -->
+<div id="sectionScrollIndicator" class="section-scroll-indicator" aria-live="polite" aria-atomic="true">
+  <span class="section-scroll-indicator-dot" aria-hidden="true"></span>
+  <span>Section:</span>
+  <span id="sectionScrollIndicatorValue" class="section-scroll-indicator-value">Timeline</span>
+</div>
+<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Previous Section">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</button>
+<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Next Section">
+  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+</button>
+
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -844,8 +1093,8 @@
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
+        <a class="desktop-nav-link text-orange-600 is-active transition-colors" href="#orgs" data-section="orgs">Organizations</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
@@ -901,7 +1150,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -920,31 +1169,31 @@
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -960,7 +1209,7 @@
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1022,7 +1271,7 @@
             <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
             <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div id="timeline-milestones" aria-label="GSoC timeline milestones" class="space-y-4 sm:space-y-5 overflow-y-auto max-h-[50vh] pl-4 no-scrollbar focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg"></div>
           <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
             <div class="flex items-center justify-between">
               <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
@@ -1046,12 +1295,12 @@
   <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
   <div class="mb-6 fade-up" style="animation-delay:.3s">
     <div class="flex flex-wrap gap-2 mb-4">
-      <button id="chip-veteran" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
-      <button id="chip-newcomer" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
-      <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
-      <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
-      <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-      <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
+      <button id="chip-veteran" data-tooltip="Organizations that participated in GSoC for many years" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
+      <button id="chip-newcomer" data-tooltip="Good for first-time contributors and beginners" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
+      <button id="chip-hot" data-tooltip="Highly competitive organizations with many applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
+      <button id="chip-chill" data-tooltip="Organizations with relatively fewer applicants" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
+      <button id="chip-active" data-tooltip="Organizations with recent GitHub activity" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
+      <button id="chip-bookmarked" data-tooltip="Organizations you saved for later" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
     </div>
     <div class="flex flex-wrap gap-2">
       <button class="pill px-3 py-1.5 rounded-full bg-surface-container-high border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" aria-pressed="false" onclick="togglePill(this)">Python</button>
@@ -1110,6 +1359,10 @@
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
+      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
+        <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+        Clear Filters
+      </button>
     </div>
   </div>
   
@@ -1122,7 +1375,7 @@
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-
+  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1243,10 +1496,44 @@
       <div class="space-y-6">
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
+          <div id="dynamic-deadlines-container" class="space-y-4">
+            <div class="deadline-node" data-date="2026-03-31">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p>
+              <p class="text-sm font-bold">Proposal Submission Deadline</p>
+              <p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p>
+            </div>
+            <div class="deadline-node" data-date="2026-04-21">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p>
+              <p class="text-sm font-bold">Review Period Starts</p>
+              <p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p>
+            </div>
           </div>
+          <p id="deadlines-empty-fallback" class="text-xs text-zinc-400 italic hidden mt-4">No upcoming deadlines.</p>
+          <script>
+            (function runtimeDeadlineFilter() {
+              const now = new Date();
+              const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+              const container = document.getElementById('dynamic-deadlines-container');
+              if (!container) return;
+              const nodes = container.querySelectorAll('.deadline-node');
+              let activeCount = 0;
+              nodes.forEach(node => {
+                const dateStr = node.dataset.date;
+                if (!dateStr) return;
+                const [year, month, day] = dateStr.split('-').map(Number);
+                if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+                const nodeUTC = Date.UTC(year, month - 1, day);
+                if (nodeUTC < todayUTC) {
+                  node.style.display = 'none';
+                } else {
+                  node.style.display = 'block';
+                  activeCount++;
+                }
+              });
+              const fallback = document.getElementById('deadlines-empty-fallback');
+              if (fallback) fallback.style.display = activeCount === 0 ? 'block' : 'none';
+            })();
+          </script>
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
@@ -1356,7 +1643,7 @@
       <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
         <label class="relative block">
           <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
-          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
+          <input id="mentorSearchInput" type="text" aria-label="Search mentors" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
         </label>
         <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
           <option value="all">All channels</option>
@@ -1382,6 +1669,7 @@
       </button>
     </div>
   </div>
+  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -1462,27 +1750,27 @@
 </section>
 
 <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
+<section class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
       </div>
     </div>
   </div>
@@ -1582,11 +1870,11 @@
       </div>
       
       <div class="github-stats-container mb-8">
-        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
         <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
+        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
       </div>
 
       <div class="section-title">Description</div>
@@ -1631,12 +1919,12 @@
     <header class="proposal-header">
       <div class="proposal-header-title">
         <h2 id="pwOrgName">Organization Proposal</h2>
-        <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+          <label class="proposal-autosave">
+            <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
+            Enable autosave
+            <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+          </label>
       </div>
-      <label class="proposal-autosave">
-        <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
-        Enable autosave
-      </label>
       <div class="proposal-toolbar">
         <button type="button" id="pwClearBtn" class="proposal-btn proposal-btn-danger" aria-label="Clear proposal draft">
           <span class="material-symbols-outlined text-sm">delete</span> Clear
@@ -1646,9 +1934,9 @@
         </button>
         <button type="button" id="pwExportPDFBtn" class="proposal-btn proposal-btn-primary" aria-label="Download proposal as PDF">
           <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
-        </button>
+        </button> 
         <button type="button" id="pwCloseBtn" class="proposal-btn" aria-label="Close proposal builder">
-          <span class="material-symbols-outlined text-sm">close</span> Close
+          <span class="material-symbols-outlined text-sm">close</span>
         </button>
       </div>
     </header>
@@ -1792,31 +2080,70 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
+  const desktopNavMediaQuery = window.matchMedia('(min-width: 768px)');
+
+  function openMobileMenu(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
-    
+
+    menu.classList.remove('hidden');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    menuBtn.setAttribute('aria-label', 'Close menu');
+    setTimeout(() => {
+      panel.style.transform = 'translateX(0)';
+    }, 10);
+    document.addEventListener('keydown', handleMenuEscape);
+  }
+
+  function closeMobileMenu({ immediate = false } = {}){
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+
+    if(menu.classList.contains('hidden') && !immediate){
+      return;
+    }
+
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Open menu');
+    document.removeEventListener('keydown', handleMenuEscape);
+
+    if(immediate){
+      panel.style.transform = 'translateX(-100%)';
+      menu.classList.add('hidden');
+      return;
+    }
+
+    panel.style.transform = 'translateX(-100%)';
+    setTimeout(() => {
+      menu.classList.add('hidden');
+    }, 300);
+  }
+
+  globalThis.toggleMenu = function(){
+    const menu = document.getElementById('mobileMenu');
+
     if(menu.classList.contains('hidden')){
-      // Open menu
-      menu.classList.remove('hidden');
-      menuBtn.setAttribute('aria-expanded', 'true');
-      menuBtn.setAttribute('aria-label', 'Close menu');
-      setTimeout(() => {
-        panel.style.transform = 'translateX(0)';
-      }, 10);
-      document.addEventListener('keydown', handleMenuEscape);
+      openMobileMenu();
     } else {
       // Close menu
-      panel.style.transform = 'translateX(-100%)';
-      menuBtn.setAttribute('aria-expanded', 'false');
-      menuBtn.setAttribute('aria-label', 'Open menu');
-      document.removeEventListener('keydown', handleMenuEscape);
-      setTimeout(() => {
-        menu.classList.add('hidden');
-      }, 300);
+      closeMobileMenu();
     }
   };
+
+  function syncMenuWithViewport(event){
+    if(event.matches){
+      closeMobileMenu({ immediate: true });
+    }
+  }
+
+  if(typeof desktopNavMediaQuery.addEventListener === 'function'){
+    desktopNavMediaQuery.addEventListener('change', syncMenuWithViewport);
+  } else if(typeof desktopNavMediaQuery.addListener === 'function'){
+    desktopNavMediaQuery.addListener(syncMenuWithViewport);
+  }
+  syncMenuWithViewport(desktopNavMediaQuery);
   
   function handleMenuEscape(e){
     if(e.key === 'Escape'){
@@ -1826,97 +2153,6 @@
       }
     }
   }
-
-window.setActiveMenu = function(clickedLink) {
-  // Remove active class from all menu links
-  const allLinks = document.querySelectorAll('.mobile-menu-link');
-
-  allLinks.forEach(link => {
-    link.classList.remove(
-      'bg-orange-50',
-      'text-orange-600',
-      'font-bold'
-    );
-
-    link.classList.add(
-      'text-zinc-700',
-      'font-medium'
-    );
-  });
-
-  // Add active class to clicked link
-  clickedLink.classList.remove(
-    'text-zinc-700',
-    'font-medium'
-  );
-
-  clickedLink.classList.add(
-    'bg-orange-50',
-    'text-orange-600',
-    'font-bold'
-  );
-
-  // Close menu
-  toggleMenu();
-};
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
-    const scrollPosition = window.scrollY + 80; // Offset for fixed header
-    
-let currentSection = 'timeline';
-
-sections.forEach(sectionId => {
-    const section = document.getElementById(sectionId);
-
-    if (section) {
-        const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
-
-        const triggerPoint = window.innerHeight / 2;
-
-        if (
-            sectionTop <= scrollPosition + triggerPoint &&
-            sectionBottom > scrollPosition + triggerPoint
-        ) {
-            currentSection = sectionId;
-        }
-    }
-});
-    
-    // Update mobile menu items
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
-      }
-    });
-
-    // Update desktop navbar items
-    const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
-    allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
-      if (linkSection === currentSection) {
-        link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-      } else {
-        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
-        link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-      }
-    });
-  }
-
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
@@ -2006,9 +2242,10 @@ sections.forEach(sectionId => {
   // ══════════════════════════════════════════════
   // MAIN APP LOGIC
   // ══════════════════════════════════════════════
+  const ITEMS_PER_PAGE = 9;
   let visibleCount = 12;
-  let visibleMentorCount = 12;
-
+  let orgCurrentPage = 1;
+  let mentorCurrentPage = 1;
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
@@ -2372,11 +2609,11 @@ sections.forEach(sectionId => {
   function renderMentorFinder(reset = true) {
     const grid = document.getElementById('mentorGrid');
     const lastUpdatedEl = document.getElementById('mentorLastUpdated');
+    const mentorPagination = document.getElementById('mentorPagination');
     if (!grid) return;
-
+    
     if (reset) {
-      grid.innerHTML = '';
-      visibleMentorCount = 12;
+      mentorCurrentPage = 1;
     }
 
     if (mentorDataState === 'loading' || mentorDataState === 'idle') {
@@ -2385,6 +2622,10 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
         </div>
       `;
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+      }
       return;
     }
 
@@ -2396,6 +2637,10 @@ sections.forEach(sectionId => {
         </div>
       `;
       if (lastUpdatedEl?.textContent !== undefined) lastUpdatedEl.textContent = 'Last updated: unavailable';
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+      }
       return;
     }
 
@@ -2427,15 +2672,31 @@ sections.forEach(sectionId => {
           <p class="text-sm text-zinc-600">Try a different org name, GitHub handle, or channel filter.</p>
         </div>
       `;
-      const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-      if (loadMoreContainer) {
-        loadMoreContainer.style.display = 'none';
+
+      if (mentorPagination) {
+        mentorPagination.innerHTML = '';
+        mentorPagination.style.display = 'none';
+
       }
       return;
     }
+    const totalMentorPages = Math.max(
+      1,
+      Math.ceil(filteredRecords.length / ITEMS_PER_PAGE)
+    );
 
-    const slice = filteredRecords.slice(visibleMentorCount - 12, visibleMentorCount);
-    slice.forEach(({ org, entry }) => {
+
+    if (mentorCurrentPage > totalMentorPages) {
+      mentorCurrentPage = totalMentorPages;
+    }
+
+    const paginatedRecords = getPaginatedItems(
+      filteredRecords,
+      mentorCurrentPage
+    );
+    grid.innerHTML = '';
+    paginatedRecords.forEach(({ org, entry }) => {
+
       const primary = getPrimaryMentorContact(entry);
       const mentorPreview = entry.mentors
         .slice(0, 3)
@@ -2499,17 +2760,15 @@ sections.forEach(sectionId => {
           <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
         </div>
       `;
+
       grid.appendChild(article);
     });
+    renderPaginationControls('mentorPagination', filteredRecords.length, mentorCurrentPage, (page) => {
+      mentorCurrentPage = page;
+      renderMentorFinder(false);
+      document.getElementById('mentors')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
-    const loadMoreContainer = document.getElementById('loadMoreMentorContainer');
-    if (loadMoreContainer) {
-      if (visibleMentorCount < filteredRecords.length) {
-        loadMoreContainer.style.display = 'flex';
-      } else {
-        loadMoreContainer.style.display = 'none';
-      }
-    }
     attachOrgCardListeners(grid);
   }
 
@@ -2634,14 +2893,14 @@ sections.forEach(sectionId => {
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
@@ -2655,6 +2914,19 @@ sections.forEach(sectionId => {
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      requestAnimationFrame(() => { 
+        if (currentMilestone) {
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
+      });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }
@@ -2708,27 +2980,112 @@ sections.forEach(sectionId => {
     }
   };
 
+function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  return items.slice(startIndex, startIndex + itemsPerPage);
+}
+
+function renderPaginationControls(containerId, totalItems, currentPage, onPageChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'flex';
+
+  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
+  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
+  const activeClass = 'bg-primary text-white border-primary';
+  const disabledClass = 'opacity-50 cursor-not-allowed';
+
+  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
+    const page = index + 1;
+    return `
+      <button
+        type="button"
+        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
+        data-page="${page}"
+        aria-label="Go to page ${page}"
+        ${page === currentPage ? 'aria-current="page"' : ''}
+      >
+        ${page}
+      </button>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
+      data-page="${currentPage - 1}"
+      ${currentPage === 1 ? 'disabled' : ''}
+    >
+      Previous
+    </button>
+
+    ${pageButtons}
+
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
+      data-page="${currentPage + 1}"
+      ${currentPage === totalPages ? 'disabled' : ''}
+    >
+      Next
+    </button>
+  `;
+
+  container.querySelectorAll('[data-page]').forEach(button => {
+    button.addEventListener('click', () => {
+      const page = Number(button.dataset.page);
+
+      if (
+        button.disabled ||
+        Number.isNaN(page) ||
+        page < 1 ||
+        page > totalPages ||
+        page === currentPage
+      ) {
+        return;
+      }
+
+      onPageChange(page);
+    });
+  });
+}
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');
 
     const emptyState = document.getElementById('emptyState');
     if (reset) {
-      grid.innerHTML = '';
-      visibleCount = 12;
+      orgCurrentPage = 1;
     }
+
+    grid.innerHTML = '';
 
     if (filteredOrgs.length === 0) {
       grid.classList.add('hidden');
       if (emptyState) emptyState.classList.remove('hidden');
       document.getElementById('orgCount').textContent = '0';
       document.getElementById('loadMoreContainer').style.display = 'none';
+      document.getElementById('orgPagination').innerHTML = '';
+      document.getElementById('orgPagination').style.display = 'none';
       return;
     } else {
       grid.classList.remove('hidden');
       if (emptyState) emptyState.classList.add('hidden');
     }
     
-    const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
+    const totalOrgPages = Math.max(1, Math.ceil(filteredOrgs.length / ITEMS_PER_PAGE));
+    if (orgCurrentPage > totalOrgPages) orgCurrentPage = totalOrgPages;
+
+    const slice = getPaginatedItems(filteredOrgs, orgCurrentPage);
     slice.forEach(org => {
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
@@ -2767,17 +3124,24 @@ sections.forEach(sectionId => {
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
           </div>
-           <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+           <button data-open-org="" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
        `;
     card.querySelector('[data-compare-org]').dataset.compareOrg = org.name;
+    card.querySelector('[data-open-org]').dataset.openOrg = org.name;
 
    grid.appendChild(card);
    attachOrgCardListeners(card);
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
-    document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
+    document.getElementById('loadMoreContainer').style.display = 'none';
+
+    renderPaginationControls('orgPagination', filteredOrgs.length, orgCurrentPage, (page) => {
+      orgCurrentPage = page;
+      renderOrgs(false);
+      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   // Attach listeners to elements created from org templates.
@@ -2831,6 +3195,8 @@ btn.__orgListenerAttached = true;
     }
     renderOrgs(true);
     renderCompare();
+
+    document.dispatchEvent(new CustomEvent('compareListChanged'));
   }
 
   function renderCompare() {
@@ -2861,6 +3227,9 @@ btn.__orgListenerAttached = true;
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
       empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
+      empty.onclick = () =>{
+        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
+      };
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
@@ -3157,7 +3526,15 @@ btn.__orgListenerAttached = true;
         <div class="py-16 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
           <span class="material-symbols-outlined text-4xl text-zinc-300 mb-4 block">bookmark_border</span>
           <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
-          <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
+          <p class="text-sm text-zinc-400 mb-6">Click the ★ on any organization card to start tracking it here.</p>
+          <button
+            id="browseOrgsBtn"
+            onclick="document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' })"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full text-sm font-bold hover:bg-orange-600 hover:scale-105 transition-all duration-200 shadow-md shadow-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2"
+            aria-label="Browse Organizations - scroll to the organization directory">
+            <span class="material-symbols-outlined text-sm">travel_explore</span>
+            Browse Organizations
+          </button>
         </div>`;
       return;
     }
@@ -3625,14 +4002,37 @@ if(org.ideas){
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
   
+    if (typeof clearAllLanguages === 'function') clearAllLanguages();
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
       chip.classList.add('bg-surface-container-highest');
     });
+    if (typeof activeChip !== 'undefined') {
+      activeChip = null;
+    }
+
+    // Reset matchAllLanguages
+    matchAllLanguages = false;
+    globalThis.matchAllLanguages = false;
+    const toggle = document.getElementById('matchAllLanguagesToggle');
+    if (toggle) toggle.checked = false;
+    if (typeof updateLanguageModeHint === 'function') updateLanguageModeHint();
+
+    // Reset selected languages
+    if (typeof selectedLanguages !== 'undefined') {
+      selectedLanguages.clear();
+      if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
+      document.querySelectorAll('.pill').forEach(pill => {
+        pill.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
+        pill.classList.add('bg-surface-container-high', 'border-zinc-200');
+        pill.setAttribute('aria-pressed', 'false');
+      });
+    }
 
     filteredOrgs = [...ORGS];
     renderOrgs(true);
+    applyFilters(); // to reset URL params
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {
@@ -3658,23 +4058,21 @@ if(org.ideas){
     applyFilters();
   });
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
-  document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
-  document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
+  document.getElementById('mentorSearchInput')?.addEventListener('input', () => {
+    mentorCurrentPage = 1;
+    renderMentorFinder();
+  });
+
+  document.getElementById('mentorChannelFilter')?.addEventListener('change', () => {
+    mentorCurrentPage = 1;
+    renderMentorFinder();
+  });
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
     matchAllLanguages = e.target.checked;
     // keep global in sync for any external code expecting `matchAllLanguages`
     globalThis.matchAllLanguages = matchAllLanguages;
     applyFilters();
     updateLanguageModeHint();
-  });
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    visibleCount += 12;
-    renderOrgs(false);
-  });
-
-  document.getElementById('loadMoreMentorBtn')?.addEventListener('click', () => {
-    visibleMentorCount += 12;
-    renderMentorFinder(false);
   });
 
   // Surprise button event listener
@@ -4244,9 +4642,11 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()">
+    <button class="close-btn" onclick="closeHelpModal()"  aria-label="Close keyboard shortcuts modal">
       <span class="material-symbols-outlined">close</span>
     </button>
+      
+    
 
     <div class="modal-header">
       <h2>Keyboard Shortcuts</h2>
@@ -4263,33 +4663,78 @@ if(org.ideas){
       <th class="py-2">Action</th>
     </tr>
   </thead>
+<tbody>
 
-  <tbody>
-    <tr>
-      <td class="py-2">↑ ↓ ← →</td>
-      <td class="py-2">Move focus between cards</td>
-    </tr>
+<tr class="category-row">
+  <td colspan="2">Navigation</td>
+</tr>
 
-    <tr>
-      <td class="py-2">Enter</td>
-      <td class="py-2">Open focused card</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2">
+    <kbd>↑</kbd>
+    <kbd>↓</kbd>
+    <kbd>←</kbd>
+    <kbd>→</kbd>
+  </td>
+  <td class="py-2">Move focus between cards</td>
+</tr>
 
-    <tr>
-      <td class="py-2">C</td>
-      <td class="py-2">Toggle compare</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Enter</kbd></td>
+  <td class="py-2">Open focused card</td>
+</tr>
 
-    <tr>
-      <td class="py-2">Esc</td>
-      <td class="py-2">Close panel</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>/</kbd></td>
+  <td class="py-2">Focus search bar</td>
+</tr>
 
-    <tr>
-      <td class="py-2">?</td>
-      <td class="py-2">Toggle help dialog</td>
-    </tr>
-  </tbody>
+
+<tr class="category-row">
+  <td colspan="2">Actions</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>C</kbd></td>
+  <td class="py-2">Toggle compare</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>A</kbd></td>
+  <td class="py-2">Go to AI Recommender Page</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>M</kbd></td>
+  <td class="py-2">Go to Mentors Page</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>R</kbd></td>
+  <td class="py-2">Reset filters</td>
+</tr>
+
+
+<tr class="category-row">
+  <td colspan="2">General</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>H</kbd></td>
+  <td class="py-2">Go to top</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Esc</kbd></td>
+  <td class="py-2">Close panel</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>?</kbd></td>
+  <td class="py-2">Open help dialog</td>
+</tr>
+
+</tbody>
 </table>
 
        
@@ -4321,13 +4766,43 @@ document.addEventListener('DOMContentLoaded', () => {
     helpBtn.addEventListener('click', openHelpModal);
   }
 
-  document.addEventListener('keydown', (e) => {
-
-    if (e.key === '?') {
-      openHelpModal();
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+    return;
+}
+  const active = document.activeElement;
+if (
+    active &&
+    (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
+        active.id === 'searchInput'
+    )
+) {
+        return;
     }
+const helpModalOpen =
+  document.getElementById('helpModal')?.classList.contains('open');
 
-    if (e.key === 'Escape') {
+const orgModalOpen =
+  document.getElementById('orgModal')?.classList.contains('open');
+
+const proposalModalOpen =
+  document.getElementById('proposalModal')?.classList.contains('open');
+
+if (helpModalOpen || orgModalOpen || proposalModalOpen) {
+  return;
+}
+
+    // Help modal
+    if(e.key==='?'){
+        e.preventDefault();
+        openHelpModal();
+    }
+  
+    if(e.key==='Escape'){
+        e.preventDefault();
+        
+    
       if (document.getElementById('proposalModal')?.classList.contains('open')) {
         globalThis.ProposalBuilder?.close?.();
       } else {
@@ -4335,7 +4810,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-  });
+    // AI recommender
+    if(e.key.toLowerCase()==='a'){
+        e.preventDefault();
+
+        document
+        .getElementById('ai-recommender')
+        ?.scrollIntoView({
+            behavior:'smooth'
+        });
+    }
+
+    // Mentors page
+    if(e.key.toLowerCase()==='m'){
+        e.preventDefault();
+
+        document
+        .getElementById('mentors')
+        ?.scrollIntoView({
+            behavior:'smooth'
+        });
+    }
+
+    // Go to top
+    if(e.key.toLowerCase()==='h'){
+        e.preventDefault();
+
+        window.scrollTo({
+            top:0,
+            behavior:'smooth'
+        });
+    }
+
+    // Reset filters
+if(e.key.toLowerCase()==='r'){
+    e.preventDefault();
+    window.clearAllFilters();
+    return;
+}
+});
 
   window.closeHelpModal = closeHelpModal;
 
@@ -4346,81 +4859,241 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
-
+<div id="tooltip" class="tooltip"></div>
 <script>
-const logoLink = document.getElementById("logoLink");
+(function(){
+  const tooltip = document.getElementById('tooltip');
+  if (!tooltip) return;
 
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
+  const hoverCapable = globalThis.matchMedia('(hover: hover)').matches;
+  let currentTooltipElement = null;
 
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
+  function repositionTooltip(element) {
+    if (!element || !tooltip.classList.contains('show')) return;
 
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+    const rect = element.getBoundingClientRect();
+    const maxWidth = Math.min(220, globalThis.innerWidth - 24);
+    tooltip.style.width = `${maxWidth}px`;
 
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
+    const left = Math.min(
+      Math.max(rect.left + rect.width / 2 - maxWidth / 2, 12),
+      globalThis.innerWidth - maxWidth - 12
     );
 
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${rect.bottom + 10}px`;
+  }
 
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+  function showTooltip(element) {
+    const text = element.dataset.tooltip;
+    if (!text) return;
+
+    currentTooltipElement = element;
+    tooltip.textContent = text;
+
+    const rect = element.getBoundingClientRect();
+    const maxWidth = Math.min(220, globalThis.innerWidth - 24);
+    tooltip.style.width = `${maxWidth}px`;
+
+    const left = Math.min(
+      Math.max(rect.left + rect.width / 2 - maxWidth / 2, 12),
+      globalThis.innerWidth - maxWidth - 12
+    );
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${rect.bottom + 10}px`;
+    tooltip.classList.add('show');
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('show');
+    currentTooltipElement = null;
+  }
+
+  function handleScrollResize() {
+    if (currentTooltipElement && tooltip.classList.contains('show')) {
+      repositionTooltip(currentTooltipElement);
     }
+  }
 
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+  document.querySelectorAll('.filter-chip').forEach((element) => {
+    if (element.title && !element.dataset.tooltip) {
+      element.dataset.tooltip = element.title;
+    }
+    element.removeAttribute('title');
 
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-    });
+    if (!element.dataset.tooltip) return;
 
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
+    element.addEventListener('mouseenter', () => showTooltip(element));
+    element.addEventListener('mouseleave', hideTooltip);
 
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+    // Always enable keyboard navigation (focus/blur) for WCAG compliance
+    // Works on desktop, tablets with external keyboards, hybrid devices, and assistive tech
+    element.addEventListener('focus', () => showTooltip(element));
+    element.addEventListener('blur', hideTooltip);
 
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+    // For touch-only devices without hover capability, add click toggle as fallback
+    if (!hoverCapable) {
+      element.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {
+          hideTooltip();
+        } else {
+          showTooltip(element);
+        }
+      });
     }
   });
-}
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.filter-chip')) {
+      hideTooltip();
+    }
+  });
+
+  globalThis.addEventListener('scroll', handleScrollResize, { passive: true });
+  globalThis.addEventListener('resize', handleScrollResize, { passive: true });
+})();
+</script>
+<script>
+(function () {
+  const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
+  const sectionLabels = {
+    timeline: "Timeline",
+    orgs: "Organizations",
+    "ai-recommender": "AI Recommender",
+    watchlist: "Watchlist",
+    issues: "Issues",
+    mentors: "Mentors",
+    guide: "Guide",
+    contact: "Contact"
+  };
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const mainHeader = document.querySelector("header.fixed.top-0");
+
+  let currentSection = 0;
+  const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
+
+  function getSectionDetectionOffset() {
+    return mainHeader?.clientHeight || 0;
+  }
+
+  function scrollToSectionIndex(index) {
+    const targetSection = sections[index];
+
+    if (!targetSection) return;
+
+    const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
+
+    window.scrollTo({
+      top: targetTop,
+      behavior: "smooth"
+    });
+  }
+
+  function updateSectionIndicator() {
+    const activeSectionId = sections[currentSection]?.id;
+
+    if (sectionIndicatorValue) {
+      sectionIndicatorValue.textContent = sectionLabels[activeSectionId] || "Timeline";
+    }
+  }
+
+  function updateNavState() {
+    const activeSectionId = sections[currentSection]?.id;
+
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      const linkSection = link.dataset.section;
+
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-600", "hover:text-zinc-900");
+        link.classList.add("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+      } else {
+        link.classList.remove("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+        link.classList.add("text-zinc-600", "hover:text-zinc-900");
+      }
+    });
+
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      const linkSection = link.dataset.section;
+
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+        link.classList.add("text-orange-600", "bg-orange-50", "font-bold");
+      } else {
+        link.classList.remove("text-orange-600", "bg-orange-50", "font-bold");
+        link.classList.add("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+      }
+    });
+
+    updateSectionIndicator();
+  }
+
+  function setCurrentSectionById(sectionId) {
+    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
+
+    if (nextSectionIndex === -1) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
+  }
+
+  const logoLink = document.getElementById("logoLink");
+
+  if (logoLink) {
+    logoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      setCurrentSectionById("timeline");
+      scrollToSectionIndex(currentSection);
+    });
+  }
+
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+    });
+  });
+
+  document.querySelectorAll(".mobile-menu-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+
+      if (typeof globalThis.toggleMenu === "function") {
+        globalThis.toggleMenu();
+      }
+    });
+  });
+
+  function updateCurrentSection() {
+    const scrollPos = window.scrollY + getSectionDetectionOffset();
+
+    sections.forEach((section, index) => {
+      if (scrollPos >= section.offsetTop) currentSection = index;
+    });
+
+    updateNavState();
+  }
+
+  window.addEventListener("scroll", updateCurrentSection, { passive: true });
+  window.addEventListener("resize", updateCurrentSection);
+  updateCurrentSection();
+
+  document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
+    if (currentSection < sections.length - 1) {
+      scrollToSectionIndex(currentSection + 1);
+    }
+  });
+
+  document.getElementById("prevSectionBtn")?.addEventListener("click", () => {
+    if (currentSection > 0) {
+      scrollToSectionIndex(currentSection - 1);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+})();
 </script>
 
 </body>

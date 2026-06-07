@@ -1971,12 +1971,59 @@
   },
   "JBoss Community": {
     "org": "JBoss Community",
-    "ideasUrl": "https://github.com/wildfly/wildfly/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://redhat.atlassian.net/wiki/x/AQLtCg",
+    "channels": [
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/JBossOutreach/GSoC",
+        "label": "JBoss GSoC Gitter"
+      },
+      {
+        "type": "Google Groups",
+        "url": "https://groups.google.com/g/wildfly",
+        "label": "JBoss Google Group"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Mario Fiore Vitale",
+        "github": "mfvitale",
+        "githubUrl":"https://github.com/mfvitale"
+      },
+      {
+        "name": "Giovanni Panice",
+        "github": "kmos",
+        "githubUrl": "https://github.com/kmos"
+      },
+      {
+        "name": "Diana Krepinska",
+        "github": "skyllarr",
+        "githubUrl":"https://github.com/skyllarr"
+      },
+      {
+        "name": "Chris Cranford",
+        "github": "Naros",
+        "githubUrl": "https://github.com/Naros"
+      },
+      {
+        "name": "Jiri Pechanec",
+        "github": "jpechane",
+        "githubUrl": "https://github.com/jpechane"
+      },
+      {
+        "name": "Vincenzo Santonastaso",
+        "github": "vsantonastaso",
+        "githubUrl": "https://github.com/vsantonastaso"
+      },
+      {
+        "name": "Vojtech",
+        "github": "vjuranek",
+        "githubUrl": "https://github.com/vjuranek"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Channels are about generic doubts. For project-specific doubts you will need to contact project mentors and channels specified in the project description",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "JdeRobot": {
@@ -1990,15 +2037,43 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Jenkins": {
-    "org": "Jenkins",
-    "ideasUrl": "https://www.jenkins.io/projects/gsoc/2026/project-ideas/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "Jenkins",
+  "ideasUrl": "https://www.jenkins.io/projects/gsoc/2026/project-ideas/",
+  "channels": [
+    {
+      "type": "Forum",
+      "url": "https://community.jenkins.io/",
+      "label": "Jenkins Community Forum"
+    },
+    {
+      "type": "Gitter",
+      "url": "https://app.gitter.im/#/room/#jenkinsci_jenkins:lobby",
+      "label": "Jenkins Gitter Lobby"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Krist Stern",
+      "github": "krisstern",
+      "githubUrl": "https://github.com/krisstern"
+    },
+    {
+      "name": "Shivay Lamba",
+      "github": "shivaylamba",
+      "githubUrl": "https://github.com/shivaylamba"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://www.jenkins.io/mailing-lists/",
+      "label": "Jenkins Mailing Lists"
+    }
+  ],
+  "tip": "Join the Jenkins community channels and introduce yourself before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-16T00:00:00.000Z"
+},
   "Jitsi": {
     "org": "Jitsi",
     "ideasUrl": "https://github.com/jitsi/jitsi-meet/wiki/GSoC-2026",
@@ -2009,6 +2084,7 @@
     "status": "no-contact-found",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
+
   "Joomla!": {
     "org": "Joomla!",
     "ideasUrl": "https://docs.joomla.org/JGSOC:Google_Summer_of_Code_2026",
@@ -3484,15 +3560,48 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "QEMU": {
-    "org": "QEMU",
-    "ideasUrl": "https://wiki.qemu.org/Google_Summer_of_Code",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "QEMU",
+  "ideasUrl": "https://wiki.qemu.org/Google_Summer_of_Code_2026",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://webchat.oftc.net/?channels=qemu-gsoc",
+      "label": "#qemu-gsoc on OFTC"
+    },
+    {
+      "type": "IRC",
+      "url": "https://webchat.oftc.net/?channels=qemu",
+      "label": "#qemu on OFTC"
+    },
+    {
+      "type": "IRC",
+      "url": "https://webchat.oftc.net/?channels=kvm",
+      "label": "#kvm on OFTC"
+    }
+  ],
+  "mentors": [
+    { "name": "Peter Xu", "github": "", "githubUrl": "" },
+    { "name": "Marc-André Lureau", "github": "", "githubUrl": "" },
+    { "name": "Stefan Hajnoczi", "github": "", "githubUrl": "" },
+    { "name": "Tyler Fanelli", "github": "", "githubUrl": "" },
+    { "name": "Hanna Czenczek", "github": "", "githubUrl": "" },
+    { "name": "Matias Ezequiel Vara Larsen", "github": "", "githubUrl": "" },
+    { "name": "Francesco Valla", "github": "", "githubUrl": "" },
+    { "name": "Stefano Garzarella", "github": "", "githubUrl": "" },
+    { "name": "Joerg Roedel", "github": "", "githubUrl": "" },
+    { "name": "Luigi Leonardi", "github": "", "githubUrl": "" },
+    { "name": "Gerd Hoffmann", "github": "", "githubUrl": "" },
+    { "name": "Helge Deller", "github": "", "githubUrl": "" }
+  ],
+  "mailingLists": [
+    { "type": "Mailing list", "url": "https://lists.nongnu.org/mailman/listinfo/qemu-devel", "label": "qemu-devel" },
+    { "type": "Mailing list", "url": "https://lists.linux.dev/linux-kvm", "label": "linux-kvm" }
+  ],
+  "tip": "Join #qemu-gsoc on OFTC IRC and introduce yourself before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-16T00:00:00.000Z"
+},
+
   "Qubes OS": {
     "org": "Qubes OS",
     "ideasUrl": "https://www.qubes-os.org/gsoc/",

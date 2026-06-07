@@ -22,13 +22,14 @@ function slugFromName(name) {
 
 function slugFromIdeas(ideas) {
   if (typeof ideas !== 'string') return null;
-  const match = ideas.match(IDEAS_SLUG_REGEX);
+  const match = IDEAS_SLUG_REGEX.exec(ideas);
   return match ? match[1].toLowerCase() : null;
 }
 
 function addSlugsToFile(filePath) {
   const original = fs.readFileSync(filePath, 'utf-8');
   const stats = { fromUrl: 0, fromName: 0, skipped: 0, flagged: [] };
+  const seenSlugs = new Map();
 
   const updated = original
     .split(/\r?\n/)
@@ -45,10 +46,21 @@ function addSlugsToFile(filePath) {
       const urlSlug = ideasMatch ? slugFromIdeas(ideasMatch[1]) : null;
       const slug = urlSlug || slugFromName(name);
 
+      if (!slug) {
+        stats.flagged.push(`EMPTY_SLUG: "${name}" — skipped, needs manual review`);
+        return line;
+      }
+
+      if (seenSlugs.has(slug)) {
+        stats.flagged.push(`COLLISION: "${name}" -> "${slug}" (already claimed by "${seenSlugs.get(slug)}") — skipped, needs manual review`);
+        return line;
+      }
+      seenSlugs.set(slug, name);
+
       if (urlSlug) stats.fromUrl += 1;
       else stats.fromName += 1;
 
-      if (/[()]/.test(name) && !urlSlug) stats.flagged.push(`${name} -> ${slug}`);
+      if (/[()]/.test(name) && !urlSlug) stats.flagged.push(`REVIEW (parentheses, no authoritative url): "${name}" -> "${slug}"`);
 
       return line.replace(/name:"[^"]+"/, () => `name:"${name}", slug:"${slug}"`);
     })
@@ -65,7 +77,7 @@ for (const target of TARGETS) {
   console.log(`  slug from name     : ${stats.fromName}`);
   console.log(`  already had slug   : ${stats.skipped}`);
   if (stats.flagged.length) {
-    console.log(`  review (name has parentheses, no authoritative url):`);
+    console.log(`  items needing manual review:`);
     stats.flagged.forEach((entry) => console.log(`    - ${entry}`));
   }
 }

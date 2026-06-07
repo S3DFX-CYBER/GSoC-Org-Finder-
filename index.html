@@ -4974,10 +4974,44 @@ if(e.key.toLowerCase()==='r'){
   const mainHeader = document.querySelector("header.fixed.top-0");
 
   let currentSection = 0;
+  let isProgrammaticScroll = false;
+  let programmaticScrollTargetTop = 0;
+  let programmaticScrollDeadline = 0;
+  let scrollUpdateFrame = 0;
   const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
 
   function getSectionDetectionOffset() {
     return mainHeader?.clientHeight || 0;
+  }
+
+  function getSectionActivationOffset() {
+    return Math.max(96, Math.min(window.innerHeight * 0.33, 240));
+  }
+
+  function getSectionIndexFromScrollPosition(scrollPos) {
+    let nextSectionIndex = 0;
+
+    sections.forEach((section, index) => {
+      if (scrollPos >= section.offsetTop) nextSectionIndex = index;
+    });
+
+    return nextSectionIndex;
+  }
+
+  function getCurrentSectionFromViewport() {
+ 
+    return getSectionIndexFromScrollPosition(
+      window.scrollY + getSectionDetectionOffset() + getSectionActivationOffset()
+    );
+  }
+
+  function setCurrentSection(index) {
+    const nextSectionIndex = Math.max(0, Math.min(index, sections.length - 1));
+
+    if (currentSection === nextSectionIndex) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
   }
 
   function scrollToSectionIndex(index) {
@@ -4985,7 +5019,14 @@ if(e.key.toLowerCase()==='r'){
 
     if (!targetSection) return;
 
+    
     const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
+
+    isProgrammaticScroll = true;
+    programmaticScrollTargetTop = targetTop;
+    programmaticScrollDeadline = performance.now() + 1000;
+
+    setCurrentSection(index);
 
     window.scrollTo({
       top: targetTop,
@@ -5036,8 +5077,7 @@ if(e.key.toLowerCase()==='r'){
 
     if (nextSectionIndex === -1) return;
 
-    currentSection = nextSectionIndex;
-    updateNavState();
+    setCurrentSection(nextSectionIndex);
   }
 
   const logoLink = document.getElementById("logoLink");
@@ -5045,8 +5085,7 @@ if(e.key.toLowerCase()==='r'){
   if (logoLink) {
     logoLink.addEventListener("click", (event) => {
       event.preventDefault();
-      setCurrentSectionById("timeline");
-      scrollToSectionIndex(currentSection);
+      scrollToSectionIndex(0);
     });
   }
 
@@ -5067,17 +5106,34 @@ if(e.key.toLowerCase()==='r'){
   });
 
   function updateCurrentSection() {
-    const scrollPos = window.scrollY + getSectionDetectionOffset();
+    if (isProgrammaticScroll) {
+      const atTarget = Math.abs(window.scrollY - programmaticScrollTargetTop) <= 2;
 
-    sections.forEach((section, index) => {
-      if (scrollPos >= section.offsetTop) currentSection = index;
-    });
+      if (!atTarget && performance.now() < programmaticScrollDeadline) {
+        return;
+      }
 
-    updateNavState();
+       
+      isProgrammaticScroll = false;
+    }
+
+   
+    const nextSectionIndex = getCurrentSectionFromViewport();
+
+    setCurrentSection(nextSectionIndex);
   }
 
-  window.addEventListener("scroll", updateCurrentSection, { passive: true });
-  window.addEventListener("resize", updateCurrentSection);
+  function scheduleCurrentSectionUpdate() {
+    if (scrollUpdateFrame) return;
+
+    scrollUpdateFrame = window.requestAnimationFrame(() => {
+      scrollUpdateFrame = 0;
+      updateCurrentSection();
+    });
+  }
+
+  window.addEventListener("scroll", scheduleCurrentSectionUpdate, { passive: true });
+  window.addEventListener("resize", scheduleCurrentSectionUpdate);
   updateCurrentSection();
 
   document.getElementById("nextSectionBtn")?.addEventListener("click", () => {

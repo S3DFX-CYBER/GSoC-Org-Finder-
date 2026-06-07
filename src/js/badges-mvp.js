@@ -91,9 +91,13 @@ const BadgeSystem = (function() {
       // Sanitize unlockedBadges: only allow valid badge IDs (badgeType_level)
       const validBadgePattern = /^(explorer|comparator|search_master|filter_pro)_[0-3]$/;
       const unlockedBadges = [...new Set(
-        parsed.unlockedBadges
-          .filter(id => typeof id === 'string' && id.length > 0 && validBadgePattern.test(id))
-      )];
+       parsed.unlockedBadges.filter(
+      id =>
+        typeof id === 'string' &&
+        id.length > 0 &&
+        validBadgePattern.test(id)
+  )
+)];
 
       return {
         explorer,

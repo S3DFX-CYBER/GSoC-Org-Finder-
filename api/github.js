@@ -71,21 +71,23 @@ export default async function handler(req) {
             signal: AbortSignal.timeout(5000)
           });
           if (res.status === 403) {
-            return new Response(
-              JSON.stringify({
-                error: "GitHub API returned 403",
-                remaining: res.headers.get("x-ratelimit-remaining"),
-                reset: res.headers.get("x-ratelimit-reset"),
-              }),
-              { status: 502, headers }
-            );
+            if (page == 1) {
+              return new Response(
+                JSON.stringify({
+                  error: "GitHub 403",
+                  remaining: res.headers.get("x-ratelimit-remaining"),
+                  reset: res.headers.get("x-ratelimit-reset"),
+                }),
+                { status: 502, headers }
+              );
+            }
           }
           if (!res.ok) {
             const errorBody = await res.text();
             if (page === 1) {
               return new Response(
                 JSON.stringify({
-                  error: `GitHub API ${res.status}`,
+                  error: `GitHub ${res.status}`,
                   details: errorBody,
                   rateLimitRemaining: res.headers.get('x-ratelimit-remaining'),
                   rateLimitReset: res.headers.get('x-ratelimit-reset'),

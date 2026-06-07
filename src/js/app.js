@@ -240,10 +240,28 @@ function updateCountdown() {
 }
 
 async function copyTextToClipboard(text) {
-  if (!navigator.clipboard?.writeText) {
-    throw new Error('Clipboard API not available');
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text);
   }
-  return navigator.clipboard.writeText(text);
+  // Fallback for older browsers / restricted contexts
+  const tempInput = document.createElement('textarea');
+  tempInput.value = text;
+  tempInput.setAttribute('readonly', 'true');
+  tempInput.style.position = 'fixed';
+  tempInput.style.opacity = '0';
+  tempInput.style.left = '-9999px';
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  try {
+    const copied = document.execCommand('copy');
+    if (!copied) {
+      throw new Error('document.execCommand("copy") returned false');
+    }
+    return copied;
+  } finally {
+    tempInput.remove();
+  }
 }
 
 

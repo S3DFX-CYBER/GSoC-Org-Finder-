@@ -76,13 +76,21 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .hero-sub{font-size:14px;color:var(--ink3);line-height:1.7;max-width:480px;margin:0 auto 30px;font-weight:400}
 
 /* ── RECENT SEARCHES ── */
-.recent-search-btn { padding: 6px 12px; border-radius: 999px; background: #fff4ec; border: 1px solid #fed7aa; color: #d45800; font-size: 12px; font-weight: 600;transition: all 0.2s ease; cursor: pointer;
+.recent-search-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff4ec;
+  border: 1px solid #fed7aa;
+  color: #9a3412; /* darker */
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.recent-search-btn:hover { background: #f97316; color: white;
-}
-
-[data-theme="dark"] .recent-search-btn { background: #1c0f05; border-color: #2a1508; color: #fb923c;
+.recent-search-btn:hover {
+  background: #c2410c; /* darker orange */
+  color: #ffffff;
 }
 
 /* ── TRENDING SECTION ── */

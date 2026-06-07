@@ -2476,31 +2476,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sync hero-search
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
-      }
-    });
-  }
-
-  // Quick chips listeners
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      const isCurrentlyActive = chip.classList.contains('bg-orange-600');
-
-// Sync hero search with hidden search input and initialize on load
 // Sync hero search with hidden search input and initialize on load
 const heroSearch = document.getElementById('hero-search');
-
 
 // ===== Recent Search History =====
 
@@ -2510,8 +2487,16 @@ const recentSearchesContainer =
 const clearSearchHistoryBtn =
   document.getElementById("clearSearchHistory");
 
-let recentSearches =
-  JSON.parse(localStorage.getItem("recentSearches")) || [];
+let recentSearches = [];
+
+try {
+  recentSearches =
+    JSON.parse(localStorage.getItem("recentSearches")) || [];
+} catch (error) {
+  console.error("Failed to parse recent searches:", error);
+  recentSearches = [];
+  localStorage.removeItem("recentSearches");
+}
 
 function renderRecentSearches() {
   if (!recentSearchesContainer) return;
@@ -2549,6 +2534,8 @@ function renderRecentSearches() {
     recentSearchesContainer.appendChild(btn);
   });
 }
+const MAX_RECENT_SEARCHES = 6;
+
 
 function saveRecentSearch(searchTerm) {
   if (!searchTerm.trim()) return;
@@ -2559,8 +2546,11 @@ function saveRecentSearch(searchTerm) {
   );
 
   recentSearches.unshift(searchTerm);
-
-  recentSearches = recentSearches.slice(0, 6);
+  
+  recentSearches = recentSearches.slice(
+    0,
+    MAX_RECENT_SEARCHES
+  );
 
   localStorage.setItem(
     "recentSearches",

@@ -240,29 +240,13 @@ function updateCountdown() {
 }
 
 async function copyTextToClipboard(text) {
-  if (navigator.clipboard?.writeText) {
-    return navigator.clipboard.writeText(text);
+  if (!navigator.clipboard?.writeText) {
+    throw new Error('Clipboard API not available');
   }
-
-  const tempInput = document.createElement('textarea');
-  tempInput.value = text;
-  tempInput.setAttribute('readonly', 'true');
-  tempInput.style.position = 'fixed';
-  tempInput.style.opacity = '0';
-  tempInput.style.left = '-9999px';
-  document.body.appendChild(tempInput);
-  tempInput.select();
-
-  try {
-    const copied = document.execCommand('copy');
-    if (!copied) {
-      throw new Error('document.execCommand("copy") returned false');
-    }
-    return copied;
-  } finally {
-    tempInput.remove();
-  }
+  return navigator.clipboard.writeText(text);
 }
+
+
 
 function showCopyTooltip(button, message = 'Copied!') {
   const tooltip = button.querySelector('.copy-org-tooltip');
@@ -1205,14 +1189,16 @@ function renderOrgs(reset = true) {
         <div class="flex items-center gap-2 flex-wrap justify-end">
           <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
           <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
-          <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(org.name)}">
+          <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
+
             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
           </button>
         </div>
       </div>
       <div class="flex items-start justify-between gap-3 mb-1">
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100 flex-1">${org.name}</h3>
-        <button type="button" data-copy-org="${escapeHtml(org.name)}" class="copy-org-btn mt-0.5" title="Copy org name" aria-label="Copy org name ${escapeHtml(org.name)}">
+        <button type="button" data-copy-org="${org.name}" class="copy-org-btn mt-0.5" title="Copy org name" aria-label="Copy org name ${org.name}">
+
           <span class="material-symbols-outlined text-lg">content_copy</span>
           <span class="copy-org-tooltip" role="status" aria-live="polite">Copied!</span>
         </button>
@@ -1225,10 +1211,12 @@ function renderOrgs(reset = true) {
       </div>
 
       <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-        <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+        <button data-compare-org="${org.name}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+
           <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
         </button>
-        <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+        <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+
       </div>`;
 
     grid.appendChild(card);

@@ -240,7 +240,6 @@ function updateCountdown() {
 }
 
 async function copyTextToClipboard(text) {
-async function copyTextToClipboard(text) {
   if (navigator.clipboard?.writeText) {
     return navigator.clipboard.writeText(text);
   }

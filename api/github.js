@@ -52,6 +52,7 @@ export default async function handler(req) {
     try {
       const res = await fetch('https://api.github.com/rate_limit', {
         headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'User-Agent': 'gsoc-org-finder' },
+        signal: AbortSignal.timeout(5000),
       });
       if (!res.ok) return new Response(JSON.stringify({ ok: false, error: `GitHub ${res.status}` }), { status: 200, headers: nc });
       const { resources } = await res.json();
@@ -186,7 +187,7 @@ export default async function handler(req) {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
-        { headers: ghHeaders }
+        { headers: ghHeaders, signal: AbortSignal.timeout(8000) }
       );
       const responseHeaders = addRateLimitHeaders(res, { ...headers });
       if (!res.ok) return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: res.status, headers: responseHeaders });
@@ -208,7 +209,6 @@ export default async function handler(req) {
     }
   }
 
-  // ── GFI count only
  // ── GFI count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
@@ -219,10 +219,10 @@ export default async function handler(req) {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
-        { headers: ghHeaders }
+        { headers: ghHeaders, signal: AbortSignal.timeout(8000) }
       );
       const responseHeaders = addRateLimitHeaders(res, { ...headers });
-      if (!res.ok) return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers: responseHeaders });
+      if (!res.ok) return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: res.status , headers: responseHeaders });
 
       const data = await res.json();
       const gfi  = data.total_count ?? null;
@@ -239,8 +239,8 @@ export default async function handler(req) {
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
-      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders, signal: AbortSignal.timeout(8000) }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders, signal: AbortSignal.timeout(8000) }),
     ]);
     const rh = addRateLimitHeaders(repoRes, { ...headers });
 

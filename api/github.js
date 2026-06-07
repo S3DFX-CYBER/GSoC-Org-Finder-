@@ -48,7 +48,7 @@ export default async function handler(req) {
   }
 
   const ghHeaders = {
-    Authorization: `token ${token}`,
+    Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'gsoc-org-finder',
   };
@@ -66,14 +66,36 @@ export default async function handler(req) {
       let repos = [];
       while (page <= 3) {
         try {
-          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
+          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, {
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
-          if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
-            break;
+          if (res.status === 403) {
+            return new Response(
+              JSON.stringify({
+                error: "GitHub API returned 403",
+                remaining: res.headers.get("x-ratelimit-remaining"),
+                reset: res.headers.get("x-ratelimit-reset"),
+              }),
+              { status: 502, headers }
+            );
           }
+          if (!res.ok) {
+            const errorBody = await res.text();
+            if (page === 1) {
+              return new Response(
+                JSON.stringify({
+                  error: `GitHub API ${res.status}`,
+                  details: errorBody,
+                  rateLimitRemaining: res.headers.get('x-ratelimit-remaining'),
+                  rateLimitReset: res.headers.get('x-ratelimit-reset'),
+                }),
+                { status: 502, headers }
+              );
+            }
+
+          break;
+        }
           const pageRepos = await res.json();
           repos = repos.concat(pageRepos);
           if (pageRepos.length < 100) break;

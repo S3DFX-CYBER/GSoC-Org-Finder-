@@ -4186,9 +4186,9 @@ if(org.ideas){
           if (mins < 60) {
             relative = `${mins} min ago`;
           } else if (hours < 24) {
-            relative = `${hours} hours ago`;
+            relative = `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
           } else {
-            relative = `${days} days ago`;
+            relative = `${days} ${days === 1 ? 'day' : 'days'} ago`;
           }
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {

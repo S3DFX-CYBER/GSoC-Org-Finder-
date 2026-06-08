@@ -223,7 +223,7 @@ For full functionality locally, run `vercel dev` to start the Edge Function.
 ### Clone Repository
 
 ```bash
-git clone https://github.com/your-username/GSoC-Org-Finder-.git
+git clone https://github.com/Pallavi-vi-1234/GSoC-Org-Finder-.git
 cd GSoC-Org-Finder-
 ```
 

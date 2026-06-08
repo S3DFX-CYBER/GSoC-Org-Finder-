@@ -563,7 +563,6 @@ function orgMatchesLanguages(org, selectedLanguages) {
 }
 
 function applyFilters(){
-  // const prevScrollY = window.scrollY;
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || '';
   const cat = categoryValue === 'all' ? '' : categoryValue;

@@ -4983,15 +4983,9 @@ if(e.key.toLowerCase()==='r'){
 
   function scrollToSectionIndex(index) {
     const targetSection = sections[index];
-
     if (!targetSection) return;
-
-    const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
-
-    window.scrollTo({
-      top: targetTop,
-      behavior: "smooth"
-    });
+    // Use scrollIntoView to respect scroll-margin-top defined in CSS
+    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function updateSectionIndicator() {
@@ -5053,22 +5047,33 @@ if(e.key.toLowerCase()==='r'){
 
   let isNavClicking = false;
   let navClickTimer = null;
+  let scrollStopTimer = null;
 
   document.querySelectorAll(".desktop-nav-link").forEach(link => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);
       setCurrentSectionById(link.dataset.section);
-      navClickTimer = setTimeout(() => { isNavClicking = false; updateCurrentSection(); }, 1000);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+        
+      }, 1500);
     });
   });
 
   document.querySelectorAll(".mobile-menu-link").forEach(link => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);
       setCurrentSectionById(link.dataset.section);
-      navClickTimer = setTimeout(() => { isNavClicking = false; }, 1000);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+        
+      }, 1500);
 
       if (typeof globalThis.toggleMenu === "function") {
         globalThis.toggleMenu();
@@ -5077,17 +5082,43 @@ if(e.key.toLowerCase()==='r'){
   });
 
   function updateCurrentSection() {
-    if (isNavClicking) return; // ignore scroll during nav click
-    const scrollPos = window.scrollY + getSectionDetectionOffset();
-    sections.forEach((section, index) => {
-      if (scrollPos >= section.offsetTop) currentSection = index;
-    });
-    updateNavState();
-  }
+      if (isNavClicking) return;
+      const offset = getSectionDetectionOffset() + 10;
+      let found = 0;
+      let closestDistance = Infinity;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= offset) {
+          const distance = offset - rect.top;
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            found = index;
+          }
+        }
+      });
+      currentSection = found;
+      updateNavState();
+    }
 
-  window.addEventListener("scroll", updateCurrentSection, { passive: true });
-  window.addEventListener("resize", updateCurrentSection);
-  updateCurrentSection();
+    const observer = new IntersectionObserver((entries) => {
+      if (isNavClicking) return;
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = sections.indexOf(entry.target);
+          if (index !== -1) {
+            currentSection = index;
+            updateNavState();
+          }
+        }
+      });
+    }, {
+      rootMargin: `-${(mainHeader?.clientHeight || 0) + 10}px 0px -60% 0px`,
+      threshold: 0
+    });
+
+    sections.forEach(section => observer.observe(section));
+    window.addEventListener("resize", updateCurrentSection);
+    updateCurrentSection();
 
   document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
     if (currentSection < sections.length - 1) {

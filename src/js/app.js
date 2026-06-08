@@ -1,38 +1,10 @@
-/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
+/* global ORGS, openModal, toggleCompare, toggleBookmark, renderOrgs, renderWatchlist, renderSelectedLanguages, renderCompare, renderCompareModal, MENTOR_DATA, CHANNEL_ICONS*//* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
-let filteredOrgs = [];
-let MENTOR_DATA = {};
-let mentorDataState = 'idle';
-const compareList = []; // list of org names
 const bookmarkedSet = new Set(parseStoredBookmarks());
-
-// Recently Viewed Organizations
-const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
-const RECENTLY_VIEWED_LIMIT = 8;
-let recentlyViewed = (() => {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(name => typeof name === 'string');
-  } catch {
-    return [];
-  }
-})();
-
-const selectedLanguages = new Set();
-let matchAllLanguages = false;
-let activeChip = null; // quick-filter chip key
-let visibleCount = 12;
-let focusedIdx = -1; // for keyboard card navigation
-
 // Expose globals for external components (recommender, recommendation-ui, etc.)
-globalThis.pills = selectedLanguages;
-globalThis.matchAllLanguages = matchAllLanguages;
-globalThis.compareList = compareList;
 globalThis.bookmarkedSet = bookmarkedSet;
 
 const CATEGORY_META = {
@@ -48,35 +20,22 @@ const CATEGORY_META = {
   dev: { className: 'bg-teal-100 text-teal-700', label: 'Dev Tools' },
   other: { className: 'bg-zinc-100 text-zinc-600', label: 'Other' },
 };
+globalThis.CATEGORY_META = CATEGORY_META;
 
-const LANGUAGE_ALIASES = {
-  'python': ['python'],
-  'javascript': ['javascript', 'js'],
-  'typescript': ['typescript', 'ts'],
-  'c/c++': ['c', 'c++', 'cpp'],
-  'java': ['java'],
-  'rust': ['rust'],
-  'go': ['go', 'golang'],
-  'ruby': ['ruby'],
-  'haskell': ['haskell'],
-  'scala': ['scala'],
-  'ml/ai': ['ml', 'ai', 'machine learning', 'artificial intelligence'],
-  'robotics': ['robotics', 'robot', 'ros']
+const LANGUAGE_MAP = {
+  'Python': ['python'],
+  'JavaScript': ['javascript', 'js'],
+  'TypeScript': ['typescript', 'ts'],
+  'C/C++': ['c', 'c++'],
+  'Java': ['java'],
+  'Rust': ['rust'],
+  'Go': ['go', 'golang'],
+  'Ruby': ['ruby'],
+  'Haskell': ['haskell'],
+  'Scala': ['scala'],
+  'ML/AI': ['machine learning', 'ml', 'ai', 'artificial intelligence'],
+  'Robotics': ['robotics', 'robot', 'ros']
 };
-
-const LANGUAGE_MAP = {};
-(() => {
-  const toDisplayKey = (k) => {
-    if (k === 'ml/ai') return 'ML/AI';
-    if (k === 'c/c++') return 'C/C++';
-    return k.split(/[\s/]+/).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
-  };
-  Object.keys(LANGUAGE_ALIASES).forEach(k => {
-    const display = toDisplayKey(k);
-    LANGUAGE_MAP[display] = LANGUAGE_ALIASES[k];
-    LANGUAGE_MAP[k] = LANGUAGE_ALIASES[k];
-  });
-})();
 globalThis.LANGUAGE_MAP = LANGUAGE_MAP;
 
 const UMBRELLA_ORGS = new Set([
@@ -90,19 +49,6 @@ const UMBRELLA_ORGS = new Set([
   'SageMath', 'National Resource for Network Biology (NRNB)', 'FOSSology', 'JabRef e.V.',
   'LabLua', 'Liquid Galaxy project', 'Free and Open Source Silicon Foundation',
 ]);
-
-const CHANNEL_ICONS = {
-  Slack: '💬', Zulip: '💬', Discord: '🎮', Matrix: '🔗', IRC: '🖥️', 'Mailing list': '📧'
-};
-
-const CONTACT_TIPS = {
-  Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
-  Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
-  Zulip: 'Post a new topic in the GSoC stream with your background and interest.',
-  Matrix: "Say hello in the public room and mention the project area you're exploring.",
-  IRC: 'Stay in the channel for a while; replies are often asynchronous.',
-  'Mailing list': "Send a short intro email with your background and the idea you're interested in."
-};
 
 // ══════════════════════════════════════════════
 // THEME & FOUC PROTECTION
@@ -138,107 +84,38 @@ function updateThemeIcon() {
 }
 
 // ══════════════════════════════════════════════
-// DYNAMIC TIMELINE & COUNTDOWN
+//  COUNTDOWN
 // ══════════════════════════════════════════════
-const GSOC_SELECTION_DATE = new Date('2026-05-08T18:00:00Z');
-const MILESTONES = [
-  { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
-  { date: new Date('2026-03-16T00:00:00Z'), label: 'Contributor Proposals Open', note: null },
-  { date: new Date('2026-03-31T23:30:00+05:30'), label: 'Proposal Submission Deadline', note: 'Submit your project proposals by 11:30 PM!' },
-  { date: GSOC_SELECTION_DATE, label: 'Accepted Projects Announced', note: null },
-  { date: new Date('2026-05-25T00:00:00Z'), label: 'Coding Officially Begins', note: 'Start working on your GSoC project!' },
-  { date: new Date('2026-07-06T18:00:00Z'), label: 'Midterm Evaluations Begin', note: 'Mentors and contributors submit midterm evaluations.' },
-  { date: new Date('2026-07-10T18:00:00Z'), label: 'Midterm Evaluation Deadline', note: null },
-  { date: new Date('2026-08-17T00:00:00Z'), label: 'Final Submissions Begin', note: 'Submit your final work product and evaluation.' },
-  { date: new Date('2026-08-24T18:00:00Z'), label: 'Final Submission Deadline (Standard)', note: 'Standard 12-week projects: submit final work product and evaluation.' },
-  { date: new Date('2026-08-31T18:00:00Z'), label: 'Mentor Final Evaluations Due (Standard)', note: null },
-  { date: new Date('2026-11-02T18:00:00Z'), label: 'Extended Timeline Final Deadline', note: 'Last date for all contributors on extended timelines to submit final work.' },
-  { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
-].filter(m => !isNaN(m.date.getTime()));
-
-function renderTimeline() {
-  const container = document.getElementById('timeline-milestones');
-  if (!container || MILESTONES.length === 0) return;
-
-  try {
-    const now = new Date();
-    if (isNaN(now.getTime())) return;
-
-    let activeIdx = MILESTONES.findIndex(m => m.date > now);
-    if (activeIdx === -1) activeIdx = MILESTONES.length - 1;
-
-    const allPast = MILESTONES[MILESTONES.length - 1].date <= now;
-
-    container.innerHTML = MILESTONES.map((m, i) => {
-      const isActive = i === activeIdx;
-      const isLast = i === MILESTONES.length - 1;
-      const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200 dark:bg-zinc-700"></div>` : '';
-      let dateStr;
-      try {
-        dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-      } catch (err) {
-        console.warn('[Timeline] Date formatting failed for:', m.date, err);
-        dateStr = m.date.toISOString().slice(0, 10);
-      }
-
-      if (isActive && !allPast) {
-        return `<div class="flex gap-3 sm:gap-4">
-          <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 dark:ring-orange-950/40 pulse-dot"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
-          <p class="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(m.label)}</p>
-          ${m.note ? `<p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
-        </div>`;
-      } else if (isActive && allPast) {
-        return `<div class="flex gap-3 sm:gap-4">
-          <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100 dark:ring-green-950/40"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
-          <p class="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(m.label)}</p>
-          <p class="text-xs text-green-600 dark:text-green-400 mt-1">✓ Completed</p></div>
-        </div>`;
-      } else {
-        return `<div class="flex gap-3 sm:gap-4 opacity-40">
-          <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-600"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
-          <p class="text-sm font-bold text-zinc-500 dark:text-zinc-400">${escapeHtml(m.label)}</p></div>
-        </div>`;
-      }
-    }).join('');
-  } catch (err) {
-    console.warn('[Timeline] renderTimeline failed:', err);
+const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
+const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+// eslint-disable-next-line prefer-const
+let cdTimer;
+function updateCountdown(){
+  const now=Date.now();
+  const labelEl=document.getElementById('countdown-label');
+  const countdownEl=document.getElementById('countdown');
+  if(!labelEl||!countdownEl) return;
+  let target=OPEN_DATE.getTime();
+  let label='📅 GSoC 2026 Applications Open In';
+  if(now>=OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
+    target=CLOSE_DATE.getTime();
+    label='🚀 Applications Are Open — Closes In';
+  } else if(now>=CLOSE_DATE.getTime()){
+    label='🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!';
+    countdownEl.textContent='';
+    labelEl.textContent=label;
+    if(cdTimer) clearInterval(cdTimer);
+    return;
   }
+  const diff=Math.max(0,target-now);
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  countdownEl.textContent=`${d}d ${h}h ${m}m`;
+  labelEl.textContent=label;
 }
-
-function updateCountdown() {
-  const countdownEl = document.getElementById('countdown');
-  const labelEl = document.getElementById('countdown-label');
-  if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
-
-  try {
-    const now = new Date();
-    if (isNaN(now.getTime())) return;
-
-    const next = MILESTONES.find(m => m.date > now);
-
-    if (!next) {
-      labelEl.textContent = 'GSoC 2026 selection complete';
-      countdownEl.textContent = '🎉 All done!';
-      countdownEl.classList.remove('text-primary');
-      countdownEl.classList.add('text-green-600');
-      return;
-    }
-
-    labelEl.textContent = `Until: ${next.label}`;
-    countdownEl.classList.remove('text-green-600');
-    countdownEl.classList.add('text-primary');
-    const diff = next.date - now;
-    if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
-    const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
-    countdownEl.textContent = `${d}d ${h}h ${m}m`;
-  } catch (err) {
-    console.warn('[Timeline] updateCountdown failed:', err);
-  }
-}
-
+updateCountdown();
+cdTimer=setInterval(updateCountdown,1000);
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
@@ -338,7 +215,9 @@ class SafeHTMLString extends String {
   }
 }
 SafeHTMLString.prototype.__isSafeHTML = true;
-
+// ══════════════════════════════════════════════
+// ANALYTICS ENGINE
+// ══════════════════════════════════════════════
 function safeHTML(strings, ...values) {
   let result = '';
   for (let i = 0; i < strings.length; i++) {
@@ -418,6 +297,9 @@ function validateIdeasUrl(ideasUrl) {
   return validateUrl(url);
 }
 
+// ══════════════════════════════════════════════
+// TRENDING
+// ══════════════════════════════════════════════
 function getCategoryMeta(category) {
   return CATEGORY_META[category] || CATEGORY_META.other;
 }
@@ -466,28 +348,57 @@ function cleanCache() {
 }
 cleanCache();
 
+const modalIdx=-1;
+let lastSearch='';
+const pills = globalThis.pills || new Set(AN.g('pills', []));
+const chips = globalThis.chips || new Set(AN.g('chips', []));
+const matchAllLanguages = globalThis.matchAllLanguages ?? false; // false = OR (any), true = AND (all)
+// Expose to global scope for HTML onclick handlers and debugging
+globalThis.pills = pills;
+globalThis.chips = chips;
+globalThis.matchAllLanguages = matchAllLanguages;
+let focusedIdx=-1;
+
+function updateAPIBanner(status) {
+  const banner = document.getElementById('apiBanner');
+  const strongEl = document.getElementById('apiStrong');
+  const textEl = document.getElementById('apiText');
+  const fetchBtn = document.getElementById('fetchBtn');
+
+  const states = {
+    ok: {
+      className: 'api-banner api-ok',
+      strong: '✓ GitHub API Connected',
+      text: 'Live stats (stars, forks, good first issues) available for all visitors.',
+      showFetch: true
+    },
+    warn: {
+      className: 'api-banner api-warn',
+      strong: '⚠ API Error',
+      text: 'Add GITHUB_TOKEN in Vercel dashboard and redeploy.',
+      showFetch: false
+    },
+    local: {
+      className: null,
+      strong: '○ Running Locally',
+      text: 'Deploy to Vercel for live GitHub stats.',
+      showFetch: false
+    }
+  };
+
+  const s = states[status];
+  if (banner && s.className) banner.className = s.className;
+  if (strongEl) strongEl.textContent = s.strong;
+  if (textEl) textEl.textContent = s.text;
+  if (fetchBtn && s.showFetch) fetchBtn.style.display = 'flex';
+}
+
 async function checkAPI() {
   try {
     const r = await fetch(`${API}?repo=django/django`);
-    const banner = document.getElementById('apiBanner');
-    if (!banner) return;
-    if (r.ok) {
-      banner.className = 'api-banner api-ok';
-      document.getElementById('apiStrong').textContent = '✓ GitHub API Connected';
-      document.getElementById('apiText').textContent = 'Live stats (stars, forks, good first issues) available for all visitors.';
-      const fetchBtn = document.getElementById('fetchBtn');
-      if (fetchBtn) fetchBtn.style.display = 'flex';
-    } else {
-      banner.className = 'api-banner api-warn';
-      document.getElementById('apiStrong').textContent = '⚠ API Error';
-      document.getElementById('apiText').textContent = 'Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
-    }
+    updateAPIBanner(r.ok ? 'ok' : 'warn');
   } catch {
-    const banner = document.getElementById('apiBanner');
-    if (banner) {
-      document.getElementById('apiStrong').textContent = '○ Running Locally';
-      document.getElementById('apiText').textContent = 'Deploy to Vercel for live GitHub stats.';
-    }
+    updateAPIBanner('local');
   }
 }
 
@@ -542,21 +453,69 @@ function openModalElement(modalId, triggerElement = null) {
       menuBtn.setAttribute('aria-expanded', 'true');
       menuBtn.setAttribute('aria-label', 'Close menu');
     }
-  } else {
-    modal.classList.add('open');
   }
-
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-  document.documentElement.style.overflow = 'hidden';
-
-  // Set focus to close button
-  const closeBtn = modal.querySelector('.close-btn, [onclick*="close"]');
-  if (closeBtn) closeBtn.focus();
-
-  modal.addEventListener('keydown', trapFocus);
 }
 
+async function fetchModalGH(){
+  const o=ORGS[modalIdx];if(!o?.github)return;
+  document.getElementById('mFetchBtn').textContent='Loading…';
+  delete ghCache[o.github];
+  delete ghCache[o.github+'__gfi'];
+  const d=await fetchGH(o.github);
+  if(d){
+    o._gh=d;
+    document.getElementById('ghStars').textContent=fmt(d.stars);
+    document.getElementById('ghForks').textContent=fmt(d.forks);
+    document.getElementById('ghIssues').textContent=fmt(d.issues);
+    document.getElementById('ghCommit').textContent=d.lastCommit;
+    document.getElementById('mFetchBtn').textContent='↻ Refresh';
+    document.getElementById('ghGFI').textContent='…';
+    const gfi=await fetchGFI(o.github);
+    const gfiTxt=gfi!==null?fmt(gfi):'—';
+    document.getElementById('ghGFI').textContent=gfiTxt;
+    if(gfi!==null){
+      o._gh.gfi=gfi;
+      const cells=document.getElementById('mMetrics')?.querySelectorAll('.mv');
+      if(cells&&cells[3])cells[3].textContent=gfiTxt;
+    }
+    applyFilters();
+  }else document.getElementById('mFetchBtn').textContent='✗ Failed';
+}
+
+function fmt(n){
+  if (!n && n !== 0) return '—';
+  if (n >= 1000) return (n/1000).toFixed(1)+'k';
+  return String(n);
+}
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function cLbl(c){
+  if (c==='hot') return '🔥 High';
+  if (c==='moderate') return '🟡 Moderate';
+  return '😎 Low';
+}
+function cBdg(c){
+  if (c==='hot') return 'bh';
+  if (c==='moderate') return 'bm';
+  return 'bc';
+}
+function aBdg(a){
+  if (a==='active') return 'bac';
+  if (a==='moderate') return 'bam';
+  if (a==='low') return 'bal';
+  return 'bna';
+}
+function catLabel(c){return{science:'Science',programming:'Programming',data:'Data',web:'Web',os:'OS',security:'Security',media:'Media',infra:'Infra',ai:'AI',dev:'Dev Tools',other:'Other'}[c]||c;}
+function catBdg(c){return'cb-'+(c||'other');}
+
+// ══════════════════════════════════════════════
+// COMPARE
+// ══════════════════════════════════════════════
+const compareList = globalThis.compareList || [];
+globalThis.compareList = compareList;
+
+    
 function closeModalElement(modalId) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
@@ -677,8 +636,9 @@ function handleNavigationRight(e, n) {
   e.preventDefault();
   focusedIdx = Math.min(focusedIdx + 1, n - 1);
   if (focusedIdx < 0) focusedIdx = 0;
-  if (focusedIdx >= visibleCount) {
-    visibleCount = Math.min(visibleCount + 12, n);
+  const vc = globalThis.visibleCount || 12;
+  if (focusedIdx >= vc) {
+    globalThis.visibleCount = Math.min(vc + 12, n);
     renderOrgs(false);
   }
   scrollToFocused();
@@ -697,8 +657,9 @@ function handleNavigationDown(e, n) {
   const cols = GRID_COLS();
   focusedIdx = Math.min(focusedIdx + cols, n - 1);
   if (focusedIdx < 0) focusedIdx = 0;
-  if (focusedIdx >= visibleCount) {
-    visibleCount = Math.min(visibleCount + 12, n);
+  const vc = globalThis.visibleCount || 12;
+  if (focusedIdx >= vc) {
+    globalThis.visibleCount = Math.min(vc + 12, n);
     renderOrgs(false);
   }
   scrollToFocused();
@@ -715,10 +676,8 @@ function handleNavigationUp(e) {
 
 function handleGlobalKeydown(e) {
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
-
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
-
-  const n = filteredOrgs.length;
+  const n = (globalThis.filteredOrgs || []).length;
   if (e.key === '?') {
     e.preventDefault();
     openModalElement('helpModal');
@@ -729,35 +688,249 @@ function handleGlobalKeydown(e) {
     document.getElementById('searchInput')?.focus();
     return;
   }
-
   if (n <= 0) return;
-
   switch (e.key) {
-    case 'ArrowRight':
-      handleNavigationRight(e, n);
-      break;
-    case 'ArrowLeft':
-      handleNavigationLeft(e);
-      break;
-    case 'ArrowDown':
-      handleNavigationDown(e, n);
-      break;
-    case 'ArrowUp':
-      handleNavigationUp(e);
-      break;
+    case 'ArrowRight': handleNavigationRight(e, n); break;
+    case 'ArrowLeft': handleNavigationLeft(e); break;
+    case 'ArrowDown': handleNavigationDown(e, n); break;
+    case 'ArrowUp': handleNavigationUp(e); break;
     case 'Enter':
       if (focusedIdx >= 0 && focusedIdx < n) {
         e.preventDefault();
-        openModal(filteredOrgs[focusedIdx].name);
+        openModal((globalThis.filteredOrgs || [])[focusedIdx]?.name);
       }
       break;
     case 'c':
     case 'C':
       if (focusedIdx >= 0 && focusedIdx < n) {
         e.preventDefault();
-        toggleCompare(null, filteredOrgs[focusedIdx].name);
+        if (typeof toggleCompare === 'function') toggleCompare(null, (globalThis.filteredOrgs || [])[focusedIdx]?.name);
       }
       break;
+  }
+}
+
+function _renderCompareTable() {
+  const wrap = document.getElementById('compareTableWrap');
+  if (!wrap) return;
+  const arr = (globalThis.compareList || [])
+    .map(name => ORGS.find(o => o.name === name))
+    .filter(Boolean);
+  if (arr.length < 2) {
+    wrap.innerHTML = '<div class="compare-hint">Select at least 2 organizations to compare.</div>';
+    return;
+  }
+  const rows = [
+    {label:'Category', vals:arr.map(o=>o.cat), type:'text'},
+    {label:'GSoC Years', vals:arr.map(o=>o.years), type:'bar', max:11, best:'high'},
+    {label:'Since', vals:arr.map(o=>o.firstYear), type:'text'},
+    {label:'Competition', vals:arr.map(o=>o.competition), scores:arr.map(o=>({hot:3,moderate:2,chill:1})[o.competition]||0), type:'scored', best:'low'},
+    {label:'Languages', vals:arr.map(o=>o.tags.slice(0,3).join(', ')), type:'text'},
+  ];
+  const thCells = arr.map(o => {
+    const name = o.name.length > 22 ? o.name.slice(0, 22) + '…' : o.name;
+    return `<th>${escapeHtml(name)}</th>`;
+  }).join('');
+  const thead = `<tr><th>Metric</th>${thCells}</tr>`;
+  let tbody = '';
+  for (const row of rows) {
+    let cells = '';
+    if (row.type === 'bar') {
+      const mx = Math.max(...row.vals);
+      cells = row.vals.map(v => {
+        const pct = mx > 0 ? Math.round(v / mx * 100) : 0;
+        return `<td><div class="cmp-bar-wrap"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${pct}%"></div></div><span class="cmp-val">${escapeHtml(String(v))}y</span></div></td>`;
+      }).join('');
+    } else if (row.type === 'scored' && row.scores && row.scores.some(s => s > 0)) {
+      const mx = Math.max(...row.scores);
+      const mn = Math.min(...row.scores.filter(s => s > 0));
+      cells = row.vals.map((v, i) => {
+        const s = row.scores[i];
+        let cls = 'cmp-val';
+        if (s > 0) {
+          if (row.best === 'high') {
+            cls = s === mx ? 'cmp-best' : s === mn ? 'cmp-worst' : 'cmp-val';
+          } else {
+            cls = s === mn ? 'cmp-best' : s === mx ? 'cmp-worst' : 'cmp-val';
+          }
+        }
+        return `<td class="${cls}">${escapeHtml(String(v))}</td>`;
+      }).join('');
+    } else {
+      cells = row.vals.map(v => `<td class="cmp-val">${escapeHtml(String(v))}</td>`).join('');
+    }
+    tbody += `<tr><td class="row-label">${escapeHtml(row.label)}</td>${cells}</tr>`;
+  }
+  wrap.innerHTML = `<table class="compare-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+}
+
+function _showCompareToast(msg){
+  let t=document.getElementById('compareToast');
+  if(!t){t=document.createElement('div');t.id='compareToast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;transition:opacity .3s;white-space:nowrap';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  setTimeout(()=>t.style.opacity='0',2200);
+}
+
+function _showSkeletons(count = 12) {
+  const grid = document.getElementById('orgGrid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({ length: count }, () => `
+    <div class="skeleton-card" aria-hidden="true">
+      <div class="skeleton-head">
+        <div class="skeleton-logo"></div>
+        <div class="skeleton-lines">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-subtitle"></div>
+        </div>
+      </div>
+      <div class="skeleton-line skeleton-body"></div>
+      <div class="skeleton-tags">
+        <div class="skeleton-pill"></div>
+        <div class="skeleton-pill"></div>
+        <div class="skeleton-pill"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// FILTER & RENDER
+// ══════════════════════════════════════════════
+
+function _normalizeTag(value) {
+  return value.trim().toLowerCase();
+}
+
+
+function matchesChips(o, chipSet) {
+  if (chipSet.has('bookmarked') && !bookmarkedSet.has(o.name)) return false;
+  if (chipSet.has('veteran') && o.years < 8) return false;
+  if (chipSet.has('newcomer') && o.years > 3) return false;
+  if (chipSet.has('hot') && o.competition !== 'hot') return false;
+  if (chipSet.has('chill') && o.competition !== 'chill') return false;
+  if (chipSet.has('active') && o._gh?.activity !== 'active') return false;
+  return true;
+}
+
+function matchesFilters(o, search, cat, compF, lang) {
+  if (cat && o.cat !== cat) return false;
+  if (compF && compF !== 'all' && o.codebase !== compF) return false;
+  if (lang) {
+    const langLabel = Object.keys(LANGUAGE_MAP).find(label => label.toLowerCase() === lang) || lang;
+    if (!orgMatchesLanguages(o, new Set([langLabel]))) return false;
+  }
+  if (search && !o.name.toLowerCase().includes(search)) return false;
+  if (pills.size > 0 && !orgMatchesLanguages(o, pills)) {
+    return false;
+  }
+  const chipSet = globalThis.chips || new Set();
+  if (!matchesChips(o, chipSet)) return false;
+  return true;
+}
+
+function sortOrgsWithRanking(res, search, sort) {
+  if (!search) {
+    return res.sort((a, b) => applySecondarySort(a, b, sort));
+  }
+
+  return res.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+    
+    if (nameA === search && nameB !== search) return -1;
+    if (nameB === search && nameA !== search) return 1;
+    
+    if (nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
+    if (nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
+    
+    return applySecondarySort(a, b, sort);
+  });
+}
+
+function syncFiltersToURL(search, cat, compF, lang, sort) {
+  const params = new URLSearchParams();
+  if (search) params.set('q', search);
+  if (cat) params.set('cat', cat);
+  if (compF && compF !== 'all') params.set('comp', compF);
+  
+  const urlChipSet = globalThis.chips || new Set();
+  if (urlChipSet.size > 0) params.set('chip', [...urlChipSet][0]);
+  
+  let selectedLangs;
+  if (pills.size) selectedLangs = [...pills];
+  else if (lang) selectedLangs = [lang];
+  else selectedLangs = [];
+  if (selectedLangs.length) params.set('lang', selectedLangs.join(','));
+  if (sort && sort !== 'alpha') params.set('sort', sort);
+  
+  history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
+}
+
+function applyFilters() {
+  if (applyFilters._running) { console.warn('applyFilters called recursively!'); return; }
+  applyFilters._running = true;
+  try {
+    const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+    const categoryValue = document.getElementById('categoryFilter')?.value || '';
+    const cat = categoryValue === 'all' ? '' : categoryValue;
+    const lang = document.getElementById('langFilter')?.value?.toLowerCase() || '';
+    const compF = document.getElementById('complexityFilter')?.value || '';
+    const sort = document.getElementById('sortSelect')?.value || 'alpha';
+
+    // Analytics Tracking
+    if (search !== lastSearch && search.length > 1) {
+      AN.trackSearch(search);
+      lastSearch = search;
+    }
+    if (cat) AN.trackCat(cat);
+
+    // Filter Step
+    const res = ORGS.filter(o => matchesFilters(o, search, cat, compF, lang));
+    // Sort Step (Now handled cleanly by our helper)
+    sortOrgsWithRanking(res, search, sort);
+
+    // State Management & Rendering
+    globalThis.filteredOrgs = res;
+    focusedIdx = -1;
+    if (typeof renderOrgs === 'function') renderOrgs(true);
+
+    // Sync to URL (Now handled cleanly by our helper)
+    syncFiltersToURL(search, cat, compF, lang, sort);
+  }
+  finally {
+    applyFilters._running = false;
+  }
+}
+
+function applySecondarySort(a, b, sortType) {
+  if(sortType==='years-desc') return b.years - a.years;
+  if(sortType==='years-asc') return a.years - b.years;
+  if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
+  if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
+  if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  return a.name.localeCompare(b.name);
+}
+
+function orgLogoOwner(o){
+  return githubOwnerFromValue(o.github);
+}
+function trimGitHubPathSlashes(path){
+  let start=0;
+  let end=path.length;
+  while(start<end&&path[start]==='/')start+=1;
+  while(end>start&&path[end-1]==='/')end-=1;
+  return path.slice(start,end);
+}
+function githubPathFromValue(value){
+  const github=String(value||'').trim();
+  if(!github)return'';
+  try{
+    const url=new URL(github);
+    const hostname=url.hostname.toLowerCase();
+    if(hostname!=='github.com'&&hostname!=='www.github.com')return'';
+    return trimGitHubPathSlashes(url.pathname);
+  }catch{
+    return trimGitHubPathSlashes(github);
   }
 }
 
@@ -793,34 +966,16 @@ globalThis.toggleBookmark = function (e, name) {
   syncBookmark(name, !bookmarkedSet.has(name));
 };
 
-function refreshVisibleBookmarkButtons() {
-  document.querySelectorAll('#orgGrid .bookmark-btn[data-bookmark-org]').forEach(btn => {
-    const name = btn.dataset.bookmarkOrg;
-    const isBookmarked = bookmarkedSet.has(name);
-    btn.classList.toggle('active', isBookmarked);
-    btn.classList.toggle('text-zinc-300', !isBookmarked);
-    btn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
-    btn.setAttribute('aria-label', isBookmarked ? `Remove bookmark from ${name}` : `Add bookmark to ${name}`);
-    const icon = btn.querySelector('.material-symbols-outlined');
-    if (icon) icon.classList.toggle('icon-fill', isBookmarked);
-  });
-}
-
 function refreshOrgGridAfterBookmarkChange() {
-  if (activeChip === 'bookmarked') {
-    applyFiltersPreservingVisibleCount();
+  const chipSet = globalThis.chips || new Set();
+  if (chipSet.has('bookmarked')) {
+    const res = ORGS.filter(o => globalThis.bookmarkedSet.has(o.name));
+    globalThis.filteredOrgs = res;
+    if (typeof renderOrgs === 'function') renderOrgs(true);
     return;
   }
-  refreshVisibleBookmarkButtons();
-}
-
-function applyFiltersPreservingVisibleCount() {
-  const savedCount = visibleCount;
+  if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
   applyFilters();
-  while (visibleCount < savedCount && visibleCount < filteredOrgs.length) {
-    visibleCount += 12;
-    renderOrgs(false);
-  }
 }
 
 function clearAllBookmarks() {
@@ -834,186 +989,13 @@ function clearAllBookmarks() {
 }
 document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
 
-function renderWatchlist() {
-  const container = document.getElementById('watchlistContainer');
-  const clearBtn = document.getElementById('clearAllBookmarksBtn');
-  if (!container) return;
-
-  container.innerHTML = '';
-  const bookmarks = [...bookmarkedSet]
-    .map(name => ORGS.find(o => o.name === name))
-    .filter(Boolean);
-
-  if (clearBtn) clearBtn.classList.toggle('hidden', bookmarks.length === 0);
-
-  if (bookmarks.length === 0) {
-    container.innerHTML = `
-      <div class="py-16 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-4 block">bookmark_border</span>
-        <p class="font-bold text-zinc-500 mb-1">Your Watchlist is Empty</p>
-        <p class="text-sm text-zinc-400">Click the ★ on any organization card to start tracking it here.</p>
-      </div>`;
-    return;
-  }
-
-  bookmarks.forEach(org => {
-    const githubOwner = githubOwnerFromValue(org.github);
-    const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-    const category = getCategoryMeta(org.cat);
-
-    const topTags = (org.tags || []).slice(0, 4)
-      .map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
-
-    const item = document.createElement('div');
-    item.className = 'bg-white dark:bg-zinc-900 rounded-2xl p-5 border border-zinc-100 dark:border-zinc-800 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
-    item.dataset.watchlistOrg = org.name;
-
-    const logoHtml = logoUrl
-      ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain">`
-      : safeHTML`<span class="material-symbols-outlined text-primary text-xl">corporate_fare</span>`;
-
-    item.innerHTML = safeHTML`
-      <div class="w-12 h-12 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100 dark:border-zinc-700">
-        ${logoHtml}
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
-          <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${org.name}</h4>
-          <div class="flex items-center gap-2 flex-shrink-0">
-            <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
-            <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
-          </div>
-        </div>
-        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1">${org.desc || ''}</p>
-        <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
-        <div class="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
-          <div class="flex items-center gap-3 text-xs text-zinc-400">
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">calendar_today</span>
-              ${String(org.years)}y in GSoC
-            </span>
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">bar_chart</span>
-              ${org.competition || '—'}
-            </span>
-          </div>
-          <button data-bookmark-org="${org.name}"
-                  class="bookmark-remove-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
-            <span class="material-symbols-outlined text-xs">bookmark_remove</span>
-            Remove
-          </button>
-        </div>
-      </div>`;
-
-    container.appendChild(item);
-    attachOrgCardListeners(item);
-  });
+function _renderGfiBadge(gh){
+  if(gh?.gfi===null||gh?.gfi===undefined)return '';
+  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
 }
-
 // ══════════════════════════════════════════════
-// COMPARE SYSTEM
+// PILLS & CHIPS
 // ══════════════════════════════════════════════
-globalThis.toggleCompare = function (e, name) {
-  if (e) e.stopPropagation();
-  if (!name) return;
-  const idx = compareList.indexOf(name);
-  if (idx > -1) {
-    compareList.splice(idx, 1);
-  } else {
-    if (compareList.length >= 3) {
-      alert("You can only compare up to 3 organizations at a time.");
-      return;
-    }
-    compareList.push(name);
-  }
-  renderOrgs(true);
-  renderCompare();
-};
-
-function renderCompare() {
-  const container = document.querySelector('#compare .grid');
-  if (!container) return;
-  if (typeof document.createElement !== 'function') return;
-  container.innerHTML = '';
-
-  compareList.forEach(name => {
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
-    const githubOwner = githubOwnerFromValue(org.github);
-    const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-
-    const item = document.createElement('div');
-    item.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800';
-    item.innerHTML = safeHTML`
-      <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-        <img src="${logoUrl}" data-org-name="${org.name}" class="w-full h-full object-contain" />
-      </div>
-      <p class="font-bold text-sm truncate">${org.name}</p>
-      <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${String(org.years)}y · ${org.competition}</p>
-      <button data-compare-org="${org.name}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
-    `;
-    container.appendChild(item);
-    attachOrgCardListeners(item);
-  });
-
-  // Empty slots helper
-  for (let i = compareList.length; i < 3; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800 border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center opacity-50';
-    empty.innerHTML = `
-      <div class="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-      <p class="font-bold text-sm text-zinc-400">Add org</p>
-      <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i + 1}</p>
-    `;
-    container.appendChild(empty);
-  }
-}
-
-function renderCompareModal() {
-  const body = document.getElementById('compareModalBody');
-  if (!body) return;
-
-  const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
-  if (selectedOrgs.length < 2) {
-    body.innerHTML = `
-      <div class="py-12 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">compare_arrows</span>
-        <p class="font-bold text-zinc-700 dark:text-zinc-300">Select at least 2 organizations to compare.</p>
-        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">Use the Compare button on organization cards, then open this tool again.</p>
-      </div>`;
-    return;
-  }
-
-  const rows = [
-    ['Category', org => getCategoryMeta(org.cat).label],
-    ['GSoC Years', org => org.years],
-    ['First Year', org => org.firstYear],
-    ['Competition', org => org.competition],
-    ['Codebase', org => org.codebase],
-    ['Tech Stack', org => org.tags.join(', ')],
-    ['Best Fit', org => org.fit.join(', ')],
-    ['Repository', org => org.github || '—'],
-  ];
-
-  body.innerHTML = `
-    <table class="w-full min-w-[720px] text-sm">
-      <thead>
-        <tr class="border-b border-zinc-200 dark:border-zinc-700">
-          <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400">Metric</th>
-          ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(org.name)}</th>`).join('')}
-        </tr>
-      </thead>
-      <tbody>
-        ${rows.map(([label, getValue]) => `
-          <tr class="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-            <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-            ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${escapeHtml(String(getValue(org)))}</td>`).join('')}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
-}
-
 globalThis.openCompareModal = function () {
   renderCompare();
   renderCompareModal();
@@ -1032,7 +1014,7 @@ function orgMatchesLanguages(org, selectedLanguages) {
   if (!selectedLanguages.size) return true;
   const orgTags = new Set((org.tags || []).map(t => t.trim().toLowerCase()));
 
-  if (globalThis.matchAllLanguages) {
+  if (matchAllLanguages) {
     return [...selectedLanguages].every(label => {
       const aliases = (LANGUAGE_MAP[label] || [label]).map(a => a.trim().toLowerCase());
       return aliases.some(alias => orgTags.has(alias));
@@ -1045,207 +1027,18 @@ function orgMatchesLanguages(org, selectedLanguages) {
   }
 }
 
-function matchesFilters(o, cat, compF, search) {
-  const orgName = o.name.toLowerCase();
-  if (cat && o.cat !== cat) return false;
-  if (compF && compF !== 'all' && o.codebase !== compF) return false;
-  if (search && !orgName.includes(search)) return false;
-  if (selectedLanguages.size > 0 && !orgMatchesLanguages(o, selectedLanguages)) return false;
-
-  if (activeChip) {
-    if (activeChip === 'bookmarked' && !bookmarkedSet.has(o.name)) return false;
-    if (activeChip === 'veterans' && o.years < 10) return false;
-    if (activeChip === 'newcomers' && o.years > 3) return false;
-    if (activeChip === 'low-competition' && o.competition !== 'chill') return false;
-    if (activeChip === 'high-competition' && o.competition !== 'hot') return false;
-    if (activeChip === 'active' && (!o._gh || o._gh.activity !== 'active')) return false;
-  }
-
-  return true;
-}
-
-function searchComparator(a, b, search, sort) {
-  const nameA = a.name.toLowerCase();
-  const nameB = b.name.toLowerCase();
-  if (nameA === search && nameB !== search) return -1;
-  if (nameB === search && nameA !== search) return 1;
-  if (nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
-  if (nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
-  return applySecondarySort(a, b, sort);
-}
-
-function applyFilters() {
-  const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
-  const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
-  const cat = categoryValue === 'all' ? '' : categoryValue;
-  const compF = document.getElementById('complexityFilter')?.value || 'all';
-  const sort = document.getElementById('sortSelect')?.value || 'alpha';
-
-  filteredOrgs = ORGS.filter(o => matchesFilters(o, cat, compF, search));
-
-  // Smart sorting: Exact match first, startsWith second, alphabetic/secondary sort third
-  if (search) {
-    filteredOrgs.sort((a, b) => searchComparator(a, b, search, sort));
-  } else {
-    filteredOrgs.sort((a, b) => applySecondarySort(a, b, sort));
-  }
-
-  renderOrgs(true);
-
-  // Sync state to URL
-  const params = new URLSearchParams();
-  if (search) params.set('q', search);
-  if (cat) params.set('cat', cat);
-  if (compF && compF !== 'all') params.set('comp', compF);
-  if (sort && sort !== 'alpha') params.set('sort', sort);
-  if (selectedLanguages.size) params.set('lang', [...selectedLanguages].join(','));
-  if (activeChip) params.set('chip', activeChip);
-  if (typeof history !== 'undefined' && typeof history.replaceState === 'function' && typeof location !== 'undefined') {
-    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
-  }
-}
-
-function applySecondarySort(a, b, sortType) {
-  if (sortType === 'years-desc') return b.years - a.years;
-  if (sortType === 'years-asc') return a.years - b.years;
-  if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition) - ['chill', 'moderate', 'hot'].indexOf(b.competition);
-  if (sortType === 'stars') return (b._gh?.stars || 0) - (a._gh?.stars || 0);
-  if (sortType === 'gfi') return (b._gh?.gfi || 0) - (a._gh?.gfi || 0);
-  return a.name.localeCompare(b.name);
-}
-
-function renderOrgs(reset = true) {
-  const grid = document.getElementById('orgGrid');
-  const emptyState = document.getElementById('emptyState');
-  if (!grid) return;
-
-  if (reset) {
-    grid.innerHTML = '';
-    visibleCount = 12;
-  }
-
-  if (filteredOrgs.length === 0) {
-    grid.classList.add('hidden');
-    if (emptyState) emptyState.classList.remove('hidden');
-    document.getElementById('orgCount').textContent = '0';
-    document.getElementById('loadMoreContainer').style.display = 'none';
-    return;
-  } else {
-    grid.classList.remove('hidden');
-    if (emptyState) emptyState.classList.add('hidden');
-  }
-
-  const slice = filteredOrgs.slice(visibleCount - 12, visibleCount);
-  slice.forEach((org, i) => {
-    const isBookmarked = bookmarkedSet.has(org.name);
-    const isComparing = compareList.includes(org.name);
-    const isFocused = focusedIdx === (visibleCount - 12 + i);
-    const card = document.createElement('article');
-    card.className = `group bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up ${isComparing ? 'ring-2 ring-primary/30' : ''} ${isFocused ? 'ring-2 ring-primary' : ''}`;
-    card.dataset.org = org.name;
-    card.setAttribute('role', 'article');
-    card.setAttribute('aria-label', `Organization: ${org.name}`);
-    card.setAttribute('tabindex', '0');
-
-    const githubOwner = githubOwnerFromValue(org.github);
-    const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-
-    const logoHtml = logoUrl
-      ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />`
-      : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
-
-    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
-    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
-
-    const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
-    const isBookmarkedStr = isBookmarked ? 'true' : 'false';
-
-    card.innerHTML = safeHTML`
-      <div class="flex justify-between items-start mb-4">
-        <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden border border-zinc-100 dark:border-zinc-700">
-          ${logoHtml}
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
-          <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
-          <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
-            <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
-          </button>
-        </div>
-      </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${org.name}</h3>
-      <span class="category-tag inline-block mb-3">${catLabel}</span>
-      <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${org.desc}</p>
-      <div class="flex flex-wrap gap-1.5 mb-4">
-        ${tagsHtml}
-        ${moreTagsHtml}
-      </div>
-
-      <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-        <button data-compare-org="${org.name}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
-        </button>
-        <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
-      </div>`;
-
-    grid.appendChild(card);
-    attachOrgCardListeners(card);
-  });
-
-  document.getElementById('orgCount').textContent = filteredOrgs.length;
-  document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
-}
-
-function attachOrgCardListeners(root) {
-  // Image error fallbacks
-  root.querySelectorAll('img[data-org-name]').forEach(img => {
-    if (img.__attached) return;
-    img.addEventListener('error', (e) => {
-      handleImgError(e.target, e.target.dataset.orgName);
-    });
-    img.__attached = true;
-  });
-
-  // Bookmark toggling
-  root.querySelectorAll('[data-bookmark-org]').forEach(btn => {
-    if (btn.__attached) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const name = btn.dataset.bookmarkOrg;
-      toggleBookmark(e, name);
-    });
-    btn.__attached = true;
-  });
-
-  // Compare toggling
-  root.querySelectorAll('[data-compare-org]').forEach(btn => {
-    if (btn.__attached) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const name = btn.dataset.compareOrg;
-      toggleCompare(e, name);
-    });
-    btn.__attached = true;
-  });
-
-  // Modal activation click
-  root.querySelectorAll('[data-open-org]').forEach(btn => {
-    if (btn.__attached) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openModal(btn.dataset.openOrg, btn);
-    });
-    btn.__attached = true;
-  });
-
-  if (root.classList?.contains('org-card') || root.classList?.contains('trend-card')) {
-    root.addEventListener('click', () => {
-      const name = root.dataset.org || root.querySelector('.trend-name')?.textContent;
-      if (name) openModal(name, root);
-    });
-  }
-}
-
+const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb'};
+const _CHIP_TOOLTIPS = {
+  veteran: 'Organizations that participated in GSoC for many years',
+  newcomer: 'Good for first-time contributors and beginners',
+  hot: 'Highly competitive organizations with many applicants',
+  chill: 'Organizations with relatively fewer applicants',
+  active: 'Organizations with recent GitHub activity',
+  bookmarked: 'Organizations you saved for later'
+};
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
 function handleImgError(img, orgName) {
   if (img.dataset.triedClearbit) {
     img.style.display = 'none';
@@ -1300,21 +1093,28 @@ globalThis.clearAllFilters = function () {
     chip.classList.add('bg-surface-container-highest');
   });
 
-  activeChip = null;
-  selectedLanguages.clear();
+  if (globalThis.chips) globalThis.chips.clear();
+  AN.s('chips', []);
+  // Clear persisted filter values so reload doesn't restore them
+  AN.s('cat', 'all');
+  AN.s('sort', 'alpha');
+  AN.s('complexity', 'all');
+  AN.s('pills', []);
+  if (globalThis.pills) globalThis.pills.clear();
   document.querySelectorAll('.pill.active').forEach(p => {
     p.classList.remove('active');
     p.setAttribute('aria-pressed', 'false');
   });
 
-  renderSelectedLanguages();
+  if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();  
+  history.replaceState(null, '', location.pathname);
   applyFilters();
 };
 
 // ══════════════════════════════════════════════
 // LIVE GITHUB STATS - API INTEGRATED FLOW
 // ══════════════════════════════════════════════
-function updateModalGHStats(org, d, gfi) {
+function _updateModalGHStats(org, d, gfi) {
   org._gh = d;
   const mStars = document.getElementById('mStars');
   const mForks = document.getElementById('mForks');
@@ -1337,50 +1137,6 @@ function updateModalGHStats(org, d, gfi) {
   }
 }
 
-globalThis.fetchModalGH = async function () {
-  const header = document.querySelector('#orgModal #orgModalTitle');
-  if (!header) return;
-  const orgName = header.textContent;
-  const org = ORGS.find(o => o.name === orgName);
-  if (!org || !org.github) return;
-
-  const btn = document.getElementById('mFetchBtn');
-  btn.textContent = 'Fetching Stats...';
-  btn.disabled = true;
-
-  // Clear caches for force refresh
-  const cacheKey = org.github;
-  delete ghCache[cacheKey];
-  delete ghCache[cacheKey + '__gfi'];
-
-  try {
-    const d = await fetchGH(org.github);
-    if (d) {
-      const gfi = await fetchGFI(org.github);
-      updateModalGHStats(org, d, gfi);
-
-      btn.textContent = 'Stats Updated!';
-      try {
-        applyFilters();
-        renderCompareModal();
-      } catch (renderErr) {
-        console.warn('Live stats updated, but UI refresh failed:', renderErr);
-      }
-    } else {
-      btn.textContent = 'Failed to Fetch';
-    }
-  } catch (e) {
-    btn.textContent = 'Error';
-  } finally {
-    setTimeout(() => {
-      btn.textContent = 'Fetch Live Stats';
-      btn.disabled = false;
-    }, 3000);
-  }
-};
-
-function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n); }
-
 // ══════════════════════════════════════════════
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
@@ -1389,7 +1145,6 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (!org) return;
 
   AN.trackOrg(org.name);
-  addRecentlyViewed(org.name);
 
   const mHeader = document.getElementById('mHeader');
   if (mHeader) {
@@ -1540,7 +1295,7 @@ function closeHelpModal() {
 globalThis.closeHelpModal = closeHelpModal;
 
 globalThis.openRandomOrg = function () {
-  const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+  const orgsToUse = globalThis.filteredOrgs.length > 0 ? globalThis.filteredOrgs : ORGS;
   if (!orgsToUse.length) {
     alert('No organizations match your filters — try clearing some!');
     return;
@@ -1550,150 +1305,6 @@ globalThis.openRandomOrg = function () {
   const randomIdx = array[0] % orgsToUse.length;
   openModal(orgsToUse[randomIdx].name);
 };
-
-// ══════════════════════════════════════════════
-// RECENTLY VIEWED UTILITIES
-// ══════════════════════════════════════════════
-function addRecentlyViewed(name) {
-  if (!name) return;
-  try {
-    recentlyViewed = recentlyViewed.filter(n => n !== name);
-    recentlyViewed.unshift(name);
-    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
-    renderRecentlyViewed();
-  } catch (e) {
-    console.warn('Failed to add to recently viewed:', e);
-  }
-}
-
-function removeRecentlyViewed(name) {
-  try {
-    recentlyViewed = recentlyViewed.filter(n => n !== name);
-    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
-    renderRecentlyViewed();
-  } catch (e) {
-    console.warn('Failed to remove from recently viewed:', e);
-  }
-}
-
-function clearRecentlyViewed() {
-  try {
-    recentlyViewed = [];
-    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
-    renderRecentlyViewed();
-  } catch (e) {
-    console.warn('Failed to clear recently viewed:', e);
-  }
-}
-
-function renderRecentlyViewed() {
-  const section = document.getElementById('recentlyViewedSection');
-  const container = document.getElementById('recentlyViewedContainer');
-  const overflowBadge = document.getElementById('recentlyViewedOverflowBadge');
-  if (!section || !container) return;
-
-  if (recentlyViewed.length === 0) {
-    section.classList.add('hidden');
-    if (overflowBadge) overflowBadge.classList.add('hidden');
-    return;
-  }
-
-  section.classList.remove('hidden');
-  container.innerHTML = '';
-
-  const overflowCount = Math.max(recentlyViewed.length - RECENTLY_VIEWED_LIMIT, 0);
-  if (overflowBadge) {
-    overflowBadge.textContent = overflowCount > 0 ? `+${overflowCount}` : '';
-    overflowBadge.classList.toggle('hidden', overflowCount === 0);
-  }
-
-  recentlyViewed.slice(0, RECENTLY_VIEWED_LIMIT).forEach(name => {
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
-    const category = getCategoryMeta(org.cat);
-
-    const card = document.createElement('div');
-    card.className = 'bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-100 dark:border-zinc-800 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
-    card.innerHTML = safeHTML`
-      <div class="flex-1 min-w-0">
-        <h4 class="font-bold text-sm mb-1 dark:text-zinc-100">${org.name}</h4>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${category.label}</span>
-          <span class="text-[10px] text-zinc-500 dark:text-zinc-400">${String(org.years)} years</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 ml-2 flex-shrink-0">
-        <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${name}" title="Remove from recently viewed" aria-label="Remove ${name} from recently viewed">
-          <span class="material-symbols-outlined text-base">close</span>
-        </button>
-      </div>`;
-
-    card.addEventListener('click', () => openModal(org.name, card));
-
-    const removeBtn = card.querySelector('[data-remove-recent]');
-    removeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeRecentlyViewed(removeBtn.dataset.removeRecent);
-    });
-
-    container.appendChild(card);
-  });
-}
-document.getElementById('clearRecentlyViewedBtn')?.addEventListener('click', clearRecentlyViewed);
-
-// ══════════════════════════════════════════════
-// LANGUAGE PILLS SYSTEM
-// ══════════════════════════════════════════════
-globalThis.togglePill = function (el) {
-  const lang = el.dataset.lang;
-  const isActive = el.classList.toggle('active');
-  el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-  if (isActive) selectedLanguages.add(lang);
-  else selectedLanguages.delete(lang);
-  renderSelectedLanguages();
-  applyFilters();
-};
-
-globalThis.unselectLanguage = function (lang) {
-  selectedLanguages.delete(lang);
-  const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
-  if (pillBtn) {
-    pillBtn.classList.remove('active');
-    pillBtn.setAttribute('aria-pressed', 'false');
-  }
-  renderSelectedLanguages();
-  applyFilters();
-};
-
-globalThis.clearAllLanguages = function () {
-  selectedLanguages.clear();
-  document.querySelectorAll('.pill.active').forEach(p => {
-    p.classList.remove('active');
-    p.setAttribute('aria-pressed', 'false');
-  });
-  renderSelectedLanguages();
-  applyFilters();
-};
-
-function renderSelectedLanguages() {
-  const container = document.getElementById('selectedLangsStrip');
-  if (!container) return;
-
-  if (selectedLanguages.size === 0) {
-    container.innerHTML = '<span class="empty-state">No languages selected</span>';
-    return;
-  }
-
-  const badges = [...selectedLanguages].map(lang => {
-    return safeHTML`<span class="selected-lang-badge" data-lang="${lang}">
-      ${lang}
-      <button class="unselect-lang-btn" aria-label="Remove ${lang}">×</button>
-    </span>`;
-  }).join('');
-
-  const clearAll = safeHTML`<button class="clear-all-langs-btn">Clear all</button>`;
-  container.innerHTML = badges + clearAll;
-}
 
 // ══════════════════════════════════════════════
 // DYNAMIC GOOD FIRST ISSUES (INDEX PAGE GRID)
@@ -1964,8 +1575,8 @@ globalThis.fetchAllIssues = async function () {
   btn.disabled = false; spin.style.display = 'none'; txt.textContent = '↻ Refresh';
 
   filterIssues();
-  renderOrgs(true);
-  updateStats();
+  if (typeof renderOrgs === 'function') renderOrgs(true);
+  if (typeof updateStats === 'function') updateStats();
 };
 
 async function loadCachedIssues() {
@@ -2136,26 +1747,114 @@ function updateStats() {
 // ══════════════════════════════════════════════
 // UTILITIES FOR CARD ATTRIBUTES MAPPING
 // ══════════════════════════════════════════════
-function trimGitHubPathSlashes(path) {
-  let start = 0;
-  let end = path.length;
-  while (start < end && path[start] === '/') start += 1;
-  while (end > start && path[end - 1] === '/') end -= 1;
-  return path.slice(start, end);
+
+// Initialize match mode toggle listener
+const matchToggle = document.getElementById('matchAllLanguagesToggle');
+if (matchToggle) {
+  matchToggle.checked = matchAllLanguages;
+  matchToggle.addEventListener('change', (e) => {
+    globalThis.matchAllLanguages = e.target.checked;
+    applyFilters();
+  });
 }
 
-function githubPathFromValue(value) {
-  const github = String(value || '').trim();
-  if (!github) return '';
-  try {
-    const url = new URL(github);
-    const hostname = url.hostname.toLowerCase();
-    if (hostname !== 'github.com' && hostname !== 'www.github.com') return '';
-    return trimGitHubPathSlashes(url.pathname);
-  } catch {
-    return trimGitHubPathSlashes(github);
+
+function restoreDropdownFilter(params, paramName, elementId, storageKey, defaultValue) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  const urlParam = params.get(paramName);
+  if (urlParam === null) {
+    const savedValue = AN.g(storageKey, defaultValue);
+    if (savedValue) element.value = savedValue;
+  } else {
+    element.value = urlParam;
   }
 }
+
+
+function restoreLanguagePills(params) {
+  const langParam = params.get('lang');
+  if (langParam === null) {
+    document.querySelectorAll('.pill').forEach(btn => {
+      const active = pills.has(btn.dataset.lang);
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    return;
+  }
+
+  const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
+  pills.clear();
+
+  if (langs.length > 1) {
+    document.querySelectorAll('.pill').forEach(btn => {
+      const active = langs.includes(btn.dataset.lang);
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      if (active) pills.add(btn.dataset.lang);
+    });
+    const langFilterEl = document.getElementById('langFilter');
+    if (langFilterEl) langFilterEl.value = ' ';
+  } else if (langs.length === 1) {
+    document.querySelectorAll('.pill').forEach(btn => {
+      const active = btn.dataset.lang === langs[0];
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      if (active) pills.add(btn.dataset.lang);
+    });
+    const langFilterEl = document.getElementById('langFilter');
+    if (langFilterEl) langFilterEl.value = langs[0];
+  } else {
+    document.querySelectorAll('.pill.active').forEach(btn => {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-pressed', 'false');
+    });
+    const langFilterEl = document.getElementById('langFilter');
+    if (langFilterEl) langFilterEl.value = 'all';
+  }
+}
+
+
+function restoreFiltersFromUrlOrStorage() {
+  const params = new URLSearchParams(location.search);
+  const searchInput = document.getElementById('searchInput');
+
+  const queryParam = params.get('q');
+  if (queryParam !== null && searchInput) {
+    searchInput.value = queryParam;
+  }
+
+  restoreDropdownFilter(params, 'cat', 'categoryFilter', 'cat', '');
+  restoreDropdownFilter(params, 'comp', 'complexityFilter', 'complexity', 'all');
+  restoreDropdownFilter(params, 'sort', 'sortSelect', 'sort', 'alpha');
+
+  restoreLanguagePills(params);
+  if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
+  const chipParam = params.get('chip');
+  if (chipParam !== null) {
+    chips.clear();
+    if (chipParam) chips.add(chipParam);
+  }
+
+  Object.keys(chipCls).forEach(k => {
+    const el = document.getElementById('chip-' + k);
+    if (!el) return;
+    const isActive = chips.has(k);
+    el.classList.toggle('bg-orange-600', isActive);
+    el.classList.toggle('text-white', isActive);
+    el.classList.toggle('bg-surface-container-highest', !isActive);
+  });
+
+  applyFilters();
+}
+
+requestAnimationFrame(() => {
+  restoreFiltersFromUrlOrStorage();
+  renderTrending();
+  loadCachedIssues();
+  checkAPI();
+});
 
 function githubOwnerFromValue(value) {
   return githubPathFromValue(value).split('/')[0] || '';
@@ -2164,10 +1863,6 @@ function githubOwnerFromValue(value) {
 function githubUrlFromValue(value) {
   const path = githubPathFromValue(value);
   return path ? `https://github.com/${path}` : '';
-}
-
-function orgLogoOwner(o) {
-  return githubOwnerFromValue(o.github);
 }
 
 function orgLogo(o) {
@@ -2196,102 +1891,28 @@ globalThis.orgLogo = orgLogo;
 globalThis.repoUrl = repoUrl;
 globalThis.repoLinkLabel = repoLinkLabel;
 
-// ══════════════════════════════════════════════
-// MENTORS FINDER RENDERERS
-// ══════════════════════════════════════════════
-async function loadMentorData() {
-  if (mentorDataState !== 'idle') return;
-  mentorDataState = 'loading';
-  try {
-    const res = await fetch('/data/mentors.json?v=' + Date.now());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    MENTOR_DATA = data.mentors || {};
-    mentorDataState = 'loaded';
-    renderMentorFinder();
-  } catch (err) {
-    console.warn('Failed to load mentors.json:', err);
-    mentorDataState = 'error';
-    const container = document.getElementById('mentorsContainer');
-    if (container) {
-      container.innerHTML = `
-        <div class="col-span-full bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl p-8 text-center">
-          <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">Mentor search unavailable</p>
-          <p class="text-sm text-zinc-600 dark:text-zinc-400">Failed to fetch mentor listings. Please try again later.</p>
-        </div>`;
-    }
-  }
-}
-
-function renderMentorFinder() {
-  const container = document.getElementById('mentorsContainer');
-  if (!container || mentorDataState !== 'loaded') return;
-
-  const search = (document.getElementById('mentorSearchInput')?.value || '').toLowerCase().trim();
-  const channel = document.getElementById('mentorChannelFilter')?.value || '';
-
-  const matched = [];
-  Object.entries(MENTOR_DATA).forEach(([orgName, mentors]) => {
-    if (!Array.isArray(mentors)) return;
-    mentors.forEach(m => {
-      const matchSearch = !search ||
-        m.name.toLowerCase().includes(search) ||
-        orgName.toLowerCase().includes(search) ||
-        (m.channels || []).some(c => String(c.value).toLowerCase().includes(search));
-
-      const matchChannel = !channel ||
-        (m.channels || []).some(c => c.type === channel);
-
-      if (matchSearch && matchChannel) {
-        matched.push({ orgName, ...m });
-      }
-    });
+// Event listeners for selects
+['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () =>{
+    AN.s('cat', document.getElementById('categoryFilter')?.value || 'all');
+    AN.s('sort', document.getElementById('sortSelect')?.value || 'alpha');
+    AN.s('complexity', document.getElementById('complexityFilter')?.value || 'all');
+    applyFilters();
   });
+});
 
-  container.innerHTML = '';
-
-  if (matched.length === 0) {
-    container.innerHTML = `
-      <div class="col-span-full py-16 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-700 mb-4 block">person_search</span>
-        <p class="font-bold text-zinc-500 mb-1">No Mentors Match Your Query</p>
-        <p class="text-sm text-zinc-400">Try adjusting your keyword filter or changing communication channels.</p>
-      </div>`;
-    return;
-  }
-
-  matched.slice(0, 30).forEach(m => {
-    const card = document.createElement('div');
-    card.className = 'mentor-card p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col justify-between hover:shadow-lg transition-all animate-fade-up';
-
-    const channelsHtml = (m.channels || []).map(c => {
-      const icon = CHANNEL_ICONS[c.type] || '💬';
-      const isUrl = sanitizeHrefUrl(c.value);
-      if (isUrl) {
-        return safeHTML`<a href="${isUrl}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip" title="${CONTACT_TIPS[c.type] || ''}">
-          ${icon} ${c.type}
-        </a>`;
-      } else {
-        return safeHTML`<span class="mentor-handle-chip" title="${CONTACT_TIPS[c.type] || ''}">
-          ${icon} ${c.value}
-        </span>`;
-      }
-    });
-
-    card.innerHTML = safeHTML`
-      <div>
-        <div class="flex items-start justify-between mb-3">
-          <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">${m.name}</h4>
-          <span class="text-[10px] font-label font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100 dark:border-orange-950/40 dark:text-orange-400">${m.role || 'Mentor'}</span>
-        </div>
-        <p class="text-xs text-primary font-bold mb-4 hover:underline cursor-pointer mentor-org-trigger" data-org-name="${m.orgName}">${m.orgName}</p>
-      </div>
-      <div class="flex flex-wrap gap-1.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-        ${channelsHtml}
-      </div>`;
-    container.appendChild(card);
-  });
-}
+globalThis.appJsApplyFilters = applyFilters;
+globalThis.applyFilters = applyFilters;
+globalThis.toggleBookmark = toggleBookmark;
+globalThis.openModal = openModal;
+globalThis.bookmarkedSet = bookmarkedSet;
+globalThis.compareList = compareList;
+globalThis.sanitizeHrefUrl = sanitizeHrefUrl;
+globalThis.cLbl = cLbl;
+globalThis.cBdg = cBdg;
+globalThis.aBdg = aBdg;
+globalThis.catLabel = catLabel;
+globalThis.catBdg = catBdg;
 
 function renderMentorContactSection(org) {
   const container = document.getElementById('mMentorsSection');
@@ -2338,243 +1959,16 @@ function renderMentorContactSection(org) {
   });
 }
 
-// Stale Data Banner Notice Check
-function applyStaleDataNotice() {
-  const now = new Date();
-  if (now > GSOC_SELECTION_DATE) {
-    const alertBanner = document.getElementById('selectionStaleAlert');
-    if (alertBanner) alertBanner.classList.remove('hidden');
-
-    const mentorStaleNote = document.getElementById('mentorStaleNote');
-    const mentorBannerDot = document.getElementById('mentorBannerDot');
-    if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
-    if (mentorBannerDot) {
-      mentorBannerDot.classList.remove('pulse-dot');
-      mentorBannerDot.style.backgroundColor = '#a1a1aa'; // Zinc-400
-    }
-  }
-}
-
 // ══════════════════════════════════════════════
 // INITIALIZATION
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // Sync bookmarks from storage initially
   ORGS.forEach(o => {
-    if (o.github && ghCache[o.github]) {
-      o._gh = ghCache[o.github];
-    }
+    if (o.github && ghCache[o.github]) o._gh = ghCache[o.github];
   });
-
-  // Restore filter state from URL parameters
-  (function restoreFiltersFromURL() {
-    const params = new URLSearchParams(location.search);
-    const setElValue = (id, val) => {
-      const el = document.getElementById(id);
-      if (el && val) el.value = val;
-    };
-
-    setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
-    setElValue('categoryFilter', params.get('cat'));
-    setElValue('complexityFilter', params.get('comp'));
-    setElValue('sortSelect', params.get('sort'));
-
-    const lang = params.get('lang');
-    if (lang) {
-      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        selectedLanguages.add(l);
-        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
-        if (pillBtn) {
-          pillBtn.classList.add('active');
-          pillBtn.setAttribute('aria-pressed', 'true');
-        }
-      });
-      renderSelectedLanguages();
-    }
-
-    const chip = params.get('chip');
-    if (chip) {
-      activeChip = chip;
-      document.querySelectorAll('.filter-chip').forEach(el => {
-        const text = el.textContent.trim().toLowerCase();
-        let key = null;
-        if (text.includes('bookmarked')) key = 'bookmarked';
-        else if (text.includes('veteran')) key = 'veterans';
-        else if (text.includes('newcomer')) key = 'newcomers';
-        else if (text.includes('low competition')) key = 'low-competition';
-        else if (text.includes('high competition')) key = 'high-competition';
-        else if (text.includes('actively')) key = 'active';
-
-        if (key === chip) {
-          el.classList.add('bg-orange-600', 'text-white');
-          el.classList.remove('bg-surface-container-highest');
-        }
-      });
-    }
-  })();
-
   updateCountdown();
-  const countdownTimer = setInterval(updateCountdown, 60000);
-  if (typeof countdownTimer.unref === 'function') countdownTimer.unref();
-  renderTimeline();
-  applyStaleDataNotice();
-
-  // Watchlist, comparison, analytics
-  applyFilters();
-  renderWatchlist();
-  renderCompare();
-  renderTrending();
-  updateAIInsights();
-  checkAPI();
-  loadMentorData();
-  renderGoodFirstIssues();
-
-  // Wire up filter event listeners
-  document.getElementById('searchInput')?.addEventListener('input', applyFilters);
-  document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
-  document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
-  document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
-  document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
-  document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
-  document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
-    matchAllLanguages = e.target.checked;
-    globalThis.matchAllLanguages = matchAllLanguages;
-    applyFilters();
-  });
-
-  document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
-    visibleCount += 12;
-    renderOrgs(false);
-  });
-
-  document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
-
-  // Programmatic event listeners replacing inline HTML handlers for close and action buttons
-  document.getElementById('closeOrgModalBtn')?.addEventListener('click', closeModal);
-  document.getElementById('closeCompareModalBtn')?.addEventListener('click', closeCompareModal);
-  document.getElementById('closeHelpModalBtn')?.addEventListener('click', closeHelpModal);
-  document.getElementById('menuBtn')?.addEventListener('click', toggleMenu);
-  document.getElementById('themeToggleBtn')?.addEventListener('click', globalThis.toggleTheme);
-
-  const backdrop = document.getElementById('mobileMenuBackdrop');
-  if (backdrop) {
-    backdrop.addEventListener('click', toggleMenu);
-    backdrop.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleMenu();
-      }
-    });
-  }
-
-  document.getElementById('closeMenuBtn')?.addEventListener('click', toggleMenu);
-
-  document.querySelectorAll('.mobile-menu-link').forEach(link => {
-    link.addEventListener('click', () => {
-      setActiveMenu(link);
-    });
-  });
-
-  // Sync hero-search
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
-      }
-    });
-  }
-
-  // Quick chips listeners
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      const isCurrentlyActive = chip.classList.contains('bg-orange-600');
-
-      document.querySelectorAll('.filter-chip').forEach(c => {
-        c.classList.remove('bg-orange-600', 'text-white');
-        c.classList.add('bg-surface-container-highest');
-      });
-
-      if (isCurrentlyActive) {
-        activeChip = null;
-      } else {
-        chip.classList.add('bg-orange-600', 'text-white');
-        chip.classList.remove('bg-surface-container-highest');
-
-        if (text.includes('bookmarked')) activeChip = 'bookmarked';
-        else if (text.includes('veteran')) activeChip = 'veterans';
-        else if (text.includes('newcomer')) activeChip = 'newcomers';
-        else if (text.includes('low competition')) activeChip = 'low-competition';
-        else if (text.includes('high competition')) activeChip = 'high-competition';
-        else if (text.includes('actively')) activeChip = 'active';
-        else activeChip = null;
-      }
-      applyFilters();
-    });
-  });
-
-  // Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
-  document.querySelectorAll('.pill[data-lang]').forEach(pill => {
-    pill.addEventListener('click', () => {
-      if (typeof globalThis.togglePill === 'function') {
-        globalThis.togglePill(pill);
-      }
-    });
-  });
-
-  document.getElementById('emptyStateClearBtn')?.addEventListener('click', clearAllFilters);
-  document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
-
-  // Wire up live stats fetch button
+  setInterval(updateCountdown, 60000);  checkAPI();
   document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
-
-  // Event delegation for trending cards scroll list
-  const trendingScroll = document.getElementById('trendingScroll');
-  if (trendingScroll) {
-    trendingScroll.addEventListener('click', (e) => {
-      const card = e.target.closest('.trend-card');
-      if (card && card.dataset.orgName) {
-        openModal(card.dataset.orgName);
-      }
-    });
-  }
-
-  // Event delegation for selected languages strip
-  const selectedStrip = document.getElementById('selectedLangsStrip');
-  if (selectedStrip) {
-    selectedStrip.addEventListener('click', (e) => {
-      const unselectBtn = e.target.closest('.unselect-lang-btn');
-      if (unselectBtn) {
-        const badge = unselectBtn.closest('.selected-lang-badge');
-        if (badge && badge.dataset.lang) {
-          unselectLanguage(badge.dataset.lang);
-        }
-        return;
-      }
-      const clearAllBtn = e.target.closest('.clear-all-langs-btn');
-      if (clearAllBtn) {
-        clearAllLanguages();
-      }
-    });
-  }
-
-  // Event delegation for mentors container
-  const mentorsContainer = document.getElementById('mentorsContainer');
-  if (mentorsContainer) {
-    mentorsContainer.addEventListener('click', (e) => {
-      const trigger = e.target.closest('.mentor-org-trigger');
-      if (trigger && trigger.dataset.orgName) {
-        openModal(trigger.dataset.orgName);
-      }
-    });
-  }
 });
 
 // ══════════════════════════════════════════════

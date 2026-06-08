@@ -559,6 +559,15 @@ kbd:hover{
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
 
+    :root {
+      --section-fab-right: 24px;
+      --section-fab-bottom: 24px;
+      --section-fab-size: 48px;
+      --section-fab-gap: 10px;
+      --section-indicator-gap: 12px;
+      --section-indicator-width: 240px;
+    }
+
     @media (max-width: 640px) {
       .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
       .modal-header h2 { font-size: 1.6rem; }
@@ -892,7 +901,6 @@ kbd:hover{
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
@@ -916,7 +924,133 @@ kbd:hover{
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
-  </style>
+  
+/* Section-wise Scroll Buttons */
+    .section-scroll-btn {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      width: var(--section-fab-size);
+      height: var(--section-fab-size);
+  border: none;
+  border-radius: 50%;
+      z-index: 30;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
+  transition: all 0.25s ease;
+}
+.section-scroll-btn:hover { transform: translateY(-2px); }
+    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
+    #prevSectionBtn {
+      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
+    }
+
+/* Dark mode - Section scroll buttons */
+.dark .section-scroll-btn {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
+}
+.dark .section-scroll-btn:hover {
+  box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
+}
+
+.section-scroll-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.section-scroll-indicator {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      bottom: calc(
+        var(--section-fab-bottom)
+        + (var(--section-fab-size) + var(--section-fab-gap)) * 2
+        + var(--section-indicator-gap)
+        + env(safe-area-inset-bottom)
+      );
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+      max-width: min(var(--section-indicator-width), calc(100vw - 32px - env(safe-area-inset-right)));
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  color: #9d4300;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.12);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-scroll-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
+}
+
+.section-scroll-indicator-value {
+  color: #1f1f1f;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+    @media (max-width: 640px) {
+      :root {
+        --section-fab-right: 12px;
+        --section-fab-bottom: 12px;
+        --section-fab-size: 42px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 8px;
+        --section-indicator-width: 180px;
+      }
+
+      .section-scroll-indicator {
+        padding: 7px 10px;
+        gap: 6px;
+        font-size: 10px;
+        line-height: 1;
+      }
+
+      .section-scroll-indicator-value {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .section-scroll-indicator > span:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --section-fab-right: 10px;
+        --section-fab-bottom: 10px;
+        --section-fab-size: 40px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 6px;
+        --section-indicator-width: 160px;
+      }
+
+      .section-scroll-indicator {
+        padding: 6px 9px;
+        border-radius: 999px;
+      }
+    }
+
+</style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -925,6 +1059,20 @@ kbd:hover{
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+
+<!-- Section Navigation Buttons -->
+<div id="sectionScrollIndicator" class="section-scroll-indicator" aria-live="polite" aria-atomic="true">
+  <span class="section-scroll-indicator-dot" aria-hidden="true"></span>
+  <span>Section:</span>
+  <span id="sectionScrollIndicatorValue" class="section-scroll-indicator-value">Timeline</span>
+</div>
+<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Previous Section">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</button>
+<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Next Section">
+  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+</button>
+
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -1002,7 +1150,7 @@ kbd:hover{
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1021,31 +1169,31 @@ kbd:hover{
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -1061,7 +1209,7 @@ kbd:hover{
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1123,7 +1271,7 @@ kbd:hover{
             <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
             <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div id="timeline-milestones" aria-label="GSoC timeline milestones" class="space-y-4 sm:space-y-5 overflow-y-auto max-h-[50vh] pl-4 no-scrollbar focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg"></div>
           <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
             <div class="flex items-center justify-between">
               <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
@@ -1602,27 +1750,27 @@ kbd:hover{
 </section>
 
 <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
+<section class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
       </div>
     </div>
   </div>
@@ -1705,7 +1853,6 @@ kbd:hover{
           <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
           <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
-    </nav>
   </div>
 </footer>
 
@@ -1786,7 +1933,7 @@ kbd:hover{
         </button>
         <button type="button" id="pwExportPDFBtn" class="proposal-btn proposal-btn-primary" aria-label="Download proposal as PDF">
           <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
-        </button> 
+        </button>
         <button type="button" id="pwCloseBtn" class="proposal-btn" aria-label="Close proposal builder">
           <span class="material-symbols-outlined text-sm">close</span>
         </button>
@@ -1901,10 +2048,13 @@ kbd:hover{
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
+<script src="src/js/app.js"></script>
 <script>
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
+
+
   (function(){
     const saved = localStorage.getItem('theme') || 'light';
     document.documentElement.classList.toggle('dark', saved === 'dark');
@@ -2006,116 +2156,6 @@ kbd:hover{
     }
   }
 
-function setDesktopNavState(activeSection) {
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    const linkSection = link.dataset.section;
-    if (linkSection === activeSection) {
-      link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-      link.classList.add('text-orange-600', 'is-active');
-    } else {
-      link.classList.remove('text-orange-600', 'is-active');
-      link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-    }
-  });
-}
-
-  function setMobileNavState(activeSection){
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.dataset.section;
-      if(linkSection === activeSection){
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100');
-        link.classList.add('text-orange-600', 'bg-orange-50');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100');
-      }
-    });
-  }
-
-  function setActiveNavSection(activeSection){
-    setDesktopNavState(activeSection);
-    setMobileNavState(activeSection);
-  }
-
-  function getTrackedSections(){
-    const sectionIds = Array.from(new Set(
-      Array.from(document.querySelectorAll('.desktop-nav-link, .mobile-menu-link'))
-        .map(link => link.dataset.section)
-        .filter(Boolean)
-    ));
-
-    return sectionIds
-      .map(sectionId => document.getElementById(sectionId))
-      .filter(Boolean)
-      .sort((a, b) => a.offsetTop - b.offsetTop);
-  }
-
-  let pendingSection = null;
-
-  // Set active menu item and update UI
-  globalThis.setActiveMenu = function(clickedLink){
-    pendingSection = clickedLink.dataset.section;
-    setActiveNavSection(pendingSection);
-
-    setTimeout(() => {
-      closeMobileMenu();
-    }, 300);
-  };
-
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      pendingSection = link.dataset.section;
-      setActiveNavSection(pendingSection);
-    });
-  });
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = getTrackedSections();
-    if(!sections.length) return;
-
-    const offset = 100;
-    const topLockThreshold = 24;
-    const scrollPosition = window.scrollY + offset;
-    let currentSection = sections[0].id;
-
-    if(window.scrollY <= topLockThreshold){
-      setActiveNavSection('orgs');
-      return;
-    }
-
-    sections.forEach(section => {
-      if(scrollPosition >= section.offsetTop){
-        currentSection = section.id;
-      }
-    });
-
-    if(pendingSection){
-      const targetSection = document.getElementById(pendingSection);
-      if(targetSection){
-        const targetTop = targetSection.offsetTop - offset;
-        const targetBottom = targetSection.offsetTop + targetSection.offsetHeight - offset;
-        const targetReached = window.scrollY >= targetTop && window.scrollY < targetBottom;
-
-        if(!targetReached){
-          setActiveNavSection(pendingSection);
-          return;
-        }
-      }
-
-      pendingSection = null;
-    }
-
-    setActiveNavSection(currentSection);
-  }
-
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
-
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
   // Prevents HTML injection via <, >, &, quotes.
@@ -2180,22 +2220,8 @@ function setDesktopNavState(activeSection) {
     return path ? `https://github.com/${path}` : null;
   }
 
-  const CATEGORY_META = {
-    science: { className: 'bg-blue-100 text-blue-700', label: 'Science' },
-    programming: { className: 'bg-violet-100 text-violet-700', label: 'Programming' },
-    data: { className: 'bg-cyan-100 text-cyan-700', label: 'Data' },
-    web: { className: 'bg-green-100 text-green-700', label: 'Web' },
-    os: { className: 'bg-orange-100 text-orange-700', label: 'OS / Systems' },
-    security: { className: 'bg-red-100 text-red-700', label: 'Security' },
-    media: { className: 'bg-pink-100 text-pink-700', label: 'Media' },
-    infra: { className: 'bg-yellow-100 text-yellow-700', label: 'Infrastructure' },
-    ai: { className: 'bg-purple-100 text-purple-700', label: 'AI / ML' },
-    dev: { className: 'bg-teal-100 text-teal-700', label: 'Dev Tools' },
-    other: { className: 'bg-zinc-100 text-zinc-600', label: 'Other' },
-  };
-
   function getCategoryMeta(category) {
-    return CATEGORY_META[category] || CATEGORY_META.other;
+    return globalThis.CATEGORY_META[category] || globalThis.CATEGORY_META.other;
   }
 
   // NOTE: For JS-string contexts inside inline event handlers,
@@ -2211,10 +2237,6 @@ function setDesktopNavState(activeSection) {
   let filteredOrgs = [...ORGS];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
-  let compareList = [];
-  const bookmarkedSet = (() => {
-    return new Set(parseStoredBookmarks());
-  })();
 
   // Recently Viewed Organizations
   const RECENTLY_VIEWED_KEY = 'recentlyViewedOrgs';
@@ -2235,9 +2257,9 @@ function setDesktopNavState(activeSection) {
     }
   })();
 
-  const selectedLanguages = new Set();
-  let matchAllLanguages = false;
-  let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
+  // selectedLanguages will be set by buildCompatibilityLayer() below
+  let selectedLanguages = globalThis.pills || new Set();
+  let activeChip = null;
   const CHANNEL_ICONS = {
     Slack: '💬',
     Zulip: '💬',
@@ -2272,12 +2294,13 @@ function setDesktopNavState(activeSection) {
   // Compatibility layer: expose a single LANGUAGE_MAP and shared `pills` set
   // so the embedded script and any external `src/js/app.js` logic agree.
   (function buildCompatibilityLayer(){
-    // Expose the selectedLanguages set as `pills` for compatibility
-    globalThis.pills = selectedLanguages;
+    if (globalThis.pills && typeof globalThis.pills.add === 'function') {
+      selectedLanguages = globalThis.pills;
+    } else {
+      globalThis.pills = selectedLanguages;
+    }
     // Expose matchAllLanguages as a global variable reference (kept in sync below)
-    globalThis.matchAllLanguages = matchAllLanguages;
-    globalThis.compareList = compareList;
-    globalThis.bookmarkedSet = bookmarkedSet;
+    globalThis.matchAllLanguages = globalThis.matchAllLanguages || false;
 
     // Build a LANGUAGE_MAP with display-label keys matching src/js/app.js expectations
     const toDisplayKey = (k) => {
@@ -2295,6 +2318,7 @@ function setDesktopNavState(activeSection) {
   })();
 
   function updateLanguageModeHint() {
+    const matchAllLanguages = globalThis.matchAllLanguages || false;
     const hint = document.getElementById('languageLogicHint');
     if (!hint) return;
     hint.textContent = matchAllLanguages
@@ -2316,8 +2340,13 @@ function setDesktopNavState(activeSection) {
     });
   }
 
+
   function clearSelectedLanguagePills() {
     selectedLanguages.clear();
+    // Also sync to globalThis.pills if it exists (from app.js)
+    if (globalThis.pills) globalThis.pills.clear();
+    AN.s('pills', [...selectedLanguages]);
+    applyFilters();
     document.querySelectorAll('.pill.active').forEach(pill => {
       pill.classList.remove('active');
       pill.setAttribute('aria-pressed', 'false');
@@ -2347,6 +2376,9 @@ function setDesktopNavState(activeSection) {
 
   window.unselectLanguage = function(lang) {
     selectedLanguages.delete(lang);
+    // Also sync to globalThis.pills if it exists (from app.js)
+    if (globalThis.pills) globalThis.pills.delete(lang);
+    AN.s('pills', [...selectedLanguages]);
     const pillBtn = document.querySelector(`.pill[data-lang="${lang}"]`);
     if (pillBtn) {
       pillBtn.classList.remove('active');
@@ -2357,14 +2389,17 @@ function setDesktopNavState(activeSection) {
   }
 
   window.clearAllLanguages = function() {
-    selectedLanguages.clear();
-    document.querySelectorAll('.pill.active').forEach(p => {
-      p.classList.remove('active');
-      p.setAttribute('aria-pressed', 'false');
-    });
-    renderSelectedLanguages();
-    applyFilters();
-  }
+  selectedLanguages.clear();
+  // Also sync to globalThis.pills if it exists (from app.js)
+  if (globalThis.pills) globalThis.pills.clear();
+  AN.s('pills', []);
+  document.querySelectorAll('.pill.active').forEach(p => {
+    p.classList.remove('active');
+    p.setAttribute('aria-pressed', 'false');
+  });
+  renderSelectedLanguages();
+  applyFilters();
+}
 
   // NOTE: toggleLanguageMode removed — the matchAllLanguagesToggle checkbox
   // uses a direct event listener (line ~1538) and does not use onclick=.
@@ -2375,16 +2410,21 @@ function setDesktopNavState(activeSection) {
     if (!langKey) return;
     const isActive = el.classList.toggle('active');
     el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    if (selectedLanguages.has(langDisplay)) selectedLanguages.delete(langDisplay);
-    else selectedLanguages.add(langDisplay);
-    renderSelectedLanguages();
-    
-    // Track filter badge when user toggles language pill
-    if (typeof BadgeSystem !== 'undefined') {
-      BadgeSystem.trackFilter();
+    if (isActive){
+      selectedLanguages.add(langDisplay);
+      // Also sync to globalThis.pills if it exists (from app.js)
+      if (globalThis.pills) globalThis.pills.add(langDisplay);
     }
+    else{
+      selectedLanguages.delete(langDisplay);
+      // Also sync to globalThis.pills if it exists (from app.js)
+      if (globalThis.pills) globalThis.pills.delete(langDisplay);
+    }
+    AN.s('pills', [...selectedLanguages]);
+    renderSelectedLanguages();
+    if (typeof BadgeSystem !== 'undefined') BadgeSystem.trackFilter();
     applyFilters();
-  };
+};
 
   function createDefaultMentorEntry(org) {
     return {
@@ -2830,6 +2870,7 @@ function setDesktopNavState(activeSection) {
     { date: new Date('2026-11-09T18:00:00Z'), label: 'Extended Mentor Evaluations Due', note: 'Final date for mentors to submit evaluations for extended projects.' },
   ].filter(m => !isNaN(m.date.getTime()));
 
+
   function renderTimeline() {
     const container = document.getElementById('timeline-milestones');
     if (!container || MILESTONES.length === 0) return;
@@ -2855,14 +2896,14 @@ function setDesktopNavState(activeSection) {
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
@@ -2876,10 +2917,24 @@ function setDesktopNavState(activeSection) {
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      requestAnimationFrame(() => { 
+        if (currentMilestone) {
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
+      });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }
   }
+
 
   // Countdown to the next upcoming milestone
   function updateCountdown() {
@@ -3009,6 +3064,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   });
 }
   function renderOrgs(reset = true) {
+    const filteredOrgs = globalThis.filteredOrgs || [];
     const grid = document.getElementById('orgGrid');
 
     const emptyState = document.getElementById('emptyState');
@@ -3036,8 +3092,8 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
 
     const slice = getPaginatedItems(filteredOrgs, orgCurrentPage);
     slice.forEach(org => {
-      const isBookmarked = bookmarkedSet.has(org.name);
-      const isComparing = compareList.includes(org.name);
+      const isBookmarked = globalThis.bookmarkedSet.has(org.name);
+      const isComparing = globalThis.globalThis.compareList.includes(org.name);
       const card = document.createElement('article');
       card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
       card.dataset.org = org.name;
@@ -3132,15 +3188,15 @@ btn.__orgListenerAttached = true;
 
   function toggleCompare(e, name) {
     if (e) e.stopPropagation();
-    const idx = compareList.indexOf(name);
+    const idx = globalThis.globalThis.compareList.indexOf(name);
     if (idx > -1) {
-      compareList.splice(idx, 1);
+      globalThis.globalThis.globalThis.compareList.splice(idx, 1);
     } else {
-      if (compareList.length >= 3) {
+      if (globalThis.globalThis.compareList.length >= 3) {
         alert("You can only compare up to 3 organizations at a time.");
         return;
       }
-      compareList.push(name);
+      globalThis.compareList.push(name);
     }
     renderOrgs(true);
     renderCompare();
@@ -3153,7 +3209,7 @@ btn.__orgListenerAttached = true;
     if (!container) return;
     container.innerHTML = '';
     
-    compareList.forEach(name => {
+    globalThis.compareList.forEach(name => {
       const org = ORGS.find(o => o.name === name);
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
@@ -3173,7 +3229,7 @@ btn.__orgListenerAttached = true;
     });
 
     // Add empty slots
-    for (let i = compareList.length; i < 3; i++) {
+    for (let i = globalThis.compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
       empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
       empty.onclick = () =>{
@@ -3198,7 +3254,7 @@ btn.__orgListenerAttached = true;
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#39;');
 
-    const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
+    const selectedOrgs = globalThis.compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
     if (selectedOrgs.length < 2) {
       body.innerHTML = `
         <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
@@ -3248,7 +3304,7 @@ btn.__orgListenerAttached = true;
     document.body.style.overflow = 'hidden';
 
     // Track badge progress only when comparison is actually opened with 2+ orgs
-    if (typeof BadgeSystem !== 'undefined' && compareList.length >= 2) {
+    if (typeof BadgeSystem !== 'undefined' && globalThis.globalThis.compareList.length >= 2) {
       BadgeSystem.trackComparison();
     }
   }
@@ -3369,26 +3425,12 @@ btn.__orgListenerAttached = true;
   });
   
 
-  function applyFiltersPreservingVisibleCount() {
-    const savedCount = visibleCount;
-    const grid = document.getElementById('orgGrid');
-    if (!grid) return;
-    // applyFilters() updates the filteredOrgs list and calls renderOrgs(true)
-    // which resets visibleCount to 12. We then keep appending subsequent pages
-    // until we reach the count the user had previously scrolled to.
-    applyFilters();
-    while (visibleCount < savedCount && visibleCount < filteredOrgs.length) {
-      visibleCount += 12;
-      renderOrgs(false);
-    }
-  }
-
   // ══════════════════════════════════════════════
   // WATCHLIST — centralised bookmark sync helper
   // ══════════════════════════════════════════════
   function refreshVisibleBookmarkButtons() {
     document.querySelectorAll('#orgGrid .bookmark-btn[data-bookmark-org]').forEach(btn => {
-      const isBookmarked = bookmarkedSet.has(btn.dataset.bookmarkOrg);
+      const isBookmarked = globalThis.bookmarkedSet.has(btn.dataset.bookmarkOrg);
       btn.classList.toggle('active', isBookmarked);
       btn.classList.toggle('text-zinc-300', !isBookmarked);
       btn.title = isBookmarked ? 'Remove bookmark' : 'Add bookmark';
@@ -3397,24 +3439,27 @@ btn.__orgListenerAttached = true;
   }
 
   function refreshOrgGridAfterBookmarkChange() {
-    if (activeChip === 'bookmarked') {
-      applyFiltersPreservingVisibleCount();
-      return;
-    }
-    refreshVisibleBookmarkButtons();
-  }
+  const chipSet = globalThis.chips || new Set();
+  if (chipSet.has('bookmarked')) {
+  const res = ORGS.filter(o => globalThis.bookmarkedSet.has(o.name));
+  globalThis.filteredOrgs = res;
+  renderOrgs(true);
+  return;
+}
+  refreshVisibleBookmarkButtons();
+}
 
   /**
    * Single source-of-truth writer for bookmarks.
-   * Always keeps bookmarkedSet (in-memory) + localStorage in lock-step.
+   * Always keeps globalThis.bookmarkedSet (in-memory) + localStorage in lock-step.
    * Re-filters only when the active filter depends on bookmark state.
    */
   function syncBookmark(name, shouldAdd) {
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
-    if (shouldAdd) bookmarkedSet.add(orgName);
-    else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    if (shouldAdd) globalThis.bookmarkedSet.add(orgName);
+    else           globalThis.bookmarkedSet.delete(orgName);
+    localStorage.setItem('bookmarks', JSON.stringify([...globalThis.bookmarkedSet]));
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3424,18 +3469,18 @@ btn.__orgListenerAttached = true;
     if (e) e.stopPropagation();
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
-    syncBookmark(orgName, !bookmarkedSet.has(orgName));
+    syncBookmark(orgName, !globalThis.bookmarkedSet.has(orgName));
   }
 
   // Listen for bookmarks toggled by app.js (the other org-grid script).
   // When app.js fires 'bookmarkChanged', we re-read localStorage so
-  // bookmarkedSet stays in sync, then refresh the Watchlist panel.
+  // globalThis.bookmarkedSet stays in sync, then refresh the Watchlist panel.
   document.addEventListener('bookmarkChanged', () => {
     const fresh = new Set(parseStoredBookmarks());
     // Diff: add new entries, remove stale ones — no full replacement so
     // any in-memory state from index.html toggles is also preserved.
-    fresh.forEach(n => bookmarkedSet.add(n));
-    [...bookmarkedSet].forEach(n => { if (!fresh.has(n)) bookmarkedSet.delete(n); });
+    fresh.forEach(n => globalThis.bookmarkedSet.add(n));
+    [...globalThis.bookmarkedSet].forEach(n => { if (!fresh.has(n)) globalThis.bookmarkedSet.delete(n); });
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3445,9 +3490,9 @@ btn.__orgListenerAttached = true;
   document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
 
   function clearAllBookmarks() {
-    if (!bookmarkedSet.size) return;
-    if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
-    bookmarkedSet.clear();
+    if (!globalThis.bookmarkedSet.size) return;
+    if (!confirm(`Remove all ${globalThis.bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
+    globalThis.bookmarkedSet.clear();
     localStorage.setItem('bookmarks', JSON.stringify([]));
     applyFilters();
     renderWatchlist();
@@ -3462,7 +3507,7 @@ btn.__orgListenerAttached = true;
 
     container.innerHTML = '';
 
-    const bookmarks = [...bookmarkedSet]
+    const bookmarks = [...globalThis.bookmarkedSet]
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
@@ -3563,7 +3608,7 @@ btn.__orgListenerAttached = true;
     const el = document.getElementById('aiInsightText');
     if (!el) return;
 
-    const bookmarks = [...bookmarkedSet]
+    const bookmarks = [...globalThis.bookmarkedSet]
       .map(name => ORGS.find(o => o.name === name))
       .filter(Boolean);
 
@@ -3755,7 +3800,7 @@ btn.__orgListenerAttached = true;
     if (typeof BadgeSystem !== 'undefined') {
       BadgeSystem.trackOrgView();
     }
-    const isBookmarked = bookmarkedSet.has(org.name);
+    const isBookmarked = globalThis.bookmarkedSet.has(org.name);
 
     document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
@@ -3781,7 +3826,7 @@ btn.__orgListenerAttached = true;
     if (modalBookmarkBtn) {
       modalBookmarkBtn.addEventListener('click', (e) => {
         toggleBookmark(e, org.name);
-        const nowBookmarked = bookmarkedSet.has(org.name);
+        const nowBookmarked = globalThis.bookmarkedSet.has(org.name);
         modalBookmarkBtn.classList.toggle('active', nowBookmarked);
         modalBookmarkBtn.classList.toggle('text-zinc-300', !nowBookmarked);
         const icon = modalBookmarkBtn.querySelector('.material-symbols-outlined');
@@ -3806,8 +3851,8 @@ btn.__orgListenerAttached = true;
     // Timeline
     let timelineHtml = '';
     for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
+      const active = (y >= org.firstYear);
+      timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 
@@ -3866,7 +3911,7 @@ if(org.ideas){
   }
 
   function openRandomOrg() {
-    const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
+    const orgsToUse = globalThis.filteredOrgs.length > 0 ? globalThis.filteredOrgs : ORGS;
     
     if (!orgsToUse.length) {
       alert('No organizations match your filters — try clearing some!');
@@ -3880,109 +3925,13 @@ if(org.ideas){
   }
 
   // Filters — all conditions are additive (chip + language pills + search + dropdowns compose)
-  function applyFilters() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
-    const cat = categoryValue === 'all' ? '' : categoryValue;
-    const comp = document.getElementById('complexityFilter').value;
-    const sort = document.getElementById('sortSelect')?.value || 'alpha';
-
-    filteredOrgs = ORGS.filter(o => {
-      const matchSearch = o.name.toLowerCase().includes(query);
-      const matchCat = !cat || o.cat === cat;
-      const matchComp = comp === 'all' || o.codebase === comp;
-      const tags = (o.tags || []).map(t => String(t).toLowerCase());
-      const matchLang = selectedLanguages.size === 0
-        || (matchAllLanguages
-          ? [...selectedLanguages].every(lang => languageMatchesSelection(tags, lang))
-          : [...selectedLanguages].some(lang => languageMatchesSelection(tags, lang)));
-
-      let matchChip = true;
-      if (activeChip === 'bookmarked')  matchChip = bookmarkedSet.has(o.name);
-      else if (activeChip === 'veterans')         matchChip = o.years >= 10;
-      else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
-      else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
-      else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
-
-      return matchSearch && matchCat && matchComp && matchLang && matchChip;
-    });
-
-    if(query){
-      filteredOrgs.sort((a,b)=>{
-        const nameA=a.name.toLowerCase();
-        const nameB=b.name.toLowerCase();
-        if(nameA===query && nameB!==query) return -1;
-        if(nameB===query && nameA!==query) return 1;
-        if(nameA.startsWith(query) && !nameB.startsWith(query)) return -1;
-        if(nameB.startsWith(query) && !nameA.startsWith(query)) return 1;
-        return applySecondarySort(a, b, sort);
-      });
-    } else {
-      filteredOrgs.sort((a, b) => applySecondarySort(a, b, sort));
-    }
-
-    renderOrgs(true);
-
-    // Persist filter state to URL so it survives page refresh
-    const params = new URLSearchParams();
-    if (query)                              params.set('q', query);
-    if (cat)                               params.set('cat', cat);
-    if (comp && comp !== 'all')            params.set('comp', comp);
-    if (sort && sort !== 'alpha')          params.set('sort', sort);
-    if (selectedLanguages.size)            params.set('lang', [...selectedLanguages].join(','));
-    if (activeChip)                        params.set('chip', activeChip);
-    history.replaceState(null, '', params.toString() ? '?' + params.toString() : location.pathname);
-  }
-
-  function applySecondarySort(a, b, sortType) {
-    if(sortType==='years-desc') return b.years - a.years;
-    if(sortType==='years-asc') return a.years - b.years;
-    if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
-    if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
-    if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
-    return a.name.localeCompare(b.name);
-  }
-
-  window.clearAllFilters = function() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('categoryFilter').value = 'all';
-    document.getElementById('complexityFilter').value = 'all';
-    if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
-    const heroSearch = document.getElementById('hero-search');
-    if (heroSearch) heroSearch.value = '';
   
-    if (typeof clearAllLanguages === 'function') clearAllLanguages();
-    // Reset chips
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.classList.remove('bg-orange-600', 'text-white');
-      chip.classList.add('bg-surface-container-highest');
-    });
-    if (typeof activeChip !== 'undefined') {
-      activeChip = null;
-    }
-
-    // Reset matchAllLanguages
-    matchAllLanguages = false;
-    globalThis.matchAllLanguages = false;
-    const toggle = document.getElementById('matchAllLanguagesToggle');
-    if (toggle) toggle.checked = false;
-    if (typeof updateLanguageModeHint === 'function') updateLanguageModeHint();
-
-    // Reset selected languages
-    if (typeof selectedLanguages !== 'undefined') {
-      selectedLanguages.clear();
-      if (typeof renderSelectedLanguages === 'function') renderSelectedLanguages();
-      document.querySelectorAll('.pill').forEach(pill => {
-        pill.classList.remove('active', 'bg-primary', 'text-white', 'border-primary');
-        pill.classList.add('bg-surface-container-high', 'border-zinc-200');
-        pill.setAttribute('aria-pressed', 'false');
-      });
-    }
-
-    filteredOrgs = [...ORGS];
-    renderOrgs(true);
-    applyFilters(); // to reset URL params
-  };
+function resetChipStyles() {
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.remove('bg-orange-600', 'text-white');
+    chip.classList.add('bg-surface-container-highest');
+  });
+}
 
   document.getElementById('searchInput').addEventListener('input', () => {
     // Track search badge when user types a search query
@@ -4017,21 +3966,19 @@ if(org.ideas){
     renderMentorFinder();
   });
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
-    matchAllLanguages = e.target.checked;
-    // keep global in sync for any external code expecting `matchAllLanguages`
-    globalThis.matchAllLanguages = matchAllLanguages;
-    applyFilters();
-    updateLanguageModeHint();
+  globalThis.matchAllLanguages = e.target.checked;    
+  applyFilters();
+  updateLanguageModeHint();
   });
 
   // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
   // Hero Search Link
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
+  const heroSearchEl = document.getElementById('hero-search');
+  if (heroSearchEl) {
+    heroSearchEl.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    heroSearchEl.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
       document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
       
@@ -4051,33 +3998,36 @@ if(org.ideas){
       const text = chip.textContent.trim().toLowerCase();
       const isCurrentlyActive = chip.classList.contains('bg-orange-600');
 
-      // Reset all chips to inactive state
+      // Reset all chips visually
       document.querySelectorAll('.filter-chip').forEach(c => {
         c.classList.remove('bg-orange-600', 'text-white');
         c.classList.add('bg-surface-container-highest');
       });
 
+      const chipSet = globalThis.chips || new Set();
+      chipSet.clear();
+      globalThis.chips = chipSet;
+
       if (!isCurrentlyActive) {
-        // Activate the clicked chip
         chip.classList.add('bg-orange-600', 'text-white');
         chip.classList.remove('bg-surface-container-highest');
 
-        // Map chip text → activeChip key used by applyFilters()
-        if (text.includes('bookmarked'))         activeChip = 'bookmarked';
-        else if (text.includes('veteran'))       activeChip = 'veterans';
-        else if (text.includes('newcomer'))      activeChip = 'newcomers';
-        else if (text.includes('low competition'))  activeChip = 'low-competition';
-        else if (text.includes('high competition')) activeChip = 'high-competition';
-        else if (text.includes('actively'))      activeChip = 'active';
-        else                                     activeChip = null;
-      } else {
-        // Chip was active — clicking again deactivates it
-        activeChip = null;
+        let chipKey = null;
+        if (text.includes('bookmarked'))          chipKey = 'bookmarked';
+        else if (text.includes('veteran'))        chipKey = 'veteran';
+        else if (text.includes('newcomer'))       chipKey = 'newcomer';
+        else if (text.includes('low competition')) chipKey = 'chill';
+        else if (text.includes('high competition')) chipKey = 'hot';
+        else if (text.includes('actively'))       chipKey = 'active';
+
+        if (chipKey) chipSet.add(chipKey);
       }
 
+      AN.s('chips', [...chipSet]);
       applyFilters();
     });
   });
+
 
   function buildGfiSearchUrl(github) {
     const query = github.includes('/')
@@ -4508,60 +4458,7 @@ if(org.ideas){
   applyStaleDataNotice(); // show post-selection message if GSoC selection is complete
   updateCountdown();
   setInterval(updateCountdown, 60000);
-  renderSelectedLanguages();
 
-  // Restore filter state from URL params on page load/refresh
-  (function restoreFiltersFromURL() {
-    const params = new URLSearchParams(location.search);
-
-    function setElValue(id, value) {
-      const el = document.getElementById(id);
-      if (el && value) el.value = value;
-    }
-
-    function getChipKey(text) {
-      if (text.includes('bookmarked'))            return 'bookmarked';
-      if (text.includes('veteran'))               return 'veterans';
-      if (text.includes('newcomer'))              return 'newcomers';
-      if (text.includes('low competition'))       return 'low-competition';
-      if (text.includes('high competition'))      return 'high-competition';
-      if (text.includes('actively'))              return 'active';
-      return null;
-    }
-
-    setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
-    setElValue('categoryFilter', params.get('cat'));
-    setElValue('complexityFilter', params.get('comp'));
-    setElValue('sortSelect', params.get('sort'));
-
-    const lang = params.get('lang');
-    if (lang) {
-      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        selectedLanguages.add(l);
-        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
-        if (pillBtn) {
-          pillBtn.classList.add('active');
-          pillBtn.setAttribute('aria-pressed', 'true');
-        }
-      });
-      renderSelectedLanguages();
-    }
-
-    const chip = params.get('chip');
-    if (chip) {
-      activeChip = chip;
-      document.querySelectorAll('.filter-chip').forEach(el => {
-        const key = getChipKey(el.textContent.trim().toLowerCase());
-        if (key === chip) {
-          el.classList.add('bg-orange-600', 'text-white');
-          el.classList.remove('bg-surface-container-highest');
-        }
-      });
-    }
-
-    applyFilters();
-  })();
   renderOrgs();
   renderWatchlist();
   renderRecentlyViewed();
@@ -4686,7 +4583,6 @@ if(org.ideas){
 </tbody>
 </table>
 
-       
 
       </div>
     </div>
@@ -4905,79 +4801,144 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 <script>
-const logoLink = document.getElementById("logoLink");
+(function () {
+  const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
+  const sectionLabels = {
+    timeline: "Timeline",
+    orgs: "Organizations",
+    "ai-recommender": "AI Recommender",
+    watchlist: "Watchlist",
+    issues: "Issues",
+    mentors: "Mentors",
+    guide: "Guide",
+    contact: "Contact"
+  };
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const mainHeader = document.querySelector("header.fixed.top-0");
 
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
+  let currentSection = 0;
+  const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
 
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
+  function getSectionDetectionOffset() {
+    return mainHeader?.clientHeight || 0;
+  }
+
+  function scrollToSectionIndex(index) {
+    const targetSection = sections[index];
+
+    if (!targetSection) return;
+
+    const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
+
+    window.scrollTo({
+      top: targetTop,
       behavior: "smooth"
     });
+  }
 
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+  function updateSectionIndicator() {
+    const activeSectionId = sections[currentSection]?.id;
 
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+    if (sectionIndicatorValue) {
+      sectionIndicatorValue.textContent = sectionLabels[activeSectionId] || "Timeline";
     }
+  }
 
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+  function updateNavState() {
+    const activeSectionId = sections[currentSection]?.id;
 
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      const linkSection = link.dataset.section;
+
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-600", "hover:text-zinc-900");
+        link.classList.add("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+      } else {
+        link.classList.remove("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+        link.classList.add("text-zinc-600", "hover:text-zinc-900");
+      }
     });
 
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      const linkSection = link.dataset.section;
 
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+        link.classList.add("text-orange-600", "bg-orange-50", "font-bold");
+      } else {
+        link.classList.remove("text-orange-600", "bg-orange-50", "font-bold");
+        link.classList.add("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+      }
+    });
 
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+    updateSectionIndicator();
+  }
+
+  function setCurrentSectionById(sectionId) {
+    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
+
+    if (nextSectionIndex === -1) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
+  }
+
+  const logoLink = document.getElementById("logoLink");
+
+  if (logoLink) {
+    logoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      setCurrentSectionById("timeline");
+      scrollToSectionIndex(currentSection);
+    });
+  }
+
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+    });
+  });
+
+  document.querySelectorAll(".mobile-menu-link").forEach(link => {
+    link.addEventListener("click", () => {
+      setCurrentSectionById(link.dataset.section);
+
+      if (typeof globalThis.toggleMenu === "function") {
+        globalThis.toggleMenu();
+      }
+    });
+  });
+
+  function updateCurrentSection() {
+    const scrollPos = window.scrollY + getSectionDetectionOffset();
+
+    sections.forEach((section, index) => {
+      if (scrollPos >= section.offsetTop) currentSection = index;
+    });
+
+    updateNavState();
+  }
+
+  window.addEventListener("scroll", updateCurrentSection, { passive: true });
+  window.addEventListener("resize", updateCurrentSection);
+  updateCurrentSection();
+
+  document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
+    if (currentSection < sections.length - 1) {
+      scrollToSectionIndex(currentSection + 1);
     }
   });
-}
+
+  document.getElementById("prevSectionBtn")?.addEventListener("click", () => {
+    if (currentSection > 0) {
+      scrollToSectionIndex(currentSection - 1);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+})();
 </script>
 
 </body>

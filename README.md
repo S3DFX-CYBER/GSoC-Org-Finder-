@@ -229,18 +229,16 @@ cd GSoC-Org-Finder-
 
 ### Run Project
 
-```bash
-npm install
-npm run dev
-```
+### Run Locally
 
-### Open in Browser
+Open the `index.html` file directly in your browser.
 
-Visit:
+For full functionality locally, run:
 
 ```bash
-http://localhost:3000
+vercel dev
 ```
+
 
 
 ---

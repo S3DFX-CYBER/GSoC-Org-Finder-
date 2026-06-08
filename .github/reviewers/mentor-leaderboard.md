@@ -4,23 +4,23 @@
 
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
-| 🥇 | @TarunyaProgrammer | 13 | 53 |
-| 🥈 | @nitinog10 | 10 | 42 |
-| 🥉 | @4f4d | 7 | 37 |
-| 4 | @KUMARNiru007 | 9 | 31 |
-| 5 | @deepak0x | 5 | 20 |
-| 6 | @saurabh24thakur | 3 | 17 |
-| 7 | @Balaji91221 | 8 | 16 |
-| 8 | @Anushreebasics | 6 | 15 |
-| 9 | @itsdakshjain | 4 | 12 |
-| 10 | @knoxiboy | 4 | 12 |
+| 🥇 | @TarunyaProgrammer | 19 | 75 |
+| 🥈 | @nitinog10 | 13 | 54 |
+| 🥉 | @KUMARNiru007 | 14 | 53 |
+| 4 | @4f4d | 7 | 37 |
+| 5 | @deepak0x | 7 | 26 |
+| 6 | @Anushreebasics | 9 | 25 |
+| 7 | @saurabh24thakur | 3 | 17 |
+| 8 | @Balaji91221 | 8 | 16 |
+| 9 | @itsdakshjain | 5 | 14 |
+| 10 | @knoxiboy | 5 | 14 |
 | 11 | @12fahed | 3 | 11 |
-| 12 | @MUKUL-PRASAD-SIGH | 4 | 9 |
-| 13 | @CoderOggy78 | 3 | 7 |
-| 14 | @nihalawasthi | 3 | 7 |
-| 15 | @AnirudhPhophalia | 3 | 6 |
-| 16 | @BandhiyaHardik | 3 | 6 |
-| 17 | @Mrigakshi-Rathore | 3 | 6 |
+| 12 | @Mrigakshi-Rathore | 5 | 10 |
+| 13 | @MUKUL-PRASAD-SIGH | 4 | 9 |
+| 14 | @CoderOggy78 | 3 | 7 |
+| 15 | @nihalawasthi | 3 | 7 |
+| 16 | @AnirudhPhophalia | 3 | 6 |
+| 17 | @BandhiyaHardik | 3 | 6 |
 | 18 | @sabeenaviklar | 2 | 6 |
 | 19 | @stealthwhizz | 2 | 6 |
 | 20 | @lourduradjou | 2 | 5 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Fri, 29 May 2026 06:03:21 GMT
+Last updated: Mon, 08 Jun 2026 11:50:20 GMT

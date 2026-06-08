@@ -87,7 +87,7 @@ export default async function handler(req) {
             signal: AbortSignal.timeout(5000)
           });
           if (res.status === 403) {
-            if (page == 1) {
+            if (page === 1) {
               return new Response(
                 JSON.stringify({
                   error: "GitHub 403",

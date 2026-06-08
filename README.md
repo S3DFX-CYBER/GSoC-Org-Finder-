@@ -212,6 +212,36 @@ Or connect the repo to Vercel and it deploys automatically on every push.
 open index.html   # macOS — works without API (GitHub stats won't load)
 ```
 For full functionality locally, run `vercel dev` to start the Edge Function.
+## 🪟 Windows Setup Guide
+
+### Prerequisites
+
+* Install Git
+* Install Node.js
+* Install VS Code
+
+### Clone Repository
+
+```bash
+git clone https://github.com/your-username/GSoC-Org-Finder-.git
+cd GSoC-Org-Finder-
+```
+
+### Run Project
+
+```bash
+npm install
+npm run dev
+```
+
+### Open in Browser
+
+Visit:
+
+```bash
+http://localhost:3000
+```
+
 
 ---
 

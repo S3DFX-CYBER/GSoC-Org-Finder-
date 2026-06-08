@@ -5107,7 +5107,7 @@ if(e.key.toLowerCase()==='r'){
         autocomplete="off"
         aria-label="Command palette search"
       />
-      <kbd style="font-size:11px;padding:2px 6px;border:1px solid #ccc;border-radius:4px;cursor:pointer" onclick="closeCmdPalette()">esc</kbd>
+      <kbd style="font-size:11px;padding:2px 6px;border:1px solid #ccc;border-radius:4px;cursor:pointer" onclick="closepalette()">esc</kbd>
     </div>
     <div id="cmd-results" role="listbox"></div>
     <div id="cmd-footer">
@@ -5147,7 +5147,12 @@ document.addEventListener('DOMContentLoaded', function () {
     return j === q.length;
   }
 
+  function escHtml(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function hl(str, q) {
+    str = escHtml(str); q = escHtml(q);
     if (!q) return str;
     var i = str.toLowerCase().indexOf(q.toLowerCase());
     if (i < 0) return str;
@@ -5170,7 +5175,7 @@ document.addEventListener('DOMContentLoaded', function () {
       matchedOrgs.forEach(function(o) {
         var idx = currentItems.length;
         currentItems.push({ type: 'org', data: o });
-        html += '<div class="cmd-item ' + (idx===activeIdx?'active':'') + '" data-idx="' + idx + '"><div class="cmd-item-icon org">🏢</div><div class="cmd-item-body"><div class="cmd-item-name">' + hl(o.name,q) + '</div><div class="cmd-item-sub">' + (o.desc||'') + '</div></div></div>';
+        html += '<div class="cmd-item ' + (idx===activeIdx?'active':'') + '" data-idx="' + idx + '"><div class="cmd-item-icon org">🏢</div><div class="cmd-item-body"><div class="cmd-item-name">' + hl(o.name,q) + '</div><div class="cmd-item-sub">' + escHtml(o.desc) + '</div></div></div>';
       });
     }
 
@@ -5212,18 +5217,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var name = item.data.name.toLowerCase();
     if (name.includes('dark') || name.includes('light') || name.includes('theme')) {
-      var btn = document.getElementById('theme-toggle') || document.querySelector('.theme-toggle, [data-action="toggle-theme"], [aria-label*="theme"], [aria-label*="dark"]');
+      var btn = document.getElementById('theme-toggle') ||
+                document.querySelector('[id*="theme"]') ||
+                document.querySelector('[class*="theme"]') ||
+                document.querySelector('[aria-label*="theme"]');
       if (btn) btn.click();
     } else if (name.includes('clear')) {
-      var cb = document.getElementById('clear-filters') || document.querySelector('.clear-filters, [data-action="clear-filters"]');
+      // clear the page search box as reliable fallback
+      if (pageSearch) {
+        pageSearch.value = '';
+        pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      var cb = document.getElementById('clear-filters') ||
+               document.querySelector('[id*="clear"]') ||
+               document.querySelector('[class*="clear"]');
       if (cb) cb.click();
-      else if (pageSearch) { pageSearch.value = ''; pageSearch.dispatchEvent(new Event('input', { bubbles: true })); }
     } else if (name.includes('good first') || name.includes('gfi')) {
-      var gfi = document.querySelector('a[href*="good"], [data-page="gfi"], #gfi-link');
+      var gfi = document.querySelector('a[href*="good"]') ||
+                document.querySelector('[id*="gfi"]') ||
+                document.querySelector('[class*="gfi"]');
       if (gfi) gfi.click();
     } else if (name.includes('sort')) {
-      var sel = document.getElementById('sort-select') || document.querySelector('select[name="sort"], .sort-select');
-      if (sel) { sel.value = 'alpha'; sel.dispatchEvent(new Event('change')); }
+      var sel = document.querySelector('select') ||
+                document.getElementById('sort-select') ||
+                document.querySelector('[id*="sort"]');
+      if (sel) { sel.value = 'alpha'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
     } else if (name.includes('scroll') || name.includes('top')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -5254,7 +5273,7 @@ document.addEventListener('DOMContentLoaded', function () {
   overlay.addEventListener('click', function(e) { if (e.target===overlay) closepalette(); });
 
   document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'm') { e.preventDefault(); overlay.classList.contains('open') ? closepalette() : openpalette(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'm') { e.preventDefault(); overlay.classList.contains('open') ? closepalette() : openpalette(); }
     if (e.key === 'Escape' && overlay.classList.contains('open')) { closepalette(); }
   });
 

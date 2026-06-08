@@ -32,29 +32,42 @@ Nexus Spring of Code is a program designed to:
 Browse the [Issues tab](https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues) and filter by:
 
 - `nsoc26` label for NSoC-specific issues
-- `level-1` for beginner-friendly tasks
-- `level-2` for intermediate tasks
-- `level-3` for advanced tasks
+- `level:beginner` (or `level1`) for beginner-friendly tasks
+- `level:intermediate` (or `level2`) for intermediate tasks
+- `level:advanced` (or `level3`) for advanced tasks
+- `type:bug`, `type:ui`, `type:api`, `type:docs`, `type:enhancement` for specific types
+
+New issues are **automatically triaged by our AI bot** which applies difficulty and type labels. You can filter by these labels to find issues that match your skill level.
 
 ### Step 2 — Request Assignment
 
 Comment on the issue with:
 
+```bash
+/assign nsoc
 ```
-/assign
-```
 
-**You MUST mention NSoC in your comment.** Example:
+You **must** include `nsoc` in your assignment command.
 
-> I would like to work on this issue under NSOC.
+### Step 3 — Assignment Processing
 
-### Step 3 — Wait for Bot Validation
+The automated system validates:
 
-The automated system will validate:
+- Your GitHub account is at least **7 days old**
+- The issue is available (not already assigned)
+- Your active assignment count is under the maximum (**3 issues**)
+- No recent spam/AI-slop flags on your account
 
-- Your eligibility as an NSoC contributor
-- Whether the issue is available
-- Your current active assignment count (max 3)
+**Auto-assignment rules by difficulty (on verified issues):**
+
+| Issue Level | Requirement |
+|-------------|-------------|
+| `level1` (Beginner) | Anyone can self-assign immediately (no restrictions) |
+| `level2` (Intermediate) | Account must be at least **30 days old** for auto-assignment |
+| `level3` (Advanced) | Must have at least **1 merged PR** in this repository |
+
+- If the issue is not yet verified, a maintainer approves via `/approve-assignment`
+- If you don't meet the requirements for a level, you can still request assignment and a maintainer can manually approve
 
 Do **NOT** start working until the bot confirms your assignment.
 
@@ -68,11 +81,13 @@ NSoC contributors can request assignments immediately — there is no date restr
 
 ## Contribution Levels
 
-| Level | Difficulty | Examples |
-|-------|-----------|----------|
-| Level 1 | Beginner | UI tweaks, docs, small bug fixes, accessibility |
-| Level 2 | Intermediate | Filter logic, caching, API improvements, search |
-| Level 3 | Advanced | Architecture changes, performance, security |
+| Level | Label | Examples |
+|-------|-------|----------|
+| Level 1 | `level1` | UI tweaks, docs, small bug fixes, accessibility |
+| Level 2 | `level2` | Filter logic, caching, API improvements, search |
+| Level 3 | `level3` | Architecture changes, performance, security |
+
+**Level 3 issues** require at least 1 previously merged PR in this repository. **Level 2 issues** require an account at least 30 days old for auto-assignment. **Level 1 issues** have no restrictions — anyone can start here.
 
 ---
 
@@ -165,13 +180,20 @@ When creating a PR, use the NSoC template located at `.github/PULL_REQUEST_TEMPL
 
 ---
 
-## Review Process
+## Review Process (3-Stage Pipeline)
 
-1. Your PR enters the automated validation pipeline (Stage 1)
-2. Once Stage 1 passes, the maintainer reviews your PR directly
-3. The maintainer may request changes — address them promptly
-4. Once approved, the maintainer merges the PR
-5. Your contribution is recorded
+Your PR goes through an automated 3-stage pipeline:
+
+| Stage | What Happens | Labels Applied |
+|-------|-------------|----------------|
+| **Stage 1** — Automated Checks | DCO sign-off, format validation, AI/slop detection, duplicate check, **LLM context analysis** | `stage-1-approved` on pass |
+| **Stage 2** — Reviewer/Maintainer Review | A reviewer checks code quality | `mentor-approved` + `pa-review-required` |
+| **Stage 3** — Maintainer Gate | Final approval and merge | `pa-approved` |
+
+The **LLM PR Analysis** bot will automatically verify that your PR:
+- Links to a valid issue
+- Actually addresses the linked issue
+- Does not include out-of-scope changes
 
 ### Expected Review Times
 
@@ -182,7 +204,10 @@ When creating a PR, use the NSoC template located at `.github/PULL_REQUEST_TEMPL
 
 ## Inactivity Policy
 
-- Assigned issues with no progress for **2–3 days** may be unassigned
+- Assigned issues with no progress for **7 days** will be auto-unassigned
+- "Progress" means posting a comment OR opening a non-draft PR linked to the issue
+- Maintainers and collaborators with write access are exempt
+- After being unassigned, you must wait **24 hours** before re-requesting
 - If you cannot complete an issue, comment `/unassign` to release it for others
 
 ---

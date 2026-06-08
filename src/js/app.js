@@ -653,38 +653,64 @@ function scrollToFocused() {
   }, 30);
 }
 
-function openCompare(){
-  renderCompareSlots();
-  renderCompareTable();
-  document.getElementById('compareBg').classList.add('open');
-  document.body.style.overflow='hidden';
+function updateCardFocus() {
+  const cards = document.querySelectorAll('#orgGrid article');
+  cards.forEach((card, idx) => {
+    const isFocused = idx === focusedIdx;
+    card.classList.toggle('ring-2', isFocused);
+    card.classList.toggle('ring-primary', isFocused);
+  });
 }
-function closeCompare(){document.getElementById('compareBg').classList.remove('open');document.body.style.overflow='';}
-function closeCompareEv(e){if(e.target===document.getElementById('compareBg'))closeCompare();}
 
-function renderCompareSlots(){
-  const arr=[...compareSet].map(i=>ORGS[i]);
-  const slots=document.getElementById('compareSlots');
-  let html='';
-  for(let i=0;i<3;i++){
-    const o=arr[i];
-    if(o){
-      const idx=ORGS.indexOf(o);
-      html+=`<div class="compare-slot filled">
-        <span class="slot-cat ${catBdg(o.cat)}">${escapeHtml(catLabel(o.cat))}</span>
-        <span class="slot-name">${escapeHtml(o.name)}</span>
-        <button 
-           class="slot-remove"
-           aria-label="Remove organization from comparison"
-          onclick="toggleCompare(${idx},null);renderCompareSlots();renderCompareTable();">
-          ✕ Remove
-        </button>
-      </div>`;
-    } else {
-      html+=`<div class="compare-slot"><span class="slot-empty">+ Add org</span><span style="font-size:10px;color:var(--muted)">Click ⚖️ on any card</span></div>`;
-    }
+// Global keydown helper functions to manage Cognitive Complexity
+function handleEscapeKey(e) {
+  const activeModal = document.querySelector('.modal-bg.open, #mobileMenu:not(.hidden), .modal-bg.compare-bg.open');
+  if (activeModal) {
+    e.preventDefault();
+    closeModalElement(activeModal.id);
+    return true;
   }
-  slots.innerHTML=html;
+  return false;
+}
+
+function handleNavigationRight(e, n) {
+  e.preventDefault();
+  focusedIdx = Math.min(focusedIdx + 1, n - 1);
+  if (focusedIdx < 0) focusedIdx = 0;
+  if (focusedIdx >= visibleCount) {
+    visibleCount = Math.min(visibleCount + 12, n);
+    renderOrgs(false);
+  }
+  scrollToFocused();
+  updateCardFocus();
+}
+
+function handleNavigationLeft(e) {
+  e.preventDefault();
+  focusedIdx = Math.max(focusedIdx - 1, 0);
+  scrollToFocused();
+  updateCardFocus();
+}
+
+function handleNavigationDown(e, n) {
+  e.preventDefault();
+  const cols = GRID_COLS();
+  focusedIdx = Math.min(focusedIdx + cols, n - 1);
+  if (focusedIdx < 0) focusedIdx = 0;
+  if (focusedIdx >= visibleCount) {
+    visibleCount = Math.min(visibleCount + 12, n);
+    renderOrgs(false);
+  }
+  scrollToFocused();
+  updateCardFocus();
+}
+
+function handleNavigationUp(e) {
+  e.preventDefault();
+  const cols = GRID_COLS();
+  focusedIdx = Math.max(focusedIdx - cols, 0);
+  scrollToFocused();
+  updateCardFocus();
 }
 
 function handleGlobalKeydown(e) {

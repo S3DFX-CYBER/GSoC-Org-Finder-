@@ -12,6 +12,22 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+async function githubFetch(url, options = {}) {
+  let res = await fetch(url, options);
+
+  if (res.status === 401 && options.headers?.Authorization) {
+    const fallbackHeaders = { ...options.headers };
+    delete fallbackHeaders.Authorization;
+
+    res = await fetch(url, {
+      ...options,
+      headers: fallbackHeaders,
+    });
+  }
+
+  return res;
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -164,7 +180,7 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetch(
+      const res = await githubFetch(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
       );

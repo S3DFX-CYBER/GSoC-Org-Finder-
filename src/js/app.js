@@ -1991,3 +1991,23 @@ if (typeof module !== 'undefined' && module.exports) {
     renderGoodFirstIssues
   };
 }
+
+// Export functions for testing
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    escapeHtml,
+    sanitizeHrefUrl,
+    validateIdeasUrl,
+    githubPathFromValue,
+    githubOwnerFromValue,
+    githubUrlFromValue,
+    orgMatchesLanguages,
+    applySecondarySort,
+    openModal,
+    closeModal,
+    fetchModalGH,  // ADD THIS
+    safeHTML,
+    rawHTML,
+    renderGoodFirstIssues
+  };
+}

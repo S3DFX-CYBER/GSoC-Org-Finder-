@@ -5110,7 +5110,9 @@ if(e.key.toLowerCase()==='r'){
             visibleSections.delete(index);
           }
         });
-        if (visibleSections.size === 0) return;
+        if (visibleSections.size === 0) {
+          return;
+        }
         currentSection = Math.min(...visibleSections);
         updateNavState();
     }, {

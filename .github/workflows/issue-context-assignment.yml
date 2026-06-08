@@ -168,14 +168,15 @@ jobs:
                   per_page: 100
                 }
               );
-
-            const existing =
-              comments.find(
+            
+            const existing = comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
                   c.body.includes(marker)
-              );
-
+            );
+           
             if (existing) {
 
               await github.rest.issues.updateComment({
@@ -259,9 +260,12 @@ jobs:
 
             const pendingExists = comments.find(
               c =>
+                c.user &&
+                c.user.login === 'github-actions[bot]' &&
                 c.body &&
-                c.body.includes('<!-- pending-assignment -->') &&
+                c.body.includes('') &&
                 !c.body.includes('✅ Issue Assigned')
+
             );
 
             if (pendingExists) {
@@ -425,6 +429,8 @@ jobs:
             const existing =
               comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
                   c.body.includes(marker)
               );
@@ -486,10 +492,10 @@ jobs:
             const assignmentComment =
               comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
-                  c.body.includes(
-                    '<!-- pending-assignment -->'
-                  )
+                  c.body.includes('')
               );
 
             if (!assignmentComment) {

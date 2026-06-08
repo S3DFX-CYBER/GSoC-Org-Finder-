@@ -1913,6 +1913,7 @@ globalThis.cBdg = cBdg;
 globalThis.aBdg = aBdg;
 globalThis.catLabel = catLabel;
 globalThis.catBdg = catBdg;
+globalThis.fetchModalGH = fetchModalGH;
 
 function renderMentorContactSection(org) {
   const container = document.getElementById('mMentorsSection');
@@ -1974,23 +1975,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY
 // ══════════════════════════════════════════════
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    escapeHtml,
-    sanitizeHrefUrl,
-    validateIdeasUrl,
-    githubPathFromValue,
-    githubOwnerFromValue,
-    githubUrlFromValue,
-    orgMatchesLanguages,
-    applySecondarySort,
-    openModal,
-    closeModal,
-    safeHTML,
-    rawHTML,
-    renderGoodFirstIssues
-  };
-}
 
 // Export functions for testing
 if (typeof module !== 'undefined' && module.exports) {
@@ -2005,7 +1989,7 @@ if (typeof module !== 'undefined' && module.exports) {
     applySecondarySort,
     openModal,
     closeModal,
-    fetchModalGH,  // ADD THIS
+    fetchModalGH,
     safeHTML,
     rawHTML,
     renderGoodFirstIssues

@@ -5161,8 +5161,9 @@ if(e.key.toLowerCase()==='r'){
         const size = Math.max(rect.width, rect.height);
         ripple.style.width = ripple.style.height = `${size}px`;
 
-        const x = (e.clientX !== undefined && e.clientX !== null) ? (e.clientX - rect.left - size / 2) : (rect.width / 2 - size / 2);
-        const y = (e.clientY !== undefined && e.clientY !== null) ? (e.clientY - rect.top - size / 2) : (rect.height / 2 - size / 2);
+        const isKeyboardClick = e.detail === 0;
+        const x = (!isKeyboardClick && e.clientX !== undefined && e.clientX !== null) ? (e.clientX - rect.left - size / 2) : (rect.width / 2 - size / 2);
+        const y = (!isKeyboardClick && e.clientY !== undefined && e.clientY !== null) ? (e.clientY - rect.top - size / 2) : (rect.height / 2 - size / 2);
         ripple.style.left = `${x}px`;
         ripple.style.top = `${y}px`;
 

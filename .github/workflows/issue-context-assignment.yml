@@ -114,7 +114,7 @@ jobs:
             }
 
             const marker =
-              '';
+              '<!-- mentor-context-review -->';
 
             const mentionList =
               selected.length
@@ -252,19 +252,17 @@ jobs:
             }
 
             // FIX: block duplicate /assign requests securely by not relying on the exact '⏳ Assignment Pending' string
-            const comments =
-              await github.paginate(
-                github.rest.issues.listComments,
-                { owner, repo, issue_number, per_page: 100 }
-              );
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number, per_page: 100 }
+            );
 
-            const pendingExists =
-              comments.find(
-                c =>
-                  c.body &&
-                  c.body.includes('') &&
-                  !c.body.includes('✅ Issue Assigned')
-              );
+            const pendingExists = comments.find(
+              c =>
+                c.body &&
+                c.body.includes('<!-- pending-assignment -->') &&
+                !c.body.includes('✅ Issue Assigned')
+            );
 
             if (pendingExists) {
 
@@ -373,7 +371,7 @@ jobs:
             }
 
             const marker =
-              '';
+              '<!-- pending-assignment -->';
 
             // FIX: Added proper fallback text for empty states
             const mentions =
@@ -490,7 +488,7 @@ jobs:
                 c =>
                   c.body &&
                   c.body.includes(
-                    ''
+                    '<!-- pending-assignment -->'
                   )
               );
 
@@ -593,7 +591,7 @@ jobs:
             });
 
             const updatedBody = [
-              '',
+              '<!-- assignment-status -->',
               '',
               '# ✅ Issue Assigned',
               '',

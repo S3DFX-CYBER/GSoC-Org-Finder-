@@ -114,7 +114,7 @@ jobs:
             }
 
             const marker =
-              '<!-- mentor-context-review -->';
+              '';
 
             const mentionList =
               selected.length
@@ -251,7 +251,7 @@ jobs:
 
             }
 
-            // FIX: block duplicate /assign requests - if a ⏳ pending comment already exists, a second /assign should not overwrite the first claimant
+            // FIX: block duplicate /assign requests securely by not relying on the exact '⏳ Assignment Pending' string
             const comments =
               await github.paginate(
                 github.rest.issues.listComments,
@@ -262,8 +262,8 @@ jobs:
               comments.find(
                 c =>
                   c.body &&
-                  c.body.includes('<!-- assignment-status -->') &&
-                  c.body.includes('⏳ Assignment Pending')
+                  c.body.includes('') &&
+                  !c.body.includes('✅ Issue Assigned')
               );
 
             if (pendingExists) {
@@ -348,7 +348,6 @@ jobs:
 
             }
 
-            // FIX: if the script returned no mentors,fall back to repo admins so the pending comment always has someone who can approve it.
             if (selected.length === 0) {
 
               try {
@@ -374,20 +373,23 @@ jobs:
             }
 
             const marker =
-              '<!-- assignment-status -->';
+              '';
 
+            // FIX: Added proper fallback text for empty states
             const mentions =
-              selected
-                .map(m => `@${m}`)
-                .join(' • ');
+              selected.length > 0
+                ? selected.map(m => `@${m}`).join(' • ')
+                : '_No active mentors available._';
 
             const avatars =
-              selected
-                .map(
-                  mentor =>
-                    `<a href="https://github.com/${mentor}"><img src="https://github.com/${mentor}.png" width="52px" alt="${mentor}" /></a>`
-                )
-                .join('\n');
+              selected.length > 0
+                ? selected
+                    .map(
+                      mentor =>
+                        `<a href="https://github.com/${mentor}"><img src="https://github.com/${mentor}.png" width="52px" alt="${mentor}" /></a>`
+                    )
+                    .join('\n')
+                : '';
 
             const body = [
               marker,
@@ -488,7 +490,7 @@ jobs:
                 c =>
                   c.body &&
                   c.body.includes(
-                    '<!-- assignment-status -->'
+                    ''
                   )
               );
 
@@ -505,8 +507,12 @@ jobs:
             const body =
               assignmentComment.body || '';
 
+            // FIX: Prevent workflow regression by allowing fallback approvals if listCollaborators failed
+            const noMentorsFallback =
+              body.includes('_No active mentors available._');
+
             const mentorMentioned =
-              body.includes(`@${approver}`);
+              body.includes(`@${approver}`) || noMentorsFallback;
 
             if (!mentorMentioned) {
 
@@ -522,7 +528,6 @@ jobs:
 
             }
 
-            // FIX: verify the approver actually has write/maintain/admin access, w/o this, any user mentioned in the comment body could self approve.
             let permissionLevel = 'none';
 
             try {
@@ -588,7 +593,7 @@ jobs:
             });
 
             const updatedBody = [
-              '<!-- assignment-status -->',
+              '',
               '',
               '# ✅ Issue Assigned',
               '',

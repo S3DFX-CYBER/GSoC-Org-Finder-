@@ -1753,6 +1753,7 @@ const matchToggle = document.getElementById('matchAllLanguagesToggle');
 if (matchToggle) {
   matchToggle.checked = matchAllLanguages;
   matchToggle.addEventListener('change', (e) => {
+    matchAllLanguages = e.target.checked;
     globalThis.matchAllLanguages = e.target.checked;
     applyFilters();
   });
@@ -1913,10 +1914,9 @@ globalThis.cBdg = cBdg;
 globalThis.aBdg = aBdg;
 globalThis.catLabel = catLabel;
 globalThis.catBdg = catBdg;
-globalThis.fetchModalGH = fetchModalGH;
 
 function renderMentorContactSection(org) {
-  const container = document.getElementById('mMentorsSection');
+  const container = document.getElementById('mMentorSection');
   if (!container) return;
 
   container.innerHTML = '';
@@ -1994,4 +1994,5 @@ if (typeof module !== 'undefined' && module.exports) {
     rawHTML,
     renderGoodFirstIssues
   };
+  globalThis.fetchModalGH = fetchModalGH;
 }

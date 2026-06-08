@@ -1286,11 +1286,32 @@
   "FLARE": {
     "org": "FLARE",
     "ideasUrl": "https://github.com/mandiant/flare-vm/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/mandiant/flare-gsoc/discussions",
+        "label": "FLARE GSoC GitHub Discussions"
+      }
+    ],
+    "mentors": [
+      { "name": "Mike Hunhoff", "github": "mike-hunhoff", "githubUrl": "https://github.com/mike-hunhoff" },
+      { "name": "Maijin", "github": "Maijin", "githubUrl": "https://github.com/Maijin" },
+      { "name": "larchchen", "github": "larchchen", "githubUrl": "https://github.com/larchchen" },
+      { "name": "mr-tz", "github": "mr-tz", "githubUrl": "https://github.com/mr-tz" },
+      { "name": "stevemk14ebr", "github": "stevemk14ebr", "githubUrl": "https://github.com/stevemk14ebr" },
+      { "name": "jaeyoungkimG", "github": "jaeyoungkimG", "githubUrl": "https://github.com/jaeyoungkimG" },
+      { "name": "m-umairx", "github": "m-umairx", "githubUrl": "https://github.com/m-umairx" },
+      { "name": "binjo", "github": "binjo", "githubUrl": "https://github.com/binjo" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:flare-external@google.com",
+        "label": "FLARE Community Mailing List"
+      }
+    ],
+    "tip": "Create a new topic in GitHub Discussions at https://github.com/mandiant/flare-gsoc/discussions and mention @mandiant/flare-gsoc. Subscribe to mailing list by emailing 'subscribe' to flare-external@google.com",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FOSSASIA": {
@@ -1347,12 +1368,34 @@
   },
   "Free and Open Source Silicon Foundation": {
     "org": "Free and Open Source Silicon Foundation",
-    "ideasUrl": "https://github.com/fossi-foundation/fossi-foundation-web/wiki/GSoC2026",
+    "ideasUrl": "https://fossi-foundation.org/gsoc/gsoc26-ideas",
     "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "mentors": [
+      {
+        "name": "Stafford Horne",
+        "github": "stffrdhrn",
+        "githubUrl": "https://github.com/stffrdhrn"
+      },
+      {
+        "name": "Jonathan Balkind",
+        "github": "jbalkind",
+        "githubUrl": "https://github.com/jbalkind"
+      },
+      {
+        "name": "Steve Hoover",
+        "github": "stevehoover",
+        "githubUrl": "https://github.com/stevehoover"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:gsoc@fossi-foundation.org",
+        "label": "FOSSi Foundation GSoC Mailing List"
+      }
+    ],
+    "tip": "Contact mentors listed on the ideas page directly, or email gsoc@fossi-foundation.org for general GSoC queries.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FreeCAD": {
@@ -1962,12 +2005,44 @@
   "JabRef e.V.": {
     "org": "JabRef e.V.",
     "ideasUrl": "https://github.com/JabRef/jabref/wiki/Google-Summer-of-Code",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discourse",
+        "url": "https://discourse.jabref.org/",
+        "label": "JabRef Discourse Forum"
+      },
+      {
+        "type": "Gitter",
+        "url": "https://gitter.im/JabRef/jabref",
+        "label": "JabRef Gitter"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Oliver Kopp",
+        "github": "koppor",
+        "githubUrl": "https://github.com/koppor"
+      },
+      {
+        "name": "Carl Christian Snethlage",
+        "github": "calixtus",
+        "githubUrl": "https://github.com/calixtus"
+      },
+      {
+        "name": "Christoph",
+        "github": "Siedlerchr",
+        "githubUrl": "https://github.com/Siedlerchr"
+      },
+      {
+        "name": "Tobias Diez",
+        "github": "tobiasdiez",
+        "githubUrl": "https://github.com/tobiasdiez"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "tip": "Introduce yourself on the JabRef Discourse forum (https://discourse.jabref.org/) and mention the project idea you're interested in. Engage publicly rather than via DMs — mentors prefer transparent discussions. Contributing to 'good first issues' on GitHub is strongly encouraged before applying.",
+    "status": "ok",
+    "lastFetched": "2026-05-26T18:05:00.000Z"
   },
   "JBoss Community": {
     "org": "JBoss Community",
@@ -2189,22 +2264,53 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "Kornia": {
-    "org": "Kornia",
-    "ideasUrl": "https://github.com/kornia/kornia/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [
-      {
-        "name": "",
-        "github": "fastai",
-        "githubUrl": "https://github.com/fastai"
-      }
-    ],
-    "mailingLists": [],
-    "tip": "",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"Kornia": {
+  "org": "Kornia",
+  "ideasUrl": "https://github.com/kornia/kornia/wiki/GSoC-2026",
+  "channels": [
+    {
+      "type": "Slack",
+      "url": "https://join.slack.com/t/kornia/shared_invite/zt-csobk21g-2AQRi~X9Uu6PLMuUZdvfjA",
+      "label": "Kornia Slack"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Edgar Riba",
+      "github": "edgarriba",
+      "githubUrl": "https://github.com/edgarriba"
+    },
+    {
+      "name": "Luis Ferraz",
+      "github": "lferraz",
+      "githubUrl": "https://github.com/lferraz"
+    },
+    {
+      "name": "Jian Shi",
+      "github": "shijianjian",
+      "githubUrl": "https://github.com/shijianjian"
+    },
+    {
+      "name": "Miquel A. Farre",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Dmytro Mishkin",
+      "github": "ducha-aiki",
+      "githubUrl": "https://github.com/ducha-aiki"
+    },
+    {
+      "name": "João Gustavo A. Amorim",
+      "github": "johnnv1",
+      "githubUrl": "https://github.com/johnnv1"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Join the Kornia Slack and contact mentors before proposal submission.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Kotlin Foundation": {
     "org": "Kotlin Foundation",
     "ideasUrl": "https://github.com/Kotlin/KEEP/blob/master/gsoc/gsoc-2026.md",

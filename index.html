@@ -5059,7 +5059,7 @@ if(e.key.toLowerCase()==='r'){
       isNavClicking = true;
       clearTimeout(navClickTimer);
       setCurrentSectionById(link.dataset.section);
-      navClickTimer = setTimeout(() => { isNavClicking = false; }, 1000);
+      navClickTimer = setTimeout(() => { isNavClicking = false; updateCurrentSection(); }, 1000);
     });
   });
 

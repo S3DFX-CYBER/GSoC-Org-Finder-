@@ -5096,7 +5096,7 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 <!-- ===== Command Palette Overlay ===== -->
-<div id="cmd-overlay" role="dialog" aria-modal="true" aria-label="Command palette">
+<dialog id="cmd-overlay" aria-label="Command palette">
   <div id="cmd-palette">
     <div id="cmd-search-row">
       <span>🔍</span>
@@ -5107,15 +5107,28 @@ if(e.key.toLowerCase()==='r'){
         autocomplete="off"
         aria-label="Command palette search"
       />
-      <kbd style="font-size:11px;padding:2px 6px;border:1px solid #ccc;border-radius:4px;cursor:pointer" onclick="closepalette()">esc</kbd>
+    <button onclick="closepalette()" aria-label="Close command palette" style="font-size:11px;padding:2px 8px;border:1px solid #ccc;border-radius:4px;cursor:pointer;background:transparent;font-family:monospace">esc</button>
     </div>
-    <div id="cmd-results" role="listbox"></div>
+    <div id="cmd-results" role="list"></div>
     <div id="cmd-footer">
       <span class="cmd-hint">Use arrow keys to navigate • Enter to select • Esc to close</span>
     </div>
   </div>
-</div>
+</dialog>
 <script>
+  function escHtml(s) {
+    return (s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  }
+
+  function fuzzy(text, q) {
+    if (!q) return true;
+    text = text.toLowerCase(); q = q.toLowerCase();
+    var j = 0;
+    for (var i = 0; i < text.length && j < q.length; i++)
+      if (text[i] === q[j]) j++;
+    return j === q.length;
+  }
+
 document.addEventListener('DOMContentLoaded', function () {
   var overlay   = document.getElementById('cmd-overlay');
   var input     = document.getElementById('cmd-input');
@@ -5123,7 +5136,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var activeIdx = 0;
   var currentItems = [];
 
-  // find the page search box once
   var pageSearch = document.getElementById('search') ||
                    document.getElementById('search-input') ||
                    document.querySelector('input[type="search"]') ||
@@ -5137,19 +5149,6 @@ document.addEventListener('DOMContentLoaded', function () {
     { icon: '🔤', name: 'Sort A to Z', sub: 'Sort organizations alphabetically' },
     { icon: '⬆️', name: 'Scroll to top', sub: 'Go back to the top of the page' },
   ];
-
-  function fuzzy(text, q) {
-    if (!q) return true;
-    text = text.toLowerCase(); q = q.toLowerCase();
-    var j = 0;
-    for (var i = 0; i < text.length && j < q.length; i++)
-      if (text[i] === q[j]) j++;
-    return j === q.length;
-  }
-
-  function escHtml(s) {
-    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
 
   function hl(str, q) {
     str = escHtml(str); q = escHtml(q);
@@ -5181,7 +5180,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // actions
     var matchedActions = ACTIONS.filter(function(a) {
-      return !q || fuzzy(a.name,q) || fuzzy(a.sub,q);
+      return q ? fuzzy(a.name,q) || fuzzy(a.sub,q) : true;
     });
 
     if (matchedActions.length) {
@@ -5193,59 +5192,76 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
-    if (!html) html = '<div style="padding:32px;text-align:center;color:#999;font-size:14px">No results for "' + q + '"</div>';
+    if (!html) {
+      var empty = document.createElement('div');
+      empty.style.cssText = 'padding:32px;text-align:center;color:#999;font-size:14px';
+      empty.textContent = 'No results for "' + q + '"';
+      resultsEl.innerHTML = '';
+      resultsEl.appendChild(empty);
+      return;
+    }
     resultsEl.innerHTML = html;
     resultsEl.querySelectorAll('.cmd-item').forEach(function(el) {
-      el.addEventListener('click', function() { cmdSelect(parseInt(el.dataset.idx)); });
+      el.addEventListener('click', function() { cmdSelect(Number.parseInt(el.dataset.idx, 10)); });
     });
+  }
+
+  function runOrgAction(org) {
+    if (!pageSearch) return;
+    pageSearch.value = org.name;
+    pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
+    pageSearch.dispatchEvent(new Event('keyup', { bubbles: true }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function runTheme() {
+    var btn = document.getElementById('theme-toggle') ||
+              document.querySelector('[id*="theme"]') ||
+              document.querySelector('[class*="theme"]') ||
+              document.querySelector('[aria-label*="theme"]');
+    if (btn) btn.click();
+  }
+
+  function runClear() {
+    if (pageSearch) {
+      pageSearch.value = '';
+      pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    var cb = document.getElementById('clear-filters') ||
+             document.querySelector('[id*="clear"]') ||
+             document.querySelector('[class*="clear"]');
+    if (cb) cb.click();
+  }
+
+  function runGfi() {
+    var gfi = document.querySelector('a[href*="good"]') ||
+              document.querySelector('[id*="gfi"]') ||
+              document.querySelector('[class*="gfi"]');
+    if (gfi) gfi.click();
+  }
+
+  function runSort() {
+    var sel = document.querySelector('select') ||
+              document.getElementById('sort-select') ||
+              document.querySelector('[id*="sort"]');
+    if (sel) { sel.value = 'alpha'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+  }
+
+  function runAction(name) {
+    if (name.includes('dark') || name.includes('light') || name.includes('theme')) { runTheme(); }
+    else if (name.includes('clear'))      { runClear(); }
+    else if (name.includes('good first')) { runGfi(); }
+    else if (name.includes('sort'))       { runSort(); }
+    else if (name.includes('scroll') || name.includes('top')) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
   }
 
   function cmdSelect(idx) {
     var item = currentItems[idx];
     if (!item) return;
     closepalette();
-
-    if (item.type === 'org') {
-      if (pageSearch) {
-        pageSearch.value = item.data.name;
-        pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
-        pageSearch.dispatchEvent(new Event('keyup', { bubbles: true }));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      return;
-    }
-
-    var name = item.data.name.toLowerCase();
-    if (name.includes('dark') || name.includes('light') || name.includes('theme')) {
-      var btn = document.getElementById('theme-toggle') ||
-                document.querySelector('[id*="theme"]') ||
-                document.querySelector('[class*="theme"]') ||
-                document.querySelector('[aria-label*="theme"]');
-      if (btn) btn.click();
-    } else if (name.includes('clear')) {
-      // clear the page search box as reliable fallback
-      if (pageSearch) {
-        pageSearch.value = '';
-        pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      var cb = document.getElementById('clear-filters') ||
-               document.querySelector('[id*="clear"]') ||
-               document.querySelector('[class*="clear"]');
-      if (cb) cb.click();
-    } else if (name.includes('good first') || name.includes('gfi')) {
-      var gfi = document.querySelector('a[href*="good"]') ||
-                document.querySelector('[id*="gfi"]') ||
-                document.querySelector('[class*="gfi"]');
-      if (gfi) gfi.click();
-    } else if (name.includes('sort')) {
-      var sel = document.querySelector('select') ||
-                document.getElementById('sort-select') ||
-                document.querySelector('[id*="sort"]');
-      if (sel) { sel.value = 'alpha'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
-    } else if (name.includes('scroll') || name.includes('top')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (item.type === 'org') { runOrgAction(item.data); }
+    else { runAction(item.data.name.toLowerCase()); }
   }
 
   function openpalette() {
@@ -5258,14 +5274,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function closepalette() {
     overlay.classList.remove('open');
+    overlay.close && overlay.close();
   }
 
   input.addEventListener('input', function() { activeIdx = 0; render(input.value); });
 
   input.addEventListener('keydown', function(e) {
     var total = currentItems.length;
-    if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = (activeIdx+1)%total; render(input.value); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = (activeIdx-1+total)%total; render(input.value); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (total > 0) { activeIdx = (activeIdx+1)%total; render(input.value); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (total > 0) { activeIdx = (activeIdx-1+total)%total; render(input.value); } }
     else if (e.key === 'Enter' && total > 0) { cmdSelect(activeIdx); }
     else if (e.key === 'Escape') { closepalette(); }
   });
@@ -5277,7 +5294,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key === 'Escape' && overlay.classList.contains('open')) { closepalette(); }
   });
 
-  var escBtn = document.querySelector('#cmd-search-row kbd');
+  var escBtn = document.querySelector('#cmd-search-row button');
   if (escBtn) escBtn.onclick = closepalette;
 });
 </script>

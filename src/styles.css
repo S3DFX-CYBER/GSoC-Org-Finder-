@@ -841,8 +841,8 @@ footer a:hover{text-decoration:underline}
   flex-shrink: 0;
 }
 
-.cmd-item-icon.org  { background: #e8f0fe; color: #1a73e8; }
-.cmd-item-icon.action { background: #e6f4ea; color: #1e8e3e; }
+.cmd-item-icon.org  { background: #b8d0f5; color: #0a2d6e; }
+.cmd-item-icon.action { background: #b8dcc2; color: #0a4a20; }
 
 .cmd-item-body { flex: 1; min-width: 0; }
 .cmd-item-name { font-size: 14px; font-weight: 500; color: var(--text-primary, #111); }
@@ -881,34 +881,26 @@ footer a:hover{text-decoration:underline}
 }
 
 /* dark mode overrides */
-.dark #cmd-palette,
 [data-theme="dark"] #cmd-palette {
   background: #1e1e2e;
   border-color: #333;
 }
-.dark #cmd-input,
 [data-theme="dark"] #cmd-input {
   color: #f0f0f0;
 }
-.dark .cmd-item-name,
 [data-theme="dark"] .cmd-item-name {
   color: #f0f0f0;
 }
-.dark .cmd-item-sub,
 [data-theme="dark"] .cmd-item-sub {
   color: #aaaaaa;
 }
-.dark .cmd-section-label,
 [data-theme="dark"] .cmd-section-label {
   color: #888888;
 }
-.dark .cmd-item:hover,
-.dark .cmd-item.active,
 [data-theme="dark"] .cmd-item:hover,
 [data-theme="dark"] .cmd-item.active {
   background: #2a2a3e;
 }
-.dark #cmd-footer,
 [data-theme="dark"] #cmd-footer {
   background: #18181b;
   border-color: #333;

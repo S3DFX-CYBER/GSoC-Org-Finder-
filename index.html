@@ -2495,7 +2495,7 @@
       };
 
       if (snapshots[value]) return snapshots[value];
-      return { label: value ? value.toUpperCase() : 'Not listed', summary: 'Use the repo and ideas page to confirm the ramp-up.', levelClass: 'beginner' };
+      return { label: value ? value.toUpperCase() : 'Not listed', summary: 'Use the repo and ideas page to confirm the ramp-up.', levelClass: 'intermediate' };
     }
 
     function getStartingPointGuide(ideasUrl, repoUrl, techTags) {
@@ -3489,19 +3489,13 @@
       const codebaseSnapshot = getCodebaseSnapshot(org.codebase);
       const techTags = Array.isArray(org.tags) ? org.tags.filter(Boolean) : [];
       const fitTags = Array.isArray(org.fit) ? org.fit.filter(Boolean) : [];
-      const yearsValue =
-        org.years !== null &&
-          org.years !== undefined &&
-          org.years !== ''
-          ? Number(org.years)
-          : null;
+      const yearsValue = org.years !== null && org.years !== undefined && org.years !== ''
+        ? Number(org.years)
+        : null;
 
-      const firstYearValue =
-        org.firstYear !== null &&
-          org.firstYear !== undefined &&
-          org.firstYear !== ''
-          ? Number(org.firstYear)
-          : null;
+      const firstYearValue = org.firstYear !== null && org.firstYear !== undefined && org.firstYear !== ''
+        ? Number(org.firstYear)
+        : null;
       const yearsText = Number.isFinite(yearsValue) ? String(yearsValue) : '—';
       const firstYearText = Number.isFinite(firstYearValue) ? String(firstYearValue) : '—';
       const description = org.desc || org.description || 'No description is available for this organization yet.';

@@ -452,7 +452,7 @@ kbd:hover{
     html { width: 100%; scroll-behavior: smooth; }
     
     /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #ai-recommender, #contact {
+    #timeline, #orgs, #guide, #watchlist, #tracker, #issues, #mentors, #ai-recommender, #contact {
       scroll-margin-top: 80px;
     }
 
@@ -1097,6 +1097,7 @@ kbd:hover{
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#tracker" data-section="tracker">Tracker</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
       </nav>
@@ -1184,6 +1185,10 @@ kbd:hover{
       <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
+      </a>
+      <a href="#tracker" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="tracker">
+        <span class="material-symbols-outlined text-lg">view_kanban</span>
+        Tracker
       </a>
       <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
@@ -1541,6 +1546,49 @@ kbd:hover{
           <p id="aiInsightText" class="text-sm text-orange-100 leading-relaxed mb-4">Select organizations to get personalized contribution advice.</p>
           <span class="text-[10px] font-label uppercase tracking-widest text-orange-200">Automated System Advice</span>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACKER SECTION -->
+<section id="tracker" class="bg-surface-container-low py-20 px-6 border-t border-zinc-100">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
+      <div>
+        <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Your Progress</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Application Tracker.</h2>
+        <p class="text-zinc-600 mt-4 max-w-2xl">Manage your applications visually. Drag and drop organizations across different stages.</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="kanbanBoard">
+      <!-- Interested -->
+      <div class="kanban-column bg-zinc-100/50 rounded-2xl p-4 flex flex-col" data-status="interested">
+        <h3 class="font-bold text-sm text-zinc-700 mb-4 flex items-center justify-between">
+          Interested <span class="bg-zinc-200 text-zinc-600 text-[10px] px-2 py-0.5 rounded-full kanban-count">0</span>
+        </h3>
+        <div class="kanban-dropzone flex-1 space-y-3 min-h-[150px]"></div>
+      </div>
+      <!-- Researching -->
+      <div class="kanban-column bg-blue-50/50 rounded-2xl p-4 flex flex-col" data-status="researching">
+        <h3 class="font-bold text-sm text-blue-800 mb-4 flex items-center justify-between">
+          Researching <span class="bg-blue-200 text-blue-800 text-[10px] px-2 py-0.5 rounded-full kanban-count">0</span>
+        </h3>
+        <div class="kanban-dropzone flex-1 space-y-3 min-h-[150px]"></div>
+      </div>
+      <!-- Drafting -->
+      <div class="kanban-column bg-orange-50/50 rounded-2xl p-4 flex flex-col" data-status="drafting">
+        <h3 class="font-bold text-sm text-orange-800 mb-4 flex items-center justify-between">
+          Drafting Proposal <span class="bg-orange-200 text-orange-800 text-[10px] px-2 py-0.5 rounded-full kanban-count">0</span>
+        </h3>
+        <div class="kanban-dropzone flex-1 space-y-3 min-h-[150px]"></div>
+      </div>
+      <!-- Submitted -->
+      <div class="kanban-column bg-green-50/50 rounded-2xl p-4 flex flex-col" data-status="submitted">
+        <h3 class="font-bold text-sm text-green-800 mb-4 flex items-center justify-between">
+          Submitted <span class="bg-green-200 text-green-800 text-[10px] px-2 py-0.5 rounded-full kanban-count">0</span>
+        </h3>
+        <div class="kanban-dropzone flex-1 space-y-3 min-h-[150px]"></div>
       </div>
     </div>
   </div>
@@ -3123,6 +3171,9 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
              </button>
+             <button data-track-btn-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">view_kanban</span> ${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'Tracked' : 'Track'}
+             </button>
           </div>
            <button data-open-org="" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
         </div>
@@ -3815,17 +3866,30 @@ btn.__orgListenerAttached = true;
           <h2>${escapeHtml(org.name)}</h2>
           <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
         </div>
-        <button
-          id="modalBookmarkBtn"
-          class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'} flex-shrink-0 mt-1"
-          data-bookmark-org="${escapeHtml(org.name)}"
-          aria-label="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
-          title="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
-        >
-          <span class="material-symbols-outlined text-2xl ${isBookmarked ? 'icon-fill' : ''}">
-            star
-          </span>
-        </button>
+        <div class="flex gap-2">
+          <button
+            id="modalTrackBtn"
+            class="bookmark-btn ${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'active' : 'text-zinc-300'} flex-shrink-0 mt-1"
+            data-track-btn-org="${escapeHtml(org.name)}"
+            aria-label="${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'Untrack' : 'Track Application'}"
+            title="${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'Untrack' : 'Track Application'}"
+          >
+            <span class="material-symbols-outlined text-2xl ${(globalThis.trackedOrgs && globalThis.trackedOrgs[org.name]) ? 'icon-fill' : ''}">
+              view_kanban
+            </span>
+          </button>
+          <button
+            id="modalBookmarkBtn"
+            class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'} flex-shrink-0 mt-1"
+            data-bookmark-org="${escapeHtml(org.name)}"
+            aria-label="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+            title="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+          >
+            <span class="material-symbols-outlined text-2xl ${isBookmarked ? 'icon-fill' : ''}">
+              star
+            </span>
+          </button>
+        </div>
       </div>
     `;
     const modalBookmarkBtn = document.getElementById('modalBookmarkBtn');
@@ -3840,6 +3904,15 @@ btn.__orgListenerAttached = true;
         const label = nowBookmarked ? 'Remove bookmark' : 'Add to Watchlist';
         modalBookmarkBtn.setAttribute('aria-label', label);
         modalBookmarkBtn.setAttribute('title', label);
+      });
+    }
+
+    const modalTrackBtn = document.getElementById('modalTrackBtn');
+    if (modalTrackBtn) {
+      modalTrackBtn.addEventListener('click', (e) => {
+        if (typeof globalThis.toggleTracker === 'function') {
+          globalThis.toggleTracker(org.name);
+        }
       });
     }
 
@@ -5105,5 +5178,208 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 
+<script>
+(function() {
+  function loadTrackerState() {
+    try {
+      const stored = localStorage.getItem('trackedOrgs');
+      if (!stored) return {};
+      const parsed = JSON.parse(stored);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+      for (const key of Object.keys(parsed)) {
+        if (!parsed[key] || typeof parsed[key] !== 'object') {
+          parsed[key] = { status: 'interested', note: '' };
+        } else {
+          if (!parsed[key].status) parsed[key].status = 'interested';
+          if (typeof parsed[key].note !== 'string') parsed[key].note = '';
+        }
+      }
+      return parsed;
+    } catch (e) {
+      console.error('Tracker init err:', e);
+      return {};
+    }
+  }
+
+  let initialTrackedOrgs = loadTrackerState();
+  globalThis.trackedOrgs = initialTrackedOrgs;
+  let draggedOrgName = null;
+
+  function saveTrackerState() {
+    try { localStorage.setItem('trackedOrgs', JSON.stringify(globalThis.trackedOrgs)); } catch (e) { console.warn('Tracker save error:', e); }
+  }
+
+  function createKanbanCard(orgName, data) {
+    const card = document.createElement('div');
+    card.className = 'kanban-card bg-white p-3 rounded-xl border border-zinc-200 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-all group';
+    card.draggable = true;
+    card.dataset.org = orgName;
+
+    const orgObj = typeof ORGS === 'undefined' ? null : ORGS.find(o => o.name === orgName);
+    const owner = (orgObj && typeof githubOwnerFromValue === 'function') ? githubOwnerFromValue(orgObj.github) : '';
+    const logoUrl = owner ? `https://github.com/${owner}.png?size=48` : '';
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          ${logoUrl ? `<img src="${escapeHtml(logoUrl)}" class="w-6 h-6 rounded-md object-contain" alt="logo"/>` : ''}
+          <h4 class="font-bold text-sm text-zinc-900 truncate max-w-[120px]" title="${escapeHtml(orgName)}">${escapeHtml(orgName)}</h4>
+        </div>
+        <button class="remove-track-btn focus:outline-none focus:ring-2 focus:ring-red-500 rounded text-zinc-400 hover:text-red-500 transition-opacity" title="Remove from Tracker" aria-label="Remove from Tracker">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      </div>
+      <div class="mb-2">
+        <select class="w-full text-xs bg-zinc-50 border border-zinc-100 rounded p-1 text-zinc-600 focus:ring-1 focus:ring-primary status-select">
+          <option value="interested" ${data.status === 'interested' ? 'selected' : ''}>Interested</option>
+          <option value="researching" ${data.status === 'researching' ? 'selected' : ''}>Researching</option>
+          <option value="drafting" ${data.status === 'drafting' ? 'selected' : ''}>Drafting Proposal</option>
+          <option value="submitted" ${data.status === 'submitted' ? 'selected' : ''}>Submitted</option>
+        </select>
+      </div>
+      <textarea class="w-full text-xs text-zinc-600 bg-zinc-50 border border-zinc-100 rounded p-2 resize-none focus:ring-1 focus:ring-primary focus:border-primary transition-all note-textarea" rows="2" placeholder="Add a note...">${escapeHtml(data.note || '')}</textarea>
+    `;
+
+    const statusSelect = card.querySelector('.status-select');
+    statusSelect.addEventListener('change', (e) => {
+      if (globalThis.trackedOrgs[orgName]) {
+        globalThis.trackedOrgs[orgName].status = e.target.value;
+        saveTrackerState();
+        globalThis.renderTracker();
+      }
+    });
+
+    card.addEventListener('dragstart', (e) => {
+      draggedOrgName = orgName;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => card.classList.add('opacity-50'), 0);
+    });
+
+    card.addEventListener('dragend', () => {
+      draggedOrgName = null;
+      card.classList.remove('opacity-50');
+    });
+
+    card.querySelector('.remove-track-btn').addEventListener('click', () => {
+      delete globalThis.trackedOrgs[orgName];
+      saveTrackerState();
+      globalThis.renderTracker();
+      updateTrackerButtons(orgName);
+    });
+
+    const textarea = card.querySelector('.note-textarea');
+    textarea.addEventListener('input', (e) => {
+      if (globalThis.trackedOrgs[orgName]) {
+        globalThis.trackedOrgs[orgName].note = e.target.value;
+        saveTrackerState();
+      }
+    });
+
+    return card;
+  }
+
+  globalThis.renderTracker = function() {
+    const columns = {
+      interested: document.querySelector('.kanban-column[data-status="interested"] .kanban-dropzone'),
+      researching: document.querySelector('.kanban-column[data-status="researching"] .kanban-dropzone'),
+      drafting: document.querySelector('.kanban-column[data-status="drafting"] .kanban-dropzone'),
+      submitted: document.querySelector('.kanban-column[data-status="submitted"] .kanban-dropzone')
+    };
+    const counts = { interested: 0, researching: 0, drafting: 0, submitted: 0 };
+
+    Object.values(columns).forEach(col => { if (col) col.innerHTML = ''; });
+
+    for (const orgName of Object.keys(globalThis.trackedOrgs)) {
+      const data = globalThis.trackedOrgs[orgName];
+      const col = columns[data.status];
+      if (!col) continue;
+      counts[data.status]++;
+      col.appendChild(createKanbanCard(orgName, data));
+    }
+
+    for (const status of Object.keys(counts)) {
+      const countEl = document.querySelector(`.kanban-column[data-status="${status}"] .kanban-count`);
+      if (countEl) countEl.textContent = counts[status];
+    }
+  };
+
+  document.querySelectorAll('.kanban-column').forEach(col => {
+    col.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      col.classList.add('bg-zinc-200/50');
+    });
+
+    col.addEventListener('dragleave', () => {
+      col.classList.remove('bg-zinc-200/50');
+    });
+
+    col.addEventListener('drop', (e) => {
+      e.preventDefault();
+      col.classList.remove('bg-zinc-200/50');
+      const newStatus = col.dataset.status;
+      if (draggedOrgName && globalThis.trackedOrgs[draggedOrgName]) {
+        globalThis.trackedOrgs[draggedOrgName].status = newStatus;
+        saveTrackerState();
+        globalThis.renderTracker();
+      }
+    });
+  });
+
+  globalThis.toggleTracker = function(orgName) {
+    if (globalThis.trackedOrgs[orgName]) {
+      delete globalThis.trackedOrgs[orgName];
+    } else {
+      globalThis.trackedOrgs[orgName] = { status: 'interested', note: '' };
+    }
+    saveTrackerState();
+    globalThis.renderTracker();
+    updateTrackerButtons(orgName);
+  };
+
+  function updateTrackerButtons(orgName) {
+    const isTracked = !!globalThis.trackedOrgs[orgName];
+    // Use CSS.escape to prevent querySelectorAll from breaking with special characters in orgName
+    const escapedSelector = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(orgName) : orgName.replaceAll('"', String.raw`\"`);
+    document.querySelectorAll(`button[data-track-btn-org="${escapedSelector}"]`).forEach(btn => {
+      if (btn.id === 'modalTrackBtn') {
+        btn.classList.toggle('active', isTracked);
+        btn.classList.toggle('text-zinc-300', !isTracked);
+        const icon = btn.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.toggle('icon-fill', isTracked);
+        const label = isTracked ? 'Untrack Application' : 'Track Application';
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+      } else {
+        btn.classList.toggle('text-primary', isTracked);
+        btn.classList.toggle('text-zinc-400', !isTracked);
+        const textNode = btn.lastChild;
+        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+          textNode.textContent = isTracked ? ' Tracked' : ' Track';
+        }
+      }
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const trackBtn = e.target.closest('button[data-track-btn-org]');
+    if (trackBtn && trackBtn.id !== 'modalTrackBtn') {
+      e.preventDefault();
+      e.stopPropagation();
+      const orgName = trackBtn.dataset.trackBtnOrg;
+      globalThis.toggleTracker(orgName);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    globalThis.renderTracker();
+    for (const orgName of Object.keys(globalThis.trackedOrgs)) {
+      updateTrackerButtons(orgName);
+    }
+  });
+})();
+</script>
 </body>
 </html>
+
+

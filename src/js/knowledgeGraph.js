@@ -103,17 +103,22 @@ function toggleGraphView() {
   const graphSection = document.getElementById('graphViewSection');
   const orgGrid = document.getElementById('orgGrid');
   const toggleBtn = document.getElementById('graphToggleBtn');
+  const pagination = document.getElementById('pagination');
+  const emptyState = document.getElementById('emptyState');
   const isShowing = graphSection.style.display !== 'none';
 
   if (isShowing) {
     graphSection.style.display = 'none';
     orgGrid.style.display = '';
+    if (pagination) pagination.style.display = '';
+    if (emptyState) emptyState.style.display = '';
     toggleBtn.textContent = '🌐 Graph View';
   } else {
     graphSection.style.display = 'block';
     orgGrid.style.display = 'none';
+    if (pagination) pagination.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
     toggleBtn.textContent = '☰ List View';
-    // Load vis-network if not already loaded
     if (typeof vis === 'undefined') {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/standalone/umd/vis-network.min.js';

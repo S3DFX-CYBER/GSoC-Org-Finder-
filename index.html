@@ -4039,13 +4039,17 @@ if(org.ideas){
     applyFilters(); // to reset URL params
   };
 
-  document.getElementById('searchInput').addEventListener('input', () => {
-    // Track search badge when user types a search query
-    const query = document.getElementById('searchInput').value.trim();
+  // Shared search function to handle badge tracking and filter application
+  function performSearch(queryText) {
+    const query = queryText.trim();
     if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
     applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    performSearch(e.target.value);
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -4088,23 +4092,13 @@ if(org.ideas){
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     const heroSearchSubmit = () => {
       document.getElementById('searchInput').value = heroSearch.value;
-      const query = heroSearch.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      applyFilters();
+      performSearch(heroSearch.value);
       document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      
-      // Track search badge when user types in hero search
-      const query = e.target.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      applyFilters();
+      performSearch(e.target.value);
     });
 
     heroSearch.addEventListener('keydown', (e) => {

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>About | FindMyGSoC — GSoC 2026 Org Finder</title>
+  <meta name="description" content="Learn about FindMyGSoC — the smart GSoC 2026 Org Finder. Discover key features, how to use the app, and how to get involved." />
+  <link rel="canonical" href="https://findmygsoc.vercel.app/about.html" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    // Theme restoration - prevent FOUC
+    (function(){
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9d4300",
+            "primary-container": "#f97316",
+            "surface-container-low": "#f3f3f3",
+            "on-surface-variant": "#584237",
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Space Grotesk"],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align: middle; }
+    .icon-fill { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+    .fade-up { animation: fadeUp .6s ease-out both; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="sticky top-0 z-30 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur">
+    <div class="flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 dark:text-white whitespace-nowrap">
+          <span class="hidden sm:inline">GSoC 2026 </span>
+          <span class="text-orange-500 italic">Org Finder</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="index.html#timeline" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">Timeline</a>
+        <a href="index.html#orgs" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">Organizations</a>
+        <a href="index.html#ai-recommender" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">AI Recommender</a>
+        <a href="index.html#watchlist" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">Watchlist</a>
+        <a href="index.html#issues" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">Issues</a>
+        <a href="index.html#mentors" class="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 transition-colors">Mentors</a>
+        <a href="about.html" class="text-orange-600 font-bold border-b-2 border-orange-500 transition-colors">About</a>
+      </nav>
+
+      <!-- Right side -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleTheme()"
+          class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
+          aria-label="Toggle theme">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-400">dark_mode</span>
+        </button>
+        <a href="https://github.com/weiwei-gitch/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
+          class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors">
+          <span class="material-symbols-outlined text-sm">star</span>
+          Star & Contribute
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section class="pt-20 pb-16 px-6 max-w-4xl mx-auto text-center fade-up">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 text-orange-600 mb-6">
+      <span class="material-symbols-outlined text-sm icon-fill">info</span>
+      <span class="font-label text-xs uppercase font-bold tracking-widest">About FindMyGSoC</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-extrabold font-headline tracking-tight mb-6">
+      Your Smart Guide to <span class="text-orange-500">GSoC 2026</span>
+    </h1>
+    <p class="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+      FindMyGSoC helps students — especially first-timers — discover the right Google Summer of Code organization, explore beginner-friendly issues, and land their first open-source contribution.
+    </p>
+  </section>
+
+  <!-- ═══════════════════ WHAT IS THIS APP ═══════════════════ -->
+  <section class="py-16 px-6 bg-surface-container-low dark:bg-zinc-900">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+          <span class="material-symbols-outlined text-orange-500">apps</span>
+        </div>
+        <h2 class="text-2xl font-extrabold font-headline">What is this app?</h2>
+      </div>
+      <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base mb-4">
+        <strong class="text-zinc-900 dark:text-zinc-100">FindMyGSoC</strong> is a free, open-source web dashboard that aggregates live data from the Google Summer of Code 2026 program. It lets you search, filter, and compare participating organizations by tech stack, category, difficulty, and competition level — all in one place.
+      </p>
+      <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base">
+        Built for students who are new to GSoC and don't know where to start, the app removes the guesswork and helps you find projects that match your skills and interests in minutes.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ KEY FEATURES ═══════════════════ -->
+  <section class="py-16 px-6 max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-extrabold font-headline tracking-tight mb-3">Key Features</h2>
+      <p class="text-zinc-500 dark:text-zinc-400">Everything you need to navigate GSoC 2026 confidently.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-orange-500">search</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">Organization Search</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Filter 200+ GSoC orgs by tech stack, category, and difficulty to find your best fit instantly.</p>
+      </div>
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-purple-500">auto_awesome</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">AI Recommender</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Enter your skills and interests — the AI engine suggests the most relevant organizations tailored to you.</p>
+      </div>
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-blue-500">bookmark</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">Watchlist</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Save your favourite organizations to a personal watchlist and compare them side by side.</p>
+      </div>
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-red-500">bug_report</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">Issues Browser</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Browse live good-first-issues from GSoC org repos so you can start contributing right away.</p>
+      </div>
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-green-500">group</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">Mentors Section</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Discover mentors for each organization and learn how to reach out and get guidance early.</p>
+      </div>
+
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
+        <div class="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-yellow-500">schedule</span>
+        </div>
+        <h3 class="font-bold text-base mb-2">GSoC Timeline</h3>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Stay on track with a clear timeline of all important GSoC 2026 dates and deadlines.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════ HOW TO USE ═══════════════════ -->
+  <section class="py-16 px-6 bg-surface-container-low dark:bg-zinc-900">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-extrabold font-headline tracking-tight mb-3">Quick-Start Guide</h2>
+        <p class="text-zinc-500 dark:text-zinc-400">New to GSoC? Follow these 4 steps to get started.</p>
+      </div>
+      <div class="space-y-6">
+
+        <div class="flex gap-5 items-start">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">1</div>
+          <div>
+            <h3 class="font-bold mb-1">Check the Timeline</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Start by reviewing the GSoC 2026 timeline so you know when applications open, close, and when results are announced.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-5 items-start">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">2</div>
+          <div>
+            <h3 class="font-bold mb-1">Use AI Recommender or Search</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Enter your skills in the AI Recommender or use the search filters to find organizations that match your tech stack and interests.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-5 items-start">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">3</div>
+          <div>
+            <h3 class="font-bold mb-1">Bookmark & Compare</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Add shortlisted organizations to your Watchlist, then explore their good-first issues and mentors to evaluate fit.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-5 items-start">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">4</div>
+          <div>
+            <h3 class="font-bold mb-1">Start Contributing</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Pick a good-first issue, make your first contribution, and reach out to mentors before the application window opens.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ TECH STACK & OPEN SOURCE ═══════════════════ -->
+  <section class="py-16 px-6 max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-extrabold font-headline tracking-tight mb-3">Tech Stack & Open Source</h2>
+      <p class="text-zinc-500 dark:text-zinc-400">FindMyGSoC is fully open-source and built with modern web technologies.</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3 mb-10">
+      <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300">HTML5</span>
+      <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300">Tailwind CSS</span>
+      <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300">Vanilla JavaScript</span>
+      <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300">GitHub API</span>
+      <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300">Vercel</span>
+    </div>
+    <div class="text-center">
+      <a href="https://github.com/weiwei-gitch/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold text-sm hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors">
+        <span class="material-symbols-outlined text-sm icon-fill">star</span>
+        View on GitHub & Contribute
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="w-full border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900">
+    <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+            <span class="text-white font-bold text-[10px]">G</span>
+          </div>
+          <span class="text-lg font-bold text-zinc-900 dark:text-white">FindMyGSoC</span>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
+      </div>
+      <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/weiwei-gitch/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="about.html">About</a>
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
+        <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(e) {}
+    }
+  </script>
+</body>
+</html>

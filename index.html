@@ -4180,7 +4180,16 @@ if(org.ideas){
       if (lastUpdatedEl) {
         if (data.updated_at) {
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
-          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+          const hours = Math.floor(mins / 60);
+          const days = Math.floor(hours / 24);
+          let relative;
+          if (mins < 60) {
+            relative = `${mins} min ago`;
+          } else if (hours < 24) {
+            relative = `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+          } else {
+            relative = `${days} ${days === 1 ? 'day' : 'days'} ago`;
+          }
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';

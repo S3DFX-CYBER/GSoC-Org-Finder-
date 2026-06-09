@@ -1976,32 +1976,38 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "IOOS": {
-    "org": "IOOS",
-    "ideasUrl": "https://github.com/ioos/gsoc",
-    "channels": [],
-    "mentors": [
-      {
-        "name": "",
-        "github": "login",
-        "githubUrl": "https://github.com/login"
-      },
-      {
-        "name": "Information",
-        "github": "",
-        "githubUrl": ""
-      }
-    ],
-    "mailingLists": [
-      {
-        "type": "Mailing list",
-        "url": "https://groups.google.com/g/ioos_tech",
-        "label": "ioos_tech"
-      }
-    ],
-    "tip": "Send a short intro email with your background and the idea you're interested in.",
-    "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+  "org": "IOOS",
+  "ideasUrl": "https://github.com/ioos/gsoc",
+  "channels": [
+    {
+      "type": "GitHub",
+      "url": "https://github.com/ioos",
+      "label": "IOOS GitHub Organization"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Filipe Fernandes",
+      "github": "ocefpaf",
+      "githubUrl": "https://github.com/ocefpaf"
+    },
+    {
+      "name": "Micah Wengren",
+      "github": "mwengren",
+      "githubUrl": "https://github.com/mwengren"
+    }
+  ],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/ioos_tech",
+      "label": "ioos_tech"
+    }
+  ],
+  "tip": "Introduce yourself through the ioos_tech mailing list and review contributor guidance before discussing project ideas.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "JabRef e.V.": {
     "org": "JabRef e.V.",
     "ideasUrl": "https://github.com/JabRef/jabref/wiki/Google-Summer-of-Code",

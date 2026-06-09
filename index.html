@@ -5147,10 +5147,10 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 <!-- ORG PICKER MODAL -->
-<div id="orgPickerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+<div id="orgPickerModal" role="dialog" aria-modal="true" aria-labelledby="orgPickerTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;">
-      <h2 style="font-size:18px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;">Choose an Organization</h2>
+      <h2 id="orgPickerTitle" style="font-size:18px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;">Choose an Organization</h2>
       <button onclick="closeOrgPicker()" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
     </div>
     <div style="padding:0 24px 12px;">

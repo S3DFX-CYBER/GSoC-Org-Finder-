@@ -179,7 +179,7 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       const responseHeaders = addRateLimitHeaders(res, { ...headers });
-      if (!res.ok) return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: res.status, headers: responseHeaders });
+      if (!res.ok) return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers: responseHeaders });
 
       const data  = await res.json();
       const total = data.total_count ?? 0;

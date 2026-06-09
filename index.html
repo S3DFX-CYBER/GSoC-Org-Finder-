@@ -3343,13 +3343,14 @@ btn.__orgListenerAttached = true;
       item.onmouseleave = () => item.style.background = '';
       item.innerHTML = `
         <div>
-          <p style="font-weight:700;font-size:14px;color:#1a1c1c;">${org.name}</p>
-          <p style="font-size:11px;color:#8c7164;margin-top:2px;">${org.cat} · ${org.years}y · ${org.competition}</p>
+          <p style="font-weight:700;font-size:14px;color:#1a1c1c;">${escapeHtml(org.name)}</p>
+          <p style="font-size:11px;color:#8c7164;margin-top:2px;">${escapeHtml(org.cat)} · ${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
         </div>
         <button style="background:#9d4300;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;">Add</button>
       `;
       item.querySelector('button').onclick = () => {
         compareList[orgPickerTargetSlot] = org.name;
+        compareList = compareList.filter(Boolean);
         renderCompare();
         closeOrgPicker();
       };
@@ -3464,6 +3465,8 @@ btn.__orgListenerAttached = true;
       closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
+    } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
+      closeOrgPicker();
     }
   });
   

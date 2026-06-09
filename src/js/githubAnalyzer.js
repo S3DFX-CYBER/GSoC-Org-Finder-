@@ -131,7 +131,3 @@ async function analyzeGitHubUser(username, options = {}) {
 
 // Export for global usage
 globalThis.analyzeGitHubUser = analyzeGitHubUser;
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { analyzeGitHubUser };
-}

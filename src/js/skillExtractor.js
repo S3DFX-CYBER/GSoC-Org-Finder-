@@ -163,8 +163,3 @@ function extractSkills(text) {
 
 globalThis.normalizeSkill = normalizeSkill;
 globalThis.extractSkills = extractSkills;
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { normalizeSkill, extractSkills };
-}
-

@@ -173,3 +173,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
 }
 
 globalThis.getRecommendations = getRecommendations;
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { getRecommendations };
+}

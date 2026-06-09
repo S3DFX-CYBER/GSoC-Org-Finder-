@@ -9,33 +9,22 @@ on:
       - reopened
       - ready_for_review
 
-  pull_request_review:
-    types:
-      - submitted
-
-  pull_request_review_comment:
-    types:
-      - created
-      - deleted
-
 permissions:
   contents: read
   pull-requests: write
   issues: write
 
 concurrency:
-  group: validate-pr-${{ github.event.pull_request.number || github.event.pull_request_review.pull_request.number }}
-  cancel-in-progress: false
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   validate-pr:
-    if: github.event_name == 'pull_request_target'
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Validate PR structure
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -47,60 +36,115 @@ jobs:
             const prNumber = pr.number;
             const body = pr.body || '';
             const title = pr.title || '';
-
             const username = pr.user.login;
 
             const lowerBody = body.toLowerCase();
 
             let warnings = [];
+            let criticalWarnings = [];
 
-            // ─────────────────────────────────────────────
             // Ignore bots
-            // ─────────────────────────────────────────────
             if (pr.user.type === 'Bot') {
-              core.info('Ignoring bot PR');
+              core.info('Skipping bot PR');
               return;
             }
 
-            // ─────────────────────────────────────────────
-            // Check linked issue
-            // ─────────────────────────────────────────────
+            // ------------------------------------------------
+            // LINKED ISSUE VALIDATION
+            // ------------------------------------------------
+
             const issueRegex =
-              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+              /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/ig;
 
-            const hasLinkedIssue = issueRegex.test(body);
+            const linkedIssues = [];
+            let match;
 
-            if (!hasLinkedIssue) {
-              warnings.push(
-                '❌ This PR does not reference a linked issue.\n\n' +
-                'Please add:\n' +
-                '`Closes #issue-number`'
-              );
+            while ((match = issueRegex.exec(body)) !== null) {
+              linkedIssues.push(match[2]);
             }
 
-            // ─────────────────────────────────────────────
-            // Detect contribution program
-            // ─────────────────────────────────────────────
-            const mentionsNSOC =
-              lowerBody.includes('nsoc');
+            if (linkedIssues.length === 0) {
 
-            const mentionsGSSOC =
-              lowerBody.includes('gssoc');
+              criticalWarnings.push(
+                '❌ Missing linked issue. Add `Closes #issue-number` to the PR body.'
+              );
+
+              try {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  labels: ['missing-linked-issue']
+                });
+              } catch (e) {}
+
+            } else {
+
+              // Remove label if fixed
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  name: 'missing-linked-issue'
+                });
+              } catch (e) {}
+
+              // Validate issue existence
+              for (const issueNum of linkedIssues) {
+
+                try {
+
+                  await github.rest.issues.get({
+                    owner,
+                    repo,
+                    issue_number: Number(issueNum)
+                  });
+
+                } catch (e) {
+
+                  criticalWarnings.push(
+                    `❌ Linked issue #${issueNum} does not exist.`
+                  );
+                }
+              }
+            }
+
+            // ------------------------------------------------
+            // PROGRAM TAGS
+            // ------------------------------------------------
+
+            const mentionsNSOC = lowerBody.includes('nsoc');
+            const mentionsGSSOC = lowerBody.includes('gssoc');
 
             if (!mentionsNSOC && !mentionsGSSOC) {
               warnings.push(
-                '⚠️ Contribution program not detected.\n\n' +
-                'Please use the proper PR template:\n' +
-                '- NSOC template\n' +
-                '- GSSOC template'
+                '⚠️ Missing contribution program declaration (`GSSOC` or `NSOC`).'
               );
             }
 
-            // ─────────────────────────────────────────────
-            // Apply labels
-            // ─────────────────────────────────────────────
+            // ------------------------------------------------
+            // LABEL MANAGEMENT
+            // ------------------------------------------------
+
             try {
+
+              for (const label of ['nsoc26', 'gssoc26']) {
+
+                try {
+
+                  await github.rest.issues.removeLabel({
+                    owner,
+                    repo,
+                    issue_number: prNumber,
+                    name: label
+                  });
+
+                } catch (e) {}
+              }
+
               if (mentionsNSOC) {
+
                 await github.rest.issues.addLabels({
                   owner,
                   repo,
@@ -110,6 +154,7 @@ jobs:
               }
 
               if (mentionsGSSOC) {
+
                 await github.rest.issues.addLabels({
                   owner,
                   repo,
@@ -117,205 +162,260 @@ jobs:
                   labels: ['gssoc26']
                 });
               }
-            } catch (err) {
-              core.warning(err.message);
+
+            } catch (e) {
+
+              core.warning(`Label operation failed: ${e.message}`);
             }
 
-            // ─────────────────────────────────────────────
-            // Required template sections
-            // ─────────────────────────────────────────────
+            // ------------------------------------------------
+            // REQUIRED TEMPLATE SECTIONS
+            // ------------------------------------------------
+
             const requiredSections = [
               'description',
               'related issue',
               'type of change',
-              'how to test',
               'checklist'
             ];
 
             for (const section of requiredSections) {
+
               if (!lowerBody.includes(section)) {
+
                 warnings.push(
                   `⚠️ Missing PR template section: \`${section}\``
                 );
               }
             }
 
-            // ─────────────────────────────────────────────
-            // Conventional commit title validation
-            // ─────────────────────────────────────────────
+            // ------------------------------------------------
+            // CONVENTIONAL TITLE
+            // ------------------------------------------------
+
             const conventionalRegex =
               /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?: .+/i;
 
             if (!conventionalRegex.test(title)) {
+
               warnings.push(
-                '⚠️ PR title does not follow Conventional Commits format.\n\n' +
-                'Examples:\n' +
-                '- feat: add search filters\n' +
-                '- fix: resolve mobile navbar overlap\n' +
-                '- docs: update contribution guide'
+                '⚠️ PR title must follow conventional commits. Example: `feat: improve mobile navbar`'
               );
             }
 
-            // ─────────────────────────────────────────────
-            // Encourage grouped PRs
-            // ─────────────────────────────────────────────
-            warnings.push(
-              '💡 Contributors are encouraged to combine 1–2 related fixes/features into a single focused PR instead of opening many tiny PRs.'
-            );
+            // ------------------------------------------------
+            // FILE / DIFF ANALYSIS
+            // ------------------------------------------------
 
-            // ─────────────────────────────────────────────
-            // Detect unresolved review comments
-            // ─────────────────────────────────────────────
-            try {
-              const reviewComments = await github.paginate(
-                github.rest.pulls.listReviewComments,
-                {
-                  owner,
-                  repo,
-                  pull_number: prNumber,
-                  per_page: 100
-                }
-              );
-
-              const unresolved = reviewComments.filter(
-                c => !c.in_reply_to_id
-              );
-
-              if (unresolved.length > 0) {
-                warnings.push(
-                  `⚠️ This PR currently has ${unresolved.length} unresolved review conversation(s).`
-                );
-
-                try {
-                  await github.rest.issues.addLabels({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    labels: ['needs-review-updates']
-                  });
-                } catch (err) {
-                  core.warning(err.message);
-                }
-              }
-            } catch (err) {
-              core.warning(err.message);
-            }
-
-            // ─────────────────────────────────────────────
-            // Comment result
-            // ─────────────────────────────────────────────
-            if (warnings.length > 0) {
-
-              const comment =
-                `## ⚠️ PR Validation Warning\n\n` +
-                `Hi @${username}, thanks for contributing 🚀\n\n` +
-                warnings.map(w => `- ${w}`).join('\n\n') +
-                `\n\n---\n\n` +
-                `Please update the PR accordingly.\n` +
-                `This is currently a warning only and does not automatically close the PR.`;
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body: comment
-              });
-
-            } else {
-
-              try {
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  labels: ['validated-pr']
-                });
-              } catch (err) {
-                core.warning(err.message);
-              }
-
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: prNumber,
-                body:
-                  `## ✅ PR Validation Passed\n\n` +
-                  `Thanks @${username}! Your PR follows the repository contribution requirements 🚀`
-              });
-            }
-
-  unresolved-conversations:
-    if: github.event_name == 'pull_request_review' || github.event_name == 'pull_request_review_comment'
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check unresolved conversations
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr =
-              context.payload.pull_request ||
-              context.payload.pull_request_review?.pull_request;
-
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
-            const prNumber = pr.number;
-
-            const comments = await github.paginate(
-              github.rest.pulls.listReviewComments,
-              {
+            const { data: prFiles } =
+              await github.rest.pulls.listFiles({
                 owner,
                 repo,
                 pull_number: prNumber,
                 per_page: 100
-              }
-            );
+              });
 
-            const unresolved = comments.filter(
-              c => !c.in_reply_to_id
-            );
+            const totalAdditions =
+              prFiles.reduce((sum, f) => sum + f.additions, 0);
+
+            const totalDeletions =
+              prFiles.reduce((sum, f) => sum + f.deletions, 0);
+
+            const totalChanges =
+              totalAdditions + totalDeletions;
+
+            const filesChanged = prFiles.length;
+
+            const isFix = /^fix/i.test(title);
+            const isDocs = /^docs/i.test(title);
+            const isStyle = /^style/i.test(title);
+
+            if (isFix && totalChanges > 500) {
+
+              warnings.push(
+                `⚠️ Very large bug-fix PR (${totalChanges} lines changed). Consider splitting into smaller PRs.`
+              );
+            }
+
+            if (isDocs && totalChanges > 1000) {
+
+              warnings.push(
+                `⚠️ Extremely large documentation PR (${totalChanges} lines).`
+              );
+            }
+
+            if (isStyle && totalChanges > 300) {
+
+              warnings.push(
+                `⚠️ Large style-only PR (${totalChanges} lines).`
+              );
+            }
+
+            const unrelatedExtensions =
+              new Set(
+                prFiles.map(f =>
+                  f.filename.split('.').pop()
+                )
+              );
+
+            if (
+              unrelatedExtensions.size > 5 &&
+              totalChanges > 250
+            ) {
+
+              warnings.push(
+                `⚠️ PR touches many unrelated file types (${unrelatedExtensions.size}) and may be too broad.`
+              );
+            }
+
+            // ------------------------------------------------
+            // DEPENDENCY CHECK
+            // ------------------------------------------------
+
+            const lockFiles = [
+              'package-lock.json',
+              'yarn.lock',
+              'pnpm-lock.yaml'
+            ];
+
+            const touchesLockFiles =
+              prFiles.some(f =>
+                lockFiles.some(l =>
+                  f.filename.endsWith(l)
+                )
+              );
+
+            if (touchesLockFiles) {
+
+              criticalWarnings.push(
+                '❌ Dependency lockfile changes detected. This repository follows a zero-dependency philosophy.'
+              );
+            }
+
+            // ------------------------------------------------
+            // LABELS
+            // ------------------------------------------------
+
+            const hasCritical =
+              criticalWarnings.length > 0;
 
             try {
-              if (unresolved.length === 0) {
 
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner,
-                    repo,
-                    issue_number: prNumber,
-                    name: 'needs-review-updates'
-                  });
-                } catch (err) {}
+              if (hasCritical) {
 
                 await github.rest.issues.addLabels({
                   owner,
                   repo,
                   issue_number: prNumber,
-                  labels: ['0-unresolved-conversations']
+                  labels: ['needs-pr-fixes']
                 });
 
               } else {
 
                 try {
+
                   await github.rest.issues.removeLabel({
                     owner,
                     repo,
                     issue_number: prNumber,
-                    name: '0-unresolved-conversations'
+                    name: 'needs-pr-fixes'
                   });
-                } catch (err) {}
 
-                await github.rest.issues.addLabels({
+                } catch (e) {}
+              }
+
+            } catch (e) {}
+
+            // ------------------------------------------------
+            // BUILD COMMENT
+            // ------------------------------------------------
+
+            let bodyMessage = '';
+
+            if (hasCritical || warnings.length > 0) {
+
+              bodyMessage =
+                `## ⚠️ PR Validation Issues\n\n` +
+                `Hi @${username}, your PR requires fixes before review.\n\n`;
+
+              if (criticalWarnings.length > 0) {
+
+                bodyMessage +=
+                  `### Critical Issues\n\n` +
+                  criticalWarnings.map(w => `- ${w}`).join('\n') +
+                  `\n\n`;
+              }
+
+              if (warnings.length > 0) {
+
+                bodyMessage +=
+                  `### Warnings\n\n` +
+                  warnings.map(w => `- ${w}`).join('\n') +
+                  `\n\n`;
+              }
+
+              if (criticalWarnings.some(w =>
+                w.includes('Missing linked issue')
+              )) {
+
+                bodyMessage +=
+                  `⚠️ PRs without linked issues may be automatically closed after 48 hours if unresolved.\n\n`;
+              }
+
+              bodyMessage +=
+                `Please push fixes after updating the PR.`;
+
+            } else {
+
+              bodyMessage =
+                `## ✅ PR Validation Passed\n\n` +
+                `Hi @${username}, automated PR validation checks passed.\n\n` +
+                `Your PR is ready for review.`;
+            }
+
+            // ------------------------------------------------
+            // UPSERT COMMENT
+            // ------------------------------------------------
+
+            const { data: comments } =
+              await github.rest.issues.listComments({
+                owner,
+                repo,
+                issue_number: prNumber,
+                per_page: 100
+              });
+
+            const marker =
+              '<!-- pr-validator-comment -->';
+
+            bodyMessage = `${marker}\n${bodyMessage}`;
+
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes(marker)
+            );
+
+            if (existing) {
+
+              if (
+                existing.body.trim() !==
+                bodyMessage.trim()
+              ) {
+
+                await github.rest.issues.updateComment({
                   owner,
                   repo,
-                  issue_number: prNumber,
-                  labels: ['needs-review-updates']
+                  comment_id: existing.id,
+                  body: bodyMessage
                 });
               }
 
-            } catch (err) {
-              core.warning(err.message);
+            } else {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: bodyMessage
+              });
             }

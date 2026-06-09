@@ -1,6 +1,8 @@
 {
   "version": 2,
   "framework": null,
+  "outputDirectory": ".",
+  "buildCommand": "",
   "devCommand": "npx serve . -l $PORT",
   "rewrites": [
     { "source": "/api/github", "destination": "/api/github.js" }

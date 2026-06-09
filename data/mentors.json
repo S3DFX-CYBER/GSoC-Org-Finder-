@@ -862,16 +862,48 @@
     "status": "ok",
     "lastFetched": "2026-05-29T15:20:00.000Z"
   },
-  "D Language Foundation": {
-    "org": "D Language Foundation",
-    "ideasUrl": "https://github.com/dlang/projects/blob/master/gsoc/gsoc-2026.md",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"D Language Foundation": {
+  "org": "D Language Foundation",
+  "ideasUrl": "https://dlang.github.io/GSoC/gsoc-2026/project-ideas.html",
+  "channels": [
+    {
+      "type": "Forum",
+      "url": "https://forum.dlang.org/",
+      "label": "D Language Forum"
+    },
+    {
+      "type": "Discord",
+      "url": "https://discord.gg/tw2c6mcKAp",
+      "label": "D Language Community Discord"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Dennis Korpel",
+      "github": "dkorpel",
+      "githubUrl": "https://github.com/dkorpel"
+    },
+    {
+      "name": "Razvan Nitu",
+      "github": "RazvanN7",
+      "githubUrl": "https://github.com/RazvanN7"
+    },
+    {
+      "name": "Atila Neves",
+      "github": "atilaneves",
+      "githubUrl": "https://github.com/atilaneves"
+    },
+    {
+      "name": "Nicholas Wilson",
+      "github": "thewilsonator",
+      "githubUrl": "https://github.com/thewilsonator"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Introduce yourself on the D Language Forum or Community Discord before discussing project ideas and proposals.",
+  "status": "ok",
+  "lastFetched": "2026-06-09T00:00:00.000Z"
+},
   "Dart": {
     "org": "Dart",
     "ideasUrl": "https://github.com/dart-lang/sdk/wiki/Google-Summer-of-Code-2026",

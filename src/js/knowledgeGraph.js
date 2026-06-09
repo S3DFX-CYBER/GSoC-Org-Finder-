@@ -1,3 +1,4 @@
+/* global ORGS, vis, openModal */
 // Interactive Knowledge Graph Visualization
 // Uses vis-network via CDN
 

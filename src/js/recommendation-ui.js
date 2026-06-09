@@ -123,9 +123,10 @@ function buildCardHtml(rec, currentCompareList, currentBookmarkedSet) {
 
     let matchedSkillsHtml = '';
     if (rec.matchedSkills.length > 0) {
-      const skillsList = rec.matchedSkills.slice(0, 4).map(s =>
-        `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`
-      ).join('');
+      const skillsList = rec.matchedSkills.slice(0, 4).map(s => {
+        const displaySkill = s.trim().toLowerCase() === 'python' ? '🐍 python' : s;
+        return `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(displaySkill)}</span>`;
+      }).join('');
       matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
     }
 

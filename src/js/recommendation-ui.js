@@ -120,15 +120,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle file upload
   if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
+    fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      file.text().then(text => {
-        resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+
+      errorState.classList.add('hidden');
+
+      if (file.size > 5 * 1024 * 1024) {
+        showError("File too large. Please upload a file under 5MB.");
+        e.target.value = '';
+        return;
+      }
+
+      const fileName = file.name.toLowerCase();
+
+      if (fileName.endsWith('.pdf')) {
+        try {
+          if (typeof pdfjsLib === 'undefined') {
+            showError("PDF library not loaded. Please refresh and try again.");
+            e.target.value = '';
+            return;
+          }
+          resumeText.placeholder = "Parsing PDF...";
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let text = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items
+              .map(item => item.str + (item.hasEOL ? '\n' : ''))
+              .join('');
+            text += pageText + '\n';
+          }
+          resumeText.value = text.trim();
+          resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+        } catch (err) {
+          console.error("PDF Parse Error:", err);
+          e.target.value = '';
+          resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+          showError("Failed to read PDF file. Please make sure it's a valid PDF.");
+        }
+      } else {
+        file.text().then(text => {
+          resumeText.value = text;
+        }).catch(err => {
+          console.error("File Read Error:", err);
+          e.target.value = '';
+          showError("Failed to read file. Please make sure it's a valid text format.");
+        });
+      }
     });
   }
 

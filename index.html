@@ -3524,7 +3524,7 @@ btn.__orgListenerAttached = true;
 
   const analyticsDialog = document.getElementById('anBg');
   if (analyticsDialog) {
-    analyticsDialog.addEventListener('click', window.closeAnEvent);
+    analyticsDialog.addEventListener('click', globalThis.closeAnEvent);
     analyticsDialog.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         closeAn();

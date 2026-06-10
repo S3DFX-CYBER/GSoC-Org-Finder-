@@ -4639,15 +4639,7 @@ if(org.ideas){
   globalThis.openModal = openModal;
 
   // Safe HTML utilities for recommendation-ui.js
-  function safeHTMLEscape(value) {
-    return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  }
-
+  
   class SafeHTMLString extends String {}
   SafeHTMLString.prototype.__isSafeHTML = true;
 
@@ -4661,9 +4653,9 @@ if(org.ideas){
         if (val && val.__isSafeHTML) {
           rendered = val.toString();
         } else if (Array.isArray(val)) {
-          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : safeHTMLEscape(x)).join('');
+          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : escapeHtml(x)).join('');
         } else {
-          rendered = safeHTMLEscape(val != null ? String(val) : '');
+          rendered = escapeHtml(val == null ? '' : String(val));
         }
         result += rendered;
       }

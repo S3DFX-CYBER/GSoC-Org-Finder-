@@ -872,63 +872,7 @@ kbd:hover{
       background: #1c0f05;
     }
 
-    .watchlist-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      flex-shrink: 0;
-    }
-    .watchlist-action-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      min-height: 2.25rem;
-      padding: 0.5rem 0.9rem;
-      border: 1px solid #e4e4e7;
-      border-radius: 999px;
-      background: #fff;
-      color: #52525b;
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
-      white-space: nowrap;
-    }
-    .watchlist-action-btn:hover,
-    .watchlist-action-btn:focus-visible {
-      border-color: #f97316;
-      background: #fff7ed;
-      color: #c2410c;
-    }
-    .watchlist-action-btn:focus-visible {
-      outline: 2px solid rgba(249, 115, 22, 0.4);
-      outline-offset: 2px;
-    }
-    .watchlist-action-primary {
-      border-color: #f97316;
-      background: #f97316;
-      color: #111827;
-    }
-    .watchlist-action-primary:hover,
-    .watchlist-action-primary:focus-visible {
-      background: #ea580c;
-      color: #111827;
-    }
-    .watchlist-action-danger {
-      border-color: #fecaca;
-      color: #dc2626;
-    }
-    .watchlist-action-danger:hover,
-    .watchlist-action-danger:focus-visible {
-      border-color: #dc2626;
-      background: #fef2f2;
-      color: #991b1b;
-    }
+    /* Watchlist styles moved to src/styles.css */
     .toast-container {
       position: fixed;
       right: 1.125rem;
@@ -963,65 +907,7 @@ kbd:hover{
     .app-toast-success { border-left-color: #16a34a; }
     .app-toast-error { border-left-color: #dc2626; }
     .app-toast-warning { border-left-color: #f59e0b; }
-    .dark .watchlist-action-btn {
-      --watchlist-action-hover-bg: #fb923c;
-      --watchlist-action-hover-text: #111827;
-      --watchlist-danger-hover-bg: #fecaca;
-      --watchlist-danger-hover-text: #7f1d1d;
-      background: #18181b;
-      border-color: #3f3f46;
-      color: #d4d4d8;
-    }
-    .dark .watchlist-action-btn:hover,
-    .dark .watchlist-action-btn:focus-visible {
-      border-color: #f97316;
-      background: var(--watchlist-action-hover-bg);
-      color: var(--watchlist-action-hover-text);
-    }
-    .dark .watchlist-action-primary {
-      background: #f97316;
-      border-color: #f97316;
-      color: #111827;
-    }
-    .dark .watchlist-action-primary:hover,
-    .dark .watchlist-action-primary:focus-visible {
-      background: var(--watchlist-action-hover-bg);
-      color: var(--watchlist-action-hover-text);
-    }
-    .dark .watchlist-action-danger {
-      color: #fca5a5;
-      border-color: rgba(252, 165, 165, 0.35);
-    }
-    .dark .watchlist-action-danger:hover,
-    .dark .watchlist-action-danger:focus-visible {
-      background: var(--watchlist-danger-hover-bg);
-      border-color: #fca5a5;
-      color: var(--watchlist-danger-hover-text);
-    }
-    .dark .app-toast {
-      background: #18181b;
-      border-color: #3f3f46;
-      color: #f4f4f5;
-    }
-    @media (max-width: 640px) {
-      .watchlist-actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-      .watchlist-action-btn {
-        flex: 1 1 calc(50% - 0.5rem);
-        min-width: 8.5rem;
-      }
-      .toast-container {
-        right: 0.75rem;
-        bottom: 0.75rem;
-        left: 0.75rem;
-        align-items: stretch;
-      }
-      .app-toast {
-        max-width: none;
-      }
-    }
+    /* Dark and responsive watchlist rules moved to src/styles.css */
     
     /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
     .timeline-border-svg {
@@ -2391,7 +2277,7 @@ sections.forEach(sectionId => {
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
-      const linkSection = link.dataset('data-section');
+      const linkSection = link.dataset.section;
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
         link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');

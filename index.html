@@ -2017,7 +2017,7 @@ kbd:hover{
 
 <!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
 
-<dialog class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" oncancel="event.preventDefault(); closeAn()" aria-label="Analytics & Achievements">
+<dialog class="modal-bg" id="anBg" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
     <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
@@ -3521,6 +3521,20 @@ btn.__orgListenerAttached = true;
       closeAn();
     }
   };
+
+  const analyticsDialog = document.getElementById('anBg');
+  if (analyticsDialog) {
+    analyticsDialog.addEventListener('click', window.closeAnEvent);
+    analyticsDialog.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        closeAn();
+      }
+    });
+    analyticsDialog.addEventListener('cancel', function (event) {
+      event.preventDefault();
+      closeAn();
+    });
+  }
 
   function renderBadges() {
     const badgesContainer = document.getElementById('badgesContainer');

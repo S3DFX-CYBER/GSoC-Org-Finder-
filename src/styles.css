@@ -906,3 +906,41 @@ footer a:hover{text-decoration:underline}
   border-color: #333;
   color: #888888;
 }
+/* Privacy Page specific overrides */
+.privacy-page .premium-footer {
+  background: #f4f4f5;
+  border-top-color: #e4e4e7;
+}
+.privacy-page .footer-stat-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: #e4e4e7;
+}
+.privacy-page .social-link {
+  border-color: #e4e4e7;
+  background: #ffffff;
+  color: #71717a;
+}
+.privacy-page #back-to-top-btn {
+  background: #f97316;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+}
+.privacy-page #back-to-top-btn:hover {
+  background: #ea580c;
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
+}
+.privacy-page #back-to-top-btn:focus-visible {
+  outline-color: #f97316;
+}
+[data-theme="dark"] .privacy-page .premium-footer {
+  background: #09090b;
+  border-top-color: #27272a;
+}
+[data-theme="dark"] .privacy-page .footer-stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: #27272a;
+}
+[data-theme="dark"] .privacy-page .social-link {
+  border-color: #27272a;
+  background: #18181b;
+  color: #a1a1aa;
+}

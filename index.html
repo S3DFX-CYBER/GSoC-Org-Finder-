@@ -307,7 +307,11 @@ kbd:hover{
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
-    .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+    .timeline-grid span.current-year { background: #fffbeb; color: #92400e; border-color: #fbbf24; font-weight: 700; }
+    .timeline-grid a.timeline-year-link { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .timeline-grid a.timeline-year-link:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
+    .timeline-grid a.timeline-year-link.current-year { background: #fffbeb; color: #92400e; border-color: #fbbf24; font-weight: 700; }
+    .timeline-grid a.timeline-year-link.current-year:hover { border-color: #92400e; background: #fef3c7; color: #78350f; }
 
     .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; flex-shrink: 0; }
     .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
@@ -901,7 +905,6 @@ kbd:hover{
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
@@ -1094,12 +1097,13 @@ kbd:hover{
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 is-active transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -1210,7 +1214,7 @@ kbd:hover{
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1272,7 +1276,7 @@ kbd:hover{
             <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
             <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div id="timeline-milestones" aria-label="GSoC timeline milestones" class="space-y-4 sm:space-y-5 overflow-y-auto max-h-[50vh] pl-4 no-scrollbar focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg"></div>
           <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
             <div class="flex items-center justify-between">
               <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
@@ -1751,27 +1755,27 @@ kbd:hover{
 </section>
 
 <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
+<section class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
       </div>
     </div>
   </div>
@@ -1838,25 +1842,10 @@ kbd:hover{
   </div>
 </section>
 
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
-      </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
-    </div>
-    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
-    </nav>
-  </div>
-</footer>
+<!-- Footer Placeholder -->
+<div id="footer-placeholder"></div>
+<script src="src/js/footer.js"></script>
+
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
@@ -1892,7 +1881,7 @@ kbd:hover{
         </div>
       </div>
 
-      <div class="section-title">Participation Timeline</div>
+      <div class="section-title">Participation Timeline<span style="font-weight:400;font-size:0.7rem;font-style:italic;color:#888;text-transform:none;letter-spacing:0.02em"> · click a year to explore its projects</span></div>
       <div class="timeline-grid" id="mTimeline"></div>
 
       <div class="section-title">Mentors &amp; Contact</div>
@@ -2894,14 +2883,14 @@ kbd:hover{
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
@@ -2915,6 +2904,19 @@ kbd:hover{
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      requestAnimationFrame(() => { 
+        if (currentMilestone) {
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
+      });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }
@@ -3201,7 +3203,7 @@ btn.__orgListenerAttached = true;
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
@@ -3844,9 +3846,20 @@ btn.__orgListenerAttached = true;
 
     // Timeline
     let timelineHtml = '';
-    for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
+    for (let y = 2020; y <= 2026; y++) {
+      const active = (y >= org.firstYear);
+      const isCurrent = (y === 2026);
+      let url = null;
+      if (active) {
+        if (y === 2020) url = sanitizeHrefUrl(org['2020_project_url'] || null);
+        else if (y === 2021) url = sanitizeHrefUrl(org['2021_project_url'] || null);
+        else if (org.slug) url = sanitizeHrefUrl(`https://summerofcode.withgoogle.com/programs/${y}/organizations/${org.slug}`);
+      }
+      if (url) {
+        timelineHtml += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="timeline-year-link${isCurrent ? ' current-year' : ''}" title="View ${escapeHtml(org.name)} at GSoC ${y}">${y}</a>`;
+      } else {
+        timelineHtml += `<span class="${isCurrent ? 'current-year ' : ''}${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
+      }
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 
@@ -4168,7 +4181,16 @@ if(org.ideas){
       if (lastUpdatedEl) {
         if (data.updated_at) {
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
-          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+          const hours = Math.floor(mins / 60);
+          const days = Math.floor(hours / 24);
+          let relative;
+          if (mins < 60) {
+            relative = `${mins} min ago`;
+          } else if (hours < 24) {
+            relative = `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+          } else {
+            relative = `${days} ${days === 1 ? 'day' : 'days'} ago`;
+          }
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';
@@ -4970,15 +4992,9 @@ if(e.key.toLowerCase()==='r'){
 
   function scrollToSectionIndex(index) {
     const targetSection = sections[index];
-
     if (!targetSection) return;
-
-    const targetTop = Math.max(0, targetSection.offsetTop - getSectionDetectionOffset());
-
-    window.scrollTo({
-      top: targetTop,
-      behavior: "smooth"
-    });
+    // Use scrollIntoView to respect scroll-margin-top defined in CSS
+    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function updateSectionIndicator() {
@@ -5038,15 +5054,32 @@ if(e.key.toLowerCase()==='r'){
     });
   }
 
+  let isNavClicking = false;
+  let navClickTimer = null;
+
   document.querySelectorAll(".desktop-nav-link").forEach(link => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
       setCurrentSectionById(link.dataset.section);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1500);
     });
   });
 
   document.querySelectorAll(".mobile-menu-link").forEach(link => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
       setCurrentSectionById(link.dataset.section);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1500);
 
       if (typeof globalThis.toggleMenu === "function") {
         globalThis.toggleMenu();
@@ -5055,18 +5088,50 @@ if(e.key.toLowerCase()==='r'){
   });
 
   function updateCurrentSection() {
-    const scrollPos = window.scrollY + getSectionDetectionOffset();
+      if (isNavClicking) return;
+      const offset = getSectionDetectionOffset() + 10;
+      let found = 0;
+      let closestDistance = Infinity;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= offset) {
+          const distance = offset - rect.top;
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            found = index;
+          }
+        }
+      });
+      currentSection = found;
+      updateNavState();
+    }
 
-    sections.forEach((section, index) => {
-      if (scrollPos >= section.offsetTop) currentSection = index;
+    const visibleSections = new Set();
+
+    const observer = new IntersectionObserver((entries) => {
+       if (isNavClicking) return;
+        entries.forEach(entry => {
+          const index = sections.indexOf(entry.target);
+          if (index === -1) return;
+          if (entry.isIntersecting) {
+            visibleSections.add(index);
+          } else {
+            visibleSections.delete(index);
+          }
+        });
+        if (visibleSections.size === 0) {
+          return;
+        }
+        currentSection = Math.min(...visibleSections);
+        updateNavState();
+    }, {
+      rootMargin: `-${(mainHeader?.clientHeight || 0) + 10}px 0px -60% 0px`,
+      threshold: 0
     });
 
-    updateNavState();
-  }
-
-  window.addEventListener("scroll", updateCurrentSection, { passive: true });
-  window.addEventListener("resize", updateCurrentSection);
-  updateCurrentSection();
+    sections.forEach(section => observer.observe(section));
+    window.addEventListener("resize", updateCurrentSection);
+    updateCurrentSection();
 
   document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
     if (currentSection < sections.length - 1) {

@@ -1312,7 +1312,7 @@ kbd:hover{
     <button id="chip-hot" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition</button>
     <button id="chip-chill" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition</button>
     <button id="chip-active" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained</button>
-    <button id="chip-community" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> 🟢 Active Communities</button>
+    <button id="chip-active-community" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> 🟢 Active Communities</button>
     <button id="chip-bookmarked" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked</button>
   </div>
   <div class="flex flex-wrap gap-2">
@@ -2307,7 +2307,7 @@ kbd:hover{
   })();
 
   const selectedLanguages = new Set();
-  let matchAllLanguages = false;
+  matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
   const CHANNEL_ICONS = {
     Slack: '💬',

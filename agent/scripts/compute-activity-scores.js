@@ -3,6 +3,11 @@
 // Computes community activity scores for all GSoC orgs
 // Run via GitHub Actions daily
 
+const WEIGHT_COMMITS = 0.3;
+const WEIGHT_PR = 0.2;
+const SCORE_MULTIPLIER = 5;
+const MAX_COMMIT_SCORE = 50;
+
 const fs = require('node:fs');
 const path = require('node:path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;

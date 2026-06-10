@@ -1553,9 +1553,9 @@ globalThis.openModal = function (name, triggerElement = null) {
         <div class="ca-grid">
           <div class="ca-row"><span class="ca-label">Overall Score</span><span class="ca-value" style="font-weight:700;color:var(--orange)">${cd.score} / 100</span></div>
           <div class="ca-row"><span class="ca-label">Tier</span><span class="ca-value">${tierMap[cd.tier] || cd.tier}</span></div>
-          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.signals?.issueResponseDays != null ? escapeHtml(String(cd.signals.issueResponseDays)) + ' days' : '—'}</span></div>
-          <div class="ca-row"><span class="ca-label">Commit Frequency (90d)</span><span class="ca-value">${cd.signals?.commitFrequency != null ? escapeHtml(String(cd.signals.commitFrequency)) + '/day' : '—'}</span></div>
-          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.signals?.prMergeRate != null ? escapeHtml(String(cd.signals.prMergeRate)) + '%' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.signals?.issueResponseDays !== null ? escapeHtml(String(cd.signals.issueResponseDays)) + ' days' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">Commit Frequency (90d)</span><span class="ca-value">${cd.signals?.commitFrequency !== null ? escapeHtml(String(cd.signals.commitFrequency)) + '/day' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.signals?.prMergeRate !== null ? escapeHtml(String(cd.signals.prMergeRate)) + '%' : '—'}</span></div>
           <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastUpdated ? escapeHtml(String(cd.lastUpdated)) : '—'}</span></div>
         </div>`;
           } else {

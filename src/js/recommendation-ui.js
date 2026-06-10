@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (fileName.endsWith('.pdf')) {
         try {
           if (typeof pdfjsLib === 'undefined') {
-            showError("PDF library not loaded. Please refresh and try again.");
+            showError("PDF library not loaded. Please try again after refreshing the page.");
             e.target.value = '';
             return;
           }

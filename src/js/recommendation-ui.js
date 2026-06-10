@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, safeHTML */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, safeHTML, pdfjsLib */
 
 let currentAbortController = null;
 let currentRequestId = 0;
@@ -120,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle file upload
   if (fileUpload) {
+    let currentUploadToken = 0;
+
     fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -133,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const fileName = file.name.toLowerCase();
+      const token = ++currentUploadToken;
 
       if (fileName.endsWith('.pdf')) {
         try {
@@ -153,18 +156,22 @@ document.addEventListener('DOMContentLoaded', () => {
               .join('');
             text += pageText + '\n';
           }
+          if (token !== currentUploadToken) return;
           resumeText.value = text.trim();
           resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
         } catch (err) {
           console.error("PDF Parse Error:", err);
+          if (token !== currentUploadToken) return;
           e.target.value = '';
           resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
           showError("Failed to read PDF file. Please make sure it's a valid PDF.");
         }
       } else {
         file.text().then(text => {
+          if (token !== currentUploadToken) return;
           resumeText.value = text;
         }).catch(err => {
+          if (token !== currentUploadToken) return;
           console.error("File Read Error:", err);
           e.target.value = '';
           showError("Failed to read file. Please make sure it's a valid text format.");

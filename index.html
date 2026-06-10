@@ -68,7 +68,7 @@
       document.head.appendChild(s);
     }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js" integrity="sha384-ff5a940921b04eeafdbe37ffcfd966bbf7825186e93938128e6a5b310675fc2b57daffd670020aa91bfe5350d4086e9e" crossorigin="anonymous"></script>
   <script>
     if (typeof pdfjsLib === 'undefined') {
       var s = document.createElement('script');
@@ -4885,11 +4885,12 @@ if(e.key.toLowerCase()==='r'){
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script>
-  if (typeof globalThis.safeHTML === 'undefined') {
+  if (globalThis.safeHTML === undefined) {
     globalThis.escapeHtml = function escapeHtml(value) {
       return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
     };
-    var SafeHTMLString = function SafeHTMLString() {};
+    var SafeHTMLString = function SafeHTMLString(value) { this._value = value; };
+    SafeHTMLString.prototype.toString = function() { return this._value; };
     SafeHTMLString.prototype.__isSafeHTML = true;
     globalThis.safeHTML = function safeHTML(strings) {
       var values = Array.prototype.slice.call(arguments, 1);

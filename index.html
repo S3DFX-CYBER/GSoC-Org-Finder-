@@ -4886,12 +4886,13 @@ if(e.key.toLowerCase()==='r'){
 <script src="src/js/recommender.js"></script>
 <script>
   if (typeof globalThis.safeHTML === 'undefined') {
-    function escapeHtml(value) {
+    globalThis.escapeHtml = function escapeHtml(value) {
       return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
-    }
-    class SafeHTMLString extends String {}
+    };
+    var SafeHTMLString = function SafeHTMLString() {};
     SafeHTMLString.prototype.__isSafeHTML = true;
-    function safeHTML(strings, ...values) {
+    globalThis.safeHTML = function safeHTML(strings) {
+      var values = Array.prototype.slice.call(arguments, 1);
       var result = '';
       for (var i = 0; i < strings.length; i++) {
         result += strings[i];
@@ -4900,16 +4901,14 @@ if(e.key.toLowerCase()==='r'){
           if (val && val.__isSafeHTML) {
             result += val.toString();
           } else if (Array.isArray(val)) {
-            result += val.map(function(v) { return (v && v.__isSafeHTML) ? v.toString() : escapeHtml(v); }).join('');
+            result += val.map(function(v) { return (v && v.__isSafeHTML) ? v.toString() : globalThis.escapeHtml(v); }).join('');
           } else {
-            result += escapeHtml(val !== undefined && val !== null ? String(val) : '');
+            result += globalThis.escapeHtml(val !== undefined && val !== null ? String(val) : '');
           }
         }
       }
       return new SafeHTMLString(result);
-    }
-    globalThis.safeHTML = safeHTML;
-    globalThis.escapeHtml = escapeHtml;
+    };
   }
 </script>
 <script src="src/js/recommendation-ui.js"></script>

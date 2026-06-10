@@ -948,6 +948,11 @@ kbd:hover{
   transition: all 0.25s ease;
 }
 .section-scroll-btn:hover { transform: translateY(-2px); }
+.section-scroll-btn:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 4px 12px rgba(157, 67, 0, 0.2);
+  transition: all 0.1s ease;
+}
     #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
     #prevSectionBtn {
       bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
@@ -960,6 +965,10 @@ kbd:hover{
 }
 .dark .section-scroll-btn:hover {
   box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
+}
+.dark .section-scroll-btn:active {
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.2);
+  transition: all 0.1s ease;
 }
 
 .section-scroll-btn:disabled {

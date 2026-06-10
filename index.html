@@ -3935,6 +3935,8 @@ if(org.ideas){
      
    const modal = document.getElementById('orgModal');
 
+previousFocusedElement = document.activeElement;
+
 modal.classList.add('open');
 modal.setAttribute('tabindex', '-1');
 modal.focus();
@@ -3943,13 +3945,17 @@ document.body.classList.add('modal-open');
 document.documentElement.style.overflow = 'hidden';
 document.body.style.overflow = 'hidden';
   }
-
+let previousFocusedElement = null;
   function closeOrgModal() {
-    document.getElementById('orgModal').classList.remove('open');
-    document.body.classList.remove('modal-open');
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
+  document.getElementById('orgModal').classList.remove('open');
+  document.body.classList.remove('modal-open');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+
+  if (previousFocusedElement) {
+    previousFocusedElement.focus();
   }
+}
 
   function openRandomOrg() {
     const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;

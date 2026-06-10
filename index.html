@@ -3933,13 +3933,15 @@ if(org.ideas){
       draftBtn.onclick = () => ProposalBuilder.open(org.name);
     }
      
-    const modal = document.getElementById('orgModal');
+   const modal = document.getElementById('orgModal');
 
 modal.classList.add('open');
 modal.setAttribute('tabindex', '-1');
 modal.focus();
 
 document.body.classList.add('modal-open');
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
   }
 
   function closeOrgModal() {

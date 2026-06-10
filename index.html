@@ -4637,6 +4637,17 @@ if(org.ideas){
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+
+  // Safe HTML utilities for recommendation-ui.js
+  function escapeHtml(value) {
+    return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+  }
+  class SafeHTMLString extends String { constructor(v){super(v);} }
+  SafeHTMLString.prototype.__isSafeHTML = true;
+  function safeHTML(strings,...values){let r='';for(let i=0;i<strings.length;i++){r+=strings[i];if(i<values.length){const v=values[i];r+=v&&v.__isSafeHTML?v.toString():Array.isArray(v)?v.map(x=>x&&x.__isSafeHTML?x.toString():escapeHtml(x)).join(''):escapeHtml(v!=null?String(v):'');}}return new SafeHTMLString(r);}
+  function rawHTML(v){return new SafeHTMLString(v||'');}
+  globalThis.safeHTML = safeHTML;
+  globalThis.rawHTML = rawHTML;
 </script>
 
 <!-- Vercel Speed Insights -->

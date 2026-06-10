@@ -4639,13 +4639,39 @@ if(org.ideas){
   globalThis.openModal = openModal;
 
   // Safe HTML utilities for recommendation-ui.js
-  function escapeHtml(value) {
-    return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+  function safeHTMLEscape(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
-  class SafeHTMLString extends String { constructor(v){super(v);} }
+
+  class SafeHTMLString extends String {}
   SafeHTMLString.prototype.__isSafeHTML = true;
-  function safeHTML(strings,...values){let r='';for(let i=0;i<strings.length;i++){r+=strings[i];if(i<values.length){const v=values[i];r+=v&&v.__isSafeHTML?v.toString():Array.isArray(v)?v.map(x=>x&&x.__isSafeHTML?x.toString():escapeHtml(x)).join(''):escapeHtml(v!=null?String(v):'');}}return new SafeHTMLString(r);}
-  function rawHTML(v){return new SafeHTMLString(v||'');}
+
+  function safeHTML(strings, ...values) {
+    let result = '';
+    for (let i = 0; i < strings.length; i++) {
+      result += strings[i];
+      if (i < values.length) {
+        const val = values[i];
+        let rendered;
+        if (val && val.__isSafeHTML) {
+          rendered = val.toString();
+        } else if (Array.isArray(val)) {
+          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : safeHTMLEscape(x)).join('');
+        } else {
+          rendered = safeHTMLEscape(val != null ? String(val) : '');
+        }
+        result += rendered;
+      }
+    }
+    return new SafeHTMLString(result);
+  }
+
+  function rawHTML(v) { return new SafeHTMLString(v || ''); }
   globalThis.safeHTML = safeHTML;
   globalThis.rawHTML = rawHTML;
 </script>

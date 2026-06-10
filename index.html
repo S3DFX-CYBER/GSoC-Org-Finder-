@@ -3953,8 +3953,15 @@ let previousFocusedElement = null;
   document.body.style.overflow = '';
 
   if (previousFocusedElement) {
+  if (
+    previousFocusedElement.isConnected &&
+    previousFocusedElement.offsetParent !== null
+  ) {
     previousFocusedElement.focus();
   }
+
+  previousFocusedElement = null;
+}
 }
 
   function openRandomOrg() {

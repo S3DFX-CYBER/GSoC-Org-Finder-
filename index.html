@@ -217,8 +217,14 @@ kbd:hover{
     .modal-bg {
       position: fixed;
       inset: 0;
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
+      color: inherit;
       z-index: 100;
       display: flex;
       align-items: center;
@@ -231,6 +237,9 @@ kbd:hover{
     .modal-bg.open {
       opacity: 1;
       pointer-events: auto;
+    }
+    .modal-bg::backdrop {
+      background: transparent;
     }
     .modal {
      background: white;
@@ -460,32 +469,6 @@ kbd:hover{
       scroll-margin-top: 80px;
     }
 
-    .desktop-nav-link {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      padding-bottom: 0.35rem;
-      text-decoration: none;
-    }
-    .desktop-nav-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 2px;
-      border-radius: 9999px;
-      background: currentColor;
-      opacity: 0;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-    .desktop-nav-link.is-active::after {
-      opacity: 1;
-      transform: scaleX(1);
-    }
-
     /* Minimal dark-mode support */
     .dark body { background: #0f0f10; color: #e5e7eb; }
     .dark .glass { background: rgba(24, 24, 27, 0.85); }
@@ -523,7 +506,7 @@ kbd:hover{
     /* Dark mode - Filter chips & language pills */
     .dark .bg-surface-container-highest { background: #27272a !important; color: #d4d4d8 !important; }
     .dark .filter-chip:not(.bg-orange-600) { background: #27272a !important; color: #d4d4d8 !important; border: 1px solid #3f3f46 !important; }
-    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #ffffff !important; border-color: #fb923c !important; }
+    .dark .filter-chip:not(.bg-orange-600):hover { background: #fb923c !important; color: #111827 !important; border-color: #fb923c !important; }
 
     /* Dark mode - Language tag pills */
     .dark section .flex.flex-wrap.gap-2 > button:not(.filter-chip) { 
@@ -862,6 +845,43 @@ kbd:hover{
       color: #fb923c;
       background: #1c0f05;
     }
+
+    /* Watchlist styles moved to src/styles.css */
+    .toast-container {
+      position: fixed;
+      right: 1.125rem;
+      bottom: 1.125rem;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.625rem;
+      pointer-events: none;
+    }
+    .app-toast {
+      max-width: min(22.5rem, calc(100vw - 2rem));
+      padding: 0.75rem 0.9rem;
+      border: 1px solid #e4e4e7;
+      border-left: 4px solid #f97316;
+      border-radius: 0.75rem;
+      background: #fff;
+      color: #18181b;
+      box-shadow: 0 18px 40px rgba(24, 24, 27, 0.18);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(0.5rem);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .app-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .app-toast-success { border-left-color: #16a34a; }
+    .app-toast-error { border-left-color: #dc2626; }
+    .app-toast-warning { border-left-color: #f59e0b; }
+    /* Dark and responsive watchlist rules moved to src/styles.css */
     
     /* SVG Flowing Border Trace animation for Timeline Card & Search Bar */
     .timeline-border-svg {
@@ -929,130 +949,7 @@ kbd:hover{
       background: #fb923c;
     }
   
-/* Section-wise Scroll Buttons */
-    .section-scroll-btn {
-  position: fixed;
-      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
-      width: var(--section-fab-size);
-      height: var(--section-fab-size);
-  border: none;
-  border-radius: 50%;
-      z-index: 30;
-  cursor: pointer;
-  color: white;
-  background: linear-gradient(135deg, #9d4300, #f97316);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
-  transition: all 0.25s ease;
-}
-.section-scroll-btn:hover { transform: translateY(-2px); }
-    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
-    #prevSectionBtn {
-      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
-    }
 
-/* Dark mode - Section scroll buttons */
-.dark .section-scroll-btn {
-  background: linear-gradient(135deg, #c2410c, #ea580c);
-  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
-}
-.dark .section-scroll-btn:hover {
-  box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
-}
-
-.section-scroll-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.section-scroll-indicator {
-  position: fixed;
-      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
-      bottom: calc(
-        var(--section-fab-bottom)
-        + (var(--section-fab-size) + var(--section-fab-gap)) * 2
-        + var(--section-indicator-gap)
-        + env(safe-area-inset-bottom)
-      );
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-      max-width: min(var(--section-indicator-width), calc(100vw - 32px - env(safe-area-inset-right)));
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(249, 115, 22, 0.2);
-  color: #9d4300;
-  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.12);
-  backdrop-filter: blur(10px);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.section-scroll-indicator-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #9d4300, #f97316);
-  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
-}
-
-.section-scroll-indicator-value {
-  color: #1f1f1f;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-    @media (max-width: 640px) {
-      :root {
-        --section-fab-right: 12px;
-        --section-fab-bottom: 12px;
-        --section-fab-size: 42px;
-        --section-fab-gap: 8px;
-        --section-indicator-gap: 8px;
-        --section-indicator-width: 180px;
-      }
-
-      .section-scroll-indicator {
-        padding: 7px 10px;
-        gap: 6px;
-        font-size: 10px;
-        line-height: 1;
-      }
-
-      .section-scroll-indicator-value {
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .section-scroll-indicator > span:nth-child(2) {
-        display: none;
-      }
-    }
-
-    @media (max-width: 480px) {
-      :root {
-        --section-fab-right: 10px;
-        --section-fab-bottom: 10px;
-        --section-fab-size: 40px;
-        --section-fab-gap: 8px;
-        --section-indicator-gap: 6px;
-        --section-indicator-width: 160px;
-      }
-
-      .section-scroll-indicator {
-        padding: 6px 9px;
-        border-radius: 999px;
-      }
-    }
 
 </style>
   <link rel="manifest" href="manifest.json" />
@@ -1063,20 +960,6 @@ kbd:hover{
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
-
-<!-- Section Navigation Buttons -->
-<div id="sectionScrollIndicator" class="section-scroll-indicator" aria-live="polite" aria-atomic="true">
-  <span class="section-scroll-indicator-dot" aria-hidden="true"></span>
-  <span>Section:</span>
-  <span id="sectionScrollIndicatorValue" class="section-scroll-indicator-value">Timeline</span>
-</div>
-<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Previous Section">
-  <span class="material-symbols-outlined">keyboard_arrow_up</span>
-</button>
-<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Next Section">
-  <span class="material-symbols-outlined">keyboard_arrow_down</span>
-</button>
-
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -1097,13 +980,12 @@ kbd:hover{
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-orange-600 font-bold border-b-2 border-orange-600 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -1155,7 +1037,7 @@ kbd:hover{
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1174,31 +1056,31 @@ kbd:hover{
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -1210,7 +1092,7 @@ kbd:hover{
       </a>
     </div>
   </nav>
-</div>
+</dialog>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1471,12 +1353,27 @@ kbd:hover{
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="watchlist-actions mt-8" aria-label="Watchlist actions">
+        <button type="button" id="exportBookmarksBtn" class="watchlist-action-btn" title="Export bookmarks">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export
+        </button>
+        <button type="button" id="importBookmarksBtn" class="watchlist-action-btn" title="Import bookmarks">
+          <span class="material-symbols-outlined text-sm">upload</span>
+          Import
+        </button>
+        <button type="button" id="shareBookmarksBtn" class="watchlist-action-btn watchlist-action-primary" title="Copy share link">
+          <span class="material-symbols-outlined text-sm">ios_share</span>
+          Share Link
+        </button>
+        <button id="clearAllBookmarksBtn"
+          class="hidden watchlist-action-btn watchlist-action-danger"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+        <input type="file" id="importBookmarksInput" class="sr-only" accept="application/json,.json">
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-6">
@@ -1956,7 +1853,7 @@ kbd:hover{
 
 <!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
 
-<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
+<dialog class="modal-bg" id="anBg" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
     <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
@@ -2035,7 +1932,7 @@ kbd:hover{
       </div>
     </div>
   </div>
-</div>
+</dialog>
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
@@ -2070,55 +1967,29 @@ kbd:hover{
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  const desktopNavMediaQuery = window.matchMedia('(min-width: 768px)');
-
-  function openMobileMenu(){
+  window.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
-
-    menu.classList.remove('hidden');
-    menuBtn.setAttribute('aria-expanded', 'true');
-    menuBtn.setAttribute('aria-label', 'Close menu');
-    setTimeout(() => {
-      panel.style.transform = 'translateX(0)';
-    }, 10);
-    document.addEventListener('keydown', handleMenuEscape);
-  }
-
-  function closeMobileMenu({ immediate = false } = {}){
-    const menu = document.getElementById('mobileMenu');
-    const panel = document.getElementById('menuPanel');
-    const menuBtn = document.getElementById('menuBtn');
-
-    if(menu.classList.contains('hidden') && !immediate){
-      return;
-    }
-
-    menuBtn.setAttribute('aria-expanded', 'false');
-    menuBtn.setAttribute('aria-label', 'Open menu');
-    document.removeEventListener('keydown', handleMenuEscape);
-
-    if(immediate){
-      panel.style.transform = 'translateX(-100%)';
-      menu.classList.add('hidden');
-      return;
-    }
-
-    panel.style.transform = 'translateX(-100%)';
-    setTimeout(() => {
-      menu.classList.add('hidden');
-    }, 300);
-  }
-
-  globalThis.toggleMenu = function(){
-    const menu = document.getElementById('mobileMenu');
 
     if(menu.classList.contains('hidden')){
-      openMobileMenu();
+      // Open menu
+      menu.classList.remove('hidden');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      menuBtn.setAttribute('aria-label', 'Close menu');
+      setTimeout(() => {
+        panel.style.transform = 'translateX(0)';
+      }, 10);
+      document.addEventListener('keydown', handleMenuEscape);
     } else {
       // Close menu
-      closeMobileMenu();
+      panel.style.transform = 'translateX(-100%)';
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Open menu');
+      document.removeEventListener('keydown', handleMenuEscape);
+      setTimeout(() => {
+        menu.classList.add('hidden');
+      }, 300);
     }
   };
 
@@ -2143,6 +2014,97 @@ kbd:hover{
       }
     }
   }
+
+window.setActiveMenu = function(clickedLink) {
+  // Remove active class from all menu links
+  const allLinks = document.querySelectorAll('.mobile-menu-link');
+
+  allLinks.forEach(link => {
+    link.classList.remove(
+      'bg-orange-50',
+      'text-orange-600',
+      'font-bold'
+    );
+
+    link.classList.add(
+      'text-zinc-700',
+      'font-medium'
+    );
+  });
+
+  // Add active class to clicked link
+  clickedLink.classList.remove(
+    'text-zinc-700',
+    'font-medium'
+  );
+
+  clickedLink.classList.add(
+    'bg-orange-50',
+    'text-orange-600',
+    'font-bold'
+  );
+
+  // Close menu
+  toggleMenu();
+};
+
+  // Update active state based on scroll position
+  function updateActiveSection() {
+    const sections = ['orgs', 'guide', 'watchlist', 'issues', 'mentors', 'timeline', 'ai-recommender'];
+    const scrollPosition = window.scrollY + 80; // Offset for fixed header
+    
+let currentSection = 'timeline';
+
+sections.forEach(sectionId => {
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+
+        const triggerPoint = window.innerHeight / 2;
+
+        if (
+            sectionTop <= scrollPosition + triggerPoint &&
+            sectionBottom > scrollPosition + triggerPoint
+        ) {
+            currentSection = sectionId;
+        }
+    }
+});
+    
+    // Update mobile menu items
+    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
+    allMobileLinks.forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if (linkSection === currentSection) {
+        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+        link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
+      } else {
+        link.classList.remove('text-orange-600', 'bg-orange-50', 'font-bold');
+        link.classList.add('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
+      }
+    });
+
+    // Update desktop navbar items
+    const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
+    allDesktopLinks.forEach(link => {
+      const linkSection = link.getAttribute('data-section');
+      if (linkSection === currentSection) {
+        link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
+        link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+      } else {
+        link.classList.remove('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
+        link.classList.add('text-zinc-600', 'hover:text-zinc-900');
+      }
+    });
+  }
+
+  // Listen for scroll events
+  window.addEventListener('scroll', updateActiveSection);
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', updateActiveSection);
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
@@ -2176,6 +2138,30 @@ kbd:hover{
     } catch {
       return [];
     }
+  }
+
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container';
+      container.setAttribute('aria-live', 'polite');
+      container.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `app-toast app-toast-${type}`;
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 220);
+    }, 3200);
   }
 
   function trimGitHubPathSlashes(path) {
@@ -3314,6 +3300,9 @@ btn.__orgListenerAttached = true;
     }
     
     const modal = document.getElementById('anBg');
+    if (typeof modal?.showModal === 'function' && !modal.open) {
+      modal.showModal();
+    }
     modal?.classList.add('open');
     document.body.style.overflow = 'hidden';
 
@@ -3325,7 +3314,11 @@ btn.__orgListenerAttached = true;
   };
 
   window.closeAn = function() {
-    document.getElementById('anBg')?.classList.remove('open');
+    const modal = document.getElementById('anBg');
+    modal?.classList.remove('open');
+    if (typeof modal?.close === 'function' && modal.open) {
+      modal.close();
+    }
     document.body.style.overflow = 'auto';
 
     // Restore focus to the element that opened the modal
@@ -3340,6 +3333,20 @@ btn.__orgListenerAttached = true;
       closeAn();
     }
   };
+
+  const analyticsDialog = document.getElementById('anBg');
+  if (analyticsDialog) {
+    analyticsDialog.addEventListener('click', globalThis.closeAnEvent);
+    analyticsDialog.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        closeAn();
+      }
+    });
+    analyticsDialog.addEventListener('cancel', function (event) {
+      event.preventDefault();
+      closeAn();
+    });
+  }
 
   function renderBadges() {
     const badgesContainer = document.getElementById('badgesContainer');
@@ -3455,10 +3462,7 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-    refreshOrgGridAfterBookmarkChange();
-    renderWatchlist();
-    updateAIInsights();
+    persistBookmarksAndNotify({ name: orgName, source: 'toggle' });
   }
 
   function toggleBookmark(e, name) {
@@ -3466,6 +3470,189 @@ btn.__orgListenerAttached = true;
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
     syncBookmark(orgName, !bookmarkedSet.has(orgName));
+  }
+
+  function getMatchingOrgNames(names) {
+    const orgNames = new Set(ORGS.map(org => org.name));
+    return [...new Set(names
+      .filter(name => typeof name === 'string')
+      .map(name => name.trim())
+      .filter(name => name && orgNames.has(name)))];
+  }
+
+  function persistBookmarksAndNotify(detail = {}) {
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail }));
+  }
+
+  function exportBookmarks() {
+    const orgs = [...bookmarkedSet];
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: '1.0',
+      source: 'FindMyGSoC',
+      orgs,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `findmygsoc-bookmarks-${stamp}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    let message;
+
+if (orgs.length > 0) {
+  const bookmarkLabel = orgs.length === 1 ? 'bookmark' : 'bookmarks';
+  message = `Exported ${orgs.length} ${bookmarkLabel}.`;
+} else {
+  message = 'Exported an empty bookmark file.';
+}
+
+showToast(message, 'success');
+  }
+
+  async function readImportedBookmarks(file) {
+    if (!file) return;
+
+    let fileText;
+    try {
+      fileText = await file.text();
+    } catch {
+      showToast('Import failed: could not read that file.', 'error');
+      return;
+    }
+
+    let data;
+    try {
+      data = JSON.parse(fileText);
+    } catch {
+      showToast('Import failed: the selected file is not valid JSON.', 'error');
+      return;
+    }
+
+    if (!data || typeof data !== 'object' || Array.isArray(data) || !Array.isArray(data.orgs)) {
+      showToast('Import failed: expected a bookmark export with an orgs array.', 'error');
+      return;
+    }
+
+    const incoming = getMatchingOrgNames(data.orgs);
+    if (!incoming.length) {
+      showToast('No matching organizations were found in that file.', 'warning');
+      return;
+    }
+
+    const before = bookmarkedSet.size;
+    incoming.forEach(name => bookmarkedSet.add(name));
+    const added = bookmarkedSet.size - before;
+    persistBookmarksAndNotify({ source: 'import', added });
+
+    const bookmarkLabel = added === 1 ? 'bookmark' : 'bookmarks';
+    const importMessage = added
+      ? `Imported ${added} new ${bookmarkLabel}.`
+      : 'Import complete. All bookmarks were already saved.';
+    const importToastType = added ? 'success' : 'info';
+
+    showToast(importMessage, importToastType);
+  }
+
+  function encodeSharedBookmarks(names) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(names))))
+      .replaceAll('+', '-')
+      .replaceAll('/', '_')
+      .replaceAll('=', '');
+  }
+
+  function decodeSharedBookmarks(value) {
+    const padded = value.replaceAll('-', '+').replaceAll('_', '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+    return JSON.parse(decodeURIComponent(escape(atob(padded))));
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+   const input = document.createElement('textarea');
+input.value = text;
+input.setAttribute('readonly', '');
+input.style.position = 'fixed';
+input.style.left = '-9999px';
+document.body.appendChild(input);
+input.select();
+
+const copied = document.execCommand('copy');
+input.remove();
+
+if (!copied) {
+  throw new Error('Failed to copy text');
+}
+  }
+
+  async function shareBookmarks() {
+  const url = new URL(location.href);
+  url.searchParams.set('bookmarks', encodeSharedBookmarks([...bookmarkedSet]));
+
+  const shareUrl = url.toString();
+
+  // Prevent extremely long URLs
+  if (shareUrl.length > 2000) {
+    showToast(
+      'Watchlist is too large to share via URL. Please export it instead.',
+      'warning'
+    );
+    return;
+  }
+
+  try {
+    await copyText(shareUrl);
+    showToast(
+      bookmarkedSet.size
+        ? 'Share link copied to clipboard.'
+        : 'Share link copied for an empty watchlist.',
+      'success'
+    );
+  } catch (err) {
+    console.warn('Failed to copy share link:', err);
+    showToast(
+      'Could not copy the share link. Please try again.',
+      'error'
+    );
+  }
+}
+
+  function loadSharedBookmarks() {
+    const url = new URL(location.href);
+    const encoded = url.searchParams.get('bookmarks');
+    if (!encoded) return;
+
+    try {
+      const decoded = decodeSharedBookmarks(encoded);
+      if (!Array.isArray(decoded)) throw new Error('Shared bookmarks must be an array.');
+      const matches = getMatchingOrgNames(decoded);
+      const before = bookmarkedSet.size;
+      matches.forEach(name => bookmarkedSet.add(name));
+      if (matches.length) {
+        persistBookmarksAndNotify({ source: 'share', added: bookmarkedSet.size - before });
+      }
+      const bookmarkLabel = matches.length === 1 ? 'bookmark' : 'bookmarks';
+      const sharedMessage = matches.length
+        ? `Loaded ${matches.length} shared ${bookmarkLabel}.`
+        : 'Shared link did not contain matching organizations.';
+      const sharedToastType = matches.length ? 'success' : 'warning';
+
+      showToast(sharedMessage, sharedToastType);
+    } catch (err) {
+      console.warn('Failed to load shared bookmarks:', err);
+      showToast('Could not load bookmarks from this share link.', 'error');
+    } finally {
+      url.searchParams.delete('bookmarks');
+      history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+    }
   }
 
   // Listen for bookmarks toggled by app.js (the other org-grid script).
@@ -3484,15 +3671,23 @@ btn.__orgListenerAttached = true;
 
   // Wire up "Clear All" button
   document.getElementById('clearAllBookmarksBtn')?.addEventListener('click', clearAllBookmarks);
+  document.getElementById('exportBookmarksBtn')?.addEventListener('click', exportBookmarks);
+  document.getElementById('shareBookmarksBtn')?.addEventListener('click', shareBookmarks);
+  document.getElementById('importBookmarksBtn')?.addEventListener('click', () => {
+    document.getElementById('importBookmarksInput')?.click();
+  });
+  document.getElementById('importBookmarksInput')?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    readImportedBookmarks(file);
+    e.target.value = '';
+  });
 
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
-    applyFilters();
-    renderWatchlist();
-    updateAIInsights();
+    persistBookmarksAndNotify({ source: 'clear' });
+    showToast('Cleared all bookmarks.', 'success');
   }
 
   // ── renderWatchlist ─────────────────────────────────────────────────────────
@@ -4623,6 +4818,7 @@ if(org.ideas){
 
     applyFilters();
   })();
+  loadSharedBookmarks();
   renderOrgs();
   renderWatchlist();
   renderRecentlyViewed();
@@ -4964,190 +5160,7 @@ if(e.key.toLowerCase()==='r'){
   globalThis.addEventListener('scroll', handleScrollResize, { passive: true });
   globalThis.addEventListener('resize', handleScrollResize, { passive: true });
 })();
-</script>
-<script>
-(function () {
-  const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
-  const sectionLabels = {
-    timeline: "Timeline",
-    orgs: "Organizations",
-    "ai-recommender": "AI Recommender",
-    watchlist: "Watchlist",
-    issues: "Issues",
-    mentors: "Mentors",
-    guide: "Guide",
-    contact: "Contact"
-  };
-  const sections = sectionIds
-    .map(id => document.getElementById(id))
-    .filter(Boolean);
-  const mainHeader = document.querySelector("header.fixed.top-0");
 
-  let currentSection = 0;
-  const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
-
-  function getSectionDetectionOffset() {
-    return mainHeader?.clientHeight || 0;
-  }
-
-  function scrollToSectionIndex(index) {
-    const targetSection = sections[index];
-    if (!targetSection) return;
-    // Use scrollIntoView to respect scroll-margin-top defined in CSS
-    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function updateSectionIndicator() {
-    const activeSectionId = sections[currentSection]?.id;
-
-    if (sectionIndicatorValue) {
-      sectionIndicatorValue.textContent = sectionLabels[activeSectionId] || "Timeline";
-    }
-  }
-
-  function updateNavState() {
-    const activeSectionId = sections[currentSection]?.id;
-
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      const linkSection = link.dataset.section;
-
-      if (linkSection === activeSectionId) {
-        link.classList.remove("text-zinc-600", "hover:text-zinc-900");
-        link.classList.add("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
-      } else {
-        link.classList.remove("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
-        link.classList.add("text-zinc-600", "hover:text-zinc-900");
-      }
-    });
-
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      const linkSection = link.dataset.section;
-
-      if (linkSection === activeSectionId) {
-        link.classList.remove("text-zinc-700", "hover:bg-zinc-100", "font-medium");
-        link.classList.add("text-orange-600", "bg-orange-50", "font-bold");
-      } else {
-        link.classList.remove("text-orange-600", "bg-orange-50", "font-bold");
-        link.classList.add("text-zinc-700", "hover:bg-zinc-100", "font-medium");
-      }
-    });
-
-    updateSectionIndicator();
-  }
-
-  function setCurrentSectionById(sectionId) {
-    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
-
-    if (nextSectionIndex === -1) return;
-
-    currentSection = nextSectionIndex;
-    updateNavState();
-  }
-
-  const logoLink = document.getElementById("logoLink");
-
-  if (logoLink) {
-    logoLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      setCurrentSectionById("timeline");
-      scrollToSectionIndex(currentSection);
-    });
-  }
-
-  let isNavClicking = false;
-  let navClickTimer = null;
-
-  document.querySelectorAll(".desktop-nav-link").forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault(); // stop browser anchor scroll
-      isNavClicking = true;
-      clearTimeout(navClickTimer);
-      setCurrentSectionById(link.dataset.section);
-      scrollToSectionIndex(currentSection);
-      navClickTimer = setTimeout(() => {
-        isNavClicking = false;
-      }, 1500);
-    });
-  });
-
-  document.querySelectorAll(".mobile-menu-link").forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault(); // stop browser anchor scroll
-      isNavClicking = true;
-      clearTimeout(navClickTimer);
-      setCurrentSectionById(link.dataset.section);
-      scrollToSectionIndex(currentSection);
-      navClickTimer = setTimeout(() => {
-        isNavClicking = false;
-      }, 1500);
-
-      if (typeof globalThis.toggleMenu === "function") {
-        globalThis.toggleMenu();
-      }
-    });
-  });
-
-  function updateCurrentSection() {
-      if (isNavClicking) return;
-      const offset = getSectionDetectionOffset() + 10;
-      let found = 0;
-      let closestDistance = Infinity;
-      sections.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= offset) {
-          const distance = offset - rect.top;
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            found = index;
-          }
-        }
-      });
-      currentSection = found;
-      updateNavState();
-    }
-
-    const visibleSections = new Set();
-
-    const observer = new IntersectionObserver((entries) => {
-       if (isNavClicking) return;
-        entries.forEach(entry => {
-          const index = sections.indexOf(entry.target);
-          if (index === -1) return;
-          if (entry.isIntersecting) {
-            visibleSections.add(index);
-          } else {
-            visibleSections.delete(index);
-          }
-        });
-        if (visibleSections.size === 0) {
-          return;
-        }
-        currentSection = Math.min(...visibleSections);
-        updateNavState();
-    }, {
-      rootMargin: `-${(mainHeader?.clientHeight || 0) + 10}px 0px -60% 0px`,
-      threshold: 0
-    });
-
-    sections.forEach(section => observer.observe(section));
-    window.addEventListener("resize", updateCurrentSection);
-    updateCurrentSection();
-
-  document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
-    if (currentSection < sections.length - 1) {
-      scrollToSectionIndex(currentSection + 1);
-    }
-  });
-
-  document.getElementById("prevSectionBtn")?.addEventListener("click", () => {
-    if (currentSection > 0) {
-      scrollToSectionIndex(currentSection - 1);
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  });
-})();
-</script>
 
 </body>
 </html>

@@ -1286,11 +1286,32 @@
   "FLARE": {
     "org": "FLARE",
     "ideasUrl": "https://github.com/mandiant/flare-vm/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/mandiant/flare-gsoc/discussions",
+        "label": "FLARE GSoC GitHub Discussions"
+      }
+    ],
+    "mentors": [
+      { "name": "Mike Hunhoff", "github": "mike-hunhoff", "githubUrl": "https://github.com/mike-hunhoff" },
+      { "name": "Maijin", "github": "Maijin", "githubUrl": "https://github.com/Maijin" },
+      { "name": "larchchen", "github": "larchchen", "githubUrl": "https://github.com/larchchen" },
+      { "name": "mr-tz", "github": "mr-tz", "githubUrl": "https://github.com/mr-tz" },
+      { "name": "stevemk14ebr", "github": "stevemk14ebr", "githubUrl": "https://github.com/stevemk14ebr" },
+      { "name": "jaeyoungkimG", "github": "jaeyoungkimG", "githubUrl": "https://github.com/jaeyoungkimG" },
+      { "name": "m-umairx", "github": "m-umairx", "githubUrl": "https://github.com/m-umairx" },
+      { "name": "binjo", "github": "binjo", "githubUrl": "https://github.com/binjo" }
+    ],
+    "mailingLists": [
+      {
+        "type": "Email",
+        "url": "mailto:flare-external@google.com",
+        "label": "FLARE Community Mailing List"
+      }
+    ],
+    "tip": "Create a new topic in GitHub Discussions at https://github.com/mandiant/flare-gsoc/discussions and mention @mandiant/flare-gsoc. Subscribe to mailing list by emailing 'subscribe' to flare-external@google.com",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "FOSSASIA": {
@@ -2704,13 +2725,39 @@
   "MetaBrainz Foundation Inc": {
     "org": "MetaBrainz Foundation Inc",
     "ideasUrl": "https://wiki.musicbrainz.org/Development/Summer_of_Code/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+    "channels": [
+    {
+      "type": "irc",
+      "name": "#metabrainz",
+      "url": "https://kiwiirc.com/nextclient/irc.libera.chat/#metabrainz"
+    },
+    {
+      "type": "matrix",
+      "name": "#metabrainz-all:chatbrainz.org",
+      "url": "https://matrix.to/#/#metabrainz-all:chatbrainz.org"
+    },
+    {
+      "type": "discord",
+      "name": "MetaBrainz Discord",
+      "url": "https://discord.gg/R4hBw972QA"
+    },
+    {
+      "type": "forum",
+      "name": "MetaBrainz Community Discourse",
+      "url": "https://community.metabrainz.org/c/metabrainz/gsoc-applications/9"
+    }
+  ],
+  "mentors": [
+    { "name": "lucifer", "github": "lucifer" },
+    { "name": "reosarevok", "github": "reosarevok" },
+    { "name": "yvanzo", "github": "yvanzo" },
+    { "name": "bitmap", "github": "bitmap" }
+  ],
+  "mailingLists": [],
+  "tip": "Join #metabrainz on IRC/Matrix/Discord. Post GSoC proposals on the forum. Do not contact mentors privately.",
+  "status": "ok",
+  "lastFetched": "2026-06-09T00:00:00.000Z"
+},
   "MetaCall": {
     "org": "MetaCall",
     "ideasUrl": "https://github.com/metacall/core/wiki/Google-Summer-Of-Code-2026",

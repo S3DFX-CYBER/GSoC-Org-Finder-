@@ -6,6 +6,7 @@ const CRITICAL_ASSETS = [
   'src/styles.css',
   'src/js/org.js',
   'src/js/app.js',
+  'src/js/modalUtils.js',
   'src/js/githubAnalyzer.js',
   'src/js/skillExtractor.js',
   'src/js/recommender.js',

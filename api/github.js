@@ -16,7 +16,7 @@ export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json',
   };
 
@@ -53,13 +53,19 @@ export default async function handler(req) {
     ghHeaders.Authorization = `Bearer ${token}`;
   }
 
-  // Helper to fallback to unauthenticated request if token is invalid (401)
+  // Helper to fallback to unauthenticated request if token is invalid (401).
+  // A shallow clone of options.headers is used for the retry so that the
+  // shared ghHeaders object is never mutated and all other calls in this
+  // invocation continue to send the Authorization header normally.
   const fetchWithFallback = async (url, options) => {
     let res = await fetch(url, options);
     if (res.status === 401 && options.headers?.Authorization) {
-      // Remove authorization for this retry and all future requests in this invocation
-      delete options.headers.Authorization;
-      res = await fetch(url, options);
+      const retryOptions = {
+        ...options,
+        headers: { ...options.headers },
+      };
+      delete retryOptions.headers.Authorization;
+      res = await fetch(url, retryOptions);
     }
     return res;
   };

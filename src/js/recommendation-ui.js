@@ -126,6 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = e.target.files[0];
       if (!file) return;
 
+      const token = ++currentUploadToken;
+
       errorState.classList.add('hidden');
 
       if (file.size > 5 * 1024 * 1024) {
@@ -135,7 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const fileName = file.name.toLowerCase();
-      const token = ++currentUploadToken;
+      const allowedExtensions = ['.pdf', '.txt'];
+
+      if (!allowedExtensions.some(ext => fileName.endsWith(ext))) {
+        showError("Unsupported file type. Please upload a .pdf or .txt file.");
+        e.target.value = '';
+        return;
+      }
 
       if (fileName.endsWith('.pdf')) {
         try {
@@ -157,7 +165,14 @@ document.addEventListener('DOMContentLoaded', () => {
             text += pageText + '\n';
           }
           if (token !== currentUploadToken) return;
-          resumeText.value = text.trim();
+          const parsedText = text.trim();
+          if (!parsedText) {
+            e.target.value = '';
+            resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+            showError("No extractable text found. This PDF may be image-based. Please upload a searchable PDF or paste text manually.");
+            return;
+          }
+          resumeText.value = parsedText;
           resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
         } catch (err) {
           console.error("PDF Parse Error:", err);

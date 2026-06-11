@@ -73,6 +73,7 @@
     if (typeof pdfjsLib === 'undefined') {
       var s = document.createElement('script');
       s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      s.integrity = "sha384-ff5a940921b04eeafdbe37ffcfd966bbf7825186e93938128e6a5b310675fc2b57daffd670020aa91bfe5350d4086e9e";
       s.crossOrigin = "anonymous";
       s.onload = function() {
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";

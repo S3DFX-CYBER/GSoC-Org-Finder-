@@ -277,7 +277,7 @@ gsoc-2026-org-finder/
 ├── index.html                    # Main frontend HTML
 ├── api/github.js                 # Vercel Edge Function — GitHub API proxy
 ├── src/
-│   ├── assets/og-image.jpeg      # Social preview image
+│   ├── assets/og-image.png      # Social preview image
 │   ├── js/app.js                 # Application logic
 │   ├── js/org.js                 # Organization data source
 │   └── styles.css                # Styling

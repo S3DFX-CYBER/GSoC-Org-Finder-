@@ -3850,8 +3850,30 @@
   "RTEMS Project": {
     "org": "RTEMS Project",
     "ideasUrl": "https://projects.rtems.org/gsoc/",
-    "channels": [],
-    "mentors": [],
+    "channels": [
+      {
+        "type": "Discord",
+        "label": "RTEMS Discord",
+        "url": "https://www.rtems.org/discord"
+      },
+      {
+        "type": "Forum",
+        "label": "RTEMS Users Forum",
+        "url": "https://users.rtems.org/c/programs/gsoc/47"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Gedare Bloom",
+        "github": "gedare",
+        "githubUrl": "https://github.com/gedare"
+      },
+      {
+        "name": "Kuan",
+        "github": "khchen",
+        "githubUrl": "https://github.com/khchen"
+      }
+    ],
     "mailingLists": [
       {
         "type": "Mailing list",
@@ -3861,7 +3883,7 @@
     ],
     "tip": "Send a short intro email with your background and the idea you're interested in.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-06-11T08:04:35.000Z"
   },
   "Ruby": {
     "org": "Ruby",

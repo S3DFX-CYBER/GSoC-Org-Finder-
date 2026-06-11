@@ -83,7 +83,7 @@ export default async function handler(req) {
       let repos = [];
       while (page <= 3) {
         try {
-          const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
+          const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, {
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
@@ -97,16 +97,16 @@ export default async function handler(req) {
           page++;
         } catch (e) {
           // Gracefully break loop on timeout/err for pages 2-3, allowing partial results
-          if (page === 1) throw e; 
+          if (page === 1) throw e;
           break;
         }
       }
-      
+
       let totalStars = 0;
       const languageCounts = {};
       const topicCounts = {};
       let activeDays = 9999;
-      
+
       repos.forEach(r => {
         if (r.fork) return; // Skip forks for skill analysis
         totalStars += r.stargazers_count;
@@ -127,7 +127,7 @@ export default async function handler(req) {
 
       const languages = Object.entries(languageCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
       const topics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
-      
+
       let activity = 'low';
       if (activeDays < 30) activity = 'high';
       else if (activeDays < 90) activity = 'medium';
@@ -139,7 +139,7 @@ export default async function handler(req) {
         activity,
         ts: Date.now()
       };
-      
+
       safeCacheSet(cacheKey, result);
       return new Response(JSON.stringify(result), { status: 200, headers });
 

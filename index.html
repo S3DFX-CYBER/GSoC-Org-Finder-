@@ -899,6 +899,32 @@
               Bookmark organizations you're targeting. Your watchlist is <strong class="text-zinc-700 dark:text-zinc-300">stored locally</strong> in your browser — private, instant, and zero sign-up required.
             </p>
           </div>
+          <p id="deadlines-empty-fallback" class="text-xs text-zinc-400 italic hidden mt-4">No upcoming deadlines.</p>
+          <script>
+            (function runtimeDeadlineFilter() {
+              const now = new Date();
+              const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+              const container = document.getElementById('dynamic-deadlines-container');
+              if (!container) return;
+              const nodes = container.querySelectorAll('.deadline-node');
+              let activeCount = 0;
+              nodes.forEach(node => {
+                const dateStr = node.dataset.date;
+                if (!dateStr) return;
+                const [year, month, day] = dateStr.split('-').map(Number);
+                if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+                const nodeUTC = Date.UTC(year, month - 1, day);
+                if (nodeUTC < todayUTC) {
+                  node.style.display = 'none';
+                } else {
+                  node.style.display = 'block';
+                  activeCount++;
+                }
+              });
+              const fallback = document.getElementById('deadlines-empty-fallback');
+              if (fallback) fallback.style.display = activeCount === 0 ? 'block' : 'none';
+            })();
+          </script>
         </div>
 
         <!-- Feature 6: Mentor Discovery (Full-Width Card) -->

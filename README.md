@@ -47,6 +47,35 @@ Built with a responsive and lightweight architecture, the platform delivers a se
 
 ---
 
+## ⚡ Quick Start
+
+If you want to run the project locally, the workflow is intentionally simple:
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Run the available checks
+
+   ```bash
+   npm test
+   npm run lint
+   ```
+
+3. Open the app locally
+
+   - macOS: `open index.html`
+   - Linux: `xdg-open index.html`
+   - Windows: open `index.html` directly in your browser
+
+   This opens the static experience right away. If you want live GitHub stats and API-backed features during development, run `vercel dev` after setting `GITHUB_TOKEN` in your environment.
+
+> There is no build step for the frontend. The site is designed to work as a static app, with optional Vercel Edge API support for richer data.
+
+---
+
 <div align="center">
 
 ## 📖 Table of Contents
@@ -54,6 +83,7 @@ Built with a responsive and lightweight architecture, the platform delivers a se
 | Section | Description |
 |----------|-------------|
 | [✨ What is this?](#-what-is-this) | Overview of the project |
+| [⚡ Quick Start](#-quick-start) | Installation and local usage |
 | [🎯 Features](#-features) | Core functionalities and highlights |
 | [📈 Flowchart](#-flowchart) | Visual representation of project workflow |
 | [📁 Project Structure](#-project-structure) | Repository folder structure |

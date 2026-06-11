@@ -2725,13 +2725,39 @@
   "MetaBrainz Foundation Inc": {
     "org": "MetaBrainz Foundation Inc",
     "ideasUrl": "https://wiki.musicbrainz.org/Development/Summer_of_Code/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+    "channels": [
+    {
+      "type": "irc",
+      "name": "#metabrainz",
+      "url": "https://kiwiirc.com/nextclient/irc.libera.chat/#metabrainz"
+    },
+    {
+      "type": "matrix",
+      "name": "#metabrainz-all:chatbrainz.org",
+      "url": "https://matrix.to/#/#metabrainz-all:chatbrainz.org"
+    },
+    {
+      "type": "discord",
+      "name": "MetaBrainz Discord",
+      "url": "https://discord.gg/R4hBw972QA"
+    },
+    {
+      "type": "forum",
+      "name": "MetaBrainz Community Discourse",
+      "url": "https://community.metabrainz.org/c/metabrainz/gsoc-applications/9"
+    }
+  ],
+  "mentors": [
+    { "name": "lucifer", "github": "lucifer" },
+    { "name": "reosarevok", "github": "reosarevok" },
+    { "name": "yvanzo", "github": "yvanzo" },
+    { "name": "bitmap", "github": "bitmap" }
+  ],
+  "mailingLists": [],
+  "tip": "Join #metabrainz on IRC/Matrix/Discord. Post GSoC proposals on the forum. Do not contact mentors privately.",
+  "status": "ok",
+  "lastFetched": "2026-06-09T00:00:00.000Z"
+},
   "MetaCall": {
     "org": "MetaCall",
     "ideasUrl": "https://github.com/metacall/core/wiki/Google-Summer-Of-Code-2026",

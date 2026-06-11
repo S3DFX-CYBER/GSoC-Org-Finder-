@@ -1,19 +1,25 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, safeHTML */
+
+let currentAbortController = null;
+let currentRequestId = 0;
+let lastRecommendations = [];
 
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
-async function analyzeProfile(username, resume) {
+async function analyzeProfile(username, resume, options = {}) {
+  const { signal } = options;
   let githubProfile = null;
   let skills = [];
 
   if (username) {
     try {
-      githubProfile = await analyzeGitHubUser(username);
+      githubProfile = await analyzeGitHubUser(username, { signal });
     } catch (err) {
+      if (err.name === 'AbortError') throw err;
       console.warn("GitHub Analysis Failed:", err);
       if (!resume) throw err; // Only bubble up error if we possess no alternate datasource
     }
@@ -30,7 +36,7 @@ async function analyzeProfile(username, resume) {
  * Global image error handler for recommendation cards.
  * Replaces broken images with a styled initial-based placeholder.
  */
-globalThis.handleRecImgError = function(img, name) {
+globalThis.handleRecImgError = function (img, name) {
   img.style.display = 'none';
   const container = img.parentElement;
   if (container) {
@@ -41,17 +47,6 @@ globalThis.handleRecImgError = function(img, name) {
       placeholder.textContent = (name || '?')[0].toUpperCase();
     }
   }
-};
-
-// Internal safety helper in case globalThis.escapeHtml is not yet initialized
-const safeEscapeHtml = (str) => {
-  if (typeof escapeHtml === 'function') return escapeHtml(str);
-  return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
 };
 
 
@@ -65,7 +60,7 @@ function handleBookmarkAction(e, btn) {
     btn.classList.toggle('active', isNowBookmarked);
     btn.classList.toggle('text-orange-500', isNowBookmarked);
     btn.classList.toggle('text-zinc-300', !isNowBookmarked);
-    
+
     const icon = btn.querySelector('.material-symbols-outlined');
     if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
   }
@@ -78,21 +73,21 @@ function handleCompareAction(e, btn, card) {
 
   // Core engine handles constraints and updates globalThis.compareList synchronously
   toggleCompare(e, name);
-  
+
   // Read the authoritative application state to govern local visual treatment
   const currentCompareList = globalThis.compareList || [];
   const isNowComparing = currentCompareList.includes(name);
 
   if (isNowComparing) {
-     btn.classList.add('text-primary');
-     btn.classList.remove('text-zinc-400');
-     btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing';
-     card.classList.add('ring-2', 'ring-primary/30');
+    btn.classList.add('text-primary');
+    btn.classList.remove('text-zinc-400');
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing';
+    card.classList.add('ring-2', 'ring-primary/30');
   } else {
-     btn.classList.remove('text-primary');
-     btn.classList.add('text-zinc-400');
-     btn.innerHTML = '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
-     card.classList.remove('ring-2', 'ring-primary/30');
+    btn.classList.remove('text-primary');
+    btn.classList.add('text-zinc-400');
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
+    card.classList.remove('ring-2', 'ring-primary/30');
   }
 }
 
@@ -111,11 +106,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const ghInput = document.getElementById('aiGhUsername');
   const resumeText = document.getElementById('aiResumeText');
   const fileUpload = document.getElementById('aiResumeFile');
-  
+
   const loadingState = document.getElementById('aiLoadingState');
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+
+  document.addEventListener('compareListChanged',() => {
+    if(lastRecommendations.length){
+      renderRecommendations(lastRecommendations);
+    }
+  });
 
   // Handle file upload
   if (fileUpload) {
@@ -156,14 +157,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
+    const requestId = ++currentRequestId;
+
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume);
+      const recommendations = await analyzeProfile(username, resume, { signal });
+      
+      if (requestId !== currentRequestId) return;
+      
+      lastRecommendations = recommendations; 
       renderRecommendations(recommendations);
     } catch (err) {
+      if (requestId !== currentRequestId || err.name === 'AbortError') return;
       showError(err.message || "An unexpected error occurred during analysis.");
     } finally {
-      setAnalysisStateUI(false);
+      if (requestId === currentRequestId) {
+        setAnalysisStateUI(false);
+      }
     }
   });
 
@@ -181,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resultsContainer) {
     resultsContainer.addEventListener('click', (e) => {
       const target = e.target;
-      
+
       const bookmarkBtn = target.closest('[data-bookmark-org]');
       if (bookmarkBtn) {
         return handleBookmarkAction(e, bookmarkBtn);
@@ -192,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareBtn && card) {
         return handleCompareAction(e, compareBtn, card);
       }
-      
+
       if (card) {
         return handleCardActivation(card);
       }
@@ -212,35 +227,33 @@ document.addEventListener('DOMContentLoaded', () => {
       const o = rec.org;
       const githubOwner = o.github ? o.github.split('/')[0] : '';
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-      
+
       const inCompare = currentCompareList.includes(o.name);
-      const isBookmarked = typeof currentBookmarkedSet.has === 'function' 
-        ? currentBookmarkedSet.has(o.name) 
+      const isBookmarked = typeof currentBookmarkedSet.has === 'function'
+        ? currentBookmarkedSet.has(o.name)
         : false;
-      
-      const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`).join('');
-      
+
+      const reasonsHtml = rec.reasons.map(r => safeHTML`<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${r}</span></li>`);
+
       let matchedSkillsHtml = '';
       if (rec.matchedSkills.length > 0) {
-         const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`).join('');
-         matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
+        const skillsList = rec.matchedSkills.slice(0, 4).map(s => safeHTML`<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${s}</span>`);
+        matchedSkillsHtml = safeHTML`<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
       }
 
-
       // Defined explicitly outside string to eliminate linting issues with nested template literals
-      const logoHtml = logoUrl 
-        ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
+      const logoHtml = logoUrl
+        ? safeHTML`<img src="${logoUrl}" data-org-name="${o.name}" alt="${o.name} logo" class="rec-logo w-full h-full object-contain rounded-lg">
            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
-        : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
+        : safeHTML`<div class="text-primary font-bold text-xl font-headline">${o.name[0] || '?'}</div>`;
 
-
-      return `
+      return safeHTML`
       <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
-               data-org-name="${safeEscapeHtml(o.name)}">
+               data-org-name="${o.name}">
         
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
-          <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
+          <span class="material-symbols-outlined text-sm">target</span> ${String(rec.score)}% Match
         </div>
 
         <!-- Header: Logo & Bookmarking -->
@@ -251,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div class="flex items-center gap-2 mt-2">
              <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
+                     data-bookmark-org="${o.name}" 
                      title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
                 <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
              </button>
@@ -260,10 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Body Text & Category -->
         <div class="flex-1">
-          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
-          <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
+          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${o.name}</h3>
+          <span class="category-tag inline-block mb-3">${(o.cat || 'Other').toUpperCase()}</span>
           
-          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
+          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${o.desc || ''}</p>
 
           <!-- Insights Box -->
           <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
@@ -276,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Bottom: Action Bar -->
         <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
+          <button data-compare-org="${o.name}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           
@@ -286,8 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </article>
       `;
-    }).join('');
+    });
 
-    resultsContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
+    resultsContainer.innerHTML = safeHTML`<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
   }
 });

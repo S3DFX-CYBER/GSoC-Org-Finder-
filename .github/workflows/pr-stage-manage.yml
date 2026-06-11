@@ -17,6 +17,7 @@ permissions:
   pull-requests: write
   issues: write
   contents: read
+  metadata: write
 
 concurrency:
   group: pr-stage-manager-${{ github.event.pull_request.number || github.event.review.pull_request.number }}
@@ -32,12 +33,11 @@ jobs:
 
     steps:
       - name: Evaluate PR Pipeline
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
 
         with:
           # Use built-in token instead of PAT
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;

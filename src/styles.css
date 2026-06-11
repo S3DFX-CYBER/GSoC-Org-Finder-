@@ -750,8 +750,5 @@ footer a:hover{text-decoration:underline}
   color: var(--muted);
 }
 
-[data-theme="dark"] .clear-all-langs-btn:hover {
-  border-color: var(--orange);
-  color: var(--orange-deep);
-  background: var(--orange-pale);
-}
+[data-theme="dark"] .tech-tag { color: var(--ink2); border-color: var(--border); }
+[data-theme="dark"] .issue-label.lang { color: var(--ink3); border-color: var(--border); }

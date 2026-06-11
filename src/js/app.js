@@ -95,6 +95,19 @@ const CHANNEL_ICONS = {
   Slack: '💬', Zulip: '💬', Discord: '🎮', Matrix: '🔗', IRC: '🖥️', 'Mailing list': '📧'
 };
 
+const TECH_ICONS = {
+  'python': '🐍 Python',
+  'react': '⚛️ React',
+  'reactjs': '⚛️ React',
+  'nextjs': '▲ Next.js',
+  'next.js': '▲ Next.js'
+};
+
+function formatTechTag(tag) {
+  const lower = tag.trim().toLowerCase();
+  return TECH_ICONS[lower] || tag;
+}
+
 const CONTACT_TIPS = {
   Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
   Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
@@ -863,8 +876,8 @@ function renderWatchlist() {
 
     const topTags = (org.tags || []).slice(0, 4)
       .map(t => {
-        const displayTag = t.trim().toLowerCase() === 'python' ? '🐍 python' : t;
-        return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${displayTag}</span>`;
+        const displayTag = formatTechTag(t);
+        return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${displayTag}</span>`;
       });
 
     const item = document.createElement('div');
@@ -1158,10 +1171,10 @@ function renderOrgs(reset = true) {
       : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
 
     const tagsHtml = org.tags.slice(0, 3).map(t => {
-      const displayTag = t.trim().toLowerCase() === 'python' ? '🐍 python' : t;
-      return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${displayTag}</span>`;
+      const displayTag = formatTechTag(t);
+      return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${displayTag}</span>`;
     });
-    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
+    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
 
     const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
     const isBookmarkedStr = isBookmarked ? 'true' : 'false';
@@ -1448,7 +1461,10 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (mFetchBtn) mFetchBtn.textContent = gh ? '↻ Refresh' : 'Fetch Live Stats';
 
   const mTech = document.getElementById('mTech');
-  if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
+  if (mTech) mTech.innerHTML = org.tags.map(t => {
+    const displayTag = formatTechTag(t);
+    return safeHTML`<span class="tech-tag">${displayTag}</span>`;
+  }).join('');
 
   const mFit = document.getElementById('mFit');
   if (mFit) mFit.innerHTML = org.fit.map(f => safeHTML`<span class="fit-tag">${f}</span>`).join('');
@@ -2065,7 +2081,10 @@ function renderIssues() {
 }
 
 function renderIssueCard(iss) {
-  const langTags = iss.orgTags.slice(0, 2).map(t => safeHTML`<span class="issue-label lang">${t}</span>`);
+  const langTags = iss.orgTags.slice(0, 2).map(t => {
+    const displayTag = formatTechTag(t);
+    return safeHTML`<span class="issue-label lang">${displayTag}</span>`;
+  });
   const gfiNames = ['good first issue', 'good-first-issue'];
   const otherLabels = iss.labels.filter(l => !gfiNames.includes(String(l).toLowerCase())).slice(0, 2)
     .map(l => safeHTML`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`);

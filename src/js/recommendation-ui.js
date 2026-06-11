@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let matchedSkillsHtml = '';
       if (rec.matchedSkills.length > 0) {
         const skillsList = rec.matchedSkills.slice(0, 4).map(s => {
-          const displaySkill = s.trim().toLowerCase() === 'python' ? '🐍 python' : s;
+          const displaySkill = typeof formatTechTag === 'function' ? formatTechTag(s) : (s.trim().toLowerCase() === 'python' ? '🐍 Python' : s);
           return safeHTML`<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${displaySkill}</span>`;
         });
         matchedSkillsHtml = safeHTML`<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;

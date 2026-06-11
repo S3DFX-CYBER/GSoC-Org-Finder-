@@ -7,12 +7,11 @@
   <meta name="description" content="Privacy Policy for FindMyGSoC." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/privacy.html" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" integrity="sha384-NPToXI2n6gWUtTP7kSreAjbTuFo/Ud8X117P3IzZKfYqse84nsxKYkLO4Q4Jwmiz" crossorigin="anonymous" />
+  <!-- integrity omitted: Google Fonts serves dynamic CSS per browser, static hashes don't work here -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="src/styles.css" />
 
   <script>
-    // Theme restoration
     (function(){
       try {
         if (localStorage.getItem('theme') === 'dark') {
@@ -22,7 +21,6 @@
     })();
   </script>
   <script>
-    // Tailwind Configuration
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -41,28 +39,70 @@
     }
   </script>
 </head>
-<body class="privacy-page bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
+<body class="bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
 
-<header class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
-  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg shadow-orange-500/20">
-        <span class="text-white font-extrabold text-xl">G</span>
-      </div>
-      <a href="index.html" class="font-extrabold text-xl tracking-tight font-headline">FindMy<span class="text-primary">GSoC</span></a>
-    </div>
-    <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
-      <a href="index.html#orgs" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
-      <a href="index.html#guide" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
-      <a href="index.html#issues" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
-    </nav>
-    <div class="flex items-center gap-4">
-      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
-        <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-zinc-200">
+  <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-3 sm:gap-4">
+      <button id="menuBtn" class="inline-flex md:hidden items-center justify-center p-2 hover:bg-zinc-100 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="material-symbols-outlined text-zinc-600">menu</span>
+      </button>
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#9d4300,#f97316);">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="text-base sm:text-lg font-extrabold tracking-tight text-zinc-900 font-sans whitespace-nowrap">
+          <span class="hidden sm:inline">GSoC 2026 </span><span class="text-orange-500 italic">Org Finder</span>
+        </span>
       </a>
     </div>
+    <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
+      <a href="index.html#orgs" class="text-zinc-600 hover:text-zinc-900 transition-colors">Organizations</a>
+      <a href="index.html#guide" class="text-zinc-600 hover:text-zinc-900 transition-colors">Guide</a>
+      <a href="index.html#issues" class="text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
+    </nav>
+    <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
+      <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
+    </a>
   </div>
 </header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden">
+  <div id="menuBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <nav id="menuPanel" aria-label="Mobile navigation" class="absolute top-0 left-0 bottom-0 w-72 bg-white shadow-2xl transition-transform duration-300 -translate-x-full">
+    <div class="flex items-center justify-between p-6 border-b border-zinc-100">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#9d4300,#f97316);">
+          <span class="text-white font-bold text-sm">G</span>
+        </div>
+        <span class="font-extrabold text-zinc-900">Menu</span>
+      </div>
+      <button id="closeMenuBtn" class="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-zinc-600">close</span>
+      </button>
+    </div>
+    <div class="p-4 space-y-1">
+      <a href="index.html#timeline" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-orange-50 text-orange-600 font-bold text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">schedule</span> Timeline
+      </a>
+      <a href="index.html#orgs" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">business</span> Organizations
+      </a>
+      <a href="index.html#guide" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">menu_book</span> Guide
+      </a>
+      <a href="index.html#issues" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
+        <span class="material-symbols-outlined text-lg">bug_report</span> Issues
+      </a>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-zinc-900 text-white text-sm font-bold hover:bg-zinc-700 transition-colors">
+        <span class="material-symbols-outlined text-base">star</span> Star & Contribute
+      </a>
+    </div>
+  </nav>
+</div>
 
 <main class="pt-32 pb-20 px-6 max-w-4xl mx-auto">
   <h1 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mb-8">Privacy Policy</h1>
@@ -86,9 +126,50 @@
   </div>
 </main>
 
-<!-- Footer Placeholder -->
 <div id="footer-placeholder"></div>
 <script src="src/js/footer.js"></script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('mobileMenu');
+    const panel = document.getElementById('menuPanel');
+    const menuBtn = document.getElementById('menuBtn');
+
+    function toggleMenu() {
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        setTimeout(() => { panel.style.transform = 'translateX(0)'; }, 10);
+      } else {
+        panel.style.transform = 'translateX(-100%)';
+        menuBtn.setAttribute('aria-expanded', 'false');
+        setTimeout(() => { menu.classList.add('hidden'); }, 300);
+      }
+    }
+
+    document.getElementById('menuBtn')?.addEventListener('click', toggleMenu);
+    document.getElementById('closeMenuBtn')?.addEventListener('click', toggleMenu);
+    document.getElementById('menuBackdrop')?.addEventListener('click', toggleMenu);
+
+    panel?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', toggleMenu);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+        toggleMenu();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && !menu.classList.contains('hidden')) {
+        panel.style.transform = 'translateX(-100%)';
+        menuBtn.setAttribute('aria-expanded', 'false');
+        setTimeout(() => { menu.classList.add('hidden'); }, 300);
+      }
+    });
+  });
+</script>
 </body>
 </html>

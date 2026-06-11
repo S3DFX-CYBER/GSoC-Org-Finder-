@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gsoc-finder-v3';
+const CACHE_NAME = 'gsoc-finder-v4';
 const CRITICAL_ASSETS = [
   './',
   'index.html',
@@ -10,6 +10,8 @@ const CRITICAL_ASSETS = [
   'src/js/skillExtractor.js',
   'src/js/recommender.js',
   'src/js/recommendation-ui.js',
+  'src/components/footer.html',
+  'src/js/footer.js',
   'src/assets/icon-512.png'
 ];
 

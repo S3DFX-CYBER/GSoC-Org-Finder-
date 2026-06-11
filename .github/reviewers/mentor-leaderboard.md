@@ -5,14 +5,14 @@
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
 | 🥇 | @TarunyaProgrammer | 19 | 75 |
-| 🥈 | @nitinog10 | 13 | 54 |
-| 🥉 | @KUMARNiru007 | 14 | 53 |
+| 🥈 | @KUMARNiru007 | 18 | 73 |
+| 🥉 | @nitinog10 | 13 | 54 |
 | 4 | @4f4d | 7 | 37 |
-| 5 | @deepak0x | 7 | 26 |
-| 6 | @Anushreebasics | 9 | 25 |
-| 7 | @saurabh24thakur | 3 | 17 |
-| 8 | @Balaji91221 | 8 | 16 |
-| 9 | @itsdakshjain | 5 | 14 |
+| 5 | @Anushreebasics | 11 | 29 |
+| 6 | @deepak0x | 7 | 26 |
+| 7 | @itsdakshjain | 6 | 19 |
+| 8 | @saurabh24thakur | 3 | 17 |
+| 9 | @Balaji91221 | 8 | 16 |
 | 10 | @knoxiboy | 5 | 14 |
 | 11 | @12fahed | 3 | 11 |
 | 12 | @Mrigakshi-Rathore | 5 | 10 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Mon, 08 Jun 2026 11:50:20 GMT
+Last updated: Thu, 11 Jun 2026 07:49:18 GMT

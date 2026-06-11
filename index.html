@@ -4044,7 +4044,7 @@ if(org.ideas){
   function performSearch(queryText, shouldTrack = false) {
     const query = queryText.trim();
     if (shouldTrack && typeof BadgeSystem !== 'undefined' && query.length > 0) {
-      BadgeSystem.trackSearch(query);
+      BadgeSystem.trackSearch();
     }
     applyFilters();
   }

@@ -1,4 +1,4 @@
-/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
+/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages, globalModalManager */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
@@ -8,6 +8,7 @@ let filteredOrgs = [];
 let MENTOR_DATA = {};
 let mentorDataState = 'idle';
 const compareList = []; // list of org names
+let modalKeydownHandler = null;
 const bookmarkedSet = new Set(parseStoredBookmarks());
 
 // Recently Viewed Organizations
@@ -1507,6 +1508,14 @@ globalThis.openModal = function (name, triggerElement = null) {
   }
 
   renderMentorContactSection(org);
+
+  const modalBg = document.getElementById('modalBg');
+  if (modalBg) {
+    if (modalKeydownHandler) modalBg.removeEventListener('keydown', modalKeydownHandler);
+    modalKeydownHandler = (e) => globalModalManager.handleKeydown(e, typeof closeModal === 'function' ? closeModal : null);
+    modalBg.addEventListener('keydown', modalKeydownHandler);
+  }
+
   openModalElement('orgModal', triggerElement);
 
   // Lazily retrieve GFIs if missing
@@ -1531,6 +1540,11 @@ globalThis.openModal = function (name, triggerElement = null) {
 
 function closeModal() {
   closeModalElement('orgModal');
+  const modalBg = document.getElementById('modalBg');
+  if (modalBg && modalKeydownHandler) {
+    modalBg.removeEventListener('keydown', modalKeydownHandler);
+    modalKeydownHandler = null;
+  }
 }
 globalThis.closeModal = closeModal;
 
@@ -2577,7 +2591,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-document.getElementById('modalBg')?.addEventListener('keydown', (e) => globalModalManager.handleKeydown(e, typeof closeModal === 'function' ? closeModal : null));
+// Global keydown listener removed, attached dynamically in openModal
 
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY

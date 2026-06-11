@@ -3909,19 +3909,15 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  function openModal(name) {
-    globalModalManager.setLastFocusedElement(document.activeElement);
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
-    addRecentlyViewed(name);
+  let inlineModalKeydownHandler = null;
 
-    // Track badge progress for org views
-    if (typeof BadgeSystem !== 'undefined') {
-      BadgeSystem.trackOrgView();
-    }
+  function renderModalHeader(org) {
     const isBookmarked = bookmarkedSet.has(org.name);
-
-    document.getElementById('mHeader').innerHTML = `
+    const category = getCategoryMeta(org.cat);
+    const mHeader = document.getElementById('mHeader');
+    if (!mHeader) return;
+    
+    mHeader.innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <div class="flex items-start justify-between pr-10">
         <div>
@@ -3955,19 +3951,29 @@ btn.__orgListenerAttached = true;
         modalBookmarkBtn.setAttribute('title', label);
       });
     }
+  }
 
-    document.getElementById('mMetrics').innerHTML = `
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
-    `;
+  function renderModalMetrics(org) {
+    const mMetrics = document.getElementById('mMetrics');
+    if (mMetrics) {
+      mMetrics.innerHTML = `
+        <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
+        <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
+        <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
+        <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+      `;
+    }
+    const mDesc = document.getElementById('mDesc');
+    if (mDesc) mDesc.textContent = org.desc;
+    
+    const mTech = document.getElementById('mTech');
+    if (mTech) mTech.innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
+    
+    const mFit = document.getElementById('mFit');
+    if (mFit) mFit.innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+  }
 
-    document.getElementById('mDesc').textContent = org.desc;
-    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
-    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
-
-    // Timeline
+  function renderModalTimeline(org) {
     let timelineHtml = '';
     for (let y = 2020; y <= 2026; y++) {
       const active = (y >= org.firstYear);
@@ -3984,9 +3990,11 @@ btn.__orgListenerAttached = true;
         timelineHtml += `<span class="${isCurrent ? 'current-year ' : ''}${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
       }
     }
-    document.getElementById('mTimeline').innerHTML = timelineHtml;
+    const mTimeline = document.getElementById('mTimeline');
+    if (mTimeline) mTimeline.innerHTML = timelineHtml;
+  }
 
-    // Sanitize and set idea/repo links
+  function renderModalLinks(org) {
     const ideasUrl = sanitizeHrefUrl(org.ideas);
     const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));
     const ideasBtn = document.getElementById('mIdeasBtn');
@@ -3998,38 +4006,64 @@ btn.__orgListenerAttached = true;
       if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href');
     }
 
-// Copy link button
-const oldCopy = document.getElementById('mIdeasCopyBtn');
-if(oldCopy) oldCopy.remove();
-if(org.ideas){
-  const copyBtn = document.createElement('button');
-  copyBtn.id = 'mIdeasCopyBtn';
-  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-  copyBtn.onclick = function(){
-    navigator.clipboard.writeText(org.ideas).then(()=>{
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-      copyBtn.style.background = '#dcfce7';
-      copyBtn.style.color = '#166534';
-      setTimeout(()=>{
-        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-        copyBtn.style.background = '';
-        copyBtn.style.color = '';
-      }, 2000);
-    });
-  };
-  document.getElementById('mIdeasBtn').after(copyBtn);
-}
-    renderMentorContactSection(org);
+    const oldCopy = document.getElementById('mIdeasCopyBtn');
+    if(oldCopy) oldCopy.remove();
+    if(org.ideas){
+      const copyBtn = document.createElement('button');
+      copyBtn.id = 'mIdeasCopyBtn';
+      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+      copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+      copyBtn.onclick = function(){
+        navigator.clipboard.writeText(org.ideas).then(()=>{
+          copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+          copyBtn.style.background = '#dcfce7';
+          copyBtn.style.color = '#166534';
+          setTimeout(()=>{
+            copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+            copyBtn.style.background = '';
+            copyBtn.style.color = '';
+          }, 2000);
+        });
+      };
+      if (ideasBtn) ideasBtn.after(copyBtn);
+    }
+  }
+
+  function openModal(name) {
+    if (typeof globalModalManager !== 'undefined') {
+      globalModalManager.setLastFocusedElement(document.activeElement);
+    }
+    const org = ORGS.find(o => o.name === name);
+    if (!org) return;
+    addRecentlyViewed(name);
+
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackOrgView();
+    }
+
+    renderModalHeader(org);
+    renderModalMetrics(org);
+    renderModalTimeline(org);
+    renderModalLinks(org);
+    if (typeof renderMentorContactSection === 'function') {
+      renderMentorContactSection(org);
+    }
 
     const draftBtn = document.getElementById('mDraftBtn');
     if (draftBtn) {
-      draftBtn.onclick = () => ProposalBuilder.open(org.name);
+      draftBtn.onclick = () => { if (typeof ProposalBuilder !== 'undefined') ProposalBuilder.open(org.name); }
     }
      
     const orgModal = document.getElementById('orgModal');
-    orgModal.classList.add('open');
-    orgModal.focus();
+    if (orgModal) {
+      orgModal.classList.add('open');
+      orgModal.focus();
+      if (typeof globalModalManager !== 'undefined') {
+        if (inlineModalKeydownHandler) orgModal.removeEventListener('keydown', inlineModalKeydownHandler);
+        inlineModalKeydownHandler = (e) => globalModalManager.handleKeydown(e, typeof closeOrgModal === 'function' ? closeOrgModal : null);
+        orgModal.addEventListener('keydown', inlineModalKeydownHandler);
+      }
+    }
     
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
@@ -4037,15 +4071,22 @@ if(org.ideas){
   }
 
   function closeOrgModal() {
-    document.getElementById('orgModal').classList.remove('open');
+    const orgModal = document.getElementById('orgModal');
+    if (orgModal) {
+      orgModal.classList.remove('open');
+      if (inlineModalKeydownHandler) {
+        orgModal.removeEventListener('keydown', inlineModalKeydownHandler);
+        inlineModalKeydownHandler = null;
+      }
+    }
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     
-    globalModalManager.restoreFocus();
+    if (typeof globalModalManager !== 'undefined') {
+      globalModalManager.restoreFocus();
+    }
   }
-
-  document.getElementById('orgModal').addEventListener('keydown', (e) => globalModalManager.handleKeydown(e, typeof closeOrgModal === 'function' ? closeOrgModal : null));
 
   function openRandomOrg() {
     const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;
@@ -5023,6 +5064,7 @@ if(e.key.toLowerCase()==='r'){
 
 });
 </script>
+<script src="src/js/modalUtils.js"></script>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

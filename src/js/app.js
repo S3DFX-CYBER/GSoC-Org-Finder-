@@ -776,11 +776,22 @@ function parseStoredBookmarks() {
   }
 }
 
+function persistBookmarksToStorage() {
+  try {
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    return true;
+  } catch (error) {
+    console.error('[Bookmarks] Failed to persist bookmarks:', error);
+    alert('Bookmarks could not be saved because your browser blocked storage. Your current session still works, but bookmarks may not persist after refresh.');
+    return false;
+  }
+}
+
 function syncBookmark(name, shouldAdd) {
   if (!name) return;
   if (shouldAdd) bookmarkedSet.add(name);
   else bookmarkedSet.delete(name);
-  localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  persistBookmarksToStorage();
 
   refreshOrgGridAfterBookmarkChange();
   renderWatchlist();
@@ -827,7 +838,7 @@ function clearAllBookmarks() {
   if (!bookmarkedSet.size) return;
   if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
   bookmarkedSet.clear();
-  localStorage.setItem('bookmarks', JSON.stringify([]));
+  persistBookmarksToStorage();
   applyFilters();
   renderWatchlist();
   updateAIInsights();

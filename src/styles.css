@@ -933,7 +933,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   color: #a1a1aa;
 }
 
-
 /* ai-recommendation page */
 .compare-toast {
   position: fixed;
@@ -956,3 +955,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
 }
+
+[data-theme="dark"] .tech-tag { color: var(--ink2); border-color: var(--border); }
+[data-theme="dark"] .issue-label.lang { color: var(--ink3); border-color: var(--border); }

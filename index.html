@@ -1985,6 +1985,8 @@ kbd:hover{
             <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
             Enable autosave
             <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
+            <div id="pwProposalStats" class = "proposal-stats"></div>
+
           </label>
       </div>
       <div class="proposal-toolbar">
@@ -4461,6 +4463,19 @@ if(org.ideas){
     return GSOC_TEMPLATE.replaceAll('[Organization Name]', orgName);
   }
 
+  function updateProposalStats(){
+    const editor = document.getElementById('pwEditor');
+    const stats = document.getElementById('pwProposalStats');
+    if(!editor || !stats) return;
+
+    const text = editor.value;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+
+    stats.textContent = `${words} words • ${chars} chars`;
+
+  }
+
   function renderPreview() {
     const editor = document.getElementById('pwEditor');
     const preview = document.getElementById('pwPreview');
@@ -4489,6 +4504,7 @@ if(org.ideas){
       editor.value = saved;
     }
     renderPreview();
+    updateProposalStats();
 
     proposalFocusReturn = document.getElementById('mDraftBtn');
     if (orgModal) orgModal.setAttribute('aria-hidden', 'true');
@@ -4531,6 +4547,7 @@ if(org.ideas){
     const editor = document.getElementById('pwEditor');
     if (editor) {
       editor.value = getTemplateForOrg(currentProposalOrg);
+      updateProposalStats();
       renderPreview();
     }
   }
@@ -4591,6 +4608,7 @@ if(org.ideas){
 
   document.getElementById('pwEditor')?.addEventListener('input', (e) => {
     renderPreview();
+    updateProposalStats();
     if (!currentProposalOrg || !isAutosaveEnabled()) return;
     clearTimeout(proposalAutosaveTimer);
     proposalAutosaveTimer = setTimeout(() => {

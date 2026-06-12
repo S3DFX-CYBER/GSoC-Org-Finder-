@@ -871,46 +871,154 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   color: var(--orange-deep);
   background: var(--orange-pale);
 }
+/* ===== Command Palette (Ctrl+K) ===== */
+#cmd-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+}
 
-/* Privacy Page specific overrides to match exact styling */
-.privacy-page .premium-footer {
-  background: #f4f4f5;
-  border-top-color: #e4e4e7;
+#cmd-overlay.open {
+  display: flex;
 }
-.dark .privacy-page .premium-footer,
-.privacy-page.dark .premium-footer {
-  background: #09090b;
-  border-top-color: #27272a;
+
+#cmd-palette {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
 }
-.privacy-page .footer-stat-card {
-  background: rgba(0, 0, 0, 0.02);
-  border-color: #e4e4e7;
+
+#cmd-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border, #e0e0e0);
 }
-.dark .privacy-page .footer-stat-card,
-.privacy-page.dark .footer-stat-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: #27272a;
+
+#cmd-search-row input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text-primary, #111);
 }
-.privacy-page .social-link {
-  border-color: #e4e4e7;
-  background: #ffffff;
-  color: #71717a;
+
+#cmd-search-row input::placeholder {
+  color: var(--text-muted, #999);
 }
-.dark .privacy-page .social-link,
-.privacy-page.dark .social-link {
-  border-color: #27272a;
+
+#cmd-results {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.cmd-section-label {
+  padding: 8px 16px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, #999);
+}
+
+.cmd-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.cmd-item:hover,
+.cmd-item.active {
+  background: var(--bg-hover, #f5f5f5);
+}
+
+.cmd-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.cmd-item-icon.org  { background: #b8d0f5; color: #0a2d6e; }
+.cmd-item-icon.action { background: #b8dcc2; color: #0a4a20; }
+
+.cmd-item-body { flex: 1; min-width: 0; }
+.cmd-item-name { font-size: 14px; font-weight: 500; color: var(--text-primary, #111); }
+.cmd-item-sub  { font-size: 12px; color: var(--text-muted, #777); margin-top: 1px; }
+
+.cmd-item-name mark {
+  background: transparent;
+  color: #1a73e8;
+  font-weight: 700;
+}
+
+#cmd-footer {
+  display: flex;
+  gap: 16px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border, #e0e0e0);
+  background: var(--bg-secondary, #fafafa);
+  font-size: 11px;
+  color: var(--text-muted, #999);
+}
+
+.cmd-hint kbd {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #ccc);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-family: monospace;
+}
+
+#cmd-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted, #999);
+  font-size: 14px;
+}
+
+/* dark mode overrides */
+[data-theme="dark"] #cmd-palette {
+  background: #1e1e2e;
+  border-color: #333;
+}
+[data-theme="dark"] #cmd-input {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .cmd-item-name {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .cmd-item-sub {
+  color: #aaaaaa;
+}
+[data-theme="dark"] .cmd-section-label {
+  color: #888888;
+}
+[data-theme="dark"] .cmd-item:hover,
+[data-theme="dark"] .cmd-item.active {
+  background: #2a2a3e;
+}
+[data-theme="dark"] #cmd-footer {
   background: #18181b;
-  color: #a1a1aa;
+  border-color: #333;
+  color: #888888;
 }
-.privacy-page #back-to-top-btn {
-  background: #f97316;
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
-}
-.privacy-page #back-to-top-btn:hover {
-  background: #ea580c;
-  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
-}
-.privacy-page #back-to-top-btn:focus-visible {
-  outline-color: #f97316;
-}
-

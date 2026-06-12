@@ -2311,16 +2311,50 @@
   "status": "ok",
   "lastFetched": "2026-05-09T16:09:12.548Z"
 },
-  "Kotlin Foundation": {
-    "org": "Kotlin Foundation",
-    "ideasUrl": "https://github.com/Kotlin/KEEP/blob/master/gsoc/gsoc-2026.md",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"Kotlin Foundation": {
+  "org": "Kotlin Foundation",
+  "ideasUrl": "https://github.com/Kotlin/KEEP/blob/master/gsoc/gsoc-2026.md",
+  "channels": [
+    {
+      "type": "Slack",
+      "url": "https://surveys.jetbrains.com/s3/kotlin-slack-sign-up",
+      "label": "Kotlin Slack"
+    },
+    {
+      "type": "Slack",
+      "url": "https://slack-chats.kotlinlang.org/c/gsoc",
+      "label": "Kotlin #gsoc Channel"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Marat Akhin",
+      "github": "ice-phoenix",
+      "githubUrl": "https://github.com/ice-phoenix"
+    },
+    {
+      "name": "Artem Olkov",
+      "github": "mMaxy",
+      "githubUrl": "https://github.com/mMaxy"
+    },
+    {
+      "name": "Charlie Zhang",
+      "github": "",
+      "githubUrl": ""
+    },
+    {
+      "name": "Ksenia Shneyveys",
+      "github": "Belosnegova",
+      "githubUrl": "https://github.com/Belosnegova"
+    }
+  ],
+  "mailingLists": [
+    "gsoc@kotlinfoundation.org"
+  ],
+  "tip": "Join Kotlin Slack and participate in the #gsoc channel before submitting a proposal or asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+} ,
   "Kubeflow": {
     "org": "Kubeflow",
     "ideasUrl": "https://github.com/kubeflow/community/blob/master/GSOC_2026.md",

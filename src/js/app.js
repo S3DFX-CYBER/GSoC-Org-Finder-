@@ -1509,14 +1509,15 @@ globalThis.openModal = function (name, triggerElement = null) {
 
   renderMentorContactSection(org);
 
-  const modalBg = document.getElementById('modalBg');
-  if (modalBg) {
-    if (modalKeydownHandler) modalBg.removeEventListener('keydown', modalKeydownHandler);
+  const orgModal = document.getElementById('orgModal');
+  if (orgModal) {
+    if (modalKeydownHandler) orgModal.removeEventListener('keydown', modalKeydownHandler);
     modalKeydownHandler = (e) => globalModalManager.handleKeydown(e, typeof closeModal === 'function' ? closeModal : null);
-    modalBg.addEventListener('keydown', modalKeydownHandler);
+    orgModal.addEventListener('keydown', modalKeydownHandler);
   }
 
   openModalElement('orgModal', triggerElement);
+  if (orgModal) orgModal.focus();
 
   // Lazily retrieve GFIs if missing
   if (org.github && (org._gh?.gfi === null || org._gh?.gfi === undefined)) {
@@ -1540,9 +1541,9 @@ globalThis.openModal = function (name, triggerElement = null) {
 
 function closeModal() {
   closeModalElement('orgModal');
-  const modalBg = document.getElementById('modalBg');
-  if (modalBg && modalKeydownHandler) {
-    modalBg.removeEventListener('keydown', modalKeydownHandler);
+  const orgModal = document.getElementById('orgModal');
+  if (orgModal && modalKeydownHandler) {
+    orgModal.removeEventListener('keydown', modalKeydownHandler);
     modalKeydownHandler = null;
   }
 }

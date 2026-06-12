@@ -586,6 +586,7 @@ kbd:hover{
       .proposal-btn { padding: 0.3rem 0.55rem; font-size: 0.7rem; }
       #pwCloseBtn { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.3rem; }
       #pwCloseBtn span + * { display: none; }
+
     }
     
     /* Dark mode - Modal */
@@ -911,13 +912,6 @@ kbd:hover{
         stroke-dasharray: none;
         stroke-dashoffset: 0;
       }
-      .section-scroll-btn {
-        transition: none !important;
-      }
-      .section-scroll-btn:hover,
-      .section-scroll-btn:active {
-        transform: none !important;
-      }
     }
 
     /* Smooth fading for search bar active animation on focus */
@@ -951,18 +945,9 @@ kbd:hover{
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  transition: all 0.25s ease;
 }
-.section-scroll-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(157, 67, 0, 0.45);
-}
-.section-scroll-btn:active {
-  transform: translateY(1px) scale(0.92);
-  box-shadow: 0 4px 12px rgba(157, 67, 0, 0.2);
-  filter: brightness(0.95);
-}
+.section-scroll-btn:hover { transform: translateY(-2px); }
     #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
     #prevSectionBtn {
       bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
@@ -975,11 +960,6 @@ kbd:hover{
 }
 .dark .section-scroll-btn:hover {
   box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
-}
-.dark .section-scroll-btn:active {
-  transform: translateY(1px) scale(0.92);
-  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.2);
-  filter: brightness(0.95);
 }
 
 /* Dark mode - Section scroll indicator */
@@ -1000,44 +980,6 @@ kbd:hover{
   opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
-}
-
-/* Custom ripple effect inside scroll buttons */
-.section-scroll-btn .click-ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple-animation 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
-  background-color: rgba(255, 255, 255, 0.45);
-  pointer-events: none;
-}
-
-@keyframes ripple-animation {
-  to {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-/* Icon animations inside scroll buttons on click */
-@keyframes bounce-down {
-  0% { transform: translateY(0); }
-  30% { transform: translateY(4px); }
-  70% { transform: translateY(-2px); }
-  100% { transform: translateY(0); }
-}
-@keyframes bounce-up {
-  0% { transform: translateY(0); }
-  30% { transform: translateY(-4px); }
-  70% { transform: translateY(2px); }
-  100% { transform: translateY(0); }
-}
-
-.section-scroll-btn.bounce-down-active .material-symbols-outlined {
-  animation: bounce-down 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.section-scroll-btn.bounce-up-active .material-symbols-outlined {
-  animation: bounce-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .section-scroll-indicator {
@@ -1638,9 +1580,9 @@ kbd:hover{
         <p class="text-xs text-green-600" id="issuesBannerSubtitle">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
       </div>
     </div>
-    <div class="sm:ml-auto flex flex-col items-start sm:items-end gap-1">
+    <div class="ml-auto text-right">
       <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: pending refresh</span>
-      <span id="issuesStaleNote" class="hidden text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
+      <span id="issuesStaleNote" class="hidden ml-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
     </div>
   </div>
   <!-- Issue Cards -->
@@ -1919,7 +1861,7 @@ kbd:hover{
 
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="mHeader">
+<div class="modal-bg" id="orgModal">
   <div class="modal">
     <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
@@ -2111,6 +2053,7 @@ kbd:hover{
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
+  let inlineModalKeydownHandler = null;
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
@@ -3909,15 +3852,21 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  let inlineModalKeydownHandler = null;
+  function openModal(name) {
+    if (typeof globalModalManager !== 'undefined') {
+      globalModalManager.setLastFocusedElement(document.activeElement);
+    }
+    const org = ORGS.find(o => o.name === name);
+    if (!org) return;
+    addRecentlyViewed(name);
 
-  function renderModalHeader(org) {
+    // Track badge progress for org views
+    if (typeof BadgeSystem !== 'undefined') {
+      BadgeSystem.trackOrgView();
+    }
     const isBookmarked = bookmarkedSet.has(org.name);
-    const category = getCategoryMeta(org.cat);
-    const mHeader = document.getElementById('mHeader');
-    if (!mHeader) return;
-    
-    mHeader.innerHTML = `
+
+    document.getElementById('mHeader').innerHTML = `
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <div class="flex items-start justify-between pr-10">
         <div>
@@ -3951,29 +3900,19 @@ btn.__orgListenerAttached = true;
         modalBookmarkBtn.setAttribute('title', label);
       });
     }
-  }
 
-  function renderModalMetrics(org) {
-    const mMetrics = document.getElementById('mMetrics');
-    if (mMetrics) {
-      mMetrics.innerHTML = `
-        <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
-        <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
-        <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
-        <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
-      `;
-    }
-    const mDesc = document.getElementById('mDesc');
-    if (mDesc) mDesc.textContent = org.desc;
-    
-    const mTech = document.getElementById('mTech');
-    if (mTech) mTech.innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
-    
-    const mFit = document.getElementById('mFit');
-    if (mFit) mFit.innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
-  }
+    document.getElementById('mMetrics').innerHTML = `
+      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
+      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+    `;
 
-  function renderModalTimeline(org) {
+    document.getElementById('mDesc').textContent = org.desc;
+    document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
+    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+
+    // Timeline
     let timelineHtml = '';
     for (let y = 2020; y <= 2026; y++) {
       const active = (y >= org.firstYear);
@@ -3990,11 +3929,9 @@ btn.__orgListenerAttached = true;
         timelineHtml += `<span class="${isCurrent ? 'current-year ' : ''}${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
       }
     }
-    const mTimeline = document.getElementById('mTimeline');
-    if (mTimeline) mTimeline.innerHTML = timelineHtml;
-  }
+    document.getElementById('mTimeline').innerHTML = timelineHtml;
 
-  function renderModalLinks(org) {
+    // Sanitize and set idea/repo links
     const ideasUrl = sanitizeHrefUrl(org.ideas);
     const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));
     const ideasBtn = document.getElementById('mIdeasBtn');
@@ -4006,48 +3943,29 @@ btn.__orgListenerAttached = true;
       if (repoUrl) repoBtn.href = repoUrl; else repoBtn.removeAttribute('href');
     }
 
-    const oldCopy = document.getElementById('mIdeasCopyBtn');
-    if(oldCopy) oldCopy.remove();
-    if(org.ideas){
-      const copyBtn = document.createElement('button');
-      copyBtn.id = 'mIdeasCopyBtn';
-      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-      copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-      copyBtn.onclick = function(){
-        navigator.clipboard.writeText(org.ideas).then(()=>{
-          copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-          copyBtn.style.background = '#dcfce7';
-          copyBtn.style.color = '#166534';
-          setTimeout(()=>{
-            copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-            copyBtn.style.background = '';
-            copyBtn.style.color = '';
-          }, 2000);
-        });
-      };
-      if (ideasBtn) ideasBtn.after(copyBtn);
-    }
-  }
-
-  function openModal(name) {
-    if (typeof globalModalManager !== 'undefined') {
-      globalModalManager.setLastFocusedElement(document.activeElement);
-    }
-    const org = ORGS.find(o => o.name === name);
-    if (!org) return;
-    addRecentlyViewed(name);
-
-    if (typeof BadgeSystem !== 'undefined') {
-      BadgeSystem.trackOrgView();
-    }
-
-    renderModalHeader(org);
-    renderModalMetrics(org);
-    renderModalTimeline(org);
-    renderModalLinks(org);
-    if (typeof renderMentorContactSection === 'function') {
-      renderMentorContactSection(org);
-    }
+// Copy link button
+const oldCopy = document.getElementById('mIdeasCopyBtn');
+if(oldCopy) oldCopy.remove();
+if(org.ideas){
+  const copyBtn = document.createElement('button');
+  copyBtn.id = 'mIdeasCopyBtn';
+  copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+  copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
+  copyBtn.onclick = function(){
+    navigator.clipboard.writeText(org.ideas).then(()=>{
+      copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
+      copyBtn.style.background = '#dcfce7';
+      copyBtn.style.color = '#166534';
+      setTimeout(()=>{
+        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
+        copyBtn.style.background = '';
+        copyBtn.style.color = '';
+      }, 2000);
+    });
+  };
+  document.getElementById('mIdeasBtn').after(copyBtn);
+}
+    renderMentorContactSection(org);
 
     const draftBtn = document.getElementById('mDraftBtn');
     if (draftBtn) {
@@ -5334,59 +5252,13 @@ if(e.key.toLowerCase()==='r'){
     window.addEventListener("resize", updateCurrentSection);
     updateCurrentSection();
 
-  const nextBtn = document.getElementById("nextSectionBtn");
-  const prevBtn = document.getElementById("prevSectionBtn");
-
-  function addClickFeedback(btn, direction) {
-    if (!btn) return;
-    btn.addEventListener("click", (e) => {
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      // Icon bounce animation
-      const animClass = direction === "up" ? "bounce-up-active" : "bounce-down-active";
-      if (!prefersReducedMotion) {
-        btn.classList.add(animClass);
-      }
-
-      // Create ripple effect
-      if (!prefersReducedMotion) {
-        const ripple = document.createElement("span");
-        ripple.classList.add("click-ripple");
-        const rect = btn.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = `${size}px`;
-
-        const isKeyboardClick = e.detail === 0;
-        const x = (!isKeyboardClick && e.clientX !== undefined && e.clientX !== null) ? (e.clientX - rect.left - size / 2) : (rect.width / 2 - size / 2);
-        const y = (!isKeyboardClick && e.clientY !== undefined && e.clientY !== null) ? (e.clientY - rect.top - size / 2) : (rect.height / 2 - size / 2);
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-
-        btn.appendChild(ripple);
-
-        ripple.addEventListener("animationend", () => {
-          ripple.remove();
-        });
-
-        btn.addEventListener("animationend", (event) => {
-          if (event.animationName === "bounce-up" || event.animationName === "bounce-down") {
-            btn.classList.remove(animClass);
-          }
-        }, { once: true });
-      }
-    });
-  }
-
-  addClickFeedback(nextBtn, "down");
-  addClickFeedback(prevBtn, "up");
-
-  nextBtn?.addEventListener("click", () => {
+  document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
     if (currentSection < sections.length - 1) {
       scrollToSectionIndex(currentSection + 1);
     }
   });
 
-  prevBtn?.addEventListener("click", () => {
+  document.getElementById("prevSectionBtn")?.addEventListener("click", () => {
     if (currentSection > 0) {
       scrollToSectionIndex(currentSection - 1);
     } else {

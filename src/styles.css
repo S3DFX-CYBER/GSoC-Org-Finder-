@@ -548,6 +548,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+body:has(#prevSectionBtn) #back-to-top-btn {
+  display: none !important;
+}
+
 #back-to-top-btn.show {
   opacity: 1;
   visibility: visible;
@@ -555,9 +559,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 }
 
 
-body:has(#prevSectionBtn) #back-to-top-btn {
-  display: none !important;
-}
 
 #back-to-top-btn:hover {
   background: var(--orange-deep);

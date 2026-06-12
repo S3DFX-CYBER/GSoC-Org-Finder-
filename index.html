@@ -1887,30 +1887,69 @@ kbd:hover{
 <section id="contact" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="text-center mb-12">
     <h2 class="text-4xl font-extrabold font-headline tracking-tight mb-4">Get in Touch</h2>
-    <p class="text-zinc-600 max-w-2xl mx-auto">Have questions, feedback, or need help? We'd love to hear from you.</p>
+    <p class="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">Have questions, feedback, or need help? We'd love to hear from you.</p>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-    <a href="https://github.com/S3DFX-CYBER" target="_blank" rel="noopener noreferrer" class="bg-white border border-zinc-200 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">person</span>
-      </div>
-      <h3 class="font-bold mb-2">GitHub Profile</h3>
-      <p class="text-sm text-zinc-600">Follow the maintainer and check out other projects.</p>
-    </a>
-    <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues" target="_blank" rel="noopener noreferrer" class="bg-white border border-zinc-200 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">bug_report</span>
-      </div>
-      <h3 class="font-bold mb-2">Report Issues</h3>
-      <p class="text-sm text-zinc-600">Found a bug or have a feature request? Open an issue.</p>
-    </a>
-    <a href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer" class="bg-white border border-zinc-200 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
-      <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 transition-colors">
-        <span class="material-symbols-outlined text-zinc-600 group-hover:text-primary">forum</span>
-      </div>
-      <h3 class="font-bold mb-2">Join Discord</h3>
-      <p class="text-sm text-zinc-600">Connect with the community for discussions and support.</p>
-    </a>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-start">
+    <!-- Left side: existing contact cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6">
+      <a href="https://github.com/S3DFX-CYBER" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
+        <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-400 group-hover:text-primary">person</span>
+        </div>
+        <h3 class="font-bold mb-2 dark:text-white">GitHub Profile</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">Follow the maintainer and check out other projects.</p>
+      </a>
+      <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/issues" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
+        <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-400 group-hover:text-primary">bug_report</span>
+        </div>
+        <h3 class="font-bold mb-2 dark:text-white">Report Issues</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">Found a bug or have a feature request? Open an issue.</p>
+      </a>
+      <a href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-primary hover:shadow-lg transition-all text-center group">
+        <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-400 group-hover:text-primary">forum</span>
+        </div>
+        <h3 class="font-bold mb-2 dark:text-white">Join Discord</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">Connect with the community for discussions and support.</p>
+      </a>
+    </div>
+
+    <!-- Right side: contact form -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm">
+      <form id="contactForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label for="contactName" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Name</label>
+            <input type="text" id="contactName" name="name" required placeholder="Your Name" 
+              class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none">
+          </div>
+          <div class="space-y-2">
+            <label for="contactEmail" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Email</label>
+            <input type="email" id="contactEmail" name="email" required placeholder="your@email.com" 
+              class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none">
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label for="contactSubject" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Subject</label>
+          <input type="text" id="contactSubject" name="subject" required placeholder="What is this about?" 
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none">
+        </div>
+        <div class="space-y-2">
+          <label for="contactMessage" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Message</label>
+          <textarea id="contactMessage" name="message" required rows="4" placeholder="Your message here..." 
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none resize-none"></textarea>
+        </div>
+        <button type="submit" id="contactSubmit" 
+          class="w-full py-4 bg-primary hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-orange-500/20 flex items-center justify-center gap-2 group">
+          <span id="submitText">Send Message</span>
+          <span id="submitSpinner" class="hidden w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+        </button>
+        <div id="contactStatus" role="status" aria-live="polite" aria-atomic="true" class="hidden p-4 rounded-xl text-sm font-medium text-center"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -5296,5 +5335,6 @@ if(e.key.toLowerCase()==='r'){
 })();
 </script>
 
+<script src="src/js/app.js"></script>
 </body>
 </html>

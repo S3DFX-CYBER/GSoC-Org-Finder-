@@ -983,6 +983,20 @@ kbd:hover{
   filter: brightness(0.95);
 }
 
+/* Dark mode - Section scroll indicator */
+.dark .section-scroll-indicator {
+  background: rgba(24, 24, 27, 0.88);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #fb923c;
+}
+.dark .section-scroll-indicator-dot {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+}
+.dark .section-scroll-indicator-value {
+  color: #e4e4e7;
+}
+
 .section-scroll-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
@@ -1301,10 +1315,9 @@ kbd:hover{
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
-        </button>
+       <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+  🎲 Surprise Me!
+</button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
@@ -4696,6 +4709,35 @@ if(org.ideas){
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+
+  // Safe HTML utilities for recommendation-ui.js
+  
+  class SafeHTMLString extends String {}
+  SafeHTMLString.prototype.__isSafeHTML = true;
+
+  function safeHTML(strings, ...values) {
+    let result = '';
+    for (let i = 0; i < strings.length; i++) {
+      result += strings[i];
+      if (i < values.length) {
+        const val = values[i];
+        let rendered;
+        if (val && val.__isSafeHTML) {
+          rendered = val.toString();
+        } else if (Array.isArray(val)) {
+          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : escapeHtml(x)).join('');
+        } else {
+          rendered = escapeHtml(val == null ? '' : String(val));
+        }
+        result += rendered;
+      }
+    }
+    return new SafeHTMLString(result);
+  }
+
+  function rawHTML(v) { return new SafeHTMLString(v || ''); }
+  globalThis.safeHTML = safeHTML;
+  globalThis.rawHTML = rawHTML;
 </script>
 
 <!-- Vercel Speed Insights -->

@@ -217,14 +217,8 @@ kbd:hover{
     .modal-bg {
       position: fixed;
       inset: 0;
-      max-width: none;
-      max-height: none;
-      margin: 0;
-      padding: 0;
-      border: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
-      color: inherit;
       z-index: 100;
       display: flex;
       align-items: center;
@@ -237,9 +231,6 @@ kbd:hover{
     .modal-bg.open {
       opacity: 1;
       pointer-events: auto;
-    }
-    .modal-bg::backdrop {
-      background: transparent;
     }
     .modal {
      background: white;
@@ -1092,7 +1083,7 @@ kbd:hover{
       </a>
     </div>
   </nav>
-</dialog>
+</div>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1853,7 +1844,7 @@ kbd:hover{
 
 <!-- ═══════════════════ ANALYTICS PANEL ═══════════════════ -->
 
-<dialog class="modal-bg" id="anBg" aria-label="Analytics & Achievements">
+<div class="modal-bg" id="anBg" onclick="closeAnEvent(event)" onkeydown="if(event.key==='Enter'||event.key===' ')closeAn()" tabindex="-1" role="dialog" aria-modal="true" aria-label="Analytics & Achievements">
   <div class="modal w-full max-w-4xl">
     <button class="close-btn" onclick="closeAn()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header pb-4 border-b border-zinc-100">
@@ -1932,7 +1923,7 @@ kbd:hover{
       </div>
     </div>
   </div>
-</dialog>
+</div>
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
@@ -1993,19 +1984,6 @@ kbd:hover{
     }
   };
 
-  function syncMenuWithViewport(event){
-    if(event.matches){
-      closeMobileMenu({ immediate: true });
-    }
-  }
-
-  if(typeof desktopNavMediaQuery.addEventListener === 'function'){
-    desktopNavMediaQuery.addEventListener('change', syncMenuWithViewport);
-  } else if(typeof desktopNavMediaQuery.addListener === 'function'){
-    desktopNavMediaQuery.addListener(syncMenuWithViewport);
-  }
-  syncMenuWithViewport(desktopNavMediaQuery);
-  
   function handleMenuEscape(e){
     if(e.key === 'Escape'){
       const menu = document.getElementById('mobileMenu');
@@ -3300,9 +3278,6 @@ btn.__orgListenerAttached = true;
     }
     
     const modal = document.getElementById('anBg');
-    if (typeof modal?.showModal === 'function' && !modal.open) {
-      modal.showModal();
-    }
     modal?.classList.add('open');
     document.body.style.overflow = 'hidden';
 
@@ -3314,11 +3289,7 @@ btn.__orgListenerAttached = true;
   };
 
   window.closeAn = function() {
-    const modal = document.getElementById('anBg');
-    modal?.classList.remove('open');
-    if (typeof modal?.close === 'function' && modal.open) {
-      modal.close();
-    }
+    document.getElementById('anBg')?.classList.remove('open');
     document.body.style.overflow = 'auto';
 
     // Restore focus to the element that opened the modal
@@ -3333,20 +3304,6 @@ btn.__orgListenerAttached = true;
       closeAn();
     }
   };
-
-  const analyticsDialog = document.getElementById('anBg');
-  if (analyticsDialog) {
-    analyticsDialog.addEventListener('click', globalThis.closeAnEvent);
-    analyticsDialog.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' || event.key === ' ') {
-        closeAn();
-      }
-    });
-    analyticsDialog.addEventListener('cancel', function (event) {
-      event.preventDefault();
-      closeAn();
-    });
-  }
 
   function renderBadges() {
     const badgesContainer = document.getElementById('badgesContainer');
@@ -5065,6 +5022,81 @@ if(e.key.toLowerCase()==='r'){
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
 <script src="src/js/recommendation-ui.js"></script>
+<script>
+const logoLink = document.getElementById("logoLink");
+
+if (logoLink) {
+  logoLink.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Scroll to timeline section
+    document.getElementById("timeline").scrollIntoView({
+      behavior: "smooth"
+    });
+
+    // Remove active classes from desktop nav links
+    document.querySelectorAll(".desktop-nav-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+
+      link.classList.add("text-zinc-600", "hover:text-zinc-900");
+    });
+
+    // Activate Timeline desktop nav link
+    const timelineLink = document.querySelector(
+      '.desktop-nav-link[href="#timeline"]'
+    );
+
+    if (timelineLink) {
+      timelineLink.classList.remove("text-zinc-600");
+
+      timelineLink.classList.add(
+        "text-orange-600",
+        "font-bold",
+        "border-b-2",
+        "border-orange-600"
+      );
+    }
+
+    // Sync mobile menu links
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      link.classList.remove(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+
+      link.classList.add(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+    });
+
+    const mobileTimelineLink = document.querySelector(
+      '.mobile-menu-link[data-section="timeline"]'
+    );
+
+    if (mobileTimelineLink) {
+      mobileTimelineLink.classList.remove(
+        "text-zinc-700",
+        "hover:bg-zinc-100",
+        "font-medium"
+      );
+
+      mobileTimelineLink.classList.add(
+        "text-orange-600",
+        "bg-orange-50",
+        "font-bold"
+      );
+    }
+  });
+}
+</script>
 <div id="tooltip" class="tooltip"></div>
 <script>
 (function(){

@@ -1386,6 +1386,9 @@ function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixe
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
 globalThis.openModal = function (name, triggerElement = null) {
+  if (typeof globalModalManager !== 'undefined') {
+    globalModalManager.setLastFocusedElement(triggerElement || document.activeElement);
+  }
   const org = ORGS.find(o => o.name === name);
   if (!org) return;
 
@@ -1517,7 +1520,6 @@ globalThis.openModal = function (name, triggerElement = null) {
   }
 
   openModalElement('orgModal', triggerElement);
-  if (orgModal) orgModal.focus();
 
   // Lazily retrieve GFIs if missing
   if (org.github && (org._gh?.gfi === null || org._gh?.gfi === undefined)) {
@@ -1545,6 +1547,9 @@ function closeModal() {
   if (orgModal && modalKeydownHandler) {
     orgModal.removeEventListener('keydown', modalKeydownHandler);
     modalKeydownHandler = null;
+  }
+  if (typeof globalModalManager !== 'undefined') {
+    globalModalManager.restoreFocus();
   }
 }
 globalThis.closeModal = closeModal;

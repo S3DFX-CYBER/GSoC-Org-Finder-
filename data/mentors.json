@@ -2149,17 +2149,53 @@
   "status": "ok",
   "lastFetched": "2026-05-16T00:00:00.000Z"
 },
-  "Jitsi": {
-    "org": "Jitsi",
-    "ideasUrl": "https://github.com/jitsi/jitsi-meet/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
-
+ "Jitsi": {
+  "org": "Jitsi",
+  "ideasUrl": "https://github.com/jitsi/jitsi-meet/wiki/GSoC-2026",
+  "channels": [
+    {
+      "type": "Forum",
+      "url": "https://community.jitsi.org/",
+      "label": "Jitsi Community Forum"
+    }
+  ],
+  "mentors": [
+    {
+      "name": "Mihaela Dumitru",
+      "github": "mihhu",
+      "githubUrl": "https://github.com/mihhu"
+    },
+    {
+      "name": "Hristo Terezov",
+      "github": "hristoterezov",
+      "githubUrl": "https://github.com/hristoterezov"
+    },
+    {
+      "name": "Дамян Минков",
+      "github": "damencho",
+      "githubUrl": "https://github.com/damencho"
+    },
+    {
+      "name": "Jaya Allamsetty",
+      "github": "jallamsetty1",
+      "githubUrl": "https://github.com/jallamsetty1"
+    },
+    {
+      "name": "Aaron van Meerten",
+      "github": "aaronkvanmeerten",
+      "githubUrl": "https://github.com/aaronkvanmeerten"
+    },
+    {
+      "name": "Scott Boone",
+      "github": "sawall",
+      "githubUrl": "https://github.com/sawall"
+    }
+  ],
+  "mailingLists": [],
+  "tip": "Use the Jitsi Community Forum and participate in existing GSoC discussions before asking project-specific questions.",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Joomla!": {
     "org": "Joomla!",
     "ideasUrl": "https://docs.joomla.org/JGSOC:Google_Summer_of_Code_2026",

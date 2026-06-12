@@ -383,9 +383,6 @@ To run the Edge Functions locally and fetch GitHub stats, you need the Vercel CL
 
 3. **Set up environment variables:**
    Create a `.env.local` file in the root directory and add your GitHub token:
-   ```env
-   GITHUB_TOKEN=ghp_your_token_here
-   ```
 
 ### 4. Run Locally
 ```bash

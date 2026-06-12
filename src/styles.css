@@ -554,6 +554,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   transform: translateY(0) scale(1);
 }
 
+
+body:has(#prevSectionBtn) #back-to-top-btn {
+  display: none !important;
+}
+
 #back-to-top-btn:hover {
   background: var(--orange-deep);
   transform: translateY(-3px) scale(1.05);
@@ -564,6 +569,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   outline: 2px solid var(--orange);
   outline-offset: 2px;
 }
+
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
 
 /* ── SKELETON CARDS ── */

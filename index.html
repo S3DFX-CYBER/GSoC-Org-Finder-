@@ -1160,7 +1160,7 @@ kbd:hover{
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="#timeline" class="flex items-center gap-2" id="logoLink">
+      <a href="landing.html" class="flex items-center gap-2" id="logoLink">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
@@ -1170,6 +1170,9 @@ kbd:hover{
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors flex items-center" href="landing.html" aria-label="Home">
+          <span class="material-symbols-outlined text-lg">home</span>
+        </a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
@@ -1247,10 +1250,6 @@ kbd:hover{
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="landing.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors">
-        <span class="material-symbols-outlined text-lg">info</span>
-        About
-      </a>
       <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
@@ -5191,6 +5190,10 @@ if(e.key.toLowerCase()==='r'){
 
   if (logoLink) {
     logoLink.addEventListener("click", (event) => {
+      const href = logoLink.getAttribute("href");
+      if (href && !href.startsWith("#")) {
+        return; // Let standard link navigation work
+      }
       event.preventDefault();
       setCurrentSectionById("timeline");
       scrollToSectionIndex(currentSection);
@@ -5202,6 +5205,10 @@ if(e.key.toLowerCase()==='r'){
 
   document.querySelectorAll(".desktop-nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
+      if (href && !href.startsWith("#")) {
+        return; // Let standard link navigation work
+      }
       e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);
@@ -5215,6 +5222,13 @@ if(e.key.toLowerCase()==='r'){
 
   document.querySelectorAll(".mobile-menu-link").forEach(link => {
     link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
+      if (href && !href.startsWith("#")) {
+        if (typeof globalThis.toggleMenu === "function") {
+          globalThis.toggleMenu();
+        }
+        return; // Let standard link navigation work
+      }
       e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);

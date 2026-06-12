@@ -26,13 +26,12 @@ jobs:
       github.event.issue.pull_request == null &&
       github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Detect commands
         id: cmd
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           script: |
             const body =
@@ -77,8 +76,8 @@ jobs:
           steps.cmd.outputs.is_approve != 'true'
         env:
           ISSUE_CLAIMANT: ${{ github.event.issue.user.login }}
-          MAX_MENTORS: '2'
-          RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 
@@ -88,7 +87,7 @@ jobs:
         if: |
           steps.cmd.outputs.is_assign != 'true' &&
           steps.cmd.outputs.is_approve != 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           SELECTED_MENTORS_JSON: ${{ steps.mentor_select.outputs.result }}
         with:
@@ -204,7 +203,7 @@ jobs:
       - name: Validate issue assignment
         id: validate
         if: steps.cmd.outputs.is_assign == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           script: |
             const { owner, repo } =
@@ -274,8 +273,8 @@ jobs:
           steps.validate.outputs.eligible == 'true'
         env:
           ISSUE_CLAIMANT: ${{ steps.validate.outputs.claimant }}
-          MAX_MENTORS: '2'
-          RANDOM_ROTATION: 'true'
+          MAX_MENTORS: "2"
+          RANDOM_ROTATION: "true"
         run: |
           RESULT=$(node .github/scripts/select-issue-mentors.js)
 
@@ -285,7 +284,7 @@ jobs:
         if: |
           steps.cmd.outputs.is_assign == 'true' &&
           steps.validate.outputs.eligible == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           CLAIMANT: ${{ steps.validate.outputs.claimant }}
           SELECTED_MENTORS_JSON: ${{ steps.assign_mentors.outputs.result }}
@@ -398,7 +397,7 @@ jobs:
 
       - name: Process mentor approval
         if: steps.cmd.outputs.is_approve == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         env:
           TARGET_USER: ${{ steps.cmd.outputs.target_user }}
         with:

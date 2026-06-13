@@ -1,4 +1,4 @@
-/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
+/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages, escapeHtml, updateCountdown */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 
@@ -39,7 +39,6 @@ globalThis.updateCountdown = function() {
   const d=Math.floor(diff/86400000);
   const h=Math.floor((diff%86400000)/3600000);
   const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
   const cdSpan = document.getElementById('countdown');
   if(cdSpan) {
     cdSpan.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
@@ -185,31 +184,12 @@ const CONTACT_TIPS = {
   }
 })();
 
-globalThis.toggleTheme = function () {
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
-};
 
-function updateThemeIcon() {
-  const btn = document.getElementById('themeToggleBtn');
-  const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-  if (icon) {
-    const isDark = typeof document.documentElement.classList.contains === 'function'
-      ? document.documentElement.classList.contains('dark')
-      : false;
-    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-  }
-}
 
 // ══════════════════════════════════════════════
 // DYNAMIC TIMELINE & COUNTDOWN
 // ══════════════════════════════════════════════
-const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
-const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+
 
 
 const GSOC_SELECTION_DATE = new Date('2026-05-08T18:00:00Z');
@@ -2491,7 +2471,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('closeCompareModalBtn')?.addEventListener('click', closeCompareModal);
   document.getElementById('closeHelpModalBtn')?.addEventListener('click', closeHelpModal);
   document.getElementById('menuBtn')?.addEventListener('click', toggleMenu);
-  document.getElementById('themeToggleBtn')?.addEventListener('click', globalThis.toggleTheme);
 
   const backdrop = document.getElementById('mobileMenuBackdrop');
   if (backdrop) {
@@ -2632,9 +2611,7 @@ window.toggleTheme = function(){
 
   updateThemeIcon();
 
-  const computedDuration = getComputedStyle(document.documentElement).transitionDuration || '0.2s';
-  const parsedDelay = parseFloat(computedDuration) * (computedDuration.includes('ms') ? 1 : 1000) || 200;
-  const delay = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : parsedDelay;
+  const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 400;
 
   setTimeout(() => {
     document.documentElement.classList.remove('theme-transition');
@@ -2646,6 +2623,8 @@ function updateThemeIcon(){
   const btn = document.getElementById('theme-toggle-btn');
   if(btn){
     const isDark = document.documentElement.classList.contains('dark');
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
     btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
     btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');

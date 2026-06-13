@@ -1126,6 +1126,12 @@ kbd:hover{
         border-radius: 999px;
       }
     }
+@media (pointer: coarse) {
+  .filter-chip.bg-orange-600:hover {
+    background-color: #ea580c !important;
+    color: #ffffff !important;
+  }
+}
 
 </style>
   <link rel="manifest" href="manifest.json" />
@@ -1452,7 +1458,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1746,7 +1752,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -3052,71 +3058,46 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   if (!container) return;
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    container.style.display = 'none';
-    return;
-  }
+  if (totalPages <= 1) { container.innerHTML = ''; container.style.display = 'none'; return; }
 
   container.style.display = 'flex';
 
-  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
-  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
-  const activeClass = 'bg-primary text-white border-primary';
-  const disabledClass = 'opacity-50 cursor-not-allowed';
+  const base = 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-full border text-xs font-bold transition-all select-none';
+  const normal = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary cursor-pointer';
+  const active = 'bg-primary text-white border-primary cursor-default';
+  const dis = 'bg-white text-zinc-300 border-zinc-100 cursor-not-allowed pointer-events-none';
+  const ellipsisCls = 'inline-flex items-center justify-center min-w-[24px] h-8 text-xs text-zinc-400 border-none bg-transparent cursor-default select-none';
 
-  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
-    const page = index + 1;
-    return `
-      <button
-        type="button"
-        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
-        data-page="${page}"
-        aria-label="Go to page ${page}"
-        ${page === currentPage ? 'aria-current="page"' : ''}
-      >
-        ${page}
-      </button>
-    `;
-  }).join('');
+  const navBtn = (label, page, isDisabled, ariaLabel) =>
+    `<button type="button" class="${base} ${isDisabled ? dis : normal} whitespace-nowrap px-3" data-page="${page}" ${isDisabled ? 'disabled' : ''} aria-label="${ariaLabel}">${label}</button>`;
+  const pageBtn = (page) =>
+    `<button type="button" class="${base} ${page === currentPage ? active : normal}" data-page="${page}" aria-label="Go to page ${page}" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`;
+  const dot = `<span class="${ellipsisCls}">…</span>`;
 
-  container.innerHTML = `
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
-      data-page="${currentPage - 1}"
-      ${currentPage === 1 ? 'disabled' : ''}
-    >
-      Previous
-    </button>
+  const WING = 2;
+  const pages = [];
+  const addPage = (p) => { if (!pages.includes(p) && p >= 1 && p <= totalPages) pages.push(p); };
+  addPage(1); addPage(totalPages);
+  for (let i = currentPage - WING; i <= currentPage + WING; i++) addPage(i);
+  pages.sort((a, b) => a - b);
 
-    ${pageButtons}
+  let pageHTML = '';
+  for (let i = 0; i < pages.length; i++) {
+    if (i > 0 && pages[i] - pages[i - 1] > 1) pageHTML += dot;
+    pageHTML += pageBtn(pages[i]);
+  }
 
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
-      data-page="${currentPage + 1}"
-      ${currentPage === totalPages ? 'disabled' : ''}
-    >
-      Next
-    </button>
-  `;
+  container.innerHTML =
+    navBtn('«', 1, currentPage === 1, 'First page') +
+    navBtn('‹', currentPage - 1, currentPage === 1, 'Previous page') +
+    pageHTML +
+    navBtn('›', currentPage + 1, currentPage === totalPages, 'Next page') +
+    navBtn('»', totalPages, currentPage === totalPages, 'Last page');
 
   container.querySelectorAll('[data-page]').forEach(button => {
     button.addEventListener('click', () => {
       const page = Number(button.dataset.page);
-
-      if (
-        button.disabled ||
-        Number.isNaN(page) ||
-        page < 1 ||
-        page > totalPages ||
-        page === currentPage
-      ) {
-        return;
-      }
-
+      if (button.disabled || Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
       onPageChange(page);
     });
   });
@@ -5098,11 +5079,9 @@ if(e.key.toLowerCase()==='r'){
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {
-          hideTooltip();
-        } else {
-          showTooltip(element);
-        }
+        clearTimeout(element._tooltipTimer);
+        showTooltip(element);
+        element._tooltipTimer = setTimeout(() => hideTooltip(), 3000);
       });
     }
   });

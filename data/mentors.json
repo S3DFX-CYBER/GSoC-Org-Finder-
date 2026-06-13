@@ -2444,11 +2444,39 @@
   "KubeVirt": {
     "org": "KubeVirt",
     "ideasUrl": "https://github.com/kubevirt/kubevirt/wiki/Google-Summer-of-Code-2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Slack",
+        "url": "https://kubernetes.slack.com/messages/kubevirt-dev",
+        "label": "Kubernetes Slack (#kubevirt-dev)"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Felix Matouschek",
+        "github": "felixmatouschek",
+        "githubUrl": "https://github.com/felixmatouschek"
+      },
+      {
+        "name": "Ľuboslav Pivarč",
+        "github": "lpivarc",
+        "githubUrl": "https://github.com/lpivarc"
+      },
+      {
+        "name": "Victor Toso",
+        "github": "victortoso",
+        "githubUrl": "https://github.com/victortoso"
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Google Group",
+        "url": "https://groups.google.com/forum/#!forum/kubevirt-dev",
+        "label": "kubevirt-dev Google Group"
+      }
+    ],
+    "tip": "Submit project ideas via the kubevirt-dev Google Group or join the #kubevirt-dev Slack channel.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "LabLua": {

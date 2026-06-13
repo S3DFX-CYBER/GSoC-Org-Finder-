@@ -1,0 +1,33 @@
+/* Shimmer animation for skeleton loaders - Issue #151 */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}
+
+.skeleton-line {
+  background-color: #e5e7eb;
+}
+
+.dark .skeleton-line {
+  background-color: #3f3f46;
+}
+
+.dark .skeleton-card {
+  border-color: #3f3f46;
+  background-color: #27272a;
+}

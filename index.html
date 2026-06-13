@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="icon" type="image/png" href="src/assets/icon-512.png">
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -70,6 +68,8 @@
       document.head.appendChild(s);
     }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
   <script>
     // Theme restoration - runs early to prevent FOUC
@@ -84,7 +84,45 @@
       }
     })();
   </script>
-  <script src="src/js/tailwind-config.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          screens: {
+            'xs': '480px',
+            'sm': '640px',
+            'md': '768px',
+            'lg': '1024px',
+            'xl': '1280px',
+            '2xl': '1536px',
+          },
+          colors: {
+            "surface-container-highest":"#e2e2e2","background":"#f9f9f9",
+            "surface-container":"#eeeeee","primary-container":"#f97316",
+            "surface":"#f9f9f9","surface-variant":"#e2e2e2",
+            "on-background":"#1a1c1c","on-primary":"#ffffff",
+            "on-surface":"#1a1c1c","error":"#ba1a1a",
+            "primary":"#9d4300","on-surface-variant":"#584237",
+            "outline":"#8c7164","surface-container-lowest":"#ffffff",
+            "secondary":"#006c47","secondary-container":"#8af5be",
+            "on-secondary-container":"#00714b","on-secondary":"#ffffff",
+            "surface-container-low":"#f3f3f3","surface-container-high":"#e8e8e8",
+            "surface-dim":"#dadada","primary-fixed":"#ffdbca",
+            "primary-fixed-dim":"#ffb690","error-container":"#ffdad6",
+            "on-error-container":"#93000a","on-secondary-fixed":"#002113",
+            "secondary-fixed-dim":"#71dba6","tertiary":"#5f5e5e",
+            "on-primary-container":"#582200","surface-tint":"#9d4300",
+          },
+          fontFamily: {
+            "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],
+            "label":["Space Grotesk"],"mono":["Fira Code"]
+          },
+          borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},
+        },
+      },
+    }
+  </script>
   <style>
     .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
     .icon-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
@@ -1122,7 +1160,7 @@ kbd:hover{
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
-      <a href="landing.html" class="flex items-center gap-2" id="logoLink">
+      <a href="#timeline" class="flex items-center gap-2" id="logoLink">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-sm">G</span>
         </div>
@@ -1131,10 +1169,7 @@ kbd:hover{
         <span class="text-primary italic">Org Finder</span>
       </span>
       </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors flex items-center" href="landing.html" aria-label="Home">
-          <span class="material-symbols-outlined text-lg">home</span>
-        </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
@@ -1791,6 +1826,32 @@ kbd:hover{
   </div>
 </section>
 
+<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+<section class="bg-surface-container-low py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      </div>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+      </div>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ═══════════════════ COMPARE ═══════════════════ -->
 <section class="py-20 px-6 max-w-7xl mx-auto">
@@ -5139,10 +5200,6 @@ if(e.key.toLowerCase()==='r'){
 
   if (logoLink) {
     logoLink.addEventListener("click", (event) => {
-      const href = logoLink.getAttribute("href");
-      if (href && !href.startsWith("#")) {
-        return; // Let standard link navigation work
-      }
       event.preventDefault();
       setCurrentSectionById("timeline");
       scrollToSectionIndex(currentSection);
@@ -5154,10 +5211,6 @@ if(e.key.toLowerCase()==='r'){
 
   document.querySelectorAll(".desktop-nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
-      const href = link.getAttribute("href");
-      if (href && !href.startsWith("#")) {
-        return; // Let standard link navigation work
-      }
       e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);
@@ -5171,13 +5224,6 @@ if(e.key.toLowerCase()==='r'){
 
   document.querySelectorAll(".mobile-menu-link").forEach(link => {
     link.addEventListener("click", (e) => {
-      const href = link.getAttribute("href");
-      if (href && !href.startsWith("#")) {
-        if (typeof globalThis.toggleMenu === "function") {
-          globalThis.toggleMenu();
-        }
-        return; // Let standard link navigation work
-      }
       e.preventDefault(); // stop browser anchor scroll
       isNavClicking = true;
       clearTimeout(navClickTimer);

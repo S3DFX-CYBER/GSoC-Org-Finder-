@@ -27,19 +27,9 @@
 
   <!-- Pre-load scripts and styling -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.0/dist/purify.min.js"
-    integrity="sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7"
-    crossorigin="anonymous"></script>
-  <script>
-    if (typeof DOMPurify === 'undefined') {
-      const s = document.createElement('script');
-      s.src = "https://unpkg.com/dompurify@3.4.0/dist/purify.min.js";
-      s.integrity = "sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7";
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-  </script>
 
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
 
   <!-- Theme restoration script to prevent flash of light theme -->
@@ -1177,13 +1167,7 @@
         html += renderCell(row.fmg) + renderCell(row.gsoc) + renderCell(row.god) + renderCell(row.gh);
         html += '</tr>';
       }
-      var cleanHtml = DOMPurify.sanitize('<table><tbody>' + html + '</tbody></table>');
-      var temp = document.createElement('div');
-      temp.innerHTML = cleanHtml;
-      var cleanTbody = temp.querySelector('tbody');
-      if (cleanTbody) {
-        tbody.innerHTML = cleanTbody.innerHTML;
-      }
+      tbody.innerHTML = html;
     }
 
     /** Renders FAQ accordion items from FAQ_DATA into #faqList */
@@ -1202,7 +1186,7 @@
         html += '<div id="' + item.id + '" class="faq-content transition-all duration-300">';
         html += '<p class="p-6 pt-0 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-zinc-100/50 dark:border-zinc-800/50">' + item.a + '</p></div></div>';
       }
-      container.innerHTML = DOMPurify.sanitize(html, { ADD_ATTR: ['aria-expanded', 'aria-controls'] });
+      container.innerHTML = html;
     }
 
     // ── Theme ─────────────────────────────────────────────────────────────────

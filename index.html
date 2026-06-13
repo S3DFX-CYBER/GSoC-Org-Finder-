@@ -3288,10 +3288,8 @@ btn.__orgListenerAttached = true;
     // Add empty slots
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.onclick = () =>{
-        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
-      };
+      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50 cursor-pointer hover:opacity-80 hover:border-orange-400 transition-all';
+      empty.onclick = () => openOrgPicker(i);
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
@@ -3369,6 +3367,57 @@ btn.__orgListenerAttached = true;
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
     document.body.style.overflow = 'auto';
+  }
+
+  let orgPickerTargetSlot = null;
+
+  function openOrgPicker(slotIndex) {
+    orgPickerTargetSlot = slotIndex;
+    document.getElementById('orgPickerSearch').value = '';
+    filterOrgPicker('');
+    const modal = document.getElementById('orgPickerModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('orgPickerSearch').focus(), 50);
+  }
+
+  function closeOrgPicker() {
+    document.getElementById('orgPickerModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    orgPickerTargetSlot = null;
+  }
+
+  function filterOrgPicker(query) {
+    const list = document.getElementById('orgPickerList');
+    const q = query.toLowerCase();
+    const filtered = ORGS.filter(o => !compareList.includes(o.name) && o.name.toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<p style="text-align:center;color:#a1a1aa;font-size:14px;padding:24px 0;">No organizations found</p>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    filtered.forEach(org => {
+      const item = document.createElement('div');
+      item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #e4e4e7;border-radius:8px;cursor:pointer;transition:background 0.15s;';
+      item.onmouseenter = () => item.style.background = '#fef3e2';
+      item.onmouseleave = () => item.style.background = '';
+      item.innerHTML = `
+        <div>
+          <p style="font-weight:700;font-size:14px;color:#1a1c1c;">${escapeHtml(org.name)}</p>
+          <p style="font-size:11px;color:#8c7164;margin-top:2px;">${escapeHtml(org.cat)} · ${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+        </div>
+        <button style="background:#9d4300;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;">Add</button>
+      `;
+      item.querySelector('button').onclick = () => {
+        compareList[orgPickerTargetSlot] = org.name;
+        compareList = compareList.filter(Boolean);
+        renderCompare();
+        closeOrgPicker();
+      };
+      list.appendChild(item);
+    });
   }
 
   // ══════════════════════════════════════════════
@@ -3478,6 +3527,8 @@ btn.__orgListenerAttached = true;
       closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
+    } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
+      closeOrgPicker();
     }
   });
   
@@ -5295,6 +5346,25 @@ if(e.key.toLowerCase()==='r'){
   });
 })();
 </script>
-
+<!-- ORG PICKER MODAL -->
+<dialog id="orgPickerModal" aria-modal="true" aria-labelledby="orgPickerTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;width:100%;height:100%;margin:0;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;">
+      <h2 id="orgPickerTitle" style="font-size:18px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;">Choose an Organization</h2>
+      <button onclick="closeOrgPicker()" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
+    </div>
+    <div style="padding:0 24px 12px;">
+      <input id="orgPickerSearch" type="text" placeholder="Search organizations..."
+        oninput="filterOrgPicker(this.value)"
+        style="width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;box-sizing:border-box;">
+    </div>
+    <div id="orgPickerList" style="overflow-y:auto;flex:1;padding:0 24px 24px;display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</dialog>
+<script>
+  document.getElementById('orgPickerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeOrgPicker();
+  });
+</script>
 </body>
 </html>

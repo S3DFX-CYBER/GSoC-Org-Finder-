@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
   <link rel="icon" type="image/png" href="src/assets/icon-512.png">
   <meta charset="utf-8" />
@@ -1935,8 +1935,7 @@ kbd:hover{
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">star</span> <span id="mStars">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">fork_right</span> <span id="mForks">---</span></div>
         <div class="gh-stat-item"><span class="material-symbols-outlined text-sm">bug_report</span> <span id="mIssues">---</span></div>
-        <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">Moderate</span></div>
-        <button class="gh-fetch" id="mFetchBtn">Fetch Live Stats</button>
+        <div class="gh-stat-item text-blue-400"><span class="material-symbols-outlined text-sm">history</span> <span id="mActivity">---</span></div>
       </div>
 
       <div class="section-title">Description</div>
@@ -3913,6 +3912,7 @@ btn.__orgListenerAttached = true;
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
+    resetGithubStats();
     addRecentlyViewed(name);
 
     // Track badge progress for org views
@@ -4365,7 +4365,16 @@ if(org.ideas){
   }
 
   // Live GitHub Stats Mock/Fetch
-  async function fetchStats() {
+ // Resets all GitHub stat display elements to loading state
+function resetGithubStats() {
+    document.getElementById('mStars').textContent = '---';
+    document.getElementById('mForks').textContent = '---';
+    document.getElementById('mIssues').textContent = '---';
+    document.getElementById('mActivity').textContent = '---';
+    document.getElementById('mActivity').className = 'gh-stat-item text-blue-400';
+}
+
+async function fetchStats() {
     const btn = document.getElementById('mFetchBtn');
     const orgName = document.querySelector('#mHeader h2').textContent;
     const org = ORGS.find(o => o.name === orgName);
@@ -4374,32 +4383,59 @@ if(org.ideas){
     btn.textContent = 'Fetching...';
     btn.disabled = true;
 
+    // Reset all stats to loading state before fetch
+    resetGithubStats();
+
     try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
+      // Fetch real-time data from GitHub API
+      const githubPath = githubPathFromValue(org.github);
+      if (!githubPath) throw new Error('No GitHub repo found');
+
+      const res = await fetch(`https://api.github.com/repos/${githubPath}`);
+      if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+      const data = await res.json();
+
+      // Extract stats from API response
+      const stars = data.stargazers_count || 0;
+      const forks = data.forks_count || 0;
+      const issues = data.open_issues_count || 0;
+
+      // Calculate activity level based on last push date
+      const lastPush = new Date(data.pushed_at);
+      const daysSince = Math.floor((Date.now() - lastPush.getTime()) / 86400000);
+
+      let activityLabel, activityClass;
+      if (daysSince <= 14) {
+        activityLabel = 'High';
+        activityClass = 'gh-stat-item text-green-400';
+      } else if (daysSince <= 45) {
+        activityLabel = 'Moderate';
+        activityClass = 'gh-stat-item text-yellow-400';
+      } else {
+        activityLabel = 'Low';
+        activityClass = 'gh-stat-item text-red-400';
+      }
+
+      document.getElementById('mStars').textContent =
+        stars >= 1000 ? (stars / 1000).toFixed(1) + 'k' : stars;
       document.getElementById('mForks').textContent = forks;
       document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
+      document.getElementById('mActivity').textContent = activityLabel;
+      document.getElementById('mActivity').className = activityClass;
+
       btn.textContent = 'Stats Updated!';
+
     } catch (e) {
-      btn.textContent = 'Error';
+      console.error('Fetch failed:', e);
+      btn.textContent = 'Error - Try Again';
+      document.getElementById('mActivity').textContent = 'Unknown';
     } finally {
       setTimeout(() => {
         btn.textContent = 'Fetch Live Stats';
         btn.disabled = false;
       }, 3000);
     }
-  }
-
+}
   document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
 
   // Proposal

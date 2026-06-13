@@ -371,6 +371,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .m-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
 .m-tag{font-size:11px;padding:4px 10px;border-radius:6px;border:1.5px solid var(--border);color:var(--ink3);background:var(--bg);font-weight:500;transition:background .3s,border-color .3s,color .3s}
 .timeline{font-size:12px;color:var(--ink3);line-height:2;margin-bottom:16px}
+#timeline-milestones{
+  height: clamp(18rem, 42vh, 28rem);
+  scroll-behavior: smooth;
+}
 .modal-cta{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s}
 .modal-cta:hover{background:var(--orange-deep)}
 .modal-ideas-link{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s;margin-right:10px}
@@ -913,4 +917,3 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .privacy-page #back-to-top-btn:focus-visible {
   outline-color: #f97316;
 }
-

@@ -1298,7 +1298,8 @@
             toggleMenu();
           }
           var top = target.getBoundingClientRect().top + window.scrollY - NAVBAR_HEIGHT;
-          window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+          var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         });
       });
     });

@@ -274,3 +274,47 @@ body.hero-loaded .hero-entry-6 {
   transform: translateY(0);
   transition-delay: 0.65s;
 }
+
+/* Respect accessibility preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  .animate-ping,
+  .animate-pulse,
+  .animate-pulse-orb,
+  .animate-pulse-ring,
+  .animate-float,
+  .hero-badge {
+    animation: none !important;
+  }
+
+  /* Entrance animations and transitions */
+  .hero-entry,
+  .hiw-step {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .bento-card,
+  .nav-link::after,
+  .faq-content,
+  .faq-icon,
+  .typing-sim::after,
+  .typing-caret {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Static fallback for typing simulation */
+  .typing-sim::after {
+    content: "python" !important;
+  }
+
+  .typing-caret {
+    border-right-color: transparent !important;
+  }
+}

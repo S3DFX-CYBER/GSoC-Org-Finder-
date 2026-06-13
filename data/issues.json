@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-05-09T13:08:02.450Z",
+  "updated_at": "2026-06-13T19:07:26.130Z",
   "source_org_count": 184,
-  "total_issues": 50,
+  "total_issues": 51,
   "issues": [
     {
       "org": "AFLplusplus",
@@ -17,7 +17,7 @@
       ],
       "comments": 6,
       "created_at": "2022-10-06T02:10:29Z",
-      "updated_at": "2026-02-19T11:26:32Z",
+      "updated_at": "2026-05-13T14:12:12Z",
       "language": null
     },
     {
@@ -40,16 +40,31 @@
       "org": "AnkiDroid",
       "github": "ankidroid/Anki-Android",
       "logo": "https://avatars.githubusercontent.com/ankidroid",
-      "title": "Performance: Investigate startUpWebView",
+      "title": "Improve some dialogs (mostly string changes)",
+      "url": "https://github.com/ankidroid/Anki-Android/issues/20508",
+      "repo": "ankidroid/Anki-Android",
+      "labels": [
+        "Good First Issue"
+      ],
+      "comments": 26,
+      "created_at": "2026-03-18T12:37:25Z",
+      "updated_at": "2026-06-05T10:13:44Z",
+      "language": null
+    },
+    {
+      "org": "AnkiDroid",
+      "github": "ankidroid/Anki-Android",
+      "logo": "https://avatars.githubusercontent.com/ankidroid",
+      "title": "Performance: Investigate androidx: startUpWebView",
       "url": "https://github.com/ankidroid/Anki-Android/issues/20973",
       "repo": "ankidroid/Anki-Android",
       "labels": [
         "Performance",
         "Good First Issue"
       ],
-      "comments": 0,
+      "comments": 5,
       "created_at": "2026-05-07T11:33:04Z",
-      "updated_at": "2026-05-07T11:36:08Z",
+      "updated_at": "2026-06-04T12:06:58Z",
       "language": null
     },
     {
@@ -70,37 +85,36 @@
       "language": null
     },
     {
-      "org": "AnkiDroid",
-      "github": "ankidroid/Anki-Android",
-      "logo": "https://avatars.githubusercontent.com/ankidroid",
-      "title": "Update to net.mikehardy:google-analytics-java:2.0.11 (needs minSdkVersion >= 24)",
-      "url": "https://github.com/ankidroid/Anki-Android/issues/7056",
-      "repo": "ankidroid/Anki-Android",
+      "org": "ArduPilot",
+      "github": "ArduPilot/ardupilot",
+      "logo": "https://avatars.githubusercontent.com/ArduPilot",
+      "title": "Sub: Vaccuum testing mode with RGB feedback",
+      "url": "https://github.com/ArduPilot/ardupilot/issues/9828",
+      "repo": "ArduPilot/ardupilot",
       "labels": [
-        "Priority-Low",
-        "Good First Issue",
-        "Keep Open",
-        "Dev",
-        "Analytics"
+        "Sub",
+        "good first issue"
       ],
-      "comments": 10,
-      "created_at": "2020-09-10T15:26:28Z",
-      "updated_at": "2026-04-30T14:58:24Z",
+      "comments": 5,
+      "created_at": "2018-11-15T14:34:06Z",
+      "updated_at": "2026-06-05T10:31:45Z",
       "language": null
     },
     {
       "org": "ArduPilot",
       "github": "ArduPilot/ardupilot",
       "logo": "https://avatars.githubusercontent.com/ArduPilot",
-      "title": "AP_DAL_Standalone is broken",
-      "url": "https://github.com/ArduPilot/ardupilot/issues/32792",
+      "title": "Copter: easier test of benchtest the parachute",
+      "url": "https://github.com/ArduPilot/ardupilot/issues/2339",
       "repo": "ArduPilot/ardupilot",
       "labels": [
+        "Copter",
+        "Safety",
         "good first issue"
       ],
-      "comments": 1,
-      "created_at": "2026-04-15T22:22:51Z",
-      "updated_at": "2026-04-20T20:26:45Z",
+      "comments": 6,
+      "created_at": "2015-05-28T09:00:55Z",
+      "updated_at": "2026-05-15T04:45:30Z",
       "language": null
     },
     {
@@ -119,19 +133,19 @@
       "language": null
     },
     {
-      "org": "ArduPilot",
-      "github": "ArduPilot/ardupilot",
-      "logo": "https://avatars.githubusercontent.com/ArduPilot",
-      "title": "Remove mavlink enum dependencies on non related library",
-      "url": "https://github.com/ArduPilot/ardupilot/issues/23320",
-      "repo": "ArduPilot/ardupilot",
+      "org": "Boa",
+      "github": "boa-dev/boa",
+      "logo": "https://avatars.githubusercontent.com/boa-dev",
+      "title": "boa_cli exit code 0 on uncaught runtime exceptions",
+      "url": "https://github.com/boa-dev/boa/issues/4962",
+      "repo": "boa-dev/boa",
       "labels": [
-        "Enhancement",
-        "good first issue"
+        "Good First Issue",
+        "C-CLI"
       ],
-      "comments": 14,
-      "created_at": "2023-03-24T10:48:12Z",
-      "updated_at": "2026-03-29T12:50:07Z",
+      "comments": 6,
+      "created_at": "2026-03-09T04:11:05Z",
+      "updated_at": "2026-06-02T03:08:30Z",
       "language": null
     },
     {
@@ -169,54 +183,19 @@
       "language": null
     },
     {
-      "org": "Boa",
-      "github": "boa-dev/boa",
-      "logo": "https://avatars.githubusercontent.com/boa-dev",
-      "title": "Add tests for `JsSymbol`",
-      "url": "https://github.com/boa-dev/boa/issues/3489",
-      "repo": "boa-dev/boa",
-      "labels": [
-        "Good First Issue",
-        "C-Tests"
-      ],
-      "comments": 12,
-      "created_at": "2023-11-29T18:12:46Z",
-      "updated_at": "2026-03-27T11:37:23Z",
-      "language": null
-    },
-    {
-      "org": "C2SI",
-      "github": "c2siorg",
-      "logo": "https://avatars.githubusercontent.com/c2siorg",
-      "title": "Missing Alt Text on Images Causing Accessibility Issues",
-      "url": "https://github.com/c2siorg/Codelabz/issues/310",
-      "repo": "c2siorg/Codelabz",
-      "labels": [
-        "bug",
-        "good first issue",
-        "UI/UX",
-        "stale",
-        "feature"
-      ],
-      "comments": 6,
-      "created_at": "2026-03-09T18:50:47Z",
-      "updated_at": "2026-04-27T04:51:54Z",
-      "language": null
-    },
-    {
       "org": "cBioPortal for Cancer Genomics",
       "github": "cBioPortal/cbioportal",
       "logo": "https://avatars.githubusercontent.com/cBioPortal",
-      "title": "on study view store opt in to store chart settings",
-      "url": "https://github.com/cBioPortal/cbioportal/issues/10738",
+      "title": "Study View genes input allows OQL, but not OQL trackgroups",
+      "url": "https://github.com/cBioPortal/cbioportal/issues/10460",
       "repo": "cBioPortal/cbioportal",
       "labels": [
-        "enhancement",
+        "bug",
         "good first issue"
       ],
-      "comments": 5,
-      "created_at": "2024-04-05T15:42:14Z",
-      "updated_at": "2026-04-14T19:07:07Z",
+      "comments": 3,
+      "created_at": "2023-11-09T10:12:34Z",
+      "updated_at": "2026-05-11T19:47:49Z",
       "language": null
     },
     {
@@ -255,6 +234,23 @@
       "org": "checkstyle",
       "github": "checkstyle/checkstyle",
       "logo": "https://avatars.githubusercontent.com/checkstyle",
+      "title": "Move violation comments above of annotated methods",
+      "url": "https://github.com/checkstyle/checkstyle/issues/19803",
+      "repo": "checkstyle/checkstyle",
+      "labels": [
+        "approved",
+        "miscellaneous",
+        "good first issue"
+      ],
+      "comments": 6,
+      "created_at": "2026-05-13T10:53:23Z",
+      "updated_at": "2026-06-10T20:48:43Z",
+      "language": null
+    },
+    {
+      "org": "checkstyle",
+      "github": "checkstyle/checkstyle",
+      "logo": "https://avatars.githubusercontent.com/checkstyle",
       "title": "Move violation comments out of Javadoc for all input files",
       "url": "https://github.com/checkstyle/checkstyle/issues/19764",
       "repo": "checkstyle/checkstyle",
@@ -263,9 +259,9 @@
         "miscellaneous",
         "good first issue"
       ],
-      "comments": 3,
+      "comments": 11,
       "created_at": "2026-04-29T02:48:15Z",
-      "updated_at": "2026-05-05T19:45:08Z",
+      "updated_at": "2026-06-06T22:12:01Z",
       "language": null
     },
     {
@@ -289,67 +285,47 @@
       "org": "CircuitVerse.org",
       "github": "CircuitVerse/CircuitVerse",
       "logo": "https://avatars.githubusercontent.com/CircuitVerse",
-      "title": "Text is not completely highlighted on hover",
-      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/2919",
+      "title": "🐞 Bug: 'Getting Started' dropdown does not close when clicked again",
+      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/7332",
       "repo": "CircuitVerse/CircuitVerse",
       "labels": [
         "good first issue",
         "🐞 bug"
       ],
-      "comments": 41,
-      "created_at": "2022-02-10T17:03:50Z",
-      "updated_at": "2026-05-09T05:00:54Z",
+      "comments": 7,
+      "created_at": "2026-04-24T13:20:54Z",
+      "updated_at": "2026-06-09T21:39:31Z",
       "language": null
     },
     {
       "org": "CircuitVerse.org",
       "github": "CircuitVerse/CircuitVerse",
       "logo": "https://avatars.githubusercontent.com/CircuitVerse",
-      "title": "Missing translation for \"Member since\" for arabic language on User dashboard",
-      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/6002",
+      "title": "Migrate Pagination To View Component",
+      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/5827",
       "repo": "CircuitVerse/CircuitVerse",
       "labels": [
-        "good first issue",
-        "🐞 bug"
+        "good first issue"
       ],
-      "comments": 20,
-      "created_at": "2025-08-23T15:39:36Z",
-      "updated_at": "2026-05-05T18:20:02Z",
+      "comments": 1,
+      "created_at": "2025-06-20T05:56:29Z",
+      "updated_at": "2026-06-09T21:38:28Z",
       "language": null
     },
     {
       "org": "CircuitVerse.org",
       "github": "CircuitVerse/CircuitVerse",
       "logo": "https://avatars.githubusercontent.com/CircuitVerse",
-      "title": "[fix] : localization in recent circuits section ",
-      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/3552",
+      "title": "Migrate Trumbowyg Text Editor to ViewComponent",
+      "url": "https://github.com/CircuitVerse/CircuitVerse/issues/5785",
       "repo": "CircuitVerse/CircuitVerse",
       "labels": [
         "good first issue",
-        "on hold",
-        "🐞 bug"
+        "🌟 feature"
       ],
-      "comments": 18,
-      "created_at": "2023-02-10T04:46:03Z",
-      "updated_at": "2026-04-15T06:23:53Z",
-      "language": null
-    },
-    {
-      "org": "Dart",
-      "github": "dart-lang/sdk",
-      "logo": "https://avatars.githubusercontent.com/dart-lang",
-      "title": "[vm/ffi] Migrate legacy multi test files",
-      "url": "https://github.com/dart-lang/sdk/issues/60212",
-      "repo": "dart-lang/sdk",
-      "labels": [
-        "gardening",
-        "contributions-welcome",
-        "good first issue",
-        "area-native-interop"
-      ],
-      "comments": 8,
-      "created_at": "2025-02-26T08:34:25Z",
-      "updated_at": "2026-02-23T07:24:18Z",
+      "comments": 1,
+      "created_at": "2025-06-01T17:40:40Z",
+      "updated_at": "2026-05-31T10:32:56Z",
       "language": null
     },
     {
@@ -367,6 +343,117 @@
       "comments": 9,
       "created_at": "2023-12-11T10:07:22Z",
       "updated_at": "2025-12-15T16:22:55Z",
+      "language": null
+    },
+    {
+      "org": "omegaUp",
+      "github": "omegaup/omegaup",
+      "logo": "https://avatars.githubusercontent.com/omegaup",
+      "title": "[FEATURE] Hide empty contest sections in ArenaV2 view",
+      "url": "https://github.com/omegaup/omegaup/issues/9626",
+      "repo": "omegaup/omegaup",
+      "labels": [
+        "feature-request",
+        "Good first issue",
+        "GSoC"
+      ],
+      "comments": 10,
+      "created_at": "2026-03-24T07:40:29Z",
+      "updated_at": "2026-06-12T20:09:42Z",
+      "language": null
+    },
+    {
+      "org": "omegaUp",
+      "github": "omegaup/omegaup",
+      "logo": "https://avatars.githubusercontent.com/omegaup",
+      "title": "[BUG] Problemas con el campo Escuela en Editar Curso",
+      "url": "https://github.com/omegaup/omegaup/issues/4498",
+      "repo": "omegaup/omegaup",
+      "labels": [
+        "UX Task",
+        "omegaUp Courses",
+        "Good first issue",
+        "Stale"
+      ],
+      "comments": 15,
+      "created_at": "2020-08-12T06:09:03Z",
+      "updated_at": "2026-05-27T04:53:32Z",
+      "language": null
+    },
+    {
+      "org": "omegaUp",
+      "github": "omegaup/omegaup",
+      "logo": "https://avatars.githubusercontent.com/omegaup",
+      "title": "[FEATURE] Improve empty state for student list in courses",
+      "url": "https://github.com/omegaup/omegaup/issues/9447",
+      "repo": "omegaup/omegaup",
+      "labels": [
+        "feature-request",
+        "Good first issue",
+        "Stale"
+      ],
+      "comments": 13,
+      "created_at": "2026-03-06T19:27:06Z",
+      "updated_at": "2026-05-23T17:28:23Z",
+      "language": null
+    },
+    {
+      "org": "Open Food Facts",
+      "github": "openfoodfacts/openfoodfacts-server",
+      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
+      "title": "Add analytics for usage of the API documentation",
+      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/10182",
+      "repo": "openfoodfacts/openfoodfacts-server",
+      "labels": [
+        "🎯 P1",
+        "📚 Documentation",
+        "good first issue",
+        "matomo"
+      ],
+      "comments": 3,
+      "created_at": "2021-09-22T12:02:28Z",
+      "updated_at": "2026-05-29T15:56:53Z",
+      "language": null
+    },
+    {
+      "org": "Open Food Facts",
+      "github": "openfoodfacts/openfoodfacts-server",
+      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
+      "title": "\"Comparison to average values of products in the same category\" is unclear",
+      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/2497",
+      "repo": "openfoodfacts/openfoodfacts-server",
+      "labels": [
+        "⏲️ 5 minute fix",
+        "averages by categories",
+        "📚 Documentation",
+        "good first issue",
+        "Fixed ?",
+        "🎨 Design"
+      ],
+      "comments": 8,
+      "created_at": "2019-10-28T19:10:56Z",
+      "updated_at": "2026-05-03T17:00:36Z",
+      "language": null
+    },
+    {
+      "org": "Open Food Facts",
+      "github": "openfoodfacts/openfoodfacts-server",
+      "logo": "https://avatars.githubusercontent.com/openfoodfacts",
+      "title": "Log key events of the web version of Open Food Facts in Matomo",
+      "url": "https://github.com/openfoodfacts/openfoodfacts-server/issues/8191",
+      "repo": "openfoodfacts/openfoodfacts-server",
+      "labels": [
+        "🎯 P1",
+        "good first issue",
+        "JavaScript",
+        "⏰ Stale",
+        "monitoring",
+        "matomo",
+        "image deletion"
+      ],
+      "comments": 5,
+      "created_at": "2023-03-13T15:50:36Z",
+      "updated_at": "2026-03-27T10:41:29Z",
       "language": null
     },
     {
@@ -531,67 +618,48 @@
       "org": "OpenVINO Toolkit",
       "github": "openvinotoolkit/openvino",
       "logo": "https://avatars.githubusercontent.com/openvinotoolkit",
-      "title": "[Good First Issue] [ARM] [Debug Caps] : Implement register prints in just-in-time Kernels",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/27715",
+      "title": "[Good First Issue]: Support prim::CallMethod",
+      "url": "https://github.com/openvinotoolkit/openvino/issues/29720",
       "repo": "openvinotoolkit/openvino",
       "labels": [
         "good first issue",
-        "category: CPU",
-        "platform: arm"
-      ],
-      "comments": 38,
-      "created_at": "2024-11-25T06:55:45Z",
-      "updated_at": "2026-05-07T17:35:16Z",
-      "language": null
-    },
-    {
-      "org": "OpenVINO Toolkit",
-      "github": "openvinotoolkit/openvino",
-      "logo": "https://avatars.githubusercontent.com/openvinotoolkit",
-      "title": "[Good First Issue]: Support aten::rrelu and aten::rrelu_ for pytorch models",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/23746",
-      "repo": "openvinotoolkit/openvino",
-      "labels": [
-        "good first issue",
-        "category: PyTorch FE",
         "no_stale"
       ],
-      "comments": 22,
-      "created_at": "2024-03-28T11:22:44Z",
-      "updated_at": "2026-05-07T15:34:32Z",
+      "comments": 18,
+      "created_at": "2025-03-25T12:14:07Z",
+      "updated_at": "2026-06-09T00:59:55Z",
       "language": null
     },
     {
       "org": "OpenVINO Toolkit",
       "github": "openvinotoolkit/openvino",
       "logo": "https://avatars.githubusercontent.com/openvinotoolkit",
-      "title": "[Good First Issue]: Support aten::Delete aten::str aten::take",
-      "url": "https://github.com/openvinotoolkit/openvino/issues/28707",
+      "title": "[Good First Issue]:",
+      "url": "https://github.com/openvinotoolkit/openvino/issues/33831",
       "repo": "openvinotoolkit/openvino",
       "labels": [
         "good first issue",
-        "category: PyTorch FE",
         "no_stale"
       ],
       "comments": 15,
-      "created_at": "2025-01-27T23:12:04Z",
-      "updated_at": "2026-05-05T09:33:33Z",
+      "created_at": "2026-01-27T09:27:33Z",
+      "updated_at": "2026-06-02T13:06:08Z",
       "language": null
     },
     {
-      "org": "Oppia Foundation",
-      "github": "oppia/oppia",
-      "logo": "https://avatars.githubusercontent.com/oppia",
-      "title": "[BUG]: Blog page is not accessible via sidebar in mobile view",
-      "url": "https://github.com/oppia/oppia/issues/25094",
-      "repo": "oppia/oppia",
+      "org": "OpenVINO Toolkit",
+      "github": "openvinotoolkit/openvino",
+      "logo": "https://avatars.githubusercontent.com/openvinotoolkit",
+      "title": "[Good First Issue]: Support aten::_sparse_mm",
+      "url": "https://github.com/openvinotoolkit/openvino/issues/29685",
+      "repo": "openvinotoolkit/openvino",
       "labels": [
         "good first issue",
-        "bug"
+        "no_stale"
       ],
-      "comments": 4,
-      "created_at": "2026-02-26T14:50:07Z",
-      "updated_at": "2026-05-09T10:28:44Z",
+      "comments": 10,
+      "created_at": "2025-03-25T12:04:58Z",
+      "updated_at": "2026-05-28T13:20:50Z",
       "language": null
     },
     {
@@ -609,23 +677,43 @@
       ],
       "comments": 221,
       "created_at": "2025-09-30T13:46:56Z",
-      "updated_at": "2026-05-08T18:20:56Z",
+      "updated_at": "2026-06-13T16:05:50Z",
       "language": null
     },
     {
       "org": "Oppia Foundation",
       "github": "oppia/oppia",
       "logo": "https://avatars.githubusercontent.com/oppia",
-      "title": "[BUG]: Acceptance test re-run steps do not work due to server not being shut down",
-      "url": "https://github.com/oppia/oppia/issues/23830",
+      "title": "[BUG]: When opening the exploration editor, the lesson creator is taken to the feedback tab rather then going to  editor mode",
+      "url": "https://github.com/oppia/oppia/issues/23017",
       "repo": "oppia/oppia",
       "labels": [
         "good first issue",
-        "bug"
+        "bug",
+        "Impact: Medium",
+        "Work: High"
       ],
-      "comments": 69,
-      "created_at": "2025-11-10T13:24:25Z",
-      "updated_at": "2026-05-08T00:17:04Z",
+      "comments": 32,
+      "created_at": "2025-07-28T21:04:43Z",
+      "updated_at": "2026-06-12T15:21:24Z",
+      "language": null
+    },
+    {
+      "org": "Oppia Foundation",
+      "github": "oppia/oppia",
+      "logo": "https://avatars.githubusercontent.com/oppia",
+      "title": "Fix pylint problems",
+      "url": "https://github.com/oppia/oppia/issues/12912",
+      "repo": "oppia/oppia",
+      "labels": [
+        "good first issue",
+        "enhancement",
+        "Impact: Medium",
+        "Work: Low"
+      ],
+      "comments": 168,
+      "created_at": "2021-05-25T13:41:19Z",
+      "updated_at": "2026-06-12T02:56:05Z",
       "language": null
     },
     {
@@ -774,77 +862,6 @@
       "comments": 1,
       "created_at": "2022-04-25T12:07:28Z",
       "updated_at": "2026-03-16T10:58:55Z",
-      "language": null
-    },
-    {
-      "org": "QC-Devs",
-      "github": "theochem/gbasis",
-      "logo": "https://avatars.githubusercontent.com/theochem",
-      "title": "[REQUEST] Direct Support for Basis-Set-Exchange",
-      "url": "https://github.com/theochem/gbasis/issues/209",
-      "repo": "theochem/gbasis",
-      "labels": [
-        "enhancement",
-        "good first issue"
-      ],
-      "comments": 11,
-      "created_at": "2025-04-04T21:13:08Z",
-      "updated_at": "2026-03-26T12:59:48Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "logo": "https://avatars.githubusercontent.com/rizinorg",
-      "title": "Horizontal histogram ruler - legend should be context-dependent",
-      "url": "https://github.com/rizinorg/rizin/issues/5290",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "good first issue",
-        "RzCons",
-        "UX/UI"
-      ],
-      "comments": 3,
-      "created_at": "2025-08-04T13:13:29Z",
-      "updated_at": "2026-05-07T17:08:36Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "logo": "https://avatars.githubusercontent.com/rizinorg",
-      "title": "Refactor use of `core->block` to the transparent IO access",
-      "url": "https://github.com/rizinorg/rizin/issues/2695",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "good first issue",
-        "RzIO",
-        "API",
-        "RzCore",
-        "refactor",
-        "Tracking"
-      ],
-      "comments": 3,
-      "created_at": "2022-06-14T12:55:00Z",
-      "updated_at": "2026-05-06T18:41:06Z",
-      "language": null
-    },
-    {
-      "org": "Rizin",
-      "github": "rizinorg/rizin",
-      "logo": "https://avatars.githubusercontent.com/rizinorg",
-      "title": "Add missing header (`iH`) information to some bin formats",
-      "url": "https://github.com/rizinorg/rizin/issues/5728",
-      "repo": "rizinorg/rizin",
-      "labels": [
-        "enhancement",
-        "good first issue",
-        "RzBin",
-        "test-required"
-      ],
-      "comments": 5,
-      "created_at": "2026-01-04T12:15:54Z",
-      "updated_at": "2026-05-06T09:05:03Z",
       "language": null
     }
   ]

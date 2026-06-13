@@ -1,6 +1,17 @@
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
+// Typed HTML utilities
+const safeHTML = (strings, ...values) => {
+  const escaped = values.map(v =>
+    String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+             .replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+  );
+  return strings.reduce((acc, str, i) => acc + str + (escaped[i] ?? ''), '');
+};
+
+const rawHTML = (str) => str;
+
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
@@ -2455,10 +2466,10 @@ const _initFromURL = () => {
   }
 };
 
-if (typeof requestAnimationFrame !== 'undefined') {
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  document.addEventListener('DOMContentLoaded', _initFromURL);
+} else if (typeof requestAnimationFrame !== 'undefined') {
   requestAnimationFrame(_initFromURL);
-} else {
-  _initFromURL();
 }
 
 // ══════════════════════════════════════════════

@@ -40,10 +40,10 @@ globalThis.updateCountdown = function() {
   const h=Math.floor((diff%86400000)/3600000);
   const m=Math.floor((diff%3600000)/60000);
   const s=Math.floor((diff%60000)/1000);
-  document.getElementById('cdDays').textContent=String(d).padStart(2,'0');
-  document.getElementById('cdHours').textContent=String(h).padStart(2,'0');
-  document.getElementById('cdMins').textContent=String(m).padStart(2,'0');
-  document.getElementById('cdSecs').textContent=String(s).padStart(2,'0');
+  const cdSpan = document.getElementById('countdown');
+  if(cdSpan) {
+    cdSpan.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
+  }
   sub.textContent=subText;
   banner.querySelector('.countdown-label').textContent=label;
 };
@@ -921,7 +921,7 @@ function renderWatchlist() {
           </div>
         </div>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1">${org.desc || ''}</p>
-        <div class="flex flex-wrap gap-1.5 mb-3">${escapeHtml(topTags)}</div>
+        <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
         <div class="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-3 text-xs text-zinc-400">
             <span class="flex items-center gap-1">
@@ -1895,7 +1895,7 @@ function updateAIInsights() {
         Highlight experience with <strong>${escapeHtml(advice.tools)}</strong> in your proposals.
       </p>
       <p>
-        <span class="font-bold">🎯 Domain Strategy (${getCategoryMeta(topCat.label)}):</span>
+        <span class="font-bold">🎯 Domain Strategy (${getCategoryMeta(topCat).label}):</span>
         Before submitting, ${escapeHtml(advice.action)} to demonstrate early commitment to mentors.
       </p>
       <p>${strategyMsg}</p>

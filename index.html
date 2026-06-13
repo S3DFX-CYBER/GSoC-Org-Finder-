@@ -1197,8 +1197,7 @@ kbd:hover{
       <button id="theme-toggle-btn"
         class="relative inline-flex shrink-0 items-center justify-center p-2 w-[40px] h-[40px] hover:bg-zinc-100/50 dark:hover:bg-zinc-800 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
         aria-label="Toggle theme" aria-pressed="false" title="Toggle theme">
-        <span aria-hidden="true" class="material-symbols-outlined absolute text-zinc-600 dark:text-zinc-400 transition-all duration-200 ease-out rotate-0 scale-100 opacity-100 dark:-rotate-90 dark:scale-50 dark:opacity-0">light_mode</span>
-        <span aria-hidden="true" class="material-symbols-outlined absolute text-zinc-600 dark:text-zinc-400 transition-all duration-200 ease-out rotate-90 scale-50 opacity-0 dark:rotate-0 dark:scale-100 dark:opacity-100">dark_mode</span>
+        <span aria-hidden="true" class="material-symbols-outlined text-zinc-600 dark:text-zinc-400">dark_mode</span>
       </button>
     
       <!-- ANALYTICS BUTTON -->
@@ -2273,14 +2272,7 @@ kbd:hover{
   // NOTE: For JS-string contexts inside inline event handlers,
   // we must also escape quotes. Prefer removing inline handlers.
 
-  window.escapeHtml = function(value) {
-    return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  };
+
 
   // ══════════════════════════════════════════════
   // MAIN APP LOGIC
@@ -3569,7 +3561,7 @@ btn.__orgListenerAttached = true;
             </div>
           </div>
           <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${org.desc || ''}</p>
-          <div class="flex flex-wrap gap-1.5 mb-3">${escapeHtml(topTags)}</div>
+          <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
           <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
             <div class="flex items-center gap-3 text-xs text-zinc-400">
               <span class="flex items-center gap-1">

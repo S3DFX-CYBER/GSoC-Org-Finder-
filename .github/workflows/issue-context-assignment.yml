@@ -168,14 +168,15 @@ jobs:
                   per_page: 100
                 }
               );
-
-            const existing =
-              comments.find(
+            
+            const existing = comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
                   c.body.includes(marker)
-              );
-
+            );
+           
             if (existing) {
 
               await github.rest.issues.updateComment({
@@ -251,6 +252,41 @@ jobs:
 
             }
 
+            // FIX: block duplicate /assign requests securely by not relying on the exact '⏳ Assignment Pending' string
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number, per_page: 100 }
+            );
+
+            const pendingExists = comments.find(
+              c =>
+                c.user &&
+                c.user.login === 'github-actions[bot]' &&
+                c.body &&
+                c.body.includes('') &&
+                !c.body.includes('✅ Issue Assigned')
+
+            );
+
+            if (pendingExists) {
+
+              core.setOutput(
+                'eligible',
+                'false'
+              );
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body:
+                  `⚠️ @${claimant} — an assignment request is already pending mentor approval for this issue. Please wait for the current request to be resolved.`
+              });
+
+              return;
+
+            }
+
             core.setOutput(
               'eligible',
               'true'
@@ -314,21 +350,48 @@ jobs:
 
             }
 
-            const marker =
-              '<!-- assignment-status -->';
+            if (selected.length === 0) {
 
+              try {
+
+                const collabs =
+                  await github.paginate(
+                    github.rest.repos.listCollaborators,
+                    { owner, repo, permission: 'admin', per_page: 100 }
+                  );
+
+                selected =
+                  collabs
+                    .map(c => c.login)
+                    .filter(l => l !== 'github-actions[bot]')
+                    .slice(0, 2);
+
+              } catch {
+
+                selected = [];
+
+              }
+
+            }
+
+            const marker =
+              '<!-- pending-assignment -->';
+
+            // FIX: Added proper fallback text for empty states
             const mentions =
-              selected
-                .map(m => `@${m}`)
-                .join(' • ');
+              selected.length > 0
+                ? selected.map(m => `@${m}`).join(' • ')
+                : '_No active mentors available._';
 
             const avatars =
-              selected
-                .map(
-                  mentor =>
-                    `<a href="https://github.com/${mentor}"><img src="https://github.com/${mentor}.png" width="52px" alt="${mentor}" /></a>`
-                )
-                .join('\n');
+              selected.length > 0
+                ? selected
+                    .map(
+                      mentor =>
+                        `<a href="https://github.com/${mentor}"><img src="https://github.com/${mentor}.png" width="52px" alt="${mentor}" /></a>`
+                    )
+                    .join('\n')
+                : '';
 
             const body = [
               marker,
@@ -349,8 +412,7 @@ jobs:
               `/approve-assignment @${claimant}`,
               '```',
               '',
-              '> Mentors rotate dynamically across issues.',
-              '> If no response occurs within 24h, PA escalation may happen.'
+              '> Mentors rotate dynamically across issues.'
             ].join('\n');
 
             const comments =
@@ -367,6 +429,8 @@ jobs:
             const existing =
               comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
                   c.body.includes(marker)
               );
@@ -428,10 +492,10 @@ jobs:
             const assignmentComment =
               comments.find(
                 c =>
+                  c.user &&
+                  c.user.login === 'github-actions[bot]' &&
                   c.body &&
-                  c.body.includes(
-                    '<!-- assignment-status -->'
-                  )
+                  c.body.includes('')
               );
 
             if (!assignmentComment) {
@@ -447,8 +511,12 @@ jobs:
             const body =
               assignmentComment.body || '';
 
+            // FIX: Prevent workflow regression by allowing fallback approvals if listCollaborators failed
+            const noMentorsFallback =
+              body.includes('_No active mentors available._');
+
             const mentorMentioned =
-              body.includes(`@${approver}`);
+              body.includes(`@${approver}`) || noMentorsFallback;
 
             if (!mentorMentioned) {
 
@@ -458,6 +526,42 @@ jobs:
                 issue_number,
                 body:
                   `⛔ @${approver} is not one of the selected mentors for this issue.`
+              });
+
+              return;
+
+            }
+
+            let permissionLevel = 'none';
+
+            try {
+
+              const { data: permData } =
+                await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner,
+                  repo,
+                  username: approver
+                });
+
+              permissionLevel = permData.permission;
+
+            } catch {
+
+              permissionLevel = 'none';
+
+            }
+
+            const allowedRoles =
+              ['admin', 'maintain', 'write'];
+
+            if (!allowedRoles.includes(permissionLevel)) {
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body:
+                  `⛔ @${approver} does not have sufficient repository permissions to approve assignments (requires write, maintain, or admin).`
               });
 
               return;

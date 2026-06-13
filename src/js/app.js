@@ -466,9 +466,7 @@ function cleanCache() {
 }
 cleanCache();
 
-let modalIdx=-1,fetching=false,lastSearch='';
 const pills=new Set();
-const chips=new Set();
 
 // ══════════════════════════════════════════════
 // COMMUNITY ACTIVITY DATA
@@ -514,6 +512,7 @@ async function checkAPI(){
   try{
     const r=await fetch(`${API}?repo=django/django`);
     const banner=document.getElementById('apiBanner');
+    if(!banner) return;
     if(r.ok){
       banner.className='api-banner api-ok';
       document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
@@ -1295,22 +1294,26 @@ function attachOrgCardListeners(root) {
     });
   }
 }
-globalThis.clearAllLanguages = clearAllLanguages;
 
-const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb', 'active-community':'cac'};
 function toggleChip(k){
   const el=document.getElementById('chip-'+k);
   if(!el) return;
   
-  const isActive = !chips.has(k);
-  if(isActive){
-    chips.add(k);
-    el.classList.add('bg-orange-600', 'text-white');
-    el.classList.remove('bg-surface-container-highest');
-  } else {
-    chips.delete(k);
-    el.classList.remove('bg-orange-600', 'text-white');
+  if(activeChip===k){
+    activeChip=null;
+    el.classList.remove('bg-orange-600','text-white');
     el.classList.add('bg-surface-container-highest');
+  } else {
+    if(activeChip){
+      const prev=document.getElementById('chip-'+activeChip);
+      if(prev){
+        prev.classList.remove('bg-orange-600','text-white');
+        prev.classList.add('bg-surface-container-highest');
+      }
+    }
+    activeChip=k;
+    el.classList.add('bg-orange-600','text-white');
+    el.classList.remove('bg-surface-container-highest');
   }
   applyFilters();
 }
@@ -2268,12 +2271,12 @@ requestAnimationFrame(()=>{
   if (langParam) {
     const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
     if (langs.length > 1) {
-      pills.clear();
+      selectedLanguages.clear();
       document.querySelectorAll('.pill').forEach(btn => {
         const active = langs.includes(btn.dataset.lang);
         btn.classList.toggle('active', active);
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-        if (active) pills.add(btn.dataset.lang);
+        if (active) selectedLanguages.add(btn.dataset.lang);
       });
       renderSelectedLanguages();
     }

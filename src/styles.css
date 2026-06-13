@@ -872,6 +872,30 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   background: var(--orange-pale);
 }
 
+/* Granular Theme Transition */
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition .card {
+  transition: background-color 400ms ease, color 400ms ease, border-color 400ms ease !important;
+}
+
+html.theme-transition button,
+html.theme-transition input,
+html.theme-transition a {
+  transition: background-color 400ms ease, color 400ms ease, border-color 400ms ease, box-shadow 400ms ease !important;
+}
+
+html.theme-transition svg,
+html.theme-transition .icon {
+  transition: fill 400ms ease, stroke 400ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
 /* Privacy Page specific overrides to match exact styling */
 .privacy-page .premium-footer {
   background: #f4f4f5;

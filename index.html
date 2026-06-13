@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function(){
+      try {
+        const saved = localStorage.getItem('theme') || 'light';
+        if (saved === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {
+        // Silent fail for privacy mode / localStorage failures
+        console.debug('Theme access failed:', e);
+      }
+    })();
+  </script>
   <link rel="icon" type="image/png" href="src/assets/icon-512.png">
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -80,7 +91,7 @@
         }
       } catch(e) {
         // localStorage might be unavailable in some browsers/modes
-        console.warn('Theme restoration failed:', e);
+        console.warn('Theme access failed:', e);
       }
     })();
   </script>
@@ -1183,13 +1194,10 @@ kbd:hover{
     <!-- Right side: Toggle visible on all screens, GitHub button hidden on mobile -->
     <div class="flex items-center gap-2 sm:gap-3">
     
-      <button id="themeToggleBtn" onclick="toggleTheme()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
-        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          dark_mode
-        </span>
+      <button id="theme-toggle-btn"
+        class="relative inline-flex shrink-0 items-center justify-center p-2 w-[40px] h-[40px] hover:bg-zinc-100/50 dark:hover:bg-zinc-800 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+        aria-label="Toggle theme" aria-pressed="false" title="Toggle theme">
+        <span aria-hidden="true" class="material-symbols-outlined text-zinc-600 dark:text-zinc-400">dark_mode</span>
       </button>
     
       <!-- ANALYTICS BUTTON -->
@@ -2113,33 +2121,6 @@ kbd:hover{
 <script src="agent/scripts/orgs.js"></script>
 <script>
   // ══════════════════════════════════════════════
-  // THEME
-  // ══════════════════════════════════════════════
-  (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
-
-  window.toggleTheme = function(){
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateThemeIcon();
-  };
-
-  function updateThemeIcon(){
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
-  }
-
-  // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
   const desktopNavMediaQuery = window.matchMedia('(min-width: 768px)');
@@ -2217,17 +2198,7 @@ kbd:hover{
   }
 
   // ══════════════════════════════════════════════
-  // Shared escaping helper (for all dynamic text used in HTML strings)
-  // Prevents HTML injection via <, >, &, quotes.
-  function escapeHtml(value) {
-    return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  }
-
+  
   // Sanitize hrefs: only allow http(s) absolute URLs.
   // Returns the original URL string when allowed, otherwise null.
   function sanitizeHrefUrl(url) {
@@ -2300,6 +2271,8 @@ kbd:hover{
 
   // NOTE: For JS-string contexts inside inline event handlers,
   // we must also escape quotes. Prefer removing inline handlers.
+
+
 
   // ══════════════════════════════════════════════
   // MAIN APP LOGIC
@@ -2529,7 +2502,7 @@ kbd:hover{
         const safe = sanitizeHrefUrl(record.url);
         if (!safe) return '';
         return `
-          <a class="mentor-link-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
+          <a class="mentor-link-chip" href="${safe}" target="_blank" rel="noopener noreferrer">
             <span>${CHANNEL_ICONS[record.type] || '💬'}</span>
             <span>${escapeHtml(record.label || record.type)}</span>
           </a>
@@ -2547,7 +2520,7 @@ kbd:hover{
           const label = mentor.github ? `@${mentor.github}` : (mentor.name || mentor.githubUrl);
           if (safe) {
             return `
-              <a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer">
+              <a class="mentor-handle-chip" href="${safe}" target="_blank" rel="noopener noreferrer">
                 <span>🐙</span>
                 <span>${escapeHtml(label)}</span>
               </a>
@@ -2558,7 +2531,7 @@ kbd:hover{
         return `
           <span class="mentor-handle-chip">
             <span>👤</span>
-            <span>${escapeHtml(mentor.name || 'Mentor')}</span>
+            <span>${escapeHtml(mentor.name || `Mentor`)}</span>
           </span>
         `;
       })
@@ -2573,7 +2546,7 @@ kbd:hover{
     const chips = mentorPreview.map((mentor) => {
       if (mentor.githubUrl) {
         const safe = sanitizeHrefUrl(mentor.githubUrl);
-        if (safe) return `<a class="mentor-handle-chip" href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer"><span>🐙</span><span>${escapeHtml(mentor.displayLabel)}</span></a>`;
+        if (safe) return `<a class="mentor-handle-chip" href="${safe}" target="_blank" rel="noopener noreferrer"><span>🐙</span><span>${escapeHtml(mentor.displayLabel)}</span></a>`;
       }
 
       return `<span class="mentor-handle-chip"><span>👤</span><span>${escapeHtml(mentor.displayLabel)}</span></span>`;
@@ -2599,7 +2572,7 @@ kbd:hover{
 
     const fallbackIdeasLink = (function(){
       const u = sanitizeHrefUrl(org.ideas);
-      return u ? `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>` : '';
+      return u ? `<a href="${u}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>` : '';
     })();
 
     const sections = [];
@@ -2792,7 +2765,7 @@ kbd:hover{
             <div class="flex flex-wrap gap-2">${buildChannelChips(channelLinks.slice(0, 2))}</div>
             ${mentorPreviewHtml}
             <div class="text-sm text-zinc-600">
-              <p><strong class="text-zinc-900">Primary channel:</strong> ${escapeHtml(primaryType)}</p>
+              <p><strong class="text-zinc-900">Primary channel:</strong> ${primaryType}</p>
             </div>
             ${entry.tip ? `<p class="text-sm text-zinc-600 line-clamp-3">${escapeHtml(entry.tip)}</p>` : ''}
           </div>
@@ -2811,14 +2784,14 @@ kbd:hover{
       article.innerHTML = `
         <div class="flex items-start justify-between gap-3 mb-4">
           <div>
-            <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${escapeHtml(org.cat)}</p>
+            <p class="text-[10px] font-label uppercase tracking-widest text-primary mb-1">${org.cat}</p>
             <h3 class="font-headline text-xl font-bold text-zinc-900">${escapeHtml(org.name)}</h3>
           </div>
-          <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${escapeHtml(entry.status)}</span>
+          <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-full ${statusClass}">${entry.status}</span>
         </div>
         ${bodyHtml}
         <div class="mt-5 pt-4 border-t border-zinc-100">
-          ${safeContactHref ? `<a href="${escapeHtml(safeContactHref)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${escapeHtml(contactLabel)}</span></span>`}
+          ${safeContactHref ? `<a href="${safeContactHref}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>📡</span><span>${contactLabel}</span></a>` : `<span class="mentor-link-chip"><span>📡</span><span>${contactLabel}</span></span>`}
           <p class="text-xs text-zinc-500 mt-3">${helperText}</p>
         </div>
       `;
@@ -2957,21 +2930,21 @@ kbd:hover{
           if (isActive && !allPast) {
             return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
+              <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
-              ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
+              ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${m.note}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
             return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
+              <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
             </div>`;
           } else {
             return `<div class="flex gap-3 sm:gap-4 opacity-40">
               <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
-              <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
+              <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
               <p class="text-sm font-bold text-zinc-500">${escapeHtml(m.label)}</p></div>
             </div>`;
           }
@@ -2995,57 +2968,7 @@ kbd:hover{
   }
 
   // Countdown to the next upcoming milestone
-  function updateCountdown() {
-    const countdownEl = document.getElementById('countdown');
-    const labelEl = document.getElementById('countdown-label');
-    if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
-
-    try {
-      const now = new Date();
-      if (isNaN(now.getTime())) return;
-
-      const next = MILESTONES.find(m => m.date > now);
-
-      if (!next) {
-        labelEl.textContent = 'GSoC 2026 selection complete';
-        countdownEl.textContent = '🎉 All done!';
-        countdownEl.classList.remove('text-primary');
-        countdownEl.classList.add('text-green-600');
-        return;
-      }
-
-      labelEl.textContent = `Until: ${next.label}`;
-      countdownEl.classList.remove('text-green-600');
-      countdownEl.classList.add('text-primary');
-      const diff = next.date - now;
-      if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
-      const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
-      countdownEl.textContent = `${d}d ${h}h ${m}m`;
-    } catch (err) {
-      console.warn('[Timeline] updateCountdown failed:', err);
-    }
-  }
-
-  // Organizational Logo Fallbacks
-  window.handleImgError = function(img, orgName) {
-    if (!img.dataset.triedClearbit) {
-      img.dataset.triedClearbit = 'true';
-      const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
-      img.src = `https://logo.clearbit.com/${domain}`;
-    } else {
-      img.style.display = 'none';
-      const placeholder = img.parentElement.querySelector('.logo-placeholder');
-      if (placeholder) {
-        placeholder.style.display = 'flex';
-        placeholder.textContent = orgName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-      }
-    }
-  };
-
-function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  return items.slice(startIndex, startIndex + itemsPerPage);
-}
+  
 
 function renderPaginationControls(containerId, totalItems, currentPage, onPageChange) {
   const container = document.getElementById(containerId);
@@ -3161,23 +3084,23 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
           <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
+            <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${org.name + ' logo'}" class="w-full h-full object-contain rounded-lg" />
             <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
-            <span class="complexity-badge ${escapeHtml(org.codebase)}">${escapeHtml(org.codebase)}</span>
+            <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
+            <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
             <button class="bookmark-btn ${isBookmarked ? 'active' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
               <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
             </button>
           </div>
         </div>
         <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
-        <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
+        <span class="category-tag">${org.cat.toUpperCase()}</span>
         <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
           ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${String(org.tags.length - 3)}</span>` : ''}
         </div>
 
         <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
@@ -3213,7 +3136,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     (root.querySelectorAll ? root.querySelectorAll('img[data-org-name]') : []).forEach(img => {
       if (img.__orgListenerAttached) return;
       img.addEventListener('error', (e) => {
-        handleImgError(e.target, e.target.dataset.orgName);
+        globalThis.handleImgError(e.target, e.target.dataset.orgName);
       });
       img.__orgListenerAttached = true;
     });
@@ -3343,8 +3266,8 @@ btn.__orgListenerAttached = true;
         <tbody>
           ${rows.map(([label, getValue]) => `
             <tr class="border-b border-zinc-100 last:border-0">
-              <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700">${escapeHtml(getValue(org))}</td>`).join('')}
+              <td class="py-3 px-4 font-bold text-zinc-500">${escapeHtml(label)}</td>
+              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700">${getValue(org)}</td>`).join('')}
             </tr>
           `).join('')}
         </tbody>
@@ -3482,8 +3405,8 @@ btn.__orgListenerAttached = true;
       html += `
         <div class="badge-card ${isLocked ? 'badge-locked' : ''}">
           <span class="badge-icon">${icon}</span>
-          <div class="badge-name">${escapeHtml(badge.name.substring(2))}</div>
-          <div class="badge-level">${escapeHtml(levelName)}</div>
+          <div class="badge-name">${badge.name.substring(2)}</div>
+          <div class="badge-level">${levelName}</div>
           <div class="badge-count">${badge.count}${badge.nextThreshold ? ' / ' + badge.nextThreshold : ''}</div>
           <div class="badge-progress">
             <div class="badge-progress-fill" style="width:${progress}%"></div>
@@ -3672,7 +3595,7 @@ btn.__orgListenerAttached = true;
         <!-- Logo -->
         <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100">
           ${logoUrl
-            ? `<img src="${escapeHtml(logoUrl)}"
+            ? `<img src="${logoUrl}"
                     data-org-name="${escapeHtml(org.name)}"
                     alt="${escapeHtml(org.name)} logo"
                     class="w-full h-full object-contain">`
@@ -3684,21 +3607,21 @@ btn.__orgListenerAttached = true;
           <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
             <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${escapeHtml(category.label)}</span>
+              <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
               <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
             </div>
           </div>
-          <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${escapeHtml(org.desc || '')}</p>
+          <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${org.desc || ''}</p>
           <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
           <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
             <div class="flex items-center gap-3 text-xs text-zinc-400">
               <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-xs">calendar_today</span>
-                ${escapeHtml(String(org.years))}y in GSoC
+                ${String(org.years)}y in GSoC
               </span>
               <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-xs">bar_chart</span>
-                ${escapeHtml(org.competition || '—')}
+                ${org.competition || '—'}
               </span>
             </div>
             <button data-bookmark-org="${escapeHtml(org.name)}"
@@ -3783,7 +3706,7 @@ btn.__orgListenerAttached = true;
 
     // ── Stack summary line ────────────────────────────────────────────────────
     const stackLine = topTags.length
-      ? `Your saved orgs centre on <strong>${topTags.map(t => escapeHtml(t)).join(', ')}</strong>.`
+      ? `Your saved orgs centre on <strong>${topTags.map(t => t).join(', ')}</strong>.`
       : 'Your saved orgs span a diverse set of technologies.';
 
     // ── Category label ────────────────────────────────────────────────────────
@@ -3803,7 +3726,7 @@ btn.__orgListenerAttached = true;
           Highlight experience with <strong>${escapeHtml(advice.tools)}</strong> in your proposals.
         </p>
         <p>
-          <span class="font-bold">🎯 Domain Strategy (${escapeHtml(catLabel)}):</span>
+          <span class="font-bold">🎯 Domain Strategy (${catLabel}):</span>
           Before submitting, ${escapeHtml(advice.action)} to demonstrate early commitment to mentors.
         </p>
         <p>${strategyMsg}</p>
@@ -3887,12 +3810,12 @@ btn.__orgListenerAttached = true;
         <div class="flex-1 min-w-0">
           <h4 class="font-bold text-sm mb-1">${escapeHtml(org.name)}</h4>
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${escapeHtml(category.label)}</span>
-            <span class="text-[10px] text-zinc-500">${escapeHtml(String(org.years))} years</span>
+            <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${category.label}</span>
+            <span class="text-[10px] text-zinc-500">${String(org.years)} years</span>
           </div>
         </div>
         <div class="flex items-center gap-2 ml-2 flex-shrink-0">
-          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${escapeHtml(name)}" title="Remove from recently viewed" aria-label="Remove ${escapeHtml(name)} from recently viewed">
+          <button class="text-zinc-400 hover:text-red-500 transition-colors" data-remove-recent="${name}" title="Remove from recently viewed" aria-label="Remove ${name} from recently viewed">
             <span class="material-symbols-outlined text-base">close</span>
           </button>
         </div>
@@ -3922,11 +3845,11 @@ btn.__orgListenerAttached = true;
     const isBookmarked = bookmarkedSet.has(org.name);
 
     document.getElementById('mHeader').innerHTML = `
-      <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
+      <span class="category-tag">${String(org.cat.toUpperCase())}</span>
       <div class="flex items-start justify-between pr-10">
         <div>
           <h2>${escapeHtml(org.name)}</h2>
-          <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+          <p class="text-zinc-500">GSoC Partner for ${String(org.years)} Years</p>
         </div>
         <button
           id="modalBookmarkBtn"
@@ -3957,15 +3880,15 @@ btn.__orgListenerAttached = true;
     }
 
     document.getElementById('mMetrics').innerHTML = `
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.years))}</p><p class="metric-label">Years In</p></div>
-      <div class="metric-card"><p class="metric-value">${escapeHtml(String(org.firstYear))}</p><p class="metric-label">First Year</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.competition).toUpperCase())}</p><p class="metric-label">Competition</p></div>
-      <div class="metric-card"><p class="metric-value font-mono text-sm">${escapeHtml(String(org.codebase).toUpperCase())}</p><p class="metric-label">Codebase</p></div>
+      <div class="metric-card"><p class="metric-value">${String(org.years)}</p><p class="metric-label">Years In</p></div>
+      <div class="metric-card"><p class="metric-value">${String(org.firstYear)}</p><p class="metric-label">First Year</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${String(org.competition.toUpperCase())}</p><p class="metric-label">Competition</p></div>
+      <div class="metric-card"><p class="metric-value font-mono text-sm">${String(org.codebase.toUpperCase())}</p><p class="metric-label">Codebase</p></div>
     `;
 
     document.getElementById('mDesc').textContent = org.desc;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
-    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
+    document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${f}</span>`).join('');
 
     // Timeline
     let timelineHtml = '';
@@ -4281,7 +4204,7 @@ if(org.ideas){
           <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Browse open Good First Issues</h4>
           <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
         </div>
-        <p class="text-xs text-zinc-500 mb-3 font-mono">${escapeHtml(org.github)}</p>
+        <p class="text-xs text-zinc-500 mb-3 font-mono">${org.github}</p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(org.name)}</span>
           <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
@@ -4331,9 +4254,9 @@ if(org.ideas){
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
         const safeUrl = sanitizeHrefUrl(issue.url);
         if (safeUrl) card.onclick = () => window.open(safeUrl, '_blank');
-        const safeRepo = escapeHtml(issue.repo || '');
-        const safeTitle = escapeHtml(issue.title || '');
-        const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
+        const safeRepo = issue.repo || '';
+        const safeTitle = issue.title || '';
+        const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`).join('');
         card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
             <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
@@ -4342,7 +4265,7 @@ if(org.ideas){
           <p class="text-xs text-zinc-500 mb-3 font-mono">${safeRepo}</p>
           <div class="flex flex-wrap gap-1.5">
             ${labelsHtml}
-            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${escapeHtml(String(issue.comments || 0))} comments</span>
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${String(issue.comments || 0)} comments</span>
           </div>
         `;
         container.appendChild(card);
@@ -4690,8 +4613,7 @@ if(org.ideas){
   updateLanguageModeHint();
   renderTimeline();        // populate #timeline-milestones on first load
   applyStaleDataNotice(); // show post-selection message if GSoC selection is complete
-  updateCountdown();
-  setInterval(updateCountdown, 60000);
+  
   renderSelectedLanguages();
 
   // Restore filter state from URL params on page load/refresh
@@ -5014,8 +4936,10 @@ if(e.key.toLowerCase()==='r'){
 
   window.closeHelpModal = closeHelpModal;
 
+
 });
 </script>
+
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

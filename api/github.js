@@ -12,11 +12,27 @@ function safeCacheSet(key, value) {
   CACHE.set(key, value);
 }
 
+async function githubFetch(url, options = {}) {
+  let res = await fetch(url, options);
+
+  if (res.status === 401 && options.headers?.Authorization) {
+    const fallbackHeaders = { ...options.headers };
+    delete fallbackHeaders.Authorization;
+
+    res = await fetch(url, {
+      ...options,
+      headers: fallbackHeaders,
+    });
+  }
+
+  return res;
+}
+
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
 
@@ -43,31 +59,14 @@ export default async function handler(req) {
   }
 
   const token = process.env.GITHUB_TOKEN;
-
-  const ghHeaders = {
-    Accept: 'application/vnd.github.v3+json',
-    'User-Agent': 'gsoc-org-finder',
-  };
-
-  if (token) {
-    ghHeaders.Authorization = `Bearer ${token}`;
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'No token' }), { status: 500, headers });
   }
 
-  // Helper to fallback to unauthenticated request if token is invalid (401).
-  // A shallow clone of options.headers is used for the retry so that the
-  // shared ghHeaders object is never mutated and all other calls in this
-  // invocation continue to send the Authorization header normally.
-  const fetchWithFallback = async (url, options) => {
-    let res = await fetch(url, options);
-    if (res.status === 401 && options.headers?.Authorization) {
-      const retryOptions = {
-        ...options,
-        headers: { ...options.headers },
-      };
-      delete retryOptions.headers.Authorization;
-      res = await fetch(url, retryOptions);
-    }
-    return res;
+  const ghHeaders = {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github.v3+json',
+    'User-Agent': 'gsoc-org-finder',
   };
 
   // MODE: ?user=username → return user profile analysis for AI recommender
@@ -83,14 +82,38 @@ export default async function handler(req) {
       let repos = [];
       while (page <= 3) {
         try {
-          const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
+          const res = await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, {
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
-          if (!res.ok) {
-            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
-            break;
+          if (res.status === 403) {
+            if (page === 1) {
+              return new Response(
+                JSON.stringify({
+                  error: "GitHub 403",
+                  remaining: res.headers.get("x-ratelimit-remaining"),
+                  reset: res.headers.get("x-ratelimit-reset"),
+                }),
+                { status: 502, headers }
+              );
+            }
           }
+          if (!res.ok) {
+            const errorBody = await res.text();
+            if (page === 1) {
+              return new Response(
+                JSON.stringify({
+                  error: `GitHub ${res.status}`,
+                  details: errorBody,
+                  rateLimitRemaining: res.headers.get('x-ratelimit-remaining'),
+                  rateLimitReset: res.headers.get('x-ratelimit-reset'),
+                }),
+                { status: 502, headers }
+              );
+            }
+
+          break;
+        }
           const pageRepos = await res.json();
           repos = repos.concat(pageRepos);
           if (pageRepos.length < 100) break;
@@ -157,7 +180,7 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetchWithFallback(
+      const res = await githubFetch(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
       );
@@ -190,7 +213,7 @@ export default async function handler(req) {
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
-      const res = await fetchWithFallback(
+      const res = await fetch(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
       );
@@ -214,8 +237,8 @@ export default async function handler(req) {
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
-      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+      fetch(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
+      fetch(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
     ]);
 
     if (!repoRes.ok) {

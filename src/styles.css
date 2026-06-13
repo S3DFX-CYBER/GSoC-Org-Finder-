@@ -26,6 +26,49 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 
+
+.radar-card {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.radar-metrics {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.radar-metrics div {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+}
+
+.radar-metrics strong {
+  font-size: 1.2rem;
+}
+
+.radar-footer {
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+.radar-hot {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.radar-trending {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+
 /* ── NAV ── */
 .nav{position:sticky;top:0;z-index:60;background:var(--nav-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s}
 .nav-inner{max-width:1340px;margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:8px}

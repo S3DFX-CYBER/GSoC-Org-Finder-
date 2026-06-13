@@ -1,5 +1,8 @@
 // src/js/org.js
 
+
+
+
 const ORGS = [
   { name:"52°North Spatial Information Research GmbH", slug:"52north-spatial-information-research-gmbh", cat:"science", years:11, firstYear:2016, competition:"moderate", codebase:"intermediate", github:"52North/SOS", tags:["python","javascript","java","gis","geospatial"], desc:"Innovative ideas & technologies in geoinformatics.", fit:["GIS enthusiasts","Python/Java devs"], ideas:"https://52north.org/outreach-dissemination/google-summer-of-code/project-ideas/", "2020_project_url":"https://summerofcode.withgoogle.com/archive/2020/organizations/6309633414660096/", "2021_project_url":"https://summerofcode.withgoogle.com/archive/2021/organizations/5129526253715456/" },
   { name:"AboutCode", slug:"aboutcode", cat:"security", years:7, firstYear:2017, competition:"chill", codebase:"beginner", github:"nexB/scancode-toolkit", tags:["python","javascript","c","shell script"], desc:"Scan code for origin, license and vulnerabilities.", fit:["Python devs","Open source compliance"], ideas:"https://github.com/aboutcode-org/aboutcode/wiki/GSOC-2026-project-ideas", "2020_project_url":"https://summerofcode.withgoogle.com/archive/2020/organizations/6689005560659968/", "2021_project_url":"https://summerofcode.withgoogle.com/archive/2021/organizations/5677990456852480/" },

@@ -1,46 +1,76 @@
-// api/github.js — Vercel Edge Function
+// api/github.js — Vercel Edge Function (issue #878)
+// Adds rate-limit headers, queue status endpoint, and stale-while-revalidate caching.
 export const config = { runtime: 'edge' };
-const CACHE = new Map();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
-const CACHE_MAX_SIZE = 1000;
+
+const CACHE      = new Map();
+const CACHE_TTL  = 60 * 60 * 1000; // 1h
+const CACHE_MAX  = 1000;
 
 function safeCacheSet(key, value) {
-  if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
-    const firstKey = CACHE.keys().next().value;
-    CACHE.delete(firstKey);
-  }
+  if (!CACHE.has(key) && CACHE.size >= CACHE_MAX) CACHE.delete(CACHE.keys().next().value);
   CACHE.set(key, value);
+}
+
+function addRateLimitHeaders(res, headers) {
+  const map = {
+    'x-ratelimit-limit':     'X-RateLimit-Limit',
+    'x-ratelimit-remaining': 'X-RateLimit-Remaining',
+    'x-ratelimit-reset':     'X-RateLimit-Reset',
+    'retry-after':           'Retry-After',
+  };
+  for (const [src, dst] of Object.entries(map)) {
+    const val = res.headers.get(src);
+    if (val != null) headers[dst] = val;
+  }
+  return headers;
 }
 
 export default async function handler(req) {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin':   '*',
+    'Access-Control-Allow-Methods':  'GET, OPTIONS',
+    'Access-Control-Allow-Headers':  'Content-Type',
+    'Access-Control-Expose-Headers': 'X-RateLimit-Remaining, X-RateLimit-Reset, X-RateLimit-Limit, Retry-After',
+    'Content-Type':                  'application/json',
+    'Cache-Control':                 'public, max-age=3600, stale-while-revalidate=14400',
   };
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers });
-  }
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers });
 
   const { searchParams } = new URL(req.url);
-  const repo = searchParams.get('repo');
-  const user = searchParams.get('user');
-  const gfiMode = searchParams.get('gfi') === '1';
-  const issuesMode = searchParams.get('issues') === '1';
+  const repo        = searchParams.get('repo');
+  const user        = searchParams.get('user');
+  const gfiMode     = searchParams.get('gfi')    === '1';
+  const issuesMode  = searchParams.get('issues') === '1';
+  const statusMode  = searchParams.get('status') === '1';
 
-  if (!repo && !user) {
-    return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
+  // ── Queue status: GET /api/github?status=1 ────────────────────────────────
+  if (statusMode) {
+    const nc    = { ...headers, 'Cache-Control': 'no-store' };
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) return new Response(JSON.stringify({ ok: false, error: 'No token configured' }), { status: 200, headers: nc });
+    try {
+      const res = await fetch('https://api.github.com/rate_limit', {
+        headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'User-Agent': 'gsoc-org-finder' },
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!res.ok) return new Response(JSON.stringify({ ok: false, error: `GitHub ${res.status}` }), { status: 200, headers: nc });
+      const { resources } = await res.json();
+      const core = resources?.core, search = resources?.search;
+      return new Response(JSON.stringify({
+        ok: true,
+        core:   { limit: core?.limit,   remaining: core?.remaining,   reset: core?.reset,   resetIn: core   ? Math.max(0, core.reset   * 1000 - Date.now()) : null },
+        search: { limit: search?.limit, remaining: search?.remaining, reset: search?.reset },
+      }), { status: 200, headers: nc });
+    } catch (err) {
+      return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 200, headers: nc });
+    }
   }
 
-  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
-    return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
-  }
-
-  if (user && !/^[\w.-]+$/.test(user)) {
-    return new Response(JSON.stringify({ error: 'Invalid user' }), { status: 400, headers });
-  }
+  // ── Validate ──────────────────────────────────────────────────────────────
+  if (!repo && !user)                              return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
+  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo))   return new Response(JSON.stringify({ error: 'Invalid repo' }),  { status: 400, headers });
+  if (user && !/^[\w.-]+$/.test(user))             return new Response(JSON.stringify({ error: 'Invalid user' }),  { status: 400, headers });
 
   const token = process.env.GITHUB_TOKEN;
 
@@ -148,115 +178,106 @@ export default async function handler(req) {
     }
   }
 
-  // MODE: ?gfi=1&issues=1 → return actual issue items
   if (gfiMode && issuesMode) {
     const cacheKey = repo + '__issues';
-    const cached = CACHE.get(cacheKey);
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
-    }
+    const cached   = CACHE.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL) return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
-        { headers: ghHeaders }
+        { headers: ghHeaders, signal: AbortSignal.timeout(8000) }
       );
-      if (!res.ok) {
-        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
-      }
-      const data = await res.json();
+      const responseHeaders = addRateLimitHeaders(res, { ...headers });
+      if (!res.ok) return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: res.status, headers: responseHeaders });
+
+      const data  = await res.json();
       const total = data.total_count ?? 0;
       const items = (data.items || []).map(i => ({
-        title: i.title,
-        html_url: i.html_url,
+        title:      i.title,
+        html_url:   i.html_url,
         created_at: i.created_at,
-        comments: i.comments,
-        labels: (i.labels || []).map(l => ({ name: l.name, color: l.color })),
+        comments:   i.comments,
+        labels:     (i.labels || []).map(l => ({ name: l.name, color: l.color })),
       }));
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
-      return new Response(JSON.stringify({ total, items }), { status: 200, headers });
-    } catch (err) {
-      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
+      return new Response(JSON.stringify({ total, items }), { status: 200, headers: responseHeaders });
+   } catch (err) {
+      return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers: { ...headers } });
     }
   }
 
-  // MODE: ?gfi=1 → return count only
+ // ── GFI count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
-    const cached = CACHE.get(cacheKey);
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
-    }
+    const cached   = CACHE.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL) return new Response(JSON.stringify({ gfi: cached.gfi, cached: true }), { status: 200, headers });
+
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
-        { headers: ghHeaders }
+        { headers: ghHeaders, signal: AbortSignal.timeout(8000) }
       );
-      if (!res.ok) {
-        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
-      }
+      const responseHeaders = addRateLimitHeaders(res, { ...headers });
+      if (!res.ok) return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: res.status , headers: responseHeaders });
+
       const data = await res.json();
-      const gfi = data.total_count ?? null;
+      const gfi  = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
-      return new Response(JSON.stringify({ gfi }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi }), { status: 200, headers: responseHeaders });
     } catch (err) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
     }
   }
 
-  // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
+  // ── Standard stats ────────────────────────────────────────────────────────
   const cached = CACHE.get(repo);
-  if (cached && Date.now() - cached.ts < CACHE_TTL) {
-    return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
-  }
+  if (cached && Date.now() - cached.ts < CACHE_TTL) return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
 
   try {
     const [repoRes, commitsRes] = await Promise.all([
-      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders, signal: AbortSignal.timeout(8000) }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders, signal: AbortSignal.timeout(8000) }),
     ]);
+    const rh = addRateLimitHeaders(repoRes, { ...headers });
 
     if (!repoRes.ok) {
       const err = await repoRes.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
+      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers: rh });
     }
 
     const repoData = await repoRes.json();
+    let lastCommit = 'Unknown', activityDays = 9999;
 
-    let lastCommit = '—';
-    let activityDays = 9999;
     if (commitsRes.ok) {
       const commits = await commitsRes.json();
       if (commits[0]?.commit?.author?.date) {
-        const d = new Date(commits[0].commit.author.date);
-        activityDays = Math.floor((Date.now() - d) / 86400000);
-        if (activityDays === 0) lastCommit = 'Today';
-        else if (activityDays === 1) lastCommit = '1d ago';
-        else if (activityDays < 30) lastCommit = `${activityDays}d ago`;
-        else if (activityDays < 365) lastCommit = `${Math.floor(activityDays / 30)}mo ago`;
-        else lastCommit = `${Math.floor(activityDays / 365)}y ago`;
+        activityDays = Math.floor((Date.now() - new Date(commits[0].commit.author.date)) / 86400000);
+        if      (activityDays === 0)   lastCommit = 'Today';
+        else if (activityDays === 1)   lastCommit = '1d ago';
+        else if (activityDays < 30)    lastCommit = `${activityDays}d ago`;
+        else if (activityDays < 365)   lastCommit = `${Math.floor(activityDays / 30)}mo ago`;
+        else                           lastCommit = `${Math.floor(activityDays / 365)}y ago`;
       }
     }
 
-    const activity = activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low';
-
     const result = {
-      stars: repoData.stargazers_count,
-      forks: repoData.forks_count,
-      issues: repoData.open_issues_count,
-      watchers: repoData.watchers_count,
+      stars:     repoData.stargazers_count,
+      forks:     repoData.forks_count,
+      issues:    repoData.open_issues_count,
+      watchers:  repoData.watchers_count,
       lastCommit,
-      activity,
-      language: repoData.language,
-      gfi: null,  // fetched separately via ?gfi=1 to avoid rate limiting
-      ts: Date.now(),
+      activity:  activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low',
+      language:  repoData.language,
+      gfi:       null,
+      ts:        Date.now(),
     };
 
     safeCacheSet(repo, result);
-    return new Response(JSON.stringify(result), { status: 200, headers });
-
+    return new Response(JSON.stringify(result), { status: 200, headers: rh });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
   }

@@ -4,6 +4,9 @@
   "outputDirectory": ".",
   "buildCommand": "",
   "devCommand": "npx serve . -l $PORT",
+  "redirects": [
+    { "source": "/", "destination": "/landing.html", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/api/github", "destination": "/api/github.js" }
   ],

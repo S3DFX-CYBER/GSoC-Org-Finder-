@@ -34,7 +34,7 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
-  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+  if (repo && !/^[\w.-]+(?:\/[\w.-]+)?$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
 
@@ -156,7 +156,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const repoScope = repo.includes('/') ? `repo:${repo}` : `org:${repo}`;
+      const q = encodeURIComponent(`${repoScope} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
@@ -189,7 +190,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const repoScope = repo.includes('/') ? `repo:${repo}` : `org:${repo}`;
+      const q = encodeURIComponent(`${repoScope} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
@@ -210,6 +212,93 @@ export default async function handler(req) {
   const cached = CACHE.get(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+  }
+
+  if (repo && !repo.includes('/')) {
+    const cacheKey = repo + '__owner';
+    const cachedOwner = CACHE.get(cacheKey);
+    if (cachedOwner && Date.now() - cachedOwner.ts < CACHE_TTL) {
+      return new Response(JSON.stringify({ ...cachedOwner, cached: true }), { status: 200, headers });
+    }
+
+    try {
+      let page = 1;
+      let repos = [];
+      while (page <= 3) {
+        try {
+          const res = await fetchWithFallback(`https://api.github.com/users/${repo}/repos?per_page=100&sort=updated&page=${page}`, {
+            headers: ghHeaders,
+            signal: AbortSignal.timeout(5000)
+          });
+          if (!res.ok) {
+            if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            break;
+          }
+          const pageRepos = await res.json();
+          repos = repos.concat(pageRepos);
+          if (pageRepos.length < 100) break;
+          page++;
+        } catch (e) {
+          if (page === 1) throw e;
+          break;
+        }
+      }
+
+      let totalStars = 0;
+      let totalForks = 0;
+      let totalIssues = 0;
+      let totalWatchers = 0;
+      const languageCounts = {};
+      const topicCounts = {};
+      let activeDays = 9999;
+
+      repos.forEach(r => {
+        if (r.fork) return;
+        totalStars += r.stargazers_count || 0;
+        totalForks += r.forks_count || 0;
+        totalIssues += r.open_issues_count || 0;
+        totalWatchers += r.watchers_count || 0;
+        if (r.language) {
+          languageCounts[r.language] = (languageCounts[r.language] || 0) + 1;
+        }
+        if (r.topics) {
+          r.topics.forEach(t => {
+            topicCounts[t] = (topicCounts[t] || 0) + 1;
+          });
+        }
+        if (r.pushed_at) {
+          const d = new Date(r.pushed_at);
+          const days = Math.floor((Date.now() - d) / 86400000);
+          if (days < activeDays) activeDays = days;
+        }
+      });
+
+      const languages = Object.entries(languageCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+      const topics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+
+      let activity = 'low';
+      if (activeDays < 30) activity = 'high';
+      else if (activeDays < 90) activity = 'medium';
+
+      const result = {
+        languages,
+        topics,
+        stars: totalStars,
+        forks: totalForks,
+        issues: totalIssues,
+        watchers: totalWatchers,
+        lastCommit: activeDays === 9999 ? '—' : activeDays === 0 ? 'Today' : activeDays === 1 ? '1d ago' : activeDays < 30 ? `${activeDays}d ago` : activeDays < 365 ? `${Math.floor(activeDays / 30)}mo ago` : `${Math.floor(activeDays / 365)}y ago`,
+        activity,
+        language: languages[0] || null,
+        gfi: null,
+        ts: Date.now()
+      };
+
+      safeCacheSet(cacheKey, result);
+      return new Response(JSON.stringify(result), { status: 200, headers });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });
+    }
   }
 
   try {

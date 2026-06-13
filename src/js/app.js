@@ -95,6 +95,33 @@ const CHANNEL_ICONS = {
   Slack: '💬', Zulip: '💬', Discord: '🎮', Matrix: '🔗', IRC: '🖥️', 'Mailing list': '📧'
 };
 
+const TECH_ICON_MAP = {
+  python: 'terminal',
+  javascript: 'code',
+  typescript: 'data_object',
+  react: 'auto_awesome',
+  nodejs: 'dns',
+  django: 'grid_view',
+  docker: 'deployed_code',
+  kubernetes: 'cloud',
+  c: 'memory',
+  'c++': 'memory',
+  css: 'palette',
+  html: 'language',
+  java: 'code',
+  rust: 'build',
+  go: 'sync_alt',
+  ruby: 'diamond',
+  swift: 'bolt',
+  kotlin: 'bolt'
+};
+
+function renderTechTag(tag) {
+  const value = String(tag || '');
+  const icon = TECH_ICON_MAP[value.toLowerCase()] || 'code';
+  return safeHTML`<span class="tech-tag inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[11px] leading-none">${icon}</span><span>${value}</span></span>`;
+}
+
 const CONTACT_TIPS = {
   Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
   Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
@@ -1154,8 +1181,8 @@ function renderOrgs(reset = true) {
       ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />`
       : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
 
-    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
-    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
+    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-700 dark:text-zinc-100">${t}</span>`);
+    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-700 dark:text-zinc-100 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
 
     const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
     const isBookmarkedStr = isBookmarked ? 'true' : 'false';
@@ -1442,7 +1469,7 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (mFetchBtn) mFetchBtn.textContent = gh ? '↻ Refresh' : 'Fetch Live Stats';
 
   const mTech = document.getElementById('mTech');
-  if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
+  if (mTech) mTech.innerHTML = org.tags.map(t => renderTechTag(t)).join('');
 
   const mFit = document.getElementById('mFit');
   if (mFit) mFit.innerHTML = org.fit.map(f => safeHTML`<span class="fit-tag">${f}</span>`).join('');

@@ -26,13 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
 function initFooter() {
   const backToTopBtn = document.getElementById('back-to-top-btn');
   if (backToTopBtn) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
+    const updateBackToTopVisibility = () => {
+      const scrollTop = window.scrollY || window.pageYOffset || 0;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+      const documentHeight = document.documentElement.scrollHeight || 0;
+      const distanceFromBottom = documentHeight - (scrollTop + viewportHeight);
+      const revealThreshold = Math.max(500, Math.round(viewportHeight * 0.75));
+
+      if (distanceFromBottom <= revealThreshold) {
         backToTopBtn.classList.add('show');
       } else {
         backToTopBtn.classList.remove('show');
       }
-    }, { passive: true });
+    };
+
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+    window.addEventListener('resize', updateBackToTopVisibility);
+    updateBackToTopVisibility();
 
     backToTopBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });

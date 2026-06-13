@@ -13,8 +13,16 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    fetch(event.request).catch(async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+      if (event.request.mode === 'navigate') {
+        return caches.match('./index.html');
+      }
+      return new Response(
+        JSON.stringify({ error: 'You are offline' }),
+        { status: 503, headers: { 'Content-Type': 'application/json' } }
+      );
     })
   );
 });

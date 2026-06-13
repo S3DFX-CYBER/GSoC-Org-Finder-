@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Terms & Conditions | GSoC 2026 Org Finder</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg: #050505;
+        --card: #101010;
+        --card2: #151515;
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --muted: #a1a1aa;
+        --accent: #ff7a00;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          Segoe UI,
+          sans-serif;
+      }
+
+      /* NAVBAR */
+      .navbar {
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        margin-right: 12px;
+      }
+
+      .nav-link {
+        color: #d4d4d8 !important;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--accent) !important;
+      }
+
+      /* HERO */
+      .hero {
+        padding: 100px 0 70px;
+      }
+
+      .hero-tag {
+        color: var(--accent);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        font-weight: 800;
+      }
+
+      .hero p {
+        color: var(--muted);
+        max-width: 800px;
+        font-size: 1.1rem;
+      }
+
+      .updated {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        border-radius: 50px;
+        background: var(--card);
+        border: 1px solid var(--border);
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        position: sticky;
+        top: 100px;
+      }
+
+      .toc-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 25px;
+      }
+
+      .toc-title {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+
+      .toc-link {
+        display: block;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 10px 12px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        transition: 0.3s;
+        font-size: 0.95rem;
+      }
+
+      .toc-link:hover {
+        background: rgba(255, 122, 0, 0.08);
+        color: white;
+      }
+
+      .toc-link.active {
+        color: var(--accent);
+        background: rgba(255, 122, 0, 0.12);
+        border-left: 3px solid var(--accent);
+      }
+
+      /* ACCORDION */
+      .accordion-item {
+        background: var(--card);
+        border: 1px solid var(--border) !important;
+        border-radius: 20px !important;
+        overflow: hidden;
+        margin-bottom: 18px;
+      }
+
+      .accordion-button {
+        background: var(--card);
+        color: white;
+        font-weight: 700;
+        padding: 22px;
+      }
+
+      .accordion-button:not(.collapsed) {
+        background: var(--card);
+        color: var(--accent);
+        box-shadow: none;
+      }
+
+      .accordion-button:focus {
+        box-shadow: none;
+      }
+
+      .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ff7a00' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+      }
+
+      .accordion-body {
+        color: var(--muted);
+        line-height: 1.9;
+        font-size: 1rem;
+      }
+
+      .accordion-body ul {
+        margin-top: 15px;
+      }
+
+      .accordion-body li {
+        margin-bottom: 10px;
+      }
+
+      /* FOOTER - Reduced Size */
+      .footer {
+        margin-top: 60px;
+        padding: 25px 0;
+        border-top: 1px solid var(--border);
+        background: #090909;
+        font-size: 0.9rem;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-left h5 {
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: #d4d4d8;
+        font-size: 1rem;
+      }
+
+      .footer-left p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 0.85rem;
+      }
+
+      .footer-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .footer-policy {
+        text-decoration: none;
+        color: #d4d4d8;
+        letter-spacing: 1px;
+        font-weight: 600;
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .social-icons a {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d4d4d8;
+        border: 1px solid rgba(255, 122, 0, 0.2);
+        transition: 0.3s;
+      }
+
+      .social-icons a:hover {
+        background: var(--accent);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 991px) {
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+        .sidebar {
+          position: relative;
+          top: 0;
+          margin-bottom: 30px;
+        }
+        .footer-content {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="brand-icon">G</div>
+          <h4 class="mb-0 fw-bold">
+            GSoC 2026 <span style="color: #ff7a00">Org Finder</span>
+          </h4>
+        </div>
+
+        <button
+          class="navbar-toggler"
+          data-bs-toggle="collapse"
+          data-bs-target="#nav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#">Timeline</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Organizations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">AI Recommender</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Watchlist</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Issues</a></li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Terms</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="container">
+        <div class="hero-tag">Legal Information</div>
+        <h1>Terms & Conditions</h1>
+        <p>
+          These Terms and Conditions govern your access to and use of GSoC 2026
+          Org Finder, including organization discovery tools, AI
+          recommendations, issue tracking, proposal assistance, watchlists, and
+          related services. By using this platform, you agree to comply with
+          these terms.
+        </p>
+        <div class="updated">Last Updated: June 2026</div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-3">
+          <div class="sidebar">
+            <div class="toc-card">
+              <div class="toc-title">Contents</div>
+              <div id="toc">
+                <a class="toc-link active" href="#s1">01 Introduction</a>
+                <a class="toc-link" href="#s2">02 Accounts & Security</a>
+                <a class="toc-link" href="#s3">03 Acceptable Use</a>
+                <a class="toc-link" href="#s4">04 Organization Data</a>
+                <a class="toc-link" href="#s5">05 AI & Proposal Tools</a>
+                <a class="toc-link" href="#s6">06 Intellectual Property</a>
+                <a class="toc-link" href="#s7">07 Privacy & Data</a>
+                <a class="toc-link" href="#s8">08 Third-Party Services</a>
+                <a class="toc-link" href="#s9">09 Disclaimer</a>
+                <a class="toc-link" href="#s10">10 Limitation of Liability</a>
+                <a class="toc-link" href="#s11">11 Governing Law</a>
+                <a class="toc-link" href="#s12">12 Contact Information</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-9">
+          <div class="accordion" id="termsAccordion">
+            <!-- 01 -->
+            <div class="accordion-item section" id="s1">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c1"
+                >
+                  01. Introduction & Acceptance of Terms
+                </button>
+              </h2>
+              <div id="c1" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                  <p>
+                    GSoC 2026 Org Finder is an independent open-source platform
+                    designed to help students, contributors, and enthusiasts
+                    discover Google Summer of Code organizations, explore
+                    projects, evaluate opportunities, and organize their
+                    contribution journey.
+                  </p>
+                  <p>
+                    By accessing or using this platform, you acknowledge that
+                    you have read, understood, and agreed to these Terms and
+                    Conditions. If you do not agree with any part of these
+                    terms, you must not use the platform.
+                  </p>
+                  <ul>
+                    <li>
+                      Use of the platform constitutes acceptance of these terms.
+                    </li>
+                    <li>
+                      Users must comply with all applicable laws and
+                      regulations.
+                    </li>
+                    <li>
+                      The platform may modify features or services at any time.
+                    </li>
+                    <li>
+                      Continued usage after any changes implies acceptance of
+                      the revised terms.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 02 -->
+            <div class="accordion-item section" id="s2">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c2"
+                >
+                  02. User Accounts & Security
+                </button>
+              </h2>
+              <div id="c2" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    Creating an account is optional but recommended for full
+                    access to features such as watchlists, personalized
+                    recommendations, and saving proposals.
+                  </p>
+                  <p>
+                    You are solely responsible for maintaining the
+                    confidentiality of your account credentials. Any activity
+                    performed using your account is your responsibility. You
+                    agree to notify us immediately of any unauthorized use of
+                    your account.
+                  </p>
+                  <ul>
+                    <li>
+                      Users must provide accurate and complete information
+                      during registration.
+                    </li>
+                    <li>
+                      Accounts may be suspended or terminated for violations of
+                      these terms.
+                    </li>
+                    <li>
+                      We implement reasonable security measures but cannot
+                      guarantee absolute security.
+                    </li>
+                    <li>
+                      You must not share your login credentials with others.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 03 -->
+            <div class="accordion-item section" id="s3">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c3"
+                >
+                  03. Acceptable Use Policy
+                </button>
+              </h2>
+              <div id="c3" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    You agree to use the platform only for lawful purposes and
+                    in a manner that does not infringe the rights of others or
+                    restrict their use of the platform.
+                  </p>
+                  <p>Prohibited activities include, but are not limited to:</p>
+                  <ul>
+                    <li>
+                      Scraping, crawling, or automated data extraction without
+                      permission.
+                    </li>
+                    <li>
+                      Distributing spam, malware, or engaging in phishing.
+                    </li>
+                    <li>Impersonating any person or organization.</li>
+                    <li>
+                      Attempting to gain unauthorized access to any part of the
+                      platform.
+                    </li>
+                    <li>
+                      Harassment, abuse, or harmful behavior toward other users.
+                    </li>
+                    <li>
+                      Any action that could damage, disable, or overburden the
+                      platform.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 04 -->
+            <div class="accordion-item section" id="s4">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c4"
+                >
+                  04. Organization Data & Content
+                </button>
+              </h2>
+              <div id="c4" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    All organization information, project ideas, and related
+                    data are collected from public sources including official
+                    GSoC listings, GitHub repositories, organization websites,
+                    and community contributions.
+                  </p>
+                  <p>
+                    While we strive for accuracy, we do not guarantee the
+                    completeness, timeliness, or correctness of any information
+                    displayed. Users are strongly encouraged to verify critical
+                    details directly with the respective organizations.
+                  </p>
+                  <ul>
+                    <li>Data may be updated periodically.</li>
+                    <li>
+                      Community-submitted information is subject to moderation.
+                    </li>
+                    <li>
+                      Organizations listed are not endorsed by this platform.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 05 -->
+            <div class="accordion-item section" id="s5">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c5"
+                >
+                  05. AI Recommendations & Proposal Tools
+                </button>
+              </h2>
+              <div id="c5" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    Our AI-powered recommendation system and proposal assistance
+                    tools are designed to provide helpful suggestions based on
+                    available data. However, all AI-generated content is for
+                    informational and guidance purposes only.
+                  </p>
+                  <p>
+                    AI recommendations do not guarantee acceptance into any
+                    Google Summer of Code program, nor do they represent
+                    official advice from Google or participating organizations.
+                    Final decisions rest entirely with the organizations and
+                    Google.
+                  </p>
+                  <ul>
+                    <li>
+                      Users are responsible for reviewing and editing all
+                      proposals.
+                    </li>
+                    <li>Plagiarism is strictly prohibited.</li>
+                    <li>
+                      AI outputs may contain inaccuracies or hallucinations.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 06 -->
+            <div class="accordion-item section" id="s6">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c6"
+                >
+                  06. Intellectual Property Rights
+                </button>
+              </h2>
+              <div id="c6" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    All original content, design, code, logos, and branding of
+                    GSoC 2026 Org Finder are protected by copyright and other
+                    intellectual property laws.
+                  </p>
+                  <p>
+                    You may not copy, modify, distribute, or create derivative
+                    works from our platform assets without explicit written
+                    permission, except for the limited rights granted for
+                    personal, non-commercial use of the service.
+                  </p>
+                  <ul>
+                    <li>
+                      User-generated content remains the property of the user.
+                    </li>
+                    <li>
+                      By submitting content, you grant us a worldwide,
+                      non-exclusive license to display it.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 07 -->
+            <div class="accordion-item section" id="s7">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c7"
+                >
+                  07. Privacy & Data Handling
+                </button>
+              </h2>
+              <div id="c7" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    We respect your privacy and collect only the minimum data
+                    necessary for providing our services, improving user
+                    experience, and ensuring platform security.
+                  </p>
+                  <p>
+                    Your data is handled in accordance with our
+                    <a href="privacy.html" class="text-accent">Privacy Policy</a>. We do
+                    not sell personal data to third parties.
+                  </p>
+                  <ul>
+                    <li>
+                      We may use analytics tools to understand usage patterns.
+                    </li>
+                    <li>
+                      You can request deletion of your account and associated
+                      data.
+                    </li>
+                    <li>
+                      Cookies are used for essential functionality and
+                      analytics.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 08 -->
+            <div class="accordion-item section" id="s8">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c8"
+                >
+                  08. Third-Party Services & Links
+                </button>
+              </h2>
+              <div id="c8" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    The platform contains links to external websites including
+                    GitHub, official GSoC pages, and organization repositories.
+                    These services operate independently and are governed by
+                    their own terms and privacy policies.
+                  </p>
+                  <p>
+                    We are not responsible for the content, availability, or
+                    practices of any third-party sites.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 09 -->
+            <div class="accordion-item section" id="s9">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c9"
+                >
+                  09. Disclaimer of Warranties
+                </button>
+              </h2>
+              <div id="c9" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    The platform is provided on an "as-is" and "as-available"
+                    basis without any warranties of any kind, whether express or
+                    implied, including but not limited to warranties of
+                    accuracy, reliability, merchantability, or fitness for a
+                    particular purpose.
+                  </p>
+                  <p>
+                    We do not warrant that the platform will be uninterrupted,
+                    error-free, or free from viruses or other harmful
+                    components.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10 -->
+            <div class="accordion-item section" id="s10">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c10"
+                >
+                  10. Limitation of Liability
+                </button>
+              </h2>
+              <div id="c10" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    To the fullest extent permitted by law, GSoC 2026 Org Finder
+                    and its maintainers shall not be liable for any indirect,
+                    incidental, special, consequential, or punitive damages
+                    arising out of or in connection with your use of the
+                    platform.
+                  </p>
+                  <p>
+                    Our total liability shall not exceed the amount you paid to
+                    us (if any) in the twelve months preceding the claim.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 11 -->
+            <div class="accordion-item section" id="s11">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c11"
+                >
+                  11. Governing Law & Updates
+                </button>
+              </h2>
+              <div id="c11" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    These Terms shall be governed by and construed in accordance
+                    with the laws of the jurisdiction where the project
+                    maintainers reside, without regard to conflict of law
+                    principles.
+                  </p>
+                  <p>
+                    We reserve the right to update or modify these Terms at any
+                    time. We will notify users of significant changes through
+                    the platform or via email when possible.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 12 -->
+            <div class="accordion-item section" id="s12">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#c12"
+                >
+                  12. Contact Information
+                </button>
+              </h2>
+              <div id="c12" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                  <p>
+                    For any questions, concerns, or requests regarding these
+                    Terms & Conditions, Privacy Policy, or other legal matters,
+                    please contact the project maintainers through the official
+                    channels:
+                  </p>
+                  <ul>
+                    <li>GitHub Issues</li>
+                    <li>Discord Community Server</li>
+                    <li>
+                      Email: maintainers@findmygsoc.org (or the listed contact
+                      on GitHub)
+                    </li>
+                  </ul>
+                  <p>
+                    We aim to respond to all legitimate inquiries within a
+                    reasonable timeframe.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-left">
+            <h5>© 2026 S3DFX-CYBER · Built for the Open Source Community</h5>
+            <p>
+              FindMyGSoC is an independent open-source project and is not
+              affiliated with Google LLC.
+            </p>
+          </div>
+
+          <div class="footer-right">
+            <a href="#" class="footer-policy">Terms &amp; Conditions</a>
+            <div class="social-icons">
+              <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository"><i class="fab fa-github"></i></a>
+              <a href="https://discord.com/invite/Kwj76sCzp" target="_blank" rel="noopener noreferrer" aria-label="Discord Server"><i class="fab fa-discord"></i></a>
+              <a href="https://www.linkedin.com/in/savio-d-souza-0a1810349/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+              <a href="https://x.com/S3DXVI" target="_blank" rel="noopener noreferrer" aria-label="Twitter/X Profile"><i class="fab fa-x-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const sections = document.querySelectorAll(".section");
+      const navLinks = document.querySelectorAll(".toc-link");
+
+      window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((section) => {
+          const top = section.offsetTop - 180;
+          if (pageYOffset >= top) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === "#" + current) {
+            link.classList.add("active");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -127,6 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fileUpload.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext !== 'txt' || !file.type.startsWith('text/')) {
+        showError('Only .txt files are accepted. Please upload a plain text file.');
+        fileUpload.value = '';
+        return;
+      }
       file.text().then(text => {
         resumeText.value = text;
       }).catch(err => {

@@ -2009,9 +2009,23 @@ function filterIssues() {
   const cat = document.getElementById('issueCatFilter')?.value || '';
   const lang = document.getElementById('issueLangFilter')?.value || '';
 
+  // Resolve the selected language value to the canonical LANGUAGE_MAP label and
+  // its known aliases (e.g. 'java' -> ['java']), exactly as applyFilters() does
+  // for the org grid. Using t.includes(lang) was a substring match that caused
+  // 'Java' to also return JavaScript issues because 'javascript'.includes('java')
+  // is true. normalizeTag() is used for both the key lookup and the alias mapping
+  // so the comparison is consistent with the rest of the codebase.
+  const langAliases = lang
+    ? (LANGUAGE_MAP[Object.keys(LANGUAGE_MAP).find(k => normalizeTag(k) === normalizeTag(lang)) || ''] || [lang])
+        .map(normalizeTag)
+    : [];
+
   filteredIssues = allIssues.filter(iss => {
     if (cat && iss.orgCat !== cat) return false;
-    if (lang && !iss.orgTags.some(t => t.includes(lang))) return false;
+    if (lang) {
+      const orgTagsNormalized = (iss.orgTags || []).map(normalizeTag);
+      if (!langAliases.some(alias => orgTagsNormalized.includes(alias))) return false;
+    }
     if (search && !iss.title.toLowerCase().includes(search) && !iss.org.toLowerCase().includes(search)) return false;
     return true;
   });

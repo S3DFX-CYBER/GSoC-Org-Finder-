@@ -1313,6 +1313,27 @@ kbd:hover{
           </div>
         </div>
       </div>
+      <div id="recentSearchWrapper" class="max-w-xl mb-6">
+  
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+            Recent Searches
+          </p>
+
+          <button
+            id="clearSearchHistory"
+            class="text-xs text-primary font-semibold hover:underline"
+          >
+            Clear
+          </button>
+        </div>
+
+        <div
+          id="recentSearches"
+          class="flex flex-wrap gap-2"
+        ></div>
+
+      </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
@@ -3985,7 +4006,7 @@ btn.__orgListenerAttached = true;
       }
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
-
+    
     // Sanitize and set idea/repo links
     const ideasUrl = sanitizeHrefUrl(org.ideas);
     const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));

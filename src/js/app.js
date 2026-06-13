@@ -2476,64 +2476,143 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sync hero-search
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
-      }
-    });
+// Sync hero search with hidden search input and initialize on load
+const heroSearch = document.getElementById('hero-search');
+
+// ===== Recent Search History =====
+
+const recentSearchesContainer =
+  document.getElementById("recentSearches");
+
+const clearSearchHistoryBtn =
+  document.getElementById("clearSearchHistory");
+
+let recentSearches = [];
+
+try {
+  recentSearches =
+    JSON.parse(localStorage.getItem("recentSearches")) || [];
+} catch (error) {
+  console.error("Failed to parse recent searches:", error);
+  recentSearches = [];
+  localStorage.removeItem("recentSearches");
+}
+
+function renderRecentSearches() {
+  if (!recentSearchesContainer) return;
+
+  recentSearchesContainer.innerHTML = "";
+
+  if (recentSearches.length === 0) {
+    recentSearchesContainer.innerHTML = `
+      <span class="text-xs text-zinc-400 italic">
+        No recent searches
+      </span>
+    `;
+    return;
   }
 
-  // Quick chips listeners
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      const isCurrentlyActive = chip.classList.contains('bg-orange-600');
+  recentSearches.forEach((search) => {
+    const btn = document.createElement("button");
 
-      document.querySelectorAll('.filter-chip').forEach(c => {
-        c.classList.remove('bg-orange-600', 'text-white');
-        c.classList.add('bg-surface-container-highest');
-      });
+    btn.className = "recent-search-btn";
+    btn.textContent = search;
 
-      if (isCurrentlyActive) {
-        activeChip = null;
-      } else {
-        chip.classList.add('bg-orange-600', 'text-white');
-        chip.classList.remove('bg-surface-container-highest');
+    btn.addEventListener("click", () => {
+      heroSearch.value = search;
 
-        if (text.includes('bookmarked')) activeChip = 'bookmarked';
-        else if (text.includes('veteran')) activeChip = 'veterans';
-        else if (text.includes('newcomer')) activeChip = 'newcomers';
-        else if (text.includes('low competition')) activeChip = 'low-competition';
-        else if (text.includes('high competition')) activeChip = 'high-competition';
-        else if (text.includes('actively')) activeChip = 'active';
-        else activeChip = null;
+      const hiddenSearch =
+        document.getElementById("searchInput");
+
+      if (hiddenSearch) {
+        hiddenSearch.value = search;
       }
+
       applyFilters();
     });
+
+    recentSearchesContainer.appendChild(btn);
   });
+}
+const MAX_RECENT_SEARCHES = 6;
 
-  // Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
-  document.querySelectorAll('.pill[data-lang]').forEach(pill => {
-    pill.addEventListener('click', () => {
-      if (typeof globalThis.togglePill === 'function') {
-        globalThis.togglePill(pill);
-      }
-    });
+
+function saveRecentSearch(searchTerm) {
+  if (!searchTerm.trim()) return;
+
+  recentSearches = recentSearches.filter(
+    (item) =>
+      item.toLowerCase() !== searchTerm.toLowerCase()
+  );
+
+  recentSearches.unshift(searchTerm);
+  
+  recentSearches = recentSearches.slice(
+    0,
+    MAX_RECENT_SEARCHES
+  );
+
+  localStorage.setItem(
+    "recentSearches",
+    JSON.stringify(recentSearches)
+  );
+
+  renderRecentSearches();
+}
+
+clearSearchHistoryBtn?.addEventListener("click", () => {
+  recentSearches = [];
+
+  localStorage.removeItem("recentSearches");
+
+  renderRecentSearches();
+});
+
+// Initial render
+renderRecentSearches();
+
+if (heroSearch) {
+  heroSearch.value =
+    document.getElementById('searchInput')?.value ||
+    new URLSearchParams(location.search).get('q') ||
+    '';
+
+  heroSearch.addEventListener('input', (e) => {
+    const value = e.target.value.trim();
+
+    // save only meaningful searches
+    if (value.length > 1) {
+      saveRecentSearch(value);
+    }
+
+    const searchInput =
+      document.getElementById('searchInput');
+
+    if (searchInput) {
+      searchInput.value = e.target.value;
+      applyFilters();
+    }
   });
+}
+// Event listeners for selects
+['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => applyFilters());
+});
 
-  document.getElementById('emptyStateClearBtn')?.addEventListener('click', clearAllFilters);
-  document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
+// Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
+document.querySelectorAll('.pill[data-lang]').forEach(pill => {
+  pill.addEventListener('click', () => {
+    if (typeof globalThis.togglePill === 'function') {
+      globalThis.togglePill(pill);
+    }
+  });
+});
 
-  // Wire up live stats fetch button
-  document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
+document.getElementById('emptyStateClearBtn')?.addEventListener('click', clearAllFilters);
+document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
+
+// Wire up live stats fetch button
+document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
 
   // Event delegation for trending cards scroll list
   const trendingScroll = document.getElementById('trendingScroll');

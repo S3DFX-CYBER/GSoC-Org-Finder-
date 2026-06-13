@@ -35,7 +35,7 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
   );
   
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
-  return scoredOrgs.slice(0, 6);
+  return scoredOrgs.slice(0, 6).map(({ rawScore, ...rest }) => rest);
 }
 
 function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons) {
@@ -165,8 +165,7 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   return {
     orgIndex: index,
     org: org,
-    score: cappedScore, 
-    rawScore: finalRawScore,
+    score: cappedScore,
     matchedSkills: [...new Set(matchedSkills)],
     reasons: matchReasons
   };

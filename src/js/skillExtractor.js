@@ -5,7 +5,7 @@ const TECH_DICTIONARY = [
   "typescript", "swift", "kotlin", "php", "scala", "haskell", "lua", "perl", 
   "julia", "matlab", "dart", "shell", "bash", "assembly", "sql", "elixir", "erlang", "clojure",
   "fortran", "ocaml", "smalltalk", "pharo", "d lang", "verilog", "verilog-a", "vhdl", "fasm", "tcl", "scheme",
-  "lisp", "prolog", "solidity", "assembly", "asm", "x86", "arm", "mips", "risc-v",
+  "lisp", "prolog", "solidity", "asm", "x86", "arm", "mips", "risc-v",
   
   "react", "angular", "vue", "django", "flask", "spring", "spring boot", "node.js", "nodejs",
   "express", "ruby on rails", "laravel", "asp.net", "svelte", "next.js", "nextjs", "tailwind",
@@ -18,13 +18,13 @@ const TECH_DICTIONARY = [
 
   "mysql", "postgresql", "mongodb", "sqlite", "redis", "cassandra", "oracle", 
   "elasticsearch", "mariadb", "firebase", "supabase", "appwrite", "dynamodb", "couchdb",
-  "postgis", "big data", "distributed storage", "couchdb", "mariadb",
+  "postgis", "big data", "distributed storage",
   
   "aws", "azure", "gcp", "google cloud", "docker", "kubernetes", "jenkins", "gitlab ci", 
   "github actions", "terraform", "ansible", "linux", "unix", "ubuntu", "centos", "debian",
   "nginx", "apache", "prometheus", "grafana", "istio", "helm", "tekton", "ci/cd", "unikernels",
   "kvm", "xen", "qemu", "virtualization", "serverless", "ebpf", "containerd", "sdet", "devops",
-  "kernel", "posix", "bsd", "unix", "real-time os", "rtos",
+  "kernel", "posix", "bsd", "real-time os", "rtos",
 
   "machine learning", "ml", "artificial intelligence", "ai", "deep learning", 
   "data science", "data analysis", "computer vision", "nlp", "natural language processing",
@@ -36,15 +36,15 @@ const TECH_DICTIONARY = [
   "gis", "geospatial", "neuroscience", "computational biology", "fuzzing", "malware analysis",
   "reverse engineering", "hpc", "eda", "chip design", "quantum chemistry", "astrophysics",
   "biomedical", "healthcare", "fintech", "edtech", "social impact", "open knowledge",
-  "distributed storage", "multi-physics", "simulation", "mapping", "genomics", "bioinformatics",
+  "multi-physics", "mapping",
   "mass spectrometry", "meteorology", "climate science", "fluid dynamics", "cfd", "aerospace",
   "graphics", "animation", "audio", "video", "multimedia", "codecs", "ffmpeg",
 
   "tensorflow", "pytorch", "keras", "scikit-learn", "numpy", "pandas", "scipy", "matplotlib",
   "opencv", "qt", "gtk", "cmake", "make", "git", "vim", "emacs", "zsh", "ninja", "bazel",
-  "latex", "markdown", "d3.js", "three.js", "ffmpeg", "gstreamer", "vlc", "ghidra", "ida-pro",
+  "latex", "markdown", "d3.js", "three.js", "gstreamer", "vlc", "ghidra", "ida-pro",
   "cuda", "opencl", "openmp", "mpi", "webgpu", "antlr", "xpath", "z3", "simd", "llvm", "clang",
-  "mlir", "qemu", "vulkan", "opengl", "directx", "vulkan", "webgl"
+  "mlir", "directx"
 ];
 
 const SORTED_TECH_DICTIONARY = [...new Set(TECH_DICTIONARY)].sort((a, b) => b.length - a.length);
@@ -98,8 +98,7 @@ function normalizeSkill(skill) {
     
     'html5 canvas': 'html5 canvas',
     'canvas': 'html5 canvas',
-    'llvm': 'llvm',
-    'qemu': 'qemu'
+    'llvm': 'llvm'
   };
   return mapping[skill] || skill;
 }

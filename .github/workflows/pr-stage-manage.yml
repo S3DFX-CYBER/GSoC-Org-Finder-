@@ -34,11 +34,21 @@ jobs:
     steps:
       - name: Evaluate PR Pipeline
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
-
+        env:
+          TRIGGER_ACTOR: ${{ github.actor }}
+          PR_STAGE_BOT_ACTOR: ${{ secrets.PR_STAGE_BOT_ACTOR }}
         with:
-          # Use built-in token instead of PAT
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Use custom bot token if available, fallback to default GITHUB_TOKEN
+          github-token: ${{ secrets.PR_STAGE_BOT_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
+            const triggerActor = process.env.TRIGGER_ACTOR;
+            const botActor = process.env.PR_STAGE_BOT_ACTOR;
+
+            if (botActor && triggerActor === botActor) {
+              core.info(`Skipping execution: Triggered by bot actor (${botActor})`);
+              return;
+            }
+
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 

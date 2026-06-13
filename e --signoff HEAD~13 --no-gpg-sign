@@ -1,0 +1,99 @@
+[33mf427e29[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/interactive-knowledge-graph-visualization[m[33m, [m[1;31morigin/feat/interactive-knowledge-graph-visualization[m[33m)[m chore: remove unrelated patch scripts
+[33m2714207[m fix: resolve merge conflicts
+[33m5e9f8bf[m Merge branch 'main' into feat/interactive-knowledge-graph-visualization
+[33m11b2dee[m fix: hide pagination and empty-state controls in graph view
+[33ma0ae2ef[m fix: declare implicit globals to suppress ESLint no-undef errors
+[33md7c54b1[m fix: normalize error status to 200 in gfi+issues mode
+[33m5cc1a29[m fix: define addRateLimitHeaders function in api/github.js
+[33m28066ab[m chore: remove out-of-scope files githubQueue.js and MIGRATION.md
+[33m99dcae3[m feat: add interactive GSoC knowledge graph visualization
+[33m78c7dff[m fix: use correct header variable in each response scope
+[33mf2be3a4[m fix: promote queue priority on duplicate enqueue, fix rh->responseHeaders
+[33mbf4d4e2[m fix: clone headers in fetchWithFallback, add timeouts to all fetches
+[33m972d190[m fix: use Number.isFinite for safer pct calculation in MIGRATION.md
+[33m61b31d8[m fix: forward rate-limit headers in user mode, add fetch timeouts, fix stale-while-revalidate promise leak
+[33ma263781[m fix: rate limit detection, Retry-After logic, reduce complexity
+[33m6d2febb[m fix: eliminate duplication, optional chains, nested ternary
+[33m7f23125[m fix: resolve SonarCloud issues — complexity, parseInt, optional chain, duplication
+[33m237a030[m refactor: clean up comments, fix Map.add bug, deadlock, cache invalidation
+[33mbd8de8a[m fix: address review comments — deadlock, cache bust, NaN guard, Map.add bug
+[33m8854cd1[m fix: address coderabbit review comments
+[33m5518367[m feat: async priority queue for GitHub API fetching, fixes rate limiting (#878)
+[33mce31b46[m chore: add 4f4d to GSSoC mentor reviewer pool (#902)
+[33me31aa35[m docs: backfill contributors (#1189)
+[33m7c79560[m Fix contact button redirection and improve interaction feedback (#821)
+[33m698cc5b[m fix: add verified mentor info for webpack (#584)
+[33ma967827[m feat : add alt text to organization logo image (#1644)
+[33m2db7d4f[m fix: add FLARE mentor contact info and GitHub Discussions channel (#290) (#1621)
+[33m1fa3510[m chore: update mentor leaderboard (#1718)
+[33m9338c06[m fix(data): add verified mentor contact info for JabRef e.V. (#321) (#1391)
+[33m1dd0675[m fix(mentors): verify and fix FOSSi Foundation contact info (#1463)
+[33mc51aa8e[m fix: verify mentor contact info for Kornia (#1766)
+[33m52dfa10[m Fix mentor contact info for Jenkins (#795)
+[33madb830b[m fix: verify and update mentor contact info for QEMU (#775)
+[33mb186870[m fix: allow Authorization header in CORS preflight requests (#1763)
+[33maa5ea5a[m Fix: Hero section overflow & theme inconsistency (#1642)
+[33m6ee4b0d[m feat: Scroll section wise 2 (#1780)
+[33madd704c[m feat: enhance keyboard shortcuts UI and navigation (#1769)
+[33ma304ede[m fix: update contact info for JBoss Community (#1770)
+[33mf0e56c0[m docs: improve contribution guide, add DCO help and JS duplication warnings (#1772)
+[33m4787a09[m feat: add dynamic filtering for upcoming deadlines under watchlist (#1175)
+[33meb8742d[m feat: frontend hardening — safe rendering, modal a11y, keyboard nav, SW caching & 23-test coverage (#1316)
+[33m1c8b5f0[m docs: backfill contributors (#1754)
+[33mbd77245[m feat: add pagination for organizations and mentors (#1414)
+[33mc46ee8a[m fix(tenet): enable reviews for external contributor PRs (#1580)
+[33ma3b8c7f[m Update discord invite with new invite link ( old link expired )
+[33m8d8e5bf[m feat: add favicon support (#1008)
+[33m576491f[m feat: add tooltips for filter chips (#999)
+[33m0b5560f[m Fix: update liquid galaxy mentor contact info and status (#899)
+[33m3cc2161[m feat: improve clear filters button tooltip (#880)
+[33m8797131[m fix: improve navbar responsive state handling and active-link synchronization (#855)
+[33m6e0f162[m feat: improve accessibility and watchlist empty state UX (#724) (#851)
+[33me7a5214[m docs: enhance README sections and project presentation (#1530)
+[33m75a7adc[m fix: update the mentor and contact info of SYNFIG and gprMax (#1411)
+[33me281c5b[m fix: add mentor contact info for St. Jude Children's Research Hospital (#616)
+[33m1a23a6a[m docs: backfill contributors (#1719)
+[33m48a0d76[m fix: load star icon on privacy page (#1684)
+[33mae79827[m feat: add clear filters reset button for better UX (#1685)
+[33m09b98f8[m fix(data): add mentor contact info for GNU Project (#1703)
+[33ma90eaa5[m chore: update mentor leaderboard (#1712)
+[33m3cc799d[m chore: update mentor leaderboard (#1711)
+[33md4c9012[m chore: update mentor leaderboard (#1627)
+[33m0755d59[m fix: improve mobile modal layout and proposal builder layout (#1675)
+[33m6617e9a[m fix:improve compare panel interactions (#1657)
+[33meec6e46[m feat: add bookmark button to org detail modal (#1630)
+[33m7caea49[m fix: verify and update FFmpeg mentor contact information (#1381)
+[33me369ae9[m fix: improve mobile modal layout for long organisation names (#1650)
+[33m1289fa0[m chore: update mentor leaderboard (#1636)
+[33m2c4e602[m chore: update mentor leaderboard (#1623)
+[33m4e87f8b[m fix: update mentor contact info for Open Robotics (#1461)
+[33m8f713f4[m chore: update mentor leaderboard (#1586)
+[33m8e56537[m fix: clone headers in fetchWithFallback to prevent shared ghHeaders mutation (#1554)
+[33m7c05b83[m fix: add verified mentor contact info for UC OSPO (fixes #427) (#1506)
+[33m285f97a[m fix: update LibreHealth and LLVM mentor contact information (#1552)
+[33m6b911de[m docs: backfill contributors (#1615)
+[33m73a81a2[m feat: add subtle border animations to timeline card (#669)
+[33m0d269e9[m fix: update Unikraft mentor contact information (#1593)
+[33m6a96afa[m fix(data): add mentor contact info for GNU Compiler Collection (GCC) (#1591)
+[33mb887cca[m t push --force-with-leaseedited for CCEXTRACTOR (#1604)
+[33md115638[m feat: update CERN HSF  mentor information (#1608)
+[33me297de0[m fix: resolve organization cards height inconsistency (#728) (#732)
+[33ma687226[m fix: add verified mentor contact info for Internet Archive (#798)
+[33maee9062[m Update merge-conflicts-reminder.yml
+[33m11cef38[m fix: update DBpedia, CDLI and Common Good mentor contact info (#1333)
+[33m2852ab2[m fix: bump action versions to Node.js 24 compatible releases (#1146)
+[33meeea753[m fix: add mentor contact info for HumanAI, CGAL Project and checkstyle (#315, #272, #273) (#1492)
+[33m70227cf[m chore: update mentor leaderboard (#1575)
+[33m5400e36[m fix(data): add mentor contact info for Django Software Foundation (#1548)
+[33maedbc9f[m chore: update mentor leaderboard (#1544)
+[33md4fbd80[m Update merge-conflicts-reminder.yml
+[33m8aa2392[m fix: resolve async race condition in recommendation flow (#1430) (#1565)
+[33mb5f9b23[m fix(ui): close org modal on outside click (#1287)
+[33m20d67b0[m fix: update mentor contact info for AOSSIE #262 (#1361)
+[33mfdf374a[m Update discord-reminder.yml
+[33macd34a8[m Update duplicate-pr.yml
+[33m7f4592b[m Update pr-validator.yml
+[33m806193a[m Update pr-validator.yml
+[33m29e1e94[m Add Discord guidance workflow for issues and PRs
+[33m8e65ecb[m chore: update mentor leaderboard (#1538)
+[33md194320[m fix: add a view more button for mentor (#1368)

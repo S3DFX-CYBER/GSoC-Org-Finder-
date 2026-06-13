@@ -11,7 +11,17 @@ function safeCacheSet(key, value) {
   }
   CACHE.set(key, value);
 }
-
+function addRateLimitHeaders(res, headers) {
+  const remaining = res.headers.get('x-ratelimit-remaining');
+  const reset = res.headers.get('x-ratelimit-reset');
+  const limit = res.headers.get('x-ratelimit-limit');
+  const retryAfter = res.headers.get('retry-after');
+  if (remaining !== null) headers['X-RateLimit-Remaining'] = remaining;
+  if (reset !== null) headers['X-RateLimit-Reset'] = reset;
+  if (limit !== null) headers['X-RateLimit-Limit'] = limit;
+  if (retryAfter !== null) headers['Retry-After'] = retryAfter;
+  return headers;
+}
 export default async function handler(req) {
   const headers = {
     'Access-Control-Allow-Origin': '*',

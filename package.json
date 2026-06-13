@@ -11,13 +11,10 @@
         "test": "node --test tests/**/*.test.js"
     },
     "devDependencies": {
-        "@tailwindcss/container-queries": "^0.1.1",
-        "@tailwindcss/forms": "^0.5.11",
         "eslint": "^8.57.0",
         "htmlhint": "^1.1.4",
         "stylelint": "^16.3.1",
-        "stylelint-config-standard": "^36.0.1",
-        "tailwindcss": "^3.4.19"
+        "stylelint-config-standard": "^36.0.1"
     },
     "dependencies": {
         "@vercel/speed-insights": "^2.0.0"

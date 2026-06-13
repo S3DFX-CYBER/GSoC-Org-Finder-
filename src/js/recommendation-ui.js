@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, safeHTML */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark, ORGS */
 
 let currentAbortController = null;
 let currentRequestId = 0;
@@ -36,7 +36,7 @@ async function analyzeProfile(username, resume, options = {}) {
  * Global image error handler for recommendation cards.
  * Replaces broken images with a styled initial-based placeholder.
  */
-globalThis.handleRecImgError = function (img, name) {
+globalThis.handleRecImgError = function(img, name) {
   img.style.display = 'none';
   const container = img.parentElement;
   if (container) {
@@ -49,21 +49,57 @@ globalThis.handleRecImgError = function (img, name) {
   }
 };
 
+// Internal safety helper in case globalThis.escapeHtml is not yet initialized
+const safeEscapeHtml = (str) => {
+  if (typeof escapeHtml === 'function') return escapeHtml(str);
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+};
+
+
+/**
+ * Resolves an org name to its numeric index in the global ORGS array.
+ * toggleBookmark(event, orgIdx) and toggleCompare(idx, event) in app.js both
+ * expect a numeric index, not a string name. Passing a string causes ORGS[string]
+ * to return undefined and every bookmark/compare action to silently no-op.
+ *
+ * @param {string} name - Org name from a data attribute
+ * @returns {number} Index in ORGS, or -1 if not found
+ */
+function resolveOrgIndex(name) {
+  if (Array.isArray(globalThis.ORGS)) {
+    return globalThis.ORGS.findIndex(o => o.name === name);
+  }
+  return -1;
+}
 
 function handleBookmarkAction(e, btn) {
   e.stopPropagation();
   const name = btn.dataset.bookmarkOrg;
-  if (typeof toggleBookmark === 'function') {
-    toggleBookmark(e, name);
-    // Dynamically verify authoritative memory to correctly manage layout class topology
-    const isNowBookmarked = (globalThis.bookmarkedSet || new Set()).has(name);
-    btn.classList.toggle('active', isNowBookmarked);
-    btn.classList.toggle('text-orange-500', isNowBookmarked);
-    btn.classList.toggle('text-zinc-300', !isNowBookmarked);
+  if (typeof toggleBookmark !== 'function') return;
 
-    const icon = btn.querySelector('.material-symbols-outlined');
-    if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
-  }
+  // toggleBookmark(event, orgIdx) expects a numeric index as the second argument.
+  // Passing the org name string causes ORGS[name] to be undefined and toggleBookmark
+  // to return early without bookmarking anything.
+  const orgIdx = resolveOrgIndex(name);
+  if (orgIdx < 0) return;
+
+  toggleBookmark(e, orgIdx);
+
+  // Sync visual state from authoritative store after the toggle
+  const isNowBookmarked = (globalThis.bookmarkedSet || new Set()).has(name);
+  btn.classList.toggle('active', isNowBookmarked);
+  btn.classList.toggle('text-orange-500', isNowBookmarked);
+  btn.classList.toggle('text-zinc-300', !isNowBookmarked);
+
+  btn.title = isNowBookmarked ? 'Remove bookmark' : 'Add bookmark';
+
+  const icon = btn.querySelector('.material-symbols-outlined');
+  if (icon) icon.classList.toggle('icon-fill', isNowBookmarked);
 }
 
 function handleCompareAction(e, btn, card) {
@@ -71,8 +107,15 @@ function handleCompareAction(e, btn, card) {
   const name = btn.dataset.compareOrg;
   if (typeof toggleCompare !== 'function') return;
 
+  // toggleCompare(idx, event) in app.js expects (number, event) -- index first.
+  // The previous call was toggleCompare(e, name): wrong order and wrong types.
+  // Both problems caused compareSet.add() to store the MouseEvent object instead
+  // of an org index, making the compare table always empty.
+  const orgIdx = resolveOrgIndex(name);
+  if (orgIdx < 0) return;
+
   // Core engine handles constraints and updates globalThis.compareList synchronously
-  toggleCompare(e, name);
+  toggleCompare(orgIdx, e);
 
   // Read the authoritative application state to govern local visual treatment
   const currentCompareList = globalThis.compareList || [];
@@ -106,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ghInput = document.getElementById('aiGhUsername');
   const resumeText = document.getElementById('aiResumeText');
   const fileUpload = document.getElementById('aiResumeFile');
-
+  
   const loadingState = document.getElementById('aiLoadingState');
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
@@ -196,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resultsContainer) {
     resultsContainer.addEventListener('click', (e) => {
       const target = e.target;
-
+      
       const bookmarkBtn = target.closest('[data-bookmark-org]');
       if (bookmarkBtn) {
         return handleBookmarkAction(e, bookmarkBtn);
@@ -207,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareBtn && card) {
         return handleCompareAction(e, compareBtn, card);
       }
-
+      
       if (card) {
         return handleCardActivation(card);
       }
@@ -227,33 +270,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const o = rec.org;
       const githubOwner = o.github ? o.github.split('/')[0] : '';
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-
+      
       const inCompare = currentCompareList.includes(o.name);
-      const isBookmarked = typeof currentBookmarkedSet.has === 'function'
-        ? currentBookmarkedSet.has(o.name)
+      const isBookmarked = typeof currentBookmarkedSet.has === 'function' 
+        ? currentBookmarkedSet.has(o.name) 
         : false;
-
-      const reasonsHtml = rec.reasons.map(r => safeHTML`<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${r}</span></li>`);
-
+      
+      const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`).join('');
+      
       let matchedSkillsHtml = '';
       if (rec.matchedSkills.length > 0) {
-        const skillsList = rec.matchedSkills.slice(0, 4).map(s => safeHTML`<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${s}</span>`);
-        matchedSkillsHtml = safeHTML`<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
+         const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`).join('');
+         matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
       }
 
-      // Defined explicitly outside string to eliminate linting issues with nested template literals
-      const logoHtml = logoUrl
-        ? safeHTML`<img src="${logoUrl}" data-org-name="${o.name}" alt="${o.name} logo" class="rec-logo w-full h-full object-contain rounded-lg">
-           <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
-        : safeHTML`<div class="text-primary font-bold text-xl font-headline">${o.name[0] || '?'}</div>`;
 
-      return safeHTML`
+      // Defined explicitly outside string to eliminate linting issues with nested template literals
+      const logoHtml = logoUrl 
+        ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
+           <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
+        : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
+
+
+      return `
       <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
-               data-org-name="${o.name}">
+               data-org-name="${safeEscapeHtml(o.name)}">
         
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
-          <span class="material-symbols-outlined text-sm">target</span> ${String(rec.score)}% Match
+          <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
         </div>
 
         <!-- Header: Logo & Bookmarking -->
@@ -264,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           <div class="flex items-center gap-2 mt-2">
              <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${o.name}" 
+                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
                      title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
                 <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
              </button>
@@ -273,10 +318,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Body Text & Category -->
         <div class="flex-1">
-          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${o.name}</h3>
-          <span class="category-tag inline-block mb-3">${(o.cat || 'Other').toUpperCase()}</span>
+          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
+          <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
           
-          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${o.desc || ''}</p>
+          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
 
           <!-- Insights Box -->
           <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
@@ -289,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Bottom: Action Bar -->
         <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${o.name}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
+          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
             <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
           </button>
           
@@ -299,8 +344,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </article>
       `;
-    });
+    }).join('');
 
-    resultsContainer.innerHTML = safeHTML`<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
+    resultsContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
   }
 });

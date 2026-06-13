@@ -3908,10 +3908,9 @@ btn.__orgListenerAttached = true;
     });
   }
 
+  let lastFocusedElement = null;
   function openModal(name) {
-    if (typeof globalModalManager !== 'undefined') {
-      globalModalManager.setLastFocusedElement(document.activeElement);
-    }
+    lastFocusedElement = document.activeElement;
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
     addRecentlyViewed(name);
@@ -4032,9 +4031,6 @@ if(org.ideas){
     if (orgModal) {
       orgModal.classList.add('open');
       orgModal.focus();
-      if (typeof globalModalManager !== 'undefined') {
-        globalModalManager.bindModalKeydown(orgModal, typeof closeOrgModal === 'function' ? closeOrgModal : null);
-      }
     }
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
@@ -4045,16 +4041,14 @@ if(org.ideas){
     const orgModal = document.getElementById('orgModal');
     if (orgModal) {
       orgModal.classList.remove('open');
-      if (typeof globalModalManager !== 'undefined') {
-        globalModalManager.unbindModalKeydown(orgModal);
-      }
     }
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     
-    if (typeof globalModalManager !== 'undefined') {
-      globalModalManager.restoreFocus();
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
     }
   }
 
@@ -5034,7 +5028,6 @@ if(e.key.toLowerCase()==='r'){
 
 });
 </script>
-<script src="src/js/modalUtils.js"></script>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

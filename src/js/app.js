@@ -531,7 +531,7 @@ function openModalElement(modalId, triggerElement = null) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
-  activeTriggerElement = triggerElement || document.activeElement;
+  activeTriggerElement = document.activeElement;
 
   if (modalId === 'mobileMenu') {
     modal.classList.remove('hidden');
@@ -554,9 +554,7 @@ function openModalElement(modalId, triggerElement = null) {
   const closeBtn = modal.querySelector('.close-btn, [onclick*="close"]');
   if (closeBtn) closeBtn.focus();
 
-  if (modalId !== 'orgModal') {
-    modal.addEventListener('keydown', trapFocus);
-  }
+  modal.addEventListener('keydown', trapFocus);
 }
 
 function closeModalElement(modalId) {
@@ -580,9 +578,7 @@ function closeModalElement(modalId) {
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
 
-  if (modalId !== 'orgModal') {
-    modal.removeEventListener('keydown', trapFocus);
-  }
+  modal.removeEventListener('keydown', trapFocus);
 
   if (activeTriggerElement) {
     activeTriggerElement.focus();
@@ -591,6 +587,11 @@ function closeModalElement(modalId) {
 }
 
 function trapFocus(e) {
+  if (e.key === 'Escape') {
+    const closeBtn = e.currentTarget.querySelector('.close-btn, [onclick*="close"]');
+    if (closeBtn) closeBtn.click();
+    return;
+  }
   if (e.key !== 'Tab') return;
   const modal = e.currentTarget;
   const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex="0"]');
@@ -1389,9 +1390,6 @@ function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixe
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
 globalThis.openModal = function (name, triggerElement = null) {
-  if (typeof globalModalManager !== 'undefined') {
-    globalModalManager.setLastFocusedElement(triggerElement || document.activeElement);
-  }
   const org = ORGS.find(o => o.name === name);
   if (!org) return;
 
@@ -1516,11 +1514,6 @@ globalThis.openModal = function (name, triggerElement = null) {
   renderMentorContactSection(org);
 
   const orgModal = document.getElementById('orgModal');
-  if (orgModal) {
-    if (typeof globalModalManager !== 'undefined') {
-      globalModalManager.bindModalKeydown(orgModal, typeof closeModal === 'function' ? closeModal : null);
-    }
-  }
 
   openModalElement('orgModal', triggerElement);
 
@@ -1546,11 +1539,6 @@ globalThis.openModal = function (name, triggerElement = null) {
 
 function closeModal() {
   closeModalElement('orgModal');
-  const orgModal = document.getElementById('orgModal');
-  if (orgModal && typeof globalModalManager !== 'undefined') {
-    globalModalManager.unbindModalKeydown(orgModal);
-    globalModalManager.restoreFocus();
-  }
 }
 globalThis.closeModal = closeModal;
 

@@ -75,6 +75,34 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .hero h1 em{font-style:italic;color:var(--orange)}
 .hero-sub{font-size:14px;color:var(--ink3);line-height:1.7;max-width:480px;margin:0 auto 30px;font-weight:400}
 
+/* ── RECENT SEARCHES ── */
+.recent-search-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff4ec;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.recent-search-btn:hover {
+  background: #c2410c;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .recent-search-btn {
+  background: #1c0f05;
+  border-color: #2a1508;
+  color: #fb923c;
+}
+
+[data-theme="dark"] .recent-search-btn:hover {
+  background: #9a3412;
+  color: #ffffff;
+}
 /* ── TRENDING SECTION ── */
 .trending-section{max-width:1340px;margin:0 auto;padding:0 24px 20px}
 .trending-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}

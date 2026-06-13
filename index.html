@@ -2307,6 +2307,7 @@ kbd:hover{
   })();
 
   const selectedLanguages = new Set();
+  let matchAllLanguages = false;
   let activeChip = null; // tracks the active quick-filter chip key ('veterans' | 'newcomers' | 'low-competition' | 'high-competition' | 'bookmarked' | 'active' | null)
   const CHANNEL_ICONS = {
     Slack: '💬',

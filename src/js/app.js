@@ -2263,7 +2263,8 @@ function applyStaleDataNotice() {
 }
 
 loadCommunityActivity();
-requestAnimationFrame(()=>{
+
+const _initFromURL = () => {
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
   if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');
@@ -2308,7 +2309,6 @@ requestAnimationFrame(()=>{
   renderTimeline();
   applyStaleDataNotice();
 
-  // Watchlist, comparison, analytics
   applyFilters();
   renderWatchlist();
   renderCompare();
@@ -2318,7 +2318,6 @@ requestAnimationFrame(()=>{
   loadMentorData();
   renderGoodFirstIssues();
 
-  // Wire up filter event listeners
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
@@ -2338,7 +2337,6 @@ requestAnimationFrame(()=>{
 
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
-  // Programmatic event listeners replacing inline HTML handlers for close and action buttons
   document.getElementById('closeOrgModalBtn')?.addEventListener('click', closeModal);
   document.getElementById('closeCompareModalBtn')?.addEventListener('click', closeCompareModal);
   document.getElementById('closeHelpModalBtn')?.addEventListener('click', closeHelpModal);
@@ -2364,7 +2362,6 @@ requestAnimationFrame(()=>{
     });
   });
 
-  // Sync hero-search
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
@@ -2379,7 +2376,6 @@ requestAnimationFrame(()=>{
     });
   }
 
-  // Quick chips listeners
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const text = chip.textContent.trim().toLowerCase();
@@ -2408,7 +2404,6 @@ requestAnimationFrame(()=>{
     });
   });
 
-  // Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
   document.querySelectorAll('.pill[data-lang]').forEach(pill => {
     pill.addEventListener('click', () => {
       if (typeof globalThis.togglePill === 'function') {
@@ -2419,11 +2414,8 @@ requestAnimationFrame(()=>{
 
   document.getElementById('emptyStateClearBtn')?.addEventListener('click', clearAllFilters);
   document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
-
-  // Wire up live stats fetch button
   document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
 
-  // Event delegation for trending cards scroll list
   const trendingScroll = document.getElementById('trendingScroll');
   if (trendingScroll) {
     trendingScroll.addEventListener('click', (e) => {
@@ -2434,7 +2426,6 @@ requestAnimationFrame(()=>{
     });
   }
 
-  // Event delegation for selected languages strip
   const selectedStrip = document.getElementById('selectedLangsStrip');
   if (selectedStrip) {
     selectedStrip.addEventListener('click', (e) => {
@@ -2453,7 +2444,6 @@ requestAnimationFrame(()=>{
     });
   }
 
-  // Event delegation for mentors container
   const mentorsContainer = document.getElementById('mentorsContainer');
   if (mentorsContainer) {
     mentorsContainer.addEventListener('click', (e) => {
@@ -2463,7 +2453,13 @@ requestAnimationFrame(()=>{
       }
     });
   }
-});
+};
+
+if (typeof requestAnimationFrame !== 'undefined') {
+  requestAnimationFrame(_initFromURL);
+} else {
+  _initFromURL();
+}
 
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY

@@ -2144,84 +2144,13 @@ function trimGitHubPathSlashes(path) {
   return path.slice(start, end);
 }
 
-function githubPathFromValue(value) {
-  const github = String(value || '').trim();
-  if (!github) return '';
-  try {
-    const url = new URL(github);
-    const hostname = url.hostname.toLowerCase();
-    if (hostname !== 'github.com' && hostname !== 'www.github.com') return '';
-    return trimGitHubPathSlashes(url.pathname);
-  } catch {
-    return trimGitHubPathSlashes(github);
-  }
-}
-
-function githubOwnerFromValue(value) {
-  return githubPathFromValue(value).split('/')[0] || '';
-}
-
-function githubUrlFromValue(value) {
-  const path = githubPathFromValue(value);
-  return path ? `https://github.com/${path}` : '';
-}
-
-function orgLogoOwner(o) {
-  return githubOwnerFromValue(o.github);
-}
-
-function orgLogo(o) {
-  const owner = orgLogoOwner(o);
-  if (!owner) return '';
-  return `https://github.com/${owner}.png?size=64`;
-}
-
-function repoUrl(o) {
-  if (!o.github) return '';
-  const owner = githubOwnerFromValue(o.github);
-  const path = githubPathFromValue(o.github);
-  if (UMBRELLA_ORGS.has(o.name) || !path.includes('/')) return owner ? `https://github.com/${owner}` : '';
-  return githubUrlFromValue(o.github);
-}
-
-function repoLinkLabel(o) {
-  if (!o.github) return '';
-  const owner = githubOwnerFromValue(o.github);
-  const path = githubPathFromValue(o.github);
-  if (UMBRELLA_ORGS.has(o.name) || !path.includes('/')) return owner + ' (org)';
-  return path;
-}
-
-globalThis.orgLogo = orgLogo;
-globalThis.repoUrl = repoUrl;
-globalThis.repoLinkLabel = repoLinkLabel;
-
-// ══════════════════════════════════════════════
-// MENTORS FINDER RENDERERS
-// ══════════════════════════════════════════════
-async function loadMentorData() {
-  if (mentorDataState !== 'idle') return;
-  mentorDataState = 'loading';
-  try {
-    const res = await fetch('/data/mentors.json?v=' + Date.now());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    MENTOR_DATA = data.mentors || {};
-    mentorDataState = 'loaded';
-    renderMentorFinder();
-  } catch (err) {
-    console.warn('Failed to load mentors.json:', err);
-    mentorDataState = 'error';
-    const container = document.getElementById('mentorsContainer');
-    if (container) {
-      container.innerHTML = `
-        <div class="col-span-full bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl p-8 text-center">
-          <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">Mentor search unavailable</p>
-          <p class="text-sm text-zinc-600 dark:text-zinc-400">Failed to fetch mentor listings. Please try again later.</p>
-        </div>`;
-    }
-  }
-}
+// Initialize match mode toggle listener
+document.getElementById('matchAllLanguagesToggle')
+  ?.addEventListener('change', (e) => {
+    matchAllLanguages = e.target.checked;
+    globalThis.matchAllLanguages = e.target.checked;
+    applyFilters();
+  });
 
 function renderMentorFinder() {
   const container = document.getElementById('mentorsContainer');

@@ -554,7 +554,9 @@ function openModalElement(modalId, triggerElement = null) {
   const closeBtn = modal.querySelector('.close-btn, [onclick*="close"]');
   if (closeBtn) closeBtn.focus();
 
-  modal.addEventListener('keydown', trapFocus);
+  if (modalId !== 'orgModal') {
+    modal.addEventListener('keydown', trapFocus);
+  }
 }
 
 function closeModalElement(modalId) {
@@ -578,7 +580,9 @@ function closeModalElement(modalId) {
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
 
-  modal.removeEventListener('keydown', trapFocus);
+  if (modalId !== 'orgModal') {
+    modal.removeEventListener('keydown', trapFocus);
+  }
 
   if (activeTriggerElement) {
     activeTriggerElement.focus();
@@ -1545,6 +1549,7 @@ function closeModal() {
   const orgModal = document.getElementById('orgModal');
   if (orgModal && typeof globalModalManager !== 'undefined') {
     globalModalManager.unbindModalKeydown(orgModal);
+    globalModalManager.restoreFocus();
   }
 }
 globalThis.closeModal = closeModal;
@@ -2591,8 +2596,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-// Global keydown listener removed, attached dynamically in openModal
 
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY

@@ -261,7 +261,7 @@
           <span id="org-count"
             class="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
             <span class="material-symbols-outlined text-amber-500 text-sm icon-fill">groups</span>
-            184+ organizations
+            <span id="org-count-text">184+ organizations</span>
           </span>
         </div>
       </div>
@@ -1258,7 +1258,9 @@
       renderFaqList();
 
       // Patch footer links and styling after dynamic load
+      var footerAttempts = 0;
       var checkFooter = setInterval(function () {
+        footerAttempts++;
         var footer = document.querySelector('footer.premium-footer');
         if (footer) {
           clearInterval(checkFooter);
@@ -1269,6 +1271,8 @@
               a.setAttribute('href', 'index.html' + href);
             }
           });
+        } else if (footerAttempts >= 100) {
+          clearInterval(checkFooter);
         }
       }, 50);
 
@@ -1336,8 +1340,8 @@
         if (statVeteransEl) statVeteransEl.textContent = `${veteranOrgs}+`;
         if (statNewcomersEl) statNewcomersEl.textContent = `${newcomerOrgs}+`;
 
-        var orgCountEl = document.getElementById('org-count');
-        if (orgCountEl) orgCountEl.lastChild.textContent = ' ' + totalOrgs + '+ organizations';
+        var orgCountTextEl = document.getElementById('org-count-text');
+        if (orgCountTextEl) orgCountTextEl.textContent = totalOrgs + '+ organizations';
 
         var dashOrgCountEl = document.getElementById('dash-org-count');
         if (dashOrgCountEl) dashOrgCountEl.textContent = totalOrgs + ' Orgs';

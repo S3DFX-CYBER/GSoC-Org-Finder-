@@ -2292,12 +2292,45 @@
   },
   "KDE Community": {
     "org": "KDE Community",
-    "ideasUrl": "https://community.kde.org/GSoC/2026",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "ideasUrl": "https://community.kde.org/GSoC/2026/Ideas",
+    "channels": [
+      {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#kde-new-contributors:kde.org",
+      "label": "KDE New Contributors"
+      },
+      {
+      "type": "Matrix",
+      "url": "https://matrix.to/#/#kde-devel:kde.org",
+      "label": "KDE Development"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Jean-Baptiste Mardelle",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "David Edmundson",
+        "github": "",
+        "githubUrl": ""
+      },
+      {
+        "name": "David Redondo",
+        "github": "",
+        "githubUrl": ""
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "mailto:kde-devel@kde.org",
+        "label": "kde-devel@kde.org"
+      }
+    ],
+    "tip": "Join KDE Matrix rooms and interact with mentors before applying.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Kiwix": {

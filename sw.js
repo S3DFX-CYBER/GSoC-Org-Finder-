@@ -110,7 +110,7 @@ globalThis.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match(cacheKey).then((res) => res || new Response('{"error":"offline"}', {
-          headers: { 'Content-Type': 'application/json' }
+          status: 503, headers: { 'Content-Type': 'application/json' }
         })))
     );
   } else {
@@ -131,7 +131,7 @@ globalThis.addEventListener('fetch', (event) => {
             ));
           }
           return caches.match(event.request).then((r) => r || new Response('{"error":"offline"}', {
-            headers: { 'Content-Type': 'application/json' }
+            status: 503, headers: { 'Content-Type': 'application/json' }
           }));
         });
 

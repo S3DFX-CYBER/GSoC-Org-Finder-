@@ -4466,11 +4466,11 @@ if(org.ideas){
   function updateProposalStats() {
     const editor = document.getElementById('pwEditor');
     const stats = document.getElementById('pwProposalStats');
-    if(!editor || !stats) return;
+    if (!editor || !stats) return;
     const text = editor.value;
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     const chars = text.length;
-    stats.textContent = `${words} words•${chars} chars`;
+    stats.textContent = `${words} words · ${chars} chars`;
   }
 
   function renderPreview() {
@@ -4608,8 +4608,7 @@ if(org.ideas){
     clearTimeout(proposalStatsTimer);
     proposalStatsTimer = setTimeout(() => {
       updateProposalStats();
-    },1000);
-    
+    }, 1000); 
     if (!currentProposalOrg || !isAutosaveEnabled()) return;
     clearTimeout(proposalAutosaveTimer);
     proposalAutosaveTimer = setTimeout(() => {

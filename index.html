@@ -1407,6 +1407,19 @@ kbd:hover{
     </div>
   </div>
 
+  <div class="mb-6">
+    <div class="flex flex-wrap items-center gap-3 mb-2">
+      <label for="tagFilterInput" class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Filter by Tags</label>
+    </div>
+    <div class="relative">
+      <input id="tagFilterInput" type="text" placeholder="Search tags (e.g. python, kubernetes, rust)..." autocomplete="off" class="w-full max-w-md bg-surface-container-low border border-zinc-200 dark:border-zinc-700 rounded-xl py-2 px-4 text-xs font-medium focus:ring-2 focus:ring-primary focus:outline-none dark:bg-zinc-800 dark:text-zinc-200" />
+      <div id="tagSuggestions" class="hidden absolute top-full left-0 mt-1 w-full max-w-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg z-30 max-h-48 overflow-y-auto"></div>
+    </div>
+    <div id="selectedTagsStrip" class="selected-langs-strip mt-2 flex flex-wrap items-center gap-2 min-h-[28px]">
+      <span class="empty-state">No tags selected</span>
+    </div>
+  </div>
+
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
     <div class="flex flex-wrap items-center gap-4">
@@ -1428,6 +1441,18 @@ kbd:hover{
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
+      <select id="orgSizeFilter" aria-label="Filter by organization size" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+        <option value="all">Org Size: All</option>
+        <option value="large">Large (8+ years)</option>
+        <option value="medium">Medium (4-7 years)</option>
+        <option value="small">Small (≤3 years)</option>
+      </select>
+      <select id="mentorshipFilter" aria-label="Filter by mentorship activity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+        <option value="all">Mentorship: All</option>
+        <option value="high">High Mentorship</option>
+        <option value="medium">Medium Mentorship</option>
+        <option value="low">Low Mentorship</option>
+      </select>
       <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
@@ -1435,6 +1460,7 @@ kbd:hover{
         <option value="comp-low">Competition (Chill First)</option>
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
+        <option value="activity">Most Active</option>
       </select>
       <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
         <span class="material-symbols-outlined text-sm">filter_alt_off</span>

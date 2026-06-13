@@ -466,21 +466,63 @@ function cleanCache() {
 }
 cleanCache();
 
-async function checkAPI() {
+let modalIdx=-1,fetching=false,lastSearch='';
+const pills=new Set();
+const chips=new Set();
+
+// ══════════════════════════════════════════════
+// COMMUNITY ACTIVITY DATA
+// ══════════════════════════════════════════════
+let communityActivity = {};   // will hold the parsed community_activity.json
+
+async function loadCommunityActivity() {
   try {
-    const r = await fetch(`${API}?repo=django/django`);
-    const banner = document.getElementById('apiBanner');
-    if (!banner) return;
-    if (r.ok) {
-      banner.className = 'api-banner api-ok';
-      document.getElementById('apiStrong').textContent = '✓ GitHub API Connected';
-      document.getElementById('apiText').textContent = 'Live stats (stars, forks, good first issues) available for all visitors.';
-      const fetchBtn = document.getElementById('fetchBtn');
-      if (fetchBtn) fetchBtn.style.display = 'flex';
-    } else {
-      banner.className = 'api-banner api-warn';
-      document.getElementById('apiStrong').textContent = '⚠ API Error';
-      document.getElementById('apiText').textContent = 'Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
+    const bust = new Date().toISOString().slice(0, 10);
+    const res = await fetch('/data/community_activity.json?v=' + bust);
+    if (!res.ok) return;
+    communityActivity = await res.json();
+    applyFilters();
+  } catch (e) {
+    console.warn('community_activity.json not yet available:', e);
+  }
+}
+
+function getCommunityBadge(org) {
+  if (!org.github) return '';
+  const d = communityActivity[org.name];
+  if (!d || d.score === undefined) return '';   // no data → hide badge entirely
+  const map = {
+    'very-active': { dot: '🟢', label: 'Very Active',   cls: 'bca-very' },
+    'active':      { dot: '🔵', label: 'Active',        cls: 'bca-active' },
+    'moderate':    { dot: '🟡', label: 'Moderate',      cls: 'bca-mod' },
+    'low':         { dot: '🔴', label: 'Low Activity',  cls: 'bca-low' },
+  };
+  const tier = map[d.tier] || map['low'];
+  return `<span class="b bca ${tier.cls}" title="Community Activity Score: ${d.score}/100">${tier.dot} ${tier.label}</span>`;
+}
+
+function getCommunityData(org) {
+  if (!org.github) return null;
+  return communityActivity[org.name] || null;
+}
+
+// Expose to global scope for HTML onclick handlers and debugging
+globalThis.pills = pills;
+globalThis.matchAllLanguages = matchAllLanguages;
+
+async function checkAPI(){
+  try{
+    const r=await fetch(`${API}?repo=django/django`);
+    const banner=document.getElementById('apiBanner');
+    if(r.ok){
+      banner.className='api-banner api-ok';
+      document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
+      document.getElementById('apiText').textContent='Live stats (stars, forks, good first issues) available for all visitors.';
+      document.getElementById('fetchBtn').style.display='flex';
+    }else{
+      banner.className='api-banner api-warn';
+      document.getElementById('apiStrong').textContent='⚠ API Error';
+      document.getElementById('apiText').textContent='Add GITHUB_TOKEN in Vercel dashboard and redeploy.';
     }
   } catch {
     const banner = document.getElementById('apiBanner');
@@ -713,6 +755,20 @@ function handleNavigationUp(e) {
   updateCardFocus();
 }
 
+function syncBookmark(name, shouldAdd) {
+  if (!name) return;
+  if (shouldAdd) bookmarkedSet.add(name);
+  else bookmarkedSet.delete(name);
+  localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  refreshOrgGridAfterBookmarkChange();
+  renderWatchlist();
+  updateAIInsights();
+}
+
+function renderMentorFinder() {
+  // Mentor finder is rendered by index.html's inline script
+}
+
 function handleGlobalKeydown(e) {
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
 
@@ -776,15 +832,18 @@ function parseStoredBookmarks() {
   }
 }
 
-function syncBookmark(name, shouldAdd) {
-  if (!name) return;
-  if (shouldAdd) bookmarkedSet.add(name);
-  else bookmarkedSet.delete(name);
-  localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-
-  refreshOrgGridAfterBookmarkChange();
-  renderWatchlist();
-  updateAIInsights();
+function applySecondarySort(a, b, sortType) {
+  if(sortType==='years-desc') return b.years - a.years;
+  if(sortType==='years-asc') return a.years - b.years;
+  if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
+  if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
+  if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
+  if(sortType==='activity-score') {
+    const sa = getCommunityData(a)?.score ?? -1;
+    const sb = getCommunityData(b)?.score ?? -1;
+    return sb - sa;
+  }
+  return a.name.localeCompare(b.name);
 }
 
 globalThis.toggleBookmark = function (e, name) {
@@ -872,7 +931,7 @@ function renderWatchlist() {
       ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain">`
       : safeHTML`<span class="material-symbols-outlined text-primary text-xl">corporate_fare</span>`;
 
-    item.innerHTML = safeHTML`
+   item.innerHTML = safeHTML`
       <div class="w-12 h-12 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100 dark:border-zinc-700">
         ${logoHtml}
       </div>
@@ -888,20 +947,10 @@ function renderWatchlist() {
         <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
         <div class="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-3 text-xs text-zinc-400">
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">calendar_today</span>
-              ${String(org.years)}y in GSoC
-            </span>
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">bar_chart</span>
-              ${org.competition || '—'}
-            </span>
+            <span>${String(org.years)}y in GSoC</span>
+            <span>${org.competition || '—'}</span>
           </div>
-          <button data-bookmark-org="${org.name}"
-                  class="bookmark-remove-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
-            <span class="material-symbols-outlined text-xs">bookmark_remove</span>
-            Remove
-          </button>
+          ${rawHTML(getCommunityBadge(org))}
         </div>
       </div>`;
 
@@ -1105,15 +1154,6 @@ function applyFilters() {
   }
 }
 
-function applySecondarySort(a, b, sortType) {
-  if (sortType === 'years-desc') return b.years - a.years;
-  if (sortType === 'years-asc') return a.years - b.years;
-  if (sortType === 'comp-low') return ['chill', 'moderate', 'hot'].indexOf(a.competition) - ['chill', 'moderate', 'hot'].indexOf(b.competition);
-  if (sortType === 'stars') return (b._gh?.stars || 0) - (a._gh?.stars || 0);
-  if (sortType === 'gfi') return (b._gh?.gfi || 0) - (a._gh?.gfi || 0);
-  return a.name.localeCompare(b.name);
-}
-
 function renderOrgs(reset = true) {
   const grid = document.getElementById('orgGrid');
   const emptyState = document.getElementById('emptyState');
@@ -1196,6 +1236,16 @@ function renderOrgs(reset = true) {
   document.getElementById('loadMoreContainer').style.display = (visibleCount < filteredOrgs.length) ? 'flex' : 'none';
 }
 
+function handleImgError(img, orgName) {
+  if (!img.dataset.triedClearbit) {
+    img.dataset.triedClearbit = 'true';
+    const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
+    img.src = `https://logo.clearbit.com/${domain}`;
+  } else {
+    img.style.display = 'none';
+  }
+}
+
 function attachOrgCardListeners(root) {
   // Image error fallbacks
   root.querySelectorAll('img[data-org-name]').forEach(img => {
@@ -1245,20 +1295,24 @@ function attachOrgCardListeners(root) {
     });
   }
 }
+globalThis.clearAllLanguages = clearAllLanguages;
 
-function handleImgError(img, orgName) {
-  if (img.dataset.triedClearbit) {
-    img.style.display = 'none';
-    const placeholder = img.parentElement.querySelector('.logo-placeholder');
-    if (placeholder) {
-      placeholder.style.display = 'flex';
-      placeholder.textContent = orgName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    }
+const chipCls={veteran:'cv',newcomer:'cn',hot:'ch',chill:'cc',active:'ca', bookmarked:'cb', 'active-community':'cac'};
+function toggleChip(k){
+  const el=document.getElementById('chip-'+k);
+  if(!el) return;
+  
+  const isActive = !chips.has(k);
+  if(isActive){
+    chips.add(k);
+    el.classList.add('bg-orange-600', 'text-white');
+    el.classList.remove('bg-surface-container-highest');
   } else {
-    img.dataset.triedClearbit = 'true';
-    const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
-    img.src = `https://logo.clearbit.com/${domain}`;
+    chips.delete(k);
+    el.classList.remove('bg-orange-600', 'text-white');
+    el.classList.add('bg-surface-container-highest');
   }
+  applyFilters();
 }
 
 // Global capturing image error event listener to replace inline onerror attributes
@@ -1472,61 +1526,34 @@ globalThis.openModal = function (name, triggerElement = null) {
       ideasBtn.style.display = 'none';
     }
   }
-
-  if (repoBtn) {
-    if (repoHref) {
-      repoBtn.href = repoHref;
-      repoBtn.style.display = 'inline-flex';
-    } else {
-      repoBtn.removeAttribute('href');
-      repoBtn.style.display = 'none';
+  
+  // Community Activity section in modal
+  const mCommunity = document.getElementById('mCommunity');
+  if (mCommunity) {
+    const cd = getCommunityData(org);
+    if (cd) {
+      const tierMap = {
+        'very-active': '🟢 Very Active',
+        'active':      '🔵 Active',
+        'moderate':    '🟡 Moderate',
+        'low':         '🔴 Low Activity',
+      };
+      mCommunity.style.display = 'block';
+      mCommunity.innerHTML = `
+        <div class="ms-title" style="margin-top:16px">Community Activity</div>
+        <div class="ca-grid">
+          <div class="ca-row"><span class="ca-label">Overall Score</span><span class="ca-value" style="font-weight:700;color:var(--orange)">${cd.score} / 100</span></div>
+          <div class="ca-row"><span class="ca-label">Tier</span><span class="ca-value">${tierMap[cd.tier] || cd.tier}</span></div>
+          <div class="ca-row"><span class="ca-label">Avg Issue Response</span><span class="ca-value">${cd.signals?.issueResponseDays !== null ? escapeHtml(String(cd.signals.issueResponseDays)) + ' days' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">Commit Frequency (90d)</span><span class="ca-value">${cd.signals?.commitFrequency !== null ? escapeHtml(String(cd.signals.commitFrequency)) + '/day' : '—'}</span></div>
+          <div class="ca-row"><span class="ca-label">PR Merge Rate</span><span class="ca-value">${cd.signals?.prMergeRate !== null ? escapeHtml(String(cd.signals.prMergeRate)) + '%' : '—'}</span></div>
+          <div class="ca-row" style="font-size:10px;color:var(--muted)"><span>Last updated</span><span>${cd.lastUpdated ? escapeHtml(String(cd.lastUpdated)) : '—'}</span></div>
+        </div>`;
+          } else {
+      mCommunity.style.display = 'none';
     }
   }
-
-  // Copy Ideas Button
-  const oldCopy = document.getElementById('mIdeasCopyBtn');
-  if (oldCopy) oldCopy.remove();
-  if (org.ideas && ideasBtn) {
-    const copyBtn = document.createElement('button');
-    copyBtn.id = 'mIdeasCopyBtn';
-    copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-    copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(org.ideas).then(() => {
-        copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
-        copyBtn.style.background = '#dcfce7';
-        copyBtn.style.color = '#166534';
-        setTimeout(() => {
-          copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
-          copyBtn.style.background = '';
-          copyBtn.style.color = '';
-        }, 2000);
-      });
-    });
-    ideasBtn.after(copyBtn);
-  }
-
-  renderMentorContactSection(org);
-  openModalElement('orgModal', triggerElement);
-
-  // Lazily retrieve GFIs if missing
-  if (org.github && (org._gh?.gfi === null || org._gh?.gfi === undefined)) {
-    const placeholder = document.getElementById('mGfiPlaceholder');
-    if (placeholder) placeholder.textContent = '…';
-    fetchGFI(org.github).then(gfi => {
-      if (gfi !== null) {
-        if (!org._gh) org._gh = {};
-        org._gh.gfi = gfi;
-        const placeholders = document.querySelectorAll('.metric-card #mGfiPlaceholder');
-        placeholders.forEach(p => p.textContent = fmt(gfi));
-        renderOrgs(false);
-        renderCompareModal();
-      } else {
-        const placeholders = document.querySelectorAll('.metric-card #mGfiPlaceholder');
-        placeholders.forEach(p => p.textContent = '—');
-      }
-    });
-  }
+  openModalElement('orgModal');
 };
 
 function closeModal() {
@@ -1968,32 +1995,32 @@ globalThis.fetchAllIssues = async function () {
   updateStats();
 };
 
-async function loadCachedIssues() {
-  if (allIssues.length || issuesFetching) return;
-  try {
+async function loadCachedIssues(){
+  if(allIssues.length||issuesFetching) return;
+  try{
     const res = await fetch('/data/issues.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (!Array.isArray(data.issues)) return;
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    if(!Array.isArray(data.issues)) return;
 
-    const orgByGithub = new Map(ORGS.map(o => [o.github?.toLowerCase(), o]));
-    const orgByName = new Map(ORGS.map(o => [o.name?.toLowerCase(), o]));
+    const orgByGithub=new Map(ORGS.map(o=>[o.github?.toLowerCase(),o]));
+    const orgByName=new Map(ORGS.map(o=>[o.name?.toLowerCase(),o]));
 
-    allIssues = data.issues.map(issue => {
-      const key = issue.github?.toLowerCase() || issue.repo?.toLowerCase() || issue.org?.toLowerCase();
-      const orgMeta = orgByGithub.get(key) || orgByName.get(issue.org?.toLowerCase());
-      const owner = githubOwnerFromValue(issue.github || issue.repo);
-      return {
-        title: issue.title || '',
-        url: issue.url || '',
-        org: issue.org || '',
-        orgCat: orgMeta?.cat || '',
-        orgTags: orgMeta?.tags || [],
-        logo: owner ? `https://github.com/${owner}.png?size=64` : '',
-        repo: issue.repo || issue.github || '',
-        created_at: issue.created_at || '',
-        labels: Array.isArray(issue.labels) ? issue.labels.map(l => typeof l === 'string' ? l : (l.name || '')) : [],
-        comments: typeof issue.comments === 'number' ? issue.comments : Number(issue.comments || 0),
+    allIssues=data.issues.map(issue=>{
+      const key=issue.github?.toLowerCase()||issue.repo?.toLowerCase()||issue.org?.toLowerCase();
+      const orgMeta=orgByGithub.get(key)||orgByName.get(issue.org?.toLowerCase());
+      const owner=githubOwnerFromValue(issue.github||issue.repo);
+      return{
+        title:issue.title||'',
+        url:issue.url||'',
+        org:issue.org||'',
+        orgCat:orgMeta?.cat||'',
+        orgTags:orgMeta?.tags||[],
+        logo:owner?`https://github.com/${owner}.png?size=64`:'',
+        repo:issue.repo||issue.github||'',
+        created_at:issue.created_at||'',
+        labels:Array.isArray(issue.labels)?issue.labels.map(l=>typeof l==='string'?l:(l.name||'')):[],
+        comments:typeof issue.comments==='number'?issue.comments:Number(issue.comments||0),
       };
     });
 
@@ -2223,196 +2250,54 @@ async function loadMentorData() {
   }
 }
 
-function renderMentorFinder() {
-  const container = document.getElementById('mentorsContainer');
-  if (!container || mentorDataState !== 'loaded') return;
-
-  const search = (document.getElementById('mentorSearchInput')?.value || '').toLowerCase().trim();
-  const channel = document.getElementById('mentorChannelFilter')?.value || '';
-
-  const matched = [];
-  Object.entries(MENTOR_DATA).forEach(([orgName, mentors]) => {
-    if (!Array.isArray(mentors)) return;
-    mentors.forEach(m => {
-      const matchSearch = !search ||
-        m.name.toLowerCase().includes(search) ||
-        orgName.toLowerCase().includes(search) ||
-        (m.channels || []).some(c => String(c.value).toLowerCase().includes(search));
-
-      const matchChannel = !channel ||
-        (m.channels || []).some(c => c.type === channel);
-
-      if (matchSearch && matchChannel) {
-        matched.push({ orgName, ...m });
-      }
-    });
-  });
-
-  container.innerHTML = '';
-
-  if (matched.length === 0) {
-    container.innerHTML = `
-      <div class="col-span-full py-16 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-700 mb-4 block">person_search</span>
-        <p class="font-bold text-zinc-500 mb-1">No Mentors Match Your Query</p>
-        <p class="text-sm text-zinc-400">Try adjusting your keyword filter or changing communication channels.</p>
-      </div>`;
-    return;
-  }
-
-  matched.slice(0, 30).forEach(m => {
-    const card = document.createElement('div');
-    card.className = 'mentor-card p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col justify-between hover:shadow-lg transition-all animate-fade-up';
-
-    const channelsHtml = (m.channels || []).map(c => {
-      const icon = CHANNEL_ICONS[c.type] || '💬';
-      const isUrl = sanitizeHrefUrl(c.value);
-      if (isUrl) {
-        return safeHTML`<a href="${isUrl}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip" title="${CONTACT_TIPS[c.type] || ''}">
-          ${icon} ${c.type}
-        </a>`;
-      } else {
-        return safeHTML`<span class="mentor-handle-chip" title="${CONTACT_TIPS[c.type] || ''}">
-          ${icon} ${c.value}
-        </span>`;
-      }
-    });
-
-    card.innerHTML = safeHTML`
-      <div>
-        <div class="flex items-start justify-between mb-3">
-          <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">${m.name}</h4>
-          <span class="text-[10px] font-label font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100 dark:border-orange-950/40 dark:text-orange-400">${m.role || 'Mentor'}</span>
-        </div>
-        <p class="text-xs text-primary font-bold mb-4 hover:underline cursor-pointer mentor-org-trigger" data-org-name="${m.orgName}">${m.orgName}</p>
-      </div>
-      <div class="flex flex-wrap gap-1.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-        ${channelsHtml}
-      </div>`;
-    container.appendChild(card);
-  });
-}
-
-function renderMentorContactSection(org) {
-  const container = document.getElementById('mMentorsSection');
-  if (!container) return;
-
-  container.innerHTML = '';
-  const mentors = MENTOR_DATA[org.name];
-
-  if (!mentors || !mentors.length) {
-    container.innerHTML = safeHTML`
-      <div class="mentor-empty border border-zinc-100 dark:border-zinc-800 rounded-xl p-6 text-center bg-zinc-50 dark:bg-zinc-900/40">
-        <p class="text-xs text-zinc-500">Contact details unavailable for ${org.name}. Browse their GSoC Ideas Page for mentor details.</p>
-      </div>`;
-    return;
-  }
-
-  mentors.forEach(m => {
-    const card = document.createElement('div');
-    card.className = 'mentor-card p-4 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800 rounded-xl mb-3 last:mb-0';
-
-    const channelsHtml = (m.channels || []).map(c => {
-      const icon = CHANNEL_ICONS[c.type] || '💬';
-      const isUrl = sanitizeHrefUrl(c.value);
-      if (isUrl) {
-        return safeHTML`<a href="${isUrl}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip hover:shadow-sm">
-          ${icon} ${c.type}: Connect
-        </a>`;
-      } else {
-        return safeHTML`<span class="mentor-handle-chip">
-          ${icon} ${c.type}: ${c.value}
-        </span>`;
-      }
-    });
-
-    card.innerHTML = safeHTML`
-      <div class="flex items-center justify-between mb-2">
-        <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100">${m.name}</h5>
-        <span class="text-[9px] font-bold text-zinc-500 uppercase">${m.role || 'Mentor'}</span>
-      </div>
-      <div class="flex flex-wrap gap-1.5 mt-2.5">
-        ${channelsHtml}
-      </div>`;
-    container.appendChild(card);
-  });
-}
-
-// Stale Data Banner Notice Check
 function applyStaleDataNotice() {
-  const now = new Date();
-  if (now > GSOC_SELECTION_DATE) {
-    const alertBanner = document.getElementById('selectionStaleAlert');
-    if (alertBanner) alertBanner.classList.remove('hidden');
-
-    const mentorStaleNote = document.getElementById('mentorStaleNote');
-    const mentorBannerDot = document.getElementById('mentorBannerDot');
-    if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
-    if (mentorBannerDot) {
-      mentorBannerDot.classList.remove('pulse-dot');
-      mentorBannerDot.style.backgroundColor = '#a1a1aa'; // Zinc-400
-    }
-  }
+  const SELECTION_DATE = new Date('2026-05-08T18:00:00Z');
+  if (Date.now() <= SELECTION_DATE.getTime()) return;
+  const issuesStaleNote = document.getElementById('issuesStaleNote');
+  if (issuesStaleNote) issuesStaleNote.classList.remove('hidden');
+  const mentorStaleNote = document.getElementById('mentorStaleNote');
+  if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
 }
 
-// ══════════════════════════════════════════════
-// INITIALIZATION
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  // Sync bookmarks from storage initially
-  ORGS.forEach(o => {
-    if (o.github && ghCache[o.github]) {
-      o._gh = ghCache[o.github];
-    }
-  });
-
-  // Restore filter state from URL parameters
-  (function restoreFiltersFromURL() {
-    const params = new URLSearchParams(location.search);
-    const setElValue = (id, val) => {
-      const el = document.getElementById(id);
-      if (el && val) el.value = val;
-    };
-
-    setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
-    setElValue('categoryFilter', params.get('cat'));
-    setElValue('complexityFilter', params.get('comp'));
-    setElValue('sortSelect', params.get('sort'));
-
-    const lang = params.get('lang');
-    if (lang) {
-      lang.split(',').map(s => s.trim()).filter(Boolean).forEach(l => {
-        selectedLanguages.add(l);
-        const pillBtn = document.querySelector(`.pill[data-lang="${l}"]`);
-        if (pillBtn) {
-          pillBtn.classList.add('active');
-          pillBtn.setAttribute('aria-pressed', 'true');
-        }
+loadCommunityActivity();
+requestAnimationFrame(()=>{
+  const params = new URLSearchParams(location.search);
+  if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
+  if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');
+  const langParam = params.get('lang');
+  if (langParam) {
+    const langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
+    if (langs.length > 1) {
+      pills.clear();
+      document.querySelectorAll('.pill').forEach(btn => {
+        const active = langs.includes(btn.dataset.lang);
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        if (active) pills.add(btn.dataset.lang);
       });
       renderSelectedLanguages();
     }
+  }
 
-    const chip = params.get('chip');
-    if (chip) {
-      activeChip = chip;
-      document.querySelectorAll('.filter-chip').forEach(el => {
-        const text = el.textContent.trim().toLowerCase();
-        let key = null;
-        if (text.includes('bookmarked')) key = 'bookmarked';
-        else if (text.includes('veteran')) key = 'veterans';
-        else if (text.includes('newcomer')) key = 'newcomers';
-        else if (text.includes('low competition')) key = 'low-competition';
-        else if (text.includes('high competition')) key = 'high-competition';
-        else if (text.includes('actively')) key = 'active';
+  const chip = params.get('chip');
+  if (chip) {
+    activeChip = chip;
+    document.querySelectorAll('.filter-chip').forEach(el => {
+      const text = el.textContent.trim().toLowerCase();
+      let key = null;
+      if (text.includes('bookmarked')) key = 'bookmarked';
+      else if (text.includes('veteran')) key = 'veterans';
+      else if (text.includes('newcomer')) key = 'newcomers';
+      else if (text.includes('low competition')) key = 'low-competition';
+      else if (text.includes('high competition')) key = 'high-competition';
+      else if (text.includes('actively')) key = 'active';
 
-        if (key === chip) {
-          el.classList.add('bg-orange-600', 'text-white');
-          el.classList.remove('bg-surface-container-highest');
-        }
-      });
-    }
-  })();
+      if (key === chip) {
+        el.classList.add('bg-orange-600', 'text-white');
+        el.classList.remove('bg-surface-container-highest');
+      }
+    });
+  }
 
   updateCountdown();
   const countdownTimer = setInterval(updateCountdown, 60000);

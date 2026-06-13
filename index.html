@@ -997,19 +997,6 @@ kbd:hover{
   color: #e4e4e7;
 }
 
-/* Dark mode - Section scroll indicator */
-.dark .section-scroll-indicator {
-  background: rgba(24, 24, 27, 0.88);
-  border-color: rgba(249, 115, 22, 0.25);
-  color: #fb923c;
-}
-.dark .section-scroll-indicator-dot {
-  background: linear-gradient(135deg, #fb923c, #f97316);
-  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
-}
-.dark .section-scroll-indicator-value {
-  color: #e4e4e7;
-}
 
 .section-scroll-btn:disabled {
   opacity: 0.3;
@@ -1934,7 +1921,7 @@ kbd:hover{
 
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal" role="dialog" aria-modal="true" aria-labelledby="mHeader">
+<div class="modal-bg" id="orgModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="mHeader">
   <div class="modal">
     <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
@@ -2126,7 +2113,6 @@ kbd:hover{
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
-  let inlineModalKeydownHandler = null;
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
@@ -4050,9 +4036,7 @@ if(org.ideas){
       orgModal.classList.add('open');
       orgModal.focus();
       if (typeof globalModalManager !== 'undefined') {
-        if (inlineModalKeydownHandler) orgModal.removeEventListener('keydown', inlineModalKeydownHandler);
-        inlineModalKeydownHandler = (e) => globalModalManager.handleKeydown(e, typeof closeOrgModal === 'function' ? closeOrgModal : null);
-        orgModal.addEventListener('keydown', inlineModalKeydownHandler);
+        globalModalManager.bindModalKeydown(orgModal, typeof closeOrgModal === 'function' ? closeOrgModal : null);
       }
     }
     document.body.classList.add('modal-open');
@@ -4064,9 +4048,8 @@ if(org.ideas){
     const orgModal = document.getElementById('orgModal');
     if (orgModal) {
       orgModal.classList.remove('open');
-      if (inlineModalKeydownHandler) {
-        orgModal.removeEventListener('keydown', inlineModalKeydownHandler);
-        inlineModalKeydownHandler = null;
+      if (typeof globalModalManager !== 'undefined') {
+        globalModalManager.unbindModalKeydown(orgModal);
       }
     }
     document.body.classList.remove('modal-open');

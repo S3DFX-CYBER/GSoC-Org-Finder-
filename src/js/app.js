@@ -8,7 +8,6 @@ let filteredOrgs = [];
 let MENTOR_DATA = {};
 let mentorDataState = 'idle';
 const compareList = []; // list of org names
-let modalKeydownHandler = null;
 const bookmarkedSet = new Set(parseStoredBookmarks());
 
 // Recently Viewed Organizations
@@ -1514,9 +1513,9 @@ globalThis.openModal = function (name, triggerElement = null) {
 
   const orgModal = document.getElementById('orgModal');
   if (orgModal) {
-    if (modalKeydownHandler) orgModal.removeEventListener('keydown', modalKeydownHandler);
-    modalKeydownHandler = (e) => globalModalManager.handleKeydown(e, typeof closeModal === 'function' ? closeModal : null);
-    orgModal.addEventListener('keydown', modalKeydownHandler);
+    if (typeof globalModalManager !== 'undefined') {
+      globalModalManager.bindModalKeydown(orgModal, typeof closeModal === 'function' ? closeModal : null);
+    }
   }
 
   openModalElement('orgModal', triggerElement);
@@ -1544,12 +1543,8 @@ globalThis.openModal = function (name, triggerElement = null) {
 function closeModal() {
   closeModalElement('orgModal');
   const orgModal = document.getElementById('orgModal');
-  if (orgModal && modalKeydownHandler) {
-    orgModal.removeEventListener('keydown', modalKeydownHandler);
-    modalKeydownHandler = null;
-  }
-  if (typeof globalModalManager !== 'undefined') {
-    globalModalManager.restoreFocus();
+  if (orgModal && typeof globalModalManager !== 'undefined') {
+    globalModalManager.unbindModalKeydown(orgModal);
   }
 }
 globalThis.closeModal = closeModal;

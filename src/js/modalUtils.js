@@ -2,6 +2,7 @@ const FOCUSABLE_ELEMENTS_SELECTOR = 'button, [href], input, select, textarea, [t
 
 class ModalManager {
   lastFocusedElement = null;
+  activeHandlers = new WeakMap();
 
   setLastFocusedElement(element) {
     this.lastFocusedElement = element;
@@ -12,6 +13,23 @@ class ModalManager {
       this.lastFocusedElement.focus();
     }
     this.lastFocusedElement = null;
+  }
+
+  bindModalKeydown(modalElement, closeCallback) {
+    if (!modalElement) return;
+    this.unbindModalKeydown(modalElement);
+    const handler = (e) => this.handleKeydown(e, closeCallback);
+    this.activeHandlers.set(modalElement, handler);
+    modalElement.addEventListener('keydown', handler);
+  }
+
+  unbindModalKeydown(modalElement) {
+    if (!modalElement) return;
+    const handler = this.activeHandlers.get(modalElement);
+    if (handler) {
+      modalElement.removeEventListener('keydown', handler);
+      this.activeHandlers.delete(modalElement);
+    }
   }
 
   handleKeydown(e, closeCallback) {

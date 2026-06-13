@@ -6,6 +6,9 @@ let currentAbortController = null;
 let currentRequestId = 0;
 let lastRecommendations = [];
 
+let currentAbortController = null;
+let currentRequestId = 0;
+
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.

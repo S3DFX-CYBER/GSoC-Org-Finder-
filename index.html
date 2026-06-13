@@ -7,6 +7,7 @@
   <title>Live GSoC 2026 Org Finder & Good First Issue Tracker | FindMyGSoC</title>
   <meta name="description" content="Live GSoC 2026 Org Finder & Good First Issue Tracker. Discover organizations, compare project fit, and track beginner-friendly GitHub issues in real time." />
   <link rel="canonical" href="https://findmygsoc.vercel.app/" />
+  <link rel="stylesheet" href="src/styles.css">
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="FindMyGSoC" />
   <meta property="og:title" content="Live GSoC 2026 Org Finder & Good First Issue Tracker" />
@@ -5072,6 +5073,16 @@ if(e.key.toLowerCase()==='r'){
     currentTooltipElement = null;
   }
 
+ <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
+
+    <script>
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    scrollBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+  scrollBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
   function handleScrollResize() {
     if (currentTooltipElement && tooltip.classList.contains('show')) {
       repositionTooltip(currentTooltipElement);

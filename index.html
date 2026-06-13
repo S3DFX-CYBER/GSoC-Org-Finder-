@@ -4972,6 +4972,21 @@ if (helpModalOpen || orgModalOpen || proposalModalOpen) {
       }
     }
 
+    if (e.key === '/') {
+    const active = document.activeElement;
+
+    const isTyping = ['INPUT','SELECT','TEXTAREA'].includes(active.tagName) || active.isContentEditable;
+
+    if (!isTyping) {
+      e.preventDefault();
+      const searchInput = document.getElementById('hero-search');
+      if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+    }
+  });
     // AI recommender
     if(e.key.toLowerCase()==='a'){
         e.preventDefault();

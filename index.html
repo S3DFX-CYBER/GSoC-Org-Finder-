@@ -2250,6 +2250,17 @@ kbd:hover{
     }
   }
 
+  function persistBookmarksToStorage() {
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+      return true;
+    } catch (error) {
+      console.error('[Bookmarks] Failed to persist bookmarks:', error);
+      alert('Bookmarks could not be saved because your browser blocked storage. Your current session still works, but bookmarks may not persist after refresh.');
+      return false;
+    }
+  }
+
   function trimGitHubPathSlashes(path) {
     let start = 0;
     let end = path.length;
@@ -3578,7 +3589,7 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    persistBookmarksToStorage();
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3612,7 +3623,7 @@ btn.__orgListenerAttached = true;
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
+    persistBookmarksToStorage();
     applyFilters();
     renderWatchlist();
     updateAIInsights();

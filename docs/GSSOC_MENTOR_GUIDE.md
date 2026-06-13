@@ -2,191 +2,261 @@
 
 Welcome to the **GirlScript Summer of Code 2026** mentor guide for FindMyGSoC!
 
-As a GSSoC mentor, you play a critical role in guiding contributors, reviewing PRs, and maintaining code quality throughout the program.
+As a mentor, you help maintain contribution quality, review pull requests, guide contributors, and ensure repository standards are followed throughout the program.
 
 ---
 
 ## Mentor Responsibilities
 
-### Core Duties
+Mentors are expected to:
 
-- Review PRs from GSSoC contributors within 24–72 hours
-- Provide constructive, actionable feedback on submissions
-- Ensure contributions meet project quality standards
-- Help contributors understand the codebase and architecture
-- Label and triage GSSoC-related issues
-- Identify and flag spam, AI-slop, or low-quality submissions
-
-### Communication
-
-- Be respectful and encouraging in all interactions
-- Provide clear explanations when requesting changes
-- Guide contributors toward better solutions rather than just rejecting work
-- Respond to questions on issues and PRs in a timely manner
+- Review pull requests within 24 hours whenever possible
+- Provide clear and actionable review feedback
+- Help contributors improve code quality
+- Maintain repository standards and architecture consistency
+- Detect low-quality, spammy, or meaningless submissions
+- Assist contributors respectfully and professionally
+- Ensure contributors follow repository contribution rules
 
 ---
 
-## Getting Started as a Mentor
+## Repository Philosophy
 
-### Access & Setup
+This project follows a zero-build, minimal-dependency, static-first, lightweight frontend architecture philosophy.
 
-1. You will be added to the `gssoc-mentors.json` file in `.github/reviewers/`
-2. The automated reviewer rotation system will assign PRs to you
-3. You will receive GitHub notifications for assigned reviews
+Mentors should ensure contributions:
+
+- Do not introduce unnecessary dependencies
+- Avoid overengineering
+- Remain maintainable
+- Follow existing repository patterns
+
+---
+
+## Mentor Setup
+
+### How Mentor Assignment Works
+
+Mentors are registered inside:
+
+```
+.github/reviewers/gssoc-mentors.json
+```
+
+The review rotation system dynamically selects active mentors based on review activity, responsiveness, mentor availability, mentor leaderboard activity, and inactivity timeout handling.
+
+Mentor assignments rotate automatically to avoid bottlenecks.
 
 ### Repository Familiarity
 
-Before reviewing contributions, ensure you understand:
+Before reviewing PRs, mentors should understand:
 
-- The zero-build, zero-dependency architecture
-- The Vercel Edge Function API (`/api/github.js`)
-- The frontend structure (vanilla HTML/CSS/JS)
-- The automated workflow system (PR validation, assignment bot, etc.)
-- The level system (Level 1/2/3) and what each entails
+- Vanilla HTML/CSS/JS architecture
+- Vercel Edge Functions
+- Repository workflow system
+- Assignment automation
+- PR review pipeline
+- Issue labeling system
+- Difficulty levels
 
 ---
 
-## PR Review Process — 3-Stage Pipeline
+## PR Review Pipeline
 
-As a GSSoC mentor, you are the key reviewer in Stage 2. Here is how the full pipeline works and where you fit in.
+All PRs follow a **3-stage review system**:
 
-### Stage 1 — Automated Validation (Bot)
+| Stage | Reviewer | Purpose |
+|-------|----------|---------|
+| Stage 1 | Automation | PR validation |
+| Stage 2 | Mentor Review | Code review |
+| Stage 3 | Project Admin | Final approval & merge |
 
-Before a PR reaches you, bots automatically verify:
+### Stage 1 — Automated Validation
 
-| Check | What it verifies |
-|-------|-----------------|
-| DCO Sign-off | Every commit has `Signed-off-by` line |
-| PR Format | Conventional title, linked issue, template sections filled |
-| AI/Slop Detection | Flags AI-generated or low-effort submissions |
-| Duplicate Detection | Checks for duplicate PRs against open PRs |
+Before a PR reaches mentors, automation checks:
 
-PRs that fail Stage 1 are blocked from reaching you. The contributor must fix the issues first.
+| Check | Purpose |
+|-------|---------|
+| DCO Validation | Commit sign-off verification |
+| PR Format Validation | PR template & linked issue |
+| Duplicate PR Detection | Detects overlapping PRs |
+| PR Size Classification | Labels PR size |
+| Assignment Validation | Ensures contributor assignment compliance |
+| Workflow Validation | CI/workflow compliance |
 
-### Stage 2 — Mentor Review (You)
+PRs failing validation may receive labels such as `needs-stage-1-fixes`, `invalid-pr`, or `missing-linked-issue`.
 
-Once Stage 1 passes, the PR is routed to you via the automated reviewer assignment system.
+> Mentors should avoid reviewing PRs still failing Stage 1.
 
-**Your workflow:**
+### Stage 2 — Mentor Review
 
-1. You receive a GitHub review request notification
-2. You have **24 hours** to begin your review — after that, the bot will reassign the PR to another mentor
-3. Review the code for quality, correctness, and project fit (see checklist below)
-4. Either **Approve** via GitHub review (adds `mentor-approved` + `pa-review-required` labels automatically) or **Request Changes**
-5. You can also comment `/approve-pr` or `/lgtm` to approve via comment (must be the first word in the comment)
-6. If you request changes, wait for the contributor to push fixes, then re-review
-7. Once you approve, the PR advances to Stage 3
+After Stage 1 passes:
 
-**Labels you'll see:**
+1. Active mentors are selected automatically
+2. Mentors are assigned dynamically
+3. Mentors receive review notifications
+4. Review rotation begins
+
+Mentors are expected to respond within **24 hours**. Inactive reviewers are automatically rotated out and replaced with other active mentors.
+
+### Stage 3 — Project Admin Review
+
+After mentor approval:
+
+- `pa-review-required` is applied
+- The Project Admin performs final review
+- Merge decision is made
+
+Project Admin may request additional changes, reject low-quality work, or escalate security concerns. Final merges are handled by **@S3DFX-CYBER**.
+
+---
+
+## Mentor Review Workflow
+
+### When You Receive a PR
+
+1. Read the linked issue
+2. Verify the PR actually solves the issue
+3. Review implementation quality
+4. Check repository consistency
+5. Approve or request changes
+
+### Mentor Approval Commands
+
+```
+/approve-pr
+```
+
+or
+
+```
+/lgtm
+```
+
+GitHub Review Approval also works normally.
+
+### Labels Used During Review
 
 | Label | Meaning |
 |-------|---------|
-| `needs-mentor-review` | PR is waiting for mentor review |
-| `mentor-review-requested` | PR assigned to you for review |
-| `mentor-approved` | You (or another mentor) approved |
-| `gssoc-mentor-approved` | GSSOC-specific mentor approval |
-| `pa-review-required` | Advances to Stage 3 — PA/Maintainer review needed |
-| `needs-stage-1-fixes` | Stage 1 checks failed — not ready for your review yet |
-
-**24-Hour Timeout:**
-- If you do not respond within 24 hours, the automated system will remove you from the review and assign another active mentor
-- This ensures PRs are not blocked waiting for inactive reviewers
-- If you are unavailable, please dismiss yourself from the review so the rotation happens faster
-
-### Stage 3 — Maintainer / PA Review
-
-After your approval, the project admin (@S3DFX-CYBER) performs the final merge decision:
-
-- The `pa-review-required` label is automatically applied when you approve
-- Confirms the PR aligns with project direction and architecture
-- Checks for security or performance concerns you may have flagged
-- Merges the PR and awards points
-
-You do not need to take action during Stage 3, but the maintainer may ask you for additional context.
-
-### Pipeline Status Comment
-
-Every PR has an auto-updating **PR Review Pipeline** status comment showing the current stage. You can use this to quickly see where a PR stands.
-
-### What to Check
-
-| Area | What to Verify |
-|------|---------------|
-| Functionality | Does it work as described? |
-| Code Quality | Is it clean, readable, maintainable? |
-| Architecture | Does it follow the zero-build philosophy? |
-| Dependencies | Are any unnecessary libraries added? |
-| Security | Are there XSS, injection, or other vulnerabilities? |
-| Performance | Does it maintain fast page load? |
-| Accessibility | Are a11y standards maintained? |
-| Responsiveness | Does it work across device sizes? |
-
-### Review Actions
-
-- **Approve** — Code meets all standards, ready to merge
-- **Request Changes** — Specific issues need fixing (provide clear instructions)
-- **Comment** — Questions or suggestions that don't block merging
+| `needs-mentor-review` | Waiting for mentor review |
+| `mentor-review-requested` | Assigned to mentor |
+| `mentor-approved` | Mentor approved |
+| `gssoc-mentor-approved` | GSSoC mentor approval completed |
+| `pa-review-required` | Ready for Project Admin review |
+| `needs-stage-1-fixes` | Validation failed |
 
 ---
 
-## Handling Common Issues
+## 24-Hour Review Rotation
 
-### AI-Generated Submissions
+Mentors are automatically rotated if inactive. If a mentor does not review, comment, or respond within 24 hours:
 
-Watch for:
-- Generic, overly-commented code
-- Code that doesn't match the contributor's past skill level
-- Submissions that don't follow the project's existing patterns
-- Responses that seem copy-pasted from AI tools
+- The mentor may be removed
+- Another active mentor is assigned automatically
+- Review flow continues
 
-Action: Request the contributor to explain their implementation. If confirmed AI-slop, close the PR.
+This prevents PR stagnation.
 
-### Point Farming
+---
 
-Watch for:
-- Multiple tiny PRs that could be one
-- Trivial changes dressed up as meaningful contributions
-- Unnecessary refactors that add no value
-- Documentation spam
+## What Mentors Should Review
 
-Action: Close low-value PRs and explain why. Label as appropriate.
+| Area | What to Verify |
+|------|----------------|
+| Functionality | Does it work correctly? |
+| Code Quality | Is code readable & maintainable? |
+| Repository Consistency | Matches existing architecture |
+| Dependencies | No unnecessary additions |
+| Performance | No regressions |
+| Accessibility | UI remains accessible |
+| Responsiveness | Mobile compatibility |
+| Security | No obvious vulnerabilities |
+
+---
+
+## Review Actions
+
+### Approve
+
+Use when:
+
+- Implementation is correct
+- Repository standards are met
+- Changes are production-safe
+
+### Request Changes
+
+Use when:
+
+- Implementation is incomplete
+- Code quality is poor
+- Repository rules are violated
+- Architecture consistency is broken
+
+Always provide actionable feedback.
+
+### Comment
+
+Use for suggestions, clarifications, or non-blocking improvements.
+
+---
+
+## Handling Low-Quality Contributions
+
+### Watch For
+
+- Meaningless changes
+- Formatting-only spam
+- Unnecessary refactors
+- Copied code
+- PR farming
+- Duplicate work
+- Dependency bloat
+
+### AI-Generated or Low-Effort Code
+
+Mentors should watch for:
+
+- Inconsistent coding style
+- Generic implementations
+- Unexplained architecture changes
+- Code the contributor cannot explain
+- Large autogenerated blobs
+
+If suspicious: request an explanation, ask the contributor to justify the implementation, and escalate repeated abuse.
+
+> Do not accuse contributors aggressively. Focus on code quality and contributor understanding.
 
 ### Duplicate Work
 
-Watch for:
-- PRs that solve the same issue as another open PR
-- Contributors working on unassigned issues
-
-Action: Close the duplicate, direct to the original.
+If a PR duplicates existing work, close it politely, reference the original PR or issue, and explain the duplication clearly.
 
 ---
 
-## Level Guidelines for Review
+## Contribution Levels
 
-### Level 1 (10 pts) — Beginner
+### Beginner — `level:beginner`
 
-- Be more lenient with code style
-- Provide educational feedback
-- Focus on whether the change works correctly
-- Guide contributors toward improvement
-- **Assignment:** No restrictions — anyone can self-assign beginner issues
+Typical work: UI fixes, docs, accessibility, small bugs.
 
-### Level 2 (25 pts) — Intermediate
+Mentor approach: educational, supportive, guidance-focused. No assignment restrictions.
 
-- Expect clean code and proper patterns
-- Verify logic correctness
-- Check edge cases
-- Ensure proper error handling where appropriate
-- **Assignment:** Requires account age ≥30 days for auto-assignment
+### Intermediate — `level:intermediate`
 
-### Level 3 (45 pts) — Advanced
+Typical work: logic improvements, filtering, APIs, caching.
 
-- Apply strict code review standards
-- Verify performance implications
-- Check security considerations
-- Ensure architectural consistency
-- Require thorough testing evidence
-- **Assignment:** Requires at least 1 merged PR in this repository
+Mentor approach: stricter review, validate correctness, review edge cases carefully.
+
+Requires: GitHub account age ≥ 30 days for auto-assignment.
+
+### Advanced — `level:advanced`
+
+Typical work: architecture, security, performance, backend systems.
+
+Mentor approach: strict review, security-aware, architecture-focused.
+
+Requires: at least 1 merged PR in the repository.
 
 ---
 
@@ -194,63 +264,95 @@ Action: Close the duplicate, direct to the original.
 
 ### Do
 
-- Review PRs within **24 hours** (you will be auto-rotated if you miss this window)
-- Provide specific line-by-line feedback
-- Suggest improvements with code examples when possible
-- Acknowledge good work and effort
-- Escalate security concerns to maintainers immediately
-- Keep the GSSoC leaderboard in mind when approving level-appropriate issues
+- Review within 24 hours
+- Be constructive
+- Explain requested changes
+- Encourage contributors
+- Escalate serious concerns
+- Maintain consistent standards
 
-### Don't
+### Do NOT
 
-- Ignore PRs for extended periods
-- Provide vague or unhelpful feedback
-- Approve low-quality work just to clear your queue
-- Be harsh or discouraging to beginners
-- Merge PRs that introduce dependencies or build tools
-- Override the automated validation system
+- Ignore review requests
+- Approve low-quality work
+- Merge dependency-heavy PRs
+- Be disrespectful
+- Encourage PR farming
+- Bypass repository workflows
 
 ---
 
 ## Escalation
 
-Escalate to the project maintainer (@S3DFX-CYBER) when:
+Escalate to the Project Admin when:
 
-- A security vulnerability is found
-- A contributor is being disrespectful or abusive
-- You encounter systematic spam or abuse
-- Architectural decisions need maintainer input
-- You are unsure about a complex merge
+- Security issues are discovered
+- Contributors become abusive
+- Spam patterns emerge
+- Architectural decisions are unclear
+- Suspicious activity is repeated
+
+**Project Admin:** @S3DFX-CYBER
 
 ---
 
-## Tools & Automation
-
-The following automated systems support your work:
+## Automation Systems
 
 | System | Purpose |
 |--------|---------|
-| PR Validator | Checks PR structure and template compliance |
-| Duplicate Detection | Flags potential duplicate PRs |
-| AI-Slop Detector | Identifies AI-generated spam |
-| Reviewer Rotation | Distributes PRs across mentors fairly |
-| Label Sync | Maintains consistent labeling |
-| Stage Manager | Moves PRs through the review pipeline |
+| Assignment Queue | Contributor assignment handling |
+| Mentor Rotation | Dynamic reviewer reassignment |
+| Duplicate Detection | Duplicate issue/PR detection |
+| Leaderboards | Contributor & mentor activity |
+| Review Pipeline | PR stage tracking |
+| Label Sync | Automatic label management |
+| Timeout Handling | Reassign inactive reviews |
+
+---
+
+## Mentor Leaderboard
+
+Mentor activity contributes to the mentor leaderboard. Metrics include:
+
+- Completed reviews
+- Approvals
+- Merged-review approvals
+- Review responsiveness
+- Review activity score
+
+Leaderboard updates automatically.
+
+---
+
+## Review Timeline Expectations
+
+| Action | Expected Time |
+|--------|---------------|
+| Initial Mentor Response | ~24 hours |
+| Re-review After Changes | ~24 hours |
+| Maintainer Review | 24–72 hours |
 
 ---
 
 ## Resources
 
-- [GSSoC Official Website](https://gssoc.girlscript.org/)
-- [GSSoC Mentor Guidelines](https://gssoc.girlscript.org/guidelines/mentor)
-- [Project Contributing Guide](../CONTRIBUTING.md)
-- [Project Discord](https://discord.gg/mgWV3xSV7)
+- [GSSoC Official Website](https://gssoc.girlscript.tech)
+- [GSSoC Mentor Guidelines](https://gssoc.girlscript.tech/guidelines)
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Project Discord
 
 ---
 
 ## Contact
 
-- Project Maintainer: [@S3DFX-CYBER](https://github.com/S3DFX-CYBER)
-- Discord: [https://discord.gg/mgWV3xSV7](https://discord.gg/mgWV3xSV7)
+**Project Admin:** @S3DFX-CYBER
 
-Thank you for mentoring with GSSoC!
+---
+
+## Final Notes
+
+This repository prioritizes quality over quantity, meaningful contributions, maintainable code, and fair review practices.
+
+Mentors play a major role in maintaining these standards.
+
+Thank you for mentoring with GSSoC 🚀

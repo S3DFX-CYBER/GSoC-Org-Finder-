@@ -1305,33 +1305,26 @@
     })();
 
     // Dynamically calculate and render statistics
-    (function () {
-      if (typeof ORGS !== 'undefined' && Array.isArray(ORGS)) {
-        const totalOrgs = ORGS.length;
-        const veteranOrgs = ORGS.filter(o => o.years >= 10).length;
-        const newcomerOrgs = ORGS.filter(o => o.years <= 3).length;
+        (function () {
+  if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) return;
 
-        const statOrgsEl = document.getElementById('statOrgs');
-        const statVeteransEl = document.getElementById('statVeterans');
-        const statNewcomersEl = document.getElementById('statNewcomers');
+  const totalOrgs = ORGS.length;
+  const veteranOrgs = ORGS.filter(o => o.years >= 10).length;
+  const newcomerOrgs = ORGS.filter(o => o.years <= 3).length;
 
-        const footerOrgEl = document.getElementById('footerOrgCount');
-        const footerVetEl = document.getElementById('footerVeteranOrgCount');
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
 
-        if (statOrgsEl) statOrgsEl.textContent = `${totalOrgs}+`;
-        if (statVeteransEl) statVeteransEl.textContent = `${veteranOrgs}+`;
-        if (statNewcomersEl) statNewcomersEl.textContent = `${newcomerOrgs}+`;
-
-        var orgCountTextEl = document.getElementById('org-count-text');
-        if (orgCountTextEl) orgCountTextEl.textContent = totalOrgs + '+ organizations';
-
-        var dashOrgCountEl = document.getElementById('dash-org-count');
-        if (dashOrgCountEl) dashOrgCountEl.textContent = totalOrgs + ' Orgs';
-
-        if (footerOrgEl) footerOrgEl.textContent = String(totalOrgs);
-        if (footerVetEl) footerVetEl.textContent = String(veteranOrgs);
-      }
-    })();
+  setText('statOrgs', `${totalOrgs}+`);
+  setText('statVeterans', `${veteranOrgs}+`);
+  setText('statNewcomers', `${newcomerOrgs}+`);
+  setText('org-count-text', `${totalOrgs}+ organizations`);
+  setText('dash-org-count', `${totalOrgs} Orgs`);
+  setText('footerOrgCount', String(totalOrgs));
+  setText('footerVeteranOrgCount', String(veteranOrgs));
+})();
   </script>
 </body>
 

@@ -1,4 +1,4 @@
-/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
+/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages, globalModalManager */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
@@ -531,7 +531,7 @@ function openModalElement(modalId, triggerElement = null) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
-  activeTriggerElement = triggerElement || document.activeElement;
+  activeTriggerElement = document.activeElement;
 
   if (modalId === 'mobileMenu') {
     modal.classList.remove('hidden');
@@ -587,6 +587,11 @@ function closeModalElement(modalId) {
 }
 
 function trapFocus(e) {
+  if (e.key === 'Escape') {
+    const closeBtn = e.currentTarget.querySelector('.close-btn, [onclick*="close"]');
+    if (closeBtn) closeBtn.click();
+    return;
+  }
   if (e.key !== 'Tab') return;
   const modal = e.currentTarget;
   const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex="0"]');
@@ -1507,6 +1512,9 @@ globalThis.openModal = function (name, triggerElement = null) {
   }
 
   renderMentorContactSection(org);
+
+  const orgModal = document.getElementById('orgModal');
+
   openModalElement('orgModal', triggerElement);
 
   // Lazily retrieve GFIs if missing

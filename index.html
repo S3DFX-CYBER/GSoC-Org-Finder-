@@ -992,11 +992,9 @@ kbd:hover{
 .dark .section-scroll-indicator-dot {
   background: linear-gradient(135deg, #fb923c, #f97316);
   box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
-}
-.dark .section-scroll-indicator-value {
+}.dark .section-scroll-indicator-value {
   color: #e4e4e7;
 }
-
 .section-scroll-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
@@ -1920,7 +1918,7 @@ kbd:hover{
 
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal">
+<div class="modal-bg" id="orgModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="mHeader">
   <div class="modal">
     <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
@@ -3910,7 +3908,9 @@ btn.__orgListenerAttached = true;
     });
   }
 
+  let lastFocusedElement = null;
   function openModal(name) {
+    lastFocusedElement = document.activeElement;
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
     addRecentlyViewed(name);
@@ -4027,17 +4027,29 @@ if(org.ideas){
       draftBtn.onclick = () => ProposalBuilder.open(org.name);
     }
      
-    document.getElementById('orgModal').classList.add('open');
+    const orgModal = document.getElementById('orgModal');
+    if (orgModal) {
+      orgModal.classList.add('open');
+      orgModal.focus();
+    }
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
   }
 
   function closeOrgModal() {
-    document.getElementById('orgModal').classList.remove('open');
+    const orgModal = document.getElementById('orgModal');
+    if (orgModal) {
+      orgModal.classList.remove('open');
+    }
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
+    
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
   }
 
   function openRandomOrg() {

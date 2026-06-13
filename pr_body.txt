@@ -1,0 +1,27 @@
+## 🚀 Program
+GSSoC
+
+## 📝 Description
+This PR addresses accessibility and keyboard trap issues for modals across both `index.html` and `app.js` code paths. It implements the focus restoration mechanism strictly using `document.activeElement` for syncing both paths natively. The existing `trapFocus()` logic has been extended to gracefully handle the `Escape` key natively across all modals, negating the need for any overly complex external logic.
+Additionally, it adds the missing `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` attributes to `#orgModal` for screen readers. Unrelated changes (like CSS formatting) have been strictly separated and removed.
+
+## 🔗 Related Issue
+Closes #1388
+
+## 🔄 Type of Change
+- [x] 🐛 Bug fix
+- [x] ♿ Accessibility improvement
+
+## 🧪 How to Test
+1. Run `npm test` to verify the DOM tests pass successfully.
+2. Open `index.html` in a browser and test the modal opening and closing (via Escape key or Close button). Ensure focus is restored correctly.
+3. Verify screen reader reads the dialog with the proper heading.
+
+## 📸 Screenshots (if applicable)
+
+## ✅ Checklist
+- [x] I am contributing under GSSoC
+- [x] My code follows the project's existing style
+- [x] I have tested my changes in a browser
+- [x] I have linked the related issue above
+- [x] My PR title follows Conventional Commits format

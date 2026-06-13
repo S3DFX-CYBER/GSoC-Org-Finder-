@@ -1,17 +1,6 @@
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
-// Typed HTML utilities
-const safeHTML = (strings, ...values) => {
-  const escaped = values.map(v =>
-    String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-             .replace(/"/g,'&quot;').replace(/'/g,'&#39;')
-  );
-  return strings.reduce((acc, str, i) => acc + str + (escaped[i] ?? ''), '');
-};
-
-const rawHTML = (str) => str;
-
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
@@ -477,8 +466,6 @@ function cleanCache() {
 }
 cleanCache();
 
-const pills=new Set();
-
 // ══════════════════════════════════════════════
 // COMMUNITY ACTIVITY DATA
 // ══════════════════════════════════════════════
@@ -516,7 +503,6 @@ function getCommunityData(org) {
 }
 
 // Expose to global scope for HTML onclick handlers and debugging
-globalThis.pills = pills;
 globalThis.matchAllLanguages = matchAllLanguages;
 
 async function checkAPI(){
@@ -2273,9 +2259,8 @@ function applyStaleDataNotice() {
   if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
 }
 
-loadCommunityActivity();
-
 const _initFromURL = () => {
+  loadCommunityActivity();
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
   if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');

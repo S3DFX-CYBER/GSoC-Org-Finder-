@@ -5,7 +5,7 @@ const TECH_DICTIONARY = [
   "typescript", "swift", "kotlin", "php", "scala", "haskell", "lua", "perl", 
   "julia", "matlab", "dart", "shell", "bash", "assembly", "sql", "elixir", "erlang", "clojure",
   "fortran", "ocaml", "smalltalk", "pharo", "d lang", "verilog", "verilog-a", "vhdl", "fasm", "tcl", "scheme",
-  "lisp", "prolog", "solidity", "assembly", "asm", "x86", "arm", "mips", "risc-v",
+  "lisp", "prolog", "solidity", "asm", "x86", "arm", "mips", "risc-v",
   
   "react", "angular", "vue", "django", "flask", "spring", "spring boot", "node.js", "nodejs",
   "express", "ruby on rails", "laravel", "asp.net", "svelte", "next.js", "nextjs", "tailwind",
@@ -18,7 +18,7 @@ const TECH_DICTIONARY = [
 
   "mysql", "postgresql", "mongodb", "sqlite", "redis", "cassandra", "oracle", 
   "elasticsearch", "mariadb", "firebase", "supabase", "appwrite", "dynamodb", "couchdb",
-  "postgis", "big data", "distributed storage", "couchdb", "mariadb",
+  "postgis", "big data", "distributed storage",
   
   "aws", "azure", "gcp", "google cloud", "docker", "kubernetes", "jenkins", "gitlab ci", 
   "github actions", "terraform", "ansible", "linux", "unix", "ubuntu", "centos", "debian",
@@ -44,7 +44,7 @@ const TECH_DICTIONARY = [
   "opencv", "qt", "gtk", "cmake", "make", "git", "vim", "emacs", "zsh", "ninja", "bazel",
   "latex", "markdown", "d3.js", "three.js", "ffmpeg", "gstreamer", "vlc", "ghidra", "ida-pro",
   "cuda", "opencl", "openmp", "mpi", "webgpu", "antlr", "xpath", "z3", "simd", "llvm", "clang",
-  "mlir", "qemu", "vulkan", "opengl", "directx", "vulkan", "webgl"
+  "mlir", "vulkan", "opengl", "directx", "webgl"
 ];
 
 const SORTED_TECH_DICTIONARY = [...new Set(TECH_DICTIONARY)].sort((a, b) => b.length - a.length);

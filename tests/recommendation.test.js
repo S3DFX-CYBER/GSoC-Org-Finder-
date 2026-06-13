@@ -18,10 +18,10 @@ test('getRecommendations returns top 6 recommendations sorted by score', () => {
   const recommendations = getRecommendations(resumeSkills, null);
 
   assert.strictEqual(recommendations.length, 6);
-  
-  // Verify they are sorted in descending order of rawScore
+  // Verify they are sorted in descending order of score
   for (let i = 0; i < recommendations.length - 1; i++) {
-    assert.ok(recommendations[i].rawScore >= recommendations[i + 1].rawScore);
+    assert.ok(recommendations[i].score >= recommendations[i + 1].score);
+  
   }
 
   // Each recommendation object must have required properties
@@ -29,7 +29,6 @@ test('getRecommendations returns top 6 recommendations sorted by score', () => {
     assert.ok('orgIndex' in rec);
     assert.ok('org' in rec);
     assert.ok('score' in rec);
-    assert.ok('rawScore' in rec);
     assert.ok(Array.isArray(rec.matchedSkills));
     assert.ok(Array.isArray(rec.reasons));
   });

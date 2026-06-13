@@ -1,9 +1,77 @@
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
+
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
+globalThis.escapeHtml = function(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+};
+
+globalThis.updateCountdown = function() {
+  const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
+  const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+  const now=Date.now();
+  const banner=document.getElementById('countdownBanner');
+  const sub=document.getElementById('countdownSub');
+  if(!banner || !sub) return;
+  let target=OPEN_DATE.getTime();
+  let label='📅 GSoC 2026 Applications Open In';
+  let subText='Until March 16, 2026';
+  if(now>=OPEN_DATE.getTime()&&now<CLOSE_DATE.getTime()){
+    target=CLOSE_DATE.getTime();
+    label='🚀 Applications Are Open — Closes In';
+    subText='Until April 8, 2026';
+    banner.style.background='linear-gradient(135deg,rgba(0,135,90,.07),rgba(0,135,90,.12))';
+    banner.style.borderBottomColor='rgba(0,135,90,.3)';
+    banner.style.color='var(--green)';
+  } else if(now>=CLOSE_DATE.getTime()){
+    banner.innerHTML='<span>🎉 GSoC 2026 applications have closed. Stay tuned for accepted orgs!</span>';
+    return;
+  }
+  const diff=Math.max(0,target-now);
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('cdDays').textContent=String(d).padStart(2,'0');
+  document.getElementById('cdHours').textContent=String(h).padStart(2,'0');
+  document.getElementById('cdMins').textContent=String(m).padStart(2,'0');
+  document.getElementById('cdSecs').textContent=String(s).padStart(2,'0');
+  sub.textContent=subText;
+  banner.querySelector('.countdown-label').textContent=label;
+};
+
+globalThis.handleImgError = function(img, orgName) {
+  if (!img.dataset.triedClearbit) {
+    img.dataset.triedClearbit = 'true';
+    const domain = orgName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.org';
+    img.src = `https://logo.clearbit.com/${domain}`;
+  } else {
+    img.style.display = 'none';
+    const parent = img.parentElement;
+    if(parent) {
+      const placeholder = parent.querySelector('.logo-placeholder');
+      if (placeholder) {
+        placeholder.style.display = 'flex';
+        placeholder.classList.remove('hidden');
+        placeholder.textContent = orgName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+      }
+    }
+  }
+};
+
+globalThis.getPaginatedItems = function(items, page, count = 12) {
+  const start = (page - 1) * count;
+  return items.slice(start, start + count);
+};
+
 let filteredOrgs = [];
 let MENTOR_DATA = {};
 let mentorDataState = 'idle';
@@ -140,6 +208,10 @@ function updateThemeIcon() {
 // ══════════════════════════════════════════════
 // DYNAMIC TIMELINE & COUNTDOWN
 // ══════════════════════════════════════════════
+const OPEN_DATE=new Date('2026-03-16T00:00:00Z');
+const CLOSE_DATE=new Date('2026-04-08T18:00:00Z');
+
+
 const GSOC_SELECTION_DATE = new Date('2026-05-08T18:00:00Z');
 const MILESTONES = [
   { date: new Date('2026-02-19T00:00:00Z'), label: 'Accepted Orgs Announced', note: null },
@@ -184,21 +256,21 @@ function renderTimeline() {
       if (isActive && !allPast) {
         return `<div class="flex gap-3 sm:gap-4">
           <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 dark:ring-orange-950/40 pulse-dot"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
+          <div><p class="text-[10px] font-bold text-primary">${dateStr}</p>
           <p class="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(m.label)}</p>
-          ${m.note ? `<p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
+          ${m.note ? `<p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">${m.note}</p>` : ''}</div>
         </div>`;
       } else if (isActive && allPast) {
         return `<div class="flex gap-3 sm:gap-4">
           <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100 dark:ring-green-950/40"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
+          <div><p class="text-[10px] font-bold text-green-600">${dateStr}</p>
           <p class="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(m.label)}</p>
           <p class="text-xs text-green-600 dark:text-green-400 mt-1">✓ Completed</p></div>
         </div>`;
       } else {
         return `<div class="flex gap-3 sm:gap-4 opacity-40">
           <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-600"></div>${connector}</div>
-          <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
+          <div><p class="text-[10px] font-bold text-zinc-400">${dateStr}</p>
           <p class="text-sm font-bold text-zinc-500 dark:text-zinc-400">${escapeHtml(m.label)}</p></div>
         </div>`;
       }
@@ -208,36 +280,7 @@ function renderTimeline() {
   }
 }
 
-function updateCountdown() {
-  const countdownEl = document.getElementById('countdown');
-  const labelEl = document.getElementById('countdown-label');
-  if (!countdownEl || !labelEl || MILESTONES.length === 0) return;
 
-  try {
-    const now = new Date();
-    if (isNaN(now.getTime())) return;
-
-    const next = MILESTONES.find(m => m.date > now);
-
-    if (!next) {
-      labelEl.textContent = 'GSoC 2026 selection complete';
-      countdownEl.textContent = '🎉 All done!';
-      countdownEl.classList.remove('text-primary');
-      countdownEl.classList.add('text-green-600');
-      return;
-    }
-
-    labelEl.textContent = `Until: ${next.label}`;
-    countdownEl.classList.remove('text-green-600');
-    countdownEl.classList.add('text-primary');
-    const diff = next.date - now;
-    if (diff <= 0) { renderTimeline(); updateCountdown(); return; }
-    const d = Math.floor(diff / 864e5), h = Math.floor((diff % 864e5) / 36e5), m = Math.floor((diff % 36e5) / 6e4);
-    countdownEl.textContent = `${d}d ${h}h ${m}m`;
-  } catch (err) {
-    console.warn('[Timeline] updateCountdown failed:', err);
-  }
-}
 
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
@@ -313,7 +356,7 @@ globalThis.openAnalytics = function () {
     : '<span style="color:var(--muted);font-size:12px">Click org cards to track views</span>';
   const tt = AN.topTerms();
   document.getElementById('srchTerms').innerHTML = tt.length
-    ? tt.map(([t, c], i) => `<span class="sch ${i < 3 ? 'hot' : ''}">${escapeHtml(t)} (${escapeHtml(String(c))})</span>`).join('')
+    ? tt.map(([t, c], i) => `<span class="sch ${i < 3 ? 'hot' : ''}">${escapeHtml(t)} (${String(c)})</span>`).join('')
     : '<span style="color:var(--muted);font-size:12px">No searches yet</span>';
   openModalElement('anBg');
 };
@@ -322,14 +365,7 @@ globalThis.closeAnEvent = function (e) { if (e.target === document.getElementByI
 // ══════════════════════════════════════════════
 // URL VALIDATION & SANITIZATION HELPERS
 // ══════════════════════════════════════════════
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
+
 
 // Centralized DOM-Safe Dynamic Rendering
 class SafeHTMLString extends String {
@@ -348,9 +384,9 @@ function safeHTML(strings, ...values) {
       if (val && val.__isSafeHTML) {
         result += val.toString();
       } else if (Array.isArray(val)) {
-        result += val.map(v => (v && v.__isSafeHTML) ? v.toString() : escapeHtml(v)).join('');
+        result += val.map(v => (v && v.__isSafeHTML) ? v.toString() : escapeHtml(String(v))).join('');
       } else {
-        result += escapeHtml(val !== undefined && val !== null ? String(val) : '');
+        result += val !== undefined && val !== null ? escapeHtml(String(val)) : '';
       }
     }
   }
@@ -862,14 +898,14 @@ function renderWatchlist() {
     const category = getCategoryMeta(org.cat);
 
     const topTags = (org.tags || []).slice(0, 4)
-      .map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
+      .map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${escapeHtml(t)}</span>`);
 
     const item = document.createElement('div');
     item.className = 'bg-white dark:bg-zinc-900 rounded-2xl p-5 border border-zinc-100 dark:border-zinc-800 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
     item.dataset.watchlistOrg = org.name;
 
     const logoHtml = logoUrl
-      ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain">`
+      ? safeHTML`<img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain">`
       : safeHTML`<span class="material-symbols-outlined text-primary text-xl">corporate_fare</span>`;
 
     item.innerHTML = safeHTML`
@@ -878,14 +914,14 @@ function renderWatchlist() {
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
-          <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${org.name}</h4>
+          <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(org.name)}</h4>
           <div class="flex items-center gap-2 flex-shrink-0">
             <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
             <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
           </div>
         </div>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1">${org.desc || ''}</p>
-        <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
+        <div class="flex flex-wrap gap-1.5 mb-3">${escapeHtml(topTags)}</div>
         <div class="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-3 text-xs text-zinc-400">
             <span class="flex items-center gap-1">
@@ -897,7 +933,7 @@ function renderWatchlist() {
               ${org.competition || '—'}
             </span>
           </div>
-          <button data-bookmark-org="${org.name}"
+          <button data-bookmark-org="${escapeHtml(org.name)}"
                   class="bookmark-remove-btn text-[10px] font-bold uppercase tracking-widest text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors">
             <span class="material-symbols-outlined text-xs">bookmark_remove</span>
             Remove
@@ -946,11 +982,11 @@ function renderCompare() {
     item.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800';
     item.innerHTML = safeHTML`
       <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-        <img src="${logoUrl}" data-org-name="${org.name}" class="w-full h-full object-contain" />
+        <img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
       </div>
-      <p class="font-bold text-sm truncate">${org.name}</p>
+      <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
       <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${String(org.years)}y · ${org.competition}</p>
-      <button data-compare-org="${org.name}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
+      <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
     `;
     container.appendChild(item);
     attachOrgCardListeners(item);
@@ -1006,8 +1042,8 @@ function renderCompareModal() {
       <tbody>
         ${rows.map(([label, getValue]) => `
           <tr class="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-            <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-            ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${escapeHtml(String(getValue(org)))}</td>`).join('')}
+            <td class="py-3 px-4 font-bold text-zinc-500">${escapeHtml(label)}</td>
+            ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${String(getValue(org))}</td>`).join('')}
           </tr>
         `).join('')}
       </tbody>
@@ -1144,17 +1180,17 @@ function renderOrgs(reset = true) {
     card.className = `group bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up ${isComparing ? 'ring-2 ring-primary/30' : ''} ${isFocused ? 'ring-2 ring-primary' : ''}`;
     card.dataset.org = org.name;
     card.setAttribute('role', 'article');
-    card.setAttribute('aria-label', `Organization: ${org.name}`);
+    card.setAttribute('aria-label', `Organization: ${escapeHtml(org.name)}`);
     card.setAttribute('tabindex', '0');
 
     const githubOwner = githubOwnerFromValue(org.github);
     const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
 
     const logoHtml = logoUrl
-      ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />`
+      ? safeHTML`<img src="${logoUrl}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain rounded-lg" />`
       : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
 
-    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
+    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${escapeHtml(t)}</span>`);
     const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
 
     const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
@@ -1168,24 +1204,24 @@ function renderOrgs(reset = true) {
         <div class="flex items-center gap-2">
           <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
           <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
-          <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
+          <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${escapeHtml(org.name)}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(org.name)}">
             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
           </button>
         </div>
       </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${org.name}</h3>
+      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${escapeHtml(org.name)}</h3>
       <span class="category-tag inline-block mb-3">${catLabel}</span>
-      <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${org.desc}</p>
+      <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${escapeHtml(org.desc)}</p>
       <div class="flex flex-wrap gap-1.5 mb-4">
         ${tagsHtml}
         ${moreTagsHtml}
       </div>
 
       <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-        <button data-compare-org="${org.name}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+        <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
         </button>
-        <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+        <button data-open-org="${escapeHtml(org.name)}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
       </div>`;
 
     grid.appendChild(card);
@@ -1396,7 +1432,7 @@ globalThis.openModal = function (name, triggerElement = null) {
     const category = getCategoryMeta(org.cat);
     mHeader.innerHTML = safeHTML`
       <span class="category-tag text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
-      <h2 id="orgModalTitle" class="text-2xl font-bold font-headline mt-2">${org.name}</h2>
+      <h2 id="orgModalTitle" class="text-2xl font-bold font-headline mt-2">${escapeHtml(org.name)}</h2>
       <p class="text-zinc-500 text-xs mt-1">GSoC Partner for ${String(org.years)} Years</p>
     `;
   }
@@ -1442,7 +1478,7 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (mFetchBtn) mFetchBtn.textContent = gh ? '↻ Refresh' : 'Fetch Live Stats';
 
   const mTech = document.getElementById('mTech');
-  if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
+  if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
 
   const mFit = document.getElementById('mFit');
   if (mFit) mFit.innerHTML = org.fit.map(f => safeHTML`<span class="fit-tag">${f}</span>`).join('');
@@ -1616,7 +1652,7 @@ function renderRecentlyViewed() {
     card.className = 'bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-100 dark:border-zinc-800 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
     card.innerHTML = safeHTML`
       <div class="flex-1 min-w-0">
-        <h4 class="font-bold text-sm mb-1 dark:text-zinc-100">${org.name}</h4>
+        <h4 class="font-bold text-sm mb-1 dark:text-zinc-100">${escapeHtml(org.name)}</h4>
         <div class="flex items-center gap-2 flex-wrap">
           <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${category.label}</span>
           <span class="text-[10px] text-zinc-500 dark:text-zinc-400">${String(org.years)} years</span>
@@ -1734,10 +1770,10 @@ async function renderGoodFirstIssues() {
         .map(l => safeHTML`<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`);
       card.innerHTML = safeHTML`
         <div class="flex items-start justify-between mb-3">
-          <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1 dark:text-zinc-100">${issue.title || ''}</h4>
+          <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1 dark:text-zinc-100">${escapeHtml(issue.title || '')}</h4>
           <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
         </div>
-        <p class="text-xs text-zinc-500 mb-3 font-mono">${issue.repo || ''}</p>
+        <p class="text-xs text-zinc-500 mb-3 font-mono">${escapeHtml(issue.repo || '')}</p>
         <div class="flex flex-wrap gap-1.5">
           ${labelsHtml}
           <span class="text-[10px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded">${String(issue.comments || 0)} comments</span>
@@ -1780,7 +1816,7 @@ function renderFallbackOrgSearchCards(container) {
       </div>
       <p class="text-xs text-zinc-500 mb-3 font-mono">${org.github}</p>
       <div class="flex flex-wrap gap-1.5">
-        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${org.name}</span>
+        <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(org.name)}</span>
         <span class="text-[10px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded">Label: good first issue</span>
       </div>`;
     container.appendChild(card);
@@ -1848,7 +1884,7 @@ function updateAIInsights() {
       : '📊 Your watchlist has a <strong>balanced mix</strong> of competition levels — a solid hedging strategy.';
 
   const stackLine = topTags.length
-    ? `Your saved orgs centre on <strong>${topTags.map(t => escapeHtml(t)).join(', ')}</strong>.`
+    ? `Your saved orgs centre on <strong>${topTags.map(t => t).join(', ')}</strong>.`
     : 'Your saved orgs span a diverse set of technologies.';
 
   el.innerHTML = `
@@ -1859,7 +1895,7 @@ function updateAIInsights() {
         Highlight experience with <strong>${escapeHtml(advice.tools)}</strong> in your proposals.
       </p>
       <p>
-        <span class="font-bold">🎯 Domain Strategy (${escapeHtml(getCategoryMeta(topCat).label)}):</span>
+        <span class="font-bold">🎯 Domain Strategy (${getCategoryMeta(topCat.label)}):</span>
         Before submitting, ${escapeHtml(advice.action)} to demonstrate early commitment to mentors.
       </p>
       <p>${strategyMsg}</p>
@@ -2059,7 +2095,7 @@ function renderIssues() {
 }
 
 function renderIssueCard(iss) {
-  const langTags = iss.orgTags.slice(0, 2).map(t => safeHTML`<span class="issue-label lang">${t}</span>`);
+  const langTags = iss.orgTags.slice(0, 2).map(t => safeHTML`<span class="issue-label lang">${escapeHtml(t)}</span>`);
   const gfiNames = ['good first issue', 'good-first-issue'];
   const otherLabels = iss.labels.filter(l => !gfiNames.includes(String(l).toLowerCase())).slice(0, 2)
     .map(l => safeHTML`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`);
@@ -2303,7 +2339,7 @@ function renderMentorContactSection(org) {
   if (!mentors || !mentors.length) {
     container.innerHTML = safeHTML`
       <div class="mentor-empty border border-zinc-100 dark:border-zinc-800 rounded-xl p-6 text-center bg-zinc-50 dark:bg-zinc-900/40">
-        <p class="text-xs text-zinc-500">Contact details unavailable for ${org.name}. Browse their GSoC Ideas Page for mentor details.</p>
+        <p class="text-xs text-zinc-500">Contact details unavailable for ${escapeHtml(org.name)}. Browse their GSoC Ideas Page for mentor details.</p>
       </div>`;
     return;
   }
@@ -2578,12 +2614,55 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ══════════════════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════════════════
+let isThemeToggling = false;
+window.toggleTheme = function(){
+  if (isThemeToggling) return;
+  isThemeToggling = true;
+
+  document.documentElement.classList.add('theme-transition');
+  const isDark = document.documentElement.classList.toggle('dark');
+  
+  try {
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  } catch (err) {
+    console.warn('Theme access failed:', err);
+  }
+
+  updateThemeIcon();
+
+  const computedDuration = getComputedStyle(document.documentElement).transitionDuration || '0.2s';
+  const parsedDelay = parseFloat(computedDuration) * (computedDuration.includes('ms') ? 1 : 1000) || 200;
+  const delay = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : parsedDelay;
+
+  setTimeout(() => {
+    document.documentElement.classList.remove('theme-transition');
+    isThemeToggling = false;
+  }, delay);
+};
+
+function updateThemeIcon(){
+  const btn = document.getElementById('theme-toggle-btn');
+  if(btn){
+    const isDark = document.documentElement.classList.contains('dark');
+    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+}
+
+// Initialize theme toggle and accessibility icon state on load
+document.addEventListener('DOMContentLoaded', () => {
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  if(themeBtn) themeBtn.addEventListener('click', window.toggleTheme);
+  updateThemeIcon();
+});
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY
 // ══════════════════════════════════════════════
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    escapeHtml,
-    sanitizeHrefUrl,
+        sanitizeHrefUrl,
     validateIdeasUrl,
     githubPathFromValue,
     githubOwnerFromValue,

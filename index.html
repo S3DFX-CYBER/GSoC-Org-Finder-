@@ -1920,7 +1920,7 @@ kbd:hover{
 
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
-<div class="modal-bg" id="orgModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="mHeader">
+<div class="modal-bg" id="orgModal" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="mHeader">
   <div class="modal">
     <button class="close-btn" onclick="closeOrgModal()"><span class="material-symbols-outlined">close</span></button>
     <div class="modal-header" id="mHeader">
@@ -3910,14 +3910,11 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  function inlineEscapeHandler(e) {
-    if (e.key === 'Escape') closeOrgModal();
-  }
-
-  let lastFocusedElement = null;
   function openModal(name) {
-    lastFocusedElement = document.activeElement;
-    document.addEventListener('keydown', inlineEscapeHandler);
+    const orgModal = document.getElementById('orgModal');
+    if (orgModal) {
+      orgModal._lastFocusedElement = document.activeElement;
+    }
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
     addRecentlyViewed(name);
@@ -4033,11 +4030,13 @@ if(org.ideas){
     if (draftBtn) {
       draftBtn.onclick = () => ProposalBuilder.open(org.name);
     }
-     
     const orgModal = document.getElementById('orgModal');
     if (orgModal) {
       orgModal.classList.add('open');
       orgModal.focus();
+      if (typeof globalThis.trapFocus === 'function') {
+        orgModal.addEventListener('keydown', globalThis.trapFocus);
+      }
     }
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
@@ -4045,18 +4044,20 @@ if(org.ideas){
   }
 
   function closeOrgModal() {
-    document.removeEventListener('keydown', inlineEscapeHandler);
     const orgModal = document.getElementById('orgModal');
     if (orgModal) {
       orgModal.classList.remove('open');
+      if (typeof globalThis.trapFocus === 'function') {
+        orgModal.removeEventListener('keydown', globalThis.trapFocus);
+      }
     }
     document.body.classList.remove('modal-open');
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
-    
-    if (lastFocusedElement) {
-      lastFocusedElement.focus();
-      lastFocusedElement = null;
+
+    if (orgModal && orgModal._lastFocusedElement) {
+      orgModal._lastFocusedElement.focus();
+      orgModal._lastFocusedElement = null;
     }
   }
 

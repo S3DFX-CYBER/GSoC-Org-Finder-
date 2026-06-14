@@ -608,6 +608,7 @@ function trapFocus(e) {
     e.preventDefault();
   }
 }
+globalThis.trapFocus = trapFocus;
 
 function toggleMenu() {
   const menu = document.getElementById('mobileMenu');

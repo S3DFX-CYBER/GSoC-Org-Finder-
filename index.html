@@ -5083,9 +5083,9 @@ if(e.key.toLowerCase()==='r'){
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        clearTimeout(window._globalTooltipTimer);
+        clearTimeout(globalThis._globalTooltipTimer);
         showTooltip(element);
-        window._globalTooltipTimer = setTimeout(() => hideTooltip(), 3000);
+        globalThis._globalTooltipTimer = setTimeout(() => hideTooltip(), 3000);
       });
     }
   });

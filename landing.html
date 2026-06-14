@@ -1255,19 +1255,20 @@
       wireAnchorScroll();
     });
 
+    /** Applies CSS classes and rewrites in-page hrefs on the injected footer element. */
+    function applyFooterPatch(footer) {
+      footer.classList.add('border-t', 'border-zinc-200', 'dark:border-zinc-800', 'bg-white', 'dark:bg-[#0f0a05]', 'transition-colors', 'duration-300');
+      footer.querySelectorAll('a').forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (href === '#orgs' || href === '#timeline') {
+          a.setAttribute('href', 'index.html' + href);
+        }
+      });
+    }
+
     /** Waits for the dynamically-injected footer then patches its links/classes.
      *  Uses MutationObserver so it fires exactly once with no polling overhead. */
     function patchFooterLinks() {
-      function applyFooterPatch(footer) {
-        footer.classList.add('border-t', 'border-zinc-200', 'dark:border-zinc-800', 'bg-white', 'dark:bg-[#0f0a05]', 'transition-colors', 'duration-300');
-        footer.querySelectorAll('a').forEach(function (a) {
-          var href = a.getAttribute('href');
-          if (href === '#orgs' || href === '#timeline') {
-            a.setAttribute('href', 'index.html' + href);
-          }
-        });
-      }
-
       // Footer may already be present if footer.js ran before this handler.
       var existing = document.querySelector('footer.premium-footer');
       if (existing) { applyFooterPatch(existing); return; }

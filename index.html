@@ -3858,7 +3858,20 @@ btn.__orgListenerAttached = true;
       });
     });
   }
-
+  function setModalLinkState(button, url) {
+    if (!button) return;
+    if (url) {
+      button.href = url;
+      button.removeAttribute('aria-disabled');
+      button.removeAttribute('tabindex');
+      button.classList.remove('opacity-50', 'pointer-events-none');
+    } else {
+      button.removeAttribute('href');
+      button.setAttribute('aria-disabled', 'true');
+      button.setAttribute('tabindex', '-1');
+      button.classList.add('opacity-50', 'pointer-events-none');
+    }
+  }
   function openModal(name) {
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
@@ -3957,41 +3970,11 @@ btn.__orgListenerAttached = true;
       }
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
-
     // Sanitize and set idea/repo links
     const ideasUrl = sanitizeHrefUrl(org.ideas);
     const repoUrl = sanitizeHrefUrl(githubUrlFromValue(org.github));
-    const ideasBtn = document.getElementById('mIdeasBtn');
-    const repoBtn = document.getElementById('mRepoBtn');
-    if (ideasBtn) {
-      if (ideasUrl){
-        ideasBtn.href = ideasUrl; 
-        ideasBtn.removeAttribute('aria-disabled');
-        ideasBtn.removeAttribute('tabindex');
-        ideasBtn.classList.remove('opacity-50', 'pointer-events-none');
-      }
-      else {
-        ideasBtn.removeAttribute('href');
-        ideasBtn.removeAttribute('href');
-        ideasBtn.setAttribute('aria-disabled', 'true');
-        ideasBtn.setAttribute('tabindex', '-1');
-        ideasBtn.classList.add('opacity-50', 'pointer-events-none');
-      }
-    }
-    if (repoBtn) {
-      if (repoUrl){
-        repoBtn.href = repoUrl; 
-        repoBtn.removeAttribute('aria-disabled');
-        repoBtn.removeAttribute('tabindex');
-        repoBtn.classList.remove('opacity-50', 'pointer-events-none');
-      }
-      else {
-        repoBtn.removeAttribute('href');
-        repoBtn.setAttribute('aria-disabled', 'true');
-        repoBtn.setAttribute('tabindex', '-1');
-        repoBtn.classList.add('opacity-50', 'pointer-events-none');
-      }
-    }
+    setModalLinkState(document.getElementById('mIdeasBtn'), ideasUrl);
+    setModalLinkState(document.getElementById('mRepoBtn'), repoUrl);
 
 // Copy link button
 const oldCopy = document.getElementById('mIdeasCopyBtn');

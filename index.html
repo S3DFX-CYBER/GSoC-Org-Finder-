@@ -4356,7 +4356,6 @@ if(org.ideas){
   let currentProposalOrg = '';
   let proposalFocusReturn = null;
   let proposalAutosaveTimer = null;
-  let proposalStatsTimer;
   const inMemoryDrafts = {};
   let localStorageAvailable = true;
   const PROPOSAL_AUTOSAVE_KEY = 'gaf_proposal_autosave';
@@ -4605,10 +4604,8 @@ if(org.ideas){
 
   document.getElementById('pwEditor')?.addEventListener('input', (e) => {
     renderPreview();
-    clearTimeout(proposalStatsTimer);
-    proposalStatsTimer = setTimeout(() => {
-      updateProposalStats();
-    }, 1000); 
+    updateProposalStats();
+   
     if (!currentProposalOrg || !isAutosaveEnabled()) return;
     clearTimeout(proposalAutosaveTimer);
     proposalAutosaveTimer = setTimeout(() => {

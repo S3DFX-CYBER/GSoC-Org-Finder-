@@ -1129,7 +1129,11 @@ kbd:hover{
 @media (pointer: coarse) {
   .filter-chip.bg-orange-600:hover {
     background-color: #ea580c !important;
-    color: #ffffff !important;
+    color: #1a0a00 !important;
+  }
+  .filter-chip.bg-surface-container-highest:hover {
+    background-color: revert !important;
+    color: revert !important;
   }
 }
 
@@ -5079,9 +5083,9 @@ if(e.key.toLowerCase()==='r'){
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        clearTimeout(element._tooltipTimer);
+        clearTimeout(window._globalTooltipTimer);
         showTooltip(element);
-        element._tooltipTimer = setTimeout(() => hideTooltip(), 3000);
+        window._globalTooltipTimer = setTimeout(() => hideTooltip(), 3000);
       });
     }
   });

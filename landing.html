@@ -1255,25 +1255,37 @@
       wireAnchorScroll();
     });
 
-    /** Polls for the dynamically-injected footer and patches its links/classes. */
+    /** Waits for the dynamically-injected footer then patches its links/classes.
+     *  Uses MutationObserver so it fires exactly once with no polling overhead. */
     function patchFooterLinks() {
-      var footerAttempts = 0;
-      var checkFooter = setInterval(function () {
-        footerAttempts++;
-        var footer = document.querySelector('footer.premium-footer');
-        if (footer) {
-          clearInterval(checkFooter);
-          footer.classList.add('border-t', 'border-zinc-200', 'dark:border-zinc-800', 'bg-white', 'dark:bg-[#0f0a05]', 'transition-colors', 'duration-300');
-          footer.querySelectorAll('a').forEach(function (a) {
-            var href = a.getAttribute('href');
-            if (href === '#orgs' || href === '#timeline') {
-              a.setAttribute('href', 'index.html' + href);
+      function applyFooterPatch(footer) {
+        footer.classList.add('border-t', 'border-zinc-200', 'dark:border-zinc-800', 'bg-white', 'dark:bg-[#0f0a05]', 'transition-colors', 'duration-300');
+        footer.querySelectorAll('a').forEach(function (a) {
+          var href = a.getAttribute('href');
+          if (href === '#orgs' || href === '#timeline') {
+            a.setAttribute('href', 'index.html' + href);
+          }
+        });
+      }
+
+      // Footer may already be present if footer.js ran before this handler.
+      var existing = document.querySelector('footer.premium-footer');
+      if (existing) { applyFooterPatch(existing); return; }
+
+      // Otherwise observe the body for the footer being inserted.
+      var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var nodes = mutations[i].addedNodes;
+          for (var j = 0; j < nodes.length; j++) {
+            var node = nodes[j];
+            if (node.nodeType === 1) {
+              var footer = node.matches('footer.premium-footer') ? node : node.querySelector('footer.premium-footer');
+              if (footer) { observer.disconnect(); applyFooterPatch(footer); return; }
             }
-          });
-        } else if (footerAttempts >= 100) {
-          clearInterval(checkFooter);
+          }
         }
-      }, 50);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
     }
 
     /** Wires smooth-scroll behaviour on all in-page anchor links. */

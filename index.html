@@ -314,6 +314,7 @@ kbd:hover{
     .timeline-grid a.timeline-year-link.current-year:hover { border-color: #92400e; background: #fef3c7; color: #78350f; }
 
     .modal-footer { padding: 1.5rem 2rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; flex-shrink: 1; }
+    .modal-footer-secondary { display: flex; gap: 1rem; margin-left: auto; }
     .modal-cta { flex: 1; padding: 0.75rem; border-radius: 1rem; font-size: 0.65rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
     .modal-ideas-link { background: #9d4300; color: white; }
     .modal-ideas-link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.3); }
@@ -575,9 +576,13 @@ kbd:hover{
     @media (max-width: 640px) {
       .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
       .modal-header h2 { font-size: 1.6rem; }
+      .metric-card { padding: 0.5rem 1rem; }
+      .metric-value { font-size: 1rem; }
+      .metric-label { font-size: 0.6rem; }
       .modal-body { padding: 0 1.5rem 2rem; min-height: 0; }
-      .modal-footer { padding: 0.75rem 1.5rem; flex-direction: column; flex-shrink: 0; }
-      .modal-cta { width: 100%; padding: 0.6rem 1rem; font-size: 0.85rem; }
+      .modal-footer { padding: 1rem; gap: 1rem; flex-direction: column; flex-shrink: 0; }
+      .modal-footer-secondary { display: flex; gap: 1rem; width: 100%; }
+      .modal-footer-secondary .modal-cta { flex-direction:column; flex: 1 1 0; min-width:0; width: auto; padding: 0.3rem 0.4rem; font-size: 0.65rem; min-height: 30px; }
       .proposal-header { padding: 0.6rem 1rem; gap: 0.4rem; position: relative; }
       .proposal-header-title { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
       .proposal-header-title h2 { font-size: 0.95rem; }
@@ -1965,12 +1970,14 @@ kbd:hover{
       <button type="button" id="mDraftBtn" class="modal-cta modal-proposal-link flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-lg">edit_document</span> Open Proposal Builder
       </button>
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
-      </a>
-      <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-lg">code</span> Repository
-      </a>
+      <div class="modal-footer-secondary">
+        <a href="#" target="_blank" rel="noopener noreferrer" id="mIdeasBtn" class="modal-cta modal-ideas-link flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-lg">lightbulb</span> Project Ideas
+        </a>
+        <a href="#" target="_blank" rel="noopener noreferrer" id="mRepoBtn" class="modal-cta modal-repo-link flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-lg">code</span> Repository
+        </a>
+      </div>
     </div>
   </div>
 </div>

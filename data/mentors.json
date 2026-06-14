@@ -3476,7 +3476,18 @@
   "QC-Devs": {
     "org": "QC-Devs",
     "ideasUrl": "https://github.com/theochem/gbasis/wiki/Google-Summer-of-Code",
-    "channels": [],
+    "channels": [
+        {
+    "type": "Website",
+    "url": "https://qcdevs.org",
+    "label": "Official Website"
+  },
+  {
+    "type": "Twitter",
+    "url": "https://x.com/QCDevs",
+    "label": "Official Twitter"
+  }
+    ],
    "mentors": [
   { "name": "Valeri Chulha", "github": "", "githubUrl": "" },
   { "name": "Paul W. Ayers", "github": "", "githubUrl": "" },

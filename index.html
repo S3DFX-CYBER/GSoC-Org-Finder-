@@ -302,7 +302,8 @@ kbd:hover{
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
     .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
     .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
-    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04);transition:all 0.3s ease; }
+     .mentor-card:hover {border: 1px solid #f97316 !important ;box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12) ;transform: translateY(-4px) scale(1.02); }
     .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -609,6 +610,7 @@ kbd:hover{
 
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
+    .dark #guide article:hover { border-color: #fb923c !important; }
     .dark #guide article h3 { color: #f4f4f5 !important; }
     .dark #guide article p, .dark #guide article li { color: #a1a1aa !important; }
     .dark #guide details { border-color: #3f3f46 !important; }
@@ -1758,7 +1760,7 @@ kbd:hover{
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-orange-500">
       <h3 class="text-xl font-bold mb-3">1) Open Source Basics</h3>
       <p class="text-sm text-zinc-600 mb-4 leading-relaxed">Open source projects publish source code publicly so anyone can inspect, improve, and share it. Contribution usually starts with reading contribution guidelines and making small, focused changes.</p>
       <ul class="space-y-2 text-sm text-zinc-700 list-disc pl-5">
@@ -1768,7 +1770,7 @@ kbd:hover{
       </ul>
     </article>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm">
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-orange-500">
       <h3 class="text-xl font-bold mb-3">2) Contribute to a GSoC Organization</h3>
       <ol class="space-y-2 text-sm text-zinc-700 list-decimal pl-5">
         <li>Pick 2–3 organizations that match your skills and interests.</li>
@@ -1780,7 +1782,7 @@ kbd:hover{
       <p class="text-xs text-zinc-500 mt-4">Tip: quality communication and small, consistent contributions usually matter more than a single large PR.</p>
     </article>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+   <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-orange-500">
       <h3 class="text-xl font-bold mb-5">3) Useful Resources</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
         <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer" class="block p-4 rounded-2xl border border-zinc-200 hover:border-primary hover:bg-orange-50/30 transition-colors">
@@ -1806,7 +1808,7 @@ kbd:hover{
       </div>
     </article>
 
-    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2">
+    <article class="bg-white border border-zinc-100 rounded-3xl p-8 shadow-sm lg:col-span-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-orange-500">
       <h3 class="text-xl font-bold mb-4">4) FAQ</h3>
       <div class="space-y-3 text-sm">
         <details class="group border border-zinc-200 rounded-xl p-4">
@@ -3165,7 +3167,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white border border-zinc-100 rounded-2xl p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-orange-500/30 hover:shadow-[0_10px_40px_rgba(249,115,22,0.15)] animate-fade-up dark:bg-gradient-to-b dark:from-zinc-900 dark:to-zinc-950 dark:border-zinc-800';
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);

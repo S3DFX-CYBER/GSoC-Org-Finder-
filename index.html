@@ -1297,7 +1297,7 @@ kbd:hover{
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+        Browse all <strong data-org-count>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
@@ -1323,7 +1323,7 @@ kbd:hover{
       <div class="flex flex-wrap gap-3 sm:gap-4">
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm" data-org-count>184</p></div>
         </div>
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
@@ -1408,7 +1408,7 @@ kbd:hover{
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
     <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
@@ -1837,7 +1837,7 @@ kbd:hover{
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
         <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
-        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse all <strong data-org-count>184</strong> open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
@@ -2112,6 +2112,37 @@ kbd:hover{
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
+  // ══════════════════════════════════════════════
+  // SAFE ORG DATA GUARD
+  // ══════════════════════════════════════════════
+  if(typeof ORGS === 'undefined' || !Array.isArray(ORGS)){
+    globalThis.ORGS = [];
+  }
+
+  // ══════════════════════════════════════════════
+  // ORG COUNT INITIALIZATION
+  // ══════════════════════════════════════════════
+  function initializeOrgCounts(){
+    const orgCount = ORGS.length > 0 ? ORGS.length : 184;
+    
+    // Update all org count display references
+    document.querySelectorAll('[data-org-count]').forEach(el => {
+      el.textContent = orgCount;
+    });
+    
+    // Update org total summary references
+    document.querySelectorAll('[data-org-total]').forEach(el => {
+      el.textContent = orgCount;
+    });
+  }
+  
+  // Initialize org counts when DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initializeOrgCounts);
+  } else {
+    initializeOrgCounts();
+  }
+
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════

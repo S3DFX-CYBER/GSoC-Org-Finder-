@@ -2476,10 +2476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-// Sync hero search with hidden search input and initialize on load
 const heroSearch = document.getElementById('hero-search');
-
-// ===== Recent Search History =====
 
 const recentSearchesContainer =
   document.getElementById("recentSearches");
@@ -2490,12 +2487,15 @@ const clearSearchHistoryBtn =
 let recentSearches = [];
 
 try {
-  recentSearches =
-    JSON.parse(localStorage.getItem("recentSearches")) || [];
+  const parsed = JSON.parse(
+    localStorage.getItem("recentSearches")
+  );
+
+  recentSearches = Array.isArray(parsed)
+    ? parsed.filter(item => typeof item === "string")
+    : [];
 } catch (error) {
-  console.error("Failed to parse recent searches:", error);
   recentSearches = [];
-  localStorage.removeItem("recentSearches");
 }
 
 function renderRecentSearches() {

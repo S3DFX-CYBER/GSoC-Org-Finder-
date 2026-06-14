@@ -75,7 +75,6 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .hero h1 em{font-style:italic;color:var(--orange)}
 .hero-sub{font-size:14px;color:var(--ink3);line-height:1.7;max-width:480px;margin:0 auto 30px;font-weight:400}
 
-/* ── RECENT SEARCHES ── */
 .recent-search-btn {
   padding: 6px 12px;
   border-radius: 999px;
@@ -276,7 +275,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   background:none;
   border:none;
   cursor:pointer;
-  padding:4px;            /* larger tap target */
+  padding:4px;   
   border-radius:6px;
 }
 .bookmark-btn:focus-visible{

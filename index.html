@@ -992,9 +992,11 @@ kbd:hover{
 .dark .section-scroll-indicator-dot {
   background: linear-gradient(135deg, #fb923c, #f97316);
   box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
-}.dark .section-scroll-indicator-value {
+}
+.dark .section-scroll-indicator-value {
   color: #e4e4e7;
 }
+
 .section-scroll-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
@@ -3908,9 +3910,14 @@ btn.__orgListenerAttached = true;
     });
   }
 
+  function inlineEscapeHandler(e) {
+    if (e.key === 'Escape') closeOrgModal();
+  }
+
   let lastFocusedElement = null;
   function openModal(name) {
     lastFocusedElement = document.activeElement;
+    document.addEventListener('keydown', inlineEscapeHandler);
     const org = ORGS.find(o => o.name === name);
     if (!org) return;
     addRecentlyViewed(name);
@@ -4038,6 +4045,7 @@ if(org.ideas){
   }
 
   function closeOrgModal() {
+    document.removeEventListener('keydown', inlineEscapeHandler);
     const orgModal = document.getElementById('orgModal');
     if (orgModal) {
       orgModal.classList.remove('open');

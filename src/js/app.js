@@ -531,7 +531,7 @@ function openModalElement(modalId, triggerElement = null) {
   const modal = document.getElementById(modalId);
   if (!modal) return;
 
-  activeTriggerElement = document.activeElement;
+  activeTriggerElement = triggerElement || document.activeElement;
 
   if (modalId === 'mobileMenu') {
     modal.classList.remove('hidden');

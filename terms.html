@@ -48,6 +48,17 @@
       .hero-bg {
         background: linear-gradient(to bottom, #0a0a0a, #050505);
       }
+
+      /* Mobile Menu */
+      #mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+      }
+
+      #mobile-menu.open {
+        max-height: 420px;
+      }
     </style>
   </head>
 
@@ -70,6 +81,7 @@
           </h1>
         </div>
 
+        <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#" class="hover:text-[#ff7a00] transition-colors"
             >Timeline</a
@@ -87,9 +99,33 @@
           <a href="#" class="text-[#ff7a00] font-semibold">Terms</a>
         </div>
 
-        <button class="md:hidden text-3xl">
+        <!-- Hamburger -->
+        <button id="hamburger" class="md:hidden text-3xl focus:outline-none">
           <span class="material-symbols-outlined">menu</span>
         </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-black/95 border-t border-white/10 px-6"
+      >
+        <div class="flex flex-col py-6 gap-6 text-base font-medium">
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Timeline</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Organizations</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >AI Recommender</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Watchlist</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors">Issues</a>
+          <a href="#" class="text-[#ff7a00] font-semibold">Terms</a>
+        </div>
       </div>
     </nav>
 
@@ -593,10 +629,7 @@
             >
               <p>
                 The platform is provided on an "as-is" and "as-available" basis
-                without any warranties of any kind, whether express or implied,
-                including but not limited to warranties of accuracy,
-                reliability, merchantability, or fitness for a particular
-                purpose.
+                without any warranties of any kind, whether express or implied.
               </p>
               <p class="mt-4">
                 We do not warrant that the platform will be uninterrupted,
@@ -782,6 +815,18 @@
     </footer>
 
     <script>
+      // Mobile Menu Toggle
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
+        const icon = hamburger.querySelector(".material-symbols-outlined");
+        icon.textContent = mobileMenu.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
       // Accessible Accordion
       const accordionItems = document.querySelectorAll(".accordion-item");
 
@@ -791,7 +836,6 @@
         header.addEventListener("click", () => {
           const isOpen = item.classList.contains("open");
 
-          // Close all
           accordionItems.forEach((other) => {
             other.classList.remove("open");
             other
@@ -799,7 +843,6 @@
               .setAttribute("aria-expanded", "false");
           });
 
-          // Open current
           if (!isOpen) {
             item.classList.add("open");
             header.setAttribute("aria-expanded", "true");
@@ -816,39 +859,49 @@
         });
       });
 
+      // Update Active TOC
+      function updateActiveTOC() {
+        let current = "";
+        const scrollY = window.scrollY + 180;
+        const sections = document.querySelectorAll(".accordion-item");
+
+        sections.forEach((section) => {
+          if (scrollY >= section.offsetTop) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        document.querySelectorAll("#toc a").forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${current}`) {
+            link.classList.add("active");
+          }
+        });
+      }
+
+      // Initialize on load
+      window.addEventListener("load", () => {
+        // Open first section + set ARIA
+        document.getElementById("s1").classList.add("open");
+        document
+          .getElementById("header1")
+          .setAttribute("aria-expanded", "true");
+
+        // Set initial TOC active state
+        updateActiveTOC();
+      });
+
       // Optimized Scroll Spy
       let isScrolling = false;
-      const tocLinks = document.querySelectorAll("#toc a");
-      const sections = document.querySelectorAll(".accordion-item");
-
       window.addEventListener("scroll", () => {
         if (isScrolling) return;
         isScrolling = true;
 
         requestAnimationFrame(() => {
-          let current = "";
-          const scrollY = window.scrollY + 180;
-
-          sections.forEach((section) => {
-            if (scrollY >= section.offsetTop) {
-              current = section.getAttribute("id");
-            }
-          });
-
-          tocLinks.forEach((link) => {
-            link.classList.remove("active");
-            if (link.getAttribute("href") === `#${current}`) {
-              link.classList.add("active");
-            }
-          });
-
+          updateActiveTOC();
           isScrolling = false;
         });
       });
-
-      // Open first section by default
-      document.getElementById("s1").classList.add("open");
-      document.getElementById("header1").setAttribute("aria-expanded", "true");
     </script>
   </body>
 </html>

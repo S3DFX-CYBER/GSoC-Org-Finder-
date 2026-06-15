@@ -23,14 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Store the listener outside the function so it can be cleaned up
+let footerScrollHandler = null;
+
 function initFooter() {
   const backToTopBtn = document.getElementById('back-to-top-btn');
   const footerElement = document.querySelector('.premium-footer');
 
   if (backToTopBtn) {
-    let ticking = false;
+    // FIX: Remove existing listener if initFooter is called multiple times
+    if (footerScrollHandler) {
+      globalThis.removeEventListener('scroll', footerScrollHandler);
+    }
 
-    globalThis.addEventListener('scroll', () => {
+    let ticking = false;
+    
+    // Assign the logic to our tracked variable
+    footerScrollHandler = () => {
       if (!ticking) {
         globalThis.requestAnimationFrame(() => {
           let shouldShow = false;
@@ -52,12 +61,20 @@ function initFooter() {
         });
         ticking = true;
       }
-    }, { passive: true });
+    };
 
-    backToTopBtn.addEventListener('click', () => {
-      globalThis.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    // Attach the tracked listener
+    globalThis.addEventListener('scroll', footerScrollHandler, { passive: true });
+
+    // FIX: Ensure click listener is only attached once
+    if (!backToTopBtn.dataset.clickBound) {
+      backToTopBtn.addEventListener('click', () => {
+        globalThis.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      backToTopBtn.dataset.clickBound = 'true';
+    }
   }
+  
   updateFooterStats();
 }
 

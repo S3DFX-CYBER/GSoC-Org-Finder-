@@ -1308,10 +1308,12 @@ kbd:hover{
           <svg class="timeline-border-svg" fill="none">
             <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
           </svg>
-          <!-- Inner Input Layer -->
-          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center gap-2 transition-all duration-300">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <button id="hero-search-submit" type="button" class="mr-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary/30">
+              Search
+            </button>
           </div>
         </div>
       </div>
@@ -4205,13 +4207,17 @@ if(org.ideas){
     applyFilters(); // to reset URL params
   };
 
-  document.getElementById('searchInput').addEventListener('input', () => {
-    // Track search badge when user types a search query
-    const query = document.getElementById('searchInput').value.trim();
-    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+  // Shared search function to handle filter application, with optional badge tracking
+  function performSearch(queryText, shouldTrack = false) {
+    const query = queryText.trim();
+    if (shouldTrack && typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
     applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    performSearch(e.target.value, false);
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -4252,17 +4258,25 @@ if(org.ideas){
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    const heroSearchSubmit = () => {
+      document.getElementById('searchInput').value = heroSearch.value;
+      performSearch(heroSearch.value, true);
+      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-      
-      // Track search badge when user types in hero search
-      const query = e.target.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      applyFilters();
+      performSearch(e.target.value, false);
     });
+
+    heroSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        heroSearchSubmit();
+      }
+    });
+
+    document.getElementById('hero-search-submit')?.addEventListener('click', heroSearchSubmit);
   }
 
   // Quick-filter chips — mutually exclusive with each other, but additive with

@@ -136,6 +136,70 @@
     .gradient-animate{background-size:200% 200%;animation:gradient-shift 8s ease infinite}
     .hero-gradient{background:linear-gradient(135deg,#9d4300 0%,#f97316 50%,#f59e0b 100%)}
 
+
+   /*Keyboard Shortcut Helper Styles*/
+    kbd{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:32px;
+    padding:4px 10px;
+    margin:2px;
+
+    background:#27272a;
+    color:#fff;
+
+    border:1px solid #3f3f46;
+    border-radius:8px;
+
+    font-size:12px;
+    font-weight:600;
+
+    box-shadow:
+    inset 0 -2px 0 rgba(255,255,255,.08),
+    0 2px 4px rgba(0,0,0,.3);
+
+    transition:all .2s ease;
+}
+
+kbd:hover{
+    transform:translateY(-2px);
+}
+.category-row td{
+    padding:16px 0 8px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#f97316;
+}
+
+.shortcut-row{
+    transition:0.2s;
+}
+
+.shortcut-row:hover{
+    background:rgba(255,255,255,0.05);
+    transform:scale(1.01);
+}
+
+.shortcut-row td{
+    padding:12px;
+}
+
+@media(max-width:640px){
+
+    .shortcut-row td{
+        display:block;
+        width:100%;
+    }
+
+    kbd{
+        min-width:28px;
+        font-size:11px;
+    }
+}
     /* Screen reader only - for accessibility */
     .sr-only {
       position: absolute;
@@ -243,7 +307,11 @@
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
-    .timeline-grid span.current-year { background: #fffbeb; color: #d97706; border-color: #fef3c7; font-weight: 700; }
+    .timeline-grid span.current-year { background: #fffbeb; color: #92400e; border-color: #fbbf24; font-weight: 700; }
+    .timeline-grid a.timeline-year-link { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; text-decoration: none; display: inline-block; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .timeline-grid a.timeline-year-link:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
+    .timeline-grid a.timeline-year-link.current-year { background: #fffbeb; color: #92400e; border-color: #fbbf24; font-weight: 700; }
+    .timeline-grid a.timeline-year-link.current-year:hover { border-color: #92400e; background: #fef3c7; color: #78350f; }
 
     .modal-footer { padding: 2rem 3rem 3rem; background: #f9f9f9; display: flex; gap: 1rem; border-top: 1px solid #eee; flex-shrink: 0; }
     .modal-cta { flex: 1; padding: 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
@@ -494,6 +562,15 @@
     .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
+
+    :root {
+      --section-fab-right: 24px;
+      --section-fab-bottom: 24px;
+      --section-fab-size: 48px;
+      --section-fab-gap: 10px;
+      --section-indicator-gap: 12px;
+      --section-indicator-width: 240px;
+    }
 
     @media (max-width: 640px) {
       .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
@@ -828,13 +905,19 @@
         stroke-dashoffset: 0;
       }
     }
-
     /* Respect accessibility preferences for reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .timeline-border-rect {
         animation: none;
         stroke-dasharray: none;
         stroke-dashoffset: 0;
+      }
+      .section-scroll-btn {
+        transition: none !important;
+      }
+      .section-scroll-btn:hover,
+      .section-scroll-btn:active {
+        transform: none !important;
       }
     }
 
@@ -852,8 +935,199 @@
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
-  </style>
-  <link rel="stylesheet" href="src/styles.css" />
+  
+/* Section-wise Scroll Buttons */
+    .section-scroll-btn {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      width: var(--section-fab-size);
+      height: var(--section-fab-size);
+  border: none;
+  border-radius: 50%;
+      z-index: 30;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.section-scroll-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(157, 67, 0, 0.45);
+}
+.section-scroll-btn:active {
+  transform: translateY(1px) scale(0.92);
+  box-shadow: 0 4px 12px rgba(157, 67, 0, 0.2);
+  filter: brightness(0.95);
+}
+    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
+    #prevSectionBtn {
+      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
+    }
+
+/* Dark mode - Section scroll buttons */
+.dark .section-scroll-btn {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
+}
+.dark .section-scroll-btn:hover {
+  box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45);
+}
+.dark .section-scroll-btn:active {
+  transform: translateY(1px) scale(0.92);
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.2);
+  filter: brightness(0.95);
+}
+
+/* Dark mode - Section scroll indicator */
+.dark .section-scroll-indicator {
+  background: rgba(24, 24, 27, 0.88);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #fb923c;
+}
+.dark .section-scroll-indicator-dot {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+}
+.dark .section-scroll-indicator-value {
+  color: #e4e4e7;
+}
+
+.section-scroll-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Custom ripple effect inside scroll buttons */
+.section-scroll-btn .click-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-animation 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+  background-color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Icon animations inside scroll buttons on click */
+@keyframes bounce-down {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(4px); }
+  70% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+@keyframes bounce-up {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+  70% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+
+.section-scroll-btn.bounce-down-active .material-symbols-outlined {
+  animation: bounce-down 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.section-scroll-btn.bounce-up-active .material-symbols-outlined {
+  animation: bounce-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.section-scroll-indicator {
+  position: fixed;
+      right: calc(var(--section-fab-right) + env(safe-area-inset-right));
+      bottom: calc(
+        var(--section-fab-bottom)
+        + (var(--section-fab-size) + var(--section-fab-gap)) * 2
+        + var(--section-indicator-gap)
+        + env(safe-area-inset-bottom)
+      );
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+      max-width: min(var(--section-indicator-width), calc(100vw - 32px - env(safe-area-inset-right)));
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  color: #9d4300;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.12);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-scroll-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
+}
+
+.section-scroll-indicator-value {
+  color: #1f1f1f;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+    @media (max-width: 640px) {
+      :root {
+        --section-fab-right: 12px;
+        --section-fab-bottom: 12px;
+        --section-fab-size: 42px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 8px;
+        --section-indicator-width: 180px;
+      }
+
+      .section-scroll-indicator {
+        padding: 7px 10px;
+        gap: 6px;
+        font-size: 10px;
+        line-height: 1;
+      }
+
+      .section-scroll-indicator-value {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .section-scroll-indicator > span:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --section-fab-right: 10px;
+        --section-fab-bottom: 10px;
+        --section-fab-size: 40px;
+        --section-fab-gap: 8px;
+        --section-indicator-gap: 6px;
+        --section-indicator-width: 160px;
+      }
+
+      .section-scroll-indicator {
+        padding: 6px 9px;
+        border-radius: 999px;
+      }
+    }
+
+</style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -862,6 +1136,20 @@
   <meta name="apple-mobile-web-app-title" content="FindMyGSoC" />
 </head>
 <body class="bg-background text-on-surface font-body antialiased">
+
+<!-- Section Navigation Buttons -->
+<div id="sectionScrollIndicator" class="section-scroll-indicator" aria-live="polite" aria-atomic="true">
+  <span class="section-scroll-indicator-dot" aria-hidden="true"></span>
+  <span>Section:</span>
+  <span id="sectionScrollIndicatorValue" class="section-scroll-indicator-value">Timeline</span>
+</div>
+<button id="prevSectionBtn" class="section-scroll-btn" aria-label="Previous Section">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</button>
+<button id="nextSectionBtn" class="section-scroll-btn" aria-label="Next Section">
+  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+</button>
+
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
@@ -882,12 +1170,13 @@
       </span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a class="desktop-nav-link text-orange-600 is-active transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#guide" data-section="guide">Guide</a>
       </nav>
     </div>
     
@@ -939,7 +1228,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-40 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -958,31 +1247,31 @@
     </div>
     
     <div class="p-4 space-y-1">
-      <a href="#timeline" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
+      <a href="#timeline" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="timeline">
         <span class="material-symbols-outlined text-lg">schedule</span>
         Timeline
       </a>
-      <a href="#orgs" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
+      <a href="#orgs" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="orgs">
         <span class="material-symbols-outlined text-lg">business</span>
         Organizations
       </a>
-      <a href="#ai-recommender" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
+      <a href="#ai-recommender" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="ai-recommender">
         <span class="material-symbols-outlined text-lg">auto_awesome</span>
         AI Recommender
       </a>
-      <a href="#watchlist" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
+      <a href="#watchlist" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="watchlist">
         <span class="material-symbols-outlined text-lg">bookmark</span>
         Watchlist
       </a>
-      <a href="#issues" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
+      <a href="#issues" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="issues">
         <span class="material-symbols-outlined text-lg">bug_report</span>
         Issues
       </a>
-      <a href="#mentors" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
+      <a href="#mentors" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="mentors">
         <span class="material-symbols-outlined text-lg">group</span>
         Mentors
       </a>
-      <a href="#guide" onclick="setActiveMenu(this)" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
+      <a href="#guide" class="mobile-menu-link flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" data-section="guide">
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
@@ -998,7 +1287,7 @@
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"> 
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch"> 
     <div class="lg:col-span-7">
       <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary mb-6 sm:mb-8">
         <span class="material-symbols-outlined text-sm icon-fill" style="color:#f97316">verified</span>
@@ -1008,7 +1297,7 @@
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+        Browse all <strong data-org-count>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
@@ -1026,16 +1315,15 @@
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
-        </button>
+       <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+  🎲 Surprise Me!
+</button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm" data-org-count>184</p></div>
         </div>
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
@@ -1060,7 +1348,7 @@
             <h3 class="font-headline font-extrabold text-lg sm:text-xl">2026 Timeline</h3>
             <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div id="timeline-milestones" class="space-y-4 sm:space-y-5"></div>
+          <div id="timeline-milestones" aria-label="GSoC timeline milestones" class="space-y-4 sm:space-y-5 overflow-y-auto max-h-[50vh] pl-4 no-scrollbar focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-lg"></div>
           <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-zinc-100">
             <div class="flex items-center justify-between">
               <span class="text-xs text-zinc-500" id="countdown-label">Next milestone</span>
@@ -1120,7 +1408,7 @@
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
     <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
@@ -1285,10 +1573,44 @@
       <div class="space-y-6">
         <div class="bg-white rounded-2xl p-6 border border-zinc-100">
           <h4 class="font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">event</span> Upcoming Deadlines</h4>
-          <div class="space-y-4">
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p><p class="text-sm font-bold">Proposal Submission Deadline</p><p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p></div>
-            <div><p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p><p class="text-sm font-bold">Review Period Starts</p><p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p></div>
+          <div id="dynamic-deadlines-container" class="space-y-4">
+            <div class="deadline-node" data-date="2026-03-31">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">MAR 31, 2026</p>
+              <p class="text-sm font-bold">Proposal Submission Deadline</p>
+              <p class="text-xs text-zinc-500">Ensure your final proposals are submitted by 18:00 UTC.</p>
+            </div>
+            <div class="deadline-node" data-date="2026-04-21">
+              <p class="text-[10px] font-label uppercase tracking-wider text-zinc-400">APR 21, 2026</p>
+              <p class="text-sm font-bold">Review Period Starts</p>
+              <p class="text-xs text-zinc-500">Mentors begin ranking of proposals.</p>
+            </div>
           </div>
+          <p id="deadlines-empty-fallback" class="text-xs text-zinc-400 italic hidden mt-4">No upcoming deadlines.</p>
+          <script>
+            (function runtimeDeadlineFilter() {
+              const now = new Date();
+              const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+              const container = document.getElementById('dynamic-deadlines-container');
+              if (!container) return;
+              const nodes = container.querySelectorAll('.deadline-node');
+              let activeCount = 0;
+              nodes.forEach(node => {
+                const dateStr = node.dataset.date;
+                if (!dateStr) return;
+                const [year, month, day] = dateStr.split('-').map(Number);
+                if (isNaN(year) || isNaN(month) || isNaN(day)) return;
+                const nodeUTC = Date.UTC(year, month - 1, day);
+                if (nodeUTC < todayUTC) {
+                  node.style.display = 'none';
+                } else {
+                  node.style.display = 'block';
+                  activeCount++;
+                }
+              });
+              const fallback = document.getElementById('deadlines-empty-fallback');
+              if (fallback) fallback.style.display = activeCount === 0 ? 'block' : 'none';
+            })();
+          </script>
         </div>
         <div class="bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 p-4 opacity-20"><span class="material-symbols-outlined text-5xl">auto_awesome</span></div>
@@ -1317,9 +1639,9 @@
         <p class="text-xs text-green-600" id="issuesBannerSubtitle">Updated every 6 hours via GitHub Actions — no API rate limits for visitors.</p>
       </div>
     </div>
-    <div class="ml-auto text-right">
+    <div class="sm:ml-auto flex flex-col items-start sm:items-end gap-1">
       <span id="issuesLastUpdated" class="text-xs font-mono text-green-600">Last updated: pending refresh</span>
-      <span id="issuesStaleNote" class="hidden ml-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
+      <span id="issuesStaleNote" class="hidden text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">⏸ GSoC selection complete. Data won't update frequently.</span>
     </div>
   </div>
   <!-- Issue Cards -->
@@ -1505,27 +1827,27 @@
 </section>
 
 <!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
-<section class="bg-zinc-900 py-20 px-6">
+<section class="bg-surface-container-low py-20 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold font-headline tracking-tight text-white mb-4">New to GSoC? Start here.</h2>
-      <p class="text-zinc-400 max-w-2xl mx-auto">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold font-headline tracking-tight mt-2">New to GSoC? Start here.</h2>
+      <p class="text-zinc-600 max-w-2xl mx-auto mt-4">Google Summer of Code is a global, online program focused on bringing new contributors into open source software development.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
-        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-primary group-hover:scale-110 transition-transform">1</div>
-        <h3 class="text-xl font-bold text-white mb-3">Explore Organizations</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
+        <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
+        <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse all <strong data-org-count>184</strong> open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
-        <h3 class="text-xl font-bold text-white mb-3">Submit a Proposal</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
+        <h3 class="text-xl font-bold mb-3">Submit a Proposal</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">Reach out to mentors and write a detailed proposal outlining how you'll contribute to your chosen project.</p>
       </div>
-      <div class="bg-white/5 border border-white/10 p-8 rounded-3xl group hover:bg-white/10 transition-all">
+      <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-green-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-green-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform">3</div>
-        <h3 class="text-xl font-bold text-white mb-3">Start Coding</h3>
-        <p class="text-zinc-400 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
+        <h3 class="text-xl font-bold mb-3">Start Coding</h3>
+        <p class="text-zinc-600 text-sm leading-relaxed">If accepted, spend your summer coding under the guidance of experienced mentors and earn a stipend of $1,500–$6,600.</p>
       </div>
     </div>
   </div>
@@ -1592,25 +1914,10 @@
   </div>
 </section>
 
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="w-full border-t border-zinc-200 bg-zinc-100 pb-48">
-  <div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-primary-container flex items-center justify-center"><span class="text-white font-bold text-[10px]">G</span></div>
-        <span class="text-lg font-bold text-zinc-900">FindMyGSoC</span>
-      </div>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">© 2026 S3DFX-CYBER · Built for the Open Source Community</p>
-    </div>
-    <nav class="flex flex-wrap gap-6" aria-label="Footer navigation">
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://discord.gg/mgWV3xSV7" target="_blank" rel="noopener noreferrer">Community</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://summerofcode.withgoogle.com/programs/2026/organizations" target="_blank" rel="noopener noreferrer">GSoC 2026</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="privacy.html">Privacy</a>
-          <a class="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-orange-500 transition-all" href="#contact">Contact</a>
-    </nav>
-  </div>
-</footer>
+<!-- Footer Placeholder -->
+<div id="footer-placeholder"></div>
+<script src="src/js/footer.js"></script>
+
 
 <!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal-bg" id="orgModal">
@@ -1646,7 +1953,7 @@
         </div>
       </div>
 
-      <div class="section-title">Participation Timeline</div>
+      <div class="section-title">Participation Timeline<span style="font-weight:400;font-size:0.7rem;font-style:italic;color:#888;text-transform:none;letter-spacing:0.02em"> · click a year to explore its projects</span></div>
       <div class="timeline-grid" id="mTimeline"></div>
 
       <div class="section-title">Mentors &amp; Contact</div>
@@ -1806,6 +2113,37 @@
 <script src="agent/scripts/orgs.js"></script>
 <script>
   // ══════════════════════════════════════════════
+  // SAFE ORG DATA GUARD
+  // ══════════════════════════════════════════════
+  if(typeof ORGS === 'undefined' || !Array.isArray(ORGS)){
+    globalThis.ORGS = [];
+  }
+
+  // ══════════════════════════════════════════════
+  // ORG COUNT INITIALIZATION
+  // ══════════════════════════════════════════════
+  function initializeOrgCounts(){
+    const orgCount = ORGS.length > 0 ? ORGS.length : 184;
+    
+    // Update all org count display references
+    document.querySelectorAll('[data-org-count]').forEach(el => {
+      el.textContent = orgCount;
+    });
+    
+    // Update org total summary references
+    document.querySelectorAll('[data-org-total]').forEach(el => {
+      el.textContent = orgCount;
+    });
+  }
+  
+  // Initialize org counts when DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initializeOrgCounts);
+  } else {
+    initializeOrgCounts();
+  }
+
+  // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
   (function(){
@@ -1908,116 +2246,6 @@
       }
     }
   }
-
-function setDesktopNavState(activeSection) {
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    const linkSection = link.dataset.section;
-    if (linkSection === activeSection) {
-      link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
-      link.classList.add('text-orange-600', 'is-active');
-    } else {
-      link.classList.remove('text-orange-600', 'is-active');
-      link.classList.add('text-zinc-600', 'hover:text-zinc-900');
-    }
-  });
-}
-
-  function setMobileNavState(activeSection){
-    const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
-    allMobileLinks.forEach(link => {
-      const linkSection = link.dataset.section;
-      if(linkSection === activeSection){
-        link.classList.remove('text-zinc-700', 'hover:bg-zinc-100');
-        link.classList.add('text-orange-600', 'bg-orange-50');
-      } else {
-        link.classList.remove('text-orange-600', 'bg-orange-50');
-        link.classList.add('text-zinc-700', 'hover:bg-zinc-100');
-      }
-    });
-  }
-
-  function setActiveNavSection(activeSection){
-    setDesktopNavState(activeSection);
-    setMobileNavState(activeSection);
-  }
-
-  function getTrackedSections(){
-    const sectionIds = Array.from(new Set(
-      Array.from(document.querySelectorAll('.desktop-nav-link, .mobile-menu-link'))
-        .map(link => link.dataset.section)
-        .filter(Boolean)
-    ));
-
-    return sectionIds
-      .map(sectionId => document.getElementById(sectionId))
-      .filter(Boolean)
-      .sort((a, b) => a.offsetTop - b.offsetTop);
-  }
-
-  let pendingSection = null;
-
-  // Set active menu item and update UI
-  globalThis.setActiveMenu = function(clickedLink){
-    pendingSection = clickedLink.dataset.section;
-    setActiveNavSection(pendingSection);
-
-    setTimeout(() => {
-      closeMobileMenu();
-    }, 300);
-  };
-
-  document.querySelectorAll('.desktop-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      pendingSection = link.dataset.section;
-      setActiveNavSection(pendingSection);
-    });
-  });
-
-  // Update active state based on scroll position
-  function updateActiveSection() {
-    const sections = getTrackedSections();
-    if(!sections.length) return;
-
-    const offset = 100;
-    const topLockThreshold = 24;
-    const scrollPosition = window.scrollY + offset;
-    let currentSection = sections[0].id;
-
-    if(window.scrollY <= topLockThreshold){
-      setActiveNavSection('orgs');
-      return;
-    }
-
-    sections.forEach(section => {
-      if(scrollPosition >= section.offsetTop){
-        currentSection = section.id;
-      }
-    });
-
-    if(pendingSection){
-      const targetSection = document.getElementById(pendingSection);
-      if(targetSection){
-        const targetTop = targetSection.offsetTop - offset;
-        const targetBottom = targetSection.offsetTop + targetSection.offsetHeight - offset;
-        const targetReached = window.scrollY >= targetTop && window.scrollY < targetBottom;
-
-        if(!targetReached){
-          setActiveNavSection(pendingSection);
-          return;
-        }
-      }
-
-      pendingSection = null;
-    }
-
-    setActiveNavSection(currentSection);
-  }
-
-  // Listen for scroll events
-  window.addEventListener('scroll', updateActiveSection);
-  
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', updateActiveSection);
 
   // ══════════════════════════════════════════════
   // Shared escaping helper (for all dynamic text used in HTML strings)
@@ -2748,8 +2976,15 @@ function setDesktopNavState(activeSection) {
 
       container.innerHTML = MILESTONES.map((m, i) => {
         const isActive = i === activeIdx;
+        const isFuture = i >= activeIdx;
         const isLast = i === MILESTONES.length - 1;
-        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        const connectorClass = isFuture
+  ? "bg-orange-400/70"
+  : "bg-zinc-200";
+
+const connector = !isLast
+  ? `<div class="w-[2px] h-10 ${connectorClass}"></div>`
+  : '';
         let dateStr;
         try {
           dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -2758,27 +2993,46 @@ function setDesktopNavState(activeSection) {
         }
 
           if (isActive && !allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-primary ring-4 ring-orange-100 pulse-dot"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-primary">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               ${m.note ? `<p class="text-xs text-zinc-500 mt-1">${escapeHtml(m.note)}</p>` : ''}</div>
             </div>`;
           } else if (isActive && allPast) {
-            return `<div class="flex gap-3 sm:gap-4">
+            return `<div class="flex gap-3 sm:gap-4 current-milestone">
               <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-green-600">${escapeHtml(dateStr)}</p>
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
             </div>`;
+          } else if (isFuture) {
+            return `<div class="flex gap-3 sm:gap-4">
+              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-zinc-400"></div>${connector}</div>
+              <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(m.label)}</p></div>
+            </div>`;
           } else {
             return `<div class="flex gap-3 sm:gap-4 opacity-40">
-              <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
+              <div class="flex flex-col items-center"><div class="w-2.5 h-2.5 rounded-full bg-white/80"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
               <p class="text-sm font-bold text-zinc-500">${escapeHtml(m.label)}</p></div>
             </div>`;
           }
       }).join('');
+      const currentMilestone = container.querySelector('.current-milestone');
+      requestAnimationFrame(() => { 
+        if (currentMilestone) {
+        container.scrollTo({
+          top:
+            currentMilestone.offsetTop -
+            container.offsetTop -
+            container.clientHeight / 2 +
+            currentMilestone.clientHeight / 2,
+          behavior: 'smooth'
+        });
+      }
+      });
     } catch (err) {
       console.warn('[Timeline] renderTimeline failed:', err);
     }
@@ -3065,7 +3319,7 @@ btn.__orgListenerAttached = true;
       item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
       item.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" class="w-full h-full object-contain" />
+          <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain" />
         </div>
         <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
         <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
@@ -3078,10 +3332,8 @@ btn.__orgListenerAttached = true;
     // Add empty slots
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.onclick = () =>{
-        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
-      };
+      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50 cursor-pointer hover:opacity-80 hover:border-orange-400 transition-all';
+      empty.onclick = () => openOrgPicker(i);
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
@@ -3159,6 +3411,57 @@ btn.__orgListenerAttached = true;
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
     document.body.style.overflow = 'auto';
+  }
+
+  let orgPickerTargetSlot = null;
+
+  function openOrgPicker(slotIndex) {
+    orgPickerTargetSlot = slotIndex;
+    document.getElementById('orgPickerSearch').value = '';
+    filterOrgPicker('');
+    const modal = document.getElementById('orgPickerModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('orgPickerSearch').focus(), 50);
+  }
+
+  function closeOrgPicker() {
+    document.getElementById('orgPickerModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    orgPickerTargetSlot = null;
+  }
+
+  function filterOrgPicker(query) {
+    const list = document.getElementById('orgPickerList');
+    const q = query.toLowerCase();
+    const filtered = ORGS.filter(o => !compareList.includes(o.name) && o.name.toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<p style="text-align:center;color:#a1a1aa;font-size:14px;padding:24px 0;">No organizations found</p>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    filtered.forEach(org => {
+      const item = document.createElement('div');
+      item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #e4e4e7;border-radius:8px;cursor:pointer;transition:background 0.15s;';
+      item.onmouseenter = () => item.style.background = '#fef3e2';
+      item.onmouseleave = () => item.style.background = '';
+      item.innerHTML = `
+        <div>
+          <p style="font-weight:700;font-size:14px;color:#1a1c1c;">${escapeHtml(org.name)}</p>
+          <p style="font-size:11px;color:#8c7164;margin-top:2px;">${escapeHtml(org.cat)} · ${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+        </div>
+        <button style="background:#9d4300;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;">Add</button>
+      `;
+      item.querySelector('button').onclick = () => {
+        compareList[orgPickerTargetSlot] = org.name;
+        compareList = compareList.filter(Boolean);
+        renderCompare();
+        closeOrgPicker();
+      };
+      list.appendChild(item);
+    });
   }
 
   // ══════════════════════════════════════════════
@@ -3268,6 +3571,8 @@ btn.__orgListenerAttached = true;
       closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
+    } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
+      closeOrgPicker();
     }
   });
   
@@ -3708,9 +4013,20 @@ btn.__orgListenerAttached = true;
 
     // Timeline
     let timelineHtml = '';
-    for(let y=2020; y<=2026; y++) {
-       const active = (y >= org.firstYear);
-       timelineHtml += `<span class="${y===2026?'current-year':''} ${active?'opacity-100':'opacity-30'}">${y}</span>`;
+    for (let y = 2020; y <= 2026; y++) {
+      const active = (y >= org.firstYear);
+      const isCurrent = (y === 2026);
+      let url = null;
+      if (active) {
+        if (y === 2020) url = sanitizeHrefUrl(org['2020_project_url'] || null);
+        else if (y === 2021) url = sanitizeHrefUrl(org['2021_project_url'] || null);
+        else if (org.slug) url = sanitizeHrefUrl(`https://summerofcode.withgoogle.com/programs/${y}/organizations/${org.slug}`);
+      }
+      if (url) {
+        timelineHtml += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="timeline-year-link${isCurrent ? ' current-year' : ''}" title="View ${escapeHtml(org.name)} at GSoC ${y}">${y}</a>`;
+      } else {
+        timelineHtml += `<span class="${isCurrent ? 'current-year ' : ''}${active ? 'opacity-100' : 'opacity-30'}">${y}</span>`;
+      }
     }
     document.getElementById('mTimeline').innerHTML = timelineHtml;
 
@@ -3854,6 +4170,7 @@ if(org.ideas){
     const heroSearch = document.getElementById('hero-search');
     if (heroSearch) heroSearch.value = '';
   
+    if (typeof clearAllLanguages === 'function') clearAllLanguages();
     // Reset chips
     document.querySelectorAll('.filter-chip').forEach(chip => {
       chip.classList.remove('bg-orange-600', 'text-white');
@@ -3881,7 +4198,9 @@ if(org.ideas){
       });
     }
 
-    applyFilters();
+    filteredOrgs = [...ORGS];
+    renderOrgs(true);
+    applyFilters(); // to reset URL params
   };
 
   document.getElementById('searchInput').addEventListener('input', () => {
@@ -4029,7 +4348,16 @@ if(org.ideas){
       if (lastUpdatedEl) {
         if (data.updated_at) {
           const mins = Math.max(1, Math.floor((Date.now() - new Date(data.updated_at).getTime()) / 60000));
-          const relative = mins < 60 ? `${mins} min ago` : `${Math.floor(mins / 60)} hours ago`;
+          const hours = Math.floor(mins / 60);
+          const days = Math.floor(hours / 24);
+          let relative;
+          if (mins < 60) {
+            relative = `${mins} min ago`;
+          } else if (hours < 24) {
+            relative = `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+          } else {
+            relative = `${days} ${days === 1 ? 'day' : 'days'} ago`;
+          }
           lastUpdatedEl.textContent = `Last updated: ${relative}`;
         } else {
           lastUpdatedEl.textContent = 'Last updated: unavailable';
@@ -4476,6 +4804,35 @@ if(org.ideas){
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+
+  // Safe HTML utilities for recommendation-ui.js
+  
+  class SafeHTMLString extends String {}
+  SafeHTMLString.prototype.__isSafeHTML = true;
+
+  function safeHTML(strings, ...values) {
+    let result = '';
+    for (let i = 0; i < strings.length; i++) {
+      result += strings[i];
+      if (i < values.length) {
+        const val = values[i];
+        let rendered;
+        if (val && val.__isSafeHTML) {
+          rendered = val.toString();
+        } else if (Array.isArray(val)) {
+          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : escapeHtml(x)).join('');
+        } else {
+          rendered = escapeHtml(val == null ? '' : String(val));
+        }
+        result += rendered;
+      }
+    }
+    return new SafeHTMLString(result);
+  }
+
+  function rawHTML(v) { return new SafeHTMLString(v || ''); }
+  globalThis.safeHTML = safeHTML;
+  globalThis.rawHTML = rawHTML;
 </script>
 
 <!-- Vercel Speed Insights -->
@@ -4491,9 +4848,11 @@ if(org.ideas){
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     
-    <button class="close-btn" onclick="closeHelpModal()" aria-label="Close keyboard shortcuts modal">
+    <button class="close-btn" onclick="closeHelpModal()"  aria-label="Close keyboard shortcuts modal">
       <span class="material-symbols-outlined">close</span>
     </button>
+      
+    
 
     <div class="modal-header">
       <h2>Keyboard Shortcuts</h2>
@@ -4510,33 +4869,78 @@ if(org.ideas){
       <th class="py-2">Action</th>
     </tr>
   </thead>
+<tbody>
 
-  <tbody>
-    <tr>
-      <td class="py-2">↑ ↓ ← →</td>
-      <td class="py-2">Move focus between cards</td>
-    </tr>
+<tr class="category-row">
+  <td colspan="2">Navigation</td>
+</tr>
 
-    <tr>
-      <td class="py-2">Enter</td>
-      <td class="py-2">Open focused card</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2">
+    <kbd>↑</kbd>
+    <kbd>↓</kbd>
+    <kbd>←</kbd>
+    <kbd>→</kbd>
+  </td>
+  <td class="py-2">Move focus between cards</td>
+</tr>
 
-    <tr>
-      <td class="py-2">C</td>
-      <td class="py-2">Toggle compare</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Enter</kbd></td>
+  <td class="py-2">Open focused card</td>
+</tr>
 
-    <tr>
-      <td class="py-2">Esc</td>
-      <td class="py-2">Close panel</td>
-    </tr>
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>/</kbd></td>
+  <td class="py-2">Focus search bar</td>
+</tr>
 
-    <tr>
-      <td class="py-2">?</td>
-      <td class="py-2">Toggle help dialog</td>
-    </tr>
-  </tbody>
+
+<tr class="category-row">
+  <td colspan="2">Actions</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>C</kbd></td>
+  <td class="py-2">Toggle compare</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>A</kbd></td>
+  <td class="py-2">Go to AI Recommender Page</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>M</kbd></td>
+  <td class="py-2">Go to Mentors Page</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>R</kbd></td>
+  <td class="py-2">Reset filters</td>
+</tr>
+
+
+<tr class="category-row">
+  <td colspan="2">General</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>H</kbd></td>
+  <td class="py-2">Go to top</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Esc</kbd></td>
+  <td class="py-2">Close panel</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>?</kbd></td>
+  <td class="py-2">Open help dialog</td>
+</tr>
+
+</tbody>
 </table>
 
        
@@ -4568,13 +4972,43 @@ document.addEventListener('DOMContentLoaded', () => {
     helpBtn.addEventListener('click', openHelpModal);
   }
 
-  document.addEventListener('keydown', (e) => {
-
-    if (e.key === '?') {
-      openHelpModal();
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+    return;
+}
+  const active = document.activeElement;
+if (
+    active &&
+    (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
+        active.id === 'searchInput'
+    )
+) {
+        return;
     }
+const helpModalOpen =
+  document.getElementById('helpModal')?.classList.contains('open');
 
-    if (e.key === 'Escape') {
+const orgModalOpen =
+  document.getElementById('orgModal')?.classList.contains('open');
+
+const proposalModalOpen =
+  document.getElementById('proposalModal')?.classList.contains('open');
+
+if (helpModalOpen || orgModalOpen || proposalModalOpen) {
+  return;
+}
+
+    // Help modal
+    if(e.key==='?'){
+        e.preventDefault();
+        openHelpModal();
+    }
+  
+    if(e.key==='Escape'){
+        e.preventDefault();
+        
+    
       if (document.getElementById('proposalModal')?.classList.contains('open')) {
         globalThis.ProposalBuilder?.close?.();
       } else {
@@ -4582,7 +5016,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-  });
+    // AI recommender
+    if(e.key.toLowerCase()==='a'){
+        e.preventDefault();
+
+        document
+        .getElementById('ai-recommender')
+        ?.scrollIntoView({
+            behavior:'smooth'
+        });
+    }
+
+    // Mentors page
+    if(e.key.toLowerCase()==='m'){
+        e.preventDefault();
+
+        document
+        .getElementById('mentors')
+        ?.scrollIntoView({
+            behavior:'smooth'
+        });
+    }
+
+    // Go to top
+    if(e.key.toLowerCase()==='h'){
+        e.preventDefault();
+
+        window.scrollTo({
+            top:0,
+            behavior:'smooth'
+        });
+    }
+
+    // Reset filters
+if(e.key.toLowerCase()==='r'){
+    e.preventDefault();
+    window.clearAllFilters();
+    return;
+}
+});
 
   window.closeHelpModal = closeHelpModal;
 
@@ -4690,156 +5162,253 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 <script>
-const logoLink = document.getElementById("logoLink");
+(function () {
+  const sectionIds = ["timeline","orgs","ai-recommender","watchlist","issues","mentors","guide","contact"];
+  const sectionLabels = {
+    timeline: "Timeline",
+    orgs: "Organizations",
+    "ai-recommender": "AI Recommender",
+    watchlist: "Watchlist",
+    issues: "Issues",
+    mentors: "Mentors",
+    guide: "Guide",
+    contact: "Contact"
+  };
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const mainHeader = document.querySelector("header.fixed.top-0");
 
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
+  let currentSection = 0;
+  const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
 
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
+  function getSectionDetectionOffset() {
+    return mainHeader?.clientHeight || 0;
+  }
 
-    // Remove active classes from desktop nav links
+  function scrollToSectionIndex(index) {
+    const targetSection = sections[index];
+    if (!targetSection) return;
+    // Use scrollIntoView to respect scroll-margin-top defined in CSS
+    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function updateSectionIndicator() {
+    const activeSectionId = sections[currentSection]?.id;
+
+    if (sectionIndicatorValue) {
+      sectionIndicatorValue.textContent = sectionLabels[activeSectionId] || "Timeline";
+    }
+  }
+
+  function updateNavState() {
+    const activeSectionId = sections[currentSection]?.id;
+
     document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+      const linkSection = link.dataset.section;
 
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-600", "hover:text-zinc-900");
+        link.classList.add("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+      } else {
+        link.classList.remove("text-orange-600", "font-bold", "border-b-2", "border-orange-600");
+        link.classList.add("text-zinc-600", "hover:text-zinc-900");
+      }
     });
 
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
+    document.querySelectorAll(".mobile-menu-link").forEach(link => {
+      const linkSection = link.dataset.section;
 
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
+      if (linkSection === activeSectionId) {
+        link.classList.remove("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+        link.classList.add("text-orange-600", "bg-orange-50", "font-bold");
+      } else {
+        link.classList.remove("text-orange-600", "bg-orange-50", "font-bold");
+        link.classList.add("text-zinc-700", "hover:bg-zinc-100", "font-medium");
+      }
+    });
 
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
+    updateSectionIndicator();
+  }
+
+  function setCurrentSectionById(sectionId) {
+    const nextSectionIndex = sections.findIndex(section => section.id === sectionId);
+
+    if (nextSectionIndex === -1) return;
+
+    currentSection = nextSectionIndex;
+    updateNavState();
+  }
+
+  const logoLink = document.getElementById("logoLink");
+
+  if (logoLink) {
+    logoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      setCurrentSectionById("timeline");
+      scrollToSectionIndex(currentSection);
+    });
+  }
+
+  let isNavClicking = false;
+  let navClickTimer = null;
+
+  document.querySelectorAll(".desktop-nav-link").forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
+      setCurrentSectionById(link.dataset.section);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1500);
+    });
+  });
+
+  document.querySelectorAll(".mobile-menu-link").forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // stop browser anchor scroll
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
+      setCurrentSectionById(link.dataset.section);
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1500);
+
+      if (typeof globalThis.toggleMenu === "function") {
+        globalThis.toggleMenu();
+      }
+    });
+  });
+
+  function updateCurrentSection() {
+      if (isNavClicking) return;
+      const offset = getSectionDetectionOffset() + 10;
+      let found = 0;
+      let closestDistance = Infinity;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= offset) {
+          const distance = offset - rect.top;
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            found = index;
+          }
+        }
+      });
+      currentSection = found;
+      updateNavState();
     }
 
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+    const visibleSections = new Set();
 
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+    const observer = new IntersectionObserver((entries) => {
+       if (isNavClicking) return;
+        entries.forEach(entry => {
+          const index = sections.indexOf(entry.target);
+          if (index === -1) return;
+          if (entry.isIntersecting) {
+            visibleSections.add(index);
+          } else {
+            visibleSections.delete(index);
+          }
+        });
+        if (visibleSections.size === 0) {
+          return;
+        }
+        currentSection = Math.min(...visibleSections);
+        updateNavState();
+    }, {
+      rootMargin: `-${(mainHeader?.clientHeight || 0) + 10}px 0px -60% 0px`,
+      threshold: 0
     });
 
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
+    sections.forEach(section => observer.observe(section));
+    window.addEventListener("resize", updateCurrentSection);
+    updateCurrentSection();
 
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
+  const nextBtn = document.getElementById("nextSectionBtn");
+  const prevBtn = document.getElementById("prevSectionBtn");
 
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
+  function addClickFeedback(btn, direction) {
+    if (!btn) return;
+    btn.addEventListener("click", (e) => {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Icon bounce animation
+      const animClass = direction === "up" ? "bounce-up-active" : "bounce-down-active";
+      if (!prefersReducedMotion) {
+        btn.classList.add(animClass);
+      }
+
+      // Create ripple effect
+      if (!prefersReducedMotion) {
+        const ripple = document.createElement("span");
+        ripple.classList.add("click-ripple");
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = `${size}px`;
+
+        const isKeyboardClick = e.detail === 0;
+        const x = (!isKeyboardClick && e.clientX !== undefined && e.clientX !== null) ? (e.clientX - rect.left - size / 2) : (rect.width / 2 - size / 2);
+        const y = (!isKeyboardClick && e.clientY !== undefined && e.clientY !== null) ? (e.clientY - rect.top - size / 2) : (rect.height / 2 - size / 2);
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        btn.appendChild(ripple);
+
+        ripple.addEventListener("animationend", () => {
+          ripple.remove();
+        });
+
+        btn.addEventListener("animationend", (event) => {
+          if (event.animationName === "bounce-up" || event.animationName === "bounce-down") {
+            btn.classList.remove(animClass);
+          }
+        }, { once: true });
+      }
+    });
+  }
+
+  addClickFeedback(nextBtn, "down");
+  addClickFeedback(prevBtn, "up");
+
+  nextBtn?.addEventListener("click", () => {
+    if (currentSection < sections.length - 1) {
+      scrollToSectionIndex(currentSection + 1);
     }
   });
-}
-</script>
 
+  prevBtn?.addEventListener("click", () => {
+    if (currentSection > 0) {
+      scrollToSectionIndex(currentSection - 1);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+})();
+</script>
+<!-- ORG PICKER MODAL -->
+<dialog id="orgPickerModal" aria-modal="true" aria-labelledby="orgPickerTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;width:100%;height:100%;margin:0;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;">
+      <h2 id="orgPickerTitle" style="font-size:18px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;">Choose an Organization</h2>
+      <button onclick="closeOrgPicker()" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
+    </div>
+    <div style="padding:0 24px 12px;">
+      <input id="orgPickerSearch" type="text" placeholder="Search organizations..."
+        oninput="filterOrgPicker(this.value)"
+        style="width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;box-sizing:border-box;">
+    </div>
+    <div id="orgPickerList" style="overflow-y:auto;flex:1;padding:0 24px 24px;display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</dialog>
 <script>
-const logoLink = document.getElementById("logoLink");
-
-if (logoLink) {
-  logoLink.addEventListener("click", function (e) {
-    e.preventDefault();
-
-    // Scroll to timeline section
-    document.getElementById("timeline").scrollIntoView({
-      behavior: "smooth"
-    });
-
-    // Remove active classes from desktop nav links
-    document.querySelectorAll(".desktop-nav-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-
-      link.classList.add("text-zinc-600", "hover:text-zinc-900");
-    });
-
-    // Activate Timeline desktop nav link
-    const timelineLink = document.querySelector(
-      '.desktop-nav-link[href="#timeline"]'
-    );
-
-    if (timelineLink) {
-      timelineLink.classList.remove("text-zinc-600");
-
-      timelineLink.classList.add(
-        "text-orange-600",
-        "font-bold",
-        "border-b-2",
-        "border-orange-600"
-      );
-    }
-
-    // Sync mobile menu links
-    document.querySelectorAll(".mobile-menu-link").forEach(link => {
-      link.classList.remove(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-
-      link.classList.add(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-    });
-
-    const mobileTimelineLink = document.querySelector(
-      '.mobile-menu-link[data-section="timeline"]'
-    );
-
-    if (mobileTimelineLink) {
-      mobileTimelineLink.classList.remove(
-        "text-zinc-700",
-        "hover:bg-zinc-100",
-        "font-medium"
-      );
-
-      mobileTimelineLink.classList.add(
-        "text-orange-600",
-        "bg-orange-50",
-        "font-bold"
-      );
-    }
+  document.getElementById('orgPickerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeOrgPicker();
   });
-}
 </script>
-
 </body>
 </html>

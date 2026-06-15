@@ -528,8 +528,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 
 #back-to-top-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(var(--section-fab-bottom) + (var(--section-fab-size) + var(--section-fab-gap)) * 2 + 50px);
+  right: calc(var(--section-fab-right) + env(safe-area-inset-right));
   width: 44px;
   height: 44px;
   border-radius: 50%;

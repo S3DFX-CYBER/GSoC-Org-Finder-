@@ -25,9 +25,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initFooter() {
   const backToTopBtn = document.getElementById('back-to-top-btn');
+  const footerElement = document.querySelector('.premium-footer');
+
   if (backToTopBtn) {
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
+      let shouldShow = false;
+
+      if (footerElement) {
+        // Get the distance from the top of the viewport to the top of the footer
+        const footerTop = footerElement.getBoundingClientRect().top;
+        
+        // Show the button as soon as the top of the footer enters the screen
+        // (adding a small 50px buffer so it doesn't pop in too abruptly)
+        shouldShow = footerTop <= window.innerHeight + 50; 
+      } else {
+        // Fallback just in case the footer class changes
+        shouldShow = window.scrollY + window.innerHeight >= document.body.scrollHeight - 300;
+      }
+
+      if (shouldShow) {
         backToTopBtn.classList.add('show');
       } else {
         backToTopBtn.classList.remove('show');

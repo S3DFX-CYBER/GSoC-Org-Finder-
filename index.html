@@ -1482,7 +1482,11 @@ kbd:hover{
   </div>
   
   <!-- Hidden search input for JavaScript compatibility -->
-  <input type="hidden" id="searchInput" />
+  <input
+    type="hidden"
+    id="searchInput"
+    aria-label="Organization search query"
+  />
   
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
@@ -1535,7 +1539,13 @@ kbd:hover{
           <div class="mt-2 flex items-center justify-between">
             <label class="text-xs text-primary font-bold cursor-pointer hover:underline flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt
-              <input type="file" id="aiResumeFile" accept=".txt" class="hidden">
+              <input
+                type="file"
+                id="aiResumeFile"
+                accept=".txt"
+                class="hidden"
+                aria-label="Upload resume text file"
+              />
             </label>
           </div>
         </div>
@@ -2038,7 +2048,17 @@ kbd:hover{
       <div class="proposal-header-title">
         <h2 id="pwOrgName">Organization Proposal</h2>
           <label class="proposal-autosave">
-            <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
+            <label for="pwAutosaveToggle" class="proposal-autosave">
+              <input
+                type="checkbox"
+                id="pwAutosaveToggle"
+                aria-describedby="pwPrivacyNote"
+              />
+              Enable autosave
+            </label>
+            <p id="pwPrivacyNote">
+              Drafts are stored only on this device when autosave is enabled.
+            </p>
             Enable autosave
             <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
           </label>
@@ -5467,8 +5487,17 @@ if(e.key.toLowerCase()==='r'){
       <button onclick="closeOrgPicker()" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
     </div>
     <div style="padding:0 24px 12px;">
-      <input id="orgPickerSearch" type="text" placeholder="Search organizations..."
+      <label for="orgPickerSearch" class="sr-only">
+        Search organizations
+      </label>
+
+      <input
+        id="orgPickerSearch"
+        type="text"
+        placeholder="Search organizations."
         oninput="filterOrgPicker(this.value)"
+        aria-label="Search organizations"
+
         style="width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;box-sizing:border-box;">
     </div>
     <div id="orgPickerList" style="overflow-y:auto;flex:1;padding:0 24px 24px;display:flex;flex-direction:column;gap:6px;"></div>
@@ -5530,7 +5559,7 @@ if(e.key.toLowerCase()==='r'){
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
   }
 

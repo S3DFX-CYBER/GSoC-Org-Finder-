@@ -28,21 +28,18 @@ function initFooter() {
   const footerElement = document.querySelector('.premium-footer');
 
   if (backToTopBtn) {
-    let ticking = false; // Variable to track the requestAnimationFrame state
+    let ticking = false;
 
-    window.addEventListener('scroll', () => {
-      // Issue 1 Fix: Throttle the scroll event using requestAnimationFrame
+    globalThis.addEventListener('scroll', () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
+        globalThis.requestAnimationFrame(() => {
           let shouldShow = false;
 
           if (footerElement) {
-            // Get the distance from the top of the viewport to the top of the footer
             const footerTop = footerElement.getBoundingClientRect().top;
-            shouldShow = footerTop <= window.innerHeight + 50; 
+            shouldShow = footerTop <= globalThis.innerHeight + 50; 
           } else {
-            // Issue 2 Fix: Apply bot's exact suggestion for the fallback
-            shouldShow = window.scrollY > 300;
+            shouldShow = globalThis.scrollY > 300;
           }
 
           if (shouldShow) {
@@ -51,17 +48,16 @@ function initFooter() {
             backToTopBtn.classList.remove('show');
           }
 
-          ticking = false; // Reset the tick so the next frame can fire
+          ticking = false;
         });
         ticking = true;
       }
     }, { passive: true });
 
     backToTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      globalThis.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
-
   updateFooterStats();
 }
 

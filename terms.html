@@ -53,11 +53,11 @@
       #mobile-menu {
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.4s ease;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       #mobile-menu.open {
-        max-height: 420px;
+        max-height: 500px; /* Safe buffer for future nav items */
       }
     </style>
   </head>
@@ -81,7 +81,7 @@
           </h1>
         </div>
 
-        <!-- Desktop Navigation -->
+        <!-- Desktop Nav -->
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#" class="hover:text-[#ff7a00] transition-colors"
             >Timeline</a
@@ -629,7 +629,10 @@
             >
               <p>
                 The platform is provided on an "as-is" and "as-available" basis
-                without any warranties of any kind, whether express or implied.
+                without any warranties of any kind, whether express or implied,
+                including but not limited to warranties of accuracy,
+                reliability, merchantability, or fitness for a particular
+                purpose.
               </p>
               <p class="mt-4">
                 We do not warrant that the platform will be uninterrupted,
@@ -815,7 +818,7 @@
     </footer>
 
     <script>
-      // Mobile Menu Toggle
+      // Mobile Menu
       const hamburger = document.getElementById("hamburger");
       const mobileMenu = document.getElementById("mobile-menu");
 
@@ -827,12 +830,11 @@
           : "menu";
       });
 
-      // Accessible Accordion
+      // Accordion
       const accordionItems = document.querySelectorAll(".accordion-item");
 
       accordionItems.forEach((item) => {
         const header = item.querySelector(".accordion-header");
-
         header.addEventListener("click", () => {
           const isOpen = item.classList.contains("open");
 
@@ -879,24 +881,20 @@
         });
       }
 
-      // Initialize on load
+      // Initialize
       window.addEventListener("load", () => {
-        // Open first section + set ARIA
         document.getElementById("s1").classList.add("open");
         document
           .getElementById("header1")
           .setAttribute("aria-expanded", "true");
-
-        // Set initial TOC active state
         updateActiveTOC();
       });
 
-      // Optimized Scroll Spy
+      // Scroll Spy
       let isScrolling = false;
       window.addEventListener("scroll", () => {
         if (isScrolling) return;
         isScrolling = true;
-
         requestAnimationFrame(() => {
           updateActiveTOC();
           isScrolling = false;

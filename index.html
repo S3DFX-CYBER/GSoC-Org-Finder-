@@ -302,8 +302,9 @@ kbd:hover{
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
     .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
     .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
-    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
-    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
+    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .mentor-card:hover , .mentor-empty:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); transform: translateY(-4px); border-color: #d1d5db; }
+    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
@@ -561,7 +562,8 @@ kbd:hover{
     .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
     .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
-    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
+    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .dark .mentor-card:hover, .dark .mentor-empty:hover { box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5); transform: translateY(-4px); border-color: #52525b; background: #27272a; }
 
     :root {
       --section-fab-right: 24px;
@@ -1297,7 +1299,7 @@ kbd:hover{
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+        Browse all <strong data-org-count>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
@@ -1325,7 +1327,7 @@ kbd:hover{
       <div class="flex flex-wrap gap-3 sm:gap-4">
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm" data-org-count>184</p></div>
         </div>
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
@@ -1410,7 +1412,7 @@ kbd:hover{
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
     <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
@@ -1839,7 +1841,7 @@ kbd:hover{
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
         <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
-        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse all <strong data-org-count>184</strong> open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
@@ -2114,6 +2116,37 @@ kbd:hover{
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
+  // ══════════════════════════════════════════════
+  // SAFE ORG DATA GUARD
+  // ══════════════════════════════════════════════
+  if(typeof ORGS === 'undefined' || !Array.isArray(ORGS)){
+    globalThis.ORGS = [];
+  }
+
+  // ══════════════════════════════════════════════
+  // ORG COUNT INITIALIZATION
+  // ══════════════════════════════════════════════
+  function initializeOrgCounts(){
+    const orgCount = ORGS.length > 0 ? ORGS.length : 184;
+    
+    // Update all org count display references
+    document.querySelectorAll('[data-org-count]').forEach(el => {
+      el.textContent = orgCount;
+    });
+    
+    // Update org total summary references
+    document.querySelectorAll('[data-org-total]').forEach(el => {
+      el.textContent = orgCount;
+    });
+  }
+  
+  // Initialize org counts when DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initializeOrgCounts);
+  } else {
+    initializeOrgCounts();
+  }
+
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════

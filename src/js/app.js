@@ -1302,15 +1302,10 @@ globalThis.clearAllFilters = function () {
 
   activeChip = null;
   selectedLanguages.clear();
-  document.querySelectorAll('.pill.active').forEach(p => {
-    p.classList.remove('active');
-    p.setAttribute('aria-pressed', 'false');
-  });
+  matchAllLanguages = false;
 
-  renderSelectedLanguages();
   applyFilters();
-};
-
+  };
 // ══════════════════════════════════════════════
 // LIVE GITHUB STATS - API INTEGRATED FLOW
 // ══════════════════════════════════════════════
@@ -2366,6 +2361,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.chip;
+
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        c.classList.remove('bg-orange-600', 'text-white');
+        c.classList.add('bg-surface-container-highest');
+      });
+
+      if (activeChip === key) {
+        activeChip = null;
+      } else {
+        activeChip = key;
+        chip.classList.add('bg-orange-600', 'text-white');
+        chip.classList.remove('bg-surface-container-highest');
+      }
+
+      applyFilters();
+    });
+  });
   // Restore filter state from URL parameters
   (function restoreFiltersFromURL() {
     const params = new URLSearchParams(location.search);

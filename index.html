@@ -1421,9 +1421,33 @@ kbd:hover{
     </div>
   </div>
 
-  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
-    <div class="flex flex-wrap items-center gap-4">
+  <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of
+      184 organizations</p>
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- Export Dropdown -->
+      <div class="relative" id="exportDropdownWrapper">
+        <button id="exportBtn" onclick="toggleExportDropdown()" aria-haspopup="true" aria-expanded="false"
+          aria-controls="exportDropdownMenu" title="Export filtered results"
+          class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container-highest text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export
+          <span class="material-symbols-outlined text-sm" id="exportChevron">expand_more</span>
+        </button>
+        <div id="exportDropdownMenu" role="menu"
+          class="hidden absolute right-0 mt-2 w-44 bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl z-20 overflow-hidden">
+          <button role="menuitem" onclick="exportResults('csv')"
+            class="w-full flex items-center gap-2 px-4 py-3 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-orange-50 dark:hover:bg-zinc-800 hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">description</span>
+            Download CSV
+          </button>
+          <button role="menuitem" onclick="exportResults('json')"
+            class="w-full flex items-center gap-2 px-4 py-3 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-orange-50 dark:hover:bg-zinc-800 hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">data_object</span>
+            Download JSON
+          </button>
+        </div>
+      </div>
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -5454,6 +5478,121 @@ if(e.key.toLowerCase()==='r'){
   document.getElementById('orgPickerModal').addEventListener('click', function(e) {
     if (e.target === this) closeOrgPicker();
   });
+
+  // ─── EXPORT FILTERED RESULTS ─────────────────────────────────────────────────
+
+  function toggleExportDropdown() {
+    const menu = document.getElementById('exportDropdownMenu');
+    const btn  = document.getElementById('exportBtn');
+    const chevron = document.getElementById('exportChevron');
+    const isOpen = !menu.classList.contains('hidden');
+
+    if (isOpen) {
+      menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      chevron.textContent = 'expand_more';
+    } else {
+      menu.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      chevron.textContent = 'expand_less';
+    }
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('exportDropdownWrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+      const menu = document.getElementById('exportDropdownMenu');
+      const btn  = document.getElementById('exportBtn');
+      const chevron = document.getElementById('exportChevron');
+      if (menu) menu.classList.add('hidden');
+      if (btn)  btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
+    }
+  });
+
+  function getFilteredOrgs() {
+    // filteredOrgs is the array already computed by the app's render/filter logic.
+    // It's set as a global by the existing renderOrgs() function.
+    // If not exposed as global, fall back to reading visible cards.
+    if (typeof filteredOrgs !== 'undefined' && Array.isArray(filteredOrgs)) {
+      return filteredOrgs;
+    }
+    // Fallback: read org names from visible cards
+    return [];
+  }
+
+  function downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportResults(format) {
+    // Close the dropdown
+    const menu = document.getElementById('exportDropdownMenu');
+    if (menu) menu.classList.add('hidden');
+
+    const orgs = getFilteredOrgs();
+
+    if (!orgs || orgs.length === 0) {
+      alert('No organizations match the current filters — nothing to export.');
+      return;
+    }
+
+    const timestamp = new Date().toISOString().slice(0, 10); // e.g. 2026-06-15
+
+    if (format === 'csv') {
+      const headers = ['Name', 'Category', 'Languages', 'Competition', 'GSoC Years', 'First Year', 'GitHub URL', 'Ideas Link'];
+      const escape  = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const rows    = orgs.map(org => [
+        org.name,
+        org.cat,
+        (org.tags || []).join('; '),
+        org.competition,
+        org.years,
+        org.firstYear,
+        org.github ? `https://github.com/${org.github}` : '',
+        org.ideas || ''
+      ].map(escape).join(','));
+
+      const csv = [headers.map(escape).join(','), ...rows].join('\n');
+      downloadFile(csv, `gsoc-orgs-${timestamp}.csv`, 'text/csv;charset=utf-8;');
+
+    } else if (format === 'json') {
+      const exportData = orgs.map(org => ({
+        name:        org.name,
+        category:    org.cat,
+        languages:   org.tags || [],
+        competition: org.competition,
+        gsocYears:   org.years,
+        firstYear:   org.firstYear,
+        githubUrl:   org.github ? `https://github.com/${org.github}` : '',
+        ideasLink:   org.ideas || '',
+        description: org.desc || ''
+      }));
+      downloadFile(JSON.stringify(exportData, null, 2), `gsoc-orgs-${timestamp}.json`, 'application/json');
+    }
+  }
+
+  // Disable export button when 0 results
+  function updateExportButtonState(count) {
+    const btn = document.getElementById('exportBtn');
+    if (!btn) return;
+    if (count === 0) {
+      btn.setAttribute('disabled', 'true');
+      btn.title = 'No results to export';
+    } else {
+      btn.removeAttribute('disabled');
+      btn.title = 'Export filtered results';
+    }
+  }
 </script>
 </body>
 </html>

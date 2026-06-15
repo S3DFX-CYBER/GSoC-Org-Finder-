@@ -28,25 +28,32 @@ function initFooter() {
   const footerElement = document.querySelector('.premium-footer');
 
   if (backToTopBtn) {
+    let ticking = false; // Variable to track the requestAnimationFrame state
+
     window.addEventListener('scroll', () => {
-      let shouldShow = false;
+      // Issue 1 Fix: Throttle the scroll event using requestAnimationFrame
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          let shouldShow = false;
 
-      if (footerElement) {
-        // Get the distance from the top of the viewport to the top of the footer
-        const footerTop = footerElement.getBoundingClientRect().top;
-        
-        // Show the button as soon as the top of the footer enters the screen
-        // (adding a small 50px buffer so it doesn't pop in too abruptly)
-        shouldShow = footerTop <= window.innerHeight + 50; 
-      } else {
-        // Fallback just in case the footer class changes
-        shouldShow = window.scrollY + window.innerHeight >= document.body.scrollHeight - 300;
-      }
+          if (footerElement) {
+            // Get the distance from the top of the viewport to the top of the footer
+            const footerTop = footerElement.getBoundingClientRect().top;
+            shouldShow = footerTop <= window.innerHeight + 50; 
+          } else {
+            // Issue 2 Fix: Apply bot's exact suggestion for the fallback
+            shouldShow = window.scrollY > 300;
+          }
 
-      if (shouldShow) {
-        backToTopBtn.classList.add('show');
-      } else {
-        backToTopBtn.classList.remove('show');
+          if (shouldShow) {
+            backToTopBtn.classList.add('show');
+          } else {
+            backToTopBtn.classList.remove('show');
+          }
+
+          ticking = false; // Reset the tick so the next frame can fire
+        });
+        ticking = true;
       }
     }, { passive: true });
 

@@ -3096,7 +3096,11 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    } catch (e) {
+      console.warn('Failed to persist bookmarks:', e);
+    }
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3130,7 +3134,11 @@ btn.__orgListenerAttached = true;
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([]));
+    } catch (e) {
+      console.warn('Failed to clear bookmarks:', e);
+    }
     applyFilters();
     renderWatchlist();
     updateAIInsights();
@@ -4336,6 +4344,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
   });
+
+  const resumeFileInput = document.getElementById('aiResumeFile');
+  const resumeTextarea = document.getElementById('aiResumeText');
+  if (resumeFileInput && resumeTextarea) {
+    resumeFileInput.addEventListener('change', function() {
+      const file = this.files?.[0];
+      if (!file) return;
+      if (!file.name.endsWith('.txt') && file.type !== 'text/plain') {
+        alert('Please upload a .txt file only.');
+        this.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        resumeTextarea.value = e.target.result;
+      };
+      reader.readAsText(file);
+    });
+  }
 
   window.closeHelpModal = closeHelpModal;
 

@@ -81,6 +81,7 @@ export default async function handler(req) {
     try {
       let page = 1;
       let repos = [];
+      let partial = false;
       while (page <= 3) {
         try {
           const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
@@ -89,6 +90,7 @@ export default async function handler(req) {
           });
           if (!res.ok) {
             if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            partial = true;
             break;
           }
           const pageRepos = await res.json();
@@ -96,8 +98,8 @@ export default async function handler(req) {
           if (pageRepos.length < 100) break;
           page++;
         } catch (e) {
-          // Gracefully break loop on timeout/err for pages 2-3, allowing partial results
-          if (page === 1) throw e; 
+          if (page === 1) throw e;
+          partial = true;
           break;
         }
       }
@@ -108,7 +110,7 @@ export default async function handler(req) {
       let activeDays = 9999;
       
       repos.forEach(r => {
-        if (r.fork) return; // Skip forks for skill analysis
+        if (r.fork) return;
         totalStars += r.stargazers_count;
         if (r.language) {
           languageCounts[r.language] = (languageCounts[r.language] || 0) + 1;
@@ -140,7 +142,7 @@ export default async function handler(req) {
         ts: Date.now()
       };
       
-      safeCacheSet(cacheKey, result);
+      if (!partial) safeCacheSet(cacheKey, result);
       return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (err) {

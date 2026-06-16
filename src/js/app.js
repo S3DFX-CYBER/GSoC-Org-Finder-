@@ -2535,18 +2535,104 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sync hero-search
+  // Hero Quick-Search typeahead (dual-sync with index.html)
   const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
+  const heroResults = document.getElementById('heroSearchResults');
+  if (heroSearch && heroResults) {
+    let heroActiveIdx = -1;
+
+    function closeHeroDropdown() {
+      heroResults.classList.remove('open');
+      heroSearch.setAttribute('aria-expanded', 'false');
+      heroActiveIdx = -1;
+      heroSearch.removeAttribute('aria-activedescendant');
+    }
+
+    function openHeroDropdown() {
+      heroResults.classList.add('open');
+      heroSearch.setAttribute('aria-expanded', 'true');
+    }
+
+    function updateHeroActive(rows) {
+      rows.forEach((row, i) => {
+        row.classList.toggle('hero-result-active', i === heroActiveIdx);
+        row.setAttribute('aria-selected', i === heroActiveIdx ? 'true' : 'false');
+        if (i === heroActiveIdx) heroSearch.setAttribute('aria-activedescendant', row.id);
+      });
+      if (heroActiveIdx < 0) heroSearch.removeAttribute('aria-activedescendant');
+    }
+
+    function renderHeroDropdown(rawQuery) {
+      const q = rawQuery.trim().toLowerCase();
+      if (!q) { closeHeroDropdown(); return; }
+
+      const matches = heroSearchMatches(q);
+
+      if (matches.length === 0) {
+        heroResults.innerHTML = '<div class="hero-result-empty">No organizations found</div>';
+        openHeroDropdown();
+        return;
       }
+
+      heroResults.innerHTML = matches.map((org, i) => {
+        const owner = org.github ? org.github.split('/')[0] : '';
+        const logoUrl = owner ? `https://github.com/${escapeHtml(owner)}.png?size=80` : '';
+        const tags = org.tags || [];
+        const visible = tags.slice(0, 3);
+        const overflow = tags.length - visible.length;
+        const logoHtml = logoUrl
+          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` +
+            `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
+          : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
+        const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
+          (overflow > 0 ? `<span class="hero-result-tag-overflow">+${overflow}</span>` : '');
+        return `<button role="option" id="hero-result-${i}" class="hero-result-row"
+            data-org-name="${escapeHtml(org.name)}" aria-selected="false">
+            <div class="hero-result-logo">${logoHtml}</div>
+            <div class="hero-result-info">
+              <div class="hero-result-name">${boldMatch(org.name, q)}</div>
+              <div class="hero-result-tags">${tagHtml}</div>
+            </div>
+          </button>`;
+      }).join('');
+
+      heroActiveIdx = -1;
+      openHeroDropdown();
+
+      heroResults.querySelectorAll('.hero-result-row').forEach(row => {
+        row.addEventListener('click', () => {
+          openModal(row.dataset.orgName);
+          heroSearch.value = '';
+          closeHeroDropdown();
+        });
+      });
+    }
+
+    heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
+
+    heroSearch.addEventListener('keydown', (e) => {
+      const rows = [...heroResults.querySelectorAll('.hero-result-row')];
+      const n = rows.length;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        heroActiveIdx = n > 0 ? (heroActiveIdx + 1) % n : -1;
+        updateHeroActive(rows);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        heroActiveIdx = n > 0 ? (heroActiveIdx - 1 + n) % n : -1;
+        updateHeroActive(rows);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const target = heroActiveIdx >= 0 ? rows[heroActiveIdx] : n === 1 ? rows[0] : null;
+        if (target) { openModal(target.dataset.orgName); heroSearch.value = ''; closeHeroDropdown(); }
+      } else if (e.key === 'Escape') {
+        closeHeroDropdown();
+      }
+    });
+
+    document.addEventListener('mousedown', (e) => {
+      if (!heroSearch.contains(e.target) && !heroResults.contains(e.target)) closeHeroDropdown();
     });
   }
 

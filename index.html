@@ -5261,6 +5261,11 @@ if(e.key.toLowerCase()==='r'){
   let isNavClicking = false;
   let navClickTimer = null;
 
+  function releaseNavClickLock() {
+    isNavClicking = false;
+    updateCurrentSection();
+  }
+
   document.querySelectorAll(".desktop-nav-link").forEach(link => {
     link.addEventListener("click", (e) => {
       e.preventDefault(); // stop browser anchor scroll
@@ -5269,7 +5274,7 @@ if(e.key.toLowerCase()==='r'){
       setCurrentSectionById(link.dataset.section);
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
-        isNavClicking = false;
+        releaseNavClickLock();
       }, 1000);
     });
   });
@@ -5282,7 +5287,7 @@ if(e.key.toLowerCase()==='r'){
       setCurrentSectionById(link.dataset.section);
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
-        isNavClicking = false;
+        releaseNavClickLock();
       }, 1000);
 
       if (typeof globalThis.toggleMenu === "function") {
@@ -5385,7 +5390,7 @@ if(e.key.toLowerCase()==='r'){
       updateNavState();
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
-        isNavClicking = false;
+        releaseNavClickLock();
       }, 1000);
     }
   });
@@ -5398,7 +5403,7 @@ if(e.key.toLowerCase()==='r'){
       updateNavState();
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
-        isNavClicking = false;
+        releaseNavClickLock();
       }, 1000);
     }
   });

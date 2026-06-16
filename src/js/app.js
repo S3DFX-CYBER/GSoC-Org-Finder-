@@ -1391,21 +1391,6 @@ globalThis.openModal = function (name, triggerElement = null) {
   AN.trackOrg(org.name);
   addRecentlyViewed(org.name);
 
-  const mHeader = document.getElementById('mHeader');
-  if (mHeader) {
-    const category = getCategoryMeta(org.cat);
-    const ideasLinkHTML = (function(){
-      const u = sanitizeHrefUrl(org.ideas);
-      return u ? rawHTML(`<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>`) : '';
-    })();
-    mHeader.innerHTML = safeHTML`
-      <span class="category-tag text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${category.label}</span>
-      <h2 id="orgModalTitle" class="text-2xl font-bold font-headline mt-2">${org.name}</h2>
-      <p class="text-zinc-500 text-xs mt-1">GSoC Partner for ${String(org.years)} Years</p>
-      ${ideasLinkHTML}
-    `;
-  }
-
   const mDesc = document.getElementById('mDesc');
   if (mDesc) mDesc.textContent = org.desc;
 

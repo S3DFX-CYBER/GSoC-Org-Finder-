@@ -2,18 +2,24 @@
 
 /* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
 
+let currentAbortController = null;
+let currentRequestId = 0;
+let lastRecommendations = [];
+
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
-async function analyzeProfile(username, resume) {
+async function analyzeProfile(username, resume, options = {}) {
+  const { signal } = options;
   let githubProfile = null;
   let skills = [];
 
   if (username) {
     try {
-      githubProfile = await analyzeGitHubUser(username);
+      githubProfile = await analyzeGitHubUser(username, { signal });
     } catch (err) {
+      if (err.name === 'AbortError') throw err;
       console.warn("GitHub Analysis Failed:", err);
       if (!resume) throw err; // Only bubble up error if we possess no alternate datasource
     }
@@ -97,9 +103,9 @@ function handleCompareAction(e, btn, card) {
 }
 
 function handleCardActivation(card) {
-  const name = card.dataset.orgName;
-  if (typeof openModal === 'function' && name) {
-    openModal(name);
+  const idx = parseInt(card.dataset.orgIndex, 10);
+  if (typeof openModal === 'function' && !isNaN(idx) && idx >= 0) {
+    openModal(idx);
   }
 }
 
@@ -116,6 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+
+  document.addEventListener('compareListChanged',() => {
+    if(lastRecommendations.length){
+      renderRecommendations(lastRecommendations);
+    }
+  });
 
   // Handle file upload
   if (fileUpload) {
@@ -156,14 +168,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
+    const requestId = ++currentRequestId;
+
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume);
+      const recommendations = await analyzeProfile(username, resume, { signal });
+      
+      if (requestId !== currentRequestId) return;
+      
+      lastRecommendations = recommendations; 
       renderRecommendations(recommendations);
     } catch (err) {
+      if (requestId !== currentRequestId || err.name === 'AbortError') return;
       showError(err.message || "An unexpected error occurred during analysis.");
     } finally {
-      setAnalysisStateUI(false);
+      if (requestId === currentRequestId) {
+        setAnalysisStateUI(false);
+      }
     }
   });
 
@@ -235,8 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       return `
-      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}" 
-               data-org-name="${safeEscapeHtml(o.name)}">
+      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
+               data-org-name="${safeEscapeHtml(o.name)}"
+               data-org-index="${rec.orgIndex}">
         
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">

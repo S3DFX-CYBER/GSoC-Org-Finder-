@@ -1133,6 +1133,16 @@ kbd:hover{
         border-radius: 999px;
       }
     }
+@media (pointer: coarse) {
+  .filter-chip.bg-orange-600:hover {
+    background-color: #ea580c !important;
+    color: #1a0a00 !important;
+  }
+  .filter-chip.bg-surface-container-highest:hover {
+    background-color: revert !important;
+    color: revert !important;
+  }
+}
 
 </style>
   <link rel="manifest" href="manifest.json" />
@@ -1313,10 +1323,12 @@ kbd:hover{
           <svg class="timeline-border-svg" fill="none">
             <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
           </svg>
-          <!-- Inner Input Layer -->
-          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center gap-2 transition-all duration-300">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <button id="hero-search-submit" type="button" class="mr-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary/30">
+              Search
+            </button>
           </div>
         </div>
       </div>
@@ -1459,7 +1471,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1753,7 +1765,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -3098,71 +3110,46 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   if (!container) return;
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    container.style.display = 'none';
-    return;
-  }
+  if (totalPages <= 1) { container.innerHTML = ''; container.style.display = 'none'; return; }
 
   container.style.display = 'flex';
 
-  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
-  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
-  const activeClass = 'bg-primary text-white border-primary';
-  const disabledClass = 'opacity-50 cursor-not-allowed';
+  const base = 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-full border text-xs font-bold transition-all select-none';
+  const normal = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary cursor-pointer';
+  const active = 'bg-primary text-white border-primary cursor-default';
+  const dis = 'bg-white text-zinc-300 border-zinc-100 cursor-not-allowed pointer-events-none';
+  const ellipsisCls = 'inline-flex items-center justify-center min-w-[24px] h-8 text-xs text-zinc-400 border-none bg-transparent cursor-default select-none';
 
-  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
-    const page = index + 1;
-    return `
-      <button
-        type="button"
-        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
-        data-page="${page}"
-        aria-label="Go to page ${page}"
-        ${page === currentPage ? 'aria-current="page"' : ''}
-      >
-        ${page}
-      </button>
-    `;
-  }).join('');
+  const navBtn = (label, page, isDisabled, ariaLabel) =>
+    `<button type="button" class="${base} ${isDisabled ? dis : normal} whitespace-nowrap px-3" data-page="${page}" ${isDisabled ? 'disabled' : ''} aria-label="${ariaLabel}">${label}</button>`;
+  const pageBtn = (page) =>
+    `<button type="button" class="${base} ${page === currentPage ? active : normal}" data-page="${page}" aria-label="Go to page ${page}" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`;
+  const dot = `<span class="${ellipsisCls}">…</span>`;
 
-  container.innerHTML = `
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
-      data-page="${currentPage - 1}"
-      ${currentPage === 1 ? 'disabled' : ''}
-    >
-      Previous
-    </button>
+  const WING = 2;
+  const pages = [];
+  const addPage = (p) => { if (!pages.includes(p) && p >= 1 && p <= totalPages) pages.push(p); };
+  addPage(1); addPage(totalPages);
+  for (let i = currentPage - WING; i <= currentPage + WING; i++) addPage(i);
+  pages.sort((a, b) => a - b);
 
-    ${pageButtons}
+  let pageHTML = '';
+  for (let i = 0; i < pages.length; i++) {
+    if (i > 0 && pages[i] - pages[i - 1] > 1) pageHTML += dot;
+    pageHTML += pageBtn(pages[i]);
+  }
 
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
-      data-page="${currentPage + 1}"
-      ${currentPage === totalPages ? 'disabled' : ''}
-    >
-      Next
-    </button>
-  `;
+  container.innerHTML =
+    navBtn('«', 1, currentPage === 1, 'First page') +
+    navBtn('‹', currentPage - 1, currentPage === 1, 'Previous page') +
+    pageHTML +
+    navBtn('›', currentPage + 1, currentPage === totalPages, 'Next page') +
+    navBtn('»', totalPages, currentPage === totalPages, 'Last page');
 
   container.querySelectorAll('[data-page]').forEach(button => {
     button.addEventListener('click', () => {
       const page = Number(button.dataset.page);
-
-      if (
-        button.disabled ||
-        Number.isNaN(page) ||
-        page < 1 ||
-        page > totalPages ||
-        page === currentPage
-      ) {
-        return;
-      }
-
+      if (button.disabled || Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
       onPageChange(page);
     });
   });
@@ -4234,13 +4221,17 @@ if(org.ideas){
     applyFilters(); // to reset URL params
   };
 
-  document.getElementById('searchInput').addEventListener('input', () => {
-    // Track search badge when user types a search query
-    const query = document.getElementById('searchInput').value.trim();
-    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+  // Shared search function to handle filter application, with optional badge tracking
+  function performSearch(queryText, shouldTrack = false) {
+    const query = queryText.trim();
+    if (shouldTrack && typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
     applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    performSearch(e.target.value, false);
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -4281,17 +4272,25 @@ if(org.ideas){
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    const heroSearchSubmit = () => {
+      document.getElementById('searchInput').value = heroSearch.value;
+      performSearch(heroSearch.value, true);
+      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-      
-      // Track search badge when user types in hero search
-      const query = e.target.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      applyFilters();
+      performSearch(e.target.value, false);
     });
+
+    heroSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        heroSearchSubmit();
+      }
+    });
+
+    document.getElementById('hero-search-submit')?.addEventListener('click', heroSearchSubmit);
   }
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
@@ -5173,11 +5172,9 @@ if(e.key.toLowerCase()==='r'){
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {
-          hideTooltip();
-        } else {
-          showTooltip(element);
-        }
+        clearTimeout(globalThis._globalTooltipTimer);
+        showTooltip(element);
+        globalThis._globalTooltipTimer = setTimeout(() => hideTooltip(), 3000);
       });
     }
   });

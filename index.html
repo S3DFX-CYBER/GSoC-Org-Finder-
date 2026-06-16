@@ -2052,12 +2052,7 @@ kbd:hover{
             <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
             Enable autosave
           </label>
-          <p id="pwPrivacyNote">
-            Drafts are stored only on this device when autosave is enabled.
-          </p>          
-            Enable autosave
-            <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
-          </label>
+          <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
           <div id="pwProposalStats" class="proposal-stats" aria-live="polite"></div>
       </div>
       <div class="proposal-toolbar">
@@ -5561,15 +5556,25 @@ if(e.key.toLowerCase()==='r'){
     URL.revokeObjectURL(url);
   }
 
+  function showExportToast(msg) {
+    const toast = document.getElementById('exportToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+  }
+
   function exportResults(format) {
     // Close the dropdown
     const menu = document.getElementById('exportDropdownMenu');
     if (menu) menu.classList.add('hidden');
 
-    const orgs = getFilteredOrgs();
+    const orgs = (typeof filteredOrgs !== 'undefined' && Array.isArray(filteredOrgs))
+      ? filteredOrgs
+      : [];
 
     if (!orgs || orgs.length === 0) {
-      alert('No organizations match the current filters — nothing to export.');
+      showExportToast('No organizations match the current filters — nothing to export.');
       return;
     }
 
@@ -5577,7 +5582,7 @@ if(e.key.toLowerCase()==='r'){
 
     if (format === 'csv') {
       const headers = ['Name', 'Category', 'Languages', 'Competition', 'GSoC Years', 'First Year', 'GitHub URL', 'Ideas Link'];
-      const escape  = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const escape  = v => `"${String(v ?? '').replaceAll('"', '""')}"`;
       const rows    = orgs.map(org => [
         org.name,
         org.cat,
@@ -5621,5 +5626,8 @@ if(e.key.toLowerCase()==='r'){
     }
   }
 </script>
+<div id="exportToast" role="alert" aria-live="assertive"
+  class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-zinc-800 text-white text-sm font-semibold shadow-xl transition-all">
+</div>
 </body>
 </html>

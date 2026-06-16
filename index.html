@@ -4329,6 +4329,8 @@ if(org.ideas){
 
   globalThis.clearAllFilters = function() {
     document.getElementById('searchInput').value = '';
+    const orgSI = document.getElementById('orgSearchInput');
+    if (orgSI) orgSI.value = '';
     document.getElementById('categoryFilter').value = 'all';
     document.getElementById('complexityFilter').value = 'all';
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
@@ -4379,6 +4381,10 @@ if(org.ideas){
 
   document.getElementById('searchInput').addEventListener('input', (e) => {
     performSearch(e.target.value, false);
+  });
+  document.getElementById('orgSearchInput')?.addEventListener('input', (e) => {
+    const si = document.getElementById('searchInput');
+    if (si) { si.value = e.target.value; applyFilters(); }
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -5025,7 +5031,7 @@ if(org.ideas){
     }
 
     setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
+    setElValue('orgSearchInput', params.get('q'));
     setElValue('categoryFilter', params.get('cat'));
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));

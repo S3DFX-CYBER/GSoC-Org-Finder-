@@ -1317,6 +1317,8 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 globalThis.clearAllFilters = function () {
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.value = '';
+  const orgSearchInput = document.getElementById('orgSearchInput');
+  if (orgSearchInput) orgSearchInput.value = '';
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) heroSearch.value = '';
 
@@ -2440,7 +2442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
+    setElValue('orgSearchInput', params.get('q'));
     setElValue('categoryFilter', params.get('cat'));
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
@@ -2497,6 +2499,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Wire up filter event listeners
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('orgSearchInput')?.addEventListener('input', (e) => {
+    const si = document.getElementById('searchInput');
+    if (si) { si.value = e.target.value; applyFilters(); }
+  });
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);

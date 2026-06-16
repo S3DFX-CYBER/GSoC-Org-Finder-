@@ -1422,8 +1422,9 @@ kbd:hover{
   </div>
 
   <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of
-      184 organizations</p>
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">
+      Showing <strong id="orgCount">184</strong> of <strong data-org-total>184</strong> organizations
+    </p>
     <div class="flex items-center gap-3 flex-wrap">
       <!-- Export Dropdown -->
       <div class="relative" id="exportDropdownWrapper">
@@ -2047,18 +2048,13 @@ kbd:hover{
     <header class="proposal-header">
       <div class="proposal-header-title">
         <h2 id="pwOrgName">Organization Proposal</h2>
-          <label class="proposal-autosave">
-            <label for="pwAutosaveToggle" class="proposal-autosave">
-              <input
-                type="checkbox"
-                id="pwAutosaveToggle"
-                aria-describedby="pwPrivacyNote"
-              />
-              Enable autosave
-            </label>
-            <p id="pwPrivacyNote">
-              Drafts are stored only on this device when autosave is enabled.
-            </p>
+          <label for="pwAutosaveToggle" class="proposal-autosave">
+            <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
+            Enable autosave
+          </label>
+          <p id="pwPrivacyNote">
+            Drafts are stored only on this device when autosave is enabled.
+          </p>          
             Enable autosave
             <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
           </label>
@@ -3231,6 +3227,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       grid.classList.add('hidden');
       if (emptyState) emptyState.classList.remove('hidden');
       document.getElementById('orgCount').textContent = '0';
+      updateExportButtonState(0);
       document.getElementById('loadMoreContainer').style.display = 'none';
       document.getElementById('orgPagination').innerHTML = '';
       document.getElementById('orgPagination').style.display = 'none';
@@ -3293,6 +3290,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
+    updateExportButtonState(filteredOrgs.length); 
     document.getElementById('loadMoreContainer').style.display = 'none';
 
     renderPaginationControls('orgPagination', filteredOrgs.length, orgCurrentPage, (page) => {
@@ -5587,7 +5585,7 @@ if(e.key.toLowerCase()==='r'){
         org.competition,
         org.years,
         org.firstYear,
-        org.github ? `https://github.com/${org.github}` : '',
+        githubUrlFromValue(org.github) || '',
         org.ideas || ''
       ].map(escape).join(','));
 
@@ -5602,7 +5600,7 @@ if(e.key.toLowerCase()==='r'){
         competition: org.competition,
         gsocYears:   org.years,
         firstYear:   org.firstYear,
-        githubUrl:   org.github ? `https://github.com/${org.github}` : '',
+        githubUrl: githubUrlFromValue(org.github) || '',
         ideasLink:   org.ideas || '',
         description: org.desc || ''
       }));

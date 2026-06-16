@@ -1074,6 +1074,33 @@ function searchComparator(a, b, search, sort) {
   return applySecondarySort(a, b, sort);
 }
 
+function boldMatch(name, query) {
+  const q = (query || '').toLowerCase();
+  const idx = name.toLowerCase().indexOf(q);
+  if (idx === -1) return escapeHtml(name);
+  return escapeHtml(name.slice(0, idx)) +
+    '<strong class="text-primary font-semibold">' +
+    escapeHtml(name.slice(idx, idx + query.length)) +
+    '</strong>' +
+    escapeHtml(name.slice(idx + query.length));
+}
+
+function heroSearchMatches(query) {
+  const q = (query || '').trim().toLowerCase();
+  if (!q) return [];
+  const matches = ORGS.filter(o => o.name.toLowerCase().includes(q));
+  matches.sort((a, b) => {
+    const na = a.name.toLowerCase();
+    const nb = b.name.toLowerCase();
+    if (na === q && nb !== q) return -1;
+    if (nb === q && na !== q) return 1;
+    if (na.startsWith(q) && !nb.startsWith(q)) return -1;
+    if (nb.startsWith(q) && !na.startsWith(q)) return 1;
+    return na.localeCompare(nb);
+  });
+  return matches.slice(0, 3);
+}
+
 function applyFilters() {
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
@@ -2616,6 +2643,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     escapeHtml,
     sanitizeHrefUrl,
+    heroSearchMatches,
     validateIdeasUrl,
     githubPathFromValue,
     githubOwnerFromValue,

@@ -5177,6 +5177,8 @@ if(e.key.toLowerCase()==='r'){
     .map(id => document.getElementById(id))
     .filter(Boolean);
   const mainHeader = document.querySelector("header.fixed.top-0");
+  const nextBtn = document.getElementById("nextSectionBtn");
+  const prevBtn = document.getElementById("prevSectionBtn");
 
   let currentSection = 0;
   const sectionIndicatorValue = document.getElementById("sectionScrollIndicatorValue");
@@ -5227,6 +5229,13 @@ if(e.key.toLowerCase()==='r'){
       }
     });
 
+    if (prevBtn) {
+      prevBtn.disabled = (currentSection === 0);
+    }
+    if (nextBtn) {
+      nextBtn.disabled = (currentSection === sections.length - 1);
+    }
+
     updateSectionIndicator();
   }
 
@@ -5261,7 +5270,7 @@ if(e.key.toLowerCase()==='r'){
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
         isNavClicking = false;
-      }, 1500);
+      }, 1000);
     });
   });
 
@@ -5274,7 +5283,7 @@ if(e.key.toLowerCase()==='r'){
       scrollToSectionIndex(currentSection);
       navClickTimer = setTimeout(() => {
         isNavClicking = false;
-      }, 1500);
+      }, 1000);
 
       if (typeof globalThis.toggleMenu === "function") {
         globalThis.toggleMenu();
@@ -5283,53 +5292,47 @@ if(e.key.toLowerCase()==='r'){
   });
 
   function updateCurrentSection() {
-      if (isNavClicking) return;
-      const offset = getSectionDetectionOffset() + 10;
-      let found = 0;
-      let closestDistance = Infinity;
-      sections.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= offset) {
-          const distance = offset - rect.top;
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            found = index;
-          }
-        }
-      });
-      currentSection = found;
+    if (isNavClicking) return;
+
+    // Check if scrolled to bottom of the page
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50) {
+      currentSection = sections.length - 1;
       updateNavState();
+      return;
     }
 
-    const visibleSections = new Set();
-
-    const observer = new IntersectionObserver((entries) => {
-       if (isNavClicking) return;
-        entries.forEach(entry => {
-          const index = sections.indexOf(entry.target);
-          if (index === -1) return;
-          if (entry.isIntersecting) {
-            visibleSections.add(index);
-          } else {
-            visibleSections.delete(index);
-          }
-        });
-        if (visibleSections.size === 0) {
-          return;
+    const offset = getSectionDetectionOffset() + 10;
+    let found = 0;
+    let closestDistance = Infinity;
+    sections.forEach((section, index) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= offset) {
+        const distance = offset - rect.top;
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          found = index;
         }
-        currentSection = Math.min(...visibleSections);
-        updateNavState();
-    }, {
-      rootMargin: `-${(mainHeader?.clientHeight || 0) + 10}px 0px -60% 0px`,
-      threshold: 0
+      }
     });
+    currentSection = found;
+    updateNavState();
+  }
 
-    sections.forEach(section => observer.observe(section));
-    window.addEventListener("resize", updateCurrentSection);
-    updateCurrentSection();
+  // Scroll listener debounced with requestAnimationFrame
+  let scrollTimeout = false;
+  window.addEventListener("scroll", () => {
+    if (isNavClicking) return;
+    if (!scrollTimeout) {
+      window.requestAnimationFrame(() => {
+        updateCurrentSection();
+        scrollTimeout = false;
+      });
+      scrollTimeout = true;
+    }
+  }, { passive: true });
 
-  const nextBtn = document.getElementById("nextSectionBtn");
-  const prevBtn = document.getElementById("prevSectionBtn");
+  window.addEventListener("resize", updateCurrentSection);
+  updateCurrentSection();
 
   function addClickFeedback(btn, direction) {
     if (!btn) return;
@@ -5376,15 +5379,27 @@ if(e.key.toLowerCase()==='r'){
 
   nextBtn?.addEventListener("click", () => {
     if (currentSection < sections.length - 1) {
-      scrollToSectionIndex(currentSection + 1);
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
+      currentSection++;
+      updateNavState();
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1000);
     }
   });
 
   prevBtn?.addEventListener("click", () => {
     if (currentSection > 0) {
-      scrollToSectionIndex(currentSection - 1);
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      isNavClicking = true;
+      clearTimeout(navClickTimer);
+      currentSection--;
+      updateNavState();
+      scrollToSectionIndex(currentSection);
+      navClickTimer = setTimeout(() => {
+        isNavClicking = false;
+      }, 1000);
     }
   });
 })();

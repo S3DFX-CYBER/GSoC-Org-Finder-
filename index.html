@@ -5234,9 +5234,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault();
+    const h = document.getElementById('hero-search');
+    if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
     return;
-}
+  }
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
   const active = document.activeElement;
 if (
     active &&

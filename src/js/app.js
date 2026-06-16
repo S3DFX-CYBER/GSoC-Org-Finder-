@@ -714,6 +714,12 @@ function handleNavigationUp(e) {
 }
 
 function handleGlobalKeydown(e) {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault();
+    const h = document.getElementById('hero-search');
+    if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
+    return;
+  }
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
 
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;

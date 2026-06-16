@@ -3908,7 +3908,12 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    } catch (e) {
+      alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
+      return;
+    }
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3942,7 +3947,12 @@ btn.__orgListenerAttached = true;
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([]));
+    } catch (e) {
+      alert('Could not clear bookmarks due to storage limits.');
+      return;
+    }
     applyFilters();
     renderWatchlist();
     updateAIInsights();

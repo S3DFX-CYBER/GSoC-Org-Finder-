@@ -1576,7 +1576,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1888,7 +1888,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -3364,54 +3364,157 @@ function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
   return items.slice(startIndex, startIndex + itemsPerPage);
 }
 
+function buildPageWindow(currentPage, totalPages, windowSize = 6) {
+  if (totalPages <= 1) return [];
+  if (totalPages <= windowSize + 2) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+  const half = Math.floor(windowSize / 2);
+  const lo = Math.max(1, Math.min(currentPage - half, totalPages - windowSize + 1));
+  const hi = lo + windowSize - 1;
+  const result = [];
+  if (lo > 1) {
+    result.push(1);
+    if (lo > 2) result.push('...');
+  }
+  for (let p = lo; p <= hi; p++) result.push(p);
+  if (hi < totalPages) {
+    if (hi < totalPages - 1) result.push('...');
+    result.push(totalPages);
+  }
+  return result;
+}
+
+// Number of page pills to show, tuned to the viewport so the controls stay on
+// a single line on mobile. Pages can grow into the thousands, so the window is
+// always bounded by first/last + ellipses regardless of total.
+function paginationWindowSize() {
+  if (typeof window === 'undefined') return 6;
+  const w = window.innerWidth || 1024;
+  if (w >= 640) return 6;
+  if (w >= 400) return 3;
+  return 1;
+}
+
+// Cache the last render args per container so we can re-fit on orientation /
+// resize changes without the caller having to re-trigger a full list render.
+const _paginationState = {};
+let _paginationLastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+function _bindPaginationResize() {
+  if (typeof window === 'undefined' || window.__paginationResizeBound) return;
+  window.__paginationResizeBound = true;
+  let raf;
+  window.addEventListener('resize', () => {
+    // Only viewport width changes how many pills fit. Ignore height-only resizes
+    // (e.g. the mobile keyboard opening) so we never tear down and rebuild a
+    // focused "go to page" input mid-tap, which would dismiss the keyboard.
+    if (window.innerWidth === _paginationLastWidth) return;
+    _paginationLastWidth = window.innerWidth;
+    clearTimeout(raf);
+    raf = setTimeout(() => {
+      const active = document.activeElement;
+      Object.keys(_paginationState).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || el.style.display === 'none') return;
+        if (active && el.contains(active)) return; // don't disrupt an active input
+        const s = _paginationState[id];
+        renderPaginationControls(id, s.totalItems, s.currentPage, s.onPageChange);
+      });
+    }, 150);
+  });
+}
+
 function renderPaginationControls(containerId, totalItems, currentPage, onPageChange) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  _paginationState[containerId] = { totalItems, currentPage, onPageChange };
+  _bindPaginationResize();
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  if (totalPages <= 1) { container.innerHTML = ''; container.style.display = 'none'; return; }
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
 
   container.style.display = 'flex';
 
-  const base = 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-full border text-xs font-bold transition-all select-none';
-  const normal = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary cursor-pointer';
-  const active = 'bg-primary text-white border-primary cursor-default';
-  const dis = 'bg-white text-zinc-300 border-zinc-100 cursor-not-allowed pointer-events-none';
-  const ellipsisCls = 'inline-flex items-center justify-center min-w-[24px] h-8 text-xs text-zinc-400 border-none bg-transparent cursor-default select-none';
+  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
+  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
+  const activeClass = 'bg-primary text-white border-primary';
+  const disabledClass = 'opacity-50 cursor-not-allowed';
 
-  const navBtn = (label, page, isDisabled, ariaLabel) =>
-    `<button type="button" class="${base} ${isDisabled ? dis : normal} whitespace-nowrap px-3" data-page="${page}" ${isDisabled ? 'disabled' : ''} aria-label="${ariaLabel}">${label}</button>`;
-  const pageBtn = (page) =>
-    `<button type="button" class="${base} ${page === currentPage ? active : normal}" data-page="${page}" aria-label="Go to page ${page}" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`;
-  const dot = `<span class="${ellipsisCls}">…</span>`;
+  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
+    const page = index + 1;
+    return `
+      <button
+        type="button"
+        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
+        data-page="${page}"
+        aria-label="Go to page ${page}"
+        ${page === currentPage ? 'aria-current="page"' : ''}
+      >
+        ${page}
+      </button>
+    `;
+  }).join('');
 
-  const WING = 2;
-  const pages = [];
-  const addPage = (p) => { if (!pages.includes(p) && p >= 1 && p <= totalPages) pages.push(p); };
-  addPage(1); addPage(totalPages);
-  for (let i = currentPage - WING; i <= currentPage + WING; i++) addPage(i);
-  pages.sort((a, b) => a - b);
+  container.innerHTML = `
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
+      data-page="${currentPage - 1}"
+      ${currentPage === 1 ? 'disabled' : ''}
+    >
+      Previous
+    </button>
 
-  let pageHTML = '';
-  for (let i = 0; i < pages.length; i++) {
-    if (i > 0 && pages[i] - pages[i - 1] > 1) pageHTML += dot;
-    pageHTML += pageBtn(pages[i]);
-  }
+    ${pageButtons}
 
-  container.innerHTML =
-    navBtn('«', 1, currentPage === 1, 'First page') +
-    navBtn('‹', currentPage - 1, currentPage === 1, 'Previous page') +
-    pageHTML +
-    navBtn('›', currentPage + 1, currentPage === totalPages, 'Next page') +
-    navBtn('»', totalPages, currentPage === totalPages, 'Last page');
+    <button
+      type="button"
+      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
+      data-page="${currentPage + 1}"
+      ${currentPage === totalPages ? 'disabled' : ''}
+    >
+      Next
+    </button>
+  `;
 
   container.querySelectorAll('[data-page]').forEach(button => {
     button.addEventListener('click', () => {
       const page = Number(button.dataset.page);
-      if (button.disabled || Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
+
+      if (
+        button.disabled ||
+        Number.isNaN(page) ||
+        page < 1 ||
+        page > totalPages ||
+        page === currentPage
+      ) {
+        return;
+      }
+
       onPageChange(page);
     });
   });
+
+  function handleGoTo() {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const val = parseInt(input.value, 10);
+    if (Number.isNaN(val) || val < 1 || val > totalPages) {
+      input.classList.add('border-red-400', 'ring-1', 'ring-red-400');
+      setTimeout(() => input.classList.remove('border-red-400', 'ring-1', 'ring-red-400'), 1200);
+      return;
+    }
+    if (val !== currentPage) onPageChange(val);
+    input.value = '';
+  }
+
+  document.getElementById(inputId)?.addEventListener('keydown', e => { if (e.key === 'Enter') handleGoTo(); });
+  document.getElementById(btnId)?.addEventListener('click', handleGoTo);
 }
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');

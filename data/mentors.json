@@ -3549,16 +3549,36 @@
     "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "OpenWISP": {
-    "org": "OpenWISP",
-    "ideasUrl": "https://github.com/openwisp/gsoc-ideas",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"OpenWISP": {
+  "org": "OpenWISP",
+  "ideasUrl": "https://openwisp.io/docs/dev/developer/gsoc-ideas-2026.html",
+   "channels": [
+        {
+            "type": "matrix",
+            "url": "https://matrix.to/#/#openwisp_development:gitter.im",
+            "label": "OpenWISP Dev Chat"
+        }
+    ],
+  "mentors": [
+    {
+      "name": "Federico Capoano",
+      "github": "nemesifier",
+      "githubUrl": "https://github.com/nemesifier"
+    },
+    {
+      "name": "Gagan Deep",
+      "github": "pandafy",
+      "githubUrl": "https://github.com/pandafy"
+    }
+  ],
+  "mailingLists": [
+    "https://groups.google.com/d/forum/openwisp",
+    "https://groups.google.com/g/openwisp-gsoc"
+  ],
+  "tip": "",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Oppia Foundation": {
     "org": "Oppia Foundation",
     "ideasUrl": "https://github.com/oppia/oppia/wiki/Google-Summer-of-Code-2026",

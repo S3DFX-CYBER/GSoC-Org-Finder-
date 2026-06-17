@@ -6,6 +6,7 @@ on:
       - opened
       - reopened
       - ready_for_review
+      - synchronize
 
 permissions:
   pull-requests: write
@@ -26,7 +27,7 @@ jobs:
 
     steps:
       - name: Analyze Pull Request
-        uses: actions/github-script@v8
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -47,117 +48,268 @@ jobs:
               return;
             }
 
-            const title = (pr.title || '').trim();
+            const title =
+              (pr.title || '').trim();
 
-            // Ignore short/generic titles
+            const body =
+              (pr.body || '').trim();
+
+            // Ignore weak PRs
             if (title.length < 10) {
               core.info('Title too short');
               return;
             }
 
-            // Normalize helper
-            const normalize = str =>
-              str
+            const STOPWORDS = new Set([
+              'the',
+              'a',
+              'an',
+              'is',
+              'are',
+              'to',
+              'of',
+              'for',
+              'on',
+              'in',
+              'and',
+              'with',
+              'fix',
+              'feature',
+              'issue',
+              'bug',
+              'update',
+              'improve',
+              'support',
+              'change',
+              'pr',
+              'pull',
+              'request'
+            ]);
+
+            function normalize(str) {
+              return str
                 .toLowerCase()
-                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/[^a-z0-9\s]/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
+            }
 
-            const currentTitle = normalize(title);
+            function tokenize(str) {
+              return normalize(str)
+                .split(' ')
+                .filter(Boolean)
+                .filter(
+                  word =>
+                    !STOPWORDS.has(word)
+                );
+            }
 
-            // Fetch recent open PRs only
-            const prs = await github.paginate(
-              github.rest.pulls.list,
-              {
-                owner,
-                repo,
-                state: 'open',
-                sort: 'created',
-                direction: 'desc',
-                per_page: 50
+            function similarity(a, b) {
+
+              const setA =
+                new Set(tokenize(a));
+
+              const setB =
+                new Set(tokenize(b));
+
+              if (
+                setA.size === 0 ||
+                setB.size === 0
+              ) {
+                return 0;
               }
-            );
+
+              const intersection =
+                [...setA].filter(
+                  x => setB.has(x)
+                );
+
+              const union =
+                new Set([
+                  ...setA,
+                  ...setB
+                ]);
+
+              return (
+                intersection.length /
+                union.size
+              );
+            }
+
+            function commonKeywordCount(a, b) {
+
+              const setA =
+                new Set(tokenize(a));
+
+              const setB =
+                new Set(tokenize(b));
+
+              return [...setA]
+                .filter(x => setB.has(x))
+                .length;
+            }
+
+            // Fetch open PRs
+            const prs =
+              await github.paginate(
+                github.rest.pulls.list,
+                {
+                  owner,
+                  repo,
+                  state: 'open',
+                  sort: 'created',
+                  direction: 'desc',
+                  per_page: 100
+                }
+              );
 
             let duplicate = null;
+            let bestScore = 0;
 
             for (const existing of prs) {
 
-              if (existing.number === prNumber) {
+              if (
+                existing.number === prNumber ||
+                existing.draft
+              ) {
                 continue;
               }
 
-              const existingTitle = normalize(
-                existing.title || ''
+              const existingTitle =
+                existing.title || '';
+
+              const existingBody =
+                existing.body || '';
+
+              const titleScore =
+                similarity(
+                  title,
+                  existingTitle
+                );
+
+              const bodyScore =
+                similarity(
+                  body,
+                  existingBody
+                );
+
+              const keywordOverlap =
+                commonKeywordCount(
+                  title,
+                  existingTitle
+                );
+
+              const finalScore =
+                (titleScore * 0.75) +
+                (bodyScore * 0.25);
+
+              core.info(
+                `PR #${existing.number} score=${finalScore.toFixed(2)} overlap=${keywordOverlap}`
               );
 
-              // Exact match
-              if (existingTitle === currentTitle) {
-                duplicate = existing;
-                break;
+              // Conservative thresholds
+              if (
+                finalScore >= 0.78 &&
+                keywordOverlap >= 3
+              ) {
+
+                if (finalScore > bestScore) {
+
+                  bestScore = finalScore;
+                  duplicate = existing;
+
+                }
+
               }
 
-              // Strong overlap match
-              if (
-                existingTitle.includes(currentTitle) ||
-                currentTitle.includes(existingTitle)
-              ) {
-                duplicate = existing;
-                break;
-              }
             }
 
             if (!duplicate) {
-              core.info('No duplicate PR detected');
+              core.info(
+                'No duplicate PR detected'
+              );
+
+              // Remove stale label if present
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  name: 'possible-duplicate-pr'
+                });
+              } catch {}
+
               return;
             }
 
             const MARKER =
               '<!-- duplicate-pr-guard -->';
 
-            const body =
-              `${MARKER}\n` +
-              `## 🔁 Possible Duplicate PR\n\n` +
-              `Hi @${username}, a similar PR may already exist:\n\n` +
-              `➡️ #${duplicate.number}\n\n` +
-              `Please check whether the changes overlap before continuing.\n\n` +
-              `This is only an informational warning — your PR will remain open.`;
+            const similarityPercent =
+              Math.round(bestScore * 100);
 
-            // Fetch existing comments
-            const comments = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner,
-                repo,
-                issue_number: prNumber,
-                per_page: 50
-              }
-            );
+            const commentBody = [
+              MARKER,
+              '',
+              '## 🔁 Possible Duplicate PR',
+              '',
+              `Hi @${username}, this PR appears similar to:`,
+              '',
+              `➡️ #${duplicate.number}`,
+              '',
+              `Similarity confidence: **${similarityPercent}%**`,
+              '',
+              'Please verify whether the changes overlap before continuing.',
+              '',
+              'If this PR is substantially different, you may clarify the distinction.',
+              '',
+              '_No automatic closure was performed._'
+            ].join('\n');
 
-            const existingComment = comments.find(c =>
-              c.user.type === 'Bot' &&
-              c.body.includes(MARKER)
-            );
+            const comments =
+              await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number: prNumber,
+                  per_page: 50
+                }
+              );
 
-            // Avoid duplicate updates
-            if (
-              existingComment &&
-              existingComment.body.trim() === body.trim()
-            ) {
-              core.info('Comment already current');
-              return;
-            }
+            const existingComment =
+              comments.find(
+                c =>
+                  c.user.type === 'Bot' &&
+                  c.body.includes(MARKER)
+              );
 
-            // Update or create sticky comment
             if (existingComment) {
 
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existingComment.id,
-                body
-              });
+              if (
+                existingComment.body.trim() ===
+                commentBody.trim()
+              ) {
 
-              core.info('Updated duplicate warning');
+                core.info(
+                  'Comment already exists'
+                );
+
+              } else {
+
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id:
+                    existingComment.id,
+                  body: commentBody
+                });
+
+                core.info(
+                  'Updated duplicate comment'
+                );
+
+              }
 
             } else {
 
@@ -165,13 +317,16 @@ jobs:
                 owner,
                 repo,
                 issue_number: prNumber,
-                body
+                body: commentBody
               });
 
-              core.info('Created duplicate warning');
+              core.info(
+                'Created duplicate comment'
+              );
+
             }
 
-            // Add label quietly
+            // Add label
             try {
 
               await github.rest.issues.addLabels({
@@ -184,8 +339,9 @@ jobs:
             } catch (e) {
 
               core.info(
-                `Label may already exist: ${e.message}`
+                `Label error: ${e.message}`
               );
+
             }
 
             core.info(

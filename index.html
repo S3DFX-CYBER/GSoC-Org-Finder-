@@ -302,8 +302,9 @@ kbd:hover{
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
     .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
     .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
-    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); }
-    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; }
+    .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .mentor-card:hover , .mentor-empty:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); transform: translateY(-4px); border-color: #d1d5db; }
+    .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
     .timeline-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .timeline-grid span { font-size: 0.75rem; font-weight: 500; color: #666; background: #fff; border: 1px solid #eee; padding: 0.3rem 0.7rem; border-radius: 0.5rem; }
@@ -561,7 +562,8 @@ kbd:hover{
     .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
     .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
-    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; }
+    .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .dark .mentor-card:hover, .dark .mentor-empty:hover { box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5); transform: translateY(-4px); border-color: #52525b; background: #27272a; }
 
     :root {
       --section-fab-right: 24px;
@@ -1126,6 +1128,16 @@ kbd:hover{
         border-radius: 999px;
       }
     }
+@media (pointer: coarse) {
+  .filter-chip.bg-orange-600:hover {
+    background-color: #ea580c !important;
+    color: #1a0a00 !important;
+  }
+  .filter-chip.bg-surface-container-highest:hover {
+    background-color: revert !important;
+    color: revert !important;
+  }
+}
 
 </style>
   <link rel="manifest" href="manifest.json" />
@@ -1297,7 +1309,7 @@ kbd:hover{
         Find Your<br/><span class="text-primary italic">Perfect GSoC Org</span>
       </h1>
       <p class="text-base sm:text-lg text-zinc-600 max-w-xl mb-8 sm:mb-10 leading-relaxed">
-        Browse all <strong>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
+        Browse all <strong data-org-count>184</strong> organizations. Filter by language, domain, competition, and live GitHub activity. Land your summer internship.
       </p>
       <!-- Search Bar -->
       <div class="relative max-w-xl mb-6 sm:mb-8 search-bar-container">
@@ -1306,25 +1318,26 @@ kbd:hover{
           <svg class="timeline-border-svg" fill="none">
             <rect class="timeline-border-rect" rx="16" ry="16" pathLength="100" />
           </svg>
-          <!-- Inner Input Layer -->
-          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center transition-all duration-300">
+          <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center gap-2 transition-all duration-300">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="w-full bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <button id="hero-search-submit" type="button" class="mr-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary/30">
+              Search
+            </button>
           </div>
         </div>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
-        <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
-          <span class="material-symbols-outlined text-sm">casino</span>
-          🎲 Surprise Me!
-        </button>
+       <button id="surpriseBtn" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2" aria-label="🎲 Surprise Me! - Open a random organization">
+  🎲 Surprise Me!
+</button>
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm">184</p></div>
+          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm" data-org-count>184</p></div>
         </div>
         <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
@@ -1409,7 +1422,7 @@ kbd:hover{
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount">184</strong> of 184 organizations</p>
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
     <div class="flex flex-wrap items-center gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
@@ -1453,7 +1466,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1747,7 +1760,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -1838,7 +1851,7 @@ kbd:hover{
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-orange-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-orange-400 group-hover:scale-110 transition-transform">1</div>
         <h3 class="text-xl font-bold mb-3">Explore Organizations</h3>
-        <p class="text-zinc-600 text-sm leading-relaxed">Browse 185+ open source organizations. Filter by language, domain, and competition level to find your match.</p>
+        <p class="text-zinc-600 text-sm leading-relaxed">Browse all <strong data-org-count>184</strong> open source organizations. Filter by language, domain, and competition level to find your match.</p>
       </div>
       <div class="bg-white border border-zinc-100 p-8 rounded-3xl group hover:bg-blue-500/10 shadow-lg transition-all">
         <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6 font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform">2</div>
@@ -2113,6 +2126,37 @@ kbd:hover{
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
 <script>
+  // ══════════════════════════════════════════════
+  // SAFE ORG DATA GUARD
+  // ══════════════════════════════════════════════
+  if(typeof ORGS === 'undefined' || !Array.isArray(ORGS)){
+    globalThis.ORGS = [];
+  }
+
+  // ══════════════════════════════════════════════
+  // ORG COUNT INITIALIZATION
+  // ══════════════════════════════════════════════
+  function initializeOrgCounts(){
+    const orgCount = ORGS.length > 0 ? ORGS.length : 184;
+    
+    // Update all org count display references
+    document.querySelectorAll('[data-org-count]').forEach(el => {
+      el.textContent = orgCount;
+    });
+    
+    // Update org total summary references
+    document.querySelectorAll('[data-org-total]').forEach(el => {
+      el.textContent = orgCount;
+    });
+  }
+  
+  // Initialize org counts when DOM is ready
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initializeOrgCounts);
+  } else {
+    initializeOrgCounts();
+  }
+
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
@@ -2946,8 +2990,15 @@ kbd:hover{
 
       container.innerHTML = MILESTONES.map((m, i) => {
         const isActive = i === activeIdx;
+        const isFuture = i >= activeIdx;
         const isLast = i === MILESTONES.length - 1;
-        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        const connectorClass = isFuture
+  ? "bg-orange-400/70"
+  : "bg-zinc-200";
+
+const connector = !isLast
+  ? `<div class="w-[2px] h-10 ${connectorClass}"></div>`
+  : '';
         let dateStr;
         try {
           dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -2969,9 +3020,15 @@ kbd:hover{
               <p class="text-sm sm:text-base font-extrabold text-zinc-900 leading-tight">${escapeHtml(m.label)}</p>
               <p class="text-xs text-green-600 mt-1">✓ Completed</p></div>
             </div>`;
+          } else if (isFuture) {
+            return `<div class="flex gap-3 sm:gap-4">
+              <div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-zinc-400"></div>${connector}</div>
+              <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
+              <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(m.label)}</p></div>
+            </div>`;
           } else {
             return `<div class="flex gap-3 sm:gap-4 opacity-40">
-              <div class="flex flex-col items-center"><div class="w-2 h-2 rounded-full bg-zinc-300"></div>${connector}</div>
+              <div class="flex flex-col items-center"><div class="w-2.5 h-2.5 rounded-full bg-white/80"></div>${connector}</div>
               <div><p class="text-[10px] font-bold text-zinc-400">${escapeHtml(dateStr)}</p>
               <p class="text-sm font-bold text-zinc-500">${escapeHtml(m.label)}</p></div>
             </div>`;
@@ -3053,71 +3110,46 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   if (!container) return;
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    container.style.display = 'none';
-    return;
-  }
+  if (totalPages <= 1) { container.innerHTML = ''; container.style.display = 'none'; return; }
 
   container.style.display = 'flex';
 
-  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
-  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
-  const activeClass = 'bg-primary text-white border-primary';
-  const disabledClass = 'opacity-50 cursor-not-allowed';
+  const base = 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-full border text-xs font-bold transition-all select-none';
+  const normal = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary cursor-pointer';
+  const active = 'bg-primary text-white border-primary cursor-default';
+  const dis = 'bg-white text-zinc-300 border-zinc-100 cursor-not-allowed pointer-events-none';
+  const ellipsisCls = 'inline-flex items-center justify-center min-w-[24px] h-8 text-xs text-zinc-400 border-none bg-transparent cursor-default select-none';
 
-  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
-    const page = index + 1;
-    return `
-      <button
-        type="button"
-        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
-        data-page="${page}"
-        aria-label="Go to page ${page}"
-        ${page === currentPage ? 'aria-current="page"' : ''}
-      >
-        ${page}
-      </button>
-    `;
-  }).join('');
+  const navBtn = (label, page, isDisabled, ariaLabel) =>
+    `<button type="button" class="${base} ${isDisabled ? dis : normal} whitespace-nowrap px-3" data-page="${page}" ${isDisabled ? 'disabled' : ''} aria-label="${ariaLabel}">${label}</button>`;
+  const pageBtn = (page) =>
+    `<button type="button" class="${base} ${page === currentPage ? active : normal}" data-page="${page}" aria-label="Go to page ${page}" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`;
+  const dot = `<span class="${ellipsisCls}">…</span>`;
 
-  container.innerHTML = `
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
-      data-page="${currentPage - 1}"
-      ${currentPage === 1 ? 'disabled' : ''}
-    >
-      Previous
-    </button>
+  const WING = 2;
+  const pages = [];
+  const addPage = (p) => { if (!pages.includes(p) && p >= 1 && p <= totalPages) pages.push(p); };
+  addPage(1); addPage(totalPages);
+  for (let i = currentPage - WING; i <= currentPage + WING; i++) addPage(i);
+  pages.sort((a, b) => a - b);
 
-    ${pageButtons}
+  let pageHTML = '';
+  for (let i = 0; i < pages.length; i++) {
+    if (i > 0 && pages[i] - pages[i - 1] > 1) pageHTML += dot;
+    pageHTML += pageBtn(pages[i]);
+  }
 
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
-      data-page="${currentPage + 1}"
-      ${currentPage === totalPages ? 'disabled' : ''}
-    >
-      Next
-    </button>
-  `;
+  container.innerHTML =
+    navBtn('«', 1, currentPage === 1, 'First page') +
+    navBtn('‹', currentPage - 1, currentPage === 1, 'Previous page') +
+    pageHTML +
+    navBtn('›', currentPage + 1, currentPage === totalPages, 'Next page') +
+    navBtn('»', totalPages, currentPage === totalPages, 'Last page');
 
   container.querySelectorAll('[data-page]').forEach(button => {
     button.addEventListener('click', () => {
       const page = Number(button.dataset.page);
-
-      if (
-        button.disabled ||
-        Number.isNaN(page) ||
-        page < 1 ||
-        page > totalPages ||
-        page === currentPage
-      ) {
-        return;
-      }
-
+      if (button.disabled || Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
       onPageChange(page);
     });
   });
@@ -3289,10 +3321,8 @@ btn.__orgListenerAttached = true;
     // Add empty slots
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50';
-      empty.onclick = () =>{
-        document.getElementById('orgs') ?.scrollIntoView({behavior: 'smooth'});
-      };
+      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50 cursor-pointer hover:opacity-80 hover:border-orange-400 transition-all';
+      empty.onclick = () => openOrgPicker(i);
       empty.innerHTML = `
         <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
         <p class="font-bold text-sm text-zinc-400">Add org</p>
@@ -3370,6 +3400,57 @@ btn.__orgListenerAttached = true;
   function closeCompareModal() {
     document.getElementById('compareModal')?.classList.remove('open');
     document.body.style.overflow = 'auto';
+  }
+
+  let orgPickerTargetSlot = null;
+
+  function openOrgPicker(slotIndex) {
+    orgPickerTargetSlot = slotIndex;
+    document.getElementById('orgPickerSearch').value = '';
+    filterOrgPicker('');
+    const modal = document.getElementById('orgPickerModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('orgPickerSearch').focus(), 50);
+  }
+
+  function closeOrgPicker() {
+    document.getElementById('orgPickerModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    orgPickerTargetSlot = null;
+  }
+
+  function filterOrgPicker(query) {
+    const list = document.getElementById('orgPickerList');
+    const q = query.toLowerCase();
+    const filtered = ORGS.filter(o => !compareList.includes(o.name) && o.name.toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<p style="text-align:center;color:#a1a1aa;font-size:14px;padding:24px 0;">No organizations found</p>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    filtered.forEach(org => {
+      const item = document.createElement('div');
+      item.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #e4e4e7;border-radius:8px;cursor:pointer;transition:background 0.15s;';
+      item.onmouseenter = () => item.style.background = '#fef3e2';
+      item.onmouseleave = () => item.style.background = '';
+      item.innerHTML = `
+        <div>
+          <p style="font-weight:700;font-size:14px;color:#1a1c1c;">${escapeHtml(org.name)}</p>
+          <p style="font-size:11px;color:#8c7164;margin-top:2px;">${escapeHtml(org.cat)} · ${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+        </div>
+        <button style="background:#9d4300;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;">Add</button>
+      `;
+      item.querySelector('button').onclick = () => {
+        compareList[orgPickerTargetSlot] = org.name;
+        compareList = compareList.filter(Boolean);
+        renderCompare();
+        closeOrgPicker();
+      };
+      list.appendChild(item);
+    });
   }
 
   // ══════════════════════════════════════════════
@@ -3479,6 +3560,8 @@ btn.__orgListenerAttached = true;
       closeOrgModal();
     } else if (document.getElementById('anBg')?.classList.contains('open')) {
       closeAn();
+    } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
+      closeOrgPicker();
     }
   });
   
@@ -4109,13 +4192,17 @@ if(org.ideas){
     applyFilters(); // to reset URL params
   };
 
-  document.getElementById('searchInput').addEventListener('input', () => {
-    // Track search badge when user types a search query
-    const query = document.getElementById('searchInput').value.trim();
-    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+  // Shared search function to handle filter application, with optional badge tracking
+  function performSearch(queryText, shouldTrack = false) {
+    const query = queryText.trim();
+    if (shouldTrack && typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
     applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    performSearch(e.target.value, false);
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -4156,17 +4243,25 @@ if(org.ideas){
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
+    const heroSearchSubmit = () => {
+      document.getElementById('searchInput').value = heroSearch.value;
+      performSearch(heroSearch.value, true);
+      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      document.getElementById('orgs').scrollIntoView({ behavior: 'smooth' });
-      
-      // Track search badge when user types in hero search
-      const query = e.target.value.trim();
-      if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
-        BadgeSystem.trackSearch();
-      }
-      applyFilters();
+      performSearch(e.target.value, false);
     });
+
+    heroSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        heroSearchSubmit();
+      }
+    });
+
+    document.getElementById('hero-search-submit')?.addEventListener('click', heroSearchSubmit);
   }
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
@@ -4710,6 +4805,35 @@ if(org.ideas){
   globalThis.toggleCompare = toggleCompare;
   globalThis.toggleBookmark = toggleBookmark;
   globalThis.openModal = openModal;
+
+  // Safe HTML utilities for recommendation-ui.js
+  
+  class SafeHTMLString extends String {}
+  SafeHTMLString.prototype.__isSafeHTML = true;
+
+  function safeHTML(strings, ...values) {
+    let result = '';
+    for (let i = 0; i < strings.length; i++) {
+      result += strings[i];
+      if (i < values.length) {
+        const val = values[i];
+        let rendered;
+        if (val && val.__isSafeHTML) {
+          rendered = val.toString();
+        } else if (Array.isArray(val)) {
+          rendered = val.map(x => (x && x.__isSafeHTML) ? x.toString() : escapeHtml(x)).join('');
+        } else {
+          rendered = escapeHtml(val == null ? '' : String(val));
+        }
+        result += rendered;
+      }
+    }
+    return new SafeHTMLString(result);
+  }
+
+  function rawHTML(v) { return new SafeHTMLString(v || ''); }
+  globalThis.safeHTML = safeHTML;
+  globalThis.rawHTML = rawHTML;
 </script>
 
 <!-- Vercel Speed Insights -->
@@ -5019,11 +5143,9 @@ if(e.key.toLowerCase()==='r'){
     if (!hoverCapable) {
       element.addEventListener('click', (event) => {
         event.stopPropagation();
-        if (tooltip.classList.contains('show') && tooltip.textContent === element.dataset.tooltip) {
-          hideTooltip();
-        } else {
-          showTooltip(element);
-        }
+        clearTimeout(globalThis._globalTooltipTimer);
+        showTooltip(element);
+        globalThis._globalTooltipTimer = setTimeout(() => hideTooltip(), 3000);
       });
     }
   });
@@ -5267,6 +5389,25 @@ if(e.key.toLowerCase()==='r'){
   });
 })();
 </script>
-
+<!-- ORG PICKER MODAL -->
+<dialog id="orgPickerModal" aria-modal="true" aria-labelledby="orgPickerTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;width:100%;height:100%;margin:0;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;">
+      <h2 id="orgPickerTitle" style="font-size:18px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;">Choose an Organization</h2>
+      <button onclick="closeOrgPicker()" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
+    </div>
+    <div style="padding:0 24px 12px;">
+      <input id="orgPickerSearch" type="text" placeholder="Search organizations..."
+        oninput="filterOrgPicker(this.value)"
+        style="width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;box-sizing:border-box;">
+    </div>
+    <div id="orgPickerList" style="overflow-y:auto;flex:1;padding:0 24px 24px;display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</dialog>
+<script>
+  document.getElementById('orgPickerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeOrgPicker();
+  });
+</script>
 </body>
 </html>

@@ -1500,18 +1500,39 @@
   "Gemini CLI": {
     "org": "Gemini CLI",
     "ideasUrl": "https://github.com/google-gemini/gemini-cli/discussions",
-    "channels": [],
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/google-gemini/gemini-cli/discussions",
+        "label": "GitHub Discussions"
+      }
+    ],
     "mentors": [
       {
-        "name": "",
-        "github": "kambleakash0",
-        "githubUrl": "https://github.com/kambleakash0"
+        "name": "gsquared94",
+        "github": "gsquared94",
+        "githubUrl": "https://github.com/gsquared94"
+      },
+      {
+        "name": "gundermanc",
+        "github": "gundermanc",
+        "githubUrl": "https://github.com/gundermanc"
+      },
+      {
+        "name": "scidomino",
+        "github": "scidomino",
+        "githubUrl": "https://github.com/scidomino"
+      },
+      {
+        "name": "akh64bit",
+        "github": "akh64bit",
+        "githubUrl": "https://github.com/akh64bit"
       }
     ],
     "mailingLists": [],
-    "tip": "",
+    "tip": "Engage with mentors and discuss project ideas directly in GitHub Discussions or Issues.",
     "status": "ok",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+    "lastFetched": "2026-05-26T01:15:00.000Z"
   },
   "Genome Assembly and Annotation": {
     "org": "Genome Assembly and Annotation",
@@ -2331,7 +2352,23 @@
         "label": "Konflux Slack"
       }
     ],
-    "mentors": [],
+    "mentors": [
+      {
+        "name": "Erik Skultety",
+        "github": "eskultety",
+        "githubUrl": "https://github.com/eskultety"
+      },
+      {
+        "name": "Adam Kaplan",
+        "github": "adambkaplan",
+        "githubUrl": "https://github.com/adambkaplan"
+      },
+      {
+        "name": "Ralph Bean",
+        "github": "ralphbean",
+        "githubUrl": "https://github.com/ralphbean"
+      }
+],
     "mailingLists": [],
     "tip": "Join and say hi in the GSoC channel before DMing mentors.",
     "status": "ok",
@@ -2700,11 +2737,54 @@
   "MariaDB": {
     "org": "MariaDB",
     "ideasUrl": "https://mariadb.org/get-involved/gsoc/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "channels": [
+      {
+        "type": "Zulip",
+        "url": "https://mariadb.zulipchat.com/",
+        "label": "MariaDB Zulip"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Sergei Golubchik",
+        "github": "vuvova",
+        "githubUrl": "https://github.com/vuvova"
+      },
+      {
+        "name": "Brandon Nesterenko",
+        "github": null,
+        "githubUrl": null
+      },
+      {
+        "name": "Oleksandr Byelkin",
+        "github": "sanja-byelkin",
+        "githubUrl": "https://github.com/sanja-byelkin"
+      },
+      {
+        "name": "Alexander Barkov",
+        "github": null,
+        "githubUrl": null
+      },
+      {
+        "name": "Nikita Malyavin",
+        "github": null,
+        "githubUrl": null
+      },
+      {
+        "name": "Rucha Deodhar",
+        "github": null,
+        "githubUrl": null
+      }
+    ],
+    "mailingLists": [
+      {
+        "type": "Mailing list",
+        "url": "https://lists.mariadb.org/postorius/lists/developers.lists.mariadb.org/",
+        "label": "maria-developers mailing list"
+      }
+    ],
+    "tip": "Join the Zulip community and subscribe to the maria-developers mailing list before asking project-specific questions.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "MDAnalysis": {
@@ -3319,14 +3399,52 @@
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "OpenAFS": {
-    "org": "OpenAFS",
-    "ideasUrl": "https://wiki.openafs.org/GSoC/",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
+  "org": "OpenAFS",
+  "ideasUrl": "https://www.openafs.org/gsoc/project-ideas.html",
+  "channels": [
+    {
+      "type": "IRC",
+      "url": "https://web.libera.chat/#openafs",
+      "label": "#openafs on Libera.Chat"
+    }
+  ],
+  "mentors": [
+  {
+    "name": "Michael Meffie",
+    "github": "meffie",
+    "githubUrl": "https://github.com/meffie"
+  },
+  {
+    "name": "Marcio Barbosa",
+    "github": "marciobarbosa",
+    "githubUrl": "https://github.com/marciobarbosa"
+  },
+  {
+    "name": "Cheyenne Wills",
+    "github": "CheyenneWills",
+    "githubUrl": "https://github.com/CheyenneWills"
+  },
+  {
+    "name": "Mark Vitale",
+    "github": "mvitale",
+    "githubUrl": "https://github.com/mvitale"
+  },
+  {
+    "name": "Kailas Zadbuke",
+    "github": "zkailas1",
+    "githubUrl": "https://github.com/zkailas1"
+  }
+],
+  "mailingLists": [
+    {
+      "type": "Mailing list",
+      "url": "https://lists.openafs.org/mailman/listinfo/openafs-devel",
+      "label": "OpenAFS Developers Mailing List"
+    }
+  ],
+  "tip": "Join the #openafs IRC channel on Libera.Chat or subscribe to the openafs-devel mailing list to reach mentors and discuss project proposals.",
+  "status": "ok",
+  "lastFetched": "2026-05-27T00:00:00.000Z"
   },
   "OpenAstronomy": {
     "org": "OpenAstronomy",
@@ -3396,24 +3514,71 @@
   },
   "OpenVINO Toolkit": {
     "org": "OpenVINO Toolkit",
-    "ideasUrl": "https://github.com/openvinotoolkit/openvino/wiki/GSoC",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://github.com/openvinotoolkit/openvino/wiki/Project-ideas-for-2026",
+    "channels": [
+      {
+        "type": "GitHub Discussions",
+        "url": "https://github.com/openvinotoolkit/openvino/discussions/categories/google-summer-of-code",
+        "label": "OpenVINO Toolkit Google Summer of Code Discussions"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Adrian Boguszewski",
+        "github": "adrianboguszewski",
+        "githubUrl": "https://github.com/adrianboguszewski"
+      },
+      {
+        "name": "Aleksandr Voron",
+        "github": "alvoron",
+        "githubUrl": "https://github.com/alvoron"
+      },
+      {
+        "name": "zhaohb",
+        "github": "zhaohb",
+        "githubUrl": "https://github.com/zhaohb"
+      },
+      {
+        "name": "ZhuoWu",
+        "github": "ZhuoWu",
+        "githubUrl": "https://github.com/ZhuoWu"
+      }
+    ],
     "mailingLists": [],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
-  "OpenWISP": {
-    "org": "OpenWISP",
-    "ideasUrl": "https://github.com/openwisp/gsoc-ideas",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "fetch-failed",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+"OpenWISP": {
+  "org": "OpenWISP",
+  "ideasUrl": "https://openwisp.io/docs/dev/developer/gsoc-ideas-2026.html",
+   "channels": [
+        {
+            "type": "matrix",
+            "url": "https://matrix.to/#/#openwisp_development:gitter.im",
+            "label": "OpenWISP Dev Chat"
+        }
+    ],
+  "mentors": [
+    {
+      "name": "Federico Capoano",
+      "github": "nemesifier",
+      "githubUrl": "https://github.com/nemesifier"
+    },
+    {
+      "name": "Gagan Deep",
+      "github": "pandafy",
+      "githubUrl": "https://github.com/pandafy"
+    }
+  ],
+  "mailingLists": [
+    "https://groups.google.com/d/forum/openwisp",
+    "https://groups.google.com/g/openwisp-gsoc"
+  ],
+  "tip": "",
+  "status": "ok",
+  "lastFetched": "2026-05-09T16:09:12.548Z"
+},
   "Oppia Foundation": {
     "org": "Oppia Foundation",
     "ideasUrl": "https://github.com/oppia/oppia/wiki/Google-Summer-of-Code-2026",

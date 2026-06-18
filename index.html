@@ -1558,22 +1558,22 @@ kbd:hover{
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
       <div class="flex items-center gap-2 mt-8 flex-wrap">
-        <label class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer" title="Import Watchlist JSON">
+        <button onclick="document.getElementById('importWatchlistInput').click()" class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer" title="Import Watchlist JSON">
           <span class="material-symbols-outlined text-sm">upload</span>
           Import
-          <input type="file" id="importWatchlistInput" accept=".json" class="hidden">
-        </label>
+        </button>
+        <input type="file" id="importWatchlistInput" accept=".json" class="hidden">
         
-        <div class="relative group">
-          <button class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors" title="Export Watchlist">
+        <div class="relative">
+          <button onclick="document.getElementById('exportDropdownMenu').classList.toggle('hidden')" class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors" title="Export Watchlist">
             <span class="material-symbols-outlined text-sm">download</span>
             Export
           </button>
-          <div class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 flex flex-col overflow-hidden">
-            <button onclick="exportWatchlistAsMarkdown()" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+          <div id="exportDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl shadow-lg z-10 flex flex-col overflow-hidden">
+            <button onclick="exportWatchlistAsMarkdown(); document.getElementById('exportDropdownMenu').classList.add('hidden')" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">description</span> Markdown (.md)
             </button>
-            <button onclick="exportWatchlistAsJSON()" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2">
+            <button onclick="exportWatchlistAsJSON(); document.getElementById('exportDropdownMenu').classList.add('hidden')" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">data_object</span> JSON (.json)
             </button>
           </div>

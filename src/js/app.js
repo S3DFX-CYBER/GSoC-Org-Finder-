@@ -2630,6 +2630,15 @@ function buildPageWindow(currentPage, totalPages, windowSize = 6) {
   return result;
 }
 
+// Contiguous run of pages centered on the current one, clamped to range — no
+// ellipsis / first / last, since the «/» buttons already jump to the boundaries.
+function buildCompactWindow(currentPage, totalPages, count) {
+  const n = Math.min(count, totalPages);
+  let lo = currentPage - Math.floor((n - 1) / 2);
+  lo = Math.max(1, Math.min(lo, totalPages - n + 1));
+  return Array.from({ length: n }, (_, i) => lo + i);
+}
+
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY
 // ══════════════════════════════════════════════
@@ -2649,6 +2658,7 @@ if (typeof module !== 'undefined' && module.exports) {
     safeHTML,
     rawHTML,
     renderGoodFirstIssues,
-    buildPageWindow
+    buildPageWindow,
+    buildCompactWindow
   };
 }

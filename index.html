@@ -3394,13 +3394,13 @@ function buildCompactWindow(currentPage, totalPages, count) {
   return Array.from({ length: n }, (_, i) => lo + i);
 }
 
-// Pick the page list for the current viewport. Desktop keeps the bounded
-// 1 … window … last view; mobile shows only the current page's neighbours so
-// the whole control stays on a single line.
+// Pick how many page pills fit the current viewport. Every breakpoint shows a
+// contiguous run of the current page's neighbours (no ellipsis / first / last)
+// since the «/» buttons already jump to the boundaries.
 function paginationPageItems(currentPage, totalPages) {
   const w = (typeof window !== 'undefined' && window.innerWidth) || 1024;
-  if (w >= 640) return buildPageWindow(currentPage, totalPages, 6);
-  return buildCompactWindow(currentPage, totalPages, w >= 400 ? 5 : 3);
+  const count = w >= 640 ? 7 : (w >= 400 ? 5 : 3);
+  return buildCompactWindow(currentPage, totalPages, count);
 }
 
 // Cache the last render args per container so we can re-fit on orientation /

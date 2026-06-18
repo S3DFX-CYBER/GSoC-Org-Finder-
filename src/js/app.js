@@ -2553,28 +2553,33 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroSearch && heroResults) {
     let heroActiveIdx = -1;
 
-    function closeHeroDropdown() {
+    const closeHeroDropdown = () => {
       heroResults.classList.remove('open');
       heroSearch.setAttribute('aria-expanded', 'false');
       heroActiveIdx = -1;
       heroSearch.removeAttribute('aria-activedescendant');
-    }
+    };
 
-    function openHeroDropdown() {
+    const openHeroDropdown = () => {
       heroResults.classList.add('open');
       heroSearch.setAttribute('aria-expanded', 'true');
-    }
+    };
 
-    function updateHeroActive(rows) {
+    const updateHeroActive = (rows) => {
       rows.forEach((row, i) => {
         row.classList.toggle('hero-result-active', i === heroActiveIdx);
         row.setAttribute('aria-selected', i === heroActiveIdx ? 'true' : 'false');
         if (i === heroActiveIdx) heroSearch.setAttribute('aria-activedescendant', row.id);
       });
       if (heroActiveIdx < 0) heroSearch.removeAttribute('aria-activedescendant');
-    }
+    };
 
-    function renderHeroDropdown(rawQuery) {
+    const renderHeroDropdown = (rawQuery) => {
+      // Reset active state before replacing the DOM so aria-activedescendant
+      // never points at a node that is about to be removed.
+      heroActiveIdx = -1;
+      heroSearch.removeAttribute('aria-activedescendant');
+
       const q = rawQuery.trim().toLowerCase();
       if (!q) { closeHeroDropdown(); return; }
 
@@ -2593,8 +2598,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const visible = tags.slice(0, 3);
         const overflow = tags.length - visible.length;
         const logoHtml = logoUrl
-          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` +
+          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain">` +
             `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
           : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
         const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
@@ -2609,7 +2613,6 @@ document.addEventListener('DOMContentLoaded', () => {
           </button>`;
       }).join('');
 
-      heroActiveIdx = -1;
       openHeroDropdown();
 
       heroResults.querySelectorAll('.hero-result-row').forEach(row => {
@@ -2618,8 +2621,16 @@ document.addEventListener('DOMContentLoaded', () => {
           heroSearch.value = '';
           closeHeroDropdown();
         });
+        const logoImg = row.querySelector('.hero-result-logo img');
+        if (logoImg) {
+          logoImg.addEventListener('error', () => {
+            logoImg.style.display = 'none';
+            const placeholder = logoImg.nextElementSibling;
+            if (placeholder) placeholder.style.display = 'flex';
+          });
+        }
       });
-    }
+    };
 
     heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
 

@@ -2212,7 +2212,7 @@ kbd:hover{
 .hero-result-logo img { width: 100%; height: 100%; object-fit: contain; }
 .hero-result-logo-placeholder {
   width: 2rem; height: 2rem; border-radius: .375rem;
-  background: var(--md-sys-color-primary, #f97316);
+  background: #c2410c;
   color: #fff; font-size: .875rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -2230,7 +2230,7 @@ kbd:hover{
 .dark .hero-result-tag { background: rgb(39 39 42); color: rgb(161 161 170); }
 .hero-result-tag-overflow {
   font-size: .625rem; font-weight: 600; padding: 1px 6px;
-  border-radius: 9999px; background: rgb(255 237 213); color: rgb(234 88 12);
+  border-radius: 9999px; background: rgb(255 237 213); color: rgb(124 45 18);
 }
 .dark .hero-result-tag-overflow { background: rgba(234,88,12,.15); color: rgb(251 146 60); }
 .hero-result-empty {
@@ -4435,28 +4435,33 @@ if(org.ideas){
   if (heroSearch && heroResults) {
     let heroActiveIdx = -1;
 
-    function closeHeroDropdown() {
+    const closeHeroDropdown = () => {
       heroResults.classList.remove('open');
       heroSearch.setAttribute('aria-expanded', 'false');
       heroActiveIdx = -1;
       heroSearch.removeAttribute('aria-activedescendant');
-    }
+    };
 
-    function openHeroDropdown() {
+    const openHeroDropdown = () => {
       heroResults.classList.add('open');
       heroSearch.setAttribute('aria-expanded', 'true');
-    }
+    };
 
-    function updateHeroActive(rows) {
+    const updateHeroActive = (rows) => {
       rows.forEach((row, i) => {
         row.classList.toggle('hero-result-active', i === heroActiveIdx);
         row.setAttribute('aria-selected', i === heroActiveIdx ? 'true' : 'false');
         if (i === heroActiveIdx) heroSearch.setAttribute('aria-activedescendant', row.id);
       });
       if (heroActiveIdx < 0) heroSearch.removeAttribute('aria-activedescendant');
-    }
+    };
 
-    function renderHeroDropdown(rawQuery) {
+    const renderHeroDropdown = (rawQuery) => {
+      // Reset active state before replacing the DOM so aria-activedescendant
+      // never points at a node that is about to be removed.
+      heroActiveIdx = -1;
+      heroSearch.removeAttribute('aria-activedescendant');
+
       const q = rawQuery.trim().toLowerCase();
       if (!q) { closeHeroDropdown(); return; }
 
@@ -4475,8 +4480,7 @@ if(org.ideas){
         const visible = tags.slice(0, 3);
         const overflow = tags.length - visible.length;
         const logoHtml = logoUrl
-          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` +
+          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain">` +
             `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
           : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
         const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
@@ -4491,7 +4495,6 @@ if(org.ideas){
           </button>`;
       }).join('');
 
-      heroActiveIdx = -1;
       openHeroDropdown();
 
       heroResults.querySelectorAll('.hero-result-row').forEach(row => {
@@ -4500,8 +4503,16 @@ if(org.ideas){
           heroSearch.value = '';
           closeHeroDropdown();
         });
+        const logoImg = row.querySelector('.hero-result-logo img');
+        if (logoImg) {
+          logoImg.addEventListener('error', () => {
+            logoImg.style.display = 'none';
+            const placeholder = logoImg.nextElementSibling;
+            if (placeholder) placeholder.style.display = 'flex';
+          });
+        }
       });
-    }
+    };
 
     heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
 

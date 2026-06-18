@@ -2161,14 +2161,23 @@ kbd:hover{
   // THEME
   // ══════════════════════════════════════════════
   (function(){
-    const saved = localStorage.getItem('theme') || 'light';
+    let saved = 'light';
+    try {
+      saved = localStorage.getItem('theme') || 'light';
+    } catch(e) {
+      console.warn('LocalStorage read blocked/failed:', e);
+    }
     document.documentElement.classList.toggle('dark', saved === 'dark');
     updateThemeIcon();
   })();
 
   window.toggleTheme = function(){
     const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch(e) {
+      console.warn('LocalStorage write blocked/failed:', e);
+    }
     updateThemeIcon();
   };
 
@@ -2183,6 +2192,14 @@ kbd:hover{
       btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     }
   }
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'theme') {
+      const isDark = e.newValue === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      updateThemeIcon();
+    }
+  });
 
   // ══════════════════════════════════════════════
   // MOBILE MENU

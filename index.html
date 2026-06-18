@@ -3385,15 +3385,22 @@ function buildPageWindow(currentPage, totalPages, windowSize = 6) {
   return result;
 }
 
-// Number of page pills to show, tuned to the viewport so the controls stay on
-// a single line on mobile. Pages can grow into the thousands, so the window is
-// always bounded by first/last + ellipses regardless of total.
-function paginationWindowSize() {
-  if (typeof window === 'undefined') return 6;
-  const w = window.innerWidth || 1024;
-  if (w >= 640) return 6;
-  if (w >= 400) return 3;
-  return 1;
+// Contiguous run of pages centered on the current one, clamped to range — no
+// ellipsis / first / last, since the «/» buttons already jump to the boundaries.
+function buildCompactWindow(currentPage, totalPages, count) {
+  const n = Math.min(count, totalPages);
+  let lo = currentPage - Math.floor((n - 1) / 2);
+  lo = Math.max(1, Math.min(lo, totalPages - n + 1));
+  return Array.from({ length: n }, (_, i) => lo + i);
+}
+
+// Pick the page list for the current viewport. Desktop keeps the bounded
+// 1 … window … last view; mobile shows only the current page's neighbours so
+// the whole control stays on a single line.
+function paginationPageItems(currentPage, totalPages) {
+  const w = (typeof window !== 'undefined' && window.innerWidth) || 1024;
+  if (w >= 640) return buildPageWindow(currentPage, totalPages, 6);
+  return buildCompactWindow(currentPage, totalPages, w >= 400 ? 5 : 3);
 }
 
 // Cache the last render args per container so we can re-fit on orientation /
@@ -3448,7 +3455,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   const navBtn = (page, label, icon, hide) => hide ? '' :
     `<button type="button" class="${navCls}" data-page="${page}" aria-label="${label}">${icon}</button>`;
 
-  const pageItems = buildPageWindow(currentPage, totalPages, paginationWindowSize());
+  const pageItems = paginationPageItems(currentPage, totalPages);
   const pagePills = pageItems.map(item => {
     if (item === '...') {
       return `<span class="text-zinc-400 dark:text-zinc-500 text-xs px-1 select-none" aria-hidden="true">…</span>`;

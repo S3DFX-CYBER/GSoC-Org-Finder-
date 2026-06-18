@@ -2624,6 +2624,18 @@ document.addEventListener('DOMContentLoaded', () => {
     heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
 
     heroSearch.addEventListener('keydown', (e) => {
+      // Re-open a closed dropdown when arrowing with an existing query (no retype needed)
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+          !heroResults.classList.contains('open') && heroSearch.value.trim()) {
+        e.preventDefault();
+        renderHeroDropdown(heroSearch.value);
+        const reopened = [...heroResults.querySelectorAll('.hero-result-row')];
+        if (reopened.length) {
+          heroActiveIdx = e.key === 'ArrowDown' ? 0 : reopened.length - 1;
+          updateHeroActive(reopened);
+        }
+        return;
+      }
       const rows = [...heroResults.querySelectorAll('.hero-result-row')];
       const n = rows.length;
       if (e.key === 'ArrowDown') {

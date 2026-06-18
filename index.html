@@ -3364,27 +3364,6 @@ function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
   return items.slice(startIndex, startIndex + itemsPerPage);
 }
 
-function buildPageWindow(currentPage, totalPages, windowSize = 6) {
-  if (totalPages <= 1) return [];
-  if (totalPages <= windowSize + 2) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  const half = Math.floor(windowSize / 2);
-  const lo = Math.max(1, Math.min(currentPage - half, totalPages - windowSize + 1));
-  const hi = lo + windowSize - 1;
-  const result = [];
-  if (lo > 1) {
-    result.push(1);
-    if (lo > 2) result.push('...');
-  }
-  for (let p = lo; p <= hi; p++) result.push(p);
-  if (hi < totalPages) {
-    if (hi < totalPages - 1) result.push('...');
-    result.push(totalPages);
-  }
-  return result;
-}
-
 // Contiguous run of pages centered on the current one, clamped to range — no
 // ellipsis / first / last, since the «/» buttons already jump to the boundaries.
 function buildCompactWindow(currentPage, totalPages, count) {
@@ -3398,25 +3377,27 @@ function buildCompactWindow(currentPage, totalPages, count) {
 // contiguous run of the current page's neighbours (no ellipsis / first / last)
 // since the «/» buttons already jump to the boundaries.
 function paginationPageItems(currentPage, totalPages) {
-  const w = (typeof window !== 'undefined' && window.innerWidth) || 1024;
-  const count = w >= 640 ? 7 : (w >= 400 ? 5 : 3);
+  const w = (typeof globalThis.window !== 'undefined' && globalThis.innerWidth) || 1024;
+  let count = 3;
+  if (w >= 640) count = 7;
+  else if (w >= 400) count = 5;
   return buildCompactWindow(currentPage, totalPages, count);
 }
 
 // Cache the last render args per container so we can re-fit on orientation /
 // resize changes without the caller having to re-trigger a full list render.
 const _paginationState = {};
-let _paginationLastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+let _paginationLastWidth = typeof globalThis.window === 'undefined' ? 0 : globalThis.innerWidth;
 function _bindPaginationResize() {
-  if (typeof window === 'undefined' || window.__paginationResizeBound) return;
-  window.__paginationResizeBound = true;
+  if (typeof globalThis.window === 'undefined' || globalThis.__paginationResizeBound) return;
+  globalThis.__paginationResizeBound = true;
   let raf;
-  window.addEventListener('resize', () => {
+  globalThis.addEventListener('resize', () => {
     // Only viewport width changes how many pills fit. Ignore height-only resizes
     // (e.g. the mobile keyboard opening) so we never tear down and rebuild a
     // focused "go to page" input mid-tap, which would dismiss the keyboard.
-    if (window.innerWidth === _paginationLastWidth) return;
-    _paginationLastWidth = window.innerWidth;
+    if (globalThis.innerWidth === _paginationLastWidth) return;
+    _paginationLastWidth = globalThis.innerWidth;
     clearTimeout(raf);
     raf = setTimeout(() => {
       const active = document.activeElement;
@@ -3505,7 +3486,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   function handleGoTo() {
     const input = document.getElementById(inputId);
     if (!input) return;
-    const val = parseInt(input.value, 10);
+    const val = Number.parseInt(input.value, 10);
     if (Number.isNaN(val)) {
       input.classList.add('border-red-400', 'ring-1', 'ring-red-400');
       setTimeout(() => input.classList.remove('border-red-400', 'ring-1', 'ring-red-400'), 1200);

@@ -1,5 +1,5 @@
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, buildPageWindow, buildCompactWindow */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, buildCompactWindow */
 
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
@@ -2609,27 +2609,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function buildPageWindow(currentPage, totalPages, windowSize = 6) {
-  if (totalPages <= 1) return [];
-  if (totalPages <= windowSize + 2) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  const half = Math.floor(windowSize / 2);
-  const lo = Math.max(1, Math.min(currentPage - half, totalPages - windowSize + 1));
-  const hi = lo + windowSize - 1;
-  const result = [];
-  if (lo > 1) {
-    result.push(1);
-    if (lo > 2) result.push('...');
-  }
-  for (let p = lo; p <= hi; p++) result.push(p);
-  if (hi < totalPages) {
-    if (hi < totalPages - 1) result.push('...');
-    result.push(totalPages);
-  }
-  return result;
-}
-
 // Contiguous run of pages centered on the current one, clamped to range — no
 // ellipsis / first / last, since the «/» buttons already jump to the boundaries.
 function buildCompactWindow(currentPage, totalPages, count) {
@@ -2658,7 +2637,6 @@ if (typeof module !== 'undefined' && module.exports) {
     safeHTML,
     rawHTML,
     renderGoodFirstIssues,
-    buildPageWindow,
     buildCompactWindow
   };
 }

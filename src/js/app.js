@@ -713,13 +713,16 @@ function handleNavigationUp(e) {
   updateCardFocus();
 }
 
+function handleHeroSearchShortcut(e) {
+  if (!((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'))) return false;
+  e.preventDefault();
+  const h = document.getElementById('hero-search');
+  if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
+  return true;
+}
+
 function handleGlobalKeydown(e) {
-  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
-    e.preventDefault();
-    const h = document.getElementById('hero-search');
-    if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
-    return;
-  }
+  if (handleHeroSearchShortcut(e)) return;
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
 
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
@@ -2634,33 +2637,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
 
+    const heroRows = () => [...heroResults.querySelectorAll('.hero-result-row')];
+
+    const reopenHeroDropdown = (key) => {
+      renderHeroDropdown(heroSearch.value);
+      const rows = heroRows();
+      if (!rows.length) return;
+      heroActiveIdx = key === 'ArrowDown' ? 0 : rows.length - 1;
+      updateHeroActive(rows);
+    };
+
+    const moveHeroActive = (delta) => {
+      const rows = heroRows();
+      const n = rows.length;
+      heroActiveIdx = n > 0 ? (heroActiveIdx + delta + n) % n : -1;
+      updateHeroActive(rows);
+    };
+
+    const selectHeroActive = () => {
+      const rows = heroRows();
+      let target = null;
+      if (heroActiveIdx >= 0) {
+        target = rows[heroActiveIdx];
+      } else if (rows.length === 1) {
+        target = rows[0];
+      }
+      if (!target) return;
+      openModal(target.dataset.orgName);
+      heroSearch.value = '';
+      closeHeroDropdown();
+    };
+
     heroSearch.addEventListener('keydown', (e) => {
+      const isArrow = e.key === 'ArrowDown' || e.key === 'ArrowUp';
       // Re-open a closed dropdown when arrowing with an existing query (no retype needed)
-      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
-          !heroResults.classList.contains('open') && heroSearch.value.trim()) {
+      if (isArrow && !heroResults.classList.contains('open') && heroSearch.value.trim()) {
         e.preventDefault();
-        renderHeroDropdown(heroSearch.value);
-        const reopened = [...heroResults.querySelectorAll('.hero-result-row')];
-        if (reopened.length) {
-          heroActiveIdx = e.key === 'ArrowDown' ? 0 : reopened.length - 1;
-          updateHeroActive(reopened);
-        }
+        reopenHeroDropdown(e.key);
         return;
       }
-      const rows = [...heroResults.querySelectorAll('.hero-result-row')];
-      const n = rows.length;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        heroActiveIdx = n > 0 ? (heroActiveIdx + 1) % n : -1;
-        updateHeroActive(rows);
+        moveHeroActive(1);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        heroActiveIdx = n > 0 ? (heroActiveIdx - 1 + n) % n : -1;
-        updateHeroActive(rows);
+        moveHeroActive(-1);
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const target = heroActiveIdx >= 0 ? rows[heroActiveIdx] : n === 1 ? rows[0] : null;
-        if (target) { openModal(target.dataset.orgName); heroSearch.value = ''; closeHeroDropdown(); }
+        selectHeroActive();
       } else if (e.key === 'Escape') {
         closeHeroDropdown();
       }

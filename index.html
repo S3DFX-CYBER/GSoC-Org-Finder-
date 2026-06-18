@@ -1576,7 +1576,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 sm:gap-2" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1888,7 +1888,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 sm:gap-2" aria-label="Mentor pagination"></div>
 </section>
  
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -3440,62 +3440,55 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
 
   container.style.display = 'flex';
 
-  const baseClass = 'px-4 py-2 rounded-full border text-xs font-bold transition-all';
-  const normalClass = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary';
-  const activeClass = 'bg-primary text-white border-primary';
-  const disabledClass = 'opacity-50 cursor-not-allowed';
+  const pillBase = 'min-w-[2rem] h-8 px-2 rounded-full text-xs font-bold transition-all flex items-center justify-center';
+  const activeCls = `${pillBase} bg-primary text-white`;
+  const normalCls = `${pillBase} text-zinc-600 dark:text-zinc-400 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20`;
+  const navCls = 'h-8 px-2 rounded-full text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 transition-all flex items-center justify-center';
 
-  const pageButtons = Array.from({ length: totalPages }, (_, index) => {
-    const page = index + 1;
-    return `
-      <button
-        type="button"
-        class="${baseClass} ${page === currentPage ? activeClass : normalClass}"
-        data-page="${page}"
-        aria-label="Go to page ${page}"
-        ${page === currentPage ? 'aria-current="page"' : ''}
-      >
-        ${page}
-      </button>
-    `;
+  const navBtn = (page, label, icon, hide) => hide ? '' :
+    `<button type="button" class="${navCls}" data-page="${page}" aria-label="${label}">${icon}</button>`;
+
+  const pageItems = buildPageWindow(currentPage, totalPages, paginationWindowSize());
+  const pagePills = pageItems.map(item => {
+    if (item === '...') {
+      return `<span class="text-zinc-400 dark:text-zinc-500 text-xs px-1 select-none" aria-hidden="true">…</span>`;
+    }
+    const active = item === currentPage;
+    return `<button type="button" class="${active ? activeCls : normalCls}"
+      data-page="${item}" aria-label="Go to page ${item}"
+      ${active ? 'aria-current="page"' : ''}>${item}</button>`;
   }).join('');
 
-  container.innerHTML = `
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === 1 ? disabledClass : ''}"
-      data-page="${currentPage - 1}"
-      ${currentPage === 1 ? 'disabled' : ''}
-    >
-      Previous
-    </button>
+  const inputId = `${containerId}-goto-input`;
+  const btnId = `${containerId}-goto-btn`;
+  const controlsRow = `
+    <div class="flex flex-nowrap items-center justify-center gap-1.5 max-w-full overflow-x-auto no-scrollbar">
+      ${navBtn(1, 'First page', '«', currentPage === 1)}
+      ${navBtn(currentPage - 1, 'Previous page', '‹', currentPage === 1)}
+      ${pagePills}
+      ${navBtn(currentPage + 1, 'Next page', '›', currentPage === totalPages)}
+      ${navBtn(totalPages, 'Last page', '»', currentPage === totalPages)}
+    </div>`;
 
-    ${pageButtons}
+  const goWidget = `
+    <div class="flex items-center gap-1.5 w-full sm:w-auto justify-center sm:ml-1">
+      <input type="number" id="${inputId}" min="1" max="${totalPages}"
+        placeholder="Go to page (e.g. ${Math.ceil(totalPages / 2)})"
+        aria-label="Go to page number"
+        class="w-40 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 text-xs focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      />
+      <button type="button" id="${btnId}" aria-label="Navigate to entered page"
+        class="h-8 w-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-primary hover:text-white dark:hover:bg-primary text-zinc-600 dark:text-zinc-300 text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center">
+        <span class="material-symbols-outlined text-base leading-none">arrow_forward</span>
+      </button>
+    </div>`;
 
-    <button
-      type="button"
-      class="${baseClass} ${normalClass} ${currentPage === totalPages ? disabledClass : ''}"
-      data-page="${currentPage + 1}"
-      ${currentPage === totalPages ? 'disabled' : ''}
-    >
-      Next
-    </button>
-  `;
+  container.innerHTML = `${controlsRow}${goWidget}`;
 
-  container.querySelectorAll('[data-page]').forEach(button => {
-    button.addEventListener('click', () => {
-      const page = Number(button.dataset.page);
-
-      if (
-        button.disabled ||
-        Number.isNaN(page) ||
-        page < 1 ||
-        page > totalPages ||
-        page === currentPage
-      ) {
-        return;
-      }
-
+  container.querySelectorAll('[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const page = Number(btn.dataset.page);
+      if (Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
       onPageChange(page);
     });
   });

@@ -1562,7 +1562,7 @@ kbd:hover{
           <span class="material-symbols-outlined text-sm">upload</span>
           Import
         </button>
-        <input type="file" id="importWatchlistInput" accept=".json" class="hidden">
+        <input type="file" id="importWatchlistInput" accept=".json" class="hidden" aria-label="Import Watchlist JSON">
         
         <div class="relative">
           <button onclick="document.getElementById('exportDropdownMenu').classList.toggle('hidden')" class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors" title="Export Watchlist">
@@ -3739,15 +3739,18 @@ btn.__orgListenerAttached = true;
       return;
     }
     
-    const escapeMd = (str) => str ? String(str).replace(/([\\`*_{}[\]()])/g, '\\$1') : '';
-    const escapeUrl = (str) => str ? String(str).replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
+    const escapeMd = (str) => str ? String(str).replaceAll(/([\\`*_{}[\]()])/g, String.raw`\$1`) : '';
+    const escapeUrl = (str) => str ? String(str).replaceAll('(', '%28').replaceAll(')', '%29') : '';
 
     let md = "# My GSoC Watchlist\n\n";
     bookmarks.forEach(org => {
       md += `## [${escapeMd(org.name)}](${escapeUrl(org.ideas || org.url || '')})\n\n`;
       if (org.desc) md += `- **Description:** ${escapeMd(org.desc)}\n`;
       if (org.ideas) md += `- **Ideas List:** ${escapeUrl(org.ideas)}\n`;
-      if (org.years) md += `- **GSoC Years:** ${escapeMd(org.years)}${org.firstYear ? ` (since ${escapeMd(org.firstYear)})` : ''}\n`;
+      if (org.years) {
+        const firstYearStr = org.firstYear ? ' (since ' + escapeMd(org.firstYear) + ')' : '';
+        md += `- **GSoC Years:** ${escapeMd(org.years)}${firstYearStr}\n`;
+      }
       if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${escapeMd(org.tags.join(', '))}\n`;
       md += '\n';
     });
@@ -3802,35 +3805,32 @@ btn.__orgListenerAttached = true;
     }, 3000);
   }
 
-  document.getElementById('importWatchlistInput')?.addEventListener('change', function(event) {
+  document.getElementById('importWatchlistInput')?.addEventListener('change', async function(event) {
     const file = event.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        const importedOrgs = JSON.parse(e.target.result);
-        if (!Array.isArray(importedOrgs)) throw new Error("Invalid format: Not an array");
-        let addedCount = 0;
-        const validOrgNames = new Set(ORGS.map(o => o.name));
-        importedOrgs.forEach(orgName => {
-          if (typeof orgName === 'string' && !bookmarkedSet.has(orgName) && validOrgNames.has(orgName)) {
-            bookmarkedSet.add(orgName);
-            addedCount++;
-          }
-        });
-        localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
-        applyFilters();
-        renderWatchlist();
-        updateAIInsights();
-        showToast("Import Successful", `Successfully imported ${addedCount} organization(s).`);
-      } catch (err) {
-        alert("Failed to parse JSON file. Ensure it's a valid watchlist export.");
-        console.error("Import error:", err);
-      } finally {
-        event.target.value = ''; // Reset input
-      }
-    };
-    reader.readAsText(file);
+    try {
+      const text = await file.text();
+      const importedOrgs = JSON.parse(text);
+      if (!Array.isArray(importedOrgs)) throw new Error("Invalid format: Not an array");
+      let addedCount = 0;
+      const validOrgNames = new Set(ORGS.map(o => o.name));
+      importedOrgs.forEach(orgName => {
+        if (typeof orgName === 'string' && !bookmarkedSet.has(orgName) && validOrgNames.has(orgName)) {
+          bookmarkedSet.add(orgName);
+          addedCount++;
+        }
+      });
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+      applyFilters();
+      renderWatchlist();
+      updateAIInsights();
+      showToast("Import Successful", `Successfully imported ${addedCount} organization(s).`);
+    } catch (err) {
+      alert("Failed to parse JSON file. Ensure it's a valid watchlist export.");
+      console.error("Import error:", err);
+    } finally {
+      event.target.value = ''; // Reset input
+    }
   });
 
   // ── renderWatchlist ─────────────────────────────────────────────────────────

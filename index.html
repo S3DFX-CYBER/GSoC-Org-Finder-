@@ -2181,6 +2181,7 @@ kbd:hover{
 }
 @media (prefers-reduced-motion: no-preference) {
   #heroSearchResults { transition: opacity 150ms ease-out, transform 150ms ease-out; }
+  .hero-result-row { transition: background-color 120ms ease, box-shadow 120ms ease; }
 }
 #heroSearchResults.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
@@ -2191,10 +2192,17 @@ kbd:hover{
 }
 .dark .hero-result-row { border-color: rgb(39 39 42); }
 .hero-result-row:last-child { border-bottom: none; }
-.hero-result-row:hover,
-.hero-result-row.hero-result-active { background: rgb(250 250 250); }
-.dark .hero-result-row:hover,
-.dark .hero-result-row.hero-result-active { background: rgb(24 24 27); }
+.hero-result-row:hover { background: rgb(244 244 245); }
+.dark .hero-result-row:hover { background: rgb(39 39 42); }
+/* keyboard (arrow) selection — primary accent bar + tint, distinct from hover */
+.hero-result-row.hero-result-active {
+  background: rgb(255 247 237);
+  box-shadow: inset 3px 0 0 var(--md-sys-color-primary, #f97316);
+}
+.dark .hero-result-row.hero-result-active {
+  background: rgba(249, 115, 22, 0.14);
+  box-shadow: inset 3px 0 0 var(--md-sys-color-primary, #f97316);
+}
 
 .hero-result-logo {
   flex-shrink: 0; width: 2rem; height: 2rem;

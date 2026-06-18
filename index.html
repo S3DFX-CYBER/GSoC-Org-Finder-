@@ -3739,13 +3739,16 @@ btn.__orgListenerAttached = true;
       return;
     }
     
+    const escapeMd = (str) => str ? String(str).replace(/([\\`*_{}[\]()])/g, '\\$1') : '';
+    const escapeUrl = (str) => str ? String(str).replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
+
     let md = "# My GSoC Watchlist\n\n";
     bookmarks.forEach(org => {
-      md += `## [${org.name}](${org.ideas || org.url || ''})\n\n`;
-      if (org.desc) md += `- **Description:** ${org.desc}\n`;
-      if (org.ideas) md += `- **Ideas List:** ${org.ideas}\n`;
-      if (org.years) md += `- **GSoC Years:** ${org.years}${org.firstYear ? ` (since ${org.firstYear})` : ''}\n`;
-      if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${org.tags.join(', ')}\n`;
+      md += `## [${escapeMd(org.name)}](${escapeUrl(org.ideas || org.url || '')})\n\n`;
+      if (org.desc) md += `- **Description:** ${escapeMd(org.desc)}\n`;
+      if (org.ideas) md += `- **Ideas List:** ${escapeUrl(org.ideas)}\n`;
+      if (org.years) md += `- **GSoC Years:** ${escapeMd(org.years)}${org.firstYear ? ` (since ${escapeMd(org.firstYear)})` : ''}\n`;
+      if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${escapeMd(org.tags.join(', '))}\n`;
       md += '\n';
     });
     

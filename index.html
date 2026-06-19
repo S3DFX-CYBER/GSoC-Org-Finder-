@@ -4407,7 +4407,7 @@ if(org.ideas){
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
         const safeUrl = sanitizeHrefUrl(issue.url);
-        if (safeUrl) card.onclick = () => globalThis.open(safeUrl, '_blank');
+        if (safeUrl) card.onclick = () => globalThis.open(safeUrl, '_blank', 'noopener,noreferrer');
         const safeRepo = escapeHtml(issue.repo || '');
         const safeTitle = escapeHtml(issue.title || '');
         const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
@@ -5312,6 +5312,7 @@ if(e.key.toLowerCase()==='r'){
     clearTimeout(navScrollEndTimer);
     navScrollEndTimer = setTimeout(() => {
       isNavClicking = false;
+      updateCurrentSection();
     }, 150);
   }
 
@@ -5386,6 +5387,7 @@ if(e.key.toLowerCase()==='r'){
       clearTimeout(navScrollEndTimer);
       navScrollEndTimer = setTimeout(() => {
         isNavClicking = false;
+        updateCurrentSection();
       }, 100);
       return;
     }

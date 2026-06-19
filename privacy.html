@@ -40,6 +40,17 @@
       }
     }
   </script>
+  <style>
+    /* Dark mode overrides */
+    .dark body { background: #0f0f10 !important; color: #e5e7eb !important; }
+    .dark header { background: rgba(24, 24, 27, 0.85) !important; border-bottom: 1px solid #3f3f46 !important; }
+    .dark header .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark header .text-zinc-600 { color: #a1a1aa !important; }
+    .dark header .hover\:text-zinc-900:hover { color: #f4f4f5 !important; }
+    .dark .text-zinc-900 { color: #f4f4f5 !important; }
+    .dark .text-zinc-600 { color: #a1a1aa !important; }
+    .dark .border-zinc-200 { border-color: #3f3f46 !important; }
+  </style>
 </head>
 <body class="privacy-page bg-surface text-zinc-900 antialiased selection:bg-orange-200 selection:text-orange-900 transition-colors duration-300">
 
@@ -57,6 +68,13 @@
       <a href="index.html#issues" class="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors">Issues</a>
     </nav>
     <div class="flex items-center gap-4">
+      <button id="themeToggleBtn" onclick="toggleTheme()"
+        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
+        <span class="material-symbols-outlined text-zinc-600">
+          dark_mode
+        </span>
+      </button>
       <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-700 transition-colors">
         <span class="material-symbols-outlined text-sm">star</span> Star & Contribute
       </a>
@@ -89,6 +107,8 @@
 <!-- Footer Placeholder -->
 <div id="footer-placeholder"></div>
 <script src="src/js/footer.js"></script>
+
+<script src="src/js/theme.js"></script>
 
 </body>
 </html>

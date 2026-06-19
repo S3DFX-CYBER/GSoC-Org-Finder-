@@ -10,6 +10,8 @@ const CRITICAL_ASSETS = [
   'src/js/skillExtractor.js',
   'src/js/recommender.js',
   'src/js/recommendation-ui.js',
+  'src/components/footer.html',
+  'src/js/footer.js',
   'src/assets/icon-512.png'
 ];
 

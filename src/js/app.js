@@ -247,7 +247,6 @@ async function copyTextToClipboard(text) {
 }
 
 
-
 function showCopyTooltip(button, message = 'Copied!') {
   const tooltip = button.querySelector('.copy-org-tooltip');
   if (!tooltip) return;

@@ -1384,12 +1384,54 @@ function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixe
 // ══════════════════════════════════════════════
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
+
+function renderModalHeader(org) {
+  const isBookmarked = bookmarkedSet.has(org.name);
+  const isComparing = compareList.includes(org.name);
+  const ideasLinkHTML = (() => {
+    const u = sanitizeHrefUrl(org.ideas);
+    return u ? `<a href="${escapeHtml(u)}" target="_blank" rel="noopener noreferrer" class="mentor-link-chip"><span>💡</span><span>Visit ideas page</span></a>` : '';
+  })();
+
+  return `
+    <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
+      <div class="flex items-start justify-between pr-10 gap-4">
+        <div>
+          <h2>${escapeHtml(org.name)}</h2>
+          <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
+          ${ideasLinkHTML}
+        </div>
+        <div class="flex flex-col items-end gap-2">
+          <button id="modalCompareBtn" data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-orange-400'} hover:text-primary flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Add to compare'}
+          </button>
+          <button
+            id="modalBookmarkBtn"
+            class="bookmark-btn ${isBookmarked ? 'active' : 'text-orange-300'} flex-shrink-0"
+            data-bookmark-org="${escapeHtml(org.name)}"
+            aria-label="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+            title="${isBookmarked ? 'Remove bookmark' : 'Add to Watchlist'}"
+          >
+            <span class="material-symbols-outlined text-2xl ${isBookmarked ? 'icon-fill' : ''}">
+              star
+            </span>
+          </button>
+        </div>
+      </div>
+      `;
+}
+globalThis.renderModalHeader = renderModalHeader;
 globalThis.openModal = function (name, triggerElement = null) {
   const org = ORGS.find(o => o.name === name);
   if (!org) return;
 
   AN.trackOrg(org.name);
   addRecentlyViewed(org.name);
+
+  const mHeader = document.getElementById('mHeader');
+  if (mHeader) {
+    mHeader.innerHTML = renderModalHeader(org);
+  }
 
   const mDesc = document.getElementById('mDesc');
   if (mDesc) mDesc.textContent = org.desc;
@@ -2581,6 +2623,7 @@ if (typeof module !== 'undefined' && module.exports) {
     orgMatchesLanguages,
     applySecondarySort,
     openModal,
+    renderModalHeader,
     closeModal,
     safeHTML,
     rawHTML,

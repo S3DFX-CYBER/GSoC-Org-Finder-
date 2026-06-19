@@ -97,10 +97,10 @@ def call_llm(client, prompt: str) -> str | None:
                 else:
                     logger.error(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")
                     return None if fail_closed else "⚠️ TENET Security Review skipped due to API rate limits."
-            logger.error(f"⚠️  LLM API error: {e}")
+            logger.exception(f"⚠️  LLM API error: {e}")
             return None if fail_closed else "⚠️ TENET Security Review skipped due to API error."
         except Exception as e:
-            logger.error(f"⚠️  LLM call failed: {e}")
+            logger.exception(f"⚠️  LLM call failed: {e}")
             return None if fail_closed else "⚠️ TENET Security Review skipped due to an internal error."
 
 
@@ -291,5 +291,5 @@ def create_branch_and_commit(
         logger.info(f"✅ Branch '{branch_name}' pushed.")
         return True
     except Exception as e:
-        logger.error(f"❌ Git error: {e}")
+        logger.exception(f"❌ Git error: {e}")
         return False

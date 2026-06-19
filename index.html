@@ -3639,6 +3639,13 @@ btn.__orgListenerAttached = true;
       closeAn();
     } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
       closeOrgPicker();
+    } else if (!document.getElementById('exportDropdownMenu')?.classList.contains('hidden')) {
+      const menu = document.getElementById('exportDropdownMenu');
+      const btn  = document.getElementById('exportBtn');
+      const chevron = document.getElementById('exportChevron');
+      menu.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
     }
   });
   
@@ -5533,17 +5540,6 @@ if(e.key.toLowerCase()==='r'){
     }
   });
 
-  function getFilteredOrgs() {
-    // filteredOrgs is the array already computed by the app's render/filter logic.
-    // It's set as a global by the existing renderOrgs() function.
-    // If not exposed as global, fall back to reading visible cards.
-    if (typeof filteredOrgs !== 'undefined' && Array.isArray(filteredOrgs)) {
-      return filteredOrgs;
-    }
-    // Fallback: read org names from visible cards
-    return [];
-  }
-
   function downloadFile(content, filename, type) {
     const blob = new Blob([content], { type });
     const url  = URL.createObjectURL(blob);
@@ -5581,7 +5577,7 @@ if(e.key.toLowerCase()==='r'){
     const timestamp = new Date().toISOString().slice(0, 10); // e.g. 2026-06-15
 
     if (format === 'csv') {
-      const headers = ['Name', 'Category', 'Languages', 'Competition', 'GSoC Years', 'First Year', 'GitHub URL', 'Ideas Link'];
+      const headers = ['Name', 'Category', 'Tags', 'Competition', 'GSoC Years', 'First Year', 'GitHub URL', 'Ideas Link'];
       const escape  = v => `"${String(v ?? '').replaceAll('"', '""')}"`;
       const rows    = orgs.map(org => [
         org.name,
@@ -5620,6 +5616,12 @@ if(e.key.toLowerCase()==='r'){
     if (count === 0) {
       btn.setAttribute('disabled', 'true');
       btn.title = 'No results to export';
+      // close dropdown if open
+      const menu = document.getElementById('exportDropdownMenu');
+      const chevron = document.getElementById('exportChevron');
+      if (menu) menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
     } else {
       btn.removeAttribute('disabled');
       btn.title = 'Export filtered results';

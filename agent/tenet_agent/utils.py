@@ -7,11 +7,12 @@ import os
 import re
 import sys
 import time
+import random
 import logging
 import requests
 from google import genai
 from google.genai import types, errors
-from github import Github, GithubException
+from github import Github
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -62,6 +63,7 @@ LLM_CONFIG = types.GenerateContentConfig(
     ]
 )
 
+
 def call_llm(client, prompt: str) -> str | None:
     """
     Call Gemini and return the text response.
@@ -87,8 +89,9 @@ def call_llm(client, prompt: str) -> str | None:
         except errors.APIError as e:
             if getattr(e, 'code', None) == 429 or "429" in str(e):
                 if attempt < MAX_RETRIES - 1:
-                    sleep_time = BASE_DELAY * (2 ** attempt)
-                    logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time}s...")
+                    jitter = random.uniform(0, 1)
+                    sleep_time = BASE_DELAY * (2 ** attempt) + jitter
+                    logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
                     time.sleep(sleep_time)
                     continue
                 else:
@@ -99,7 +102,6 @@ def call_llm(client, prompt: str) -> str | None:
         except Exception as e:
             logger.error(f"⚠️  LLM call failed: {e}")
             return None if fail_closed else "⚠️ TENET Security Review skipped due to an internal error."
-
 
 
 # ─── PR utilities ─────────────────────────────────────────────────────────────

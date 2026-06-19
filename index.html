@@ -898,7 +898,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<dialog id="mobileMenu" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-40 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -953,7 +953,7 @@
       </a>
     </div>
   </nav>
-</dialog>
+</div>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1229,7 +1229,7 @@
           <span class="material-symbols-outlined text-sm">delete_sweep</span>
           Clear All
         </button>
-        <input type="file" id="importBookmarksInput" class="sr-only" accept="application/json,.json">
+        <input type="file" id="importBookmarksInput" class="sr-only" accept="application/json,.json" aria-label="Import bookmarks">
       </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1900,7 +1900,7 @@ sections.forEach(sectionId => {
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
-      const linkSection = link.dataset.section;
+      const linkSection = link.getAttribute('data-section');
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
         link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
@@ -1913,7 +1913,7 @@ sections.forEach(sectionId => {
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
-      const linkSection = link.dataset.section;
+      const linkSection = link.getAttribute('data-section');
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
         link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
@@ -2661,7 +2661,7 @@ sections.forEach(sectionId => {
       container.innerHTML = MILESTONES.map((m, i) => {
         const isActive = i === activeIdx;
         const isLast = i === MILESTONES.length - 1;
-        const connector = !isLast ? `<div class="w-0.5 h-10 bg-zinc-200"></div>` : '';
+        const connector = isLast ? '' : `<div class="w-0.5 h-10 bg-zinc-200"></div>`;
         let dateStr;
         try {
           dateStr = m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -3252,8 +3252,12 @@ btn.__orgListenerAttached = true;
     document.body.appendChild(input);
     input.select();
 
-    const copied = document.execCommand('copy');
-    input.remove();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } finally {
+      input.remove();
+    }
 
     if (!copied) {
       throw new Error('Failed to copy text');

@@ -386,10 +386,6 @@
     body { width: 100%; overflow-x: hidden; }
     html { width: 100%; scroll-behavior: smooth; }
     
-    /* Scroll offset for fixed header */
-    #timeline, #orgs, #guide, #watchlist, #issues, #mentors, #ai-recommender, #contact {
-      scroll-margin-top: 80px;
-    }
 
     /* Minimal dark-mode support */
     .dark body { background: #0f0f10; color: #e5e7eb; }
@@ -902,7 +898,7 @@
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<dialog id="mobileMenu" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -957,7 +953,7 @@
       </a>
     </div>
   </nav>
-</div>
+</dialog>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="pt-20 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 max-w-7xl mx-auto fade-up">
@@ -1372,7 +1368,7 @@
       <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
         <label class="relative block">
           <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400 text-sm">search</span>
-          <input id="mentorSearchInput" type="text" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
+          <input id="mentorSearchInput" type="text" aria-label="Search mentors" placeholder="Search org name or mentor GitHub handle..." class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary" />
         </label>
         <select id="mentorChannelFilter" class="bg-surface-container-low border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary text-zinc-700 px-4">
           <option value="all">All channels</option>
@@ -1808,7 +1804,7 @@
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  window.toggleMenu = function(){
+  globalThis.toggleMenu = function(){
     const menu = document.getElementById('mobileMenu');
     const panel = document.getElementById('menuPanel');
     const menuBtn = document.getElementById('menuBtn');
@@ -1843,7 +1839,7 @@
     }
   }
 
-window.setActiveMenu = function(clickedLink) {
+globalThis.setActiveMenu = function(clickedLink) {
   // Remove active class from all menu links
   const allLinks = document.querySelectorAll('.mobile-menu-link');
 
@@ -1904,7 +1900,7 @@ sections.forEach(sectionId => {
     // Update mobile menu items
     const allMobileLinks = document.querySelectorAll('.mobile-menu-link');
     allMobileLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset.section;
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-700', 'hover:bg-zinc-100', 'font-medium');
         link.classList.add('text-orange-600', 'bg-orange-50', 'font-bold');
@@ -1917,7 +1913,7 @@ sections.forEach(sectionId => {
     // Update desktop navbar items
     const allDesktopLinks = document.querySelectorAll('.desktop-nav-link');
     allDesktopLinks.forEach(link => {
-      const linkSection = link.getAttribute('data-section');
+      const linkSection = link.dataset.section;
       if (linkSection === currentSection) {
         link.classList.remove('text-zinc-600', 'hover:text-zinc-900');
         link.classList.add('text-orange-600', 'font-bold', 'border-b-2', 'border-orange-600');
@@ -4537,11 +4533,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (helpBtn) {
     helpBtn.addEventListener('click', openHelpModal);
   }
-
+  
   document.addEventListener('keydown', (e) => {
 
+     const helpModalOpen =
+    document.getElementById('helpModal')?.classList.contains('open');
+
+  const orgModalOpen =
+    document.getElementById('orgModal')?.classList.contains('open');
+
+  const proposalModalOpen =
+    document.getElementById('proposalModal')?.classList.contains('open');
+
+  if (helpModalOpen || orgModalOpen || proposalModalOpen) {
+    return;
+  }
+
     if (e.key === '?') {
-      openHelpModal();
+        e.preventDefault();
+        openHelpModal();
     }
 
     if (e.key === 'Escape') {

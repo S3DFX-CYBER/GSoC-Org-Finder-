@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle file upload
   if (fileUpload) {
     let currentUploadToken = 0;
+    const DEFAULT_PLACEHOLDER = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
 
     fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const token = ++currentUploadToken;
 
-      resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+      resumeText.placeholder = DEFAULT_PLACEHOLDER;
 
       errorState.classList.add('hidden');
 
@@ -180,21 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
               .join('');
             text += pageText + '\n';
           }
+          resumeText.placeholder = DEFAULT_PLACEHOLDER;
           if (token !== currentUploadToken) return;
           const parsedText = text.trim();
           if (!parsedText) {
             e.target.value = '';
-            resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+            resumeText.placeholder = DEFAULT_PLACEHOLDER;
             showError("No extractable text found. This PDF may be image-based. Please upload a searchable PDF or paste text manually.");
             return;
           }
           resumeText.value = parsedText;
-          resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+          resumeText.placeholder = DEFAULT_PLACEHOLDER;
         } catch (err) {
           console.error("PDF Parse Error:", err);
+          resumeText.placeholder = DEFAULT_PLACEHOLDER;
           if (token !== currentUploadToken) return;
           e.target.value = '';
-          resumeText.placeholder = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
           showError("Failed to read PDF file. Please make sure it's a valid PDF.");
         }
       } else {

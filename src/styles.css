@@ -528,8 +528,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 
 #back-to-top-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(var(--section-fab-bottom) + (var(--section-fab-size) + var(--section-fab-gap)) * 3 + env(safe-area-inset-bottom));
+  right: calc(var(--section-fab-right) + env(safe-area-inset-right));
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -913,4 +913,3 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
 .privacy-page #back-to-top-btn:focus-visible {
   outline-color: #f97316;
 }
-

@@ -9,6 +9,14 @@
  *  B5 – Native <dialog> open/close  (showModal / close, not class toggle)
  *  B6 – Proper ARIA live-region  (aria-live="polite" on message list)
  *  B7 – Input sanitisation  (strip control chars, cap at 300 chars client-side)
+ *
+ * CI fixes (cubic-dev-ai):
+ *  C1 – localStorage schema validation: coerce non-array parsed values to []
+ *       to prevent TypeErrors on .push()/.slice()/.forEach() for returning users.
+ *  C2 – Sanitisation regex now preserves \n (LF) and \r (CR) so Shift+Enter
+ *       newlines are not silently stripped, matching the UI hint.
+ *  C3 – Abort differentiation: user-initiated dialog close no longer persists
+ *       a false "timed out" error message in chat history.
  */
 
 (function () {
@@ -34,6 +42,9 @@
    * ───────────────────────────────────────────── */
   let isFetching    = false;   // B1 – serialisation lock
   let abortCtrl     = null;    // B2 – current AbortController
+  // C3 – tracks whether the current abort was user-initiated (dialog close)
+  // vs. a genuine network timeout, so we don't persist false error messages.
+  let isUserAbort   = false;
 
   /* ─────────────────────────────────────────────
    * 4. SAFE LOCALSTORAGE HELPERS  (B3)
@@ -41,7 +52,12 @@
   function storageGet(key) {
     try {
       const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : [];
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      // C1 – Schema validation: JSON.parse can return null, {}, numbers, etc.
+      // Any non-array value would cause TypeErrors downstream on .push()/.slice().
+      // Coerce all non-array results to a safe empty array.
+      return Array.isArray(parsed) ? parsed : [];
     } catch (_) {
       return [];
     }
@@ -164,7 +180,15 @@
    * ───────────────────────────────────────────── */
   function sanitiseInput(raw) {
     return raw
-      .replace(/[\x00-\x1F\x7F]/g, '')  // strip control characters
+      // C2 – Preserve \x0A (LF) and \x0D (CR) so Shift+Enter newlines are kept.
+      // Original /[\x00-\x1F\x7F]/g stripped ALL control chars including newlines,
+      // contradicting the "Shift+Enter for new line" UI hint.
+      // Updated range excludes 0x0A and 0x0D explicitly:
+      //   0x00–0x09  (controls before LF)
+      //   0x0B–0x0C  (VT, FF – not newlines)
+      //   0x0E–0x1F  (controls after CR)
+      //   0x7F       (DEL)
+      .replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, '')
       .trim()
       .slice(0, MAX_INPUT_LENGTH);
   }
@@ -175,7 +199,8 @@
   async function sendMessage(userText, history) {
     // B1 – serialisation lock: reject concurrent calls.
     if (isFetching) return null;
-    isFetching = true;
+    isFetching  = true;
+    isUserAbort = false;   // C3 – reset abort-reason flag for each new request
 
     // B2 – AbortController with 8 s timeout.
     abortCtrl  = new AbortController();
@@ -213,13 +238,21 @@
     } catch (err) {
       clearTimeout(timerId);
       if (err.name === 'AbortError') {
+        // C3 – Differentiate user-initiated close from genuine network timeout.
+        // If the user closed/dismissed the dialog, isUserAbort is true —
+        // return null silently so no error is appended to chat history.
+        // Only show the timeout message for real network timeouts.
+        if (isUserAbort) {
+          return null;
+        }
         return '⚠️ Request timed out. Please try again.';
       }
       console.error('[GSoC Guide] Fetch error:', err);
       return `⚠️ Something went wrong: ${err.message}`;
     } finally {
-      isFetching = false;
-      abortCtrl  = null;
+      isFetching  = false;
+      abortCtrl   = null;
+      isUserAbort = false;
     }
   }
 
@@ -285,8 +318,13 @@
   }
 
   function closeDialog() {
-    // Cancel any in-flight request.
-    if (abortCtrl) abortCtrl.abort();
+    // C3 – Mark this abort as user-initiated before calling abort(),
+    // so sendMessage's catch block can distinguish it from a network timeout
+    // and suppress the false "timed out" error message.
+    if (abortCtrl) {
+      isUserAbort = true;
+      abortCtrl.abort();
+    }
     dialog.close();              // B5 – native API
     toggleBtn.focus();           // return focus to trigger (WCAG 2.1 SC 3.2.2)
   }

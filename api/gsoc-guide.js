@@ -7,6 +7,10 @@
  *  B3 – Input validation + control-char strip (prompt injection guard)
  *  B4 – AbortController timeout (8 s) on OpenAI fetch
  *  B5 – Structured error logging (no silent catch)
+ *
+ * CI fixes (cubic-dev-ai):
+ *  C1 – Evict empty/stale Map entries after sliding-window cleanup
+ *       to prevent unbounded memory growth under high-cardinality traffic.
  */
 
 export const config = { runtime: 'edge' };
@@ -36,10 +40,21 @@ const ipTimestamps = new Map();   // ip → number[]
 function isRateLimited(ip) {
   const now   = Date.now();
   const times = (ipTimestamps.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+
+  // C1 – Evict the key entirely when no recent timestamps remain,
+  // preventing the Map from growing without bound under high-cardinality traffic.
+  if (times.length === 0) {
+    ipTimestamps.delete(ip);
+    // Allow this request (no history means not rate-limited).
+    ipTimestamps.set(ip, [now]);
+    return false;
+  }
+
   if (times.length >= RATE_LIMIT_MAX) {
     ipTimestamps.set(ip, times);
     return true;
   }
+
   times.push(now);
   ipTimestamps.set(ip, times);
   return false;

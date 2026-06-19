@@ -5563,7 +5563,11 @@ if(e.key.toLowerCase()==='r'){
   function exportResults(format) {
     // Close the dropdown
     const menu = document.getElementById('exportDropdownMenu');
+    const btn = document.getElementById('exportBtn');
+    const chevron = document.getElementById('exportChevron');
     if (menu) menu.classList.add('hidden');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+    if (chevron) chevron.textContent = 'expand_more';
 
     const orgs = (typeof filteredOrgs !== 'undefined' && Array.isArray(filteredOrgs))
       ? filteredOrgs

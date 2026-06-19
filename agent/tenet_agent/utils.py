@@ -51,36 +51,39 @@ def get_llm_client():
 MAX_RETRIES = 3
 BASE_DELAY = 5
 
+LLM_CONFIG = types.GenerateContentConfig(
+    temperature=0.2,
+    max_output_tokens=8192,
+    safety_settings=[
+        types.SafetySetting(
+            category="HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold="BLOCK_MEDIUM_AND_ABOVE",
+        )
+    ]
+)
+
 def call_llm(client, prompt: str) -> str | None:
     """
     Call Gemini and return the text response.
 
     Implements a retry mechanism for 429 Quota Exceeded errors and gracefully
-    handles None text by returning a degraded mode warning for fail-open workflow.
+    handles None text by returning a degraded mode warning for fail-open workflow,
+    unless TENET_FAIL_CLOSED is set.
     """
-    config = types.GenerateContentConfig(
-        temperature=0.2,
-        max_output_tokens=8192,
-        safety_settings=[
-            types.SafetySetting(
-                category="HARM_CATEGORY_DANGEROUS_CONTENT",
-                threshold="BLOCK_MEDIUM_AND_ABOVE",
-            )
-        ]
-    )
+    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
 
     for attempt in range(MAX_RETRIES):
         try:
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt,
-                config=config
+                config=LLM_CONFIG
             )
             if response.text is not None:
                 return response.text.strip()
             else:
                 logger.warning("⚠️  LLM response.text is None (likely blocked by safety settings).")
-                return "⚠️ TENET Security Review skipped due to safety filters."
+                return None if fail_closed else "⚠️ TENET Security Review skipped due to safety filters."
         except errors.APIError as e:
             if getattr(e, 'code', None) == 429 or "429" in str(e):
                 if attempt < MAX_RETRIES - 1:
@@ -90,12 +93,12 @@ def call_llm(client, prompt: str) -> str | None:
                     continue
                 else:
                     logger.error(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")
-                    return "⚠️ TENET Security Review skipped due to API rate limits."
+                    return None if fail_closed else "⚠️ TENET Security Review skipped due to API rate limits."
             logger.error(f"⚠️  LLM API error: {e}")
-            return "⚠️ TENET Security Review skipped due to API error."
+            return None if fail_closed else "⚠️ TENET Security Review skipped due to API error."
         except Exception as e:
             logger.error(f"⚠️  LLM call failed: {e}")
-            return "⚠️ TENET Security Review skipped due to an internal error."
+            return None if fail_closed else "⚠️ TENET Security Review skipped due to an internal error."
 
 
 

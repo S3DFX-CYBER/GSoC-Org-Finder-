@@ -74,6 +74,7 @@ class TestCallLLM(unittest.TestCase):
             result = call_llm(self.client, self.prompt)
 
         self.assertIsNone(result)
+        self.assertEqual(self.client.models.generate_content.call_count, 3)
 
     def test_fail_closed_on_safety_block_none_text(self):
         os.environ["TENET_FAIL_CLOSED"] = "true"
@@ -84,6 +85,7 @@ class TestCallLLM(unittest.TestCase):
         result = call_llm(self.client, self.prompt)
 
         self.assertIsNone(result)
+        self.assertEqual(self.client.models.generate_content.call_count, 1)
 
 
 if __name__ == '__main__':

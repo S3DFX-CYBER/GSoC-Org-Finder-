@@ -3335,9 +3335,11 @@ btn.__orgListenerAttached = true;
     document.getElementById('importBookmarksInput')?.click();
   });
   document.getElementById('importBookmarksInput')?.addEventListener('change', (e) => {
-    const file = e.target.files?.[0];
+    const input = e.currentTarget;
+    if (!(input instanceof HTMLInputElement)) return;
+    const file = input.files?.[0];
     readImportedBookmarks(file);
-    e.target.value = '';
+    input.value = '';
   });
 
   function clearAllBookmarks() {

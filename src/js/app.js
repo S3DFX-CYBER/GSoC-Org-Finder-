@@ -239,6 +239,43 @@ function updateCountdown() {
   }
 }
 
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  // Fallback for older browsers / restricted contexts
+  const tempInput = document.createElement('textarea');
+  tempInput.value = text;
+  tempInput.setAttribute('readonly', 'true');
+  tempInput.style.position = 'fixed';
+  tempInput.style.opacity = '0';
+  tempInput.style.left = '-9999px';
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  try {
+    const copied = document.execCommand('copy');
+    if (!copied) {
+      throw new Error('document.execCommand("copy") returned false');
+    }
+    return copied;
+  } finally {
+    tempInput.remove();
+  }
+}
+
+
+function showCopyTooltip(button, message = 'Copied!') {
+  const tooltip = button.querySelector('.copy-org-tooltip');
+  if (!tooltip) return;
+
+  tooltip.textContent = message;
+  tooltip.classList.add('show');
+  clearTimeout(button.__copyTooltipTimer);
+  button.__copyTooltipTimer = setTimeout(() => {
+    tooltip.classList.remove('show');
+  }, 1400);
+}
+
 // ══════════════════════════════════════════════
 // ANALYTICS ENGINE
 // ══════════════════════════════════════════════
@@ -1165,15 +1202,23 @@ function renderOrgs(reset = true) {
         <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden border border-zinc-100 dark:border-zinc-700">
           ${logoHtml}
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap justify-end">
           <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
           <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
           <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
+
             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
           </button>
         </div>
       </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${org.name}</h3>
+      <div class="flex items-start justify-between gap-3 mb-1">
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100 flex-1">${org.name}</h3>
+        <button type="button" data-copy-org="${org.name}" class="copy-org-btn mt-0.5" title="Copy org name" aria-label="Copy org name ${org.name}">
+
+          <span class="material-symbols-outlined text-lg">content_copy</span>
+          <span class="copy-org-tooltip" role="status" aria-live="polite">Copied!</span>
+        </button>
+      </div>
       <span class="category-tag inline-block mb-3">${catLabel}</span>
       <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${org.desc}</p>
       <div class="flex flex-wrap gap-1.5 mb-4">
@@ -1183,9 +1228,11 @@ function renderOrgs(reset = true) {
 
       <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
         <button data-compare-org="${org.name}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
+
           <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
         </button>
         <button data-open-org="${org.name}" class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">View Details <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+
       </div>`;
 
     grid.appendChild(card);
@@ -1199,43 +1246,61 @@ function renderOrgs(reset = true) {
 function attachOrgCardListeners(root) {
   // Image error fallbacks
   root.querySelectorAll('img[data-org-name]').forEach(img => {
-    if (img.__attached) return;
+    if (img.__orgListenerAttached) return;
     img.addEventListener('error', (e) => {
       handleImgError(e.target, e.target.dataset.orgName);
     });
-    img.__attached = true;
+    img.__orgListenerAttached = true;
   });
 
   // Bookmark toggling
   root.querySelectorAll('[data-bookmark-org]').forEach(btn => {
-    if (btn.__attached) return;
+    if (btn.__orgListenerAttached) return;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const name = btn.dataset.bookmarkOrg;
       toggleBookmark(e, name);
     });
-    btn.__attached = true;
+    btn.__orgListenerAttached = true;
+  });
+
+  // Attach a copy handler to each org-name button.
+  root.querySelectorAll('[data-copy-org]').forEach(btn => {
+    if (btn.__orgListenerAttached) return;
+    // Keep the org name copy action lightweight and easy to spot.
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const name = btn.dataset.copyOrg;
+      try {
+        await copyTextToClipboard(name);
+        showCopyTooltip(btn);
+      } catch (err) {
+        console.warn('Failed to copy org name:', err);
+        showCopyTooltip(btn, 'Copy failed');
+      }
+    });
+    btn.__orgListenerAttached = true;
   });
 
   // Compare toggling
   root.querySelectorAll('[data-compare-org]').forEach(btn => {
-    if (btn.__attached) return;
+    if (btn.__orgListenerAttached) return;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const name = btn.dataset.compareOrg;
       toggleCompare(e, name);
     });
-    btn.__attached = true;
+    btn.__orgListenerAttached = true;
   });
 
   // Modal activation click
   root.querySelectorAll('[data-open-org]').forEach(btn => {
-    if (btn.__attached) return;
+    if (btn.__orgListenerAttached) return;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       openModal(btn.dataset.openOrg, btn);
     });
-    btn.__attached = true;
+    btn.__orgListenerAttached = true;
   });
 
   if (root.classList?.contains('org-card') || root.classList?.contains('trend-card')) {

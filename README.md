@@ -547,7 +547,7 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/KaranGupta2005"><img src="https://github.com/KaranGupta2005.png" width="50px" alt="KaranGupta2005" /></a>
 <a href="https://github.com/knoxiboy"><img src="https://github.com/knoxiboy.png" width="50px" alt="knoxiboy" /></a>
 <a href="https://github.com/Kota-Jagadeesh"><img src="https://github.com/Kota-Jagadeesh.png" width="50px" alt="Kota-Jagadeesh" /></a>
-<a href="https://github.com/KUMARNiru007"><img src="https://github.com/KUMARNiru007.png" width="50px" alt="KUMARNiru007" /></a>
+<a href="https://github.com/KumarNirupam1"><img src="https://github.com/KumarNirupam1.png" width="50px" alt="KumarNirupam1" /></a>
 <a href="https://github.com/lourduradjou"><img src="https://github.com/lourduradjou.png" width="50px" alt="lourduradjou" /></a>
 <a href="https://github.com/lovestaco"><img src="https://github.com/lovestaco.png" width="50px" alt="lovestaco" /></a>
 <a href="https://github.com/magic-peach"><img src="https://github.com/magic-peach.png" width="50px" alt="magic-peach" /></a>

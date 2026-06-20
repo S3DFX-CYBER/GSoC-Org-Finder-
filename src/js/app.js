@@ -4,7 +4,7 @@
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
-let filteredOrgs = [];
+// filteredOrgs declared in index.html inline script
 let MENTOR_DATA = {};
 let mentorDataState = 'idle';
 const compareList = []; // list of org names
@@ -1204,6 +1204,7 @@ function renderOrgs(reset = true) {
         <div class="flex items-center gap-2">
           <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${String(org.years)}y Veteran</span>
           <span class="complexity-badge ${org.codebase}">${org.codebase}</span>
+          ${rawHTML(getCommunityBadge(org))}
           <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" data-bookmark-org="${org.name}" title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}" aria-pressed="${isBookmarkedStr}" aria-label="${isBookmarked ? 'Remove bookmark from ' : 'Add bookmark to '}${org.name}">
             <span class="material-symbols-outlined text-lg ${isBookmarked ? 'icon-fill' : ''}">star</span>
           </button>
@@ -2259,8 +2260,8 @@ function applyStaleDataNotice() {
   if (mentorStaleNote) mentorStaleNote.classList.remove('hidden');
 }
 
-const _initFromURL = () => {
-  loadCommunityActivity();
+const _initFromURL = async () => {
+  await loadCommunityActivity();
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');
   if (params.get('cat'))    document.getElementById('categoryFilter').value = params.get('cat');

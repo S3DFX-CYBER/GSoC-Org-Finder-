@@ -2279,7 +2279,7 @@ kbd:hover{
   let visibleCount = 12;
   let orgCurrentPage = 1;
   let mentorCurrentPage = 1;
-  let filteredOrgs = [...ORGS];
+  let filteredOrgs = typeof ORGS !== 'undefined' ? [...ORGS] : [];
   let MENTOR_DATA = {};
   let mentorDataState = 'idle';
   let compareList = [];
@@ -4878,6 +4878,7 @@ if(e.key.toLowerCase()==='r'){
 
 });
 </script>
+<script src="agent/scripts/orgs.js"></script>
 <script src="src/js/app.js"></script>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>

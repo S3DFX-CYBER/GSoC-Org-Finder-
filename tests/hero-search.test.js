@@ -13,7 +13,7 @@ globalThis.document = {
 };
 
 globalThis.ORGS = require('../src/js/org.js');
-const { heroSearchMatches } = require('../src/js/app.js');
+const { heroSearchMatches } = require('../src/js/hero-search.js');
 
 test('returns empty array for empty string', () => {
   assert.deepStrictEqual(heroSearchMatches(''), []);

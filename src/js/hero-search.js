@@ -15,13 +15,14 @@
 
   function boldMatch(name, query) {
     const q = (query || '').toLowerCase();
+    if (!q) return escapeHtml(name);
     const idx = name.toLowerCase().indexOf(q);
     if (idx === -1) return escapeHtml(name);
     return escapeHtml(name.slice(0, idx)) +
       '<strong class="text-primary font-semibold">' +
-      escapeHtml(name.slice(idx, idx + query.length)) +
+      escapeHtml(name.slice(idx, idx + q.length)) +
       '</strong>' +
-      escapeHtml(name.slice(idx + query.length));
+      escapeHtml(name.slice(idx + q.length));
   }
 
   function heroSearchMatches(query) {
@@ -38,6 +39,38 @@
       return na.localeCompare(nb);
     });
     return matches.slice(0, 3);
+  }
+
+  function buildHeroResultRow(org, i, q) {
+    const owner = org.github ? org.github.split('/')[0] : '';
+    const logoUrl = owner ? `https://github.com/${escapeHtml(owner)}.png?size=80` : '';
+    const tags = org.tags || [];
+    const visible = tags.slice(0, 3);
+    const overflow = tags.length - visible.length;
+    const logoHtml = logoUrl
+      ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain">` +
+        `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
+      : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
+    const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
+      (overflow > 0 ? `<span class="hero-result-tag-overflow">+${overflow}</span>` : '');
+    return `<button role="option" id="hero-result-${i}" class="hero-result-row"
+            data-org-name="${escapeHtml(org.name)}" aria-selected="false">
+            <div class="hero-result-logo">${logoHtml}</div>
+            <div class="hero-result-info">
+              <div class="hero-result-name">${boldMatch(org.name, q)}</div>
+              <div class="hero-result-tags">${tagHtml}</div>
+            </div>
+          </button>`;
+  }
+
+  function attachHeroLogoFallback(row) {
+    const logoImg = row.querySelector('.hero-result-logo img');
+    if (!logoImg) return;
+    logoImg.addEventListener('error', () => {
+      logoImg.style.display = 'none';
+      const placeholder = logoImg.nextElementSibling;
+      if (placeholder) placeholder.style.display = 'flex';
+    });
   }
 
   function initHeroSearch() {
@@ -85,45 +118,20 @@
         return;
       }
 
-      heroResults.innerHTML = matches.map((org, i) => {
-        const owner = org.github ? org.github.split('/')[0] : '';
-        const logoUrl = owner ? `https://github.com/${escapeHtml(owner)}.png?size=80` : '';
-        const tags = org.tags || [];
-        const visible = tags.slice(0, 3);
-        const overflow = tags.length - visible.length;
-        const logoHtml = logoUrl
-          ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain">` +
-            `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
-          : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
-        const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
-          (overflow > 0 ? `<span class="hero-result-tag-overflow">+${overflow}</span>` : '');
-        return `<button role="option" id="hero-result-${i}" class="hero-result-row"
-            data-org-name="${escapeHtml(org.name)}" aria-selected="false">
-            <div class="hero-result-logo">${logoHtml}</div>
-            <div class="hero-result-info">
-              <div class="hero-result-name">${boldMatch(org.name, q)}</div>
-              <div class="hero-result-tags">${tagHtml}</div>
-            </div>
-          </button>`;
-      }).join('');
+      heroResults.innerHTML = matches.map((org, i) => buildHeroResultRow(org, i, q)).join('');
 
       openHeroDropdown();
 
       heroResults.querySelectorAll('.hero-result-row').forEach(row => {
-        row.addEventListener('click', () => {
-          openModal(row.dataset.orgName);
-          heroSearch.value = '';
-          closeHeroDropdown();
-        });
-        const logoImg = row.querySelector('.hero-result-logo img');
-        if (logoImg) {
-          logoImg.addEventListener('error', () => {
-            logoImg.style.display = 'none';
-            const placeholder = logoImg.nextElementSibling;
-            if (placeholder) placeholder.style.display = 'flex';
-          });
-        }
+        row.addEventListener('click', () => chooseHeroRow(row));
+        attachHeroLogoFallback(row);
       });
+    };
+
+    const chooseHeroRow = (row) => {
+      openModal(row.dataset.orgName);
+      heroSearch.value = '';
+      closeHeroDropdown();
     };
 
     heroSearch.addEventListener('input', (e) => renderHeroDropdown(e.target.value));
@@ -141,7 +149,15 @@
     const moveHeroActive = (delta) => {
       const rows = heroRows();
       const n = rows.length;
-      heroActiveIdx = n > 0 ? (heroActiveIdx + delta + n) % n : -1;
+      if (n === 0) {
+        heroActiveIdx = -1;
+      } else if (heroActiveIdx < 0) {
+        // From the inactive sentinel, ArrowDown lands on the first row and
+        // ArrowUp on the last — modulo on -1 would skip a row otherwise.
+        heroActiveIdx = delta > 0 ? 0 : n - 1;
+      } else {
+        heroActiveIdx = (heroActiveIdx + delta + n) % n;
+      }
       updateHeroActive(rows);
     };
 
@@ -153,10 +169,7 @@
       } else if (rows.length === 1) {
         target = rows[0];
       }
-      if (!target) return;
-      openModal(target.dataset.orgName);
-      heroSearch.value = '';
-      closeHeroDropdown();
+      if (target) chooseHeroRow(target);
     };
 
     heroSearch.addEventListener('keydown', (e) => {

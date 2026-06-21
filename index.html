@@ -944,7 +944,7 @@ kbd:hover{
       height: var(--section-fab-size);
   border: none;
   border-radius: 50%;
-      z-index: 30;
+      z-index: 29;
   cursor: pointer;
   color: white;
   background: linear-gradient(135deg, #9d4300, #f97316);
@@ -955,6 +955,11 @@ kbd:hover{
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
+#prevSectionBtn { z-index: 30; }
+#nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
+#prevSectionBtn {
+      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
+    }
 .section-scroll-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(157, 67, 0, 0.45);
@@ -964,10 +969,6 @@ kbd:hover{
   box-shadow: 0 4px 12px rgba(157, 67, 0, 0.2);
   filter: brightness(0.95);
 }
-    #nextSectionBtn { bottom: calc(var(--section-fab-bottom) + env(safe-area-inset-bottom)); }
-    #prevSectionBtn {
-      bottom: calc(var(--section-fab-bottom) + var(--section-fab-size) + var(--section-fab-gap) + env(safe-area-inset-bottom));
-    }
 
 /* Dark mode - Section scroll buttons */
 .dark .section-scroll-btn {
@@ -1001,6 +1002,12 @@ kbd:hover{
   opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.section-scroll-btn.scroll-up-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
 }
 
 /* Custom ripple effect inside scroll buttons */
@@ -1050,7 +1057,7 @@ kbd:hover{
         + var(--section-indicator-gap)
         + env(safe-area-inset-bottom)
       );
-  z-index: 30;
+  z-index: 31;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -5442,6 +5449,22 @@ if(e.key.toLowerCase()==='r'){
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   });
+
+  const SCROLL_UP_THRESHOLD = 300;
+  function updateScrollUpVisibility() {
+    if (!prevBtn) return;
+    prevBtn.classList.toggle("scroll-up-hidden", window.scrollY <= SCROLL_UP_THRESHOLD);
+  }
+  updateScrollUpVisibility();
+  let scrollTick;
+  window.addEventListener("scroll", () => {
+    if (!scrollTick) {
+      scrollTick = requestAnimationFrame(() => {
+        updateScrollUpVisibility();
+        scrollTick = null;
+      });
+    }
+  }, { passive: true });
 })();
 </script>
 <!-- ORG PICKER MODAL -->

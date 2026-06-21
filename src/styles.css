@@ -478,6 +478,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   background: rgba(0, 0, 0, 0.02);
 }
 
+.premium-footer[data-theme="dark"] .footer-stat-card,
+.dark .footer-stat-card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .footer-stat-card:hover {
   transform: translateY(-2px);
   border-color: var(--orange);

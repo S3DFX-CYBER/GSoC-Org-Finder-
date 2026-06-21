@@ -3541,6 +3541,9 @@ btn.__orgListenerAttached = true;
     if(!t) {
       t=document.createElement('div');
       t.id='compareToast';
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      t.setAttribute('aria-atomic', 'true');
       t.style.cssText='position:fixed;
       bottom:24px;
       left:50%;
@@ -3577,8 +3580,7 @@ btn.__orgListenerAttached = true;
     }
     renderOrgs(true);
     renderCompare();
-
-    //document.dispatchEvent(new CustomEvent('compareListChanged'));
+    document.dispatchEvent(new CustomEvent('compareListChanged'));
   }
 
   function renderCompare() {

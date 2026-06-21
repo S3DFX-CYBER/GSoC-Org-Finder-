@@ -1760,7 +1760,7 @@ async function renderGoodFirstIssues() {
       card.className = 'bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800 hover:shadow-lg transition-all group cursor-pointer';
 
       const safeUrl = sanitizeHrefUrl(issue.url);
-      if (safeUrl) card.addEventListener?.('click', () => window.open(safeUrl, '_blank'));
+      if (safeUrl) card.addEventListener?.('click', () => globalThis.open(safeUrl, '_blank'));
 
       const labelsHtml = (issue.labels || []).slice(0, 2)
         .map(l => safeHTML`<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${l}</span>`);

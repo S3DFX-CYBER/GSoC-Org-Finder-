@@ -1285,6 +1285,11 @@ kbd:hover{
         <span class="material-symbols-outlined text-lg">menu_book</span>
         Guide
       </a>
+      <div class="border-t border-zinc-100 my-2 mx-4"></div>
+      <button onclick="toggleTheme(); toggleMenu();" class="mobile-menu-link flex items-center gap-3 w-full px-4 py-3 rounded-lg text-zinc-700 hover:bg-zinc-100 font-medium text-sm transition-colors" aria-label="Toggle theme">
+        <span class="material-symbols-outlined text-lg" id="mobileThemeIcon">dark_mode</span>
+        <span id="mobileThemeLabel">Dark Mode</span>
+      </button>
     </div>
     
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-100">
@@ -2190,14 +2195,22 @@ kbd:hover{
   };
 
   function updateThemeIcon(){
+    const isDark = document.documentElement.classList.contains('dark');
     const btn = document.getElementById('themeToggleBtn');
     const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
     if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
       icon.textContent = isDark ? 'light_mode' : 'dark_mode';
       btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
       btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+    const mobileIcon = document.getElementById('mobileThemeIcon');
+    const mobileLabel = document.getElementById('mobileThemeLabel');
+    if(mobileIcon){
+      mobileIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }
+    if(mobileLabel){
+      mobileLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
     }
   }
 

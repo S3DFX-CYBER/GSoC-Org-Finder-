@@ -5036,7 +5036,8 @@ if (
     active &&
     (
         ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
-        active.id === 'searchInput'
+        active.id === 'searchInput' ||
+        active.isContentEditable
     )
 ) {
         return;

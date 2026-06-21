@@ -716,7 +716,7 @@ function handleNavigationUp(e) {
 function handleGlobalKeydown(e) {
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
 
-  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable) return;
 
   const n = filteredOrgs.length;
   if (e.key === '?') {

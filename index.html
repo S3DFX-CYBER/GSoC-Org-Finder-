@@ -3440,9 +3440,6 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
 
   const pageItems = paginationPageItems(currentPage, totalPages);
   const pagePills = pageItems.map(item => {
-    if (item === '...') {
-      return `<span class="text-zinc-400 dark:text-zinc-500 text-xs px-1 select-none" aria-hidden="true">…</span>`;
-    }
     const active = item === currentPage;
     return `<button type="button" class="${active ? activeCls : normalCls}"
       data-page="${item}" aria-label="Go to page ${item}"
@@ -3486,13 +3483,14 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
   function handleGoTo() {
     const input = document.getElementById(inputId);
     if (!input) return;
-    const val = Number.parseInt(input.value, 10);
-    if (Number.isNaN(val)) {
+    const raw = input.value.trim();
+    const num = Number(raw);
+    if (raw === '' || !Number.isFinite(num)) {
       input.classList.add('border-red-400', 'ring-1', 'ring-red-400');
       setTimeout(() => input.classList.remove('border-red-400', 'ring-1', 'ring-red-400'), 1200);
       return;
     }
-    const page = Math.min(Math.max(val, 1), totalPages);
+    const page = Math.min(Math.max(Math.trunc(num), 1), totalPages);
     if (page !== currentPage) onPageChange(page);
     input.value = '';
   }

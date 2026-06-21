@@ -1,29 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-// Mock browser globals for Node.js test environment before importing app.js
-globalThis.window = {};
-globalThis.localStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {}
-};
-globalThis.sessionStorage = {
-  getItem: () => null,
-  setItem: () => {}
-};
-globalThis.document = {
-  documentElement: {
-    classList: {
-      toggle: () => {}
-    }
-  },
-  getElementById: () => null,
-  querySelectorAll: () => [],
-  addEventListener: () => {}
-};
-
-globalThis.ORGS = require('../src/js/org.js');
+require('./helpers/setup-globals.js');
 require('../src/js/skillExtractor.js');
 
 const { buildCompactWindow } = require('../src/js/app.js');

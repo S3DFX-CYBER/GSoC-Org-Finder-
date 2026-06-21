@@ -1,20 +1,13 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-// Mock browser globals for Node.js test environment
+require('./helpers/setup-globals.js');
+
+// Custom window for modal tests (overrides the helper's stub)
 globalThis.window = {
   location: { search: '' },
   addEventListener: () => {},
   open: () => {}
-};
-globalThis.localStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {}
-};
-globalThis.sessionStorage = {
-  getItem: () => null,
-  setItem: () => {}
 };
 
 // Stub DOM elements with focus support

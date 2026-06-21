@@ -1,17 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-// Mock browser globals for Node.js test environment
-globalThis.window = {};
-globalThis.localStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {}
-};
-globalThis.sessionStorage = {
-  getItem: () => null,
-  setItem: () => {}
-};
+require('./helpers/setup-globals.js');
 
 // Stub DOM elements for issues page
 const mockElements = {

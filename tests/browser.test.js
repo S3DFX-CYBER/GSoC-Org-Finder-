@@ -1,22 +1,15 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-// Mock browser globals for DOM environment
+require('./helpers/setup-globals.js');
+
+// Custom window/location for browser DOM tests (overrides the helper's stub)
 globalThis.window = {
   addEventListener: () => {},
   location: { search: '' },
   open: () => {}
 };
 globalThis.location = { search: '' };
-globalThis.localStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {}
-};
-globalThis.sessionStorage = {
-  getItem: () => null,
-  setItem: () => {}
-};
 
 function createStubElement(id, tag = 'div') {
   const element = {

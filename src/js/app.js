@@ -1,5 +1,5 @@
 /* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
-/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues, buildCompactWindow */
+/* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
@@ -2609,15 +2609,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Contiguous run of pages centered on the current one, clamped to range — no
-// ellipsis / first / last, since the «/» buttons already jump to the boundaries.
-function buildCompactWindow(currentPage, totalPages, count) {
-  const n = Math.min(count, totalPages);
-  let lo = currentPage - Math.floor((n - 1) / 2);
-  lo = Math.max(1, Math.min(lo, totalPages - n + 1));
-  return Array.from({ length: n }, (_, i) => lo + i);
-}
-
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY
 // ══════════════════════════════════════════════
@@ -2636,7 +2627,6 @@ if (typeof module !== 'undefined' && module.exports) {
     closeModal,
     safeHTML,
     rawHTML,
-    renderGoodFirstIssues,
-    buildCompactWindow
+    renderGoodFirstIssues
   };
 }

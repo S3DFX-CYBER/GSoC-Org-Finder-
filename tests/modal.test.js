@@ -3,6 +3,18 @@ const assert = require('node:assert');
 
 require('./helpers/setup-globals.js');
 
+// Snapshot the globals this suite overrides so we can put them back afterwards.
+// Without this, the custom window/document/fetch below leak into any test file
+// that runs later in the same process, causing order-dependent failures.
+const _savedGlobals = {
+  window: globalThis.window,
+  document: globalThis.document,
+  fetch: globalThis.fetch
+};
+test.after(() => {
+  Object.assign(globalThis, _savedGlobals);
+});
+
 // Custom window for modal tests (overrides the helper's stub)
 globalThis.window = {
   location: { search: '' },

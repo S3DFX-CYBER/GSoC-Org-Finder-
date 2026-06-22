@@ -1,10 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-require('./helpers/setup-globals.js');
-require('../src/js/skillExtractor.js');
-
-const { buildCompactWindow } = require('../src/js/app.js');
+const { buildCompactWindow } = require('../src/js/pagination.js');
 
 test('buildCompactWindow centers a contiguous run on the current page', () => {
   assert.deepStrictEqual(buildCompactWindow(9, 21, 5), [7, 8, 9, 10, 11]);

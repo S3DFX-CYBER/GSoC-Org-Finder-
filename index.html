@@ -2256,6 +2256,7 @@ kbd:hover{
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
+<script src="src/js/pagination.js"></script>
 <script>
   // ══════════════════════════════════════════════
   // SAFE ORG DATA GUARD
@@ -3362,15 +3363,6 @@ const connector = !isLast
 function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   return items.slice(startIndex, startIndex + itemsPerPage);
-}
-
-// Contiguous run of pages centered on the current one, clamped to range — no
-// ellipsis / first / last, since the «/» buttons already jump to the boundaries.
-function buildCompactWindow(currentPage, totalPages, count) {
-  const n = Math.min(count, totalPages);
-  let lo = currentPage - Math.floor((n - 1) / 2);
-  lo = Math.max(1, Math.min(lo, totalPages - n + 1));
-  return Array.from({ length: n }, (_, i) => lo + i);
 }
 
 // Pick how many page pills fit the current viewport. Every breakpoint shows a

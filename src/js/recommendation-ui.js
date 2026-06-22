@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark, SCORE_METRIC_KEYS */
 
 let currentAbortController = null;
 let currentRequestId = 0;
@@ -60,12 +60,20 @@ const safeEscapeHtml = (str) => {
     .replaceAll("'", '&#039;');
 };
 
+const METRIC_KEYS = (typeof SCORE_METRIC_KEYS !== 'undefined' ? SCORE_METRIC_KEYS : null) || {
+  LANG: 'langScore',
+  TOPIC: 'topicScore',
+  ACTIVITY: 'activityScore',
+  EXPERIENCE: 'experienceScore',
+  STABILITY: 'stabilityScore',
+};
+
 const BREAKDOWN_METRICS = [
-  { key: 'langScore', label: 'Language Fit' },
-  { key: 'topicScore', label: 'Domain Interest' },
-  { key: 'activityScore', label: 'Activity Match' },
-  { key: 'experienceScore', label: 'Experience Level' },
-  { key: 'stabilityScore', label: 'Stability Bonus' },
+  { key: METRIC_KEYS.LANG, label: 'Language Fit' },
+  { key: METRIC_KEYS.TOPIC, label: 'Domain Interest' },
+  { key: METRIC_KEYS.ACTIVITY, label: 'Activity Match' },
+  { key: METRIC_KEYS.EXPERIENCE, label: 'Experience Level' },
+  { key: METRIC_KEYS.STABILITY, label: 'Stability Bonus' },
 ];
 
 function renderScoreBreakdownPanel(scoreBreakdown, panelId) {

@@ -2,6 +2,14 @@
 
 /* global ORGS */
 
+const SCORE_METRIC_KEYS = {
+  LANG: 'langScore',
+  TOPIC: 'topicScore',
+  ACTIVITY: 'activityScore',
+  EXPERIENCE: 'experienceScore',
+  STABILITY: 'stabilityScore',
+};
+
 const SCORE_BREAKDOWN_MAX = {
   lang: 40,
   topic: 30,
@@ -210,11 +218,11 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
     scoreBreakdown: {
       total: cappedScore,
       breakdown: {
-        langScore: { score: langResult.score, max: SCORE_BREAKDOWN_MAX.lang },
-        topicScore: { score: topicResult.score, max: SCORE_BREAKDOWN_MAX.topic },
-        activityScore: { score: activityScore, max: SCORE_BREAKDOWN_MAX.activity },
-        experienceScore: { score: experienceScore, max: SCORE_BREAKDOWN_MAX.experience },
-        stabilityScore: { score: stabilityBonus, max: SCORE_BREAKDOWN_MAX.stability },
+        [SCORE_METRIC_KEYS.LANG]: { score: langResult.score, max: SCORE_BREAKDOWN_MAX.lang },
+        [SCORE_METRIC_KEYS.TOPIC]: { score: topicResult.score, max: SCORE_BREAKDOWN_MAX.topic },
+        [SCORE_METRIC_KEYS.ACTIVITY]: { score: activityScore, max: SCORE_BREAKDOWN_MAX.activity },
+        [SCORE_METRIC_KEYS.EXPERIENCE]: { score: experienceScore, max: SCORE_BREAKDOWN_MAX.experience },
+        [SCORE_METRIC_KEYS.STABILITY]: { score: stabilityBonus, max: SCORE_BREAKDOWN_MAX.stability },
       },
       matchedLanguages: langResult.matched.map(formatSkillLabel),
       matchedDomains: matchedDomains.map(formatSkillLabel),
@@ -222,8 +230,9 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   };
 }
 
+globalThis.SCORE_METRIC_KEYS = SCORE_METRIC_KEYS;
 globalThis.getRecommendations = getRecommendations;
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { getRecommendations };
+  module.exports = { getRecommendations, SCORE_METRIC_KEYS };
 }

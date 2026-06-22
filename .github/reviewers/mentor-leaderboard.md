@@ -6,7 +6,7 @@
 |------|--------|---------|-------|
 | 🥇 | @KUMARNiru007 | 25 | 108 |
 | 🥈 | @TarunyaProgrammer | 19 | 75 |
-| 🥉 | @nitinog10 | 15 | 64 |
+| 🥉 | @nitinog10 | 16 | 69 |
 | 4 | @Anushreebasics | 17 | 45 |
 | 5 | @4f4d | 7 | 37 |
 | 6 | @deepak0x | 7 | 26 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Wed, 17 Jun 2026 02:34:31 GMT
+Last updated: Wed, 17 Jun 2026 03:57:34 GMT

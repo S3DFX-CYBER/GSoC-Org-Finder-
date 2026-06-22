@@ -9,6 +9,7 @@ and posts the result as a PR comment.
 import os
 import re
 import sys
+import logging
 
 from utils import (
     get_github_client,
@@ -21,58 +22,67 @@ from utils import (
 )
 from prompts import PR_REVIEW_SYSTEM, PR_REVIEW_TEMPLATE
 
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
+
 
 def main():
     """Run the TENET Agent PR review workflow."""
     fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
 
-    def fail_workflow(msg: str):
-        print(msg)
+    def fail_workflow(msg: str, critical: bool = False):
+        if critical:
+            logger.error(msg)
+            sys.exit(1)
+
         if fail_closed:
+            logger.error(msg)
             sys.exit(1)
         else:
-            print("⚠️  Fail-open enabled: Exiting with code 0 despite the error.")
+            logger.warning(msg)
+            logger.warning("⚠️  Fail-open enabled: Exiting with code 0 despite the error.")
             sys.exit(0)
 
     try:
-        print("🛡️  TENET Agent - PR Reviewer starting...")
+        logger.info("🛡️  TENET Agent - PR Reviewer starting...")
 
         # ── Gather context from environment variables ──────────────────────────────
         token = os.environ.get("GITHUB_TOKEN")
         if not token:
-            fail_workflow("❌ GITHUB_TOKEN is not set.")
+            fail_workflow("❌ GITHUB_TOKEN is not set.", critical=True)
 
         repo_name = os.environ.get("REPO")
         if not repo_name:
-            fail_workflow("❌ REPO environment variable is not set.")
+            fail_workflow("❌ REPO environment variable is not set.", critical=True)
 
         pr_number_str = os.environ.get("PR_NUMBER")
         if not pr_number_str:
-            fail_workflow("❌ PR_NUMBER environment variable is not set.")
+            fail_workflow("❌ PR_NUMBER environment variable is not set.", critical=True)
         try:
             pr_number = int(pr_number_str)
         except ValueError:
-            fail_workflow(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}")
+            fail_workflow(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}", critical=True)
+
         pr_title = os.environ.get("PR_TITLE", "")
         pr_body = os.environ.get("PR_BODY", "") or "*No description provided.*"
         pr_author = os.environ.get("PR_AUTHOR", "unknown")
 
-        print(f"📋 Reviewing PR #{pr_number}: {pr_title}")
-        print(f"📦 Repository: {repo_name}")
+        logger.info(f"📋 Reviewing PR #{pr_number}: {pr_title}")
+        logger.info(f"📦 Repository: {repo_name}")
 
         # ── Fetch PR diff ──────────────────────────────────────────────────────────
-        print("📥 Fetching PR diff...")
+        logger.info("📥 Fetching PR diff...")
         try:
             diff = get_pr_diff(repo_name, pr_number, token)
         except Exception as e:
-            fail_workflow(f"❌ Failed to fetch PR diff: {e}")
+            fail_workflow(f"❌ Failed to fetch PR diff: {e}", critical=True)
 
         if not diff.strip():
-            print("ℹ️  PR has no diff (empty). Skipping review.")
+            logger.info("ℹ️  PR has no diff (empty). Skipping review.")
             sys.exit(0)
 
         diff = truncate_diff(diff, max_chars=80_000)
-        print(f"📏 Diff size: {len(diff)} chars")
+        logger.info(f"📏 Diff size: {len(diff)} chars")
 
         # ── Build the review prompt ────────────────────────────────────────────────
         user_prompt = PR_REVIEW_TEMPLATE.format(
@@ -86,14 +96,14 @@ def main():
         prompt = f"{PR_REVIEW_SYSTEM}\n\n{user_prompt}"
 
         # ── Call Gemini ────────────────────────────────────────────────────────────
-        print("🤖 Calling Gemini for security review...")
+        logger.info("🤖 Calling Gemini for security review...")
         model = get_llm_client()
         review_text = call_llm(model, prompt)
 
         if not review_text:
-            fail_workflow("❌ LLM returned an empty or error response.")
+            fail_workflow("❌ LLM returned an empty or error response.", critical=False)
 
-        print("✍️  Review generated. Posting to PR...")
+        logger.info("✍️  Review generated. Posting to PR...")
 
         # ── Post the review comment ────────────────────────────────────────────────
         g = get_github_client()
@@ -109,16 +119,16 @@ def main():
                 existing_labels = [lbl.name for lbl in pr.get_labels()]
                 if "🚨 security" not in existing_labels:
                     pr.add_to_labels("🚨 security")
-                    print("🔴 Added '🚨 security' label due to critical/high findings.")
+                    logger.info("🔴 Added '🚨 security' label due to critical/high findings.")
             except Exception as e:
                 # Label may not exist — not a fatal error
-                print(f"⚠️  Could not add security label: {e}")
+                logger.warning(f"⚠️  Could not add security label: {e}")
 
-        print("✅ TENET PR Review complete.")
+        logger.info("✅ TENET PR Review complete.")
     except SystemExit:
         raise
     except Exception as e:
-        fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}")
+        fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}", critical=True)
 
 
 if __name__ == "__main__":

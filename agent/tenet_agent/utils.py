@@ -69,6 +69,22 @@ def is_rate_limit_error(e: Exception) -> bool:
     return getattr(e, 'code', None) == 429 or "429" in str(e)
 
 
+def get_retry_delay_seconds(e: errors.APIError) -> float | None:
+    """Extract server-requested retry delay from APIError if present."""
+    if not hasattr(e, 'details') or not isinstance(e.details, dict):
+        return None
+    try:
+        details_list = e.details.get("error", {}).get("details", [])
+        for detail in details_list:
+            if isinstance(detail, dict) and detail.get("@type") == "type.googleapis.com/google.rpc.RetryInfo":
+                delay_str = detail.get("retryDelay", "")
+                if isinstance(delay_str, str) and delay_str.endswith("s"):
+                    return float(delay_str[:-1])
+    except Exception:
+        pass
+    return None
+
+
 def call_llm(client, prompt: str) -> str | None:
     """
     Call Gemini and return the text response.
@@ -94,9 +110,14 @@ def call_llm(client, prompt: str) -> str | None:
         except errors.APIError as e:
             if is_rate_limit_error(e):
                 if attempt < MAX_RETRIES - 1:
-                    jitter = random.uniform(0, 1)
-                    sleep_time = BASE_DELAY * (2 ** attempt) + jitter
-                    logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
+                    server_delay = get_retry_delay_seconds(e)
+                    if server_delay is not None:
+                        sleep_time = server_delay
+                        logger.warning(f"⚠️  Rate limit (429) hit. Server requested retry in {sleep_time:.2f}s...")
+                    else:
+                        jitter = random.uniform(0, 1)
+                        sleep_time = BASE_DELAY * (2 ** attempt) + jitter
+                        logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
                     time.sleep(sleep_time)
                     continue
                 else:

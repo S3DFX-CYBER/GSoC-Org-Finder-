@@ -64,6 +64,11 @@ LLM_CONFIG = types.GenerateContentConfig(
 )
 
 
+def is_rate_limit_error(e: Exception) -> bool:
+    """Check if an exception is a rate limit error (429)."""
+    return getattr(e, 'code', None) == 429 or "429" in str(e)
+
+
 def call_llm(client, prompt: str) -> str | None:
     """
     Call Gemini and return the text response.
@@ -87,7 +92,7 @@ def call_llm(client, prompt: str) -> str | None:
                 logger.warning("⚠️  LLM response.text is None (likely blocked by safety settings).")
                 return None if fail_closed else "⚠️ TENET Security Review skipped due to safety filters."
         except errors.APIError as e:
-            if getattr(e, 'code', None) == 429 or "429" in str(e):
+            if is_rate_limit_error(e):
                 if attempt < MAX_RETRIES - 1:
                     jitter = random.uniform(0, 1)
                     sleep_time = BASE_DELAY * (2 ** attempt) + jitter
@@ -95,7 +100,7 @@ def call_llm(client, prompt: str) -> str | None:
                     time.sleep(sleep_time)
                     continue
                 else:
-                    logger.error(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")
+                    logger.exception(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")
                     return None if fail_closed else "⚠️ TENET Security Review skipped due to API rate limits."
             logger.exception(f"⚠️  LLM API error: {e}")
             return None if fail_closed else "⚠️ TENET Security Review skipped due to API error."

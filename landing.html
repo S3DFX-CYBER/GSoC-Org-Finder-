@@ -33,14 +33,20 @@
   <link rel="stylesheet" href="src/styles.css" />
 
   <!-- Theme restoration script to prevent flash of light theme -->
+  <!-- NOTE: Value is validated against an explicit allowlist before touching the DOM,
+       preventing a tampered localStorage entry from injecting arbitrary class names. -->
   <script>
-    try {
-      if (window.localStorage && window.localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark');
+    (function () {
+      var ALLOWED_THEMES = ['dark', 'light'];
+      try {
+        var stored = window.localStorage && window.localStorage.getItem('theme');
+        if (stored && ALLOWED_THEMES.indexOf(stored) !== -1 && stored === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (_e) {
+        /* Storage unavailable — silently skip theme restore */
       }
-    } catch (err) {
-      console.log('Theme restore warning:', err);
-    }
+    }());
   </script>
 
   <!-- Tailwind configuration -->
@@ -1107,248 +1113,9 @@
   <!-- ═══════════════════ SCRIPTS ═══════════════════ -->
   <script src="agent/scripts/orgs.js"></script>
   <script src="src/js/footer.js"></script>
-  <script>
-    // ── Shared constants ──────────────────────────────────────────────────────
+  <!-- Landing page logic (theme, FAQ, comparison table, animations, stats) -->
+  <script src="src/js/landing.js"></script>
 
-    /** Comparison table data — single source of truth, eliminates duplicated rows */
-    var COMPARISON_DATA = [
-      { feature: 'AI skill matching', fmg: 'primary', gsoc: false, god: false, gh: false },
-      { feature: 'Live Good First Issues', fmg: 'primary', gsoc: false, god: false, gh: 'secondary' },
-      { feature: 'Filter by tech & category', fmg: 'primary', gsoc: false, god: 'primary', gh: 'secondary' },
-      { feature: 'Org side-by-side compare', fmg: 'primary', gsoc: false, god: false, gh: false },
-      { feature: 'Proposal editor & PDF export', fmg: 'primary', gsoc: false, god: false, gh: false },
-      { feature: 'Multi-year participation stats', fmg: 'primary', gsoc: false, god: 'primary', gh: false },
-      { feature: 'Works offline (PWA)', fmg: 'primary', gsoc: false, god: false, gh: false },
-      { feature: 'No login or signup needed', fmg: 'primary', gsoc: 'secondary', god: 'secondary', gh: 'secondary' }
-    ];
-
-    /** FAQ data — single source of truth, eliminates duplicated accordion blocks */
-    var FAQ_DATA = [
-      {
-        id: 'faq-ans-1',
-        q: 'What is FindMyGSoC?',
-        a: 'FindMyGSoC is an independent open-source dashboard designed to help GSoC applicants explore, analyze, and select optimal open-source organizations. It tracks organization participation stats, aggregates contact resources, tracks live Good First Issues, and features a markdown editor to draft proposals.'
-      },
-      {
-        id: 'faq-ans-2',
-        q: 'How does the AI Recommendation matching work?',
-        a: 'The AI recommender parses your input\u2014either your GitHub username (to analyze your public repos, languages, and topics) or copy-pasted CV text. It extracts your key skills and computes a match score against the technologies, domains, and codebase complexity of the 184 GSoC organizations in our index.'
-      },
-      {
-        id: 'faq-ans-3',
-        q: 'Where is my proposal draft data saved?',
-        a: 'Privacy first. All draft proposals, watchlist items, bookmarks, and search history are saved locally inside your browser\u2019s localStorage. No data is ever uploaded to external databases, keeping your ideas and work completely private.'
-      },
-      {
-        id: 'faq-ans-4',
-        q: 'Is this platform affiliated with Google?',
-        a: 'No, FindMyGSoC is an independent open-source project created and maintained by the developer community. It is not affiliated with, sponsored by, or endorsed by Google LLC. Google Summer of Code is a registered trademark of Google LLC.'
-      }
-    ];
-
-    // ── Render helpers ────────────────────────────────────────────────────────
-
-    /** Renders a single comparison table cell icon */
-    function renderCell(value) {
-      if (!value) {
-        return '<td class="py-3.5 px-4 text-center"><span class="material-symbols-outlined text-zinc-300 dark:text-zinc-600 text-xl">cancel</span></td>';
-      }
-      return '<td class="py-3.5 px-4 text-center"><span class="material-symbols-outlined text-' + value + ' icon-fill text-xl">check_circle</span></td>';
-    }
-
-    /** Renders comparison rows from COMPARISON_DATA into #comparisonRows */
-    function renderComparisonRows() {
-      var tbody = document.getElementById('comparisonRows');
-      if (!tbody) { return; }
-      var html = '';
-      for (var i = 0; i < COMPARISON_DATA.length; i++) {
-        var row = COMPARISON_DATA[i];
-        html += '<tr><td class="py-3.5 pr-6 text-zinc-700 dark:text-zinc-300 font-medium">' + row.feature + '</td>';
-        html += renderCell(row.fmg) + renderCell(row.gsoc) + renderCell(row.god) + renderCell(row.gh);
-        html += '</tr>';
-      }
-      tbody.innerHTML = html;
-    }
-
-    /** Renders FAQ accordion items from FAQ_DATA into #faqList */
-    function renderFaqList() {
-      var container = document.getElementById('faqList');
-      if (!container) { return; }
-      var btnClass = 'faq-trigger flex items-center justify-between w-full p-6 text-left font-bold text-sm sm:text-base text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/35 transition-colors focus:outline-none';
-      var wrapClass = 'border border-zinc-200/70 dark:border-zinc-800/80 bg-white/80 dark:bg-[#1a1108]/40 glass rounded-2xl overflow-hidden transition-colors duration-300';
-      var html = '';
-      for (var j = 0; j < FAQ_DATA.length; j++) {
-        var item = FAQ_DATA[j];
-        html += '<div class="' + wrapClass + '">';
-        html += '<button class="' + btnClass + '" aria-expanded="false" aria-controls="' + item.id + '">';
-        html += '<span>' + item.q + '</span>';
-        html += '<span class="material-symbols-outlined faq-icon transition-transform duration-200">expand_more</span></button>';
-        html += '<div id="' + item.id + '" class="faq-content transition-all duration-300">';
-        html += '<p class="p-6 pt-0 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-zinc-100/50 dark:border-zinc-800/50">' + item.a + '</p></div></div>';
-      }
-      container.innerHTML = html;
-    }
-
-    // ── Theme ─────────────────────────────────────────────────────────────────
-
-    (function () { updateThemeIcon(); })();
-
-    function toggleTheme() {
-      var isDark = document.documentElement.classList.toggle('dark');
-      try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) { }
-      updateThemeIcon();
-    }
-
-    function updateThemeIcon() {
-      var btn = document.getElementById('themeToggleBtn');
-      var icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-      if (icon) {
-        var isDark = document.documentElement.classList.contains('dark');
-        icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-        btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-        btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      }
-    }
-
-    // ── Mobile menu ───────────────────────────────────────────────────────────
-
-    function toggleMenu() {
-      var menu = document.getElementById('mobileMenu');
-      var btn = document.getElementById('menuBtn');
-      var isExpanded = btn.getAttribute('aria-expanded') === 'true';
-      menu.classList.toggle('hidden');
-      btn.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
-      var icon = btn.querySelector('.material-symbols-outlined');
-      if (icon) { icon.textContent = !isExpanded ? 'close' : 'menu'; }
-    }
-
-    // Smooth scroll with fixed-navbar offset compensation
-    document.addEventListener('DOMContentLoaded', function () {
-      // Trigger hero entry animations
-      document.body.classList.add('hero-loaded');
-
-      // Wire button event listeners (replaces inline onclick handlers)
-      var themeBtn = document.getElementById('themeToggleBtn');
-      if (themeBtn) { themeBtn.addEventListener('click', toggleTheme); }
-
-      var menuBtn = document.getElementById('menuBtn');
-      if (menuBtn) { menuBtn.addEventListener('click', toggleMenu); }
-
-      // Render data-driven sections
-      renderComparisonRows();
-      renderFaqList();
-
-      // Patch footer links and styling after dynamic load
-      patchFooterLinks();
-
-      // FAQ accordion delegation (handles dynamically rendered FAQ buttons)
-      var faqList = document.getElementById('faqList');
-      if (faqList) {
-        faqList.addEventListener('click', function (e) {
-          var btn = e.target.closest('.faq-trigger');
-          if (!btn) { return; }
-          var isExpanded = btn.getAttribute('aria-expanded') === 'true';
-          btn.setAttribute('aria-expanded', !isExpanded ? 'true' : 'false');
-        });
-      }
-
-      wireAnchorScroll();
-    });
-
-    /** Applies CSS classes and rewrites in-page hrefs on the injected footer element. */
-    function applyFooterPatch(footer) {
-      footer.classList.add('border-t', 'border-zinc-200', 'dark:border-zinc-800', 'bg-white', 'dark:bg-[#0f0a05]', 'transition-colors', 'duration-300');
-      footer.querySelectorAll('a').forEach(function (a) {
-        var href = a.getAttribute('href');
-        if (href === '#orgs' || href === '#timeline') {
-          a.setAttribute('href', 'index.html' + href);
-        }
-      });
-    }
-
-    /** Waits for the dynamically-injected footer then patches its links/classes.
-     *  Uses MutationObserver so it fires exactly once with no polling overhead. */
-    function patchFooterLinks() {
-      // Footer may already be present if footer.js ran before this handler.
-      var existing = document.querySelector('footer.premium-footer');
-      if (existing) { applyFooterPatch(existing); return; }
-
-      // Otherwise observe the body for the footer being inserted.
-      var observer = new MutationObserver(function (mutations) {
-        for (var i = 0; i < mutations.length; i++) {
-          var nodes = mutations[i].addedNodes;
-          for (var j = 0; j < nodes.length; j++) {
-            var node = nodes[j];
-            if (node.nodeType === 1) {
-              var footer = node.matches('footer.premium-footer') ? node : node.querySelector('footer.premium-footer');
-              if (footer) { observer.disconnect(); applyFooterPatch(footer); return; }
-            }
-          }
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-
-    /** Wires smooth-scroll behaviour on all in-page anchor links. */
-    function wireAnchorScroll() {
-      var NAVBAR_HEIGHT = 72;
-      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-        anchor.addEventListener('click', function (e) {
-          var targetId = this.getAttribute('href').slice(1);
-          if (!targetId) { return; }
-          var target = document.getElementById(targetId);
-          if (!target) { return; }
-          e.preventDefault();
-          // Close mobile menu if open
-          var mobileMenu = document.getElementById('mobileMenu');
-          if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-            toggleMenu();
-          }
-          var top = target.getBoundingClientRect().top + window.scrollY - NAVBAR_HEIGHT;
-          var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-        });
-      });
-    }
-
-    // Scroll-triggered fade-in for How It Works step cards
-    (function () {
-      var steps = document.querySelectorAll('.hiw-step');
-      if (!steps.length) return;
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-      steps.forEach(function (step) { observer.observe(step); });
-    })();
-
-    // Dynamically calculate and render statistics
-(function () {
-  if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) return;
-
-  const totalOrgs = ORGS.length;
-  const veteranOrgs = ORGS.filter(o => o.years >= 10).length;
-  const newcomerOrgs = ORGS.filter(o => o.years <= 3).length;
-
-  function setText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  }
-
-  setText('statOrgs', `${totalOrgs}+`);
-  setText('statVeterans', `${veteranOrgs}+`);
-  setText('statNewcomers', `${newcomerOrgs}+`);
-  setText('org-count-text', `${totalOrgs}+ organizations`);
-  setText('dash-org-count', `${totalOrgs} Orgs`);
-  setText('footerOrgCount', String(totalOrgs));
-  setText('footerVeteranOrgCount', String(veteranOrgs));
-})();
-  </script>
 </body>
 
 </html>

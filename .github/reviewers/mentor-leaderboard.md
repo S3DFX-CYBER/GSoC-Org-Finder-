@@ -4,7 +4,7 @@
 
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
-| 🥇 | @KUMARNiru007 | 25 | 108 |
+| 🥇 | @KumarNirupam1 | 25 | 108 |
 | 🥈 | @TarunyaProgrammer | 19 | 75 |
 | 🥉 | @nitinog10 | 16 | 69 |
 | 4 | @Anushreebasics | 17 | 45 |

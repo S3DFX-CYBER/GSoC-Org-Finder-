@@ -49,7 +49,6 @@ jobs:
 
       - name: Run TENET PR Review
         if: steps.key_check.outputs.has_key == 'true'
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TENET_AI_KEY: ${{ secrets.TENET_AI_KEY }}

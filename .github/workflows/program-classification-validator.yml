@@ -86,35 +86,30 @@ jobs:
               // ------------------------------------
               // Metadata
               // ------------------------------------
+              
+              const normalizedBody = body.replace(/\r\n/g, '\n');
+              const has = (re) => re.test(normalizedBody);
 
               if (
-                body.includes('program: gssoc') ||
-                body.includes('- [x] gssoc') ||
-                body.includes('program\ngssoc') ||
-                body.includes('program\r\ngssoc') ||
-                body.includes('- [x] i am contributing under gssoc') ||
-                body.includes('- [x] i am participating via gssoc')
+                has(/\bprogram\s*:\s*gssoc\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(gssoc|i am contributing under gssoc|i am participating via gssoc)\b/im) ||
+                has(/\bprogram\n\s*gssoc\b/i)
               ) {
                 detected.add('gssoc');
               }
 
               if (
-                body.includes('program: nsoc') ||
-                body.includes('- [x] nsoc') ||
-                body.includes('program\nnsoc') ||
-                body.includes('program\r\nnsoc') ||
-                body.includes('- [x] i am contributing under nsoc') ||
-                body.includes('- [x] i am participating via nsoc')
+                has(/\bprogram\s*:\s*nsoc\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(nsoc|i am contributing under nsoc|i am participating via nsoc)\b/im) ||
+                has(/\bprogram\n\s*nsoc\b/i)
               ) {
                 detected.add('nsoc');
               }
 
               if (
-                body.includes('program: general') ||
-                body.includes('- [x] general contribution') ||
-                body.includes('program\ngeneral') ||
-                body.includes('program\r\ngeneral') ||
-                body.includes('- [x] i am a general contributor')
+                has(/\bprogram\s*:\s*general\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(general contribution|i am a general contributor)\b/im) ||
+                has(/\bprogram\n\s*general\b/i)
               ) {
                 detected.add('general');
               }

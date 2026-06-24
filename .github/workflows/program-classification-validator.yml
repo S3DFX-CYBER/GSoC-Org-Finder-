@@ -89,21 +89,32 @@ jobs:
 
               if (
                 body.includes('program: gssoc') ||
-                body.includes('- [x] gssoc')
+                body.includes('- [x] gssoc') ||
+                body.includes('program\ngssoc') ||
+                body.includes('program\r\ngssoc') ||
+                body.includes('- [x] i am contributing under gssoc') ||
+                body.includes('- [x] i am participating via gssoc')
               ) {
                 detected.add('gssoc');
               }
 
               if (
                 body.includes('program: nsoc') ||
-                body.includes('- [x] nsoc')
+                body.includes('- [x] nsoc') ||
+                body.includes('program\nnsoc') ||
+                body.includes('program\r\nnsoc') ||
+                body.includes('- [x] i am contributing under nsoc') ||
+                body.includes('- [x] i am participating via nsoc')
               ) {
                 detected.add('nsoc');
               }
 
               if (
                 body.includes('program: general') ||
-                body.includes('- [x] general contribution')
+                body.includes('- [x] general contribution') ||
+                body.includes('program\ngeneral') ||
+                body.includes('program\r\ngeneral') ||
+                body.includes('- [x] i am a general contributor')
               ) {
                 detected.add('general');
               }

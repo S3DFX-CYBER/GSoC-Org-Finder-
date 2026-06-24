@@ -85,6 +85,19 @@ def get_retry_delay_seconds(e: errors.APIError) -> float | None:
     return None
 
 
+def _sleep_for_retry(attempt: int, e: errors.APIError) -> None:
+    """Calculate sleep time and wait before retrying."""
+    server_delay = get_retry_delay_seconds(e)
+    if server_delay is not None:
+        sleep_time = server_delay
+        logger.warning(f"⚠️  Rate limit (429) hit. Server requested retry in {sleep_time:.2f}s...")
+    else:
+        jitter = random.uniform(0, 1)
+        sleep_time = BASE_DELAY * (2 ** attempt) + jitter
+        logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
+    time.sleep(sleep_time)
+
+
 def call_llm(client, prompt: str) -> str | None:
     """
     Call Gemini and return the text response.
@@ -110,15 +123,7 @@ def call_llm(client, prompt: str) -> str | None:
         except errors.APIError as e:
             if is_rate_limit_error(e):
                 if attempt < MAX_RETRIES - 1:
-                    server_delay = get_retry_delay_seconds(e)
-                    if server_delay is not None:
-                        sleep_time = server_delay
-                        logger.warning(f"⚠️  Rate limit (429) hit. Server requested retry in {sleep_time:.2f}s...")
-                    else:
-                        jitter = random.uniform(0, 1)
-                        sleep_time = BASE_DELAY * (2 ** attempt) + jitter
-                        logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
-                    time.sleep(sleep_time)
+                    _sleep_for_retry(attempt, e)
                     continue
                 else:
                     logger.exception(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")

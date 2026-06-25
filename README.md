@@ -54,6 +54,7 @@ open index.html   # macOS
 > 💡 No Node.js, no npm, no build tools needed. This is a pure HTML/CSS/JS project.
 
 **Helpful links for new contributors:**
+
 | Guide | Link |
 |-------|------|
 | GSSoC'26 Contributors | [GSSoC Contributor Guide](docs/GSSOC_CONTRIBUTOR_GUIDE.md) |

@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, safeHTML, pdfjsLib, escapeHtml */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, pdfjsLib, escapeHtml */
 
 let currentAbortController = null;
 let currentRequestId = 0;

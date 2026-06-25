@@ -114,15 +114,15 @@ const CONTACT_TIPS = {
       document.documentElement.classList.add('dark');
     } else if (saved === 'light') {
       document.documentElement.classList.remove('dark');
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    } else if (globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
     updateThemeIcon();
 
-    if (window.matchMedia) {
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (globalThis.matchMedia) {
+      globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
         if (!localStorage.getItem('theme')) {
           document.documentElement.classList.toggle('dark', e.matches);
           updateThemeIcon();

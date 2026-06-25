@@ -24,7 +24,7 @@ jobs:
 
     if: |
       github.event.pull_request.draft == false &&
-      github.actor != 'github-actions[bot]'
+      github.event.sender.login != 'github-actions[bot]'
 
     runs-on: ubuntu-latest
 

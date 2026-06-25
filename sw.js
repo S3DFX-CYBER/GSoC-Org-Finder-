@@ -43,6 +43,29 @@ globalThis.addEventListener('install', (event) => {
   );
 });
 
+globalThis.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Install critical assets first
+      await cache.addAll(CRITICAL_ASSETS);
+
+      // Try to cache optional assets individually, catching errors so they don't break install
+      await Promise.all(
+        OPTIONAL_ASSETS.map(async (url) => {
+          try {
+            const response = await fetch(url);
+            if (response.status === 200 || response.ok) {
+              await cache.put(url, response);
+            }
+          } catch (err) {
+            console.warn('[ServiceWorker] Failed to precache optional asset:', url, err);
+          }
+        })
+      );
+    }).then(() => globalThis.skipWaiting())
+  );
+});
+
 globalThis.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -87,7 +110,7 @@ globalThis.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match(cacheKey).then((res) => res || new Response('{"error":"offline"}', {
-          headers: { 'Content-Type': 'application/json' }
+          status: 503, headers: { 'Content-Type': 'application/json' }
         })))
     );
   } else {
@@ -102,9 +125,14 @@ globalThis.addEventListener('fetch', (event) => {
           return networkResponse;
         }).catch(() => {
           if (event.request.mode === 'navigate') {
-            return caches.match('index.html');
+            return caches.match('index.html').then((r) => r || new Response(
+              '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Offline</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;background:#f8f9fa;color:#333}h1{font-size:1.5rem;text-align:center;padding:2rem}</style></head><body><h1>You are offline.<br>Some content may not be available.</h1></body></html>',
+              { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+            ));
           }
-          return caches.match(event.request);
+          return caches.match(event.request).then((r) => r || new Response('{"error":"offline"}', {
+            status: 503, headers: { 'Content-Type': 'application/json' }
+          }));
         });
 
         return cachedResponse || fetchPromise;

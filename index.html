@@ -43,6 +43,13 @@
     (function loadDependencies() {
       const dependencies = [
         {
+          name: 'fuse',
+          primary: 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js',
+          fallback: 'https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js',
+          integrity: '', // No integrity for ease of fallback unless specified
+          check: () => typeof Fuse !== 'undefined'
+        },
+        {
           name: 'marked',
           primary: 'https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js',
           fallback: 'https://unpkg.com/marked@9.1.6/marked.min.js',

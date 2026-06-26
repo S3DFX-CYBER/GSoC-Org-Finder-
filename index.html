@@ -4257,7 +4257,7 @@ if(org.ideas){
 
     filteredOrgs = [...ORGS];
     renderOrgs(true);
-    applyFilters(); // to reset URL params
+    history.replaceState(null, '', location.pathname); applyFilters(); // reset URL params and re-render with clean state
   };
 
   // Shared search function to handle filter application, with optional badge tracking

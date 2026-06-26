@@ -2630,3 +2630,59 @@ if (typeof module !== 'undefined' && module.exports) {
     renderGoodFirstIssues
   };
 }
+
+// Initial State Sync via localstorage Persistence 
+let userSkills = JSON.parse(localStorage.getItem('userSkills')) || [];
+
+function renderSkillChips() {
+  const chipsContainer = document.getElementById('selected-skills-chips');
+  if (!chipsContainer) return;
+  
+  chipsContainer.innerHTML = '';
+  userSkills.forEach(skill => {
+    const chip = document.createElement('span');
+    chip.className = 'skill-chip';
+    chip.innerHTML = `${skill.toUpperCase()} <span class="remove-btn" data-skill="${skill}">&times;</span>`;
+    chipsContainer.appendChild(chip);
+  });
+  
+  document.querySelectorAll('.skill-chip .remove-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const skillToRemove = e.target.getAttribute('data-skill');
+      userSkills = userSkills.filter(s => s !== skillToRemove);
+      localStorage.setItem('userSkills', JSON.stringify(userSkills));
+      renderSkillChips();
+      if (typeof updateOrgCardsUI === 'function') updateOrgCardsUI();
+    });
+  });
+}
+
+function calculateSynergyScore(orgTags) {
+  if (!orgTags || orgTags.length === 0) return { score: 0, matched: [], gaps: [] };
+  
+  const cleanOrgTags = orgTags.map(t => t.toLowerCase());
+  const cleanUserSkills = userSkills.map(s => s.toLowerCase());
+  
+  const matched = cleanOrgTags.filter(tag => cleanUserSkills.includes(tag));
+  const gaps = cleanOrgTags.filter(tag => !cleanUserSkills.includes(tag));
+  const score = Math.round((matched.length / cleanOrgTags.length) * 100);
+  
+  return { score, matched, gaps };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dropdown = document.getElementById('skill-selector-dropdown');
+  if (dropdown) {
+    dropdown.addEventListener('change', (e) => {
+      const selectedValue = e.target.value.toLowerCase();
+      if (selectedValue && !userSkills.includes(selectedValue)) {
+        userSkills.push(selectedValue);
+        localStorage.setItem('userSkills', JSON.stringify(userSkills));
+        renderSkillChips();
+        dropdown.value = ''; 
+        if (typeof updateOrgCardsUI === 'function') updateOrgCardsUI();
+      }
+    });
+  }
+  renderSkillChips();
+});

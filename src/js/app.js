@@ -2630,9 +2630,41 @@ if (typeof module !== 'undefined' && module.exports) {
     renderGoodFirstIssues
   };
 }
+// Safe Initial State Sync with Environment and try/catch Guards
+let userSkills = [];
+try {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('userSkills');
+    userSkills = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(userSkills)) userSkills = [];
+  }
+} catch (e) {
+  console.warn('Failed to safely load userSkills from localStorage:', e);
+  userSkills = [];
+}
 
-// Initial State Sync via localstorage Persistence 
-let userSkills = JSON.parse(localStorage.getItem('userSkills')) || [];
+// Safe Initial State Sync with Environment and try/catch Guards
+let userSkills = [];
+try {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('userSkills');
+    userSkills = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(userSkills)) userSkills = [];
+  }
+} catch (e) {
+  console.warn('Failed to safely load userSkills from localStorage:', e);
+  userSkills = [];
+}
+
+// Performance Optimization: Cache DOM Elements to avoid re-scanning the page repeatedly
+let cachedOrgCards = null;
+
+function getOrgCards() {
+  if (!cachedOrgCards || cachedOrgCards.length === 0) {
+    cachedOrgCards = document.querySelectorAll('[data-org-tags]');
+  }
+  return cachedOrgCards;
+}
 
 function renderSkillChips() {
   const chipsContainer = document.getElementById('selected-skills-chips');
@@ -2641,8 +2673,18 @@ function renderSkillChips() {
   chipsContainer.innerHTML = '';
   userSkills.forEach(skill => {
     const chip = document.createElement('span');
-    chip.className = 'skill-chip';
-    chip.innerHTML = `${skill.toUpperCase()} <span class="remove-btn" data-skill="${skill}">&times;</span>`;
+    chip.className = 'skill-chip px-2 py-1 rounded text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 flex items-center gap-1';
+    
+    // Fix DOM-XSS vulnerabilities by using safe text nodes instead of innerHTML
+    const textNode = document.createTextNode(skill.toUpperCase());
+    chip.appendChild(textNode);
+    
+    const removeBtn = document.createElement('span');
+    removeBtn.className = 'remove-btn cursor-pointer font-bold ml-1 text-red-500';
+    removeBtn.textContent = '×';
+    removeBtn.setAttribute('data-skill', skill);
+    
+    chip.appendChild(removeBtn);
     chipsContainer.appendChild(chip);
   });
   
@@ -2650,9 +2692,13 @@ function renderSkillChips() {
     btn.addEventListener('click', (e) => {
       const skillToRemove = e.target.getAttribute('data-skill');
       userSkills = userSkills.filter(s => s !== skillToRemove);
-      localStorage.setItem('userSkills', JSON.stringify(userSkills));
+      try {
+        localStorage.setItem('userSkills', JSON.stringify(userSkills));
+      } catch (err) {
+        console.error(err);
+      }
       renderSkillChips();
-      if (typeof updateOrgCardsUI === 'function') updateOrgCardsUI();
+      applySynergyToUI();
     });
   });
 }
@@ -2665,9 +2711,41 @@ function calculateSynergyScore(orgTags) {
   
   const matched = cleanOrgTags.filter(tag => cleanUserSkills.includes(tag));
   const gaps = cleanOrgTags.filter(tag => !cleanUserSkills.includes(tag));
-  const score = Math.round((matched.length / cleanOrgTags.length) * 100);
+  const score = userSkills.length > 0 ? Math.round((matched.length / cleanOrgTags.length) * 100) : 0;
   
   return { score, matched, gaps };
+}
+
+function applySynergyToUI() {
+  // Use performance-optimized cached elements
+  const cards = getOrgCards();
+  if (!cards || cards.length === 0) return;
+
+  cards.forEach(card => {
+    const tagsAttr = card.getAttribute('data-org-tags') || '';
+    const tags = tagsAttr.split(',').map(t => t.trim()).filter(t => t);
+    const analysis = calculateSynergyScore(tags);
+    
+    let scoreBadge = card.querySelector('.synergy-score-display');
+    if (!scoreBadge) {
+      scoreBadge = document.createElement('div');
+      scoreBadge.className = 'synergy-score-display mt-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400';
+      card.appendChild(scoreBadge);
+    }
+    scoreBadge.textContent = userSkills.length > 0 ? `Synergy Match: ${analysis.score}%` : '';
+  });
+}
+
+// Avoid racing conditions by verifying dynamic element creation states dynamically
+function initializeSynergyTracker() {
+  const cards = document.querySelectorAll('[data-org-tags]');
+  if (cards.length > 0) {
+    cachedOrgCards = cards;
+    applySynergyToUI();
+  } else {
+    // Retry gracefully if asynchronous components are still resolving
+    setTimeout(initializeSynergyTracker, 300);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2677,12 +2755,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectedValue = e.target.value.toLowerCase();
       if (selectedValue && !userSkills.includes(selectedValue)) {
         userSkills.push(selectedValue);
-        localStorage.setItem('userSkills', JSON.stringify(userSkills));
+        try {
+          localStorage.setItem('userSkills', JSON.stringify(userSkills));
+        } catch (err) {
+          console.error(err);
+        }
         renderSkillChips();
+        applySynergyToUI();
         dropdown.value = ''; 
-        if (typeof updateOrgCardsUI === 'function') updateOrgCardsUI();
       }
     });
   }
   renderSkillChips();
+  initializeSynergyTracker();
 });

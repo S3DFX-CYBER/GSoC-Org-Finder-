@@ -1426,9 +1426,34 @@ kbd:hover{
     </div>
   </div>
 
-  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
-    <div class="flex flex-wrap items-center gap-4">
+  <div class="flex items-center justify-between mb-8 flex-wrap gap-3">
+    <p class="font-label text-xs uppercase tracking-widest text-zinc-500">
+      Showing <strong id="orgCount">184</strong> of <strong data-org-total>184</strong> organizations
+    </p>
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- Export Dropdown -->
+      <div class="relative" id="exportDropdownWrapper">
+        <button id="exportBtn" onclick="toggleExportDropdown()" aria-haspopup="true" aria-expanded="false"
+          aria-controls="exportDropdownMenu" title="Export filtered results"
+          class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container-highest text-xs font-bold hover:bg-primary hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export
+          <span class="material-symbols-outlined text-sm" id="exportChevron">expand_more</span>
+        </button>
+        <div id="exportDropdownMenu" role="menu"
+          class="hidden absolute right-0 mt-2 w-44 bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl z-20 overflow-hidden">
+          <button role="menuitem" onclick="exportResults('csv')"
+            class="w-full flex items-center gap-2 px-4 py-3 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-orange-50 dark:hover:bg-zinc-800 hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">description</span>
+            Download CSV
+          </button>
+          <button role="menuitem" onclick="exportResults('json')"
+            class="w-full flex items-center gap-2 px-4 py-3 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-orange-50 dark:hover:bg-zinc-800 hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-sm">data_object</span>
+            Download JSON
+          </button>
+        </div>
+      </div>
       <select id="categoryFilter" aria-label="Filter by category" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -1463,7 +1488,11 @@ kbd:hover{
   </div>
   
   <!-- Hidden search input for JavaScript compatibility -->
-  <input type="hidden" id="searchInput" />
+  <input
+    type="hidden"
+    id="searchInput"
+    aria-label="Organization search query"
+  />
   
   <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
@@ -1516,7 +1545,13 @@ kbd:hover{
           <div class="mt-2 flex items-center justify-between">
             <label class="text-xs text-primary font-bold cursor-pointer hover:underline flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt
-              <input type="file" id="aiResumeFile" accept=".txt" class="hidden">
+              <input
+                type="file"
+                id="aiResumeFile"
+                accept=".txt"
+                class="hidden"
+                aria-label="Upload resume text file"
+              />
             </label>
           </div>
         </div>
@@ -2020,11 +2055,11 @@ kbd:hover{
     <header class="proposal-header">
       <div class="proposal-header-title">
         <h2 id="pwOrgName">Organization Proposal</h2>
-          <label class="proposal-autosave">
+          <label for="pwAutosaveToggle" class="proposal-autosave">
             <input type="checkbox" id="pwAutosaveToggle" aria-describedby="pwPrivacyNote" />
             Enable autosave
-            <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
           </label>
+          <p id="pwPrivacyNote">Drafts are stored only on this device when autosave is enabled.</p>
           <div id="pwProposalStats" class="proposal-stats" aria-live="polite"></div>
       </div>
       <div class="proposal-toolbar">
@@ -3187,6 +3222,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       grid.classList.add('hidden');
       if (emptyState) emptyState.classList.remove('hidden');
       document.getElementById('orgCount').textContent = '0';
+      updateExportButtonState(0);
       document.getElementById('loadMoreContainer').style.display = 'none';
       document.getElementById('orgPagination').innerHTML = '';
       document.getElementById('orgPagination').style.display = 'none';
@@ -3249,6 +3285,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     });
 
     document.getElementById('orgCount').textContent = filteredOrgs.length;
+    updateExportButtonState(filteredOrgs.length); 
     document.getElementById('loadMoreContainer').style.display = 'none';
 
     renderPaginationControls('orgPagination', filteredOrgs.length, orgCurrentPage, (page) => {
@@ -3602,6 +3639,13 @@ btn.__orgListenerAttached = true;
       closeAn();
     } else if (document.getElementById('orgPickerModal')?.style.display === 'flex') {
       closeOrgPicker();
+    } else if (!document.getElementById('exportDropdownMenu')?.classList.contains('hidden')) {
+      const menu = document.getElementById('exportDropdownMenu');
+      const btn  = document.getElementById('exportBtn');
+      const chevron = document.getElementById('exportChevron');
+      menu.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
     }
   });
   
@@ -5504,8 +5548,17 @@ if(e.key.toLowerCase()==='r'){
       <button onclick="closeOrgPicker()" aria-label="Close" style="background:none;border:none;cursor:pointer;font-size:20px;color:#71717a;">✕</button>
     </div>
     <div style="padding:0 24px 12px;">
-      <input id="orgPickerSearch" type="text" placeholder="Search organizations..."
+      <label for="orgPickerSearch" class="sr-only">
+        Search organizations
+      </label>
+
+      <input
+        id="orgPickerSearch"
+        type="text"
+        placeholder="Search organizations."
         oninput="filterOrgPicker(this.value)"
+        aria-label="Search organizations"
+
         style="width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;box-sizing:border-box;">
     </div>
     <div id="orgPickerList" style="overflow-y:auto;flex:1;padding:0 24px 24px;display:flex;flex-direction:column;gap:6px;"></div>
@@ -5515,6 +5568,133 @@ if(e.key.toLowerCase()==='r'){
   document.getElementById('orgPickerModal').addEventListener('click', function(e) {
     if (e.target === this) closeOrgPicker();
   });
+
+  // ─── EXPORT FILTERED RESULTS ─────────────────────────────────────────────────
+
+  function toggleExportDropdown() {
+    const menu = document.getElementById('exportDropdownMenu');
+    const btn  = document.getElementById('exportBtn');
+    const chevron = document.getElementById('exportChevron');
+    const isOpen = !menu.classList.contains('hidden');
+
+    if (isOpen) {
+      menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      chevron.textContent = 'expand_more';
+    } else {
+      menu.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      chevron.textContent = 'expand_less';
+    }
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('exportDropdownWrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+      const menu = document.getElementById('exportDropdownMenu');
+      const btn  = document.getElementById('exportBtn');
+      const chevron = document.getElementById('exportChevron');
+      if (menu) menu.classList.add('hidden');
+      if (btn)  btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
+    }
+  });
+
+  function downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function showExportToast(msg) {
+    const toast = document.getElementById('exportToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+  }
+
+  function exportResults(format) {
+    // Close the dropdown
+    const menu = document.getElementById('exportDropdownMenu');
+    const btn = document.getElementById('exportBtn');
+    const chevron = document.getElementById('exportChevron');
+    if (menu) menu.classList.add('hidden');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+    if (chevron) chevron.textContent = 'expand_more';
+
+    const orgs = (typeof filteredOrgs !== 'undefined' && Array.isArray(filteredOrgs))
+      ? filteredOrgs
+      : [];
+
+    if (!orgs || orgs.length === 0) {
+      showExportToast('No organizations match the current filters — nothing to export.');
+      return;
+    }
+
+    const timestamp = new Date().toISOString().slice(0, 10); // e.g. 2026-06-15
+
+    if (format === 'csv') {
+      const headers = ['Name', 'Category', 'Tags', 'Competition', 'GSoC Years', 'First Year', 'GitHub URL', 'Ideas Link'];
+      const escape  = v => `"${String(v ?? '').replaceAll('"', '""')}"`;
+      const rows    = orgs.map(org => [
+        org.name,
+        org.cat,
+        (org.tags || []).join('; '),
+        org.competition,
+        org.years,
+        org.firstYear,
+        githubUrlFromValue(org.github) || '',
+        org.ideas || ''
+      ].map(escape).join(','));
+
+      const csv = [headers.map(escape).join(','), ...rows].join('\n');
+      downloadFile(csv, `gsoc-orgs-${timestamp}.csv`, 'text/csv;charset=utf-8;');
+
+    } else if (format === 'json') {
+      const exportData = orgs.map(org => ({
+        name:        org.name,
+        category:    org.cat,
+        languages:   org.tags || [],
+        competition: org.competition,
+        gsocYears:   org.years,
+        firstYear:   org.firstYear,
+        githubUrl: githubUrlFromValue(org.github) || '',
+        ideasLink:   org.ideas || '',
+        description: org.desc || ''
+      }));
+      downloadFile(JSON.stringify(exportData, null, 2), `gsoc-orgs-${timestamp}.json`, 'application/json');
+    }
+  }
+
+  // Disable export button when 0 results
+  function updateExportButtonState(count) {
+    const btn = document.getElementById('exportBtn');
+    if (!btn) return;
+    if (count === 0) {
+      btn.setAttribute('disabled', 'true');
+      btn.title = 'No results to export';
+      // close dropdown if open
+      const menu = document.getElementById('exportDropdownMenu');
+      const chevron = document.getElementById('exportChevron');
+      if (menu) menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.textContent = 'expand_more';
+    } else {
+      btn.removeAttribute('disabled');
+      btn.title = 'Export filtered results';
+    }
+  }
 </script>
+<div id="exportToast" role="alert" aria-live="assertive"
+  class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-zinc-800 text-white text-sm font-semibold shadow-xl transition-all">
+</div>
 </body>
 </html>

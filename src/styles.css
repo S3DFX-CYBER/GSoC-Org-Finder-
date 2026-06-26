@@ -843,4 +843,40 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   color: #a1a1aa;
 }
 
+/* Synergy Score & Skill Gap Accent Variables */
+.synergy-badge {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  margin-left: 10px;
+  background: rgba(255, 255, 255, 0.1);
+}
 
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #00adb5;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.9em;
+}
+
+.skill-chip .remove-btn {
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Color matrix states */
+.badge-match {
+  background-color: #28a745 !important;
+  color: #fff !important;
+}
+
+.badge-gap {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  cursor: help;
+}

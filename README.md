@@ -378,7 +378,7 @@ GITHUB_TOKEN=ghp_your_token_here
 Generate a token at:
 https://github.com/settings/tokens
 
-Only the `public_repo` scope is required.
+No specific scope is required for read-only access to public repositories. You can generate a token with no scopes selected, or use a fine-grained read-only token.
 
 ### 4. Deploy
 

@@ -98,7 +98,7 @@ def _sleep_for_retry(attempt: int, e: errors.APIError) -> None:
     time.sleep(sleep_time)
 
 
-def call_llm(client, prompt: str, fail_closed: bool = False) -> str | None:
+def call_llm(client, prompt: str, fail_closed: bool = True) -> str | None:
     """
     Call Gemini and return the text response.
 

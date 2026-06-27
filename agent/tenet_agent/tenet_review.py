@@ -50,7 +50,7 @@ class EnvConfig:
 
 
 def get_env_config() -> EnvConfig:
-    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
+    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "true").lower() == "true"
 
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
@@ -87,8 +87,15 @@ def review_pr(config: EnvConfig):
     try:
         diff = get_pr_diff(config.repo_name, config.pr_number, config.token)
     except Exception as e:
-        # Non-critical, as fetching diff might fail due to transient GitHub API issues
-        fail_workflow(f"❌ Failed to fetch PR diff: {e}", critical=False, fail_closed=config.fail_closed)
+        msg = f"❌ Failed to fetch PR diff: {e}"
+        if not config.fail_closed:
+            try:
+                g = get_github_client()
+                repo = get_repo(g)
+                post_pr_comment(repo, config.pr_number, "⚠️ TENET Security Review skipped due to GitHub API error fetching diff.")
+            except Exception as post_err:
+                logger.warning(f"⚠️  Could not post fail-open warning to PR: {post_err}")
+        fail_workflow(msg, critical=False, fail_closed=config.fail_closed)
 
     if not diff.strip():
         logger.info("ℹ️  PR has no diff (empty). Skipping review.")
@@ -141,7 +148,7 @@ def main():
         raise
     except Exception as e:
         # Unexpected errors trigger fail-open behavior
-        fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
+        fail_closed = os.environ.get("TENET_FAIL_CLOSED", "true").lower() == "true"
         fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}", critical=False, fail_closed=fail_closed)
 
 

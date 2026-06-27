@@ -3535,36 +3535,23 @@ btn.__orgListenerAttached = true;
     });
   }
 
-  
   function showToast(msg) {
-    let t=document.getElementById('compareToast');
-    if(!t) {
-      t=document.createElement('div');
-      t.id='compareToast';
+    let t = document.getElementById('compareToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.className = 'compareToast';
       t.setAttribute('role', 'status');
       t.setAttribute('aria-live', 'polite');
       t.setAttribute('aria-atomic', 'true');
-      t.style.cssText='position:fixed;
-      bottom:24px;
-      left:50%;
-      transform:translateX(-50%);
-      background:var(--ink);
-      color:var(--bg);
-      padding:10px 18px;
-      border-radius:8px;
-      font-size:12px;
-      font-weight:700;
-      z-index:999;
-      transition:opacity .3s;
-      white-space:nowrap';
+      t.className = 'compare-toast';
+      t.style.opacity = '0';
       document.body.appendChild(t);
     }
-    t.textContent=msg;
-    t.style.opacity='1';
+    t.textContent = msg;
     clearTimeout(t._hideTimeout);
-    t._hideTimeout = setTimeout(()=>t.style.opacity='0',2200);
+    requestAnimationFrame(() => requestAnimationFrame(() => { t.style.opacity = '1'; }));
+    t._hideTimeout = setTimeout(() => { t.style.opacity = '0'; }, 2200);
   }
-
 
   function toggleCompare(e, name) {
     if (e) e.stopPropagation();
@@ -5177,7 +5164,7 @@ if(org.ideas){
   
   class SafeHTMLString extends String {}
   SafeHTMLString.prototype.__isSafeHTML = true;
-
+ 
   function safeHTML(strings, ...values) {
     let result = '';
     for (let i = 0; i < strings.length; i++) {

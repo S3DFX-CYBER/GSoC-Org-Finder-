@@ -11,6 +11,7 @@ import re
 import sys
 import logging
 from dataclasses import dataclass
+from typing import NoReturn
 
 from utils import (
     get_github_client,
@@ -27,8 +28,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-def fail_workflow(msg: str, critical: bool = False):
-    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
+def fail_workflow(msg: str, critical: bool = False, fail_closed: bool = False) -> NoReturn:
     if critical or fail_closed:
         logger.error(msg)
         sys.exit(1)
@@ -46,24 +46,27 @@ class EnvConfig:
     pr_title: str
     pr_body: str
     pr_author: str
+    fail_closed: bool
 
 
 def get_env_config() -> EnvConfig:
+    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
+
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
-        fail_workflow("❌ GITHUB_TOKEN is not set.", critical=True)
+        fail_workflow("❌ GITHUB_TOKEN is not set.", critical=True, fail_closed=fail_closed)
 
     repo_name = os.environ.get("REPO")
     if not repo_name:
-        fail_workflow("❌ REPO environment variable is not set.", critical=True)
+        fail_workflow("❌ REPO environment variable is not set.", critical=True, fail_closed=fail_closed)
 
     pr_number_str = os.environ.get("PR_NUMBER")
     if not pr_number_str:
-        fail_workflow("❌ PR_NUMBER environment variable is not set.", critical=True)
+        fail_workflow("❌ PR_NUMBER environment variable is not set.", critical=True, fail_closed=fail_closed)
     try:
         pr_number = int(pr_number_str)
     except ValueError:
-        fail_workflow(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}", critical=True)
+        fail_workflow(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}", critical=True, fail_closed=fail_closed)
 
     return EnvConfig(
         token=token,
@@ -72,6 +75,7 @@ def get_env_config() -> EnvConfig:
         pr_title=os.environ.get("PR_TITLE", ""),
         pr_body=os.environ.get("PR_BODY", "") or "*No description provided.*",
         pr_author=os.environ.get("PR_AUTHOR", "unknown"),
+        fail_closed=fail_closed,
     )
 
 
@@ -84,7 +88,7 @@ def review_pr(config: EnvConfig):
         diff = get_pr_diff(config.repo_name, config.pr_number, config.token)
     except Exception as e:
         # Non-critical, as fetching diff might fail due to transient GitHub API issues
-        fail_workflow(f"❌ Failed to fetch PR diff: {e}", critical=False)
+        fail_workflow(f"❌ Failed to fetch PR diff: {e}", critical=False, fail_closed=config.fail_closed)
 
     if not diff.strip():
         logger.info("ℹ️  PR has no diff (empty). Skipping review.")
@@ -104,10 +108,10 @@ def review_pr(config: EnvConfig):
 
     logger.info("🤖 Calling Gemini for security review...")
     model = get_llm_client()
-    review_text = call_llm(model, prompt)
+    review_text = call_llm(model, prompt, fail_closed=config.fail_closed)
 
     if not review_text:
-        fail_workflow("❌ LLM returned an empty or error response.", critical=False)
+        fail_workflow("❌ LLM returned an empty or error response.", critical=False, fail_closed=config.fail_closed)
 
     logger.info("✍️  Review generated. Posting to PR...")
     g = get_github_client()
@@ -137,7 +141,8 @@ def main():
         raise
     except Exception as e:
         # Unexpected errors trigger fail-open behavior
-        fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}", critical=False)
+        fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
+        fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}", critical=False, fail_closed=fail_closed)
 
 
 if __name__ == "__main__":

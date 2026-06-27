@@ -80,8 +80,8 @@ def get_retry_delay_seconds(e: errors.APIError) -> float | None:
                 delay_str = detail.get("retryDelay", "")
                 if isinstance(delay_str, str) and delay_str.endswith("s"):
                     return float(delay_str[:-1])
-    except Exception:
-        pass
+    except (KeyError, TypeError, AttributeError, ValueError) as parse_error:
+        logger.warning(f"⚠️  Failed to parse retryDelay from APIError: {parse_error}")
     return None
 
 
@@ -98,16 +98,14 @@ def _sleep_for_retry(attempt: int, e: errors.APIError) -> None:
     time.sleep(sleep_time)
 
 
-def call_llm(client, prompt: str) -> str | None:
+def call_llm(client, prompt: str, fail_closed: bool = False) -> str | None:
     """
     Call Gemini and return the text response.
 
     Implements a retry mechanism for 429 Quota Exceeded errors and gracefully
     handles None text by returning a degraded mode warning for fail-open workflow,
-    unless TENET_FAIL_CLOSED is set.
+    unless fail_closed is True.
     """
-    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
-
     for attempt in range(MAX_RETRIES):
         try:
             response = client.models.generate_content(

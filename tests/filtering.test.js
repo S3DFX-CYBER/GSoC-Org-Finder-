@@ -27,7 +27,7 @@ globalThis.document = {
 globalThis.ORGS = require('../src/js/org.js');
 
 // Import the modules
-const { orgMatchesLanguages, applySecondarySort } = require('../src/js/app.js');
+const { orgMatchesLanguages, applySecondarySort, searchComparator } = require('../src/js/app.js');
 require('../src/js/skillExtractor.js'); // Populates LANGUAGE_MAP on global
 
 test('orgMatchesLanguages returns true when languages set is empty', () => {
@@ -75,4 +75,30 @@ test('applySecondarySort sorts correctly', () => {
 
   // alphabetical sort (default)
   assert.ok(applySecondarySort(a, b, 'alpha') < 0);
+});
+
+test('searchComparator sorts with fuzzy scores', () => {
+  const a = { name: 'The Python Foundation', years: 10, competition: 'hot' };
+  const b = { name: 'A Pyhton Group', years: 5, competition: 'chill' };
+  const c = { name: 'Some Other', years: 5, competition: 'chill' };
+
+  globalThis.orgSearchScores = new Map();
+  globalThis.orgSearchScores.set('The Python Foundation', 0.1);
+  globalThis.orgSearchScores.set('A Pyhton Group', 0.3);
+  globalThis.orgSearchScores.set('Some Other', 0.9);
+
+  // a has better score than b
+  assert.ok(searchComparator(a, b, 'pyhton', 'alpha') < 0);
+  // b has better score than c
+  assert.ok(searchComparator(b, c, 'pyhton', 'alpha') < 0);
+
+  // Exact match takes precedence over score
+  const exact = { name: 'pyhton', years: 1, competition: 'chill' };
+  globalThis.orgSearchScores.set('pyhton', 0.5); // Worse score somehow
+  assert.ok(searchComparator(exact, a, 'pyhton', 'alpha') < 0);
+
+  // StartsWith takes precedence over score
+  const starts = { name: 'pyhton starts', years: 1, competition: 'chill' };
+  globalThis.orgSearchScores.set('pyhton starts', 0.4);
+  assert.ok(searchComparator(starts, b, 'pyhton', 'alpha') < 0);
 });

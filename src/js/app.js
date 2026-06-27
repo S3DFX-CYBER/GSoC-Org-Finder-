@@ -109,9 +109,26 @@ const CONTACT_TIPS = {
 // ══════════════════════════════════════════════
 (function initTheme() {
   try {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else if (globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     updateThemeIcon();
+
+    if (globalThis.matchMedia) {
+      globalThis.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+          document.documentElement.classList.toggle('dark', e.matches);
+          updateThemeIcon();
+        }
+      });
+    }
   } catch (e) {
     console.warn('Theme init failed:', e);
   }
@@ -1071,8 +1088,16 @@ function searchComparator(a, b, search, sort) {
   if (nameB === search && nameA !== search) return 1;
   if (nameA.startsWith(search) && !nameB.startsWith(search)) return -1;
   if (nameB.startsWith(search) && !nameA.startsWith(search)) return 1;
+  
+  if (globalThis.orgSearchScores && globalThis.orgSearchScores.has(a.name) && globalThis.orgSearchScores.has(b.name)) {
+    const diff = globalThis.orgSearchScores.get(a.name) - globalThis.orgSearchScores.get(b.name);
+    if (diff !== 0) return diff;
+  }
+  
   return applySecondarySort(a, b, sort);
 }
+
+let orgSearchFuse = null;
 
 function applyFilters() {
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
@@ -1081,7 +1106,30 @@ function applyFilters() {
   const compF = document.getElementById('complexityFilter')?.value || 'all';
   const sort = document.getElementById('sortSelect')?.value || 'alpha';
 
-  filteredOrgs = ORGS.filter(o => matchesFilters(o, cat, compF, search));
+  globalThis.orgSearchScores = new Map();
+  let baseOrgs = ORGS;
+  let useFallbackSearch = false;
+
+  if (search) {
+    if (typeof Fuse !== 'undefined') {
+      if (!orgSearchFuse) {
+        orgSearchFuse = new Fuse(ORGS, {
+          includeScore: true,
+          threshold: 0.3,
+          keys: ['name', 'tags', 'cat']
+        });
+      }
+      const results = orgSearchFuse.search(search);
+      baseOrgs = results.map(r => {
+        globalThis.orgSearchScores.set(r.item.name, r.score);
+        return r.item;
+      });
+    } else {
+      useFallbackSearch = true;
+    }
+  }
+
+  filteredOrgs = baseOrgs.filter(o => matchesFilters(o, cat, compF, useFallbackSearch ? search : ''));
 
   // Smart sorting: Exact match first, startsWith second, alphabetic/secondary sort third
   if (search) {
@@ -2622,6 +2670,7 @@ if (typeof module !== 'undefined' && module.exports) {
     githubUrlFromValue,
     orgMatchesLanguages,
     applySecondarySort,
+    searchComparator,
     openModal,
     renderModalHeader,
     closeModal,

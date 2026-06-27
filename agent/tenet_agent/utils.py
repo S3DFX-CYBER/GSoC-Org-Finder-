@@ -14,7 +14,6 @@ from google import genai
 from google.genai import types, errors
 from github import Github
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 

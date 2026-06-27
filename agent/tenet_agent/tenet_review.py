@@ -71,7 +71,15 @@ def get_env_config() -> EnvConfig:
 
     ai_key = os.environ.get("TENET_AI_KEY")
     if not ai_key:
-        fail_workflow("❌ TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.", critical=True, fail_closed=fail_closed)
+        msg = "❌ TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions."
+        if not fail_closed:
+            try:
+                g = get_github_client(token)
+                repo = get_repo(g, repo_name)
+                post_pr_comment(repo, pr_number, "⚠️ TENET Security Review skipped due to missing API key.")
+            except Exception as post_err:
+                logger.warning(f"⚠️  Could not post fail-open warning to PR: {post_err}")
+        fail_workflow(msg, critical=False, fail_closed=fail_closed)
 
     return EnvConfig(
         token=token,

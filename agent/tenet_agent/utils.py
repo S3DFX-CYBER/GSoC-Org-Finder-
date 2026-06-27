@@ -20,17 +20,15 @@ logger = logging.getLogger(__name__)
 
 # ─── GitHub client ────────────────────────────────────────────────────────────
 
-def get_github_client() -> Github:
+def get_github_client(token: str) -> Github:
     """Create and return an authenticated GitHub client."""
-    token = os.environ.get("GITHUB_TOKEN")
     if not token:
         raise ValueError("GITHUB_TOKEN is not set.")
     return Github(token)
 
 
-def get_repo(g: Github):
+def get_repo(g: Github, repo_name: str):
     """Return the repository object for the current workflow context."""
-    repo_name = os.environ.get("REPO")
     if not repo_name:
         raise ValueError("REPO environment variable is not set.")
     return g.get_repo(repo_name)
@@ -38,9 +36,8 @@ def get_repo(g: Github):
 
 # ─── LLM client ───────────────────────────────────────────────────────────────
 
-def get_llm_client():
+def get_llm_client(api_key: str):
     """Configure Gemini and return a Client instance."""
-    api_key = os.environ.get("TENET_AI_KEY")
     if not api_key:
         raise ValueError("TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.")
     return genai.Client(api_key=api_key)

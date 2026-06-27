@@ -46,6 +46,7 @@ class EnvConfig:
     pr_title: str
     pr_body: str
     pr_author: str
+    ai_key: str
     fail_closed: bool
 
 
@@ -68,6 +69,10 @@ def get_env_config() -> EnvConfig:
     except ValueError:
         fail_workflow(f"❌ PR_NUMBER is not a valid integer: {pr_number_str!r}", critical=True, fail_closed=fail_closed)
 
+    ai_key = os.environ.get("TENET_AI_KEY")
+    if not ai_key:
+        fail_workflow("❌ TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.", critical=True, fail_closed=fail_closed)
+
     return EnvConfig(
         token=token,
         repo_name=repo_name,
@@ -75,6 +80,7 @@ def get_env_config() -> EnvConfig:
         pr_title=os.environ.get("PR_TITLE", ""),
         pr_body=os.environ.get("PR_BODY", "") or "*No description provided.*",
         pr_author=os.environ.get("PR_AUTHOR", "unknown"),
+        ai_key=ai_key,
         fail_closed=fail_closed,
     )
 
@@ -114,15 +120,15 @@ def review_pr(config: EnvConfig):
     prompt = f"{PR_REVIEW_SYSTEM}\n\n{user_prompt}"
 
     logger.info("🤖 Calling Gemini for security review...")
-    model = get_llm_client()
+    model = get_llm_client(config.ai_key)
     review_text = call_llm(model, prompt, fail_closed=config.fail_closed)
 
     if not review_text:
         fail_workflow("❌ LLM returned an empty or error response.", critical=False, fail_closed=config.fail_closed)
 
     logger.info("✍️  Review generated. Posting to PR...")
-    g = get_github_client()
-    repo = get_repo(g)
+    g = get_github_client(config.token)
+    repo = get_repo(g, config.repo_name)
     post_pr_comment(repo, config.pr_number, review_text)
 
     if re.search(r"\[SEVERITY:\s*(CRITICAL|HIGH)\]", review_text, flags=re.IGNORECASE):

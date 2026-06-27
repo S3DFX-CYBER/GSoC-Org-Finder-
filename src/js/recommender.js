@@ -7,8 +7,7 @@
  * against all GSoC organizations, returning the top 5 matches.
  */
 
-/* global ORGS */
-
+/* global ORGS, participationYears */
 /**
  * Generates recommendations for GSoC organizations.
  * 
@@ -150,6 +149,13 @@ function calculateExperienceScore(profile, org, matchReasons) {
     let delta = 0;
     const hasWeakProfile = !profile || (profile.stars < 10 && (profile.languages?.length || 0) < 3);
     
+    const years = participationYears(org.firstYear);
+
+if (years >= 10) {
+    matchReasons.push(`GSoC Veteran (${years} years)`);
+} else if (years >= 5) {
+    matchReasons.push(`Established GSoC Org (${years} years)`);
+}
     if (hasWeakProfile) {
       if (org.codebase === 'beginner') {
         matchReasons.push(`Great for newcomers (beginner-friendly codebase)`);

@@ -50,7 +50,7 @@ class EnvConfig:
 
 
 def get_env_config() -> EnvConfig:
-    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "true").lower() == "true"
+    fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
 
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
@@ -148,7 +148,7 @@ def main():
         raise
     except Exception as e:
         # Unexpected errors trigger fail-open behavior
-        fail_closed = os.environ.get("TENET_FAIL_CLOSED", "true").lower() == "true"
+        fail_closed = os.environ.get("TENET_FAIL_CLOSED", "false").lower() == "true"
         fail_workflow(f"❌ Unexpected error in TENET PR Review workflow: {e}", critical=False, fail_closed=fail_closed)
 
 

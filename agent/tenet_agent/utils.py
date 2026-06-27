@@ -24,8 +24,7 @@ def get_github_client() -> Github:
     """Create and return an authenticated GitHub client."""
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
-        logger.error("❌ GITHUB_TOKEN is not set.")
-        sys.exit(1)
+        raise ValueError("GITHUB_TOKEN is not set.")
     return Github(token)
 
 
@@ -33,8 +32,7 @@ def get_repo(g: Github):
     """Return the repository object for the current workflow context."""
     repo_name = os.environ.get("REPO")
     if not repo_name:
-        logger.error("❌ REPO environment variable is not set.")
-        sys.exit(1)
+        raise ValueError("REPO environment variable is not set.")
     return g.get_repo(repo_name)
 
 
@@ -44,8 +42,7 @@ def get_llm_client():
     """Configure Gemini and return a Client instance."""
     api_key = os.environ.get("TENET_AI_KEY")
     if not api_key:
-        logger.error("❌ TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.")
-        sys.exit(1)
+        raise ValueError("TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.")
     return genai.Client(api_key=api_key)
 
 
@@ -98,7 +95,7 @@ def _sleep_for_retry(attempt: int, e: errors.APIError) -> None:
     time.sleep(sleep_time)
 
 
-def call_llm(client, prompt: str, fail_closed: bool = True) -> str | None:
+def call_llm(client, prompt: str, fail_closed: bool = False) -> str | None:
     """
     Call Gemini and return the text response.
 

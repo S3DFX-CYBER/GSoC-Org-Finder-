@@ -109,8 +109,10 @@ const CONTACT_TIPS = {
 // ══════════════════════════════════════════════
 (function initTheme() {
   try {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldUseDark = saved === 'dark' || (!saved && prefersDark);
+    document.documentElement.classList.toggle('dark', shouldUseDark);
     updateThemeIcon();
   } catch (e) {
     console.warn('Theme init failed:', e);

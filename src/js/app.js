@@ -783,7 +783,7 @@ function syncBookmark(name, shouldAdd) {
   try {
     localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
   } catch (e) {
-    console.warn('Failed to persist bookmarks:', e);
+    alert('We could not save your bookmarks because browser storage is unavailable.');
   }
 
   refreshOrgGridAfterBookmarkChange();
@@ -834,7 +834,7 @@ function clearAllBookmarks() {
   try {
     localStorage.setItem('bookmarks', JSON.stringify([]));
   } catch (e) {
-    console.warn('Failed to clear bookmarks:', e);
+    alert('We could not clear bookmarks because browser storage is unavailable.');
   }
   applyFilters();
   renderWatchlist();

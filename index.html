@@ -3652,7 +3652,16 @@ btn.__orgListenerAttached = true;
     try {
       localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
     } catch (e) {
-      alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
+      const isQuotaError =
+        typeof DOMException !== 'undefined' &&
+        e instanceof DOMException &&
+        (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED');
+      if (isQuotaError) {
+        alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
+      } else {
+        console.error('Failed to persist bookmarks', e);
+        alert('Could not save bookmarks because browser storage is unavailable.');
+      }
       return;
     }
     refreshOrgGridAfterBookmarkChange();
@@ -3691,7 +3700,16 @@ btn.__orgListenerAttached = true;
     try {
       localStorage.setItem('bookmarks', JSON.stringify([]));
     } catch (e) {
-      alert('Could not clear bookmarks due to storage limits.');
+      const isQuotaError =
+        typeof DOMException !== 'undefined' &&
+        e instanceof DOMException &&
+        (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED');
+      if (isQuotaError) {
+        alert('Could not clear bookmarks due to storage limits.');
+      } else {
+        console.error('Failed to clear bookmarks in storage', e);
+        alert('Could not clear bookmarks because browser storage is unavailable.');
+      }
       return;
     }
     applyFilters();

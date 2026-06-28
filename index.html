@@ -2310,10 +2310,12 @@ kbd:hover{
   };
 
   function updateThemeIcon(){
+    const isDark = typeof document.documentElement.classList.contains === 'function'
+      ? document.documentElement.classList.contains('dark')
+      : false;
     const btn = document.getElementById('themeToggleBtn');
     const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
     if(icon){
-      const isDark = document.documentElement.classList.contains('dark');
       icon.textContent = isDark ? 'light_mode' : 'dark_mode';
       btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
@@ -2323,7 +2325,6 @@ kbd:hover{
     const mobileIcon = document.getElementById('mobileThemeIcon');
     const mobileLabel = document.getElementById('mobileThemeLabel');
     if (mobileBtn && mobileIcon && mobileLabel) {
-      const isDark = document.documentElement.classList.contains('dark');
       mobileIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
       mobileLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
       mobileBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
@@ -3926,12 +3927,7 @@ btn.__orgListenerAttached = true;
     const nextBookmarks = new Set(bookmarkedSet);
     if (shouldAdd) nextBookmarks.add(orgName);
     else nextBookmarks.delete(orgName);
-    try {
-      localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
-    } catch (e) {
-      alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
-      return;
-    }
+    localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
     bookmarkedSet.clear();
     nextBookmarks.forEach(n => bookmarkedSet.add(n));
     refreshOrgGridAfterBookmarkChange();
@@ -3966,12 +3962,7 @@ btn.__orgListenerAttached = true;
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
-    try {
-      localStorage.setItem('bookmarks', JSON.stringify([]));
-    } catch (e) {
-      alert('Could not clear bookmarks due to storage limits.');
-      return;
-    }
+    localStorage.setItem('bookmarks', JSON.stringify([]));
     bookmarkedSet.clear();
     applyFilters();
     renderWatchlist();

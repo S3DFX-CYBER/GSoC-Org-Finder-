@@ -464,8 +464,6 @@ kbd:hover{
     .proposal-preview blockquote { border-left: 4px solid #ddd; padding-left: 1rem; color: #666; margin-bottom: 1rem; }
     .proposal-preview a { color: #f97316; text-decoration: underline; }
     .proposal-preview-error { color: #ba1a1a; font-size: 0.875rem; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-
     /* Custom Scrollbar for Modal */
     .modal::-webkit-scrollbar { width: 6px; }
     .modal::-webkit-scrollbar-track { background: transparent; }
@@ -3908,7 +3906,12 @@ btn.__orgListenerAttached = true;
     if (!orgName) return;
     if (shouldAdd) bookmarkedSet.add(orgName);
     else           bookmarkedSet.delete(orgName);
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    } catch (e) {
+      alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
+      return;
+    }
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3942,7 +3945,12 @@ btn.__orgListenerAttached = true;
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
     bookmarkedSet.clear();
-    localStorage.setItem('bookmarks', JSON.stringify([]));
+    try {
+      localStorage.setItem('bookmarks', JSON.stringify([]));
+    } catch (e) {
+      alert('Could not clear bookmarks due to storage limits.');
+      return;
+    }
     applyFilters();
     renderWatchlist();
     updateAIInsights();

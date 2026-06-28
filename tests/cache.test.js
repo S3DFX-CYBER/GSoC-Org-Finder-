@@ -130,3 +130,30 @@ test('Service Worker Fetch: API endpoint triggers Network-First strategy and fal
   assert.strictEqual(response.status, 200);
   assert.ok(response.fromCache);
 });
+
+test('Service Worker Fetch: issues.json requests are cached under the canonical path', async () => {
+  globalThis.caches.matchVal = null;
+  fetchAttempted = false;
+  globalThis.fetch.shouldFail = false;
+  stubCache.putCalls = [];
+
+  const event = {
+    request: { url: 'https://example.com/data/issues.json?v=123' },
+    respondWith: (promise) => {
+      event.promise = promise;
+    },
+    waitUntil: (promise) => {
+      event.waitUntilPromise = promise;
+    }
+  };
+
+  listeners['fetch'](event);
+  const response = await event.promise;
+
+  assert.strictEqual(response.status, 200);
+  assert.ok(fetchAttempted);
+  assert.ok(event.waitUntilPromise);
+  await event.waitUntilPromise;
+  assert.strictEqual(stubCache.putCalls.length, 1);
+  assert.strictEqual(String(stubCache.putCalls[0].req.url), 'https://example.com/data/issues.json');
+});

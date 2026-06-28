@@ -946,7 +946,7 @@ function renderCompare() {
     item.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800';
     item.innerHTML = safeHTML`
       <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-        <img src="${logoUrl}" data-org-name="${org.name}" class="w-full h-full object-contain" />
+        <img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain" />
       </div>
       <p class="font-bold text-sm truncate">${org.name}</p>
       <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${String(org.years)}y · ${org.competition}</p>

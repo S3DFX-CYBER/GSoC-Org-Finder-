@@ -5,6 +5,7 @@ const path = require('node:path');
 
 // Mock Service Worker Environment Globals
 const listeners = {};
+const { URL: NodeURL } = require('node:url');
 globalThis.self = {
   addEventListener: (event, handler) => {
     listeners[event] = handler;
@@ -64,7 +65,7 @@ globalThis.URL = class {
     this.href = url;
     // Support both full URLs and path-only strings used in tests
     try {
-      const parsed = new globalThis.URL(url);
+      const parsed = new NodeURL(url);
       this.origin   = parsed.origin;
       this.pathname = parsed.pathname;
       this.protocol = parsed.protocol;

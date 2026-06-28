@@ -137,7 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const ext = file.name.split('.').pop().toLowerCase();
       const validExts = ['txt', 'text', 'md', 'csv', 'json', 'xml', 'html', 'htm', 'log', 'ini', 'cfg', 'yaml', 'yml', 'toml', 'conf', 'sh', 'bat', 'ps1'];
       const validMimes = ['text/', 'application/json', 'application/xml', 'application/x-yaml'];
-      const isTextFile = validExts.includes(ext) && validMimes.some(m => file.type.startsWith(m));
+      const hasValidExt = validExts.includes(ext);
+      const hasValidMime = !file.type || validMimes.some((m) => file.type.startsWith(m));
+      const isTextFile = hasValidExt && hasValidMime;
       if (!isTextFile) {
         showError(`Unsupported file type ".${ext}". Please upload a plain text file (.txt).`);
         fileUpload.value = '';

@@ -3,6 +3,13 @@ export const config = { runtime: 'edge' };
 const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_SIZE = 1000;
+const OWNER_NAME_RE = /^[\w.-]+$/;
+const FULL_REPO_RE = /^[\w.-]+\/[\w.-]+$/;
+
+function buildRepoQualifier(repo, isOwnerOnly) {
+  if (!repo) return '';
+  return isOwnerOnly ? `org:${repo}` : `repo:${repo}`;
+}
 
 function safeCacheSet(key, value) {
   if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
@@ -29,12 +36,13 @@ export default async function handler(req) {
   const user = searchParams.get('user');
   const gfiMode = searchParams.get('gfi') === '1';
   const issuesMode = searchParams.get('issues') === '1';
+  const isOwnerOnly = !!repo && !repo.includes('/');
 
   if (!repo && !user) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
-  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+  if (repo && !(isOwnerOnly ? OWNER_NAME_RE.test(repo) : FULL_REPO_RE.test(repo))) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
 
@@ -156,7 +164,7 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const q = encodeURIComponent(`${buildRepoQualifier(repo, isOwnerOnly)} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
@@ -189,7 +197,7 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
+      const q = encodeURIComponent(`${buildRepoQualifier(repo, isOwnerOnly)} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
@@ -213,6 +221,46 @@ export default async function handler(req) {
   }
 
   try {
+    if (isOwnerOnly) {
+      const orgRes = await fetchWithFallback(`https://api.github.com/orgs/${repo}`, { headers: ghHeaders });
+      if (!orgRes.ok) {
+        return new Response(JSON.stringify({
+          name: repo,
+          description: 'Organization-level GitHub entry — no specific repository. Good First Issues are searched across all repos in this org.',
+          stars: null,
+          forks: null,
+          issues: null,
+          watchers: null,
+          lastCommit: '—',
+          activity: 'unknown',
+          language: null,
+          gfi: null,
+          ts: Date.now(),
+          isOwnerOnly: true,
+        }), { status: 200, headers });
+      }
+
+      const repoData = await orgRes.json();
+
+      const result = {
+        name: repoData.name || repo,
+        description: repoData.description || 'Organization-level GitHub entry',
+        stars: null,
+        forks: null,
+        issues: null,
+        watchers: null,
+        lastCommit: '—',
+        activity: 'unknown',
+        language: null,
+        gfi: null,
+        ts: Date.now(),
+        isOwnerOnly: true,
+      };
+
+      safeCacheSet(repo, result);
+      return new Response(JSON.stringify(result), { status: 200, headers });
+    }
+
     const [repoRes, commitsRes] = await Promise.all([
       fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
       fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
@@ -228,7 +276,12 @@ export default async function handler(req) {
     let lastCommit = '—';
     let activityDays = 9999;
     if (commitsRes.ok) {
-      const commits = await commitsRes.json();
+      let commits = [];
+      try {
+        commits = await commitsRes.json();
+      } catch {
+        commits = [];
+      }
       if (commits[0]?.commit?.author?.date) {
         const d = new Date(commits[0].commit.author.date);
         activityDays = Math.floor((Date.now() - d) / 86400000);
@@ -246,12 +299,13 @@ export default async function handler(req) {
       stars: repoData.stargazers_count,
       forks: repoData.forks_count,
       issues: repoData.open_issues_count,
-      watchers: repoData.watchers_count,
+      watchers: repoData.watchers_count ?? null,
       lastCommit,
       activity,
-      language: repoData.language,
+      language: repoData.language ?? null,
       gfi: null,  // fetched separately via ?gfi=1 to avoid rate limiting
       ts: Date.now(),
+      isOwnerOnly: false,
     };
 
     safeCacheSet(repo, result);

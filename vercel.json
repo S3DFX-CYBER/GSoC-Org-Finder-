@@ -7,6 +7,7 @@
   "rewrites": [
     { "source": "/", "destination": "/landing.html" },
     { "source": "/app", "destination": "/index.html" },
+    { "source": "/app/:path*", "destination": "/index.html" },
     { "source": "/api/github", "destination": "/api/github.js" }
   ],
   "headers": [

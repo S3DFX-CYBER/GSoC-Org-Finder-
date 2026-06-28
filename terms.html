@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms & Conditions | GSoC 2026 Org Finder</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Material Symbols -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+      :root {
+        --accent: #ff7a00;
+      }
+
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .accordion-item.open .accordion-content {
+        max-height: 2000px;
+      }
+
+      .toc-link {
+        transition: all 0.2s ease;
+      }
+
+      .toc-link.active {
+        color: rgb(255 122 0);
+        background-color: rgba(255, 122, 0, 0.1);
+        border-left: 3px solid rgb(255 122 0);
+      }
+
+      .hero-bg {
+        background: linear-gradient(to bottom, #0a0a0a, #050505);
+      }
+
+      /* Mobile Menu */
+      #mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      #mobile-menu.open {
+        max-height: 500px; /* Safe buffer for future nav items */
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#050505] text-white">
+    <!-- Navbar -->
+    <nav
+      class="bg-black/95 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50"
+    >
+      <div
+        class="max-w-screen-2xl mx-auto px-6 py-5 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 bg-[#ff7a00] rounded-2xl flex items-center justify-center text-2xl font-bold"
+          >
+            G
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">
+            GSoC 2026 <span class="text-[#ff7a00]">Org Finder</span>
+          </h1>
+        </div>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Timeline</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Organizations</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >AI Recommender</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Watchlist</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors">Issues</a>
+          <a href="#" class="text-[#ff7a00] font-semibold">Terms</a>
+        </div>
+
+        <!-- Hamburger -->
+        <button id="hamburger" class="md:hidden text-3xl focus:outline-none">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="md:hidden bg-black/95 border-t border-white/10 px-6"
+      >
+        <div class="flex flex-col py-6 gap-6 text-base font-medium">
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Timeline</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Organizations</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >AI Recommender</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors"
+            >Watchlist</a
+          >
+          <a href="#" class="hover:text-[#ff7a00] transition-colors">Issues</a>
+          <a href="#" class="text-[#ff7a00] font-semibold">Terms</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-bg py-24 border-b border-white/10">
+      <div class="max-w-screen-2xl mx-auto px-6">
+        <div class="max-w-3xl">
+          <p
+            class="uppercase tracking-[4px] text-[#ff7a00] text-sm font-semibold mb-4"
+          >
+            Legal Information
+          </p>
+          <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
+            Terms &amp; Conditions
+          </h1>
+          <p class="text-lg text-gray-400">
+            These Terms and Conditions govern your access to and use of GSoC
+            2026 Org Finder, including organization discovery tools, AI
+            recommendations, issue tracking, proposal assistance, watchlists,
+            and related services.
+          </p>
+          <div
+            class="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-zinc-900 border border-white/10 rounded-3xl text-sm"
+          >
+            <span class="material-symbols-outlined text-[#ff7a00]">update</span>
+            Last Updated: June 2026
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="max-w-screen-2xl mx-auto px-6 py-12">
+      <div class="grid lg:grid-cols-12 gap-10">
+        <!-- Sidebar TOC -->
+        <div class="lg:col-span-3">
+          <div
+            class="sticky top-24 bg-zinc-950 border border-white/10 rounded-3xl p-8"
+          >
+            <h3
+              class="uppercase text-xs tracking-widest text-[#ff7a00] font-semibold mb-6"
+            >
+              Contents
+            </h3>
+            <div id="toc" class="space-y-1 text-[15px]">
+              <a href="#s1" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >01 Introduction</a
+              >
+              <a href="#s2" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >02 Accounts &amp; Security</a
+              >
+              <a href="#s3" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >03 Acceptable Use</a
+              >
+              <a href="#s4" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >04 Organization Data</a
+              >
+              <a href="#s5" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >05 AI &amp; Proposal Tools</a
+              >
+              <a href="#s6" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >06 Intellectual Property</a
+              >
+              <a href="#s7" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >07 Privacy &amp; Data</a
+              >
+              <a href="#s8" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >08 Third-Party Services</a
+              >
+              <a href="#s9" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >09 Disclaimer</a
+              >
+              <a href="#s10" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >10 Limitation of Liability</a
+              >
+              <a href="#s11" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >11 Governing Law</a
+              >
+              <a href="#s12" class="toc-link block px-5 py-3.5 rounded-2xl"
+                >12 Contact Information</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-9 space-y-8">
+          <!-- 01 -->
+          <div
+            id="s1"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header1"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="true"
+              aria-controls="panel1"
+            >
+              <span class="text-xl font-semibold"
+                >01. Introduction &amp; Acceptance of Terms</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel1"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header1"
+            >
+              <p class="mb-4">
+                GSoC 2026 Org Finder is an independent open-source platform
+                designed to help students, contributors, and enthusiasts
+                discover Google Summer of Code organizations, explore projects,
+                evaluate opportunities, and organize their contribution journey.
+              </p>
+              <p class="mb-4">
+                By accessing or using this platform, you acknowledge that you
+                have read, understood, and agreed to these Terms and Conditions.
+                If you do not agree with any part of these terms, you must not
+                use the platform.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  Use of the platform constitutes acceptance of these terms.
+                </li>
+                <li>
+                  Users must comply with all applicable laws and regulations.
+                </li>
+                <li>
+                  The platform may modify features or services at any time.
+                </li>
+                <li>
+                  Continued usage after any changes implies acceptance of the
+                  revised terms.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 02 -->
+          <div
+            id="s2"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header2"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel2"
+            >
+              <span class="text-xl font-semibold"
+                >02. User Accounts &amp; Security</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel2"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header2"
+            >
+              <p>
+                Creating an account is optional but recommended for full access
+                to features such as watchlists, personalized recommendations,
+                and saving proposals.
+              </p>
+              <p class="mt-4">
+                You are solely responsible for maintaining the confidentiality
+                of your account credentials.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  Users must provide accurate and complete information during
+                  registration.
+                </li>
+                <li>
+                  Accounts may be suspended or terminated for violations of
+                  these terms.
+                </li>
+                <li>
+                  We implement reasonable security measures but cannot guarantee
+                  absolute security.
+                </li>
+                <li>You must not share your login credentials with others.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 03 -->
+          <div
+            id="s3"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header3"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel3"
+            >
+              <span class="text-xl font-semibold"
+                >03. Acceptable Use Policy</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel3"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header3"
+            >
+              <p>
+                You agree to use the platform only for lawful purposes and in a
+                manner that does not infringe the rights of others.
+              </p>
+              <p class="mt-4">
+                Prohibited activities include, but are not limited to:
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  Scraping, crawling, or automated data extraction without
+                  permission.
+                </li>
+                <li>Distributing spam, malware, or engaging in phishing.</li>
+                <li>Impersonating any person or organization.</li>
+                <li>
+                  Attempting to gain unauthorized access to any part of the
+                  platform.
+                </li>
+                <li>
+                  Harassment, abuse, or harmful behavior toward other users.
+                </li>
+                <li>
+                  Any action that could damage, disable, or overburden the
+                  platform.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 04 -->
+          <div
+            id="s4"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header4"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel4"
+            >
+              <span class="text-xl font-semibold"
+                >04. Organization Data &amp; Content</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel4"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header4"
+            >
+              <p>
+                All organization information, project ideas, and related data
+                are collected from public sources including official GSoC
+                listings, GitHub repositories, organization websites, and
+                community contributions.
+              </p>
+              <p class="mt-4">
+                While we strive for accuracy, we do not guarantee the
+                completeness, timeliness, or correctness of any information
+                displayed. Users are strongly encouraged to verify critical
+                details directly with the respective organizations.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>Data may be updated periodically.</li>
+                <li>
+                  Community-submitted information is subject to moderation.
+                </li>
+                <li>Organizations listed are not endorsed by this platform.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 05 -->
+          <div
+            id="s5"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header5"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel5"
+            >
+              <span class="text-xl font-semibold"
+                >05. AI Recommendations &amp; Proposal Tools</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel5"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header5"
+            >
+              <p>
+                Our AI-powered recommendation system and proposal assistance
+                tools are designed to provide helpful suggestions based on
+                available data. However, all AI-generated content is for
+                informational and guidance purposes only.
+              </p>
+              <p class="mt-4">
+                AI recommendations do not guarantee acceptance into any Google
+                Summer of Code program, nor do they represent official advice
+                from Google or participating organizations.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  Users are responsible for reviewing and editing all proposals.
+                </li>
+                <li>Plagiarism is strictly prohibited.</li>
+                <li>AI outputs may contain inaccuracies or hallucinations.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 06 -->
+          <div
+            id="s6"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header6"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel6"
+            >
+              <span class="text-xl font-semibold"
+                >06. Intellectual Property Rights</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel6"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header6"
+            >
+              <p>
+                All original content, design, code, logos, and branding of GSoC
+                2026 Org Finder are protected by copyright and other
+                intellectual property laws.
+              </p>
+              <p class="mt-4">
+                You may not copy, modify, distribute, or create derivative works
+                from our platform assets without explicit written permission,
+                except for the limited rights granted for personal,
+                non-commercial use.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  User-generated content remains the property of the user.
+                </li>
+                <li>
+                  By submitting content, you grant us a worldwide, non-exclusive
+                  license to display it.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 07 -->
+          <div
+            id="s7"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header7"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel7"
+            >
+              <span class="text-xl font-semibold"
+                >07. Privacy &amp; Data Handling</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel7"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header7"
+            >
+              <p>
+                We respect your privacy and collect only the minimum data
+                necessary for providing our services, improving user experience,
+                and ensuring platform security.
+              </p>
+              <p class="mt-4">
+                Your data is handled in accordance with our
+                <a href="privacy.html" class="text-[#ff7a00] hover:underline"
+                  >Privacy Policy</a
+                >. We do not sell personal data to third parties.
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>
+                  We may use analytics tools to understand usage patterns.
+                </li>
+                <li>
+                  You can request deletion of your account and associated data.
+                </li>
+                <li>
+                  Cookies are used for essential functionality and analytics.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 08 -->
+          <div
+            id="s8"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header8"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel8"
+            >
+              <span class="text-xl font-semibold"
+                >08. Third-Party Services &amp; Links</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel8"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header8"
+            >
+              <p>
+                The platform contains links to external websites including
+                GitHub, official GSoC pages, and organization repositories.
+                These services operate independently and are governed by their
+                own terms and privacy policies.
+              </p>
+              <p class="mt-4">
+                We are not responsible for the content, availability, or
+                practices of any third-party sites.
+              </p>
+            </div>
+          </div>
+
+          <!-- 09 -->
+          <div
+            id="s9"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header9"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel9"
+            >
+              <span class="text-xl font-semibold"
+                >09. Disclaimer of Warranties</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel9"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header9"
+            >
+              <p>
+                The platform is provided on an "as-is" and "as-available" basis
+                without any warranties of any kind, whether express or implied,
+                including but not limited to warranties of accuracy,
+                reliability, merchantability, or fitness for a particular
+                purpose.
+              </p>
+              <p class="mt-4">
+                We do not warrant that the platform will be uninterrupted,
+                error-free, or free from viruses or other harmful components.
+              </p>
+            </div>
+          </div>
+
+          <!-- 10 -->
+          <div
+            id="s10"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header10"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel10"
+            >
+              <span class="text-xl font-semibold"
+                >10. Limitation of Liability</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel10"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header10"
+            >
+              <p>
+                To the fullest extent permitted by law, GSoC 2026 Org Finder and
+                its maintainers shall not be liable for any indirect,
+                incidental, special, consequential, or punitive damages arising
+                out of or in connection with your use of the platform.
+              </p>
+              <p class="mt-4">
+                Our total liability shall not exceed the amount you paid to us
+                (if any) in the twelve months preceding the claim.
+              </p>
+            </div>
+          </div>
+
+          <!-- 11 -->
+          <div
+            id="s11"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header11"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel11"
+            >
+              <span class="text-xl font-semibold"
+                >11. Governing Law &amp; Updates</span
+              >
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel11"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header11"
+            >
+              <p>
+                These Terms shall be governed by and construed in accordance
+                with the laws of the jurisdiction where the project maintainers
+                reside, without regard to conflict of law principles.
+              </p>
+              <p class="mt-4">
+                We reserve the right to update or modify these Terms at any
+                time. We will notify users of significant changes through the
+                platform or via email when possible.
+              </p>
+            </div>
+          </div>
+
+          <!-- 12 -->
+          <div
+            id="s12"
+            class="accordion-item bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden"
+          >
+            <button
+              id="header12"
+              class="accordion-header w-full px-8 py-7 text-left flex items-center justify-between hover:bg-white/5 transition-all"
+              aria-expanded="false"
+              aria-controls="panel12"
+            >
+              <span class="text-xl font-semibold">12. Contact Information</span>
+              <span
+                class="material-symbols-outlined text-[#ff7a00] transition-transform duration-300"
+                >expand_more</span
+              >
+            </button>
+            <div
+              id="panel12"
+              class="accordion-content px-8 pb-8 text-gray-300 leading-relaxed"
+              role="region"
+              aria-labelledby="header12"
+            >
+              <p>
+                For any questions, concerns, or requests regarding these Terms
+                &amp; Conditions, Privacy Policy, or other legal matters, please
+                contact the project maintainers through the official channels:
+              </p>
+              <ul class="list-disc pl-6 space-y-2 mt-4">
+                <li>GitHub Issues</li>
+                <li>Discord Community Server</li>
+                <li>
+                  Email: maintainers@findmygsoc.org (or the listed contact on
+                  GitHub)
+                </li>
+              </ul>
+              <p class="mt-4">
+                We aim to respond to all legitimate inquiries within a
+                reasonable timeframe.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 py-12 mt-12">
+      <div class="max-w-screen-2xl mx-auto px-6">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center gap-6"
+        >
+          <div>
+            <p class="font-medium">
+              © 2026 S3DFX-CYBER · Built for the Open Source Community
+            </p>
+            <p class="text-sm text-gray-500 mt-1">
+              FindMyGSoC is an independent open-source project and is not
+              affiliated with Google LLC.
+            </p>
+          </div>
+          <div class="flex items-center gap-8">
+            <a href="#" class="text-sm hover:text-[#ff7a00] transition-colors"
+              >Terms &amp; Conditions</a
+            >
+            <div class="flex gap-5 text-2xl">
+              <a
+                href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[#ff7a00]"
+                ><span class="material-symbols-outlined">code</span></a
+              >
+              <a
+                href="https://discord.com/invite/Kwj76sCzp"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[#ff7a00]"
+                ><span class="material-symbols-outlined">forum</span></a
+              >
+              <a
+                href="https://www.linkedin.com/in/savio-d-souza-0a1810349/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[#ff7a00]"
+                ><span class="material-symbols-outlined">linkedin</span></a
+              >
+              <a
+                href="https://x.com/S3DXVI"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-[#ff7a00]"
+                ><span class="material-symbols-outlined">share</span></a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile Menu
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("open");
+        const icon = hamburger.querySelector(".material-symbols-outlined");
+        icon.textContent = mobileMenu.classList.contains("open")
+          ? "close"
+          : "menu";
+      });
+
+      // Accordion
+      const accordionItems = document.querySelectorAll(".accordion-item");
+
+      accordionItems.forEach((item) => {
+        const header = item.querySelector(".accordion-header");
+        header.addEventListener("click", () => {
+          const isOpen = item.classList.contains("open");
+
+          accordionItems.forEach((other) => {
+            other.classList.remove("open");
+            other
+              .querySelector(".accordion-header")
+              .setAttribute("aria-expanded", "false");
+          });
+
+          if (!isOpen) {
+            item.classList.add("open");
+            header.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
+
+      // TOC Smooth Scroll
+      document.querySelectorAll("#toc a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const target = document.querySelector(link.getAttribute("href"));
+          if (target) target.scrollIntoView({ behavior: "smooth" });
+        });
+      });
+
+      // Update Active TOC
+      function updateActiveTOC() {
+        let current = "";
+        const scrollY = window.scrollY + 180;
+        const sections = document.querySelectorAll(".accordion-item");
+
+        sections.forEach((section) => {
+          if (scrollY >= section.offsetTop) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        document.querySelectorAll("#toc a").forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${current}`) {
+            link.classList.add("active");
+          }
+        });
+      }
+
+      // Initialize
+      window.addEventListener("load", () => {
+        document.getElementById("s1").classList.add("open");
+        document
+          .getElementById("header1")
+          .setAttribute("aria-expanded", "true");
+        updateActiveTOC();
+      });
+
+      // Scroll Spy
+      let isScrolling = false;
+      window.addEventListener("scroll", () => {
+        if (isScrolling) return;
+        isScrolling = true;
+        requestAnimationFrame(() => {
+          updateActiveTOC();
+          isScrolling = false;
+        });
+      });
+    </script>
+  </body>
+</html>

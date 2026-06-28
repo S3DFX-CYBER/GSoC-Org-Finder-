@@ -29,12 +29,16 @@ export default async function handler(req) {
   const user = searchParams.get('user');
   const gfiMode = searchParams.get('gfi') === '1';
   const issuesMode = searchParams.get('issues') === '1';
+  const isOwnerOnly = !!repo && !repo.includes('/');
 
   if (!repo && !user) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
-  const isOwnerOnly = repo && !repo.includes('/');
+  if (repo && isOwnerOnly && !/^[\w.-]+$/.test(repo)) {
+    return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
+  }
+
   if (repo && !isOwnerOnly && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
@@ -44,7 +48,12 @@ export default async function handler(req) {
   }
 
   // Helper: build GitHub search qualifier for repo or org
-  const repoQualifier = repo ? (isOwnerOnly ? `org:${repo}` : `repo:${repo}`) : '';
+  let repoQualifier = '';
+  let repoPath = '';
+  if (repo) {
+    repoQualifier = isOwnerOnly ? `org:${repo}` : `repo:${repo}`;
+    repoPath = isOwnerOnly ? encodeURIComponent(repo) : repo.split('/').map(encodeURIComponent).join('/');
+  }
 
   const token = process.env.GITHUB_TOKEN;
 
@@ -221,13 +230,20 @@ export default async function handler(req) {
 
     if (isOwnerOnly) {
       // Owner-only GitHub value: fetch org-level info instead of repo stats
-      const orgRes = await fetchWithFallback(`https://api.github.com/orgs/${repo}`, { headers: ghHeaders });
+      const orgRes = await fetchWithFallback(`https://api.github.com/orgs/${repoPath}`, { headers: ghHeaders });
       if (!orgRes.ok) {
         return new Response(JSON.stringify({
           name: repo,
           description: 'Organization-level GitHub entry — no specific repository. Good First Issues are searched across all repos in this org.',
-          stars: null, forks: null, open_issues: null,
-          lastCommit: '—', activity: 'unknown',
+          stars: null,
+          forks: null,
+          issues: null,
+          watchers: null,
+          lastCommit: '—',
+          activity: 'unknown',
+          language: null,
+          gfi: null,
+          ts: Date.now(),
           isOwnerOnly: true,
         }), { status: 200, headers });
       }
@@ -276,15 +292,16 @@ export default async function handler(req) {
     const activity = activityDays < 14 ? 'active' : activityDays < 60 ? 'moderate' : 'low';
 
     const result = {
-      stars: repoData.stargazers_count,
-      forks: repoData.forks_count,
-      issues: repoData.open_issues_count,
-      watchers: repoData.watchers_count,
+      stars: repoData.stargazers_count ?? null,
+      forks: repoData.forks_count ?? null,
+      issues: repoData.open_issues_count ?? null,
+      watchers: repoData.watchers_count ?? null,
       lastCommit,
       activity,
-      language: repoData.language,
+      language: repoData.language ?? null,
       gfi: null,  // fetched separately via ?gfi=1 to avoid rate limiting
       ts: Date.now(),
+      isOwnerOnly: !!repoData.isOwnerOnly,
     };
 
     safeCacheSet(repo, result);

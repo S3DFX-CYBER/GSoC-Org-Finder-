@@ -12,6 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
   <script>
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
     tailwind.config = {
       darkMode: "class",
       theme: { extend: {
@@ -131,8 +134,12 @@
 
     // Build TOC from h2 headings
     const headings = contentEl.querySelectorAll('h2');
+    const usedIds = new Map();
     headings.forEach(h2 => {
-      const id = 'section-' + h2.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const baseId = 'section-' + h2.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const seenCount = usedIds.get(baseId) || 0;
+      usedIds.set(baseId, seenCount + 1);
+      const id = seenCount === 0 ? baseId : `${baseId}-${seenCount + 1}`;
       h2.id = id;
       const link = document.createElement('a');
       link.className = 'toc-link';
@@ -149,12 +156,7 @@
 </script>
 
 <div id="footer-placeholder"></div>
-<script>
-  fetch('src/components/footer.html')
-    .then(r => r.text())
-    .then(html => { document.getElementById('footer-placeholder').outerHTML = html; })
-    .catch(() => {});
-</script>
+<script src="src/js/footer.js"></script>
 
 </body>
 </html>

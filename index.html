@@ -3908,14 +3908,17 @@ btn.__orgListenerAttached = true;
   function syncBookmark(name, shouldAdd) {
     const orgName = typeof name === 'number' ? ORGS[name]?.name : name;
     if (!orgName) return;
-    if (shouldAdd) bookmarkedSet.add(orgName);
-    else           bookmarkedSet.delete(orgName);
+    const nextBookmarks = new Set(bookmarkedSet);
+    if (shouldAdd) nextBookmarks.add(orgName);
+    else nextBookmarks.delete(orgName);
     try {
-      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+      localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
     } catch (e) {
       alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
       return;
     }
+    bookmarkedSet.clear();
+    nextBookmarks.forEach(n => bookmarkedSet.add(n));
     refreshOrgGridAfterBookmarkChange();
     renderWatchlist();
     updateAIInsights();
@@ -3948,13 +3951,13 @@ btn.__orgListenerAttached = true;
   function clearAllBookmarks() {
     if (!bookmarkedSet.size) return;
     if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
-    bookmarkedSet.clear();
     try {
       localStorage.setItem('bookmarks', JSON.stringify([]));
     } catch (e) {
       alert('Could not clear bookmarks due to storage limits.');
       return;
     }
+    bookmarkedSet.clear();
     applyFilters();
     renderWatchlist();
     updateAIInsights();
@@ -4354,10 +4357,14 @@ btn.__orgListenerAttached = true;
     if (mIssues) mIssues.textContent = '—';
     if (mActivity) {
       mActivity.textContent = 'Moderate';
-      mActivity.className = 'gh-stat-item';
+      const activityWrapper = mActivity.closest('.gh-stat-item');
+      if (activityWrapper) activityWrapper.className = 'gh-stat-item text-blue-400';
     }
     const mFetchBtn = document.getElementById('mFetchBtn');
-    if (mFetchBtn) mFetchBtn.textContent = 'Fetching...';
+    if (mFetchBtn) {
+      mFetchBtn.textContent = org.github ? 'Fetching...' : 'No GitHub repo';
+      mFetchBtn.disabled = !org.github;
+    }
 
     // Timeline
     let timelineHtml = '';
@@ -4841,7 +4848,12 @@ if(org.ideas){
     if (mActivity) {
       const act = d.activity || 'moderate';
       mActivity.textContent = act.charAt(0).toUpperCase() + act.slice(1);
-      mActivity.className = act === 'active' || act === 'high' || act === 'hot' ? 'gh-stat-item text-green-500' : 'gh-stat-item text-blue-400';
+      const activityWrapper = mActivity.closest('.gh-stat-item');
+      if (activityWrapper) {
+        activityWrapper.className = act === 'active' || act === 'high' || act === 'hot'
+          ? 'gh-stat-item text-green-500'
+          : 'gh-stat-item text-blue-400';
+      }
     }
     if (gfi !== null) {
       org._gh.gfi = gfi;
@@ -4852,7 +4864,7 @@ if(org.ideas){
 
   function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n); }
 
-  async function fetchModalGH() {
+  async function fetchModalGH({ force = false } = {}) {
     const orgName = document.querySelector('#orgModal #orgModalTitle');
     if (!orgName) return;
     const name = orgName.textContent;
@@ -4860,17 +4872,22 @@ if(org.ideas){
     if (!org || !org.github) return;
 
     const btn = document.getElementById('mFetchBtn');
+    const activeOrgName = name;
     btn.textContent = 'Fetching Stats...';
     btn.disabled = true;
 
     const cacheKey = org.github;
-    delete ghCache[cacheKey];
-    delete ghCache[cacheKey + '__gfi'];
+    if (force) {
+      delete ghCache[cacheKey];
+      delete ghCache[cacheKey + '__gfi'];
+    }
 
     try {
       const d = await fetchGH(org.github);
+      const currentOrgName = document.querySelector('#orgModal #orgModalTitle')?.textContent;
+      if (currentOrgName !== activeOrgName) return;
       if (d) {
-        const gfi = await fetchGFI(org.github);
+        const gfi = force ? await fetchGFI(org.github) : await fetchGFI(org.github);
         updateModalGHStats(org, d, gfi);
         btn.textContent = 'Stats Updated!';
         try { applyFilters(); } catch {}
@@ -4887,7 +4904,7 @@ if(org.ideas){
     }
   }
 
-  document.getElementById('mFetchBtn').addEventListener('click', fetchModalGH);
+  document.getElementById('mFetchBtn').addEventListener('click', () => fetchModalGH({ force: true }));
 
   // Proposal
   let currentProposalOrg = '';

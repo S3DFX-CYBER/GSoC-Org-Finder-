@@ -7,6 +7,10 @@ const CACHE_MAX_SIZE = 1000;
 function touchCache(key) {
   if (CACHE.has(key)) {
     const value = CACHE.get(key);
+    if (Date.now() - value.ts >= CACHE_TTL) {
+      CACHE.delete(key);
+      return null;
+    }
     CACHE.delete(key);
     CACHE.set(key, value);
     return value;

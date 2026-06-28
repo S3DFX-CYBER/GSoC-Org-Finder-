@@ -1327,7 +1327,12 @@ function updateModalGHStats(org, d, gfi) {
   if (mActivity) {
     const act = d.activity || 'moderate';
     mActivity.textContent = act.charAt(0).toUpperCase() + act.slice(1);
-    mActivity.className = act === 'active' || act === 'high' || act === 'hot' ? 'gh-stat-item text-green-500' : 'gh-stat-item text-blue-400';
+    const activityWrapper = mActivity.closest('.gh-stat-item');
+    if (activityWrapper) {
+      activityWrapper.className = act === 'active' || act === 'high' || act === 'hot'
+        ? 'gh-stat-item text-green-500'
+        : 'gh-stat-item text-blue-400';
+    }
   }
 
   if (gfi !== null) {
@@ -1337,7 +1342,7 @@ function updateModalGHStats(org, d, gfi) {
   }
 }
 
-globalThis.fetchModalGH = async function () {
+globalThis.fetchModalGH = async function ({ force = false } = {}) {
   const header = document.querySelector('#orgModal #orgModalTitle');
   if (!header) return;
   const orgName = header.textContent;
@@ -1348,13 +1353,16 @@ globalThis.fetchModalGH = async function () {
   btn.textContent = 'Fetching Stats...';
   btn.disabled = true;
 
-  // Clear caches for force refresh
   const cacheKey = org.github;
-  delete ghCache[cacheKey];
-  delete ghCache[cacheKey + '__gfi'];
+  if (force) {
+    delete ghCache[cacheKey];
+    delete ghCache[cacheKey + '__gfi'];
+  }
 
   try {
     const d = await fetchGH(org.github);
+    const currentOrgName = document.querySelector('#orgModal #orgModalTitle')?.textContent;
+    if (currentOrgName !== orgName) return;
     if (d) {
       const gfi = await fetchGFI(org.github);
       updateModalGHStats(org, d, gfi);
@@ -1460,10 +1468,14 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (mIssues) mIssues.textContent = '—';
   if (mActivity) {
     mActivity.textContent = 'Moderate';
-    mActivity.className = 'gh-stat-item';
+    const activityWrapper = mActivity.closest('.gh-stat-item');
+    if (activityWrapper) activityWrapper.className = 'gh-stat-item text-blue-400';
   }
   const mFetchBtn = document.getElementById('mFetchBtn');
-  if (mFetchBtn) mFetchBtn.textContent = 'Fetching...';
+  if (mFetchBtn) {
+    mFetchBtn.textContent = org.github ? 'Fetching...' : 'No GitHub repo';
+    mFetchBtn.disabled = !org.github;
+  }
 
   const mTech = document.getElementById('mTech');
   if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
@@ -2562,7 +2574,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
 
   // Wire up live stats fetch button
-  document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
+  document.getElementById('mFetchBtn')?.addEventListener('click', () => fetchModalGH({ force: true }));
 
   // Event delegation for trending cards scroll list
   const trendingScroll = document.getElementById('trendingScroll');

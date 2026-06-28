@@ -3912,6 +3912,7 @@ btn.__orgListenerAttached = true;
     try {
       localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
     } catch (e) {
+      console.warn('Could not save bookmark due to storage limits.', e);
       alert('Could not save bookmark due to storage limits. Please free up some space in your browser settings.');
       return;
     }
@@ -3952,6 +3953,7 @@ btn.__orgListenerAttached = true;
     try {
       localStorage.setItem('bookmarks', JSON.stringify([]));
     } catch (e) {
+      console.warn('Could not clear bookmarks due to storage limits.', e);
       alert('Could not clear bookmarks due to storage limits.');
       return;
     }

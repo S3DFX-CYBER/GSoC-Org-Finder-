@@ -1397,7 +1397,7 @@ function renderModalHeader(org) {
     <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
       <div class="flex items-start justify-between pr-10 gap-4">
         <div>
-          <h2>${escapeHtml(org.name)}</h2>
+          <h2 id="orgModalTitle">${escapeHtml(org.name)}</h2>
           <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
           ${ideasLinkHTML}
         </div>
@@ -1450,28 +1450,20 @@ globalThis.openModal = function (name, triggerElement = null) {
     `;
   }
 
-  const gh = org._gh;
   const mStars = document.getElementById('mStars');
   const mForks = document.getElementById('mForks');
   const mIssues = document.getElementById('mIssues');
   const mActivity = document.getElementById('mActivity');
 
-  if (mStars) mStars.textContent = gh ? fmt(gh.stars) : '—';
-  if (mForks) mForks.textContent = gh ? fmt(gh.forks) : '—';
-  if (mIssues) mIssues.textContent = gh ? fmt(gh.issues) : '—';
+  if (mStars) mStars.textContent = '—';
+  if (mForks) mForks.textContent = '—';
+  if (mIssues) mIssues.textContent = '—';
   if (mActivity) {
-    const act = gh ? (gh.activity || 'moderate') : 'moderate';
-    mActivity.textContent = act.charAt(0).toUpperCase() + act.slice(1);
-    mActivity.className = act === 'active' || act === 'high' || act === 'hot' ? 'gh-stat-item text-green-500' : 'gh-stat-item text-blue-400';
+    mActivity.textContent = 'Moderate';
+    mActivity.className = 'gh-stat-item';
   }
-
-  if (gh && gh.gfi !== undefined) {
-    const placeholders = document.querySelectorAll('.metric-card #mGfiPlaceholder');
-    placeholders.forEach(p => p.textContent = fmt(gh.gfi));
-  }
-
   const mFetchBtn = document.getElementById('mFetchBtn');
-  if (mFetchBtn) mFetchBtn.textContent = gh ? '↻ Refresh' : 'Fetch Live Stats';
+  if (mFetchBtn) mFetchBtn.textContent = 'Fetching...';
 
   const mTech = document.getElementById('mTech');
   if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
@@ -1540,6 +1532,11 @@ globalThis.openModal = function (name, triggerElement = null) {
 
   renderMentorContactSection(org);
   openModalElement('orgModal', triggerElement);
+
+  // Auto-fetch live GitHub stats
+  if (org.github) {
+    fetchModalGH();
+  }
 
   // Lazily retrieve GFIs if missing
   if (org.github && (org._gh?.gfi === null || org._gh?.gfi === undefined)) {

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Contributing Guide | FindMyGSoC</title>
+  <meta name="description" content="Contribution guidelines for the GSoC Org Finder project." />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.0/dist/purify.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: {
+        colors: { "primary":"#9d4300", "primary-container":"#f97316" },
+        fontFamily: { "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],"mono":["Fira Code"] }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9f9; color: #1a1c1c; }
+    .dark body { background: #0f0f10; color: #e5e7eb; }
+    .contrib-content h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.1; }
+    .contrib-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; color: #9d4300; }
+    .dark .contrib-content h2 { border-color: #3f3f46; color: #fb923c; }
+    .contrib-content h3 { font-size: 1.15rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .contrib-content h4 { font-size: 1rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.4rem; }
+    .contrib-content p { margin-bottom: 1rem; line-height: 1.7; }
+    .contrib-content ul, .contrib-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+    .contrib-content ul { list-style-type: disc; }
+    .contrib-content ol { list-style-type: decimal; }
+    .contrib-content li { margin-bottom: 0.25rem; line-height: 1.6; }
+    .contrib-content a { color: #f97316; text-decoration: underline; }
+    .contrib-content a:hover { color: #9d4300; }
+    .contrib-content code { background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; color: #be185d; }
+    .dark .contrib-content code { background: #3f3f46; color: #f472b6; }
+    .contrib-content pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #e5e7eb; }
+    .dark .contrib-content pre { background: #27272a; border-color: #3f3f46; }
+    .contrib-content pre code { background: transparent; padding: 0; color: inherit; }
+    .dark .contrib-content pre code { color: inherit; }
+    .contrib-content blockquote { border-left: 4px solid #f97316; padding-left: 1rem; color: #6b7280; margin-bottom: 1rem; }
+    .dark .contrib-content blockquote { color: #a1a1aa; }
+    .contrib-content table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.9rem; }
+    .contrib-content th, .contrib-content td { border: 1px solid #e5e7eb; padding: 0.5rem 0.75rem; text-align: left; }
+    .dark .contrib-content th, .dark .contrib-content td { border-color: #3f3f46; }
+    .contrib-content th { background: #f3f4f6; font-weight: 700; }
+    .dark .contrib-content th { background: #27272a; }
+    .contrib-content hr { margin: 2rem 0; border-color: #e5e7eb; }
+    .dark .contrib-content hr { border-color: #3f3f46; }
+    .contrib-content strong { font-weight: 700; }
+    .contrib-content em { font-style: italic; }
+    .contrib-content img { max-width: 100%; border-radius: 8px; }
+    .toc-link { display: block; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; color: #6b7280; text-decoration: none; transition: all 0.15s; }
+    .toc-link:hover { background: #fff7ed; color: #9d4300; }
+    .dark .toc-link { color: #a1a1aa; }
+    .dark .toc-link:hover { background: rgba(249,115,22,0.1); color: #fb923c; }
+    .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #f97316; border-radius: 50%; width: 32px; height: 32px; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 768px) {
+      .contrib-content h1 { font-size: 1.75rem; }
+      .contrib-content h2 { font-size: 1.25rem; }
+      .toc-column { position: static !important; width: 100% !important; margin-bottom: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-100 dark:bg-[#18181b]/80 dark:border-zinc-800">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+        <span class="text-white font-bold text-sm">G</span>
+      </div>
+      <span class="font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <span class="text-primary italic">Org Finder</span>
+      </span>
+    </a>
+    <a href="/" class="text-sm font-bold text-primary hover:text-orange-600 transition-colors flex items-center gap-1">
+      <span class="material-symbols-outlined text-base">arrow_back</span> Back to Home
+    </a>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+  <div class="flex flex-col md:flex-row gap-8">
+    <!-- TOC Sidebar -->
+    <aside class="toc-column md:w-64 flex-shrink-0">
+      <div class="md:sticky md:top-20 bg-white dark:bg-[#18181b] border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">On this page</h3>
+        <nav id="toc" class="space-y-0.5 max-h-[60vh] overflow-y-auto"></nav>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <div class="bg-white dark:bg-[#18181b] border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 sm:p-10">
+        <div id="loading" class="flex items-center justify-center py-20">
+          <div class="loading-spinner"></div>
+          <span class="ml-3 text-zinc-500 font-medium">Loading contributing guide...</span>
+        </div>
+        <div id="content" class="contrib-content hidden"></div>
+        <div id="error" class="hidden text-center py-20">
+          <span class="material-symbols-outlined text-4xl text-red-400 mb-4">error</span>
+          <p class="font-bold text-zinc-900 dark:text-zinc-100 mb-2">Failed to load contributing guide</p>
+          <p class="text-sm text-zinc-500">Please try refreshing the page or check the <a href="https://github.com/S3DFX-CYBER/GSoC-Org-Finder-/blob/main/CONTRIBUTING.md" target="_blank" class="text-primary underline">original CONTRIBUTING.md on GitHub</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(async function() {
+  const loadingEl = document.getElementById('loading');
+  const contentEl = document.getElementById('content');
+  const errorEl = document.getElementById('error');
+  const tocEl = document.getElementById('toc');
+
+  try {
+    const res = await fetch('/CONTRIBUTING.md');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const md = await res.text();
+    loadingEl.classList.add('hidden');
+    contentEl.classList.remove('hidden');
+
+    const html = DOMPurify.sanitize(marked.parse(md));
+    contentEl.innerHTML = html;
+
+    // Build TOC from h2 headings
+    const headings = contentEl.querySelectorAll('h2');
+    headings.forEach(h2 => {
+      const id = 'section-' + h2.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      h2.id = id;
+      const link = document.createElement('a');
+      link.className = 'toc-link';
+      link.href = '#' + id;
+      link.textContent = h2.textContent;
+      tocEl.appendChild(link);
+    });
+  } catch (err) {
+    loadingEl.classList.add('hidden');
+    errorEl.classList.remove('hidden');
+    console.error('Failed to load CONTRIBUTING.md:', err);
+  }
+})();
+</script>
+
+<div id="footer-placeholder"></div>
+<script>
+  fetch('src/components/footer.html')
+    .then(r => r.text())
+    .then(html => { document.getElementById('footer-placeholder').outerHTML = html; })
+    .catch(() => {});
+</script>
+
+</body>
+</html>

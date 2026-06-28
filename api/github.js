@@ -4,8 +4,20 @@ const CACHE = new Map();
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const CACHE_MAX_SIZE = 1000;
 
+function touchCache(key) {
+  if (CACHE.has(key)) {
+    const value = CACHE.get(key);
+    CACHE.delete(key);
+    CACHE.set(key, value);
+    return value;
+  }
+  return null;
+}
+
 function safeCacheSet(key, value) {
-  if (!CACHE.has(key) && CACHE.size >= CACHE_MAX_SIZE) {
+  if (CACHE.has(key)) {
+    CACHE.delete(key);
+  } else if (CACHE.size >= CACHE_MAX_SIZE) {
     const firstKey = CACHE.keys().next().value;
     CACHE.delete(firstKey);
   }
@@ -73,7 +85,7 @@ export default async function handler(req) {
   // MODE: ?user=username → return user profile analysis for AI recommender
   if (user) {
     const cacheKey = 'user__' + user;
-    const cached = CACHE.get(cacheKey);
+    const cached = touchCache(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
     }
@@ -151,7 +163,7 @@ export default async function handler(req) {
   // MODE: ?gfi=1&issues=1 → return actual issue items
   if (gfiMode && issuesMode) {
     const cacheKey = repo + '__issues';
-    const cached = CACHE.get(cacheKey);
+    const cached = touchCache(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
@@ -184,7 +196,7 @@ export default async function handler(req) {
   // MODE: ?gfi=1 → return count only
   if (gfiMode) {
     const cacheKey = repo + '__gfi';
-    const cached = CACHE.get(cacheKey);
+    const cached = touchCache(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
@@ -207,7 +219,7 @@ export default async function handler(req) {
   }
 
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
-  const cached = CACHE.get(repo);
+  const cached = touchCache(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
   }

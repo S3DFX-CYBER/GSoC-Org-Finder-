@@ -322,10 +322,10 @@ kbd:hover{
     .metric-value { font-size: 1.25rem; font-weight: 800; color: #1a1c1c; margin-bottom: 0.2rem; }
     .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #555; }
 
-    .github-stats-container { background: #1a1a1a; border-radius: 1.5rem; padding: 1rem; color: #fff; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; justify-content: space-between; }
-    .gh-fetch { background: #333; color: #aaa; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
-    .gh-fetch:hover { background: #444; color: #fff; }
-    .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #4ade80; display: flex; align-items: center; gap: 0.5rem; }
+    .github-stats-container { background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1rem; color: #1a1c1c; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; position: relative; overflow: hidden; justify-content: space-between; }
+    .gh-fetch { background: #e2e8f0; color: #475569; border: none; padding: 0.3rem 0.8rem; border-radius: 99px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
+    .gh-fetch:hover { background: #cbd5e1; color: #1e293b; }
+    .gh-stat-item { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #2563eb; display: flex; align-items: center; gap: 0.5rem; }
 
     .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.2rem; }
     .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
@@ -641,6 +641,10 @@ kbd:hover{
     .dark #compareModalBody .text-zinc-700 { color: #e5e7eb !important; }
     .dark #compareModalBody .text-zinc-500 { color: #a1a1aa !important; }
     .dark #compareModalBody .text-zinc-400 { color: #d4d4d8 !important; }
+    .dark .github-stats-container { background: #1a1a1a; border: none; color: #fff; }
+    .dark .gh-fetch { background: #333; color: #aaa; }
+    .dark .gh-fetch:hover { background: #444; color: #fff; }
+    .dark .gh-stat-item { color: #4ade80; }
 
     /* Dark mode - Guide section cards */
     .dark #guide article { background: #18181b !important; border-color: #3f3f46 !important; }
@@ -4265,7 +4269,7 @@ btn.__orgListenerAttached = true;
       <span class="category-tag">${escapeHtml(String(org.cat).toUpperCase())}</span>
         <div class="flex items-start justify-between pr-10 gap-4">
           <div>
-            <h2>${escapeHtml(org.name)}</h2>
+            <h2 id="orgModalTitle">${escapeHtml(org.name)}</h2>
             <p class="text-zinc-500">GSoC Partner for ${escapeHtml(String(org.years))} Years</p>
             ${ideasLinkHTML}
           </div>
@@ -4340,6 +4344,21 @@ btn.__orgListenerAttached = true;
     document.getElementById('mTech').innerHTML = org.tags.map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('');
     document.getElementById('mFit').innerHTML = org.fit.map(f => `<span class="fit-tag">${escapeHtml(f)}</span>`).join('');
 
+    // Clear live stats — show loading state before auto-fetch
+    const mStars = document.getElementById('mStars');
+    const mForks = document.getElementById('mForks');
+    const mIssues = document.getElementById('mIssues');
+    const mActivity = document.getElementById('mActivity');
+    if (mStars) mStars.textContent = '—';
+    if (mForks) mForks.textContent = '—';
+    if (mIssues) mIssues.textContent = '—';
+    if (mActivity) {
+      mActivity.textContent = 'Moderate';
+      mActivity.className = 'gh-stat-item';
+    }
+    const mFetchBtn = document.getElementById('mFetchBtn');
+    if (mFetchBtn) mFetchBtn.textContent = 'Fetching...';
+
     // Timeline
     let timelineHtml = '';
     for (let y = 2020; y <= 2026; y++) {
@@ -4397,6 +4416,11 @@ if(org.ideas){
     document.body.classList.add('modal-open');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+
+    // Auto-fetch live GitHub stats
+    if (org.github) {
+      fetchModalGH();
+    }
   }
 
   function closeOrgModal() {
@@ -4757,43 +4781,113 @@ if(org.ideas){
     }
   }
 
-  // Live GitHub Stats Mock/Fetch
-  async function fetchStats() {
-    const btn = document.getElementById('mFetchBtn');
-    const orgName = document.querySelector('#mHeader h2').textContent;
-    const org = ORGS.find(o => o.name === orgName);
-    if (!org) return;
+  // GitHub API helpers
+  const GH_API = '/api/github';
+  const ghCache = (() => {
+    try { return JSON.parse(localStorage.getItem('gaf_ghc') || '{}'); } catch { return {}; }
+  })();
 
-    btn.textContent = 'Fetching...';
+  function saveCache(key, value) {
+    try { localStorage.setItem('gaf_ghc', JSON.stringify(ghCache)); }
+    catch (e) {
+      if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+        for (const k in ghCache) delete ghCache[k];
+        if (key && value !== undefined) ghCache[key] = value;
+        try { localStorage.setItem('gaf_ghc', JSON.stringify(ghCache)); } catch {}
+      }
+    }
+  }
+
+  async function fetchGH(repo) {
+    if (!repo) return null;
+    if (ghCache[repo] && Date.now() - ghCache[repo].ts < 3600000) return ghCache[repo];
+    try {
+      const r = await fetch(`${GH_API}?repo=${encodeURIComponent(repo)}`);
+      if (!r.ok) return null;
+      const d = await r.json();
+      if (d.error) return null;
+      d.ts = Date.now();
+      ghCache[repo] = d;
+      saveCache(repo, d);
+      return d;
+    } catch { return null; }
+  }
+
+  async function fetchGFI(repo) {
+    if (!repo) return null;
+    const cacheKey = repo + '__gfi';
+    const hit = ghCache[cacheKey];
+    if (hit && Date.now() - hit.ts < 3600000 && hit.count !== null && hit.count !== undefined) return hit.count;
+    try {
+      const r = await fetch(`${GH_API}?repo=${encodeURIComponent(repo)}&gfi=1`);
+      if (!r.ok) return null;
+      const d = await r.json();
+      if (d.gfi === null || d.gfi === undefined) return null;
+      ghCache[cacheKey] = { count: d.gfi, ts: Date.now() };
+      saveCache(cacheKey, ghCache[cacheKey]);
+      return d.gfi;
+    } catch { return null; }
+  }
+
+  function updateModalGHStats(org, d, gfi) {
+    org._gh = d;
+    const mStars = document.getElementById('mStars');
+    const mForks = document.getElementById('mForks');
+    const mIssues = document.getElementById('mIssues');
+    const mActivity = document.getElementById('mActivity');
+    if (mStars) mStars.textContent = fmt(d.stars);
+    if (mForks) mForks.textContent = fmt(d.forks);
+    if (mIssues) mIssues.textContent = fmt(d.issues);
+    if (mActivity) {
+      const act = d.activity || 'moderate';
+      mActivity.textContent = act.charAt(0).toUpperCase() + act.slice(1);
+      mActivity.className = act === 'active' || act === 'high' || act === 'hot' ? 'gh-stat-item text-green-500' : 'gh-stat-item text-blue-400';
+    }
+    if (gfi !== null) {
+      org._gh.gfi = gfi;
+      const placeholders = document.querySelectorAll('.metric-card #mGfiPlaceholder');
+      placeholders.forEach(p => p.textContent = fmt(gfi));
+    }
+  }
+
+  function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n); }
+
+  async function fetchModalGH() {
+    const orgName = document.querySelector('#orgModal #orgModalTitle');
+    if (!orgName) return;
+    const name = orgName.textContent;
+    const org = ORGS.find(o => o.name === name);
+    if (!org || !org.github) return;
+
+    const btn = document.getElementById('mFetchBtn');
+    btn.textContent = 'Fetching Stats...';
     btn.disabled = true;
 
+    const cacheKey = org.github;
+    delete ghCache[cacheKey];
+    delete ghCache[cacheKey + '__gfi'];
+
     try {
-      // Simulate real fetch delay
-      await new Promise(r => setTimeout(r, 1200));
-      
-      // Since no token, we simulate random but realistic growth
-      const stars = (Math.random() * 5000 + 1000).toFixed(0);
-      const forks = (stars * 0.2).toFixed(0);
-      const issues = (Math.random() * 50 + 10).toFixed(0);
-      
-      document.getElementById('mStars').textContent = `${(stars/1000).toFixed(1)}k`;
-      document.getElementById('mForks').textContent = forks;
-      document.getElementById('mIssues').textContent = issues;
-      document.getElementById('mActivity').textContent = 'High';
-      document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
-      
-      btn.textContent = 'Stats Updated!';
+      const d = await fetchGH(org.github);
+      if (d) {
+        const gfi = await fetchGFI(org.github);
+        updateModalGHStats(org, d, gfi);
+        btn.textContent = 'Stats Updated!';
+        try { applyFilters(); } catch {}
+      } else {
+        btn.textContent = 'Failed to Fetch';
+      }
     } catch (e) {
       btn.textContent = 'Error';
     } finally {
       setTimeout(() => {
-        btn.textContent = 'Fetch Live Stats';
+        btn.textContent = '↻ Refresh';
         btn.disabled = false;
       }, 3000);
     }
   }
 
-  document.getElementById('mFetchBtn').addEventListener('click', fetchStats);
+  document.getElementById('mFetchBtn').addEventListener('click', fetchModalGH);
 
   // Proposal
   let currentProposalOrg = '';

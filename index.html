@@ -604,15 +604,29 @@ kbd:hover{
     }
 
     @media (max-width: 640px) {
-      .modal-header { padding: 1rem 1.5rem 0.5rem; flex-shrink: 0; }
-      .modal-header h2 { font-size: 1.6rem; }
-      .metric-card { padding: 0.5rem 1rem; margin-top: 0.5rem;}
-      .metric-value { font-size: 1rem; }
-      .metric-label { font-size: 0.6rem; }
-      .modal-body { padding: 0 1.5rem 2rem; min-height: 0; }
-      .modal-footer { padding: 1rem; gap: 1rem; flex-direction: column; flex-shrink: 0; }
-      .modal-footer-secondary { display: flex; gap: 1rem; width: 100%; }
-      .modal-footer-secondary .modal-cta { flex-direction:column; flex: 1 1 0; min-width:0; width: auto; padding: 0.3rem 0.4rem; font-size: 0.65rem; min-height: 30px; }
+      .modal { max-height: 85vh; border-radius: 1.5rem; }
+      .modal-header { padding: 0.75rem 1rem 0.25rem; flex-shrink: 0; }
+      .modal-header h2 { font-size: 1.25rem; -webkit-line-clamp: 2; line-clamp: 2; }
+      .modal-header p { font-size: 0.75rem; }
+      .category-tag { font-size: 0.6rem; margin-bottom: 0.5rem; }
+      .close-btn { top: 0.75rem; right: 0.75rem; width: 2rem; height: 2rem; font-size: 1rem; }
+      .metrics-grid { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+      .metric-card { padding: 0.35rem 0.5rem; margin-top: 0.25rem; border-radius: 0.75rem; }
+      .metric-value { font-size: 0.85rem; }
+      .metric-label { font-size: 0.5rem; }
+      .modal-body { padding: 0 1rem 0.75rem; min-height: 0; max-height: none; overflow-y: auto; flex: 1; }
+      .modal-body .section-title { margin-top: 1rem; font-size: 0.65rem; padding-bottom: 0.3rem; }
+      .modal-body #mDesc { font-size: 0.75rem; margin-bottom: 0.75rem; }
+      .modal-body .grid { gap: 1rem; }
+      .github-stats-container { padding: 0.6rem 0.75rem; gap: 0.75rem; border-radius: 1rem; }
+      .gh-stat-item { font-size: 0.65rem; }
+      .gh-fetch { font-size: 0.55rem; padding: 0.2rem 0.6rem; }
+      .tech-tag, .fit-tag { font-size: 0.6rem; padding: 0.25rem 0.5rem; }
+      .mentor-link-chip, .mentor-handle-chip { font-size: 0.65rem; padding: 0.3rem 0.5rem; }
+      .modal-footer { padding: 0.6rem 1rem; gap: 0.5rem; flex-direction: column; flex-shrink: 0; }
+      .modal-footer .modal-cta { padding: 0.5rem; gap: 0.3rem; flex: 1; }
+      .modal-footer-secondary { display: flex; gap: 0.5rem; width: 100%; }
+      .modal-footer-secondary .modal-cta { flex-direction: column; flex: 1 1 0; min-width: 0; width: auto; padding: 0.35rem 0.4rem; font-size: 0.6rem; min-height: 28px; }
       .proposal-header { padding: 0.6rem 1rem; gap: 0.4rem; position: relative; }
       .proposal-header-title { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
       .proposal-header-title h2 { font-size: 0.95rem; }
@@ -621,7 +635,6 @@ kbd:hover{
       .proposal-btn { padding: 0.3rem 0.55rem; font-size: 0.7rem; }
       #pwCloseBtn { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.3rem; }
       #pwCloseBtn span + * { display: none; }
-
     }
     
     /* Dark mode - Modal */

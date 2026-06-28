@@ -5071,7 +5071,7 @@ if(e.key.toLowerCase()==='r'){
     resumeFileInput.addEventListener('change', function() {
       const file = this.files?.[0];
       if (!file) return;
-      if (!file.name.endsWith('.txt') && file.type !== 'text/plain') {
+      if (!file.name.endsWith('.txt') || file.type !== 'text/plain') {
         alert('Please upload a .txt file only.');
         this.value = '';
         return;
@@ -5079,6 +5079,9 @@ if(e.key.toLowerCase()==='r'){
       const reader = new FileReader();
       reader.onload = function(e) {
         resumeTextarea.value = e.target.result;
+      };
+      reader.onerror = function() {
+        alert('Sorry, we could not read that file.');
       };
       reader.readAsText(file);
     });

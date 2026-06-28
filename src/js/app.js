@@ -780,7 +780,11 @@ function syncBookmark(name, shouldAdd) {
   if (!name) return;
   if (shouldAdd) bookmarkedSet.add(name);
   else bookmarkedSet.delete(name);
-  localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  try {
+    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+  } catch (e) {
+    console.warn('Failed to persist bookmarks:', e);
+  }
 
   refreshOrgGridAfterBookmarkChange();
   renderWatchlist();
@@ -827,7 +831,11 @@ function clearAllBookmarks() {
   if (!bookmarkedSet.size) return;
   if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
   bookmarkedSet.clear();
-  localStorage.setItem('bookmarks', JSON.stringify([]));
+  try {
+    localStorage.setItem('bookmarks', JSON.stringify([]));
+  } catch (e) {
+    console.warn('Failed to clear bookmarks:', e);
+  }
   applyFilters();
   renderWatchlist();
   updateAIInsights();

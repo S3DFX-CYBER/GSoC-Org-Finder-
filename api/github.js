@@ -110,6 +110,7 @@ export default async function handler(req) {
       let activeDays = 9999;
       
       repos.forEach(r => {
+        // Skip forks for skill analysis
         if (r.fork) return;
         totalStars += r.stargazers_count;
         if (r.language) {

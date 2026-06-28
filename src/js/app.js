@@ -1342,29 +1342,30 @@ function updateModalGHStats(org, d, gfi) {
   }
 }
 
-globalThis.fetchModalGH = async function ({ force = false } = {}) {
+globalThis.fetchModalGH = async function ({ forceRefresh = false } = {}) {
   const header = document.querySelector('#orgModal #orgModalTitle');
   if (!header) return;
   const orgName = header.textContent;
   const org = ORGS.find(o => o.name === orgName);
   if (!org || !org.github) return;
+  const requestRepo = org.github;
 
   const btn = document.getElementById('mFetchBtn');
   btn.textContent = 'Fetching Stats...';
   btn.disabled = true;
 
-  const cacheKey = org.github;
-  if (force) {
+  const cacheKey = requestRepo;
+  if (forceRefresh) {
     delete ghCache[cacheKey];
     delete ghCache[cacheKey + '__gfi'];
   }
 
   try {
-    const d = await fetchGH(org.github);
+    const d = await fetchGH(requestRepo);
     const currentOrgName = document.querySelector('#orgModal #orgModalTitle')?.textContent;
     if (currentOrgName !== orgName) return;
     if (d) {
-      const gfi = await fetchGFI(org.github);
+      const gfi = await fetchGFI(requestRepo);
       updateModalGHStats(org, d, gfi);
 
       btn.textContent = 'Stats Updated!';
@@ -1547,7 +1548,7 @@ globalThis.openModal = function (name, triggerElement = null) {
 
   // Auto-fetch live GitHub stats
   if (org.github) {
-    fetchModalGH();
+    fetchModalGH({ forceRefresh: false });
   }
 
   // Lazily retrieve GFIs if missing
@@ -2574,7 +2575,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
 
   // Wire up live stats fetch button
-  document.getElementById('mFetchBtn')?.addEventListener('click', () => fetchModalGH({ force: true }));
+  document.getElementById('mFetchBtn')?.addEventListener('click', () => fetchModalGH({ forceRefresh: true }));
 
   // Event delegation for trending cards scroll list
   const trendingScroll = document.getElementById('trendingScroll');

@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderRecommendations(recommendations);
     } catch (err) {
       if (requestId !== currentRequestId || err.name === 'AbortError') return;
+      lastRecommendations = [];
       showError(err.message || "An unexpected error occurred during analysis.");
     } finally {
       if (requestId === currentRequestId) {

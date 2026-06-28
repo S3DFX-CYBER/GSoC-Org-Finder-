@@ -778,14 +778,17 @@ function parseStoredBookmarks() {
 
 function syncBookmark(name, shouldAdd) {
   if (!name) return;
-  if (shouldAdd) bookmarkedSet.add(name);
-  else bookmarkedSet.delete(name);
+  const nextBookmarks = new Set(bookmarkedSet);
+  if (shouldAdd) nextBookmarks.add(name);
+  else nextBookmarks.delete(name);
   try {
-    localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+    localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
   } catch (e) {
     alert('We could not save your bookmarks because browser storage is unavailable.');
+    return;
   }
-
+  bookmarkedSet.clear();
+  nextBookmarks.forEach(n => bookmarkedSet.add(n));
   refreshOrgGridAfterBookmarkChange();
   renderWatchlist();
   updateAIInsights();
@@ -830,12 +833,14 @@ function applyFiltersPreservingVisibleCount() {
 function clearAllBookmarks() {
   if (!bookmarkedSet.size) return;
   if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
-  bookmarkedSet.clear();
+  const emptyBookmarks = new Set();
   try {
-    localStorage.setItem('bookmarks', JSON.stringify([]));
+    localStorage.setItem('bookmarks', JSON.stringify([...emptyBookmarks]));
   } catch (e) {
     alert('We could not clear bookmarks because browser storage is unavailable.');
+    return;
   }
+  bookmarkedSet.clear();
   applyFilters();
   renderWatchlist();
   updateAIInsights();

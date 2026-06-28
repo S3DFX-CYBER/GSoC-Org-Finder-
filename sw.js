@@ -107,6 +107,7 @@ globalThis.addEventListener('fetch', (event) => {
           return caches.match(event.request);
         });
 
+        event.waitUntil(fetchPromise);
         return cachedResponse || fetchPromise;
       })
     );

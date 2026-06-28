@@ -784,7 +784,7 @@ function syncBookmark(name, shouldAdd) {
   try {
     localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
   } catch (e) {
-    alert('We could not save your bookmarks because browser storage is unavailable.');
+    console.warn('Bookmark persistence failed because browser storage is unavailable.', e);
     return;
   }
   bookmarkedSet.clear();
@@ -837,7 +837,7 @@ function clearAllBookmarks() {
   try {
     localStorage.setItem('bookmarks', JSON.stringify([...emptyBookmarks]));
   } catch (e) {
-    alert('We could not clear bookmarks because browser storage is unavailable.');
+    console.warn('Bookmark clearing failed because browser storage is unavailable.', e);
     return;
   }
   bookmarkedSet.clear();

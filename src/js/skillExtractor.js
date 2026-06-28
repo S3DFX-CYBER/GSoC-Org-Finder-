@@ -98,7 +98,8 @@ function normalizeSkill(skill) {
     
     'html5 canvas': 'html5 canvas',
     'canvas': 'html5 canvas',
-    'llvm': 'llvm'
+    'llvm': 'llvm',
+    'qemu': 'qemu'
   };
   return mapping[skill] || skill;
 }

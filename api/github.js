@@ -34,17 +34,13 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Missing repo or user parameter' }), { status: 400, headers });
   }
 
-  const isOwnerOnly = repo && !repo.includes('/');
-  if (repo && !isOwnerOnly && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
+  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
     return new Response(JSON.stringify({ error: 'Invalid repo' }), { status: 400, headers });
   }
 
   if (user && !/^[\w.-]+$/.test(user)) {
     return new Response(JSON.stringify({ error: 'Invalid user' }), { status: 400, headers });
   }
-
-  // Helper: build GitHub search qualifier for repo or org
-  const repoQualifier = repo ? (isOwnerOnly ? `org:${repo}` : `repo:${repo}`) : '';
 
   const token = process.env.GITHUB_TOKEN;
 
@@ -160,7 +156,7 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`${repoQualifier} label:"good first issue" state:open`);
+      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=30&sort=created&order=desc`,
         { headers: ghHeaders }
@@ -193,7 +189,7 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
     }
     try {
-      const q = encodeURIComponent(`${repoQualifier} label:"good first issue" state:open`);
+      const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
       const res = await fetchWithFallback(
         `https://api.github.com/search/issues?q=${q}&per_page=1`,
         { headers: ghHeaders }
@@ -217,59 +213,30 @@ export default async function handler(req) {
   }
 
   try {
-    let repoData, lastCommit = '—', activityDays = 9999;
+    const [repoRes, commitsRes] = await Promise.all([
+      fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
+      fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
+    ]);
 
-    if (isOwnerOnly) {
-      // Owner-only GitHub value: fetch org-level info instead of repo stats
-      const orgRes = await fetchWithFallback(`https://api.github.com/orgs/${repo}`, { headers: ghHeaders });
-      if (!orgRes.ok) {
-        return new Response(JSON.stringify({
-          name: repo,
-          description: 'Organization-level GitHub entry — no specific repository. Good First Issues are searched across all repos in this org.',
-          stars: null, forks: null, open_issues: null,
-          lastCommit: '—', activity: 'unknown',
-          isOwnerOnly: true,
-        }), { status: 200, headers });
-      }
-      const orgData = await orgRes.json();
-      repoData = {
-        name: orgData.name || repo,
-        full_name: repo,
-        description: orgData.description || 'Organization-level GitHub entry',
-        stargazers_count: null,
-        forks_count: null,
-        open_issues_count: null,
-        html_url: orgData.html_url || `https://github.com/${repo}`,
-        isOwnerOnly: true,
-      };
-    } else {
-      const [repoRes, commitsRes] = await Promise.all([
-        fetchWithFallback(`https://api.github.com/repos/${repo}`, { headers: ghHeaders }),
-        fetchWithFallback(`https://api.github.com/repos/${repo}/commits?per_page=1`, { headers: ghHeaders }),
-      ]);
+    if (!repoRes.ok) {
+      const err = await repoRes.json().catch(() => ({}));
+      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
+    }
 
-      if (!repoRes.ok) {
-        const err = await repoRes.json().catch(() => ({}));
-        return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
-      }
+    const repoData = await repoRes.json();
 
-      repoData = await repoRes.json();
-
-      if (commitsRes.ok) {
-        try {
-          const commits = await commitsRes.json();
-          if (commits[0]?.commit?.author?.date) {
-            const d = new Date(commits[0].commit.author.date);
-            activityDays = Math.floor((Date.now() - d) / 86400000);
-            if (activityDays === 0) lastCommit = 'Today';
-            else if (activityDays === 1) lastCommit = '1d ago';
-            else if (activityDays < 30) lastCommit = `${activityDays}d ago`;
-            else if (activityDays < 365) lastCommit = `${Math.floor(activityDays / 30)}mo ago`;
-            else lastCommit = `${Math.floor(activityDays / 365)}y ago`;
-          }
-        } catch {
-          // Non-JSON body — fall through with safe defaults
-        }
+    let lastCommit = '—';
+    let activityDays = 9999;
+    if (commitsRes.ok) {
+      const commits = await commitsRes.json();
+      if (commits[0]?.commit?.author?.date) {
+        const d = new Date(commits[0].commit.author.date);
+        activityDays = Math.floor((Date.now() - d) / 86400000);
+        if (activityDays === 0) lastCommit = 'Today';
+        else if (activityDays === 1) lastCommit = '1d ago';
+        else if (activityDays < 30) lastCommit = `${activityDays}d ago`;
+        else if (activityDays < 365) lastCommit = `${Math.floor(activityDays / 30)}mo ago`;
+        else lastCommit = `${Math.floor(activityDays / 365)}y ago`;
       }
     }
 

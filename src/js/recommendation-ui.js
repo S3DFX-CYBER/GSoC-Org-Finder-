@@ -137,18 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const ext = file.name.split('.').pop().toLowerCase();
       const validExts = ['txt', 'text', 'md', 'csv', 'json', 'xml', 'html', 'htm', 'log', 'ini', 'cfg', 'yaml', 'yml', 'toml', 'conf', 'sh', 'bat', 'ps1'];
       const validMimes = ['text/', 'application/json', 'application/xml', 'application/x-yaml'];
-      const isTextFile = validExts.includes(ext) || validMimes.some(m => file.type.startsWith(m));
+      const isTextFile = validExts.includes(ext) && validMimes.some(m => file.type.startsWith(m));
       if (!isTextFile) {
         showError(`Unsupported file type ".${ext}". Please upload a plain text file (.txt).`);
         fileUpload.value = '';
         return;
       }
+      if (file.size > 51200) {
+        showError('File is too large. Please upload a file under 50 KB.');
+        fileUpload.value = '';
+        return;
+      }
       file.text().then(text => {
-        if (text.length > 50000) {
-          showError('File is too large. Please upload a file under 50 KB.');
-          fileUpload.value = '';
-          return;
-        }
         resumeText.value = text;
       }).catch(err => {
         console.error("File Read Error:", err);

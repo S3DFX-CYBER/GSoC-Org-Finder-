@@ -140,6 +140,7 @@ export default async function handler(req) {
         topics,
         stars: totalStars,
         activity,
+        partial,
         ts: Date.now()
       };
       

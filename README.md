@@ -627,12 +627,15 @@ These mentors help guide and review contributions for the GSSoC program:
 <a href="https://github.com/Jay-Jay-Tee"><img src="https://github.com/Jay-Jay-Tee.png" width="50px" alt="Jay-Jay-Tee" /></a>
 <a href="https://github.com/Konarksharma13"><img src="https://github.com/Konarksharma13.png" width="50px" alt="Konarksharma13" /></a>
 <a href="https://github.com/Kuldeeps1505"><img src="https://github.com/Kuldeeps1505.png" width="50px" alt="Kuldeeps1505" /></a>
+<a href="https://github.com/KumarNirupam1"><img src="https://github.com/KumarNirupam1.png" width="50px" alt="KumarNirupam1" /></a>
 <a href="https://github.com/Lathika11"><img src="https://github.com/Lathika11.png" width="50px" alt="Lathika11" /></a>
 <a href="https://github.com/Manasa-2303"><img src="https://github.com/Manasa-2303.png" width="50px" alt="Manasa-2303" /></a>
 <a href="https://github.com/Manav5234"><img src="https://github.com/Manav5234.png" width="50px" alt="Manav5234" /></a>
 <a href="https://github.com/MehtabSandhu11"><img src="https://github.com/MehtabSandhu11.png" width="50px" alt="MehtabSandhu11" /></a>
 <a href="https://github.com/Namish06"><img src="https://github.com/Namish06.png" width="50px" alt="Namish06" /></a>
+<a href="https://github.com/NayansiDupare"><img src="https://github.com/NayansiDupare.png" width="50px" alt="NayansiDupare" /></a>
 <a href="https://github.com/Nightkilller"><img src="https://github.com/Nightkilller.png" width="50px" alt="Nightkilller" /></a>
+<a href="https://github.com/Nilamma19"><img src="https://github.com/Nilamma19.png" width="50px" alt="Nilamma19" /></a>
 <a href="https://github.com/Nirula23"><img src="https://github.com/Nirula23.png" width="50px" alt="Nirula23" /></a>
 <a href="https://github.com/OmkarAKadam"><img src="https://github.com/OmkarAKadam.png" width="50px" alt="OmkarAKadam" /></a>
 <a href="https://github.com/Pallavi-vi-1234"><img src="https://github.com/Pallavi-vi-1234.png" width="50px" alt="Pallavi-vi-1234" /></a>

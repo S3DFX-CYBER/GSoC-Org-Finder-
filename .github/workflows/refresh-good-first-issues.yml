@@ -68,6 +68,9 @@ jobs:
           [ -f data/ui-summary.json ] || echo '{}' > data/ui-summary.json
           [ -f data/org-stats.json ] || echo '{}' > data/org-stats.json
 
+      - name: Regenerate UI summary
+        run: node agent/scripts/generate-ui-cache.js
+
       - name: Update refresh timestamp
         run: |
           mkdir -p data

@@ -2,6 +2,8 @@
 
 > Tracks mentor review activity and review quality across all merged pull requests.
 
+Generated: 2026-06-28T21:33:44.884Z
+
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
 | 🥇 | @TarunyaProgrammer | 19 | 75 |
@@ -34,33 +36,39 @@
 | 28 | @AditthyaSS | 0 | 0 |
 | 29 | @anubhavxdev | 0 | 0 |
 | 30 | @aryanbhutani26 | 0 | 0 |
-| 31 | @ayu-yishu13 | 0 | 0 |
-| 32 | @Ayushh-Sharmaa | 0 | 0 |
-| 33 | @coder-zs-cse | 0 | 0 |
-| 34 | @deepaksinghh12 | 0 | 0 |
-| 35 | @DevROHIT11 | 0 | 0 |
-| 36 | @Haile-12 | 0 | 0 |
-| 37 | @JoeCelaster | 0 | 0 |
-| 38 | @kallal79 | 0 | 0 |
-| 39 | @KaranGupta2005 | 0 | 0 |
-| 40 | @lovestaco | 0 | 0 |
-| 41 | @magic-peach | 0 | 0 |
-| 42 | @Maxd646 | 0 | 0 |
-| 43 | @MAYANKSHARMA01010 | 0 | 0 |
-| 44 | @Mohit-368 | 0 | 0 |
-| 45 | @morningstarxcdcode | 0 | 0 |
-| 46 | @oasis-parzival | 0 | 0 |
-| 47 | @Precise-Goals | 0 | 0 |
-| 48 | @preetbiswas12 | 0 | 0 |
-| 49 | @rounakkraaj-1744 | 0 | 0 |
-| 50 | @Satya900 | 0 | 0 |
-| 51 | @Shravanthi20 | 0 | 0 |
-| 52 | @sparshagarwal0411 | 0 | 0 |
-| 53 | @subratamondalnsec | 0 | 0 |
-| 54 | @Suvanwita | 0 | 0 |
-| 55 | @SyedImtiyaz-1 | 0 | 0 |
-| 56 | @thakurutkarsh22 | 0 | 0 |
-| 57 | @uddalak2005 | 0 | 0 |
-| 58 | @vanshaggarwal07 | 0 | 0 |
-
-Last updated: Thu, 11 Jun 2026 07:49:18 GMT
+| 31 | @arzoo0511 | 0 | 0 |
+| 32 | @ayu-yishu13 | 0 | 0 |
+| 33 | @Ayushh-Sharmaa | 0 | 0 |
+| 34 | @coder-zs-cse | 0 | 0 |
+| 35 | @deepaksinghh12 | 0 | 0 |
+| 36 | @DevROHIT11 | 0 | 0 |
+| 37 | @Haile-12 | 0 | 0 |
+| 38 | @harxhe | 0 | 0 |
+| 39 | @JoeCelaster | 0 | 0 |
+| 40 | @kallal79 | 0 | 0 |
+| 41 | @KaranGupta2005 | 0 | 0 |
+| 42 | @Kota-Jagadeesh | 0 | 0 |
+| 43 | @kpj2006 | 0 | 0 |
+| 44 | @lovestaco | 0 | 0 |
+| 45 | @magic-peach | 0 | 0 |
+| 46 | @Manan-Chawla | 0 | 0 |
+| 47 | @Maxd646 | 0 | 0 |
+| 48 | @MAYANKSHARMA01010 | 0 | 0 |
+| 49 | @Mohit-368 | 0 | 0 |
+| 50 | @morningstarxcdcode | 0 | 0 |
+| 51 | @Neilblaze | 0 | 0 |
+| 52 | @nirvik34 | 0 | 0 |
+| 53 | @oasis-parzival | 0 | 0 |
+| 54 | @Precise-Goals | 0 | 0 |
+| 55 | @preetbiswas12 | 0 | 0 |
+| 56 | @rounakkraaj-1744 | 0 | 0 |
+| 57 | @Satya900 | 0 | 0 |
+| 58 | @Shravanthi20 | 0 | 0 |
+| 59 | @sparshagarwal0411 | 0 | 0 |
+| 60 | @subratamondalnsec | 0 | 0 |
+| 61 | @Suvanwita | 0 | 0 |
+| 62 | @SyedImtiyaz-1 | 0 | 0 |
+| 63 | @thakurutkarsh22 | 0 | 0 |
+| 64 | @uddalak2005 | 0 | 0 |
+| 65 | @UltraBot05 | 0 | 0 |
+| 66 | @vanshaggarwal07 | 0 | 0 |

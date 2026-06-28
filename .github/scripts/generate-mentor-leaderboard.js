@@ -22,42 +22,29 @@ function n(v) {
     : 0;
 }
 
-function days(iso) {
-  if (!iso) return 9999;
-
-  const timestamp =
-    new Date(iso).getTime();
-
-  if (!Number.isFinite(timestamp)) {
-    return 9999;
-  }
-
-  return Math.max(
-    0,
-    (Date.now() - timestamp) / 86400000
-  );
-}
-
 const mentors =
-  (
-    readJson(mentorsPath, {
-      reviewers: []
-    }).reviewers || []
-  )
-    .map((m) =>
-      String(m).trim().toLowerCase()
-    )
-    .filter((m) => m.length > 0)
-    .filter((m, i, arr) => arr.indexOf(m) === i);
+  Array.from(
+    new Map(
+      (
+        readJson(mentorsPath, {
+          reviewers: []
+        }).reviewers || []
+      )
+        .map((m) => String(m).trim())
+        .filter((m) => m.length > 0)
+        .map((m) => [m.toLowerCase(), m])
+    ).values()
+  );
 
 const rawStats =
-  readJson(statsPath, {
-    mentors: {}
-  }).mentors || {};
+  readJson(statsPath, {});
+
+const statsSource =
+  rawStats.mentors || rawStats;
 
 const stats =
   Object.fromEntries(
-    Object.entries(rawStats).map(
+    Object.entries(statsSource).map(
       ([key, value]) => [
         String(key).trim().toLowerCase(),
         value
@@ -69,45 +56,12 @@ const rows = mentors
   .map((username) => {
 
     const s =
-      stats[username] || {};
-
-    const inactiveDays =
-      days(s.last_reviewed_at);
-
-    const decay =
-      Math.max(
-        0,
-        1 - Math.min(0.8, inactiveDays / 120)
-      );
-
-    const quality =
-      n(s.review_quality_score);
-
-    const score =
-      (
-        (n(s.approvals) * 2) +
-        (n(s.merged_reviews) * 3) +
-        (n(s.assignment_approvals) * 2) +
-        (n(s.reviews) * 0.5) +
-        (n(s.priority_reviews) * 1.5) +
-        quality
-      ) * decay;
-
-    const activity =
-      inactiveDays <= 14
-        ? '🟢 Active'
-        : inactiveDays <= 45
-          ? '🟡 Warm'
-          : '🔴 Inactive';
+      stats[username.toLowerCase()] || {};
 
     return {
       username,
-      score,
-      inactiveDays,
-      activity,
-      approvals: n(s.approvals),
-      merged: n(s.merged_reviews),
-      quality
+      reviews: n(s.reviews),
+      score: n(s.score)
     };
 
   })
@@ -117,12 +71,8 @@ const rows = mentors
       return b.score - a.score;
     }
 
-    if (a.inactiveDays !== b.inactiveDays) {
-      return a.inactiveDays - b.inactiveDays;
-    }
-
-    return a.username.localeCompare(
-      b.username
+    return a.username.toLowerCase().localeCompare(
+      b.username.toLowerCase()
     );
   });
 
@@ -133,17 +83,17 @@ const medals = [
 ];
 
 const lines = [
-  '# 🏆 Mentor Leaderboard',
+  '# 🏆 Mentor Review Leaderboard',
   '',
-  '> Dynamic mentor activity ranking based on approvals, merged reviews, quality scoring, assignment participation, and activity recency.',
+  '> Tracks mentor review activity and review quality across all merged pull requests.',
   '',
   `Generated: ${new Date().toISOString()}`,
   '',
-  '| Rank | Mentor | Score | Approvals | Merged Reviews | Quality | Activity |',
-  '|---:|---|---:|---:|---:|---:|---|',
+  '| Rank | Mentor | Reviews | Score |',
+  '|------|--------|---------|-------|',
 
   ...rows.map((r, index) =>
-    `| ${medals[index] || `#${index + 1}`} | @${r.username} | ${r.score.toFixed(2)} | ${r.approvals} | ${r.merged} | ${r.quality.toFixed(2)} | ${r.activity} |`
+    `| ${medals[index] || `${index + 1}`} | @${r.username} | ${r.reviews} | ${r.score} |`
   )
 ];
 

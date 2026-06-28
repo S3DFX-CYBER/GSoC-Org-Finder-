@@ -1984,10 +1984,11 @@
     "org": "Internet Archive",
     "ideasUrl": "https://docs.google.com/document/d/1EjzrHVapOZuzdI_Qqd_ravaTgiDWnxlMRbjjbzfd_-I/edit?tab=t.0",
     "channels": [
-        {
-            "type": "Slack",
-            "url": "https://internetarchive.slack.com"
-        }
+      {
+        "type": "Slack",
+        "url": "https://internetarchive.slack.com",
+        "label": "Internet Archive Slack"
+      }
     ],
     "mentors": [
         { "name": "Mark Graham", "github": "", "githubUrl": "" },
@@ -2836,33 +2837,33 @@
     "org": "MetaBrainz Foundation Inc",
     "ideasUrl": "https://wiki.musicbrainz.org/Development/Summer_of_Code/2026",
     "channels": [
-    {
-      "type": "irc",
-      "name": "#metabrainz",
-      "url": "https://kiwiirc.com/nextclient/irc.libera.chat/#metabrainz"
-    },
-    {
-      "type": "matrix",
-      "name": "#metabrainz-all:chatbrainz.org",
-      "url": "https://matrix.to/#/#metabrainz-all:chatbrainz.org"
-    },
-    {
-      "type": "discord",
-      "name": "MetaBrainz Discord",
-      "url": "https://discord.gg/R4hBw972QA"
-    },
-    {
-      "type": "forum",
-      "name": "MetaBrainz Community Discourse",
-      "url": "https://community.metabrainz.org/c/metabrainz/gsoc-applications/9"
-    }
-  ],
-  "mentors": [
-    { "name": "lucifer", "github": "lucifer" },
-    { "name": "reosarevok", "github": "reosarevok" },
-    { "name": "yvanzo", "github": "yvanzo" },
-    { "name": "bitmap", "github": "bitmap" }
-  ],
+      {
+        "type": "irc",
+        "label": "#metabrainz",
+        "url": "https://kiwiirc.com/nextclient/irc.libera.chat/#metabrainz"
+      },
+      {
+        "type": "matrix",
+        "label": "#metabrainz-all:chatbrainz.org",
+        "url": "https://matrix.to/#/#metabrainz-all:chatbrainz.org"
+      },
+      {
+        "type": "discord",
+        "label": "MetaBrainz Discord",
+        "url": "https://discord.gg/R4hBw972QA"
+      },
+      {
+        "type": "forum",
+        "label": "MetaBrainz Community Discourse",
+        "url": "https://community.metabrainz.org/c/metabrainz/gsoc-applications/9"
+      }
+    ],
+    "mentors": [
+      { "name": "lucifer", "github": "lucifer", "githubUrl": "https://github.com/lucifer" },
+      { "name": "reosarevok", "github": "reosarevok", "githubUrl": "https://github.com/reosarevok" },
+      { "name": "yvanzo", "github": "yvanzo", "githubUrl": "https://github.com/yvanzo" },
+      { "name": "bitmap", "github": "bitmap", "githubUrl": "https://github.com/bitmap" }
+    ],
   "mailingLists": [],
   "tip": "Join #metabrainz on IRC/Matrix/Discord. Post GSoC proposals on the forum. Do not contact mentors privately.",
   "status": "ok",
@@ -4092,8 +4093,13 @@
     "channels": [
       {
         "type": "email",
-        "url": "https://gist.github.com/claymcleod/ee8e62831a4975cba2032d888bb52080",
-        "label": "View GSoC 2026 Ideas"
+        "url": "mailto:clay.mcleod@stjude.org",
+        "label": "clay.mcleod@stjude.org"
+      },
+      {
+        "type": "email",
+        "url": "mailto:stephanie.sandor@stjude.org",
+        "label": "stephanie.sandor@stjude.org"
       }
     ],
     "mentors": [

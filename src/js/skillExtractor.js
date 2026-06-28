@@ -23,7 +23,7 @@ const TECH_DICTIONARY = [
   "aws", "azure", "gcp", "google cloud", "docker", "kubernetes", "jenkins", "gitlab ci", 
   "github actions", "terraform", "ansible", "linux", "unix", "ubuntu", "centos", "debian",
   "nginx", "apache", "prometheus", "grafana", "istio", "helm", "tekton", "ci/cd", "unikernels",
-  "kvm", "xen", "virtualization", "serverless", "ebpf", "containerd", "sdet", "devops",
+  "kvm", "xen", "qemu", "virtualization", "serverless", "ebpf", "containerd", "sdet", "devops",
   "kernel", "posix", "bsd", "real-time os", "rtos",
 
   "machine learning", "ml", "artificial intelligence", "ai", "deep learning", 

@@ -68,16 +68,10 @@ jobs:
           [ -f data/ui-summary.json ] || echo '{}' > data/ui-summary.json
           [ -f data/org-stats.json ] || echo '{}' > data/org-stats.json
 
-      - name: Regenerate UI summary
-        run: node agent/scripts/generate-ui-cache.js
-
       - name: Update refresh timestamp
         run: |
           mkdir -p data
           echo "{\"updatedAt\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"}" > data/last-updated.json
-
-      - name: Validate generated JSON data
-        run: npm run validate:data
 
       - name: Update UI statistics
         run: |

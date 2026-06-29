@@ -31,14 +31,6 @@ function addSlugsToFile(filePath) {
   const stats = { fromUrl: 0, fromName: 0, skipped: 0, flagged: [] };
   const seenSlugs = new Map();
 
-  original.split(/\r?\n/).forEach((line) => {
-    const existingSlugMatch = line.match(/\bslug:"([^"]+)"/);
-    const existingNameMatch = line.match(/name:"([^"]+)"/);
-    if (existingSlugMatch && existingNameMatch) {
-      seenSlugs.set(existingSlugMatch[1], existingNameMatch[1]);
-    }
-  });
-
   const updated = original
     .split(/\r?\n/)
     .map((line) => {

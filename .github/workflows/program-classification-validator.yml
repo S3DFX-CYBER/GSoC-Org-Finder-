@@ -161,10 +161,10 @@ jobs:
             // If both GSSoC and NSoC signals/labels are detected, apply the
             // priority rule (GSSoC takes priority) and discard the NSoC signal
             // so exactly one program classification is validated and applied.
-            if (detectedPrograms.includes('gssoc') && detectedPrograms.includes('nsoc')) {
-              const nsocIndex = detectedPrograms.indexOf('nsoc');
+            if (detectedActualPrograms.includes('gssoc') && detectedActualPrograms.includes('nsoc')) {
+              const nsocIndex = detectedActualPrograms.indexOf('nsoc');
               if (nsocIndex > -1) {
-                detectedPrograms.splice(nsocIndex, 1);
+                detectedActualPrograms.splice(nsocIndex, 1);
               }
               core.warning('Dual-label program classification detected (gssoc + nsoc) — resolved to GSSoC priority');
             }

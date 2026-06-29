@@ -3959,7 +3959,8 @@ btn.__orgListenerAttached = true;
     bookmarkedSet.clear();
     try {
       localStorage.setItem('bookmarks', JSON.stringify([]));
-    } catch (e) {
+    } catch (error) {
+      console.warn('Failed to clear bookmarks from localStorage:', error);
       alert('Could not clear bookmarks due to storage limits.');
     }
     applyFilters();
@@ -4794,7 +4795,8 @@ if(org.ideas){
       document.getElementById('mActivity').className = 'gh-stat-item text-green-400';
       
       btn.textContent = 'Stats Updated!';
-    } catch (e) {
+    } catch (error) {
+      console.error('Failed to fetch live stats:', error);
       btn.textContent = 'Error';
     } finally {
       setTimeout(() => {

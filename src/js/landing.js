@@ -346,11 +346,12 @@ function initHiwAnimations() {
  * No-ops gracefully if ORGS is not available.
  */
 function renderLiveStats() {
-  if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) { return; }
+  const orgs = globalThis.ORGS;
+  if (!Array.isArray(orgs)) { return; }
 
-  const totalOrgs    = ORGS.length;
-  const veteranOrgs  = ORGS.filter((o) => o.years >= 10).length;
-  const newcomerOrgs = ORGS.filter((o) => o.years <= 3).length;
+  const totalOrgs    = orgs.length;
+  const veteranOrgs  = orgs.filter((o) => o.years >= 10).length;
+  const newcomerOrgs = orgs.filter((o) => o.years <= 3).length;
 
   /** @param {string} id @param {string} value */
   const setText = (id, value) => {

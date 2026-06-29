@@ -238,7 +238,12 @@ jobs:
                   `Removed label: ${name}`
                 );
 
-              } catch (_) {}
+              } catch (e) {
+                core.warning(
+                  `Failed removing label '${name}': ${e.message}`
+                );
+                throw e;
+              }
             }
 
             // --------------------------------------------------

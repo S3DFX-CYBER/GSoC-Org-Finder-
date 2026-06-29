@@ -49,11 +49,13 @@ jobs:
                 .map(l => l.name.toLowerCase());
 
             let isGssoc =
+              existingLabels.includes('gssoc') ||
               existingLabels.includes('gssoc26') ||
               branch.includes('gssoc') ||
               body.includes('gssoc');
 
             let isNsoc =
+              existingLabels.includes('nsoc') ||
               existingLabels.includes('nsoc26') ||
               branch.includes('nsoc') ||
               body.includes('nsoc');
@@ -217,19 +219,34 @@ jobs:
             // --------------------------------------------------
 
             const labelsToAdd = [];
+            const labelsToRemove = [];
 
             // isGssoc / isNsoc have already been normalised by the dual-label
             // guard above, so at most one of these branches will execute.
             if (isGssoc) {
               labelsToAdd.push('gssoc-review');
+              if (existingLabels.includes('nsoc-review')) {
+                labelsToRemove.push('nsoc-review');
+              }
             } else if (isNsoc) {
               // else-if guarantees mutual exclusivity even without the guard
               labelsToAdd.push('nsoc-review');
+              if (existingLabels.includes('gssoc-review')) {
+                labelsToRemove.push('gssoc-review');
+              }
             }
 
             if (labelsToAdd.length > 0) {
 
               try {
+                for (const label of labelsToRemove) {
+                  await github.rest.issues.removeLabel({
+                    owner,
+                    repo,
+                    issue_number: number,
+                    name: label
+                  });
+                }
 
                 await github.rest.issues.addLabels({
                   owner,

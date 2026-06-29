@@ -2309,28 +2309,33 @@ kbd:hover{
     updateThemeIcon();
   };
 
+  function syncThemeButton(button, icon, label, isDark){
+    if(!button || !icon) return;
+    icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    button.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    button.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    button.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    if(label){
+      label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    }
+  }
+
   function updateThemeIcon(){
     const isDark = typeof document.documentElement.classList.contains === 'function'
       ? document.documentElement.classList.contains('dark')
       : false;
-    const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
-    const mobileBtn = document.getElementById('mobileThemeToggleBtn');
-    const mobileIcon = document.getElementById('mobileThemeIcon');
-    const mobileLabel = document.getElementById('mobileThemeLabel');
-    if (mobileBtn && mobileIcon && mobileLabel) {
-      mobileIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
-      mobileLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-      mobileBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      mobileBtn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-      mobileBtn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    }
+    syncThemeButton(
+      document.getElementById('themeToggleBtn'),
+      document.querySelector('#themeToggleBtn .material-symbols-outlined'),
+      null,
+      isDark
+    );
+    syncThemeButton(
+      document.getElementById('mobileThemeToggleBtn'),
+      document.getElementById('mobileThemeIcon'),
+      document.getElementById('mobileThemeLabel'),
+      isDark
+    );
   }
 
   // ══════════════════════════════════════════════

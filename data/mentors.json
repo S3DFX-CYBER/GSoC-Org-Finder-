@@ -3686,7 +3686,7 @@
   "ideasUrl": "https://openwisp.io/docs/dev/developer/gsoc-ideas-2026.html",
    "channels": [
         {
-            "type": "matrix",
+            "type": "Matrix",
             "url": "https://matrix.to/#/#openwisp_development:gitter.im",
             "label": "OpenWISP Dev Chat"
         }
@@ -3704,8 +3704,16 @@
     }
   ],
   "mailingLists": [
-    "https://groups.google.com/d/forum/openwisp",
-    "https://groups.google.com/g/openwisp-gsoc"
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/d/forum/openwisp",
+      "label": "OpenWISP Google Group"
+    },
+    {
+      "type": "Mailing list",
+      "url": "https://groups.google.com/g/openwisp-gsoc",
+      "label": "OpenWISP GSoC Google Group"
+    }
   ],
   "tip": "",
   "status": "ok",

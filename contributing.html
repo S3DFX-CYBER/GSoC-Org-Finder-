@@ -5,7 +5,7 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Contributing Guide | FindMyGSoC</title>
   <meta name="description" content="Contribution guidelines for the GSoC Org Finder project." />
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="stylesheet" href="contributing.tailwind.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js" integrity="sha384-odPBjvtXVM/5hOYIr3A1dB+flh0c3wAT3bSesIOqEGmyUA4JoKf/YTWy0XKOYAY7" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.0/dist/purify.min.js" integrity="sha384-lExbHoPFNjOW+xMze1tJWzpODN3bi/yx3zhbwRoZWaIYxjl89HxJcI2BxPTNa9M7" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
@@ -14,13 +14,6 @@
   <script>
     if (localStorage.getItem('theme') === 'dark') {
       document.documentElement.classList.add('dark');
-    }
-    tailwind.config = {
-      darkMode: "class",
-      theme: { extend: {
-        colors: { "primary":"#9d4300", "primary-container":"#f97316" },
-        fontFamily: { "headline":["Plus Jakarta Sans"],"body":["Plus Jakarta Sans"],"mono":["Fira Code"] }
-      }}
     }
   </script>
   <style>
@@ -39,7 +32,7 @@
     .contrib-content a { color: #f97316; text-decoration: underline; }
     .contrib-content a:hover { color: #9d4300; }
     .contrib-content code { background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; color: #be185d; }
-    .dark .contrib-content code { background: #3f3f46; color: #f472b6; }
+    .dark .contrib-content code { background: #27272a; color: #f9a8d4; }
     .contrib-content pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #e5e7eb; }
     .dark .contrib-content pre { background: #27272a; border-color: #3f3f46; }
     .contrib-content pre code { background: transparent; padding: 0; color: inherit; }

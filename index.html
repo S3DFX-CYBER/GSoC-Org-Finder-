@@ -2344,7 +2344,6 @@ kbd:hover{
 </style>
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
-<script src="src/js/hero-search.js"></script>
 <script>
   // ══════════════════════════════════════════════
   // SAFE ORG DATA GUARD
@@ -5402,16 +5401,13 @@ document.addEventListener('DOMContentLoaded', () => {
     helpBtn.addEventListener('click', openHelpModal);
   }
 
-function handleHeroSearchShortcut(e) {
-  if (!((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'))) return false;
-  e.preventDefault();
-  const h = document.getElementById('hero-search');
-  if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
-  return true;
-}
-
 document.addEventListener('keydown', (e) => {
-  if (handleHeroSearchShortcut(e)) return;
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault();
+    const h = document.getElementById('hero-search');
+    if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'center' }); h.focus(); }
+    return;
+  }
   if (e.altKey || e.ctrlKey || e.metaKey) return;
   const active = document.activeElement;
 if (
@@ -5497,6 +5493,7 @@ if(e.key.toLowerCase()==='r'){
 
 });
 </script>
+<script src="src/js/hero-search.js"></script>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

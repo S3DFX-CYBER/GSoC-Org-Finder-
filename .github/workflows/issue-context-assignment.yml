@@ -384,7 +384,10 @@ jobs:
             }
 
             const noMentorsAvailable = pendingBody.includes('_No active mentors available._');
-            const isMentorMentioned  = pendingBody.includes(`@${approver}`);
+            const mentorsSection = pendingBody.split('### Active Mentors')[1]?.split('### Approve Using')[0] || '';
+            const selectedMentors = [...mentorsSection.matchAll(/@([\w-]+)/g)]
+              .map(m => m[1].toLowerCase());
+            const isMentorMentioned = selectedMentors.includes(approver.toLowerCase());
 
             if (!isMentorMentioned && !noMentorsAvailable) {
               await github.rest.issues.createComment({

@@ -173,12 +173,14 @@ jobs:
               // Notify contributor when a dual-label conflict was auto-resolved
               if (isDualLabel) {
                 // Fetch existing comments to prevent duplicate spam on subsequent workflow triggers
-                const comments = await github.rest.issues.listComments({
-                  owner,
-                  repo,
-                  issue_number: prNumber,
-                  per_page: 100
-                });
+                const comments = {
+                  data: await github.paginate(github.rest.issues.listComments, {
+                    owner,
+                    repo,
+                    issue_number: prNumber,
+                    per_page: 100
+                  })
+                };
 
                 const marker = '<!-- dual-label-conflict-notice -->';
                 const hasNotice = comments.data.some(c => c.body && c.body.includes(marker));

@@ -42,7 +42,8 @@
   }
 
   function buildHeroResultRow(org, i, q) {
-    const owner = org.github ? org.github.split('/')[0] : '';
+    const rawGithub = (org.github || '').replace(/^https?:\/\/github\.com\//, '');
+    const owner = rawGithub.split('/')[0] || '';
     const logoUrl = owner ? `https://github.com/${escapeHtml(owner)}.png?size=80` : '';
     const tags = org.tags || [];
     const visible = tags.slice(0, 3);

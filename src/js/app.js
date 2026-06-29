@@ -781,14 +781,15 @@ function syncBookmark(name, shouldAdd) {
   const nextBookmarks = new Set(bookmarkedSet);
   if (shouldAdd) nextBookmarks.add(name);
   else nextBookmarks.delete(name);
+  bookmarkedSet.clear();
+  nextBookmarks.forEach(item => {
+    bookmarkedSet.add(item);
+  });
   try {
     localStorage.setItem('bookmarks', JSON.stringify([...nextBookmarks]));
   } catch (e) {
     console.warn('Bookmark persistence failed because browser storage is unavailable.', e);
-    return;
   }
-  bookmarkedSet.clear();
-  nextBookmarks.forEach(n => bookmarkedSet.add(n));
   refreshOrgGridAfterBookmarkChange();
   renderWatchlist();
   updateAIInsights();
@@ -834,13 +835,12 @@ function clearAllBookmarks() {
   if (!bookmarkedSet.size) return;
   if (!confirm(`Remove all ${bookmarkedSet.size} bookmarked organization(s)? This cannot be undone.`)) return;
   const emptyBookmarks = new Set();
+  bookmarkedSet.clear();
   try {
     localStorage.setItem('bookmarks', JSON.stringify([...emptyBookmarks]));
   } catch (e) {
     console.warn('Bookmark clearing failed because browser storage is unavailable.', e);
-    return;
   }
-  bookmarkedSet.clear();
   applyFilters();
   renderWatchlist();
   updateAIInsights();

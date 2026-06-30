@@ -266,7 +266,7 @@ function applyFooterPatch(footer) {
   footer.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href');
     if (href === '#orgs' || href === '#timeline') {
-      a.setAttribute('href', `index.html${href}`);
+      a.setAttribute('href', `/app${href}`);
     }
   });
 }

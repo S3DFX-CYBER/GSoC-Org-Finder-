@@ -109,7 +109,6 @@ function handleCardActivation(card) {
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
   const getRecsBtn = document.getElementById('btnGetRecommendations');
   if (!getRecsBtn) return; // Ensure the element exists

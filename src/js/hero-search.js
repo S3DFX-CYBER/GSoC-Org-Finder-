@@ -13,16 +13,17 @@
 (function (root) {
   'use strict';
 
-  function boldMatch(name, query) {
+  function boldMatch(name, query, escapeHtmlFn) {
+    const esc = escapeHtmlFn || escapeHtml;
     const q = (query || '').toLowerCase();
-    if (!q) return escapeHtml(name);
+    if (!q) return esc(name);
     const idx = name.toLowerCase().indexOf(q);
-    if (idx === -1) return escapeHtml(name);
-    return escapeHtml(name.slice(0, idx)) +
+    if (idx === -1) return esc(name);
+    return esc(name.slice(0, idx)) +
       '<strong class="text-primary font-semibold">' +
-      escapeHtml(name.slice(idx, idx + q.length)) +
+      esc(name.slice(idx, idx + q.length)) +
       '</strong>' +
-      escapeHtml(name.slice(idx + q.length));
+      esc(name.slice(idx + q.length));
   }
 
   function heroSearchMatches(query) {
@@ -41,24 +42,25 @@
     return matches.slice(0, 3);
   }
 
-  function buildHeroResultRow(org, i, q) {
+  function buildHeroResultRow(org, i, q, escapeHtmlFn) {
+    const esc = escapeHtmlFn || escapeHtml;
     const rawGithub = (org.github || '').replace(/^https?:\/\/github\.com\//, '');
     const owner = rawGithub.split('/')[0] || '';
-    const logoUrl = owner ? `https://github.com/${escapeHtml(owner)}.png?size=80` : '';
+    const logoUrl = owner ? `https://github.com/${esc(owner)}.png?size=80` : '';
     const tags = org.tags || [];
     const visible = tags.slice(0, 3);
     const overflow = tags.length - visible.length;
     const logoHtml = logoUrl
       ? `<img src="${logoUrl}" alt="" class="w-full h-full object-contain">` +
-        `<div class="hero-result-logo-placeholder" style="display:none">${escapeHtml(org.name.charAt(0))}</div>`
-      : `<div class="hero-result-logo-placeholder">${escapeHtml(org.name.charAt(0))}</div>`;
-    const tagHtml = visible.map(t => `<span class="hero-result-tag">${escapeHtml(t)}</span>`).join('') +
+        `<div class="hero-result-logo-placeholder" style="display:none">${esc(org.name.charAt(0))}</div>`
+      : `<div class="hero-result-logo-placeholder">${esc(org.name.charAt(0))}</div>`;
+    const tagHtml = visible.map(t => `<span class="hero-result-tag">${esc(t)}</span>`).join('') +
       (overflow > 0 ? `<span class="hero-result-tag-overflow">+${overflow}</span>` : '');
     return `<button role="option" id="hero-result-${i}" class="hero-result-row"
-            data-org-name="${escapeHtml(org.name)}" aria-selected="false">
+            data-org-name="${esc(org.name)}" aria-selected="false">
             <div class="hero-result-logo">${logoHtml}</div>
             <div class="hero-result-info">
-              <div class="hero-result-name">${boldMatch(org.name, q)}</div>
+              <div class="hero-result-name">${boldMatch(org.name, q, esc)}</div>
               <div class="hero-result-tags">${tagHtml}</div>
             </div>
           </button>`;
@@ -74,7 +76,10 @@
     });
   }
 
-  function initHeroSearch() {
+  function initHeroSearch(deps) {
+    const openModalImpl = (deps && deps.openModal) || openModal;
+    const escapeHtmlImpl = (deps && deps.escapeHtml) || escapeHtml;
+
     const heroSearch = document.getElementById('hero-search');
     const heroResults = document.getElementById('heroSearchResults');
     if (!heroSearch || !heroResults) return;
@@ -119,7 +124,7 @@
         return;
       }
 
-      heroResults.innerHTML = matches.map((org, i) => buildHeroResultRow(org, i, q)).join('');
+      heroResults.innerHTML = matches.map((org, i) => buildHeroResultRow(org, i, q, escapeHtmlImpl)).join('');
 
       openHeroDropdown();
 
@@ -130,7 +135,7 @@
     };
 
     const chooseHeroRow = (row) => {
-      openModal(row.dataset.orgName);
+      openModalImpl(row.dataset.orgName);
       heroSearch.value = '';
       closeHeroDropdown();
     };
@@ -198,10 +203,18 @@
     document.addEventListener('mousedown', (e) => {
       if (!heroSearch.contains(e.target) && !heroResults.contains(e.target)) closeHeroDropdown();
     });
+
+    // Ctrl/Cmd+K focuses the hero search (single source of truth for this shortcut).
+    document.addEventListener('keydown', (e) => {
+      if (!((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K'))) return;
+      e.preventDefault();
+      heroSearch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      heroSearch.focus();
+    });
   }
 
   if (typeof document !== 'undefined' && document.addEventListener) {
-    document.addEventListener('DOMContentLoaded', initHeroSearch);
+    document.addEventListener('DOMContentLoaded', () => initHeroSearch());
   }
 
   const api = { heroSearchMatches, boldMatch, initHeroSearch };

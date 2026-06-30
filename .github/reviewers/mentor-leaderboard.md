@@ -54,6 +54,48 @@
 | 40 | @lovestaco | 0 | 0 |
 | 41 | @magic-peach | 0 | 0 |
 | 42 | @Maxd646 | 0 | 0 |
+| 🥇 | @KumarNirupam1 | 32 | 137 |
+| 🥈 | @TarunyaProgrammer | 23 | 92 |
+| 🥉 | @nitinog10 | 16 | 69 |
+| 4 | @Anushreebasics | 20 | 52 |
+| 5 | @deepak0x | 9 | 38 |
+| 6 | @4f4d | 7 | 37 |
+| 7 | @itsdakshjain | 6 | 19 |
+| 8 | @knoxiboy | 6 | 19 |
+| 9 | @saurabh24thakur | 3 | 17 |
+| 10 | @Balaji91221 | 8 | 16 |
+| 11 | @Maxd646 | 4 | 12 |
+| 12 | @12fahed | 3 | 11 |
+| 13 | @Mrigakshi-Rathore | 5 | 10 |
+| 14 | @CoderOggy78 | 4 | 9 |
+| 15 | @MUKUL-PRASAD-SIGH | 4 | 9 |
+| 16 | @nihalawasthi | 3 | 7 |
+| 17 | @AnirudhPhophalia | 3 | 6 |
+| 18 | @BandhiyaHardik | 3 | 6 |
+| 19 | @sabeenaviklar | 2 | 6 |
+| 20 | @stealthwhizz | 2 | 6 |
+| 21 | @lourduradjou | 2 | 5 |
+| 22 | @SparshM8 | 2 | 4 |
+| 23 | @AnirbansarkarS | 1 | 2 |
+| 24 | @Ayush-Patel-56 | 1 | 2 |
+| 25 | @piyushdotcomm | 1 | 2 |
+| 26 | @Sagar-Datkhile | 1 | 2 |
+| 27 | @aanjalii01 | 0 | 0 |
+| 28 | @adithyan-css | 0 | 0 |
+| 29 | @AditthyaSS | 0 | 0 |
+| 30 | @anubhavxdev | 0 | 0 |
+| 31 | @aryanbhutani26 | 0 | 0 |
+| 32 | @ayu-yishu13 | 0 | 0 |
+| 33 | @Ayushh-Sharmaa | 0 | 0 |
+| 34 | @coder-zs-cse | 0 | 0 |
+| 35 | @deepaksinghh12 | 0 | 0 |
+| 36 | @DevROHIT11 | 0 | 0 |
+| 37 | @Haile-12 | 0 | 0 |
+| 38 | @JoeCelaster | 0 | 0 |
+| 39 | @kallal79 | 0 | 0 |
+| 40 | @KaranGupta2005 | 0 | 0 |
+| 41 | @lovestaco | 0 | 0 |
+| 42 | @magic-peach | 0 | 0 |
 | 43 | @MAYANKSHARMA01010 | 0 | 0 |
 | 44 | @Mohit-368 | 0 | 0 |
 | 45 | @morningstarxcdcode | 0 | 0 |
@@ -73,3 +115,4 @@
 
 Last updated: Fri, 29 May 2026 06:03:21 GMT
 Last updated: Tue, 02 Jun 2026 16:59:00 GMT
+Last updated: Tue, 30 Jun 2026 06:52:58 GMT

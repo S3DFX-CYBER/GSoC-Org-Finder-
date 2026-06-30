@@ -4,21 +4,21 @@
 
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
-| 🥇 | @KumarNirupam1 | 25 | 108 |
-| 🥈 | @TarunyaProgrammer | 19 | 75 |
+| 🥇 | @KumarNirupam1 | 32 | 137 |
+| 🥈 | @TarunyaProgrammer | 23 | 92 |
 | 🥉 | @nitinog10 | 16 | 69 |
-| 4 | @Anushreebasics | 17 | 45 |
-| 5 | @4f4d | 7 | 37 |
-| 6 | @deepak0x | 7 | 26 |
+| 4 | @Anushreebasics | 20 | 52 |
+| 5 | @deepak0x | 9 | 38 |
+| 6 | @4f4d | 7 | 37 |
 | 7 | @itsdakshjain | 6 | 19 |
 | 8 | @knoxiboy | 6 | 19 |
 | 9 | @saurabh24thakur | 3 | 17 |
 | 10 | @Balaji91221 | 8 | 16 |
-| 11 | @12fahed | 3 | 11 |
-| 12 | @Mrigakshi-Rathore | 5 | 10 |
-| 13 | @Maxd646 | 3 | 10 |
-| 14 | @MUKUL-PRASAD-SIGH | 4 | 9 |
-| 15 | @CoderOggy78 | 3 | 7 |
+| 11 | @Maxd646 | 4 | 12 |
+| 12 | @12fahed | 3 | 11 |
+| 13 | @Mrigakshi-Rathore | 5 | 10 |
+| 14 | @CoderOggy78 | 4 | 9 |
+| 15 | @MUKUL-PRASAD-SIGH | 4 | 9 |
 | 16 | @nihalawasthi | 3 | 7 |
 | 17 | @AnirudhPhophalia | 3 | 6 |
 | 18 | @BandhiyaHardik | 3 | 6 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Wed, 17 Jun 2026 03:57:34 GMT
+Last updated: Tue, 30 Jun 2026 06:52:58 GMT

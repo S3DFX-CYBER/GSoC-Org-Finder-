@@ -5767,6 +5767,400 @@ if(e.key.toLowerCase()==='r'){
   });
 })();
 </script>
+
+<!-- Floating toggle button (always visible)
+     Positioned ABOVE your existing #prevSectionBtn / #nextSectionBtn stack
+     (same --section-fab-right offset, stacked with --section-fab-gap spacing)
+     so it never overlaps the section-navigation FABs already on the page. -->
+<button
+  id="gsocGuideToggle"
+  class="guide-toggle-btn"
+  aria-haspopup="dialog"
+  aria-label="Open GSoC Guide chat"
+  title="Ask the GSoC Guide"
+>
+  💬
+</button>
+
+<!-- Native dialog – browser handles focus trap + Escape automatically -->
+<dialog
+  id="gsocGuidePanel"
+  class="guide-dialog"
+  aria-label="GSoC Guide Chat"
+  aria-modal="true"
+>
+  <!-- Header -->
+  <header class="guide-dialog__header">
+    <h2 class="guide-dialog__title" id="gsocGuideTitle">GSoC Guide</h2>
+    <div class="guide-dialog__header-actions">
+      <button
+        id="gsocGuideClear"
+        class="guide-btn guide-btn--ghost"
+        title="Clear conversation history"
+        type="button"
+      >
+        🗑 Clear
+      </button>
+      <button
+        id="gsocGuideClose"
+        class="guide-btn guide-btn--ghost guide-btn--icon"
+        aria-label="Close GSoC Guide chat"
+        title="Close"
+        type="button"
+      >
+        ✕
+      </button>
+    </div>
+  </header>
+
+  <ul
+    id="gsocGuideMessages"
+    class="guide-messages"
+    aria-live="polite"
+    aria-atomic="false"
+    aria-relevant="additions"
+    aria-label="Conversation"
+  ></ul>
+
+  <!-- Input form -->
+  <form id="gsocGuideForm" class="guide-form" novalidate>
+    <label for="gsocGuideInput" class="guide-form__label">
+      Ask about GSoC organisations, timelines, or proposals
+    </label>
+    <div class="guide-form__row">
+      <textarea
+        id="gsocGuideInput"
+        class="guide-form__input"
+        name="question"
+        rows="2"
+        maxlength="300"
+        placeholder="e.g. Which org fits a Python beginner?"
+        aria-describedby="gsocGuideCharCount gsocGuideInputHint"
+        autocomplete="off"
+        required
+      ></textarea>
+      <button
+        type="submit"
+        class="guide-btn guide-btn--primary"
+        aria-label="Send message"
+        aria-busy="false"
+      >
+        Send
+      </button>
+    </div>
+    <div class="guide-form__meta">
+      <span id="gsocGuideCharCount" aria-live="polite" class="guide-form__counter">
+        300 characters remaining
+      </span>
+      <span id="gsocGuideInputHint" class="guide-form__hint" aria-hidden="true">
+        Shift+Enter for new line
+      </span>
+    </div>
+  </form>
+</dialog>
+
+<!--
+  Minimal styles – add to your main stylesheet or a <style> block in <head>.
+  Uses CSS custom properties so it inherits your site's theme variables.
+-->
+<style>
+/* ── Toggle button ───────────────────────────────────────── */
+/* Stacks ABOVE your existing #prevSectionBtn / #nextSectionBtn / indicator
+   using the same --section-fab-* variables already defined in :root,
+   so spacing stays consistent if you ever change those values. */
+.guide-toggle-btn {
+  position: fixed;
+  right: calc(var(--section-fab-right, 24px) + env(safe-area-inset-right));
+  bottom: calc(
+    var(--section-fab-bottom, 24px)
+    + (var(--section-fab-size, 48px) + var(--section-fab-gap, 10px)) * 2
+    + var(--section-indicator-gap, 12px)
+    + 56px /* indicator pill height + gap */
+    + env(safe-area-inset-bottom)
+  );
+  z-index: 900;
+  width: var(--section-fab-size, 48px);
+  height: var(--section-fab-size, 48px);
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(157, 67, 0, 0.35);
+  transition: transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s;
+}
+.guide-toggle-btn:hover  { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(157, 67, 0, 0.45); }
+.guide-toggle-btn:active { transform: translateY(1px) scale(0.92); }
+.guide-toggle-btn:focus-visible {
+  outline: 3px solid #f97316;
+  outline-offset: 3px;
+}
+.dark .guide-toggle-btn {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+  box-shadow: 0 8px 24px rgba(194, 65, 12, 0.35);
+}
+.dark .guide-toggle-btn:hover { box-shadow: 0 12px 32px rgba(194, 65, 12, 0.45); }
+
+@media (max-width: 640px) {
+  .guide-toggle-btn {
+    width: var(--section-fab-size, 42px);
+    height: var(--section-fab-size, 42px);
+    font-size: 1.1rem;
+    bottom: calc(
+      var(--section-fab-bottom, 12px)
+      + (var(--section-fab-size, 42px) + var(--section-fab-gap, 8px)) * 2
+      + var(--section-indicator-gap, 8px)
+      + 48px
+      + env(safe-area-inset-bottom)
+    );
+  }
+}
+
+/* ── Dialog shell ────────────────────────────────────────── */
+.guide-dialog {
+  position: fixed;
+  inset: auto 1rem 5.5rem auto;
+  width: min(420px, calc(100vw - 2rem));
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: .75rem;
+  padding: 0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  color: #1a1c1c;
+  overflow: hidden;
+}
+/* Remove default UA dialog backdrop; add our own */
+.guide-dialog::backdrop {
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(4px);
+}
+.dark .guide-dialog {
+  background: #18181b;
+  border-color: #3f3f46;
+  color: #f4f4f5;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.guide-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1rem;
+  background: linear-gradient(135deg, #9d4300, #f97316);
+  color: #fff;
+  flex-shrink: 0;
+}
+.dark .guide-dialog__header {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
+}
+.guide-dialog__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.guide-dialog__header-actions {
+  display: flex;
+  gap: .25rem;
+}
+
+/* ── Messages ────────────────────────────────────────────── */
+.guide-messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.guide-message {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  max-width: 85%;
+}
+.guide-message--user      { align-self: flex-end; }
+.guide-message--assistant { align-self: flex-start; }
+
+.guide-message__label {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #888;
+}
+.dark .guide-message__label { color: #a1a1aa; }
+
+.guide-message__body {
+  margin: 0;
+  padding: .55rem .75rem;
+  border-radius: .5rem;
+  font-size: .9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word; /* NOSONAR: intentional fallback for browsers without overflow-wrap support */
+  overflow-wrap: anywhere;
+}
+.guide-message--user .guide-message__body {
+  background: #9d4300;
+  color: #fff;
+  border-bottom-right-radius: .1rem;
+}
+.guide-message--assistant .guide-message__body {
+  background: #f3f3f3;
+  color: #1a1c1c;
+  border-bottom-left-radius: .1rem;
+}
+.dark .guide-message--user .guide-message__body { background: #c2410c; }
+.dark .guide-message--assistant .guide-message__body { background: #27272a; color: #d4d4d8; }
+
+/* Typing indicator */
+.guide-message--typing .guide-message__body,
+.guide-message--typing {
+  display: flex;
+  flex-direction: row;
+  gap: .3rem;
+  align-items: center;
+  padding: .6rem .75rem;
+  background: #f3f3f3;
+  border-radius: .5rem;
+  align-self: flex-start;
+}
+.dark .guide-message--typing { background: #27272a; }
+.guide-message--typing span {
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: #aaa;
+  animation: guideDot 1.2s infinite ease-in-out;
+}
+.dark .guide-message--typing span { background: #71717a; }
+.guide-message--typing span:nth-child(2) { animation-delay: .2s; }
+.guide-message--typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes guideDot {
+  0%, 80%, 100% { transform: scale(.8); opacity: .5; }
+  40%           { transform: scale(1.1); opacity: 1; }
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.guide-form {
+  padding: .75rem 1rem;
+  border-top: 1px solid #f3f3f3;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.dark .guide-form { border-top-color: #27272a; }
+.guide-form__label {
+  font-size: .78rem;
+  color: #584237;
+}
+.dark .guide-form__label { color: #a1a1aa; }
+.guide-form__row {
+  display: flex;
+  gap: .5rem;
+  align-items: flex-end;
+}
+.guide-form__input {
+  flex: 1;
+  resize: none;
+  border: 1px solid #ddd;
+  border-radius: .4rem;
+  padding: .45rem .6rem;
+  font-size: .9rem;
+  font-family: inherit;
+  line-height: 1.4;
+  color: #1a1c1c;
+  background: #fff;
+  transition: border-color .15s;
+}
+.dark .guide-form__input {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #f4f4f5;
+}
+.guide-form__input:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249,115,22,.2);
+}
+.guide-form__meta {
+  display: flex;
+  justify-content: space-between;
+}
+.guide-form__counter,
+.guide-form__hint {
+  font-size: .72rem;
+  color: #888;
+}
+.dark .guide-form__counter,
+.dark .guide-form__hint { color: #a1a1aa; }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.guide-btn {
+  cursor: pointer;
+  border: none;
+  border-radius: .4rem;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  padding: .45rem .85rem;
+  transition: background .15s, opacity .15s;
+  white-space: nowrap;
+}
+.guide-btn:focus-visible {
+  outline: 3px solid #f97316;
+  outline-offset: 2px;
+}
+.guide-btn--primary {
+  background: #9d4300;
+  color: #fff;
+}
+.guide-btn--primary:hover:not(:disabled) { background: #7a3500; }
+.guide-btn--primary:disabled { opacity: .6; cursor: not-allowed; }
+.dark .guide-btn--primary { background: #c2410c; }
+.dark .guide-btn--primary:hover:not(:disabled) { background: #9a3412; }
+
+.guide-btn--ghost {
+  background: transparent;
+  color: #fff;
+}
+.guide-btn--ghost:hover { background: rgba(255,255,255,.18); }
+.guide-btn--icon { padding: .35rem .55rem; font-size: 1rem; }
+
+/* ── Reduced-motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .guide-toggle-btn,
+  .guide-form__input,
+  .guide-btn { transition: none; }
+  .guide-toggle-btn:hover,
+  .guide-toggle-btn:active { transform: none; }
+  @keyframes guideDot { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .guide-dialog {
+    inset: auto 0 4rem 0;
+    width: 100%;
+    border-radius: .75rem .75rem 0 0;
+    max-height: 80vh;
+  }
+}
+</style>
+
+<!-- Load the JS (defer so it runs after DOM is ready) -->
+<script src="src/js/gsoc-guide.js" defer></script>
+
 <!-- ORG PICKER MODAL -->
 <dialog id="orgPickerModal" aria-modal="true" aria-labelledby="orgPickerTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:16px;width:100%;height:100%;margin:0;">
   <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">

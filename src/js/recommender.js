@@ -9,7 +9,7 @@
  * @param {Object|null} githubProfile - Optional GitHub profile metrics
  * @returns {Array<Object>} - Top 6 recommended organizations sorted by score
  */
-function getRecommendations(resumeSkills = [], githubProfile = null) {
+function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) {
   if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) {
     console.error("ORGS is not defined.");
     return [];
@@ -35,7 +35,7 @@ function getRecommendations(resumeSkills = [], githubProfile = null) {
   );
   
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
-  return scoredOrgs.slice(0, 6);
+  return scoredOrgs.slice(0, count);
 }
 
 function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons) {

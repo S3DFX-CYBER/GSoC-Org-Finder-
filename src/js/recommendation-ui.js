@@ -11,7 +11,7 @@ let lastRecommendations = [];
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
 async function analyzeProfile(username, resume, options = {}) {
-  const { signal } = options;
+  const { signal, count = 6 } = options;
   let githubProfile = null;
   let skills = [];
 
@@ -29,7 +29,7 @@ async function analyzeProfile(username, resume, options = {}) {
     skills = extractSkills(resume);
   }
 
-  return getRecommendations(skills, githubProfile);
+  return getRecommendations(skills, githubProfile, count);
 }
 
 /**
@@ -121,10 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorState = document.getElementById('aiErrorState');
   const resultsContainer = document.getElementById('aiResultsContainer');
   const errorMsg = document.getElementById('aiErrorMsg');
+  let visibleCount = 6;
 
   document.addEventListener('compareListChanged',() => {
     if(lastRecommendations.length){
-      renderRecommendations(lastRecommendations);
+      renderRecommendations(lastRecommendations.slice(0, visibleCount));
     }
   });
 
@@ -176,12 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume, { signal });
+      const recommendations = await analyzeProfile(username, resume, { signal, count: Infinity });
       
       if (requestId !== currentRequestId) return;
       
       lastRecommendations = recommendations; 
-      renderRecommendations(recommendations);
+      visibleCount = 6;
+      renderRecommendations(recommendations.slice(0, visibleCount));
     } catch (err) {
       if (requestId !== currentRequestId || err.name === 'AbortError') return;
       showError(err.message || "An unexpected error occurred during analysis.");
@@ -218,6 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return handleCompareAction(e, compareBtn, card);
       }
       
+      const showMoreBtn = target.closest('#btnShowMoreRecs');
+      if (showMoreBtn) {
+        visibleCount += 6;
+        renderRecommendations(lastRecommendations.slice(0, visibleCount));
+        return;
+      }
+
       if (card) {
         return handleCardActivation(card);
       }
@@ -314,6 +323,15 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    resultsContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>`;
+    const showMoreHtml = (lastRecommendations.length > recs.length)
+      ? `<div class="flex justify-center mt-6">
+           <button id="btnShowMoreRecs" class="px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:border-primary hover:text-primary transition-colors">
+             Show More
+           </button>
+         </div>`
+      : '';
+
+    resultsContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${html}</div>${showMoreHtml}`;
+      
   }
 });

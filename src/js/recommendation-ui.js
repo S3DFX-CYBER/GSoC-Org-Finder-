@@ -224,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (showMoreBtn) {
         visibleCount += 6;
         renderRecommendations(lastRecommendations.slice(0, visibleCount));
+        resultsContainer.querySelector('#btnShowMoreRecs')?.focus();
         return;
       }
 

@@ -326,8 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showMoreHtml = (lastRecommendations.length > recs.length)
       ? `<div class="flex justify-center mt-6">
-           <button id="btnShowMoreRecs" class="px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:border-primary hover:text-primary transition-colors">
-             Show More
+           <button id="btnShowMoreRecs" aria-label="Show more recommendations" class="px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:border-primary hover:text-primary transition-colors">
+              Show More
            </button>
          </div>`
       : '';

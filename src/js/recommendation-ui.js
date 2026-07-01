@@ -230,7 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
           newBtn.focus();
         } else {
           const cards = resultsContainer.querySelectorAll('article[data-org-name]');
-          cards[prevCount]?.focus();
+          const firstNewCard = cards[prevCount];
+          const focusTarget = firstNewCard?.querySelector('button') ?? firstNewCard;
+          focusTarget?.focus();
         }
         return;
       }

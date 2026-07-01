@@ -200,6 +200,36 @@ kbd:hover{
         font-size:11px;
     }
 }
+    /* Mobile filter/language dropdown styles */
+    .mobile-filter-option.bg-orange-600,
+    .mobile-filter-option.bg-orange-600:hover {
+      background: #c2410c !important;
+      color: #fff !important;
+    }
+    .mobile-lang-pill.active {
+      border-color: #9d4300 !important;
+      color: #9d4300 !important;
+      background: #fff7ed !important;
+    }
+    .dark #mobileFilterPanel,
+    .dark #mobileLangPanel {
+      background: #27272a !important;
+      border-color: #3f3f46 !important;
+    }
+    .dark .mobile-filter-option:hover {
+      background: #3f3f46 !important;
+    }
+    .dark .mobile-lang-pill {
+      background: #3f3f46 !important;
+      border-color: #52525b !important;
+      color: #d4d4d8 !important;
+    }
+    .dark .mobile-lang-pill.active {
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+      background: #431407 !important;
+    }
+
     /* Screen reader only - for accessibility */
     .sr-only {
       position: absolute;
@@ -1388,8 +1418,8 @@ kbd:hover{
     <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Organizations</h2>
     <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Browse and filter GSoC 2026 organizations by tech stack, difficulty level, and interests to discover projects that match your skills and goals.</p>
   </div>
-  <!-- ═══════════════════ FILTER CHIPS ═══════════════════ -->
-  <div class="mb-6 fade-up" style="animation-delay:.3s">
+  <!-- ═══════════════════ FILTER CHIPS (desktop only) ═══════════════════ -->
+  <div class="mb-6 fade-up hidden md:block" style="animation-delay:.3s">
     <div class="flex flex-wrap gap-2 mb-4">
       <button id="chip-veteran" data-tooltip="Organizations that participated in GSoC for many years" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only</button>
       <button id="chip-newcomer" data-tooltip="Good for first-time contributors and beginners" class="filter-chip px-4 py-2 rounded-full bg-surface-container-highest text-xs font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers</button>
@@ -1420,9 +1450,83 @@ kbd:hover{
         <input id="matchAllLanguagesToggle" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary" aria-describedby="languageLogicHint"/>
         <span class="text-xs text-zinc-600 font-medium">Match all selected languages </span>
       </label>
-      <span id="languageLogicHint" 
-        class="text-xs text-primary font-medium italic">
-      </span>
+      <span id="languageLogicHint" class="text-xs text-primary font-medium italic"></span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ MOBILE FILTER DROPDOWNS ═══════════════════ -->
+  <div class="mb-4 md:hidden fade-up" style="animation-delay:.3s">
+    <!-- Row 1: Filters + Languages side by side -->
+    <div class="flex gap-2 mb-3">
+    <!-- Mobile: Filters dropdown (replaces chips) -->
+    <div class="relative flex-1" id="mobileFilterDropdownWrap">
+      <button id="mobileFilterBtn" onclick="toggleMobileFilterDropdown()" class="w-full flex items-center justify-between px-3 py-2.5 bg-surface-container-highest rounded-xl text-xs font-bold text-on-surface border border-transparent hover:border-primary transition-colors">
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm text-primary">tune</span>
+          <span id="mobileFilterLabel">Filters</span>
+        </span>
+        <span class="material-symbols-outlined text-sm transition-transform" id="mobileFilterChevron">expand_more</span>
+      </button>
+      <div id="mobileFilterPanel" class="hidden absolute left-0 top-full mt-1 bg-white dark:bg-zinc-800 rounded-xl shadow-lg border border-zinc-100 dark:border-zinc-700 z-30 p-2 flex flex-col gap-1" style="min-width:180px">
+        <button id="mob-chip-veteran" data-mobile-chip="chip-veteran" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm">military_tech</span> Veterans Only
+        </button>
+        <button id="mob-chip-newcomer" data-mobile-chip="chip-newcomer" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm">fiber_new</span> Newcomers
+        </button>
+        <button id="mob-chip-hot" data-mobile-chip="chip-hot" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm">local_fire_department</span> High Competition
+        </button>
+        <button id="mob-chip-chill" data-mobile-chip="chip-chill" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm">sentiment_satisfied</span> Low Competition
+        </button>
+        <button id="mob-chip-active" data-mobile-chip="chip-active" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm">bolt</span> Actively Maintained
+        </button>
+        <button id="mob-chip-bookmarked" data-mobile-chip="chip-bookmarked" onclick="toggleMobileChip(this)" class="mobile-filter-option flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-sm icon-fill" style="color:#f59e0b">star</span> Bookmarked
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile: Languages dropdown (replaces language pills) -->
+    <div class="relative flex-1" id="mobileLangDropdownWrap">
+      <button id="mobileLangBtn" onclick="toggleMobileLangDropdown()" class="w-full flex items-center justify-between px-3 py-2.5 bg-surface-container-highest rounded-xl text-xs font-bold text-on-surface border border-transparent hover:border-primary transition-colors">
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm text-primary">code</span>
+          <span id="mobileLangLabel">Languages</span>
+        </span>
+        <span class="material-symbols-outlined text-sm transition-transform" id="mobileLangChevron">expand_more</span>
+      </button>
+      <div id="mobileLangPanel" class="hidden absolute right-0 top-full mt-1 bg-white dark:bg-zinc-800 rounded-xl shadow-lg border border-zinc-100 dark:border-zinc-700 z-30 p-2" style="min-width:240px">
+        <div class="flex flex-wrap gap-1.5 p-1">
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Python" onclick="toggleMobileLangPill(this)">Python</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="JavaScript" onclick="toggleMobileLangPill(this)">JavaScript</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="TypeScript" onclick="toggleMobileLangPill(this)">TypeScript</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="C/C++" onclick="toggleMobileLangPill(this)">C/C++</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Java" onclick="toggleMobileLangPill(this)">Java</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Rust" onclick="toggleMobileLangPill(this)">Rust</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Go" onclick="toggleMobileLangPill(this)">Go</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Ruby" onclick="toggleMobileLangPill(this)">Ruby</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Haskell" onclick="toggleMobileLangPill(this)">Haskell</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Scala" onclick="toggleMobileLangPill(this)">Scala</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="ML/AI" onclick="toggleMobileLangPill(this)">ML/AI</button>
+          <button class="mobile-lang-pill px-3 py-1.5 rounded-full bg-surface-container-high border border-zinc-200 text-xs font-medium hover:border-primary hover:text-primary transition-colors" data-lang="Robotics" onclick="toggleMobileLangPill(this)">Robotics</button>
+        </div>
+        <div class="mt-2 px-1 flex items-center gap-2 border-t border-zinc-100 dark:border-zinc-700 pt-2">
+          <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+            <input id="matchAllLanguagesToggleMobile" type="checkbox" class="rounded border-zinc-300 text-primary focus:ring-primary"/>
+            <span class="text-xs text-zinc-600 font-medium">Match all</span>
+          </label>
+          <span id="languageLogicHintMobile" class="text-xs text-primary font-medium italic"></span>
+        </div>
+      </div>
+    </div>
+    </div><!-- end row 1 -->
+
+    <!-- Mobile selected langs strip -->
+    <div id="selectedLangsStripMobile" class="flex flex-wrap items-center gap-2 min-h-[28px]">
+      <span class="empty-state"></span>
     </div>
   </div>
 
@@ -1441,13 +1545,13 @@ kbd:hover{
         <option value="media">Media</option>
         <option value="other">Other</option>
       </select>
-      <select id="complexityFilter" aria-label="Filter by complexity" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="complexityFilter" aria-label="Filter by complexity" class="flex-1 md:flex-none bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600 px-2 py-2">
         <option value="all">Complexity: All</option>
         <option value="beginner">Beginner</option>
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
-      <select id="sortSelect" aria-label="Sort organizations" class="bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600">
+      <select id="sortSelect" aria-label="Sort organizations" class="flex-1 md:flex-none bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600 px-2 py-2">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
         <option value="years-asc">Years (Low-High)</option>
@@ -1455,9 +1559,9 @@ kbd:hover{
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
-      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
+      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-3 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
         <span class="material-symbols-outlined text-sm">filter_alt_off</span>
-        Clear Filters
+        <span class="hidden sm:inline">Clear Filters</span>
       </button>
     </div>
   </div>
@@ -2557,6 +2661,141 @@ kbd:hover{
     applyFilters();
   };
 
+  // ── Mobile Filter & Language Dropdown Logic ──────────────────────────────
+  globalThis.toggleMobileFilterDropdown = function() {
+    const panel = document.getElementById('mobileFilterPanel');
+    const chevron = document.getElementById('mobileFilterChevron');
+    if (!panel) return;
+    const isOpen = !panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', isOpen);
+    if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    // close lang panel if open
+    document.getElementById('mobileLangPanel')?.classList.add('hidden');
+    const lc = document.getElementById('mobileLangChevron');
+    if (lc) lc.style.transform = '';
+  };
+
+  globalThis.toggleMobileLangDropdown = function() {
+    const panel = document.getElementById('mobileLangPanel');
+    const chevron = document.getElementById('mobileLangChevron');
+    if (!panel) return;
+    const isOpen = !panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', isOpen);
+    if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    // close filter panel if open
+    document.getElementById('mobileFilterPanel')?.classList.add('hidden');
+    const fc = document.getElementById('mobileFilterChevron');
+    if (fc) fc.style.transform = '';
+  };
+
+  // Close mobile dropdowns when clicking outside
+  document.addEventListener('click', function(e) {
+    const filterWrap = document.getElementById('mobileFilterDropdownWrap');
+    const langWrap = document.getElementById('mobileLangDropdownWrap');
+    if (filterWrap && !filterWrap.contains(e.target)) {
+      document.getElementById('mobileFilterPanel')?.classList.add('hidden');
+      const fc = document.getElementById('mobileFilterChevron');
+      if (fc) fc.style.transform = '';
+    }
+    if (langWrap && !langWrap.contains(e.target)) {
+      document.getElementById('mobileLangPanel')?.classList.add('hidden');
+      const lc = document.getElementById('mobileLangChevron');
+      if (lc) lc.style.transform = '';
+    }
+  });
+
+  // Mobile chip toggle — mirrors the real filter-chip
+  globalThis.toggleMobileChip = function(mobileBtn) {
+    const targetId = mobileBtn.dataset.mobileChip;
+    const realChip = document.getElementById(targetId);
+    // Toggle the real chip (triggers existing filter logic)
+    if (realChip) realChip.click();
+    // Update mobile button visual state
+    const isActive = realChip ? realChip.classList.contains('bg-orange-600') : false;
+    mobileBtn.classList.toggle('bg-orange-600', isActive);
+    mobileBtn.classList.toggle('text-white', isActive);
+    // Update label on the trigger button
+    syncMobileFilterLabel();
+  };
+
+  function syncMobileFilterLabel() {
+    const activeChips = document.querySelectorAll('.filter-chip.bg-orange-600');
+    const label = document.getElementById('mobileFilterLabel');
+    if (!label) return;
+    if (activeChips.length === 0) {
+      label.textContent = 'Filters';
+    } else {
+      label.textContent = `Filters (${activeChips.length})`;
+    }
+    // Also sync mobile button states
+    document.querySelectorAll('.mobile-filter-option').forEach(btn => {
+      const targetId = btn.dataset.mobileChip;
+      const realChip = document.getElementById(targetId);
+      const isActive = realChip?.classList.contains('bg-orange-600') || false;
+      btn.classList.toggle('bg-orange-600', isActive);
+      btn.classList.toggle('text-white', isActive);
+    });
+  }
+
+  // Mobile language pill toggle — reuses existing selectedLanguages set + applyFilters
+  globalThis.toggleMobileLangPill = function(btn) {
+    const lang = btn.dataset.lang;
+    if (!lang) return;
+    const isActive = btn.classList.toggle('active');
+    btn.style.borderColor = isActive ? '#9d4300' : '';
+    btn.style.color = isActive ? '#9d4300' : '';
+    btn.style.background = isActive ? '#fff7ed' : '';
+    if (isActive) selectedLanguages.add(lang);
+    else selectedLanguages.delete(lang);
+    // Also sync the desktop pill
+    const desktopPill = document.querySelector(`.pill[data-lang="${lang}"]`);
+    if (desktopPill) {
+      desktopPill.classList.toggle('active', isActive);
+      desktopPill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    }
+    renderSelectedLanguages();
+    syncMobileLangLabel();
+    applyFilters();
+  };
+
+  function syncMobileLangLabel() {
+    const label = document.getElementById('mobileLangLabel');
+    if (!label) return;
+    label.textContent = selectedLanguages.size > 0 ? `Languages (${selectedLanguages.size})` : 'Languages';
+  }
+
+  // Keep mobile strip in sync with renderSelectedLanguages
+  const _origRender = renderSelectedLanguages;
+  renderSelectedLanguages = function() {
+    _origRender();
+    // Sync mobile strip
+    const mobileStrip = document.getElementById('selectedLangsStripMobile');
+    if (mobileStrip) {
+      const mainStrip = document.getElementById('selectedLangsStrip');
+      mobileStrip.innerHTML = mainStrip ? mainStrip.innerHTML : '';
+    }
+    syncMobileLangLabel();
+    syncMobileFilterLabel();
+    // Sync mobile lang pill visuals
+    document.querySelectorAll('.mobile-lang-pill').forEach(btn => {
+      const lang = btn.dataset.lang;
+      const isActive = selectedLanguages.has(lang);
+      btn.style.borderColor = isActive ? '#9d4300' : '';
+      btn.style.color = isActive ? '#9d4300' : '';
+      btn.style.background = isActive ? '#fff7ed' : '';
+      btn.classList.toggle('active', isActive);
+    });
+  };
+
+  // Sync mobile toggle with real matchAllLanguagesToggle
+  document.getElementById('matchAllLanguagesToggleMobile')?.addEventListener('change', function(e) {
+    const realToggle = document.getElementById('matchAllLanguagesToggle');
+    if (realToggle) {
+      realToggle.checked = e.target.checked;
+      realToggle.dispatchEvent(new Event('change'));
+    }
+  });
+
   function createDefaultMentorEntry(org) {
     return {
       org: org.name,
@@ -3212,9 +3451,8 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       
       card.innerHTML = `
         <div class="flex justify-between items-start mb-4">
-          <div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" />
-            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
+          <div class="w-14 h-14 flex-shrink-0 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
+            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" width="56" height="56" />            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
@@ -3295,6 +3533,24 @@ btn.__orgListenerAttached = true;
     });
   }
 
+  function showToast(msg) {
+    let t = document.getElementById('compareToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'compareToast';
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      t.setAttribute('aria-atomic', 'true');
+      t.className = 'compare-toast';
+      t.style.opacity = '0';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    clearTimeout(t._hideTimeout);
+    requestAnimationFrame(() => requestAnimationFrame(() => { t.style.opacity = '1'; }));
+    t._hideTimeout = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+  }
+
   function toggleCompare(e, name) {
     if (e) e.stopPropagation();
     const idx = compareList.indexOf(name);
@@ -3302,14 +3558,13 @@ btn.__orgListenerAttached = true;
       compareList.splice(idx, 1);
     } else {
       if (compareList.length >= 3) {
-        alert("You can only compare up to 3 organizations at a time.");
+        showToast("You can only compare up to 3 organizations at a time.");
         return;
       }
       compareList.push(name);
     }
     renderOrgs(true);
     renderCompare();
-
     document.dispatchEvent(new CustomEvent('compareListChanged'));
   }
 
@@ -4258,6 +4513,21 @@ if(org.ideas){
     filteredOrgs = [...ORGS];
     renderOrgs(true);
     applyFilters(); // to reset URL params
+
+    // Reset mobile dropdowns
+    document.getElementById('mobileFilterLabel') && (document.getElementById('mobileFilterLabel').textContent = 'Filters');
+    document.getElementById('mobileLangLabel') && (document.getElementById('mobileLangLabel').textContent = 'Languages');
+    document.querySelectorAll('.mobile-filter-option').forEach(btn => {
+      btn.classList.remove('bg-orange-600', 'text-white');
+    });
+    document.querySelectorAll('.mobile-lang-pill').forEach(btn => {
+      btn.classList.remove('active');
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    });
+    const mobToggle = document.getElementById('matchAllLanguagesToggleMobile');
+    if (mobToggle) mobToggle.checked = false;
   };
 
   // Shared search function to handle filter application, with optional badge tracking
@@ -4892,7 +5162,7 @@ if(org.ideas){
   
   class SafeHTMLString extends String {}
   SafeHTMLString.prototype.__isSafeHTML = true;
-
+ 
   function safeHTML(strings, ...values) {
     let result = '';
     for (let i = 0; i < strings.length; i++) {

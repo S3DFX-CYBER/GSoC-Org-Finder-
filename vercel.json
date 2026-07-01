@@ -7,7 +7,6 @@
   "routes": [
     { "src": "/app/(.*)", "dest": "/index.html" },
     { "src": "/app", "dest": "/index.html" },
-    { "src": "/api/github", "dest": "/api/github.js" },
     {
       "src": "/api/(.*)",
       "headers": {
@@ -23,7 +22,7 @@
       },
       "continue": true
     },
-    { "src": "/", "dest": "/landing.html" },
-    { "handle": "filesystem" }
+    { "src": "/api/github", "dest": "/api/github.js" },
+    { "src": "/", "dest": "/landing.html" }
   ]
 }

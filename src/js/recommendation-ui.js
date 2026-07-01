@@ -11,7 +11,7 @@ let lastRecommendations = [];
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
  */
 async function analyzeProfile(username, resume, options = {}) {
-  const { signal, count = 6 } = options;
+  const { signal, count = Infinity } = options;
   let githubProfile = null;
   let skills = [];
 
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setAnalysisStateUI(true);
     try {
-      const recommendations = await analyzeProfile(username, resume, { signal, count: Infinity });
+      const recommendations = await analyzeProfile(username, resume, { signal });
       
       if (requestId !== currentRequestId) return;
       
@@ -222,9 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const showMoreBtn = target.closest('#btnShowMoreRecs');
       if (showMoreBtn) {
+        const prevCount = visibleCount;
         visibleCount += 6;
         renderRecommendations(lastRecommendations.slice(0, visibleCount));
-        resultsContainer.querySelector('#btnShowMoreRecs')?.focus();
+        const newBtn = resultsContainer.querySelector('#btnShowMoreRecs');
+        if (newBtn) {
+          newBtn.focus();
+        } else {
+          const cards = resultsContainer.querySelectorAll('article[data-org-name]');
+          cards[prevCount]?.focus();
+        }
         return;
       }
 

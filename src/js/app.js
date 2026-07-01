@@ -2015,15 +2015,16 @@ function filterIssues() {
   // 'Java' to also return JavaScript issues because 'javascript'.includes('java')
   // is true. normalizeTag() is used for both the key lookup and the alias mapping
   // so the comparison is consistent with the rest of the codebase.
+  const normLang = lang.trim().toLowerCase();
   const langAliases = lang
-    ? (LANGUAGE_MAP[Object.keys(LANGUAGE_MAP).find(k => normalizeTag(k) === normalizeTag(lang)) || ''] || [lang])
-        .map(normalizeTag)
+    ? (LANGUAGE_MAP[Object.keys(LANGUAGE_MAP).find(k => k.trim().toLowerCase() === normLang) || ''] || [lang])
+        .map(t => t.trim().toLowerCase())
     : [];
 
   filteredIssues = allIssues.filter(iss => {
     if (cat && iss.orgCat !== cat) return false;
     if (lang) {
-      const orgTagsNormalized = (iss.orgTags || []).map(normalizeTag);
+      const orgTagsNormalized = (iss.orgTags || []).map(t => t.trim().toLowerCase());
       if (!langAliases.some(alias => orgTagsNormalized.includes(alias))) return false;
     }
     if (search && !iss.title.toLowerCase().includes(search) && !iss.org.toLowerCase().includes(search)) return false;

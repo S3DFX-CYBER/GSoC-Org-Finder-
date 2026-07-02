@@ -1959,26 +1959,27 @@
     "ideasUrl": "https://wiki.gnuradio.org/index.php/GSoCIdeas",
     "channels": [
         {
-            "type": "matrix",
-            "name": "#gnuradio:gnuradio.org",
+            "type": "Matrix",
+            "label": "#gnuradio:gnuradio.org",
             "url": "https://chat.gnuradio.org/"
         },
         {
-            "type": "irc",
-            "name": "#gnuradio",
-            "url": "ircs://irc.libera.chat/gnuradio"
+            "type": "IRC",
+            "label": "#gnuradio",
+            "url": "https://web.libera.chat/?channel=#gnuradio"
         }
     ],
     "mentors": [
-        { "name": "Josh Morman", "github": "jmorman" },
-        { "name": "Marcus Müller", "github": "marcusmueller" },
-        { "name": "Cyrille Morin", "github": "cyrille-morin" },
-        { "name": "Luigi Cruz", "github": "luigi-cruz" },
-        { "name": "Håkon Vågsether", "github": "hakonvags" }
+        { "name": "Josh Morman", "github": "jmorman", "githubUrl": "https://github.com/jmorman" },
+        { "name": "Marcus Müller", "github": "marcusmueller", "githubUrl": "https://github.com/marcusmueller" },
+        { "name": "Cyrille Morin", "github": "cyrille-morin", "githubUrl": "https://github.com/cyrille-morin" },
+        { "name": "Luigi Cruz", "github": "luigi-cruz", "githubUrl": "https://github.com/luigi-cruz" },
+        { "name": "Håkon Vågsether", "github": "hakonvags", "githubUrl": "https://github.com/hakonvags" }
     ],
     "mailingLists": [
         {
-            "name": "discuss-gnuradio",
+            "type": "Mailing list",
+            "label": "discuss-gnuradio",
             "url": "https://lists.gnu.org/mailman/listinfo/discuss-gnuradio",
             "email": "discuss-gnuradio@gnu.org"
         }

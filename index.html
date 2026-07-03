@@ -1201,9 +1201,9 @@ kbd:hover{
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 md:gap-8">
+    <div class="flex items-center gap-3 sm:gap-4 lg:gap-8">
       <!-- Hamburger menu button (mobile only) -->
-      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex md:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <button id="menuBtn" onclick="toggleMenu()" class="inline-flex lg:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
         <span class="material-symbols-outlined text-zinc-600">menu</span>
       </button>
       
@@ -1216,7 +1216,7 @@ kbd:hover{
         <span class="text-primary italic">Org Finder</span>
       </span>
       </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
@@ -1275,7 +1275,7 @@ kbd:hover{
 </header>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobileMenu" class="fixed inset-0 z-50 hidden md:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div id="mobileMenu" class="fixed inset-0 z-50 hidden lg:hidden" style="z-index:60;" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMenu()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleMenu()" tabindex="0" role="button" aria-label="Close menu"></div>
   
@@ -1355,12 +1355,14 @@ kbd:hover{
           </svg>
           <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center gap-2 transition-all duration-300">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
-            <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
-            <button id="hero-search-submit" type="button" class="mr-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary/30">
-              Search
-            </button>
+            <input id="hero-search" type="text" placeholder="Quick search… (Ctrl+K)"
+              aria-label="Quick search GSoC 2026 organizations" autocomplete="off"
+              role="combobox" aria-expanded="false" aria-controls="heroSearchResults" aria-autocomplete="list"
+              class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
           </div>
         </div>
+        <!-- Typeahead results dropdown — anchored to .search-bar-container (position:relative) -->
+        <div id="heroSearchResults" role="listbox" aria-label="Organization suggestions"></div>
       </div>
       <!-- Surprise Button -->
       <div class="mb-8 sm:mb-10">
@@ -1533,7 +1535,7 @@ kbd:hover{
   <!-- ═══════════════════ ALL 4 FILTER DROPDOWNS + CLEAR ═══════════════════ -->
   <div class="flex flex-wrap items-center justify-between gap-3 mb-8">
     <p class="font-label text-xs uppercase tracking-widest text-zinc-500">Showing <strong id="orgCount" data-org-count>184</strong> of <span data-org-total>184</span> organizations</p>
-    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+    <div class="grid grid-cols-2 gap-x-3 gap-y-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
       <select id="categoryFilter" aria-label="Filter by category" class="flex-1 md:flex-none bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600 px-2 py-2">
         <option value="all">Categories: All</option>
         <option value="web">Web</option>
@@ -1552,6 +1554,12 @@ kbd:hover{
         <option value="intermediate">Intermediate</option>
         <option value="advanced">Advanced</option>
       </select>
+      <div class="relative flex items-center">
+        <span class="material-symbols-outlined absolute left-2 text-zinc-400 pointer-events-none select-none" style="font-size:15px">search</span>
+        <input id="orgSearchInput" type="text" placeholder="Search orgs…"
+          aria-label="Search organizations in grid"
+          class="bg-surface-container-low rounded-xl text-xs font-medium pl-7 pr-3 py-[5px] border-none focus:ring-2 focus:ring-zinc-500 focus:outline-none text-zinc-600 dark:text-zinc-400 w-full sm:w-44" />
+      </div>
       <select id="sortSelect" aria-label="Sort organizations" class="flex-1 md:flex-none bg-surface-container-low border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-500 focus:outline-none cursor-pointer text-zinc-600 px-2 py-2">
         <option value="alpha">Sort: A-Z</option>
         <option value="years-desc">Years (High-Low)</option>
@@ -1560,7 +1568,7 @@ kbd:hover{
         <option value="stars">GitHub Stars</option>
         <option value="gfi">Good First Issues</option>
       </select>
-      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="px-3 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1" title="Clear all search and filters">
+      <button id="clearFiltersBtn" onclick="clearAllFilters()" class="col-span-2 justify-self-start px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors flex items-center gap-1 sm:col-auto" title="Clear all search and filters">
         <span class="material-symbols-outlined text-sm">filter_alt_off</span>
         <span class="hidden sm:inline">Clear Filters</span>
       </button>
@@ -2264,6 +2272,9 @@ kbd:hover{
     globalThis.ORGS = [];
   }
 
+  // Hero Quick-Search helpers + wiring now live in src/js/hero-search.js
+  // (single source of truth, self-initializes on DOMContentLoaded).
+
   // ══════════════════════════════════════════════
   // ORG COUNT INITIALIZATION
   // ══════════════════════════════════════════════
@@ -2318,7 +2329,7 @@ kbd:hover{
   // ══════════════════════════════════════════════
   // MOBILE MENU
   // ══════════════════════════════════════════════
-  const desktopNavMediaQuery = globalThis.matchMedia('(min-width: 768px)');
+  const desktopNavMediaQuery = globalThis.matchMedia('(min-width: 1024px)');
 
   function openMobileMenu(){
     const menu = document.getElementById('mobileMenu');
@@ -4477,6 +4488,8 @@ if(org.ideas){
 
   globalThis.clearAllFilters = function() {
     document.getElementById('searchInput').value = '';
+    const orgSI = document.getElementById('orgSearchInput');
+    if (orgSI) orgSI.value = '';
     document.getElementById('categoryFilter').value = 'all';
     document.getElementById('complexityFilter').value = 'all';
     if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = 'alpha';
@@ -4543,6 +4556,10 @@ if(org.ideas){
   document.getElementById('searchInput').addEventListener('input', (e) => {
     performSearch(e.target.value, false);
   });
+  document.getElementById('orgSearchInput')?.addEventListener('input', (e) => {
+    const si = document.getElementById('searchInput');
+    if (si) { si.value = e.target.value; applyFilters(); }
+  });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
     if (typeof BadgeSystem !== 'undefined') {
@@ -4578,30 +4595,7 @@ if(org.ideas){
   // Surprise button event listener
   document.getElementById('surpriseBtn')?.addEventListener('click', openRandomOrg);
 
-  // Hero Search Link
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    const heroSearchSubmit = () => {
-      document.getElementById('searchInput').value = heroSearch.value;
-      performSearch(heroSearch.value, true);
-      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    heroSearch.addEventListener('input', (e) => {
-      document.getElementById('searchInput').value = e.target.value;
-      performSearch(e.target.value, false);
-    });
-
-    heroSearch.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        heroSearchSubmit();
-      }
-    });
-
-    document.getElementById('hero-search-submit')?.addEventListener('click', heroSearchSubmit);
-  }
+  // Hero Quick-Search typeahead is wired in src/js/hero-search.js.
 
   // Quick-filter chips — mutually exclusive with each other, but additive with
   // language pills, search, and dropdown filters. applyFilters() reads activeChip.
@@ -5112,7 +5106,7 @@ if(org.ideas){
     }
 
     setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
+    setElValue('orgSearchInput', params.get('q'));
     setElValue('categoryFilter', params.get('cat'));
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
@@ -5327,9 +5321,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) {
-    return;
-}
+  // Ctrl/Cmd+K is owned by src/js/hero-search.js (single source of truth).
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
   const active = document.activeElement;
 if (
     active &&
@@ -5414,6 +5407,7 @@ if(e.key.toLowerCase()==='r'){
 
 });
 </script>
+<script src="src/js/hero-search.js"></script>
 <script src="src/js/badges-mvp.js"></script>
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>

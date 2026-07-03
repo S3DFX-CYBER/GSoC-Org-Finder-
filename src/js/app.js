@@ -714,6 +714,7 @@ function handleNavigationUp(e) {
 }
 
 function handleGlobalKeydown(e) {
+  // Ctrl/Cmd+K is owned by src/js/hero-search.js (single source of truth).
   if (e.key === 'Escape' && handleEscapeKey(e)) return;
 
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
@@ -1074,6 +1075,9 @@ function searchComparator(a, b, search, sort) {
   return applySecondarySort(a, b, sort);
 }
 
+// Hero Quick-Search helpers + wiring now live in src/js/hero-search.js
+// (single source of truth, shared by index.html and the test suite).
+
 function applyFilters() {
   const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
   const categoryValue = document.getElementById('categoryFilter')?.value || 'all';
@@ -1284,6 +1288,8 @@ if (typeof document !== 'undefined' && document.addEventListener) {
 globalThis.clearAllFilters = function () {
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.value = '';
+  const orgSearchInput = document.getElementById('orgSearchInput');
+  if (orgSearchInput) orgSearchInput.value = '';
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) heroSearch.value = '';
 
@@ -2407,7 +2413,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     setElValue('searchInput', params.get('q'));
-    setElValue('hero-search', params.get('q'));
+    setElValue('orgSearchInput', params.get('q'));
     setElValue('categoryFilter', params.get('cat'));
     setElValue('complexityFilter', params.get('comp'));
     setElValue('sortSelect', params.get('sort'));
@@ -2464,6 +2470,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Wire up filter event listeners
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('orgSearchInput')?.addEventListener('input', (e) => {
+    const si = document.getElementById('searchInput');
+    if (si) { si.value = e.target.value; applyFilters(); }
+  });
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
@@ -2508,20 +2518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sync hero-search
-  const heroSearch = document.getElementById('hero-search');
-  if (heroSearch) {
-    heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
-    heroSearch.addEventListener('input', (e) => {
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
-      }
-    });
-  }
+  // Hero Quick-Search typeahead is wired in src/js/hero-search.js.
 
   // Quick chips listeners
   document.querySelectorAll('.filter-chip').forEach(chip => {

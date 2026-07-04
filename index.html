@@ -5373,7 +5373,6 @@ document.addEventListener('keydown', (e) => {
   const proposalModalOpen =
     document.getElementById('proposalModal')?.classList.contains('open');
   const anyModalOpen = helpModalOpen || orgModalOpen || proposalModalOpen;
-
   // Focus search bar — works alongside Ctrl/Cmd but not while already typing or a modal is open
   if (!anyModalOpen && !isTyping && (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'))) {
     e.preventDefault();
@@ -5381,13 +5380,13 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   // Jump to Timeline section
-  if (!anyModalOpen && !isTyping && (e.metaKey || e.ctrlKey) && e.key === '1') {
+  if (!anyModalOpen && !isTyping && e.altKey && e.key === '1') {
     e.preventDefault();
     document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
   // Jump to Organizations section
-  if (!anyModalOpen && !isTyping && (e.metaKey || e.ctrlKey) && e.key === '2') {
+  if (!anyModalOpen && !isTyping && e.altKey && e.key === '2') {
     e.preventDefault();
     document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
@@ -5399,7 +5398,7 @@ document.addEventListener('keydown', (e) => {
     if (isTyping) {
         return;
     }
-if (anyModalOpen) {
+if (anyModalOpen && e.key !== 'Escape') {
   return;
 }
 

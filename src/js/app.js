@@ -731,12 +731,12 @@ function handleGlobalKeydown(e) {
     document.getElementById('hero-search')?.focus();
     return;
   }
-  if (!anyModalOpen && (e.metaKey || e.ctrlKey) && e.key === '1') {
+  if (!anyModalOpen && e.altKey && e.key === '1') {
     e.preventDefault();
     document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
-  if (!anyModalOpen && (e.metaKey || e.ctrlKey) && e.key === '2') {
+  if (!anyModalOpen && e.altKey && e.key === '2') {
     e.preventDefault();
     document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;

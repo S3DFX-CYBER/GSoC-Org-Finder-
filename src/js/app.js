@@ -721,7 +721,7 @@ function handleGlobalKeydown(e) {
   const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open');
 
   const n = filteredOrgs.length;
-  if (e.key === '?') {
+  if (!anyModalOpen && e.key === '?') {
     e.preventDefault();
     openModalElement('helpModal');
     return;

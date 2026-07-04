@@ -718,23 +718,25 @@ function handleGlobalKeydown(e) {
 
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
+  const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open');
+
   const n = filteredOrgs.length;
   if (e.key === '?') {
     e.preventDefault();
     openModalElement('helpModal');
     return;
   }
-  if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
+  if (!anyModalOpen && (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'))) {
     e.preventDefault();
     document.getElementById('hero-search')?.focus();
     return;
   }
-  if ((e.metaKey || e.ctrlKey) && e.key === '1') {
+  if (!anyModalOpen && (e.metaKey || e.ctrlKey) && e.key === '1') {
     e.preventDefault();
     document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
-  if ((e.metaKey || e.ctrlKey) && e.key === '2') {
+  if (!anyModalOpen && (e.metaKey || e.ctrlKey) && e.key === '2') {
     e.preventDefault();
     document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;

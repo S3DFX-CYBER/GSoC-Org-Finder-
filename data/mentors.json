@@ -1956,14 +1956,38 @@
   },
   "GNU Radio": {
     "org": "GNU Radio",
-    "ideasUrl": "https://wiki.gnuradio.org/index.php/GSoC",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
-    "lastFetched": "2026-05-09T16:09:12.548Z"
-  },
+    "ideasUrl": "https://wiki.gnuradio.org/index.php/GSoCIdeas",
+    "channels": [
+        {
+            "type": "Matrix",
+            "label": "#gnuradio:gnuradio.org",
+            "url": "https://chat.gnuradio.org/"
+        },
+        {
+            "type": "IRC",
+            "label": "#gnuradio",
+            "url": "https://web.libera.chat/#gnuradio"
+        }
+    ],
+    "mentors": [
+        { "name": "Josh Morman", "github": "jmorman", "githubUrl": "https://github.com/jmorman" },
+        { "name": "Marcus Müller", "github": "marcusmueller", "githubUrl": "https://github.com/marcusmueller" },
+        { "name": "Cyrille Morin", "github": "cyrille-morin", "githubUrl": "https://github.com/cyrille-morin" },
+        { "name": "Luigi Cruz", "github": "luigi-cruz", "githubUrl": "https://github.com/luigi-cruz" },
+        { "name": "Håkon Vågsether", "github": "hakonvags", "githubUrl": "https://github.com/hakonvags" }
+    ],
+    "mailingLists": [
+        {
+            "type": "Mailing list",
+            "label": "discuss-gnuradio",
+            "url": "https://lists.gnu.org/mailman/listinfo/discuss-gnuradio",
+            "email": "discuss-gnuradio@gnu.org"
+        }
+    ],
+    "tip": "Join #gnuradio on Matrix (chat.gnuradio.org) or IRC (Libera.Chat). Post on the mailing list discuss-gnuradio@gnu.org. Do not contact mentors off-list.",
+    "status": "ok",
+    "lastFetched": "2026-07-02T00:00:00.000Z"
+},
   "gprMax": {
     "org": "gprMax",
     "ideasUrl": "https://github.com/gprMax/GSoC/blob/main/project-ideas-2026.md",

@@ -724,9 +724,19 @@ function handleGlobalKeydown(e) {
     openModalElement('helpModal');
     return;
   }
-  if (e.key === '/') {
+  if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
     e.preventDefault();
-    document.getElementById('searchInput')?.focus();
+    document.getElementById('hero-search')?.focus();
+    return;
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === '1') {
+    e.preventDefault();
+    document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === '2') {
+    e.preventDefault();
+    document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
 

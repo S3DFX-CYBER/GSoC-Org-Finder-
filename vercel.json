@@ -7,6 +7,7 @@
   "routes": [
     { "src": "/app/(.*)", "dest": "/index.html" },
     { "src": "/app", "dest": "/index.html" },
+    { "src": "/contributing", "dest": "/contributing.html" },
     {
       "src": "/api/(.*)",
       "headers": {

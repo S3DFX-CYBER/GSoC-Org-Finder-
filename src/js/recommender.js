@@ -14,6 +14,8 @@ function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) 
     console.error("ORGS is not defined.");
     return [];
   }
+  
+  const safeCount = (typeof count === 'number' && !isNaN(count) && count > 0) ? count : 6;
 
   const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();
@@ -35,7 +37,7 @@ function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) 
   );
   
   scoredOrgs.sort((a, b) => b.rawScore - a.rawScore);
-  return scoredOrgs.slice(0, count);
+  return scoredOrgs.slice(0, safeCount);
 }
 
 function calculateLanguageScore(userLanguages, orgTags, orgCat, matchedSkills, matchReasons) {

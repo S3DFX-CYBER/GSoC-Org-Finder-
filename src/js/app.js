@@ -664,7 +664,7 @@ function updateCardFocus() {
 
 // Global keydown helper functions to manage Cognitive Complexity
 function handleEscapeKey(e) {
-  const activeModal = document.querySelector('.modal-bg.open, #mobileMenu:not(.hidden), .modal-bg.compare-bg.open');
+  const activeModal = document.querySelector('.modal-bg.open, #mobileMenu:not(.hidden), .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
   if (activeModal) {
     e.preventDefault();
     closeModalElement(activeModal.id);
@@ -719,7 +719,10 @@ function handleGlobalKeydown(e) {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
   const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
+  const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
+if (anyModalOpen) return;
 
+const n = filteredOrgs.length;
   const n = filteredOrgs.length;
   if (!anyModalOpen && e.key === '?') {
     e.preventDefault();

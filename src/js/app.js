@@ -104,6 +104,51 @@ const CONTACT_TIPS = {
   'Mailing list': "Send a short intro email with your background and the idea you're interested in."
 };
 
+const TECH_ICON_MAP = {
+  python: 'code', javascript: 'javascript', js: 'javascript', typescript: 'code', ts: 'code',
+  java: 'code', 'c++': 'code', cpp: 'code', c: 'code', 'c#': 'code', csharp: 'code',
+  rust: 'code', go: 'code', golang: 'code', ruby: 'code', scala: 'code', kotlin: 'code',
+  swift: 'code', php: 'code', haskell: 'code', lua: 'code', perl: 'code', julia: 'code',
+  dart: 'code', elixir: 'code', clojure: 'code', fortran: 'code', ocaml: 'code', r: 'code',
+  shell: 'terminal', bash: 'terminal', 'shell script': 'terminal',
+  react: 'code', angular: 'code', vue: 'code', vuejs: 'code', svelte: 'code',
+  django: 'code', flask: 'code', fastapi: 'code', spring: 'code', 'spring boot': 'code',
+  'node.js': 'code', nodejs: 'code', express: 'code', nextjs: 'code', 'next.js': 'code',
+  tensorflow: 'code', pytorch: 'code', keras: 'code', 'scikit-learn': 'code',
+  numpy: 'code', pandas: 'code', matplotlib: 'code',
+  docker: 'terminal', kubernetes: 'terminal', linux: 'terminal',
+  android: 'code', ios: 'code', flutter: 'code', 'react native': 'code',
+  mysql: 'database', postgresql: 'database', mongodb: 'database', sql: 'database',
+  redis: 'database', elasticsearch: 'database', bigdata: 'database', 'big data': 'database',
+  git: 'code', github: 'code', html: 'code', css: 'code',
+  'machine learning': 'neurology', ai: 'neurology', ml: 'neurology',
+  'data science': 'bar_chart', security: 'shield', cybersecurity: 'shield',
+  '3d': '3d_rotation', opengl: '3d_rotation', graphics: '3d_rotation',
+  audio: 'music_note', video: 'smart_display',
+  aws: 'cloud', azure: 'cloud', gcp: 'cloud', 'google cloud': 'cloud',
+  testing: 'bug_report', qa: 'bug_report',
+  api: 'api', rest: 'api', graphql: 'api',
+};
+
+function normalizeTag(tag) {
+  if (!tag) return '';
+  const mapping = {
+    'nodejs': 'node.js', 'node.js': 'node.js',
+    'next.js': 'nextjs', 'nextjs': 'nextjs',
+    'reactjs': 'react', 'vuejs': 'vue.js', 'vue.js': 'vue.js',
+    'c#': 'csharp', 'csharp': 'csharp',
+    'golang': 'go', 'go': 'go',
+    'rails': 'ruby on rails', 'ruby on rails': 'ruby on rails',
+    'springboot': 'springboot', 'spring boot': 'springboot',
+    'meteor': 'meteor.js', 'meteor.js': 'meteor.js',
+    'angularjs': 'angularjs', 'angular': 'angularjs',
+    'js': 'javascript', 'ts': 'typescript',
+    'cpp': 'c++', 'c++': 'c++',
+    'shell': 'shell script', 'bash': 'shell script', 'shell script': 'shell script',
+  };
+  return mapping[tag.toLowerCase().trim()] || tag.toLowerCase().trim();
+}
+
 // ══════════════════════════════════════════════
 // THEME & FOUC PROTECTION
 // ══════════════════════════════════════════════
@@ -329,6 +374,13 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function renderTechTag(tag) {
+  if (!tag || typeof tag !== 'string' || !tag.trim()) return '';
+  const normalized = normalizeTag(tag);
+  const icon = TECH_ICON_MAP[normalized] || 'code';
+  return `<span class="tech-tag"><span class="material-symbols-outlined tech-tag-icon">${icon}</span>${escapeHtml(tag.trim())}</span>`;
 }
 
 // Centralized DOM-Safe Dynamic Rendering

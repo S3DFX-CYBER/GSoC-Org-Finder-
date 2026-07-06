@@ -78,6 +78,16 @@ function handleBookmarkAction(e, btn) {
   }
 }
 
+function updateCompareVisualState(btn, card, isNowComparing) {
+  btn.classList.toggle('text-primary', isNowComparing);
+  btn.classList.toggle('text-zinc-400', !isNowComparing);
+  btn.innerHTML = isNowComparing
+    ? '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing'
+    : '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
+  card?.classList.toggle('ring-2', isNowComparing);
+  card?.classList.toggle('ring-primary/30', isNowComparing);
+}
+
 function handleCompareAction(e, btn, card) {
   e.stopPropagation();
   const name = btn.dataset.compareOrg;
@@ -90,17 +100,7 @@ function handleCompareAction(e, btn, card) {
   const currentCompareList = globalThis.compareList || [];
   const isNowComparing = currentCompareList.includes(name);
 
-  if (isNowComparing) {
-     btn.classList.add('text-primary');
-     btn.classList.remove('text-zinc-400');
-     btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing';
-     card.classList.add('ring-2', 'ring-primary/30');
-  } else {
-     btn.classList.remove('text-primary');
-     btn.classList.add('text-zinc-400');
-     btn.innerHTML = '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
-     card.classList.remove('ring-2', 'ring-primary/30');
-  }
+  updateCompareVisualState(btn, card, isNowComparing);
 }
 
 function handleCardActivation(card) {
@@ -124,21 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMsg = document.getElementById('aiErrorMsg');
   let visibleCount = 6;
 
- document.addEventListener('compareListChanged', () => {
+document.addEventListener('compareListChanged', () => {
     const currentCompareList = globalThis.compareList || [];
     resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
       const card = btn.closest('[data-org-name]');
       const name = btn.dataset.compareOrg;
       const isNowComparing = currentCompareList.includes(name);
-      btn.classList.toggle('text-primary', isNowComparing);
-      btn.classList.toggle('text-zinc-400', !isNowComparing);
-      btn.innerHTML = isNowComparing
-        ? '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing'
-        : '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
-      card?.classList.toggle('ring-2', isNowComparing);
-      card?.classList.toggle('ring-primary/30', isNowComparing);
+      updateCompareVisualState(btn, card, isNowComparing);
     });
-  });
+});
 
   // Handle file upload
   if (fileUpload) {

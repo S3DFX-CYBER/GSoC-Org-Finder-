@@ -3,11 +3,13 @@
 /* global ORGS */
 
 /**
- * Retrieves the top 6 recommended organizations based on skills and profile.
+ * Retrieves recommended organizations based on skills and profile.
  * 
  * @param {Array<string>} resumeSkills - Unique set of extracted resume skills
  * @param {Object|null} githubProfile - Optional GitHub profile metrics
- * @returns {Array<Object>} - Top 6 recommended organizations sorted by score
+ * @param {number} [count=6] - Maximum number of organizations to return.
+ *   Pass Infinity to return all scored orgs. Negative numbers, NaN, null and non numeric values fall back to the default of 6.
+ * @returns {Array<Object>} - Recommended organizations sorted by score
  */
 function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) {
   if (typeof ORGS === 'undefined' || !Array.isArray(ORGS)) {
@@ -15,7 +17,8 @@ function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) 
     return [];
   }
   
-  const safeCount = (typeof count === 'number' && !isNaN(count) && count > 0) ? count : 6;
+  const parsed = Number(count);
+  const safeCount = ( !Number.isNaN(parsed) && parsed > 0) ? parsed : 6;
 
   const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();

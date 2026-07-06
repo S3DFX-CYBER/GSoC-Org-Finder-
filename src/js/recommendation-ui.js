@@ -9,6 +9,7 @@ let lastRecommendations = [];
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
+ * 'count' defaults to Infinity here to fetch full recommendation list client-side.This allows UI to handle subsequent batching and rendering (like the 'Show More' functionality) entirely locally without re running the heavy analytical pipeline even though getRecommendations() inherently defaults to 6.
  */
 async function analyzeProfile(username, resume, options = {}) {
   const { signal, count = Infinity } = options;
@@ -123,10 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMsg = document.getElementById('aiErrorMsg');
   let visibleCount = 6;
 
-  document.addEventListener('compareListChanged',() => {
-    if(lastRecommendations.length){
-      renderRecommendations(lastRecommendations.slice(0, visibleCount));
-    }
+ document.addEventListener('compareListChanged', () => {
+    const currentCompareList = globalThis.compareList || [];
+    resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
+      const card = btn.closest('[data-org-name]');
+      const name = btn.dataset.compareOrg;
+      const isNowComparing = currentCompareList.includes(name);
+      btn.classList.toggle('text-primary', isNowComparing);
+      btn.classList.toggle('text-zinc-400', !isNowComparing);
+      btn.innerHTML = isNowComparing
+        ? '<span class="material-symbols-outlined text-sm">check_circle</span> Comparing'
+        : '<span class="material-symbols-outlined text-sm">compare_arrows</span> Compare';
+      card?.classList.toggle('ring-2', isNowComparing);
+      card?.classList.toggle('ring-primary/30', isNowComparing);
+    });
   });
 
   // Handle file upload
@@ -281,7 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
       <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
                data-org-name="${safeEscapeHtml(o.name)}"
-               data-org-index="${rec.orgIndex}">
+               data-org-index="${rec.orgIndex}"
+               tabindex="-1">
         
         <!-- Match Score Badge -->
         <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">

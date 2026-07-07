@@ -728,6 +728,40 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   flex-wrap: wrap;
 }
 
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.footer-link:hover {
+  color: #18181b !important;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+ .dark .footer-link:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.footer-link .material-symbols-outlined {
+  transition: transform 0.25s ease;
+}
+
+.footer-link:hover .material-symbols-outlined {
+  transform: translateX(2px) scale(1.08);
+  color: inherit;
+}
+
 .social-link {
   display: inline-flex;
   align-items: center;
@@ -776,11 +810,15 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.12), 0 16px 32px rgba(10, 102, 194, 0.28);
 }
 
-.social-link.discord:hover,
-.social-link.discord:focus-visible {
-  background: #5865f2;
-  border-color: #5865f2;
-  box-shadow: 0 0 0 4px rgba(88, 101, 242, 0.12), 0 16px 32px rgba(88, 101, 242, 0.28);
+.dark .social-link.github:hover {
+  background: #ffffff;
+  color: #18181b;
+  border-color: #ffffff;
+}
+.social-link.discord:hover {
+  background: #5865F2;
+  border-color: #5865F2;
+  box-shadow: 0 0 12px rgba(88, 101, 242, 0.5);
 }
 
 .social-link.twitter:hover,

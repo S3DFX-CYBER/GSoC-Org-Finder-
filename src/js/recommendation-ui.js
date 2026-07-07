@@ -9,7 +9,7 @@ let lastRecommendations = [];
 /**
  * Encapsulates the heavy analytical logic into a single async pipe.
  * Moved to outer scope to maximize reuse and minimize closure memory footprint.
- * 'count' defaults to Infinity here to fetch full recommendation list client-side.This allows UI to handle subsequent batching and rendering (like the 'Show More' functionality) entirely locally without re running the heavy analytical pipeline even though getRecommendations() inherently defaults to 6.
+ * Defaults count to Infinity so the full ranked list is fetched once and cached client side allowing ui to render orgs without re running the scoring pipeline.
  */
 async function analyzeProfile(username, resume, options = {}) {
   const { signal, count = Infinity } = options;
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMsg = document.getElementById('aiErrorMsg');
   let visibleCount = 6;
 
-document.addEventListener('compareListChanged', () => {
+  document.addEventListener('compareListChanged', () => {
     const currentCompareList = globalThis.compareList || [];
     resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
       const card = btn.closest('[data-org-name]');
@@ -132,7 +132,7 @@ document.addEventListener('compareListChanged', () => {
       const isNowComparing = currentCompareList.includes(name);
       updateCompareVisualState(btn, card, isNowComparing);
     });
-});
+  });
 
   // Handle file upload
   if (fileUpload) {

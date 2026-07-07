@@ -192,16 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
       resumeText.placeholder = DEFAULT_PLACEHOLDER;
     };
 
-    const readTextResume = (file, token) => {
-      file.text().then(text => {
+    const readTextResume = async (file, token) => {
+      try {
+        const text = await file.text();
         if (isTokenStale(token)) return;
         resumeText.value = text;
-      }).catch(err => {
+      } catch (err) {
         if (isTokenStale(token)) return;
         console.error("File Read Error:", err);
         clearInput(fileUpload);
         showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+      }
     };
 
     fileUpload.addEventListener('change', async (e) => {
@@ -219,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fileType === 'pdf') {
           await parsePdfResume(file, token);
         } else {
-          readTextResume(file, token);
+          await readTextResume(file, token);
         }
       } catch (err) {
         if (isTokenStale(token)) return;

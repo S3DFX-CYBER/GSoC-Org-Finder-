@@ -10,9 +10,13 @@
     "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
     "build:css": "tailwindcss -i ./src/tailwind.css -o ./src/assets/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./src/tailwind.css -o ./src/assets/tailwind.css --watch",
-    "build": "npm run build:css"
+    "build": "npm run build:css",
+    "test": "node --test ./tests",
+    "validate:data": "node agent/scripts/validate-ideas-urls.js && node agent/scripts/validate-mentors.js"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.4",
+    "@tailwindcss/container-queries": "^0.2.3",
     "autoprefixer": "^10.5.0",
     "eslint": "^8.57.0",
     "htmlhint": "^1.1.4",

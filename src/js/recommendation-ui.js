@@ -96,11 +96,8 @@ function handleCompareAction(e, btn, card) {
   // Core engine handles constraints and updates globalThis.compareList synchronously
   toggleCompare(e, name);
   
-  // Read the authoritative application state to govern local visual treatment
-  const currentCompareList = globalThis.compareList || [];
-  const isNowComparing = currentCompareList.includes(name);
-
-  updateCompareVisualState(btn, card, isNowComparing);
+  // Explicitly dispatch so compareListChanged listener syncs all card visual states
+  document.dispatchEvent(new CustomEvent('compareListChanged'));
 }
 
 function handleCardActivation(card) {
@@ -181,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestId = ++currentRequestId;
 
     setAnalysisStateUI(true);
+    
     try {
       const recommendations = await analyzeProfile(username, resume, { signal });
       
@@ -211,6 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Register one central delegate for all user actions triggered inside recommendation container
   if (resultsContainer) {
+    resultsContainer.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest('[data-org-name]');
+      if (card && e.target === card) {
+        e.preventDefault();
+        handleCardActivation(card);
+      }
+    });
+
     resultsContainer.addEventListener('click', (e) => {
       const target = e.target;
       
@@ -225,12 +232,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return handleCompareAction(e, compareBtn, card);
       }
       
+      if (card) {
+        return handleCardActivation(card);
+      }
+
       const showMoreBtn = target.closest('#btnShowMoreRecs');
       if (showMoreBtn) {
         const prevCount = visibleCount;
-        visibleCount += 6;
-        renderRecommendations(lastRecommendations.slice(0, visibleCount));
-        const newBtn = resultsContainer.querySelector('#btnShowMoreRecs');
+        visibleCount = Math.min(visibleCount + 6, lastRecommendations.length);
+
+        const currentCompareList = globalThis.compareList || [];
+        const currentBookmarkedSet = globalThis.bookmarkedSet || new Set();
+        const newCardsHtml = lastRecommendations
+          .slice(prevCount, visibleCount)
+          .map(rec => buildCardHtml(rec, currentCompareList, currentBookmarkedSet))
+          .join('');
+
+        const grid = resultsContainer.querySelector('.grid');
+        if (grid) grid.insertAdjacentHTML('beforeend', newCardsHtml);
+
+        const oldShowMore = document.getElementById('btnShowMoreRecs')?.parentElement;
+        oldShowMore?.remove();
+        if (visibleCount < lastRecommendations.length) {
+          resultsContainer.insertAdjacentHTML('beforeend',
+            `<div class="flex justify-center mt-6">
+               <button id="btnShowMoreRecs" aria-label="Show more recommendations" class="px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:border-primary hover:text-primary transition-colors">
+                 Show More
+               </button>
+             </div>`);
+        }
+
+        const newBtn = document.getElementById('btnShowMoreRecs');
         if (newBtn) {
           newBtn.focus();
         } else {
@@ -241,11 +273,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return;
       }
-
-      if (card) {
-        return handleCardActivation(card);
-      }
     });
+  }
+
+  function buildCardHtml(rec, currentCompareList, currentBookmarkedSet) {
+    const o = rec.org;
+    const githubOwner = o.github ? o.github.split('/')[0] : '';
+    const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
+
+    const inCompare = currentCompareList.includes(o.name);
+    const isBookmarked = typeof currentBookmarkedSet.has === 'function'
+      ? currentBookmarkedSet.has(o.name)
+      : false;
+
+    const reasonsHtml = rec.reasons.map(r =>
+      `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`
+    ).join('');
+
+    let matchedSkillsHtml = '';
+    if (rec.matchedSkills.length > 0) {
+      const skillsList = rec.matchedSkills.slice(0, 4).map(s =>
+        `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`
+      ).join('');
+      matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
+    }
+
+    const logoHtml = logoUrl
+      ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
+         <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
+      : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
+
+    return `
+    <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
+             data-org-name="${safeEscapeHtml(o.name)}"
+             data-org-index="${rec.orgIndex}"
+             tabindex="-1">
+      <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
+        <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
+      </div>
+      <div class="flex justify-between items-start mb-4 pt-2">
+        <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden">
+          ${logoHtml}
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+           <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}"
+                   data-bookmark-org="${safeEscapeHtml(o.name)}"
+                   title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
+              <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
+           </button>
+        </div>
+      </div>
+      <div class="flex-1">
+        <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
+        <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
+        <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
+        <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+          <ul class="space-y-1.5 mb-3">${reasonsHtml}</ul>
+          ${matchedSkillsHtml}
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
+        <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
+        </button>
+        <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
+          View <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+    </article>`;
   }
 
   function renderRecommendations(recs) {
@@ -257,87 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentCompareList = globalThis.compareList || [];
     const currentBookmarkedSet = globalThis.bookmarkedSet || new Set();
 
-    const html = recs.map(rec => {
-      const o = rec.org;
-      const githubOwner = o.github ? o.github.split('/')[0] : '';
-      const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
-      
-      const inCompare = currentCompareList.includes(o.name);
-      const isBookmarked = typeof currentBookmarkedSet.has === 'function' 
-        ? currentBookmarkedSet.has(o.name) 
-        : false;
-      
-      const reasonsHtml = rec.reasons.map(r => `<li class="text-[11px] text-zinc-600 dark:text-zinc-400 flex items-start gap-2"><span class="material-symbols-outlined text-xs text-emerald-500 mt-0.5">check_circle</span> <span class="leading-tight">${safeEscapeHtml(r)}</span></li>`).join('');
-      
-      let matchedSkillsHtml = '';
-      if (rec.matchedSkills.length > 0) {
-         const skillsList = rec.matchedSkills.slice(0, 4).map(s => `<span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-[9px] font-bold uppercase tracking-wider">${safeEscapeHtml(s)}</span>`).join('');
-         matchedSkillsHtml = `<div class="mt-2 flex flex-wrap gap-1">${skillsList}</div>`;
-      }
-
-
-      // Defined explicitly outside string to eliminate linting issues with nested template literals
-      const logoHtml = logoUrl 
-        ? `<img src="${safeEscapeHtml(logoUrl)}" data-org-name="${safeEscapeHtml(o.name)}" alt="${safeEscapeHtml(o.name)} logo" class="w-full h-full object-contain rounded-lg" onerror="handleRecImgError(this, this.dataset.orgName)">
-           <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl font-headline bg-primary/5"></div>`
-        : `<div class="text-primary font-bold text-xl font-headline">${safeEscapeHtml(o.name[0] || '?')}</div>`;
-
-
-      return `
-      <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
-               data-org-name="${safeEscapeHtml(o.name)}"
-               data-org-index="${rec.orgIndex}"
-               tabindex="-1">
-        
-        <!-- Match Score Badge -->
-        <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
-          <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match
-        </div>
-
-        <!-- Header: Logo & Bookmarking -->
-        <div class="flex justify-between items-start mb-4 pt-2">
-          <div class="w-14 h-14 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden">
-            ${logoHtml}
-          </div>
-          
-          <div class="flex items-center gap-2 mt-2">
-             <button class="bookmark-btn ${isBookmarked ? 'active text-orange-500' : 'text-zinc-300'}" 
-                     data-bookmark-org="${safeEscapeHtml(o.name)}" 
-                     title="${isBookmarked ? 'Remove bookmark' : 'Add bookmark'}">
-                <span class="material-symbols-outlined text-xl ${isBookmarked ? 'icon-fill' : ''}">star</span>
-             </button>
-          </div>
-        </div>
-
-        <!-- Body Text & Category -->
-        <div class="flex-1">
-          <h3 class="font-headline text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:text-primary transition-colors">${safeEscapeHtml(o.name)}</h3>
-          <span class="category-tag inline-block mb-3">${safeEscapeHtml((o.cat || 'Other').toUpperCase())}</span>
-          
-          <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-3 line-clamp-2">${safeEscapeHtml(o.desc || '')}</p>
-
-          <!-- Insights Box -->
-          <div class="mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-            <ul class="space-y-1.5 mb-3">
-              ${reasonsHtml}
-            </ul>
-            ${matchedSkillsHtml}
-          </div>
-        </div>
-
-        <!-- Bottom: Action Bar -->
-        <div class="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <button data-compare-org="${safeEscapeHtml(o.name)}" class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${inCompare ? 'text-primary' : 'text-zinc-400'} hover:text-primary transition-colors">
-            <span class="material-symbols-outlined text-sm">${inCompare ? 'check_circle' : 'compare_arrows'}</span> ${inCompare ? 'Comparing' : 'Compare'}
-          </button>
-          
-          <button class="flex items-center gap-1 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-2 transition-all">
-            View <span class="material-symbols-outlined text-sm">arrow_forward</span>
-          </button>
-        </div>
-      </article>
-      `;
-    }).join('');
+    const html = recs.map(rec => buildCardHtml(rec, currentCompareList, currentBookmarkedSet)).join('');
 
     const showMoreHtml = (lastRecommendations.length > recs.length)
       ? `<div class="flex justify-center mt-6">

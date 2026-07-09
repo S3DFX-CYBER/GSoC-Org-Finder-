@@ -18,7 +18,7 @@ function getRecommendations(resumeSkills = [], githubProfile = null, count = 6) 
   }
   
   const parsed = Number(count);
-  const safeCount = ( !Number.isNaN(parsed) && parsed > 0) ? parsed : 6;
+  const safeCount = ( !Number.isNaN(parsed) && parsed > 0) ? Math.floor(parsed) : 6;
 
   const normalize = globalThis.normalizeSkill || (s => s);
   const userLanguages = new Set();

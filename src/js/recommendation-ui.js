@@ -338,7 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const focusTarget = firstNewCard?.querySelector('button') ?? firstNewCard;
           focusTarget?.focus();
         }
-        return;
       }
     });
   }

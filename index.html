@@ -1571,7 +1571,7 @@ kbd:hover{
   <!-- Hidden search input for JavaScript compatibility -->
   <input type="hidden" id="searchInput" />
   
-  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="orgGrid">
+  <div class="org-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 scrollable-directory org-directory" id="orgGrid">
     <!-- Organizations will be rendered here dynamically -->
     <div class="col-span-full py-20 text-center animate-pulse">
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
@@ -1877,7 +1877,7 @@ kbd:hover{
       </div>
     </div>
 
-    <div id="mentorGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 scrollable-directory mentor-directory" id="mentorGrid">
       <div class="col-span-full bg-white rounded-2xl border border-zinc-100 p-8 text-center">
         <p class="text-sm text-zinc-500">Loading mentor contact data...</p>
       </div>
@@ -1891,7 +1891,7 @@ kbd:hover{
   </div>
   <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
 </section>
- 
+
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
@@ -2972,6 +2972,18 @@ kbd:hover{
       entry: getMentorEntry(org.name)
     }));
   }
+  function scrollDirectoryToTop(gridId) {
+    const grid = document.getElementById(gridId);
+    if (grid) {
+      grid.scrollTop = 0;
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const header = document.querySelector('nav') || document.querySelector('header');
+      const headerHeight = header ? header.getBoundingClientRect().height : 80;
+      const SCROLL_OFFSET = 16;
+      const gridTop = grid.getBoundingClientRect().top + window.scrollY - headerHeight - SCROLL_OFFSET;
+      window.scrollTo({ top: gridTop, behavior: prefersReduced ? 'auto' : 'smooth' });
+    }
+  }
 
   function renderMentorFinder(reset = true) {
     const grid = document.getElementById('mentorGrid');
@@ -3133,9 +3145,8 @@ kbd:hover{
     renderPaginationControls('mentorPagination', filteredRecords.length, mentorCurrentPage, (page) => {
       mentorCurrentPage = page;
       renderMentorFinder(false);
-      document.getElementById('mentors')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollDirectoryToTop('mentorGrid');
     });
-
     attachOrgCardListeners(grid);
   }
 
@@ -3494,7 +3505,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
     renderPaginationControls('orgPagination', filteredOrgs.length, orgCurrentPage, (page) => {
       orgCurrentPage = page;
       renderOrgs(false);
-      document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollDirectoryToTop('orgGrid');
     });
   }
 

@@ -30,7 +30,7 @@ const orgMatches = orgDataRaw.matchAll(/name:\s*"([^"]+)"[^}]+github:\s*"([^"]+)
 for (const m of orgMatches) {
   const name = m[1];
   const repo = m[2];
-  if (repo?.includes('/')) {
+  if (repo) {
     githubRepos.push({ name, repo });
   }
 }
@@ -120,9 +120,9 @@ async function analyzeOrg({ name, repo }) {
       tier,
       label,
       signals: {
-        issueResponseDays: Math.round(issueResponseDays),
+        issueResponseDays: issueResponseDays === null ? null : Math.round(issueResponseDays),
         commitFrequency: Math.round(commitFrequency * 10) / 10,
-        prMergeRate: Math.round(prMergeRate * 100),
+        prMergeRate: prMergeRate === null ? null : Math.round(prMergeRate * 100),
         ideasFreshnessDays: Math.round(ideasFreshnessDays),
         starsGrowth: Math.round(starsGrowth * 10) / 10
       },

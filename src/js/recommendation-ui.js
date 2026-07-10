@@ -190,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let visibleCount = 6;
 
   document.addEventListener('compareListChanged', () => {
+    if (!resultsContainer) return;
+
     const currentCompareList = globalThis.compareList || [];
     resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
       const card = btn.closest('[data-org-name]');

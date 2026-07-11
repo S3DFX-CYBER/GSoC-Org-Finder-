@@ -204,6 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fileUpload.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
+
+      const MAX_RESUME_SIZE = 5 * 1024 * 1024; //5MB
+      if (file.size > MAX_RESUME_SIZE) {
+        showError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Please upload a file under 5MB.`);
+        fileUpload.value = '';
+        return;
+      }
+
       file.text().then(text => {
         resumeText.value = text;
       }).catch(err => {

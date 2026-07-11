@@ -30,7 +30,7 @@ const orgMatches = orgDataRaw.matchAll(/name:\s*"([^"]+)"[^}]+github:\s*"([^"]+)
 for (const m of orgMatches) {
   const name = m[1];
   const repo = m[2];
-  if (repo) {
+  if (repo && repo.includes('/')) {
     githubRepos.push({ name, repo });
   }
 }

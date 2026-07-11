@@ -2073,14 +2073,14 @@ kbd:hover{
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script>
-  let communityActivity = {};
-  fetch('data/community_activity.json?v=' + new Date().toISOString().slice(0, 10))
-    .then(r => r.json())
-    .then(data => { communityActivity = data; applyFilters(); })
-    .catch(() => { communityActivity = {}; });
-
+  // communityActivity is loaded exactly once, by loadCommunityActivity()
+  // in src/js/app.js. Declaring/fetching it again here caused a duplicate
+  // `let communityActivity` redeclaration (SyntaxError, since this inline
+  // script and app.js share the same classic-script global scope), which
+  // aborted app.js parsing entirely and broke safeHTML/rawHTML too.
+  // Read the single copy off window.communityActivity instead.
   function getActivityBadge(orgName) {
-    const a = communityActivity[orgName];
+    const a = (window.communityActivity || {})[orgName];
     if (!a) return '';
     return `<span class="activity-badge tier-${escapeHtml(a.tier)}" title="Activity Score: ${escapeHtml(a.score)}/100">${escapeHtml(a.label)}</span>`;
   }
@@ -3975,7 +3975,7 @@ if(org.ideas){
       else if (activeChip === 'newcomers')   matchChip = o.years <= 3;
       else if (activeChip === 'low-competition')  matchChip = o.competition === 'chill';
       else if (activeChip === 'high-competition') matchChip = o.competition === 'hot';
-      else if (activeChip === 'active-communities') matchChip = (communityActivity[o.name]?.score || 0) >= 60;
+      else if (activeChip === 'active-communities') matchChip = ((window.communityActivity || {})[o.name]?.score || 0) >= 60;
 
       return matchSearch && matchCat && matchComp && matchLang && matchChip;
     });
@@ -4013,7 +4013,7 @@ if(org.ideas){
     if(sortType==='comp-low') return ['chill','moderate','hot'].indexOf(a.competition) - ['chill','moderate','hot'].indexOf(b.competition);
     if(sortType==='stars') return (b._gh?.stars||0) - (a._gh?.stars||0);
     if(sortType==='gfi') return (b._gh?.gfi||0) - (a._gh?.gfi||0);
-    if(sortType==='most-active'||sortType==='activity-score') return ((communityActivity[b.name]?.score)||0) - ((communityActivity[a.name]?.score)||0);
+    if(sortType==='most-active'||sortType==='activity-score') return (((window.communityActivity || {})[b.name]?.score)||0) - (((window.communityActivity || {})[a.name]?.score)||0);
     return a.name.localeCompare(b.name);
   }
 

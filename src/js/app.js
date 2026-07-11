@@ -470,6 +470,10 @@ cleanCache();
 // COMMUNITY ACTIVITY DATA
 // ══════════════════════════════════════════════
 let communityActivity = {};   // will hold the parsed community_activity.json
+// Single source of truth: this is the ONLY place communityActivity is fetched.
+// Mirrored onto window.communityActivity so index.html's inline script can
+// read it without redeclaring/refetching and racing this assignment.
+window.communityActivity = communityActivity;
 
 async function loadCommunityActivity() {
   try {
@@ -477,6 +481,7 @@ async function loadCommunityActivity() {
     const res = await fetch('/data/community_activity.json?v=' + bust);
     if (!res.ok) return;
     communityActivity = await res.json();
+    window.communityActivity = communityActivity;
     applyFilters();
   } catch (e) {
     console.warn('community_activity.json not yet available:', e);

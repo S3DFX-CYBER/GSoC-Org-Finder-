@@ -1,11 +1,10 @@
-/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
+/* global ORGS, filteredOrgs, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
 // filteredOrgs declared in index.html inline script
-/* global filteredOrgs, visibleCount */
 let MENTOR_DATA = {}; // eslint-disable-line no-unused-vars
 let mentorDataState = 'idle';
 const compareList = []; // list of org names

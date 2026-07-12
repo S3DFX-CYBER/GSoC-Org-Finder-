@@ -5,7 +5,8 @@
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
 // filteredOrgs declared in index.html inline script
-let MENTOR_DATA = {};
+/* global filteredOrgs, visibleCount */
+let MENTOR_DATA = {}; // eslint-disable-line no-unused-vars
 let mentorDataState = 'idle';
 const compareList = []; // list of org names
 const bookmarkedSet = new Set(parseStoredBookmarks());
@@ -91,11 +92,11 @@ const UMBRELLA_ORGS = new Set([
   'LabLua', 'Liquid Galaxy project', 'Free and Open Source Silicon Foundation',
 ]);
 
-const CHANNEL_ICONS = {
+const CHANNEL_ICONS = { // eslint-disable-line no-unused-vars
   Slack: '💬', Zulip: '💬', Discord: '🎮', Matrix: '🔗', IRC: '🖥️', 'Mailing list': '📧'
 };
 
-const CONTACT_TIPS = {
+const CONTACT_TIPS = { // eslint-disable-line no-unused-vars
   Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
   Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
   Zulip: 'Post a new topic in the GSoC stream with your background and interest.',
@@ -519,7 +520,7 @@ async function checkAPI(){
       banner.className='api-banner api-ok';
       document.getElementById('apiStrong').textContent='✓ GitHub API Connected';
       document.getElementById('apiText').textContent='Live stats (stars, forks, good first issues) available for all visitors.';
-      document.getElementById('fetchBtn').style.display='flex';
+      const fetchBtn = document.getElementById('fetchBtn'); if (fetchBtn) fetchBtn.style.display='flex';
     }else{
       banner.className='api-banner api-warn';
       document.getElementById('apiStrong').textContent='⚠ API Error';
@@ -1444,7 +1445,7 @@ function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixe
 // ══════════════════════════════════════════════
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
-globalThis.openModal = function (name, triggerElement = null) {
+globalThis.openModal = function (name, _triggerElement = null) {
   const org = ORGS.find(o => o.name === name);
   if (!org) return;
 
@@ -1518,10 +1519,9 @@ globalThis.openModal = function (name, triggerElement = null) {
 
   // Sanitize href links
   const ideasUrl = validateIdeasUrl(org.ideas);
-  const repoHref = githubUrlFromValue(org.github);
 
   const ideasBtn = document.getElementById('mIdeasBtn');
-  const repoBtn = document.getElementById('mRepoBtn');
+  const repoBtn = document.getElementById('mRepoBtn'); if (repoBtn) repoBtn.href = githubUrlFromValue(org.github) || '#';
 
   if (ideasBtn) {
     if (ideasUrl) {

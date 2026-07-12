@@ -2265,6 +2265,7 @@ function applyStaleDataNotice() {
 }
 
 const _initFromURL = async () => {
+  if (typeof ORGS !== 'undefined' && Array.isArray(ORGS)) filteredOrgs = [...ORGS];
   renderOrgs(true); // initial sync render for tests
   await loadCommunityActivity();
   const params = new URLSearchParams(location.search);

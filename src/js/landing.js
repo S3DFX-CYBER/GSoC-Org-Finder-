@@ -1,4 +1,5 @@
 /**
+/* global ORGS */
  * landing.js — FindMyGSoC Landing Page Scripts
  *
  * Responsibilities:

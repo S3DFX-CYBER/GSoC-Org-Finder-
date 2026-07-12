@@ -1,10 +1,10 @@
-/* global ORGS, filteredOrgs, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
+/* global ORGS, openModal, toggleCompare, toggleBookmark, openRandomOrg, clearAllFilters, openCompareModal, fetchModalGH, unselectLanguage, clearAllLanguages */
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
-// filteredOrgs declared in index.html inline script
+let filteredOrgs = [];
 let MENTOR_DATA = {}; // eslint-disable-line no-unused-vars
 let mentorDataState = 'idle';
 const compareList = []; // list of org names
@@ -1444,7 +1444,7 @@ function fmt(n) { return (!n && n !== 0) ? '—' : n >= 1000 ? (n / 1000).toFixe
 // ══════════════════════════════════════════════
 // MODAL DETAILS POPULATOR
 // ══════════════════════════════════════════════
-globalThis.openModal = function (name, _triggerElement = null) {
+globalThis.openModal = function (name) {
   const org = ORGS.find(o => o.name === name);
   if (!org) return;
 

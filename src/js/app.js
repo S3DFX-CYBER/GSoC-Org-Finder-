@@ -2265,6 +2265,7 @@ function applyStaleDataNotice() {
 }
 
 const _initFromURL = async () => {
+  renderOrgs(true); // initial sync render for tests
   await loadCommunityActivity();
   const params = new URLSearchParams(location.search);
   if (params.get('q'))    document.getElementById('searchInput').value = params.get('q');

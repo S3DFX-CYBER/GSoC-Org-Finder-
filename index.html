@@ -2083,7 +2083,7 @@ kbd:hover{
   function getActivityBadge(orgName) {
     const a = (window.communityActivity || {})[orgName];
     if (!a) return '';
-    return `<span class="activity-badge tier-${escapeHtml(a.tier)}" title="Activity Score: ${escapeHtml(a.score)}/100">${escapeHtml(a.label)}</span>`;
+    return `<span class="activity-badge tier-${escapeHtml(a.tier)}" title="Activity Score: ${escapeHtml(String(a.score))}/100">${escapeHtml(a.label)}</span>`;
   }
   // THEME
   // ══════════════════════════════════════════════
@@ -3421,7 +3421,7 @@ btn.__orgListenerAttached = true;
     // Update badge indicator in header
     const badgeIndicator = document.getElementById('badgeIndicator');
     if (badgeIndicator) {
-      badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${unlockedCount}/${totalCount}`;
+      badgeIndicator.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px">emoji_events</span> ${escapeHtml(String(unlockedCount))}/${escapeHtml(String(totalCount))}`;
     }
   }
 

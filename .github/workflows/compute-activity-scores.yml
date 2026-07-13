@@ -1,28 +1,26 @@
 name: Compute Community Activity Scores
-
 on:
   schedule:
     - cron: '0 0 * * *'  # Daily at midnight
   workflow_dispatch:       # Manual trigger
-
 jobs:
   compute-scores:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.2.0
         with:
           node-version: '18'
-
       - name: Run activity score computation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node agent/scripts/compute-activity-scores.js
-
       - name: Commit updated scores
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b2b3e36ac28eb95  # v7.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update community activity scores"

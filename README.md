@@ -486,6 +486,27 @@ The Edge Function proxies GitHub API calls so your token never hits the client.
 | `GET /api/github?repo=owner/repo&gfi=1` | Good First Issue count only (faster, cached separately) |
 | `GET /api/github?repo=owner/repo&gfi=1&issues=1` | Full list of up to 30 open Good First Issues |
 
+---
+## 🏆 Community Activity Score
+
+Each organization is scored daily (0–100) based on GitHub activity signals fetched by `.github/workflows/compute-activity-scores.yml`:
+
+| Signal | Weight | Description |
+|--------|--------|-------------|
+| Issue resolution time | 30% | Average days to close issues |
+| Commit frequency | 20% | Commits in last 90 days |
+| PR merge rate | 20% | % of PRs merged in 90 days |
+| Repository freshness | 15% | Days since last push |
+| Stars score | 15% | Scaled stargazers count |
+
+**Tiers:**
+- 🟢 **Very Active** — score 75–100
+- 🔵 **Active** — score 50–74
+- 🟡 **Moderate** — score 25–49
+- 🔴 **Low Activity** — score 0–24
+
+Scores are stored in `data/community_activity.json` and updated daily. Organizations with no GitHub data are excluded from scoring.
+
 All responses are cached in-memory for **1 hour** on the Edge runtime.
 # 🚀 Official Open Source Program Project
 

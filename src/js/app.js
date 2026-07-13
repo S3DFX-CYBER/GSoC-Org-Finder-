@@ -766,9 +766,6 @@ function syncBookmark(name, shouldAdd) {
   updateAIInsights();
 }
 
-function renderMentorFinder() {
-  // Mentor finder is rendered by index.html's inline script
-}
 
 function handleGlobalKeydown(e) {
   if (e.key === 'Escape' && handleEscapeKey(e)) return;

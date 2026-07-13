@@ -8,8 +8,6 @@ on:
 jobs:
   compute-scores:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
@@ -24,9 +22,12 @@ jobs:
         run: node agent/scripts/compute-activity-scores.js
 
       - name: Commit updated scores
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add data/community_activity.json
-          git diff --staged --quiet || git commit -m "chore: update community activity scores"
-          git push
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update community activity scores"
+          title: "chore: update community activity scores"
+          body: "Automated daily update of community activity scores."
+          branch: "auto/update-community-activity-scores"
+          delete-branch: true
+          add-paths: data/community_activity.json

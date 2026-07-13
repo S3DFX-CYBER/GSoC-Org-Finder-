@@ -32,6 +32,8 @@ for (const m of orgMatches) {
   const repo = m[2];
   if (repo && repo.includes('/')) {
     githubRepos.push({ name, repo });
+  } else {
+    console.warn(`Skipping bare owner (no repo path): ${name} → "${repo}"`);
   }
 }
 

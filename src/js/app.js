@@ -2237,7 +2237,7 @@ async function loadMentorData() {
     const data = await res.json();
     MENTOR_DATA = data.mentors || {};
     mentorDataState = 'loaded';
-    renderMentorFinder();
+    if (typeof renderMentorFinder === "function") renderMentorFinder();
   } catch (err) {
     console.warn('Failed to load mentors.json:', err);
     mentorDataState = 'error';
@@ -2322,8 +2322,8 @@ const _initFromURL = async () => {
   document.getElementById('categoryFilter')?.addEventListener('change', applyFilters);
   document.getElementById('complexityFilter')?.addEventListener('change', applyFilters);
   document.getElementById('sortSelect')?.addEventListener('change', applyFilters);
-  document.getElementById('mentorSearchInput')?.addEventListener('input', renderMentorFinder);
-  document.getElementById('mentorChannelFilter')?.addEventListener('change', renderMentorFinder);
+  document.getElementById("mentorSearchInput")?.addEventListener("input", () => { if (typeof renderMentorFinder === "function") renderMentorFinder(); });
+  document.getElementById("mentorChannelFilter")?.addEventListener("change", () => { if (typeof renderMentorFinder === "function") renderMentorFinder(); });
   document.getElementById('matchAllLanguagesToggle')?.addEventListener('change', (e) => {
     matchAllLanguages = e.target.checked;
     globalThis.matchAllLanguages = matchAllLanguages;

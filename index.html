@@ -1668,12 +1668,35 @@ kbd:hover{
         <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
-      <button id="clearAllBookmarksBtn"
-        class="hidden mt-8 flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 transition-colors"
-        title="Remove all bookmarks">
-        <span class="material-symbols-outlined text-sm">delete_sweep</span>
-        Clear All
-      </button>
+      <div class="flex items-center gap-2 mt-8 flex-wrap">
+        <button onclick="document.getElementById('importWatchlistInput').click()" class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer" title="Import Watchlist JSON">
+          <span class="material-symbols-outlined text-sm">upload</span>
+          Import
+        </button>
+        <input type="file" id="importWatchlistInput" accept=".json" class="hidden" aria-label="Import Watchlist JSON">
+        
+        <div class="relative">
+          <button onclick="document.getElementById('exportDropdownMenu').classList.toggle('hidden')" class="flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-600 border border-zinc-200 rounded-full px-4 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors" title="Export Watchlist">
+            <span class="material-symbols-outlined text-sm">download</span>
+            Export
+          </button>
+          <div id="exportDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-xl shadow-lg z-10 flex flex-col overflow-hidden">
+            <button onclick="exportWatchlistAsMarkdown(); document.getElementById('exportDropdownMenu').classList.add('hidden')" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">description</span> Markdown (.md)
+            </button>
+            <button onclick="exportWatchlistAsJSON(); document.getElementById('exportDropdownMenu').classList.add('hidden')" class="text-left px-4 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">data_object</span> JSON (.json)
+            </button>
+          </div>
+        </div>
+
+        <button id="clearAllBookmarksBtn"
+          class="hidden flex-shrink-0 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+          title="Remove all bookmarks">
+          <span class="material-symbols-outlined text-sm">delete_sweep</span>
+          Clear All
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-6">
@@ -3947,6 +3970,125 @@ btn.__orgListenerAttached = true;
     renderWatchlist();
     updateAIInsights();
   }
+
+  // ── Import / Export Watchlist ───────────────────────────────────────────────
+  globalThis.exportWatchlistAsJSON = function() {
+    const bookmarks = [...bookmarkedSet];
+    if (bookmarks.length === 0) {
+      alert("Watchlist is empty. Nothing to export.");
+      return;
+    }
+    const blob = new Blob([JSON.stringify(bookmarks, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gsoc_watchlist.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  globalThis.exportWatchlistAsMarkdown = function() {
+    const bookmarks = [...bookmarkedSet]
+      .map(name => ORGS.find(o => o.name === name))
+      .filter(Boolean);
+    if (bookmarks.length === 0) {
+      alert("Watchlist is empty. Nothing to export.");
+      return;
+    }
+    
+    const escapeMd = (str) => str ? String(str).replaceAll(/([\\`*_{}[\]()])/g, String.raw`\$1`) : '';
+    const escapeUrl = (str) => str ? String(str).replaceAll('(', '%28').replaceAll(')', '%29') : '';
+
+    let md = "# My GSoC Watchlist\n\n";
+    bookmarks.forEach(org => {
+      md += `## [${escapeMd(org.name)}](${escapeUrl(org.ideas || org.url || '')})\n\n`;
+      if (org.desc) md += `- **Description:** ${escapeMd(org.desc)}\n`;
+      if (org.ideas) md += `- **Ideas List:** ${escapeUrl(org.ideas)}\n`;
+      if (org.years) {
+        const firstYearStr = org.firstYear ? ' (since ' + escapeMd(org.firstYear) + ')' : '';
+        md += `- **GSoC Years:** ${escapeMd(org.years)}${firstYearStr}\n`;
+      }
+      if (org.tags && Array.isArray(org.tags) && org.tags.length) md += `- **Tech Stack:** ${escapeMd(org.tags.join(', '))}\n`;
+      md += '\n';
+    });
+    
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gsoc_watchlist.md';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  function showToast(title, message) {
+    const toast = document.createElement('div');
+    toast.className = 'badge-notification flex items-center gap-3';
+
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'badge-notification-icon bg-white/20 w-10 h-10 rounded-full flex items-center justify-center shrink-0';
+    const icon = document.createElement('span');
+    icon.className = 'material-symbols-outlined text-white';
+    icon.textContent = 'check_circle';
+    iconContainer.appendChild(icon);
+
+    const textContainer = document.createElement('div');
+    textContainer.className = 'badge-notification-text';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'badge-notification-title font-bold text-sm';
+    titleEl.textContent = title;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'badge-notification-desc text-xs text-white/80';
+    messageEl.textContent = message;
+
+    textContainer.appendChild(titleEl);
+    textContainer.appendChild(messageEl);
+
+    toast.appendChild(iconContainer);
+    toast.appendChild(textContainer);
+    document.body.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
+  document.getElementById('importWatchlistInput')?.addEventListener('change', async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const importedOrgs = JSON.parse(text);
+      if (!Array.isArray(importedOrgs)) throw new Error("Invalid format: Not an array");
+      let addedCount = 0;
+      const validOrgNames = new Set(ORGS.map(o => o.name));
+      importedOrgs.forEach(orgName => {
+        if (typeof orgName === 'string' && !bookmarkedSet.has(orgName) && validOrgNames.has(orgName)) {
+          bookmarkedSet.add(orgName);
+          addedCount++;
+        }
+      });
+      localStorage.setItem('bookmarks', JSON.stringify([...bookmarkedSet]));
+      applyFilters();
+      renderWatchlist();
+      updateAIInsights();
+      showToast("Import Successful", `Successfully imported ${addedCount} organization(s).`);
+    } catch (err) {
+      alert("Failed to parse JSON file. Ensure it's a valid watchlist export.");
+      console.error("Import error:", err);
+    } finally {
+      event.target.value = ''; // Reset input
+    }
+  });
 
   // ── renderWatchlist ─────────────────────────────────────────────────────────
   function renderWatchlist() {

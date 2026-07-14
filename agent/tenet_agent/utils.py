@@ -6,68 +6,124 @@ Handles GitHub API interactions, permission checks, and LLM client setup.
 import os
 import re
 import sys
+import time
+import random
+import logging
 import requests
-import google.generativeai as genai
-from github import Github, GithubException
+from google import genai
+from google.genai import types, errors
+from github import Github
+
+logger = logging.getLogger(__name__)
 
 
 # ─── GitHub client ────────────────────────────────────────────────────────────
 
-def get_github_client() -> Github:
+def get_github_client(token: str) -> Github:
     """Create and return an authenticated GitHub client."""
-    token = os.environ.get("GITHUB_TOKEN")
     if not token:
-        print("❌ GITHUB_TOKEN is not set.")
-        sys.exit(1)
+        raise ValueError("GITHUB_TOKEN is not set.")
     return Github(token)
 
 
-def get_repo(g: Github):
+def get_repo(g: Github, repo_name: str):
     """Return the repository object for the current workflow context."""
-    repo_name = os.environ.get("REPO")
     if not repo_name:
-        print("❌ REPO environment variable is not set.")
-        sys.exit(1)
+        raise ValueError("REPO environment variable is not set.")
     return g.get_repo(repo_name)
 
 
 # ─── LLM client ───────────────────────────────────────────────────────────────
 
-def get_llm_client():
-    """Configure Gemini and return a GenerativeModel instance."""
-    api_key = os.environ.get("TENET_AI_KEY")
+def get_llm_client(api_key: str):
+    """Configure Gemini and return a Client instance."""
     if not api_key:
-        print("❌ TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.")
-        sys.exit(1)
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(
-        model_name="gemini-2.5-flash",
-        generation_config=genai.types.GenerationConfig(
-            temperature=0.2,
-            max_output_tokens=8192,  # raised from 4096 — issue solver writes multiple full files
-        ),
-        safety_settings=[
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE",
-            },
-        ],
-    )
+        raise ValueError("TENET_AI_KEY secret is not set. Please add it in repo Settings → Secrets → Actions.")
+    return genai.Client(api_key=api_key)
 
 
-def call_llm(model, prompt: str) -> str | None:
+MAX_RETRIES = 3
+BASE_DELAY = 5
+
+LLM_CONFIG = types.GenerateContentConfig(
+    temperature=0.2,
+    max_output_tokens=8192,
+    safety_settings=[
+        types.SafetySetting(
+            category="HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold="BLOCK_MEDIUM_AND_ABOVE",
+        )
+    ]
+)
+
+
+def is_rate_limit_error(e: Exception) -> bool:
+    """Check if an exception is a rate limit error (429)."""
+    return getattr(e, 'code', None) == 429 or "429" in str(e)
+
+
+def get_retry_delay_seconds(e: errors.APIError) -> float | None:
+    """Extract server-requested retry delay from APIError if present."""
+    if not hasattr(e, 'details') or not isinstance(e.details, dict):
+        return None
+    try:
+        details_list = e.details.get("error", {}).get("details", [])
+        for detail in details_list:
+            if isinstance(detail, dict) and detail.get("@type") == "type.googleapis.com/google.rpc.RetryInfo":
+                delay_str = detail.get("retryDelay", "")
+                if isinstance(delay_str, str) and delay_str.endswith("s"):
+                    return float(delay_str[:-1])
+    except (KeyError, TypeError, AttributeError, ValueError) as parse_error:
+        logger.warning(f"⚠️  Failed to parse retryDelay from APIError: {parse_error}")
+    return None
+
+
+def _sleep_for_retry(attempt: int, e: errors.APIError) -> None:
+    """Calculate sleep time and wait before retrying."""
+    server_delay = get_retry_delay_seconds(e)
+    if server_delay is not None:
+        sleep_time = server_delay
+        logger.warning(f"⚠️  Rate limit (429) hit. Server requested retry in {sleep_time:.2f}s...")
+    else:
+        jitter = random.uniform(0, 1)
+        sleep_time = BASE_DELAY * (2 ** attempt) + jitter
+        logger.warning(f"⚠️  Rate limit (429) hit. Retrying in {sleep_time:.2f}s...")
+    time.sleep(sleep_time)
+
+
+def call_llm(client, prompt: str, fail_closed: bool = False) -> str | None:
     """
     Call Gemini and return the text response.
 
-    Returns None on failure so callers can distinguish an error
-    from a valid (but empty) model response.
+    Implements a retry mechanism for 429 Quota Exceeded errors and gracefully
+    handles None text by returning a degraded mode warning for fail-open workflow,
+    unless fail_closed is True.
     """
-    try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
-    except Exception as e:
-        print(f"⚠️  LLM call failed: {e}")
-        return None
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=LLM_CONFIG
+            )
+            if response.text is not None:
+                return response.text.strip()
+            else:
+                logger.warning("⚠️  LLM response.text is None (likely blocked by safety settings).")
+                return None if fail_closed else "⚠️ TENET Security Review skipped due to safety filters."
+        except errors.APIError as e:
+            if is_rate_limit_error(e):
+                if attempt < MAX_RETRIES - 1:
+                    _sleep_for_retry(attempt, e)
+                    continue
+                else:
+                    logger.exception(f"⚠️  LLM call failed after {MAX_RETRIES} retries due to rate limit.")
+                    return None if fail_closed else "⚠️ TENET Security Review skipped due to API rate limits."
+            logger.exception(f"⚠️  LLM API error: {e}")
+            return None if fail_closed else "⚠️ TENET Security Review skipped due to API error."
+        except Exception as e:
+            logger.exception(f"⚠️  LLM call failed: {e}")
+            return None if fail_closed else "⚠️ TENET Security Review skipped due to an internal error."
 
 
 # ─── PR utilities ─────────────────────────────────────────────────────────────
@@ -97,7 +153,7 @@ def post_pr_comment(repo, pr_number: int, body: str) -> None:
     """Post a comment on a PR."""
     pr = repo.get_pull(pr_number)
     pr.create_issue_comment(body)
-    print(f"✅ Posted review comment on PR #{pr_number}")
+    logger.info(f"✅ Posted review comment on PR #{pr_number}")
 
 
 # ─── Issue utilities ──────────────────────────────────────────────────────────
@@ -106,7 +162,7 @@ def post_issue_comment(repo, issue_number: int, body: str) -> None:
     """Post a comment on an issue."""
     issue = repo.get_issue(issue_number)
     issue.create_comment(body)
-    print(f"✅ Posted comment on issue #{issue_number}")
+    logger.info(f"✅ Posted comment on issue #{issue_number}")
 
 
 def get_repo_structure(base_path: str = ".", max_files: int = 120) -> str:
@@ -224,18 +280,18 @@ def create_branch_and_commit(
     import subprocess
 
     if not _validate_branch_name(branch_name):
-        print(f"❌ Invalid branch name: {branch_name!r}")
+        logger.error(f"❌ Invalid branch name: {branch_name!r}")
         return False
 
     for filepath in file_changes:
         if not _validate_filepath(filepath):
-            print(f"❌ Invalid filepath (potential path traversal): {filepath!r}")
+            logger.error(f"❌ Invalid filepath (potential path traversal): {filepath!r}")
             return False
 
     def run(cmd: list[str]) -> subprocess.CompletedProcess:
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
-            print(
+            logger.error(
                 f"Git command failed: {' '.join(cmd)}\n"
                 f"Stdout: {result.stdout}\nStderr: {result.stderr}"
             )
@@ -254,8 +310,8 @@ def create_branch_and_commit(
 
         run(["git", "commit", "-m", commit_message])
         run(["git", "push", "origin", branch_name])
-        print(f"✅ Branch '{branch_name}' pushed.")
+        logger.info(f"✅ Branch '{branch_name}' pushed.")
         return True
     except Exception as e:
-        print(f"❌ Git error: {e}")
+        logger.exception(f"❌ Git error: {e}")
         return False

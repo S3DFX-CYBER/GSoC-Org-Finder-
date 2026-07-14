@@ -101,9 +101,9 @@ function handleCompareAction(e, btn) {
 }
 
 function handleCardActivation(card) {
-  const idx = parseInt(card.dataset.orgIndex, 10);
-  if (typeof openModal === 'function' && !isNaN(idx) && idx >= 0) {
-    openModal(idx);
+  const name = card.dataset.orgName;
+  if (typeof openModal === 'function' && name) {
+    openModal(name);
   }
 }
 

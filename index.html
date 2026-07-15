@@ -68,6 +68,23 @@
       document.head.appendChild(s);
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous"></script>
+  <script>
+    if (typeof pdfjsLib === 'undefined') {
+      var s = document.createElement('script');
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      s.integrity = "sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e";
+      s.crossOrigin = "anonymous";
+      s.onload = function() {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      };
+      document.head.appendChild(s);
+    } else {
+      window.addEventListener('load', function() {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+      });
+    }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
@@ -1621,8 +1638,8 @@ kbd:hover{
           <textarea id="aiResumeText" rows="4" placeholder="Paste your resume or list your skills here (e.g. Python, React, Machine Learning)..." class="w-full p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-primary dark:text-white transition-all resize-none"></textarea>
           <div class="mt-2 flex items-center justify-between">
             <label class="text-xs text-primary font-bold cursor-pointer hover:underline flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt
-              <input type="file" id="aiResumeFile" accept=".txt" class="hidden">
+              <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload .txt / .pdf
+              <input type="file" id="aiResumeFile" accept=".txt,.pdf" class="hidden">
             </label>
           </div>
         </div>
@@ -3753,6 +3770,7 @@ btn.__orgListenerAttached = true;
         } else {
           compareList[orgPickerTargetSlot] = org.name;
           compareList = compareList.filter(Boolean);
+          globalThis.compareList = compareList;
           renderCompare();
         }
         closeOrgPicker();
@@ -5430,6 +5448,34 @@ if(e.key.toLowerCase()==='r'){
 <script src="src/js/githubAnalyzer.js"></script>
 <script src="src/js/skillExtractor.js"></script>
 <script src="src/js/recommender.js"></script>
+<script>
+  if (globalThis.safeHTML === undefined) {
+    globalThis.escapeHtml = function escapeHtml(value) {
+      return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+    };
+    var SafeHTMLString = function SafeHTMLString(value) { this._value = value; };
+    SafeHTMLString.prototype.toString = function() { return this._value; };
+    SafeHTMLString.prototype.__isSafeHTML = true;
+    globalThis.safeHTML = function safeHTML(strings) {
+      var values = Array.prototype.slice.call(arguments, 1);
+      var result = '';
+      for (var i = 0; i < strings.length; i++) {
+        result += strings[i];
+        if (i < values.length) {
+          var val = values[i];
+          if (val && val.__isSafeHTML) {
+            result += val.toString();
+          } else if (Array.isArray(val)) {
+            result += val.map(function(v) { return (v && v.__isSafeHTML) ? v.toString() : globalThis.escapeHtml(v); }).join('');
+          } else {
+            result += globalThis.escapeHtml(val !== undefined && val !== null ? String(val) : '');
+          }
+        }
+      }
+      return new SafeHTMLString(result);
+    };
+  }
+</script>
 <script src="src/js/recommendation-ui.js"></script>
 <div id="tooltip" class="tooltip"></div>
 <script>

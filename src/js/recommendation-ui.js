@@ -1,6 +1,6 @@
 // src/js/recommendation-ui.js
 
-/* global analyzeGitHubUser, extractSkills, getRecommendations, escapeHtml, openModal, toggleCompare, toggleBookmark */
+/* global analyzeGitHubUser, extractSkills, getRecommendations, openModal, toggleCompare, toggleBookmark, pdfjsLib, escapeHtml */
 
 let currentAbortController = null;
 let currentRequestId = 0;
@@ -201,15 +201,105 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle file upload
   if (fileUpload) {
-    fileUpload.addEventListener('change', (e) => {
+    let currentUploadToken = 0;
+    const DEFAULT_PLACEHOLDER = "Paste your resume or list your skills here (e.g. Python, React, Machine Learning)...";
+
+    const isTokenStale = (token) => {
+      return token !== currentUploadToken;
+    };
+
+    const clearInput = (input) => {
+      input.value = '';
+    };
+
+    const validateResumeFile = (file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        showError("File too large. Please upload a file under 5MB.");
+        clearInput(fileUpload);
+        return null;
+      }
+      const fileName = file.name.toLowerCase();
+      if (!fileName.endsWith('.pdf') && !fileName.endsWith('.txt')) {
+        showError("Unsupported file type. Please upload a .pdf or .txt file.");
+        clearInput(fileUpload);
+        return null;
+      }
+      return fileName.endsWith('.pdf') ? 'pdf' : 'txt';
+    };
+
+    const parsePdfResume = async (file, token) => {
+      if (typeof pdfjsLib === 'undefined') {
+        showError("PDF library not loaded. Please try again after refreshing the page.");
+        clearInput(fileUpload);
+        return;
+      }
+      resumeText.placeholder = "Parsing PDF...";
+      const arrayBuffer = await file.arrayBuffer();
+      if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let text = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const pageText = content.items
+          .map(item => item.str + (item.hasEOL ? '\n' : ''))
+          .join('');
+        text += pageText + '\n';
+      }
+      if (isTokenStale(token)) {
+        resumeText.placeholder = DEFAULT_PLACEHOLDER;
+        return;
+      }
+      const parsedText = text.trim();
+      if (!parsedText) {
+        clearInput(fileUpload);
+        resumeText.placeholder = DEFAULT_PLACEHOLDER;
+        showError("No extractable text found. This PDF may be image-based. Please upload a searchable PDF or paste text manually.");
+        return;
+      }
+      resumeText.value = parsedText;
+      resumeText.placeholder = DEFAULT_PLACEHOLDER;
+    };
+
+    const readTextResume = async (file, token) => {
+      try {
+        const text = await file.text();
+        if (isTokenStale(token)) return;
+        resumeText.value = text;
+      } catch (err) {
+        if (isTokenStale(token)) return;
+        console.error("File Read Error:", err);
+        clearInput(fileUpload);
+        showError("Failed to read file. Please make sure it's a valid text format.");
+      }
+    };
+
+    fileUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      file.text().then(text => {
-        resumeText.value = text;
-      }).catch(err => {
-        console.error("File Read Error:", err);
-        showError("Failed to read file. Please make sure it's a valid text format.");
-      });
+
+      const token = ++currentUploadToken;
+      resumeText.placeholder = DEFAULT_PLACEHOLDER;
+      errorState.classList.add('hidden');
+
+      const fileType = validateResumeFile(file);
+      if (!fileType) return;
+
+      try {
+        if (fileType === 'pdf') {
+          await parsePdfResume(file, token);
+        } else {
+          await readTextResume(file, token);
+        }
+      } catch (err) {
+        if (isTokenStale(token)) return;
+        resumeText.placeholder = DEFAULT_PLACEHOLDER;
+        console.error("Upload Error:", err);
+        clearInput(fileUpload);
+        showError("Failed to read PDF file. Please make sure it's a valid PDF.");
+      }
     });
   }
 

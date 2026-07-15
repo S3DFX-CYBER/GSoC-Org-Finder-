@@ -137,7 +137,6 @@ function buildCardHtml(rec, currentCompareList, currentBookmarkedSet) {
     return `
     <article class="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer flex flex-col ${inCompare ? 'ring-2 ring-primary/30' : ''}"
              data-org-name="${safeEscapeHtml(o.name)}"
-             data-org-index="${rec.orgIndex}"
              tabindex="-1">
       <div class="absolute top-0 right-0 bg-gradient-to-bl from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-bl-2xl rounded-tr-2xl font-bold text-xs shadow-sm flex items-center gap-1 z-10">
         <span class="material-symbols-outlined text-sm">target</span> ${rec.score}% Match

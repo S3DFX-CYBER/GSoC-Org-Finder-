@@ -4,7 +4,7 @@
 
 | Rank | Mentor | Reviews | Score |
 |------|--------|---------|-------|
-| 🥇 | @KumarNirupam1 | 37 | 163 |
+| 🥇 | @KumarNirupam1 | 38 | 168 |
 | 🥈 | @TarunyaProgrammer | 23 | 92 |
 | 🥉 | @nitinog10 | 16 | 69 |
 | 4 | @Anushreebasics | 20 | 52 |
@@ -16,10 +16,10 @@
 | 10 | @Balaji91221 | 8 | 16 |
 | 11 | @Maxd646 | 4 | 12 |
 | 12 | @12fahed | 3 | 11 |
-| 13 | @Mrigakshi-Rathore | 5 | 10 |
-| 14 | @CoderOggy78 | 4 | 9 |
-| 15 | @MUKUL-PRASAD-SIGH | 4 | 9 |
-| 16 | @AnirudhPhophalia | 4 | 8 |
+| 13 | @AnirudhPhophalia | 5 | 10 |
+| 14 | @Mrigakshi-Rathore | 5 | 10 |
+| 15 | @CoderOggy78 | 4 | 9 |
+| 16 | @MUKUL-PRASAD-SIGH | 4 | 9 |
 | 17 | @nihalawasthi | 3 | 7 |
 | 18 | @BandhiyaHardik | 3 | 6 |
 | 19 | @sabeenaviklar | 2 | 6 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Tue, 14 Jul 2026 06:27:45 GMT
+Last updated: Wed, 15 Jul 2026 10:43:43 GMT

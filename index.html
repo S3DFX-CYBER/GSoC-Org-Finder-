@@ -1201,7 +1201,7 @@ kbd:hover{
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
-    <div class="flex items-center gap-3 sm:gap-4 xl:gap-8">
+    <div class="flex items-center gap-1.5 sm:gap-4 xl:gap-8">
       <!-- Hamburger menu button (mobile only) -->
       <button id="menuBtn" onclick="toggleMenu()" class="inline-flex lg:hidden shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-lg transition-colors" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
         <span class="material-symbols-outlined text-zinc-600">menu</span>
@@ -1209,10 +1209,10 @@ kbd:hover{
 
       <!-- Home button (links back to landing page) -->
       <a href="/" 
-         class="hidden sm:inline-flex shrink-0 items-center gap-1 px-2 py-2 hover:bg-zinc-100/50 rounded-lg transition-colors text-zinc-600 hover:text-zinc-900"
+         class="inline-flex shrink-0 items-center gap-1 px-1.5 sm:px-2 py-2 hover:bg-zinc-100/50 rounded-lg transition-colors text-zinc-600 hover:text-zinc-900"
          aria-label="Go to home page" title="Home">
         <span class="material-symbols-outlined text-lg">home</span>
-        <span class="text-sm font-medium">Home</span>
+        <span class="hidden xs:inline text-sm font-medium whitespace-nowrap">Home</span>
       </a>
 
       <a href="#timeline" class="flex items-center gap-2" id="logoLink">
@@ -1227,7 +1227,7 @@ kbd:hover{
       <nav class="hidden lg:flex items-center gap-4 xl:gap-6 text-sm font-medium">
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#timeline" data-section="timeline">Timeline</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#orgs" data-section="orgs">Organizations</a>
-        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
+        <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap" href="#ai-recommender" data-section="ai-recommender">AI Recommender</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#watchlist" data-section="watchlist">Watchlist</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#issues" data-section="issues">Issues</a>
         <a class="desktop-nav-link text-zinc-600 hover:text-zinc-900 transition-colors" href="#mentors" data-section="mentors">Mentors</a>

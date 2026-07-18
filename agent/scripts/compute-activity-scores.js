@@ -108,13 +108,16 @@ async function analyzeOrg({ name, repo }) {
       ? (Date.now() - new Date(repoData.pushed_at)) / 86400000
       : 60;
 
+    if (issueResponseDays === null || prMergeRate === null) return null;
+
     const score = computeScore({
-      issueResponseDays: issueResponseDays ?? 14,
+      issueResponseDays: issueResponseDays,
       commitFrequency,
-      prMergeRate: prMergeRate ?? 0.5,
+      prMergeRate: prMergeRate,
       ideasFreshnessDays,
       starsGrowth
     });
+    if (score === null) return null;
     const { tier, label } = getTier(score);
 
     return {

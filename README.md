@@ -495,8 +495,8 @@ Each organization is scored daily (0–100) based on GitHub activity signals fet
 |--------|--------|-------------|
 | Issue resolution time | 30% | Average days to close issues |
 | Commit frequency | 20% | Commits in last 90 days |
-| PR merge rate | 20% | % of PRs merged in 90 days |
-| Repository freshness | 15% | Days since last push |
+| PR merge rate | 15% | % of PRs merged in 90 days |
+| Repository freshness | 20% | Days since last push |
 | Stars score | 15% | Scaled stargazers count |
 
 **Tiers:**

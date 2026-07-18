@@ -117,7 +117,6 @@ async function analyzeOrg({ name, repo }) {
       ideasFreshnessDays,
       starsGrowth
     });
-    if (score === null) return null;
     const { tier, label } = getTier(score);
 
     return {

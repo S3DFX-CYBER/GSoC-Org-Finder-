@@ -12,11 +12,11 @@
 | 6 | @4f4d | 7 | 37 |
 | 7 | @itsdakshjain | 6 | 19 |
 | 8 | @knoxiboy | 6 | 19 |
-| 9 | @saurabh24thakur | 3 | 17 |
-| 10 | @Balaji91221 | 8 | 16 |
-| 11 | @Maxd646 | 4 | 12 |
-| 12 | @12fahed | 3 | 11 |
-| 13 | @AnirudhPhophalia | 5 | 10 |
+| 9 | @AnirudhPhophalia | 9 | 18 |
+| 10 | @saurabh24thakur | 3 | 17 |
+| 11 | @Balaji91221 | 8 | 16 |
+| 12 | @Maxd646 | 4 | 12 |
+| 13 | @12fahed | 3 | 11 |
 | 14 | @Mrigakshi-Rathore | 5 | 10 |
 | 15 | @CoderOggy78 | 4 | 9 |
 | 16 | @MUKUL-PRASAD-SIGH | 4 | 9 |
@@ -63,4 +63,4 @@
 | 57 | @uddalak2005 | 0 | 0 |
 | 58 | @vanshaggarwal07 | 0 | 0 |
 
-Last updated: Fri, 17 Jul 2026 14:57:11 GMT
+Last updated: Sun, 19 Jul 2026 13:22:51 GMT

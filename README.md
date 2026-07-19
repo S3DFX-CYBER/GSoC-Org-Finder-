@@ -11,7 +11,7 @@ Discover organizations based on **tech stack, domains, competition level, GitHub
     <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Project-blue?style=for-the-badge" alt="Live Demo badge">
   </a>
   
-  <a href="https://discord.gg/Kwj76sCzp">
+  <a href="https://discord.gg/jYrbHKtn8t">
     <img src="https://img.shields.io/badge/💬_Discord-Join_Community-5865F2?style=for-the-badge" alt = "Discord badge">
   </a>
 </p>

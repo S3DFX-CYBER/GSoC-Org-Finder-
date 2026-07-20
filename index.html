@@ -1200,6 +1200,9 @@ kbd:hover{
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <header class="fixed top-0 w-full z-50 bg-white/80 glass shadow-sm">
+  <div id="scrollProgressBar"
+      class="fixed bottom-0 left-0 z-[9999] h-1 w-0 bg-orange-500 transition-[width] duration-100 ease-out motion-reduce:transition-none">
+    </div>
   <div class="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
     <div class="flex items-center gap-1.5 sm:gap-4 xl:gap-8">
       <!-- Hamburger menu button (mobile only) -->
@@ -5807,5 +5810,35 @@ if(e.key.toLowerCase()==='r'){
     if (e.target === this) closeOrgPicker();
   });
 </script>
+
+  <!-- ═══════════════════ Scroll ProgressBar ═══════════════════ -->
+  <script>
+    (() => {
+      const progressBar = document.getElementById("scrollProgressBar");
+
+      if (!progressBar) return;
+
+      const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const scrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+
+        const progress =
+          scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+        progressBar.style.width = `${progress}%`;
+      };
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("resize", updateProgress);
+
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(updateProgress).observe(document.body);
+      }
+
+      updateProgress();
+    })();
+  </script>
+
 </body>
 </html>

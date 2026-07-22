@@ -168,7 +168,6 @@ function calculateScoreForOrg(org, index, userLanguages, userTopics, githubProfi
   }
 
   return {
-    orgIndex: index,
     org: org,
     score: cappedScore, 
     rawScore: finalRawScore,

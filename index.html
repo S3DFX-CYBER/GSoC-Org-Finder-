@@ -1365,6 +1365,7 @@ kbd:hover{
           <div class="relative z-10 bg-white dark:bg-[#18181b] rounded-[calc(1rem-1.5px)] w-full search-border-inner flex items-center gap-2 transition-all duration-300">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">search</span>
             <input id="hero-search" type="text" placeholder="Search organization names..." aria-label="Search GSoC 2026 organizations" class="flex-1 bg-transparent border-0 rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm font-medium focus:ring-0 focus:outline-none transition-all text-zinc-900 dark:text-zinc-100" />
+            <span class="hidden sm:inline-flex items-center gap-0.5 mr-2 px-1.5 py-0.5 rounded-md border border-zinc-300 dark:border-zinc-600 text-[10px] font-mono font-semibold text-zinc-400 dark:text-zinc-500 select-none" aria-hidden="true">⌘/Ctrl K</span>
             <button id="hero-search-submit" type="button" class="mr-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary/30">
               Search
             </button>
@@ -5219,7 +5220,7 @@ if(org.ideas){
   }
 </script>
 
-<div class="modal-bg" id="helpModal">
+<div class="modal-bg" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
   <div class="modal">
     
     <button class="close-btn" onclick="closeHelpModal()"  aria-label="Close keyboard shortcuts modal">
@@ -5229,7 +5230,7 @@ if(org.ideas){
     
 
     <div class="modal-header">
-      <h2>Keyboard Shortcuts</h2>
+      <h2 id="helpModalTitle">Keyboard Shortcuts</h2>
       <p>Quick shortcuts for navigation</p>
     </div>
 
@@ -5265,8 +5266,18 @@ if(org.ideas){
 </tr>
 
 <tr class="shortcut-row">
-  <td class="py-2"><kbd>/</kbd></td>
+  <td class="py-2"><kbd>/</kbd> or <kbd>⌘</kbd><kbd>K</kbd></td>
   <td class="py-2">Focus search bar</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Alt</kbd><kbd>1</kbd></td>
+  <td class="py-2">Jump to Timeline section</td>
+</tr>
+
+<tr class="shortcut-row">
+  <td class="py-2"><kbd>Alt</kbd><kbd>2</kbd></td>
+  <td class="py-2">Jump to Organizations section</td>
 </tr>
 
 
@@ -5329,16 +5340,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const helpModal = document.getElementById('helpModal');
   const helpBtn = document.getElementById('helpBtn');
+  let helpModalTriggerEl = null;
+
+  function trapHelpModalFocus(e) {
+    if (e.key !== 'Tab' || !helpModal) return;
+    const focusables = helpModal.querySelectorAll('button, [href], input, select, textarea, [tabindex="0"]');
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      last.focus();
+      e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      first.focus();
+      e.preventDefault();
+    }
+  }
 
   function openHelpModal() {
     if (helpModal) {
+      helpModalTriggerEl = document.activeElement;
       helpModal.classList.add('open');
+      helpModal.querySelector('.close-btn')?.focus();
+      document.addEventListener('keydown', trapHelpModalFocus);
     }
   }
 
   function closeHelpModal() {
     if (helpModal) {
       helpModal.classList.remove('open');
+      document.removeEventListener('keydown', trapHelpModalFocus);
+      helpModalTriggerEl?.focus();
+      helpModalTriggerEl = null;
     }
   }
 
@@ -5347,29 +5380,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 document.addEventListener('keydown', (e) => {
+  const active = document.activeElement;
+  const isTyping = active && (
+    ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
+    active.id === 'searchInput'
+  );
+
+  const helpModalOpen =
+    document.getElementById('helpModal')?.classList.contains('open');
+  const orgModalOpen =
+    document.getElementById('orgModal')?.classList.contains('open');
+  const proposalModalOpen =
+    document.getElementById('proposalModal')?.classList.contains('open');
+  const anyModalOpen = helpModalOpen || orgModalOpen || proposalModalOpen;
+  // Focus search bar — works alongside Ctrl/Cmd but not while already typing or a modal is open
+  if (!anyModalOpen && !isTyping && (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'))) {
+    e.preventDefault();
+    document.getElementById('hero-search')?.focus();
+    return;
+  }
+  // Jump to Timeline section
+  if (!anyModalOpen && !isTyping && e.altKey && e.key === '1') {
+    e.preventDefault();
+    document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  // Jump to Organizations section
+  if (!anyModalOpen && !isTyping && e.altKey && e.key === '2') {
+    e.preventDefault();
+    document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
     if (e.ctrlKey || e.metaKey || e.altKey) {
     return;
 }
-  const active = document.activeElement;
-if (
-    active &&
-    (
-        ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName) ||
-        active.id === 'searchInput'
-    )
-) {
+    if (isTyping) {
         return;
     }
-const helpModalOpen =
-  document.getElementById('helpModal')?.classList.contains('open');
-
-const orgModalOpen =
-  document.getElementById('orgModal')?.classList.contains('open');
-
-const proposalModalOpen =
-  document.getElementById('proposalModal')?.classList.contains('open');
-
-if (helpModalOpen || orgModalOpen || proposalModalOpen) {
+if (anyModalOpen && e.key !== 'Escape') {
   return;
 }
 

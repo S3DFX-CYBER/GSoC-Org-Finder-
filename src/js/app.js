@@ -664,7 +664,7 @@ function updateCardFocus() {
 
 // Global keydown helper functions to manage Cognitive Complexity
 function handleEscapeKey(e) {
-  const activeModal = document.querySelector('.modal-bg.open, #mobileMenu:not(.hidden), .modal-bg.compare-bg.open');
+  const activeModal = document.querySelector('.modal-bg.open, #mobileMenu:not(.hidden), .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
   if (activeModal) {
     e.preventDefault();
     closeModalElement(activeModal.id);
@@ -718,15 +718,30 @@ function handleGlobalKeydown(e) {
 
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
+  const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
+  const anyModalOpen = !!document.querySelector('.modal-bg.open, .modal-bg.compare-bg.open, #proposalModal.open, #proposalModal[open]');
+if (anyModalOpen) return;
+
+const n = filteredOrgs.length;
   const n = filteredOrgs.length;
-  if (e.key === '?') {
+  if (!anyModalOpen && e.key === '?') {
     e.preventDefault();
     openModalElement('helpModal');
     return;
   }
-  if (e.key === '/') {
+  if (!anyModalOpen && (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'))) {
     e.preventDefault();
-    document.getElementById('searchInput')?.focus();
+    document.getElementById('hero-search')?.focus();
+    return;
+  }
+  if (!anyModalOpen && e.altKey && e.key === '1') {
+    e.preventDefault();
+    document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if (!anyModalOpen && e.altKey && e.key === '2') {
+    e.preventDefault();
+    document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
 

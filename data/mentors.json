@@ -3370,11 +3370,34 @@
   "Open HealthCare Network": {
     "org": "Open HealthCare Network",
     "ideasUrl": "https://summerofcode.withgoogle.com/programs/2026/organizations/open-healthcare-network",
-    "channels": [],
-    "mentors": [],
-    "mailingLists": [],
+    "channels": [
+      {
+       "type": "Slack",
+       "url": "https://slack.ohc.network",
+       "label": "Open HealthCare Network Slack"
+      }
+    ],
+    "mentors": [
+      {
+       "name": "Mohammed Nihal",
+       "github": "nihal467",
+       "githubUrl": "https://github.com/nihal467"
+     },
+     {
+      "name": "Amjith Titus",
+      "github": "amjithtitus09",
+      "githubUrl": "https://github.com/amjithtitus09"
+     }
+    ],
+    "mailingLists": [
+      {
+       "type": "Email",
+       "url": "mailto:info@ohc.network",
+       "label": "info@ohc.network"
+     }
+    ],
     "tip": "",
-    "status": "no-contact-found",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Open Robotics": {

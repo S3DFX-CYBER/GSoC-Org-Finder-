@@ -491,14 +491,63 @@ async function checkAPI() {
   }
 }
 
+const inFlightRequests = new Map();
+let globalRateLimitReset = 0;
+
+async function fetchWithBackoff(url, options = {}, depth = 0) {
+  if (inFlightRequests.has(url)) return inFlightRequests.get(url);
+
+  const requestPromise = (async () => {
+    try {
+      // Check global rate limit pause
+      const now = Date.now();
+      if (globalRateLimitReset > now) {
+        await new Promise(r => setTimeout(r, globalRateLimitReset - now + 100));
+      }
+
+      const res = await fetch(url, options);
+      
+      // Handle Rate Limit (429)
+      if (res.status === 429 && depth < 3) {
+        const retryAfter = res.headers.get('retry-after');
+        const ghReset = res.headers.get('x-ratelimit-reset');
+        const jitter = (globalThis.crypto?.getRandomValues ? globalThis.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296 : 0.5);
+        let waitMs = Math.pow(2, depth) * 1000 + jitter * 1000;
+
+        if (retryAfter) {
+          waitMs = parseInt(retryAfter, 10) * 1000;
+        } else if (ghReset) {
+          waitMs = Math.max(waitMs, (parseInt(ghReset, 10) * 1000) - Date.now());
+        }
+
+        // Set global pause if it's a significant wait
+        if (waitMs > 2000) globalRateLimitReset = Date.now() + waitMs;
+
+        const fpStatus = document.getElementById('fpStatus');
+        if (fpStatus) fpStatus.textContent = `Rate limited. Waiting ${Math.ceil(waitMs/1000)}s...`;
+
+        await new Promise(r => setTimeout(r, waitMs));
+        inFlightRequests.delete(url);
+        return fetchWithBackoff(url, options, depth + 1);
+      }
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } finally {
+      inFlightRequests.delete(url);
+    }
+  })();
+
+  inFlightRequests.set(url, requestPromise);
+  return requestPromise;
+}
+
 async function fetchGH(repo) {
   if (!repo) return null;
   if (ghCache[repo] && Date.now() - ghCache[repo].ts < 3600000) return ghCache[repo];
   try {
-    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}`);
-    if (!r.ok) return null;
-    const d = await r.json();
-    if (d.error) return null;
+    const d = await fetchWithBackoff(`${API}?repo=${encodeURIComponent(repo)}`);
+    if (!d || d.error) return null;
     d.ts = Date.now();
     ghCache[repo] = d;
     saveCache(repo, d);
@@ -512,13 +561,13 @@ async function fetchGFI(repo) {
   const hit = ghCache[cacheKey];
   if (hit && Date.now() - hit.ts < 3600000 && hit.count !== null && hit.count !== undefined) return hit.count;
   try {
-    const r = await fetch(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
-    if (!r.ok) return null;
-    const d = await r.json();
-    if (d.gfi === null || d.gfi === undefined) return null;
-    ghCache[cacheKey] = { count: d.gfi, ts: Date.now() };
+    const d = await fetchWithBackoff(`${API}?repo=${encodeURIComponent(repo)}&gfi=1`);
+    if (!d || (d.gfi === null && d.gfi === undefined)) return null;
+    const gfi = d.gfi ?? d.total;
+    if (gfi === null || gfi === undefined) return null;
+    ghCache[cacheKey] = { count: gfi, ts: Date.now() };
     saveCache(cacheKey, ghCache[cacheKey]);
-    return d.gfi;
+    return gfi;
   } catch { return null; }
 }
 
@@ -1912,6 +1961,7 @@ let issuesFetching = false;
 
 globalThis.openIssuesPage = function () {
   openModalElement('issuesPage');
+
   loadCachedIssues();
 };
 
@@ -1940,15 +1990,17 @@ globalThis.fetchAllIssues = async function () {
       <div style="font-size:11px;color:var(--green);margin-top:8px;font-weight:600" id="fpFound">0 issues found so far</div>
     </div>`;
 
-  const BATCH = 5;
-  for (let i = 0; i < orgsWithGithub.length; i += BATCH) {
-    const batch = orgsWithGithub.slice(i, i + BATCH);
+  // Dynamic batching: Start conservative, adapt if needed
+  const batchSize = 5;
+  const baseDelay = 200; 
+
+  for (let i = 0; i < orgsWithGithub.length; i += batchSize) {
+    const batch = orgsWithGithub.slice(i, i + batchSize);
     await Promise.all(batch.map(async o => {
       try {
-        const r = await fetch(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
-        if (!r.ok) return;
-        const data = await r.json();
-        if (data.items?.length) {
+        const data = await fetchWithBackoff(`${API}?repo=${encodeURIComponent(o.github)}&gfi=1&issues=1`);
+        
+        if (data && data.items?.length) {
           const owner = githubOwnerFromValue(o.github);
           const logo = owner ? `https://github.com/${owner}.png?size=64` : '';
           data.items.forEach(issue => {
@@ -1979,6 +2031,7 @@ globalThis.fetchAllIssues = async function () {
       done++;
     }));
 
+    // Update progress UI
     const pct = Math.round(done / orgsWithGithub.length * 100);
     const fpStatus = document.getElementById('fpStatus');
     const fpBar = document.getElementById('fpBar');
@@ -1987,7 +2040,10 @@ globalThis.fetchAllIssues = async function () {
     if (fpBar) fpBar.style.width = pct + '%';
     if (fpFound) fpFound.textContent = `${found} issues found so far`;
     txt.textContent = `${done}/${orgsWithGithub.length}…`;
-    await new Promise(r => setTimeout(r, 60));
+
+    // Adaptive delay based on global limit
+    const delay = globalRateLimitReset > Date.now() ? 1000 : baseDelay;
+    await new Promise(r => setTimeout(r, delay));
   }
 
   allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));

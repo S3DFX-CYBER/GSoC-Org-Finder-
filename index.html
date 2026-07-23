@@ -4384,6 +4384,10 @@ if(org.ideas){
   copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">content_copy</span> Copy Link';
   copyBtn.className = 'modal-cta modal-repo-link flex items-center justify-center gap-2';
   copyBtn.onclick = function(){
+    if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+      console.error('Failed to copy link: Clipboard API unavailable');
+      return;
+    }
     navigator.clipboard.writeText(org.ideas).then(()=>{
       copyBtn.innerHTML = '<span class="material-symbols-outlined text-lg">check_circle</span> Copied!';
       copyBtn.style.background = '#dcfce7';
@@ -4393,7 +4397,7 @@ if(org.ideas){
         copyBtn.style.background = '';
         copyBtn.style.color = '';
       }, 2000);
-    });
+    }).catch(err => console.error('Failed to copy link:', err));
   };
   document.getElementById('mIdeasBtn').after(copyBtn);
 }

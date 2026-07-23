@@ -1379,17 +1379,17 @@ kbd:hover{
       </div>
       <!-- Stat Badges -->
       <div class="flex flex-wrap gap-3 sm:gap-4">
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <span class="material-symbols-outlined text-primary text-lg">groups</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Total Orgs</p><p class="font-bold text-sm" data-org-count>184</p></div>
+          <div><p class="text-xs sm:text-sm text-zinc-500">Total Orgs</p><p class="font-bold text-lg" data-org-count>184</p></div>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <span class="material-symbols-outlined text-secondary text-lg">code</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Languages</p><p class="font-bold text-sm">30+</p></div>
+          <div><p class="text-xs sm:text-sm text-zinc-500">Languages</p><p class="font-bold text-lg">30+</p></div>
         </div>
-        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm">
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white rounded-xl border border-zinc-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <span class="material-symbols-outlined text-primary-container text-lg">category</span>
-          <div><p class="text-[10px] sm:text-xs text-zinc-500">Domains</p><p class="font-bold text-sm">15+</p></div>
+          <div><p class="text-xs sm:text-sm text-zinc-500">Domains</p><p class="font-bold text-lg">15+</p></div>
         </div>
       </div>
     </div>
@@ -3464,9 +3464,12 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer';
       card.dataset.org = org.name;
-      
+      //add event listener to open org modal, when clicking anywhere
+      card.addEventListener('click', () => {
+          openModal(org.name);
+      });
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
@@ -3550,7 +3553,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
         e.stopPropagation();
         openModal(btn.dataset.openOrg);
       });
-btn.__orgListenerAttached = true;
+      btn.__orgListenerAttached = true;
     });
   }
 
@@ -4006,8 +4009,11 @@ btn.__orgListenerAttached = true;
         .join('');
 
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-3 sm:p-5 border border-zinc-100 flex gap-3 sm:gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
+      item.className = 'bg-white rounded-2xl p-3 sm:p-5 border border-zinc-100 flex gap-3 sm:gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up cursor-pointer';
       item.dataset.watchlistOrg = org.name;
+      item.addEventListener('click', () => {
+          openModal(org.name);
+      });
 
       item.innerHTML = `
         <!-- Logo -->

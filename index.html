@@ -3456,9 +3456,12 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up cursor-pointer';
       card.dataset.org = org.name;
-      
+      //add event listener to open org modal, when clicking anywhere
+      card.addEventListener('click', () => {
+          openModal(org.name);
+      });
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
@@ -3542,7 +3545,7 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
         e.stopPropagation();
         openModal(btn.dataset.openOrg);
       });
-btn.__orgListenerAttached = true;
+      btn.__orgListenerAttached = true;
     });
   }
 

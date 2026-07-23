@@ -125,6 +125,7 @@ async function analyzeGitHubUser(username, options = {}) {
 
     return userProfile;
   } catch (err) {
+    if (err.name === 'AbortError') return null;
     handleAnalyzerError(err, username);
   }
 }

@@ -2501,114 +2501,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('closeMenuBtn')?.addEventListener('click', toggleMenu);
-
+  
+// --- CONSOLIDATED SEARCH/SCROLL LISTENERS ---
+  
+  // Mobile Menu
   document.querySelectorAll('.mobile-menu-link').forEach(link => {
-    link.addEventListener('click', () => {
-      setActiveMenu(link);
-    });
+    link.addEventListener('click', () => setActiveMenu(link));
   });
 
-  // Sync hero-search
+  // Hero Search
   const heroSearch = document.getElementById('hero-search');
   if (heroSearch) {
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     heroSearch.addEventListener('input', (e) => {
       const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.value = e.target.value;
-        const orgsSec = document.getElementById('orgs');
-        if (orgsSec) orgsSec.scrollIntoView({ behavior: 'smooth' });
-        applyFilters();
-      }
-    });
-  }
-
-  // Quick chips listeners
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const text = chip.textContent.trim().toLowerCase();
-      const isCurrentlyActive = chip.classList.contains('bg-orange-600');
-
-      document.querySelectorAll('.filter-chip').forEach(c => {
-        c.classList.remove('bg-orange-600', 'text-white');
-        c.classList.add('bg-surface-container-highest');
-      });
-
-      if (isCurrentlyActive) {
-        activeChip = null;
-      } else {
-        chip.classList.add('bg-orange-600', 'text-white');
-        chip.classList.remove('bg-surface-container-highest');
-
-        if (text.includes('bookmarked')) activeChip = 'bookmarked';
-        else if (text.includes('veteran')) activeChip = 'veterans';
-        else if (text.includes('newcomer')) activeChip = 'newcomers';
-        else if (text.includes('low competition')) activeChip = 'low-competition';
-        else if (text.includes('high competition')) activeChip = 'high-competition';
-        else if (text.includes('actively')) activeChip = 'active';
-        else activeChip = null;
-      }
+      if (searchInput) searchInput.value = e.target.value;
+      if (typeof BadgeSystem !== 'undefined' && e.target.value.trim().length > 0) BadgeSystem.trackSearch();
       applyFilters();
     });
+    heroSearch.addEventListener('keydown', (e) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        const target = document.getElementById('orgs');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+  // Search Scroll Button
+  document.getElementById('searchScrollBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.getElementById('orgs');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
-
-  // Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
-  document.querySelectorAll('.pill[data-lang]').forEach(pill => {
-    pill.addEventListener('click', () => {
-      if (typeof globalThis.togglePill === 'function') {
-        globalThis.togglePill(pill);
-      }
-    });
-  });
-
-  document.getElementById('emptyStateClearBtn')?.addEventListener('click', clearAllFilters);
-  document.getElementById('openCompareModalBtn')?.addEventListener('click', openCompareModal);
-
-  // Wire up live stats fetch button
-  document.getElementById('mFetchBtn')?.addEventListener('click', fetchModalGH);
-
-  // Event delegation for trending cards scroll list
-  const trendingScroll = document.getElementById('trendingScroll');
-  if (trendingScroll) {
-    trendingScroll.addEventListener('click', (e) => {
-      const card = e.target.closest('.trend-card');
-      if (card && card.dataset.orgName) {
-        openModal(card.dataset.orgName);
-      }
-    });
-  }
-
-  // Event delegation for selected languages strip
-  const selectedStrip = document.getElementById('selectedLangsStrip');
-  if (selectedStrip) {
-    selectedStrip.addEventListener('click', (e) => {
-      const unselectBtn = e.target.closest('.unselect-lang-btn');
-      if (unselectBtn) {
-        const badge = unselectBtn.closest('.selected-lang-badge');
-        if (badge && badge.dataset.lang) {
-          unselectLanguage(badge.dataset.lang);
-        }
-        return;
-      }
-      const clearAllBtn = e.target.closest('.clear-all-langs-btn');
-      if (clearAllBtn) {
-        clearAllLanguages();
-      }
-    });
-  }
-
-  // Event delegation for mentors container
-  const mentorsContainer = document.getElementById('mentorsContainer');
-  if (mentorsContainer) {
-    mentorsContainer.addEventListener('click', (e) => {
-      const trigger = e.target.closest('.mentor-org-trigger');
-      if (trigger && trigger.dataset.orgName) {
-        openModal(trigger.dataset.orgName);
-      }
-    });
-  }
-});
-
 // ══════════════════════════════════════════════
 // EXPORT FOR NODE ENVIRONMENT TESTING COMPATIBILITY
 // ══════════════════════════════════════════════
@@ -2630,3 +2555,4 @@ if (typeof module !== 'undefined' && module.exports) {
     renderGoodFirstIssues
   };
 }
+});

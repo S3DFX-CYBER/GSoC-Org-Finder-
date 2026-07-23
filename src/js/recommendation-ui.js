@@ -188,15 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMsg = document.getElementById('aiErrorMsg');
   let visibleCount = 6;
 
-  document.addEventListener('compareListChanged', () => {
-    const currentCompareList = globalThis.compareList || [];
-    resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
-      const card = btn.closest('[data-org-name]');
-      const name = btn.dataset.compareOrg;
-      const isNowComparing = currentCompareList.includes(name);
-      updateCompareVisualState(btn, card, isNowComparing);
+
+  if (resultsContainer) {
+    document.addEventListener('compareListChanged', () => {
+      const currentCompareList = globalThis.compareList || [];
+      resultsContainer.querySelectorAll('[data-compare-org]').forEach(btn => {
+        const card = btn.closest('[data-org-name]');
+        const name = btn.dataset.compareOrg;
+        const isNowComparing = currentCompareList.includes(name);
+        updateCompareVisualState(btn, card, isNowComparing);
+      });
     });
-  });
+  }
 
   // Handle file upload
   if (fileUpload) {

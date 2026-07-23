@@ -3880,6 +3880,35 @@ btn.__orgListenerAttached = true;
       closeOrgPicker();
     }
   });
+  document.getElementById('orgModal')?.addEventListener('keydown', (e) => {
+  if (
+    e.key !== 'Tab' ||
+    !document.getElementById('orgModal')?.classList.contains('open')
+  ) return;
+
+  const modal = document.getElementById('orgModal');
+
+  const focusable = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+
+  const list = [...focusable].filter(
+    (el) => !el.disabled && el.offsetParent !== null
+  );
+
+  if (list.length === 0) return;
+
+  const first = list[0];
+  const last = list[list.length - 1];
+
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+});
   
 
   function applyFiltersPreservingVisibleCount() {
@@ -4404,18 +4433,36 @@ if(org.ideas){
       draftBtn.onclick = () => ProposalBuilder.open(org.name);
     }
      
-    document.getElementById('orgModal').classList.add('open');
-    document.body.classList.add('modal-open');
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+   const modal = document.getElementById('orgModal');
+
+previousFocusedElement = document.activeElement;
+
+modal.classList.add('open');
+modal.setAttribute('tabindex', '-1');
+modal.focus();
+
+document.body.classList.add('modal-open');
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
+  }
+let previousFocusedElement = null;
+  function closeOrgModal() {
+  document.getElementById('orgModal').classList.remove('open');
+  document.body.classList.remove('modal-open');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+
+  if (previousFocusedElement) {
+  if (
+    previousFocusedElement.isConnected &&
+    previousFocusedElement.offsetParent !== null
+  ) {
+    previousFocusedElement.focus();
   }
 
-  function closeOrgModal() {
-    document.getElementById('orgModal').classList.remove('open');
-    document.body.classList.remove('modal-open');
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-  }
+  previousFocusedElement = null;
+}
+}
 
   function openRandomOrg() {
     const orgsToUse = filteredOrgs.length > 0 ? filteredOrgs : ORGS;

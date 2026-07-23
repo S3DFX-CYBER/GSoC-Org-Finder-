@@ -1585,7 +1585,7 @@ kbd:hover{
       <p class="text-zinc-400 font-headline italic">Loading organization directory...</p>
     </div>
   </div>
-  <div id="orgPagination" class="mt-12 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Organizations pagination"></div>
+  <div id="orgPagination" class="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 sm:gap-2" aria-label="Organizations pagination"></div>
   <!-- Empty State -->
   <div id="emptyState" class="hidden py-20 text-center animate-fade-up">
     <div class="text-6xl mb-4">🔍</div>
@@ -1897,7 +1897,7 @@ kbd:hover{
       </button>
     </div>
   </div>
-  <div id="mentorPagination" class="mt-10 flex flex-nowrap items-center justify-center gap-1 overflow-x-auto no-scrollbar" aria-label="Mentor pagination"></div>
+  <div id="mentorPagination" class="mt-10 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 sm:gap-2" aria-label="Mentor pagination"></div>
 </section>
 
 <!-- ═══════════════════ CONTRIBUTOR GUIDE ═══════════════════ -->
@@ -2265,6 +2265,7 @@ kbd:hover{
 
 <!-- ═══════════════════ JS ═══════════════════ -->
 <script src="agent/scripts/orgs.js"></script>
+<script src="src/js/pagination.js"></script>
 <script>
   // ══════════════════════════════════════════════
   // SAFE ORG DATA GUARD
@@ -3384,54 +3385,130 @@ function getPaginatedItems(items, currentPage, itemsPerPage = ITEMS_PER_PAGE) {
   return items.slice(startIndex, startIndex + itemsPerPage);
 }
 
+// Pick how many page pills fit the current viewport. Every breakpoint shows a
+// contiguous run of the current page's neighbours (no ellipsis / first / last)
+// since the «/» buttons already jump to the boundaries.
+function paginationPageItems(currentPage, totalPages) {
+  const w = (typeof globalThis.window !== 'undefined' && globalThis.innerWidth) || 1024;
+  let count = 3;
+  if (w >= 640) count = 7;
+  else if (w >= 400) count = 5;
+  return buildCompactWindow(currentPage, totalPages, count);
+}
+
+// Cache the last render args per container so we can re-fit on orientation /
+// resize changes without the caller having to re-trigger a full list render.
+const _paginationState = {};
+let _paginationLastWidth = typeof globalThis.window === 'undefined' ? 0 : globalThis.innerWidth;
+function _bindPaginationResize() {
+  if (typeof globalThis.window === 'undefined' || globalThis.__paginationResizeBound) return;
+  globalThis.__paginationResizeBound = true;
+  let raf;
+  globalThis.addEventListener('resize', () => {
+    // Only viewport width changes how many pills fit. Ignore height-only resizes
+    // (e.g. the mobile keyboard opening) so we never tear down and rebuild a
+    // focused "go to page" input mid-tap, which would dismiss the keyboard.
+    if (globalThis.innerWidth === _paginationLastWidth) return;
+    _paginationLastWidth = globalThis.innerWidth;
+    clearTimeout(raf);
+    raf = setTimeout(() => {
+      const active = document.activeElement;
+      Object.keys(_paginationState).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || el.style.display === 'none') return;
+        if (active && el.contains(active)) return; // don't disrupt an active input
+        const s = _paginationState[id];
+        renderPaginationControls(id, s.totalItems, s.currentPage, s.onPageChange);
+      });
+    }, 150);
+  });
+}
+
 function renderPaginationControls(containerId, totalItems, currentPage, onPageChange) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  _paginationState[containerId] = { totalItems, currentPage, onPageChange };
+  _bindPaginationResize();
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  if (totalPages <= 1) { container.innerHTML = ''; container.style.display = 'none'; return; }
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
 
   container.style.display = 'flex';
 
-  const base = 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-full border text-xs font-bold transition-all select-none';
-  const normal = 'bg-white text-zinc-600 border-zinc-200 hover:border-primary hover:text-primary cursor-pointer';
-  const active = 'bg-primary text-white border-primary cursor-default';
-  const dis = 'bg-white text-zinc-300 border-zinc-100 cursor-not-allowed pointer-events-none';
-  const ellipsisCls = 'inline-flex items-center justify-center min-w-[24px] h-8 text-xs text-zinc-400 border-none bg-transparent cursor-default select-none';
+  const pillBase = 'min-w-[2rem] h-8 px-2 rounded-full text-xs font-bold transition-all flex items-center justify-center';
+  const activeCls = `${pillBase} bg-primary text-white`;
+  const normalCls = `${pillBase} text-zinc-600 dark:text-zinc-400 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20`;
+  const navBase = 'h-8 px-2 rounded-full text-xs font-bold transition-all flex items-center justify-center';
+  const navActiveCls = `${navBase} text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20`;
+  const navDisabledCls = `${navBase} text-zinc-300 dark:text-zinc-600 opacity-50 cursor-not-allowed pointer-events-none`;
 
-  const navBtn = (label, page, isDisabled, ariaLabel) =>
-    `<button type="button" class="${base} ${isDisabled ? dis : normal} whitespace-nowrap px-3" data-page="${page}" ${isDisabled ? 'disabled' : ''} aria-label="${ariaLabel}">${label}</button>`;
-  const pageBtn = (page) =>
-    `<button type="button" class="${base} ${page === currentPage ? active : normal}" data-page="${page}" aria-label="Go to page ${page}" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`;
-  const dot = `<span class="${ellipsisCls}">…</span>`;
+  const navBtn = (page, label, icon, disabled) =>
+    `<button type="button" class="${disabled ? navDisabledCls : navActiveCls}" data-page="${page}" aria-label="${label}"${disabled ? ' disabled aria-disabled="true"' : ''}>${icon}</button>`;
 
-  const WING = 2;
-  const pages = [];
-  const addPage = (p) => { if (!pages.includes(p) && p >= 1 && p <= totalPages) pages.push(p); };
-  addPage(1); addPage(totalPages);
-  for (let i = currentPage - WING; i <= currentPage + WING; i++) addPage(i);
-  pages.sort((a, b) => a - b);
+  const pageItems = paginationPageItems(currentPage, totalPages);
+  const pagePills = pageItems.map(item => {
+    const active = item === currentPage;
+    return `<button type="button" class="${active ? activeCls : normalCls}"
+      data-page="${item}" aria-label="Go to page ${item}"
+      ${active ? 'aria-current="page"' : ''}>${item}</button>`;
+  }).join('');
 
-  let pageHTML = '';
-  for (let i = 0; i < pages.length; i++) {
-    if (i > 0 && pages[i] - pages[i - 1] > 1) pageHTML += dot;
-    pageHTML += pageBtn(pages[i]);
-  }
+  const inputId = `${containerId}-goto-input`;
+  const btnId = `${containerId}-goto-btn`;
+  const controlsRow = `
+    <div class="flex flex-nowrap items-center justify-center gap-1.5 max-w-full overflow-x-auto no-scrollbar">
+      ${navBtn(1, 'First page', '«', currentPage === 1)}
+      ${navBtn(currentPage - 1, 'Previous page', '‹', currentPage === 1)}
+      ${pagePills}
+      ${navBtn(currentPage + 1, 'Next page', '›', currentPage === totalPages)}
+      ${navBtn(totalPages, 'Last page', '»', currentPage === totalPages)}
+    </div>`;
 
-  container.innerHTML =
-    navBtn('«', 1, currentPage === 1, 'First page') +
-    navBtn('‹', currentPage - 1, currentPage === 1, 'Previous page') +
-    pageHTML +
-    navBtn('›', currentPage + 1, currentPage === totalPages, 'Next page') +
-    navBtn('»', totalPages, currentPage === totalPages, 'Last page');
+  const goWidget = `
+    <div class="flex items-center gap-1.5 w-full sm:w-auto justify-center sm:ml-1">
+      <input type="number" id="${inputId}" min="1" max="${totalPages}"
+        placeholder="Go to page (e.g. ${Math.ceil(totalPages / 2)})"
+        aria-label="Go to page number"
+        class="w-40 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 text-xs focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      />
+      <button type="button" id="${btnId}" aria-label="Navigate to entered page"
+        class="h-8 w-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-primary hover:text-white dark:hover:bg-primary text-zinc-600 dark:text-zinc-300 text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center">
+        <span class="material-symbols-outlined text-base leading-none">arrow_forward</span>
+      </button>
+    </div>`;
 
-  container.querySelectorAll('[data-page]').forEach(button => {
-    button.addEventListener('click', () => {
-      const page = Number(button.dataset.page);
-      if (button.disabled || Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
+  container.innerHTML = `${controlsRow}${goWidget}`;
+
+  container.querySelectorAll('[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const page = Number(btn.dataset.page);
+      if (Number.isNaN(page) || page < 1 || page > totalPages || page === currentPage) return;
       onPageChange(page);
     });
   });
+
+  function handleGoTo() {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const raw = input.value.trim();
+    const num = Number(raw);
+    if (raw === '' || !Number.isFinite(num)) {
+      input.classList.add('border-red-400', 'ring-1', 'ring-red-400');
+      setTimeout(() => input.classList.remove('border-red-400', 'ring-1', 'ring-red-400'), 1200);
+      return;
+    }
+    const page = Math.min(Math.max(Math.trunc(num), 1), totalPages);
+    if (page !== currentPage) onPageChange(page);
+    input.value = '';
+  }
+
+  document.getElementById(inputId)?.addEventListener('keydown', e => { if (e.key === 'Enter') handleGoTo(); });
+  document.getElementById(btnId)?.addEventListener('click', handleGoTo);
 }
   function renderOrgs(reset = true) {
     const grid = document.getElementById('orgGrid');

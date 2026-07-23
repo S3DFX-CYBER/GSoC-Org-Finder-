@@ -75,9 +75,8 @@
     // Theme restoration - runs early to prevent FOUC
     (function(){
       try {
-        if (localStorage.getItem('theme') === 'dark') {
-          document.documentElement.classList.add('dark');
-        }
+        const saved = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', saved === 'dark');
       } catch(e) {
         // localStorage might be unavailable in some browsers/modes
         console.warn('Theme restoration failed:', e);
@@ -972,6 +971,59 @@ kbd:hover{
     .dark .search-bar-container:focus-within .search-border-outer {
       background: #fb923c;
     }
+
+    /* ══════════════════════════════════════════════ */
+    /* THEME TOGGLE ICON ANIMATION                    */
+    /* ══════════════════════════════════════════════ */
+    .att-svg { 
+      width: 24px; 
+      height: 24px; 
+      position: relative;
+    }
+    .att-svg .att-sun-icon, 
+    .att-svg .att-moon-icon { 
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      transform-origin: center;
+      transform-box: view-box;
+      will-change: transform, opacity;
+    }
+    
+    /* Light Mode: Sun is visible, Moon is hidden */
+    .att-svg .att-sun-icon { 
+      opacity: 1; 
+      transform: scale(1) rotate(0deg); 
+    }
+    .att-svg .att-moon-icon { 
+      opacity: 0; 
+      transform: scale(0.3) rotate(90deg); 
+    }
+    
+    /* Dark Mode: Sun is hidden, Moon is visible */
+    html.dark .att-svg .att-sun-icon { 
+      opacity: 0; 
+      transform: scale(0.3) rotate(-90deg); 
+    }
+    html.dark .att-svg .att-moon-icon { 
+      opacity: 1; 
+      transform: scale(1) rotate(0deg); 
+    }
+    
+    html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after { 
+      transition-property: background-color, border-color, color, fill, stroke;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-out;
+      transition-delay: 0s;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .att-svg, .att-svg .att-sun-icon, .att-svg .att-moon-icon, html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after { 
+        transition: none !important; 
+      }
+    }
   
 /* Section-wise Scroll Buttons */
     .section-scroll-btn {
@@ -1239,12 +1291,24 @@ kbd:hover{
     <div class="flex items-center gap-2 sm:gap-3">
     
       <button id="themeToggleBtn" onclick="toggleTheme()"
-        class="inline-flex shrink-0 items-center justify-center p-2 hover:bg-zinc-100/50 rounded-full transition-colors"
+        class="relative inline-flex shrink-0 items-center justify-center p-2 w-[40px] h-[40px] hover:bg-zinc-100/50 dark:hover:bg-zinc-800 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 att-btn"
         aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme">
-    
-        <span class="material-symbols-outlined text-zinc-600">
-          dark_mode
-        </span>
+        <svg class="att-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <g class="att-sun-icon">
+            <circle cx="12" cy="12" r="5" fill="currentColor" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </g>
+          <g class="att-moon-icon">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" stroke="none" />
+          </g>
+        </svg>
       </button>
     
       <!-- ANALYTICS BUTTON -->
@@ -2300,24 +2364,34 @@ kbd:hover{
   // ══════════════════════════════════════════════
   // THEME
   // ══════════════════════════════════════════════
-  (function(){
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.classList.toggle('dark', saved === 'dark');
-    updateThemeIcon();
-  })();
+  updateThemeIcon();
 
-  globalThis.toggleTheme = function(){
+  let isThemeToggling = false;
+  window.toggleTheme = function(){
+    if (isThemeToggling) return;
+    isThemeToggling = true;
+
+    document.documentElement.classList.add('theme-transition');
     const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch (err) {
+      console.warn('Theme persistence failed:', err);
+    }
     updateThemeIcon();
+
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300;
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transition');
+      isThemeToggling = false;
+    }, delay);
   };
 
   function updateThemeIcon(){
     const btn = document.getElementById('themeToggleBtn');
-    const icon = btn ? btn.querySelector('.material-symbols-outlined') : null;
-    if(icon){
+    if(btn){
       const isDark = document.documentElement.classList.contains('dark');
-      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
       btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
       btn.setAttribute('title', isDark ? 'Switch to light theme' : 'Switch to dark theme');

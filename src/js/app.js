@@ -2,6 +2,8 @@
 /* exported openAnalytics, closeAnEvent, fetchAll, fetchModalGH, toggleCompareFromModal, openCompare, closeCompareEv, imgErr, toggleBookmark, toggleChip, resetFilters, closeModalEv, openIssuesPage, closeIssuesPage, fetchAllIssues, showMoreIssues */
 
 // ══════════════════════════════════════════════
+<<<<<<< HEAD
+=======
 // GLOBAL STATE & COMPATIBILITY LAYER
 // ══════════════════════════════════════════════
 let filteredOrgs = [];
@@ -22,6 +24,7 @@ let recentlyViewed = (() => {
     return [];
   }
 })();
+>>>>>>> upstream/main
 
 const selectedLanguages = new Set();
 let matchAllLanguages = false;
@@ -331,6 +334,7 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+// Note: Theme toggling logic (toggleTheme, tick, updateThemeIcon) has been moved to the inline script in index.html
 // Centralized DOM-Safe Dynamic Rendering
 class SafeHTMLString extends String {
   constructor(value) {

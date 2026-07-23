@@ -466,6 +466,15 @@ function cleanCache() {
 }
 cleanCache();
 
+function syncOrgCountDisplays() {
+  const total = ORGS.length;
+  const countTargets = ['heroOrgCount', 'totalOrgsStat', 'orgTotalCount', 'guideOrgCount'];
+  for (const id of countTargets) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = total;
+  }
+}
+
 async function checkAPI() {
   try {
     const r = await fetch(`${API}?repo=django/django`);
@@ -2397,6 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
       o._gh = ghCache[o.github];
     }
   });
+  syncOrgCountDisplays();
 
   // Restore filter state from URL parameters
   (function restoreFiltersFromURL() {

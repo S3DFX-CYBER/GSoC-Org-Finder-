@@ -3090,12 +3090,44 @@
   },
   "Metaflow": {
     "org": "Metaflow",
-    "ideasUrl": "https://github.com/Netflix/metaflow/wiki/GSoC-2026",
-    "channels": [],
-    "mentors": [],
+    "ideasUrl": "https://docs.metaflow.org/internals/gsoc-2026",
+    "channels": [
+      {
+        "type": "slack",
+        "label": "Metaflow Community Slack",
+        "url": "https://slack.outerbounds.co/"
+      }
+    ],
+    "mentors": [
+      {
+        "name": "Savin Goyal",
+        "github": "savingoyal",
+        "githubUrl": "https://github.com/savingoyal"
+      },
+      {
+        "name": "Romain Cledat",
+        "github": "romain-intel",
+        "githubUrl": "https://github.com/romain-intel"
+      },
+      {
+        "name": "Sakari Ikonen",
+        "github": "saikonen",
+        "githubUrl": "https://github.com/saikonen"
+      },
+      {
+        "name": "Nissan Pow",
+        "github": "npow",
+        "githubUrl": "https://github.com/npow"
+      },
+      {
+        "name": "Valay Dave",
+        "github": "valayDave",
+        "githubUrl": "https://github.com/valayDave"
+      }
+    ],
     "mailingLists": [],
-    "tip": "",
-    "status": "no-contact-found",
+    "tip": "Join the community Slack at slack.outerbounds.co and post questions in the #gsoc channel.",
+    "status": "ok",
     "lastFetched": "2026-05-09T16:09:12.548Z"
   },
   "Metasploit": {

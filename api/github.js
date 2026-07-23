@@ -81,6 +81,7 @@ export default async function handler(req) {
     try {
       let page = 1;
       let repos = [];
+      let cacheable = true;
       while (page <= 3) {
         try {
           const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
@@ -89,15 +90,21 @@ export default async function handler(req) {
           });
           if (!res.ok) {
             if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
+            cacheable = false;
             break;
           }
           const pageRepos = await res.json();
           repos = repos.concat(pageRepos);
           if (pageRepos.length < 100) break;
+          if (page === 3) {
+            cacheable = false;
+            break;
+          }
           page++;
         } catch (e) {
-          // Gracefully break loop on timeout/err for pages 2-3, allowing partial results
-          if (page === 1) throw e; 
+          // Gracefully break loop on timeout/err for pages 2-3, but avoid caching partial data.
+          if (page === 1) throw e;
+          cacheable = false;
           break;
         }
       }
@@ -137,10 +144,11 @@ export default async function handler(req) {
         topics,
         stars: totalStars,
         activity,
+        partial: !cacheable,
         ts: Date.now()
       };
       
-      safeCacheSet(cacheKey, result);
+      if (cacheable) safeCacheSet(cacheKey, result);
       return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (err) {

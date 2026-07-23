@@ -36,17 +36,17 @@ globalThis.compareList = compareList;
 globalThis.bookmarkedSet = bookmarkedSet;
 
 const CATEGORY_META = {
-  science: { className: 'bg-blue-100 text-blue-700', label: 'Science' },
-  programming: { className: 'bg-violet-100 text-violet-700', label: 'Programming' },
-  data: { className: 'bg-cyan-100 text-cyan-700', label: 'Data' },
-  web: { className: 'bg-green-100 text-green-700', label: 'Web' },
-  os: { className: 'bg-orange-100 text-orange-700', label: 'OS / Systems' },
-  security: { className: 'bg-red-100 text-red-700', label: 'Security' },
-  media: { className: 'bg-pink-100 text-pink-700', label: 'Media' },
-  infra: { className: 'bg-yellow-100 text-yellow-700', label: 'Infrastructure' },
-  ai: { className: 'bg-purple-100 text-purple-700', label: 'AI / ML' },
-  dev: { className: 'bg-teal-100 text-teal-700', label: 'Dev Tools' },
-  other: { className: 'bg-zinc-100 text-zinc-600', label: 'Other' },
+  science: { className: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300', label: 'Science' },
+  programming: { className: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300', label: 'Programming' },
+  data: { className: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300', label: 'Data' },
+  web: { className: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300', label: 'Web' },
+  os: { className: 'bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300', label: 'OS / Systems' },
+  security: { className: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300', label: 'Security' },
+  media: { className: 'bg-pink-100 text-pink-700 dark:bg-pink-950/50 dark:text-pink-300', label: 'Media' },
+  infra: { className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-300', label: 'Infrastructure' },
+  ai: { className: 'bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300', label: 'AI / ML' },
+  dev: { className: 'bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300', label: 'Dev Tools' },
+  other: { className: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300', label: 'Other' },
 };
 
 const LANGUAGE_ALIASES = {
@@ -94,6 +94,19 @@ const UMBRELLA_ORGS = new Set([
 const CHANNEL_ICONS = {
   Slack: '💬', Zulip: '💬', Discord: '🎮', Matrix: '🔗', IRC: '🖥️', 'Mailing list': '📧'
 };
+
+const TECH_ICONS = {
+  'python': '🐍 Python',
+  'react': '⚛️ React',
+  'reactjs': '⚛️ React',
+  'nextjs': '▲ Next.js',
+  'next.js': '▲ Next.js'
+};
+
+function formatTechTag(tag) {
+  const lower = tag.trim().toLowerCase();
+  return TECH_ICONS[lower] || tag;
+}
 
 const CONTACT_TIPS = {
   Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
@@ -862,7 +875,10 @@ function renderWatchlist() {
     const category = getCategoryMeta(org.cat);
 
     const topTags = (org.tags || []).slice(0, 4)
-      .map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
+      .map(t => {
+        const displayTag = formatTechTag(t);
+        return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${displayTag}</span>`;
+      });
 
     const item = document.createElement('div');
     item.className = 'bg-white dark:bg-zinc-900 rounded-2xl p-5 border border-zinc-100 dark:border-zinc-800 flex gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
@@ -1154,8 +1170,11 @@ function renderOrgs(reset = true) {
       ? safeHTML`<img src="${logoUrl}" data-org-name="${org.name}" alt="${org.name} logo" class="w-full h-full object-contain rounded-lg" />`
       : safeHTML`<div class="logo-placeholder flex w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5">${(org.name || '?')[0].toUpperCase()}</div>`;
 
-    const tagsHtml = org.tags.slice(0, 3).map(t => safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400">${t}</span>`);
-    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-400 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
+    const tagsHtml = org.tags.slice(0, 3).map(t => {
+      const displayTag = formatTechTag(t);
+      return safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${displayTag}</span>`;
+    });
+    const moreTagsHtml = org.tags.length > 3 ? safeHTML`<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200 cursor-help" title="${org.tags.slice(3).join(', ')}">+${String(org.tags.length - 3)}</span>` : '';
 
     const catLabel = getCategoryMeta(org.cat).label.toUpperCase();
     const isBookmarkedStr = isBookmarked ? 'true' : 'false';
@@ -1474,7 +1493,10 @@ globalThis.openModal = function (name, triggerElement = null) {
   if (mFetchBtn) mFetchBtn.textContent = gh ? '↻ Refresh' : 'Fetch Live Stats';
 
   const mTech = document.getElementById('mTech');
-  if (mTech) mTech.innerHTML = org.tags.map(t => safeHTML`<span class="tech-tag">${t}</span>`).join('');
+  if (mTech) mTech.innerHTML = org.tags.map(t => {
+    const displayTag = formatTechTag(t);
+    return safeHTML`<span class="tech-tag">${displayTag}</span>`;
+  }).join('');
 
   const mFit = document.getElementById('mFit');
   if (mFit) mFit.innerHTML = org.fit.map(f => safeHTML`<span class="fit-tag">${f}</span>`).join('');
@@ -2091,7 +2113,10 @@ function renderIssues() {
 }
 
 function renderIssueCard(iss) {
-  const langTags = iss.orgTags.slice(0, 2).map(t => safeHTML`<span class="issue-label lang">${t}</span>`);
+  const langTags = iss.orgTags.slice(0, 2).map(t => {
+    const displayTag = formatTechTag(t);
+    return safeHTML`<span class="issue-label lang">${displayTag}</span>`;
+  });
   const gfiNames = ['good first issue', 'good-first-issue'];
   const otherLabels = iss.labels.filter(l => !gfiNames.includes(String(l).toLowerCase())).slice(0, 2)
     .map(l => safeHTML`<span class="issue-label" style="background:rgba(107,33,168,.06);color:var(--purple);border:1px solid rgba(107,33,168,.2)">${l}</span>`);

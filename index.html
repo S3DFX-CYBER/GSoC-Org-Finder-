@@ -330,8 +330,10 @@ kbd:hover{
     .tech-tags, .fit-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.2rem; }
     .tech-tag { background: #f3f4f6; color: #4b5563; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
     .fit-tag { background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.5rem; border: 1px solid #dbeafe; }
-    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; }
-    .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; }
+    .mentor-link-chip { display:inline-flex; align-items:center; gap:.45rem; background:#fff7ed; color:#9d4300; border:1px solid #fed7aa; border-radius:999px; padding:.45rem .75rem; font-size:.75rem; font-weight:700; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+    .mentor-link-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 67, 0, 0.15); background: #ffedd5; }
+    .mentor-handle-chip { display:inline-flex; align-items:center; gap:.35rem; background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; border-radius:999px; padding:.4rem .7rem; font-size:.75rem; font-weight:600; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+    .mentor-handle-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); background: #e5e7eb; }
     .mentor-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; box-shadow:0 1px 2px rgba(15,23,42,.04); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .mentor-card:hover , .mentor-empty:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); transform: translateY(-4px); border-color: #d1d5db; }
     .mentor-empty { background:#ffffff; border:1px solid #e5e7eb; border-radius:1rem; padding:2rem; text-align:center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -592,7 +594,9 @@ kbd:hover{
     .dark .tech-tag { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
     .dark .fit-tag { background: #1e293b; color: #93c5fd; border-color: #334155; }
     .dark .mentor-link-chip { background: rgba(124,45,18,0.72); color: #fff7ed; border-color: rgba(251,146,60,0.45); }
+    .dark .mentor-link-chip:hover { background: rgba(154,52,18,0.85); box-shadow: 0 4px 12px rgba(251, 146, 60, 0.15); }
     .dark .mentor-handle-chip { background: #27272a; color: #d4d4d8; border-color: #3f3f46; }
+    .dark .mentor-handle-chip:hover { background: #3f3f46; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
     .dark .mentor-card, .dark .mentor-empty { background:#18181b; border-color:#3f3f46; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .dark .mentor-card:hover, .dark .mentor-empty:hover { box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5); transform: translateY(-4px); border-color: #52525b; background: #27272a; }
 
@@ -2466,17 +2470,17 @@ kbd:hover{
   }
 
   const CATEGORY_META = {
-    science: { className: 'bg-blue-100 text-blue-700', label: 'Science' },
-    programming: { className: 'bg-violet-100 text-violet-700', label: 'Programming' },
-    data: { className: 'bg-cyan-100 text-cyan-700', label: 'Data' },
-    web: { className: 'bg-green-100 text-green-700', label: 'Web' },
-    os: { className: 'bg-orange-100 text-orange-700', label: 'OS / Systems' },
-    security: { className: 'bg-red-100 text-red-700', label: 'Security' },
-    media: { className: 'bg-pink-100 text-pink-700', label: 'Media' },
-    infra: { className: 'bg-yellow-100 text-yellow-700', label: 'Infrastructure' },
-    ai: { className: 'bg-purple-100 text-purple-700', label: 'AI / ML' },
-    dev: { className: 'bg-teal-100 text-teal-700', label: 'Dev Tools' },
-    other: { className: 'bg-zinc-100 text-zinc-600', label: 'Other' },
+    science: { className: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300', label: 'Science' },
+    programming: { className: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300', label: 'Programming' },
+    data: { className: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300', label: 'Data' },
+    web: { className: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300', label: 'Web' },
+    os: { className: 'bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300', label: 'OS / Systems' },
+    security: { className: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300', label: 'Security' },
+    media: { className: 'bg-pink-100 text-pink-700 dark:bg-pink-950/50 dark:text-pink-300', label: 'Media' },
+    infra: { className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-300', label: 'Infrastructure' },
+    ai: { className: 'bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300', label: 'AI / ML' },
+    dev: { className: 'bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300', label: 'Dev Tools' },
+    other: { className: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300', label: 'Other' },
   };
 
   function getCategoryMeta(category) {
@@ -2531,6 +2535,19 @@ kbd:hover{
     IRC: '🖥️',
     'Mailing list': '📧'
   };
+
+  const TECH_ICONS = {
+    'python': '🐍 Python',
+    'react': '⚛️ React',
+    'reactjs': '⚛️ React',
+    'nextjs': '▲ Next.js',
+    'next.js': '▲ Next.js'
+  };
+
+  function formatTechTag(tag) {
+    const lower = tag.trim().toLowerCase();
+    return TECH_ICONS[lower] || tag;
+  }
   const CONTACT_TIPS = {
     Slack: 'Join and say hi in the GSoC channel before DMing mentors.',
     Discord: 'Introduce yourself in the public channel before asking project-specific questions.',
@@ -3464,16 +3481,16 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
       const isBookmarked = bookmarkedSet.has(org.name);
       const isComparing = compareList.includes(org.name);
       const card = document.createElement('article');
-      card.className = 'group bg-white rounded-2xl p-6 border border-zinc-100 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up';
+      card.className = `group bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 transition-all hover:shadow-xl hover:border-primary/20 animate-fade-up ${isComparing ? 'ring-2 ring-primary/30' : ''}`;
       card.dataset.org = org.name;
       
       const githubOwner = githubOwnerFromValue(org.github);
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
       card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-          <div class="w-14 h-14 flex-shrink-0 rounded-xl bg-surface-container-low flex items-center justify-center p-2 overflow-hidden">
-            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" width="56" height="56" />            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
+          <div class="w-14 h-14 flex-shrink-0 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center p-2 overflow-hidden border border-zinc-100 dark:border-zinc-700">
+            <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name + ' logo')}" class="w-full h-full object-contain rounded-lg" width="56" height="56" />
+            <div class="logo-placeholder hidden w-full h-full items-center justify-center text-primary font-bold text-xl bg-primary/5"></div>
           </div>
           <div class="flex items-center gap-2">
             <span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-widest px-2 py-1 rounded-full font-bold">${escapeHtml(String(org.years))}y Veteran</span>
@@ -3483,15 +3500,18 @@ function renderPaginationControls(containerId, totalItems, currentPage, onPageCh
             </button>
           </div>
         </div>
-        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors">${escapeHtml(org.name)}</h3>
+        <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:text-primary transition-colors dark:text-zinc-100">${escapeHtml(org.name)}</h3>
         <span class="category-tag">${escapeHtml(org.cat.toUpperCase())}</span>
-        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2">${escapeHtml(org.desc)}</p>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-4 line-clamp-2 dark:text-zinc-400">${escapeHtml(org.desc)}</p>
         <div class="flex flex-wrap gap-1.5 mb-4">
-          ${org.tags.slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">${escapeHtml(t)}</span>`).join('')}
-          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
+          ${org.tags.slice(0, 3).map(t => {
+            const displayTag = formatTechTag(t);
+            return `<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${escapeHtml(displayTag)}</span>`;
+          }).join('')}
+          ${org.tags.length > 3 ? `<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">+${escapeHtml(String(org.tags.length - 3))}</span>` : ''}
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-zinc-100">
+        <div class="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-3">
              <button data-compare-org="${escapeHtml(org.name)}" class="text-[10px] font-bold uppercase tracking-widest ${isComparing ? 'text-primary' : 'text-zinc-400'} hover:text-primary flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">${isComparing ? 'check_circle' : 'compare_arrows'}</span> ${isComparing ? 'Comparing' : 'Compare'}
@@ -3600,13 +3620,13 @@ btn.__orgListenerAttached = true;
       const logoUrl = githubOwner ? `https://github.com/${githubOwner}.png?size=80` : '';
       
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-xl p-4 border border-zinc-100';
+      item.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800';
       item.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+        <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center mx-auto mb-3 overflow-hidden">
           <img src="${escapeHtml(logoUrl)}" data-org-name="${escapeHtml(org.name)}" alt="${escapeHtml(org.name)} logo" class="w-full h-full object-contain" />
         </div>
-        <p class="font-bold text-sm truncate">${escapeHtml(org.name)}</p>
-        <p class="text-[10px] text-zinc-500 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
+        <p class="font-bold text-sm truncate dark:text-zinc-100">${escapeHtml(org.name)}</p>
+        <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-label uppercase mt-1">${escapeHtml(String(org.years))}y · ${escapeHtml(org.competition)}</p>
         <button data-compare-org="${escapeHtml(org.name)}" class="text-[9px] text-red-500 font-bold uppercase mt-2 hover:underline">Remove</button>
       `;
       container.appendChild(item);
@@ -3616,12 +3636,12 @@ btn.__orgListenerAttached = true;
     // Add empty slots
     for (let i = compareList.length; i < 3; i++) {
       const empty = document.createElement('div');
-      empty.className = 'bg-white rounded-xl p-4 border border-zinc-100 border-dashed border-zinc-300 flex flex-col items-center justify-center opacity-50 cursor-pointer hover:opacity-80 hover:border-orange-400 transition-all';
+      empty.className = 'bg-white dark:bg-zinc-900 rounded-xl p-4 border border-zinc-100 dark:border-zinc-800 border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center opacity-50 cursor-pointer hover:opacity-80 hover:border-orange-400 transition-all';
       empty.onclick = () => openOrgPicker(i);
       empty.innerHTML = `
-        <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
-        <p class="font-bold text-sm text-zinc-400">Add org</p>
-        <p class="text-[10px] text-zinc-400 font-label uppercase mt-1">Slot ${i+1}</p>
+        <div class="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3"><span class="material-symbols-outlined text-zinc-400">add</span></div>
+        <p class="font-bold text-sm text-zinc-400 dark:text-zinc-500">Add org</p>
+        <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-label uppercase mt-1">Slot ${i+1}</p>
       `;
       container.appendChild(empty);
     }
@@ -3640,10 +3660,10 @@ btn.__orgListenerAttached = true;
     const selectedOrgs = compareList.map(name => ORGS.find(o => o.name === name)).filter(Boolean);
     if (selectedOrgs.length < 2) {
       body.innerHTML = `
-        <div class="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
-          <span class="material-symbols-outlined text-4xl text-zinc-300 mb-3">compare_arrows</span>
-          <p class="font-bold text-zinc-700">Select at least 2 organizations to compare.</p>
-          <p class="text-sm text-zinc-500 mt-2">Use the Compare button on organization cards, then open this tool again.</p>
+        <div class="py-12 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-700 mb-3">compare_arrows</span>
+          <p class="font-bold text-zinc-700 dark:text-zinc-300">Select at least 2 organizations to compare.</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-2">Use the Compare button on organization cards, then open this tool again.</p>
         </div>
       `;
       return;
@@ -3663,16 +3683,16 @@ btn.__orgListenerAttached = true;
     body.innerHTML = `
       <table class="w-full min-w-[720px] text-sm">
         <thead>
-          <tr class="border-b border-zinc-200">
-            <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400">Metric</th>
-            ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold">${escapeHtml(org.name)}</th>`).join('')}
+          <tr class="border-b border-zinc-200 dark:border-zinc-800">
+            <th class="text-left py-3 px-4 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Metric</th>
+            ${selectedOrgs.map(org => `<th class="text-left py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(org.name)}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${rows.map(([label, getValue]) => `
-            <tr class="border-b border-zinc-100 last:border-0">
-              <td class="py-3 px-4 font-bold text-zinc-500">${label}</td>
-              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700">${escapeHtml(getValue(org))}</td>`).join('')}
+            <tr class="border-b border-zinc-100 dark:border-zinc-800/60 last:border-0">
+              <td class="py-3 px-4 font-bold text-zinc-500 dark:text-zinc-400">${label}</td>
+              ${selectedOrgs.map(org => `<td class="py-3 px-4 text-zinc-700 dark:text-zinc-300">${escapeHtml(getValue(org))}</td>`).join('')}
             </tr>
           `).join('')}
         </tbody>
@@ -4002,16 +4022,19 @@ btn.__orgListenerAttached = true;
       const category = getCategoryMeta(org.cat);
 
       const topTags = (org.tags || []).slice(0, 4)
-        .map(t => `<span class="px-2 py-0.5 bg-surface-container-low text-[10px] font-mono rounded text-zinc-600">${escapeHtml(t)}</span>`)
+        .map(t => {
+          const displayTag = formatTechTag(t);
+          return `<span class="px-2 py-0.5 bg-surface-container-low dark:bg-zinc-800 text-[10px] font-mono rounded text-zinc-600 dark:text-zinc-200">${escapeHtml(displayTag)}</span>`;
+        })
         .join('');
 
       const item = document.createElement('div');
-      item.className = 'bg-white rounded-2xl p-3 sm:p-5 border border-zinc-100 flex gap-3 sm:gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all animate-fade-up';
+      item.className = 'bg-white dark:bg-zinc-900 rounded-2xl p-3 sm:p-5 border border-zinc-100 dark:border-zinc-800 flex gap-3 sm:gap-4 items-start hover:shadow-lg hover:border-primary/20 transition-all duration-200 animate-fade-up';
       item.dataset.watchlistOrg = org.name;
 
       item.innerHTML = `
         <!-- Logo -->
-        <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100">
+        <div class="w-12 h-12 rounded-xl bg-surface-container-low dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-zinc-100 dark:border-zinc-700">
           ${logoUrl
             ? `<img src="${escapeHtml(logoUrl)}"
                     data-org-name="${escapeHtml(org.name)}"
@@ -4023,16 +4046,16 @@ btn.__orgListenerAttached = true;
         <!-- Body -->
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-2 mb-1.5 flex-wrap">
-            <h4 class="font-bold text-zinc-900 leading-tight">${escapeHtml(org.name)}</h4>
+            <h4 class="font-bold text-zinc-900 dark:text-zinc-100 leading-tight">${escapeHtml(org.name)}</h4>
             <div class="flex items-center gap-2 flex-shrink-0">
               <span class="text-[10px] font-label font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${category.className}">${escapeHtml(category.label)}</span>
               <span class="text-[10px] font-label font-bold uppercase tracking-wider text-white bg-primary px-2 py-0.5 rounded-full">★ Saved</span>
             </div>
           </div>
-          <p class="text-sm text-zinc-500 mb-3 line-clamp-1">${escapeHtml(org.desc || '')}</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-3 line-clamp-1">${escapeHtml(org.desc || '')}</p>
           <div class="flex flex-wrap gap-1.5 mb-3">${topTags}</div>
           <div class="flex items-center justify-between flex-wrap gap-y-2 pt-3 border-t border-zinc-100 dark:border-zinc-800/60">
-            <div class="flex items-center gap-3 text-xs text-zinc-400">
+            <div class="flex items-center gap-3 text-xs text-zinc-400 dark:text-zinc-500">
               <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-xs">calendar_today</span>
                 ${escapeHtml(String(org.years))}y
@@ -4223,13 +4246,13 @@ btn.__orgListenerAttached = true;
       const category = getCategoryMeta(org.cat);
 
       const card = document.createElement('div');
-      card.className = 'bg-white rounded-lg p-4 border border-zinc-100 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
+      card.className = 'bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-100 dark:border-zinc-800 hover:border-primary transition-colors cursor-pointer flex items-center justify-between';
       card.innerHTML = `
         <div class="flex-1 min-w-0">
-          <h4 class="font-bold text-sm mb-1">${escapeHtml(org.name)}</h4>
+          <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-1">${escapeHtml(org.name)}</h4>
           <div class="flex items-center gap-2 flex-wrap">
             <span class="${category.className} rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">${escapeHtml(category.label)}</span>
-            <span class="text-[10px] text-zinc-500">${escapeHtml(String(org.years))} years</span>
+            <span class="text-[10px] text-zinc-500 dark:text-zinc-400">${escapeHtml(String(org.years))} years</span>
           </div>
         </div>
         <div class="flex items-center gap-2 ml-2 flex-shrink-0">
@@ -4670,7 +4693,7 @@ if(org.ideas){
     container.innerHTML = '';
 
     const notice = document.createElement('p');
-    notice.className = 'col-span-full text-sm text-zinc-500';
+    notice.className = 'col-span-full text-sm text-zinc-500 dark:text-zinc-400';
     notice.textContent = 'Live pre-fetched issues are still syncing. Browse open Good First Issues for all organizations below.';
     container.appendChild(notice);
 
@@ -4679,16 +4702,16 @@ if(org.ideas){
       card.href = buildGfiSearchUrl(org.github.trim());
       card.target = '_blank';
       card.rel = 'noopener noreferrer';
-      card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer block';
+      card.className = 'bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800 hover:shadow-lg transition-all group cursor-pointer block';
       card.innerHTML = `
         <div class="flex items-start justify-between mb-3">
-          <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Browse open Good First Issues</h4>
+          <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-1">Browse open Good First Issues</h4>
           <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
         </div>
-        <p class="text-xs text-zinc-500 mb-3 font-mono">${escapeHtml(org.github)}</p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3 font-mono">${escapeHtml(org.github)}</p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(org.name)}</span>
-          <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">Label: good first issue</span>
+          <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 rounded">Label: good first issue</span>
         </div>
       `;
       container.appendChild(card);
@@ -4732,7 +4755,7 @@ if(org.ideas){
       container.innerHTML = '';
       issues.slice(0, 6).forEach(issue => {
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-5 border border-zinc-100 hover:shadow-lg transition-all group cursor-pointer';
+        card.className = 'bg-white dark:bg-zinc-900 rounded-xl p-5 border border-zinc-100 dark:border-zinc-800 hover:shadow-lg transition-all group cursor-pointer';
         const safeUrl = sanitizeHrefUrl(issue.url);
         if (safeUrl) card.onclick = () => globalThis.open(safeUrl, '_blank');
         const safeRepo = escapeHtml(issue.repo || '');
@@ -4740,13 +4763,13 @@ if(org.ideas){
         const labelsHtml = (issue.labels || []).slice(0,2).map(l => `<span class="text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded font-bold">${escapeHtml(l)}</span>`).join('');
         card.innerHTML = `
           <div class="flex items-start justify-between mb-3">
-            <h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
+            <h4 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-primary transition-colors line-clamp-1">${safeTitle}</h4>
             <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary text-lg">open_in_new</span>
           </div>
-          <p class="text-xs text-zinc-500 mb-3 font-mono">${safeRepo}</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3 font-mono">${safeRepo}</p>
           <div class="flex flex-wrap gap-1.5">
             ${labelsHtml}
-            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded">${escapeHtml(String(issue.comments || 0))} comments</span>
+            <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 rounded">${escapeHtml(String(issue.comments || 0))} comments</span>
           </div>
         `;
         container.appendChild(card);
@@ -4756,9 +4779,9 @@ if(org.ideas){
       const container = document.querySelector('#issues .grid');
       if (container) {
         container.innerHTML = `
-          <div class="col-span-full bg-white rounded-xl p-8 border border-zinc-100 text-center">
-            <p class="text-sm font-bold text-zinc-900 mb-2">Unable to load pre-fetched issues</p>
-            <p class="text-sm text-zinc-600 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
+          <div class="col-span-full bg-white dark:bg-zinc-900 rounded-xl p-8 border border-zinc-100 dark:border-zinc-800 text-center">
+            <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">Unable to load pre-fetched issues</p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">Cached issue data could not be retrieved at this time. Please refresh the page or try again later.</p>
           </div>`;
       }
       const lastUpdatedEl = document.getElementById('issuesLastUpdated');

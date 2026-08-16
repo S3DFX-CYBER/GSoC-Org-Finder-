@@ -610,12 +610,41 @@ body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-
   box-shadow: 0 0 12px rgba(10, 102, 194, 0.5);
 }
 
-.social-link.twitter:hover {
-  background: #1DA1F2;
-  border-color: #1DA1F2;
-  box-shadow: 0 0 12px rgba(29, 161, 242, 0.5);
+.social-link.twitter:hover,
+.social-link.x:hover {
+  background: #000000;
+  border-color: #000000;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
 }
 
+
+#back-to-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px rgba(244, 107, 14, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#back-to-top-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
 
 [data-theme="dark"] select option{background:#1A1108;color:var(--ink)}
 

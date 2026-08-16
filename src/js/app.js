@@ -829,6 +829,101 @@ function clearAllBookmarks() {
   bookmarkedSet.clear();
   localStorage.setItem('bookmarks', JSON.stringify([]));
   applyFilters();
+  // Notify the Watchlist panel (index.html inline script) about the change so
+  // renderWatchlist() and updateAIInsights() stay in sync across both bookmark
+  // systems without tight coupling between the two scripts.
+  document.dispatchEvent(new CustomEvent('bookmarkChanged', { detail: { name: orgName } }));
+}
+
+function isBookmarked(orgName) {
+  const saved = getBookmarks();
+  return saved.includes(orgName);
+}
+
+function renderGfiBadge(gh){
+  if(gh?.gfi===null||gh?.gfi===undefined)return '';
+  return `<span class="gh-s">🟢 <b>${escapeHtml(fmt(gh.gfi))} GFI</b></span>`;
+}
+
+// ══════════════════════════════════════════════
+// RENDER GRID  ← only this function was changed
+// ══════════════════════════════════════════════
+function renderGrid(orgs){
+  const g=document.getElementById('orgGrid');
+
+  // ── Empty-state fallback ──────────────────────────────────
+  if(!orgs.length){
+    g.innerHTML=`
+      <div class="empty-state" role="status" aria-live="polite">
+        <div class="empty-state__icon">🔍</div>
+        <h2 class="empty-state__title">No organizations found</h2>
+        <p class="empty-state__message">
+          No organizations match your current filters.<br>
+          Try removing a tag or resetting your search!
+        </p>
+        <button
+          class="empty-state__reset"
+          onclick="resetFilters()"
+          aria-label="Reset all filters"
+        >
+          ✕ Reset Filters
+        </button>
+      </div>`;
+    return;
+  }
+  // ─────────────────────────────────────────────────────────
+
+  g.innerHTML=orgs.map((o,i)=>{
+    const act=o._gh?.activity||null;
+    const orgTags = o.tags || [];
+    let tags = '';
+    if (orgTags.length > 3) {
+      const visible = orgTags.slice(0, 3);
+      const hidden = orgTags.slice(3);
+      tags = visible.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + 
+             `<span class="tag" title="${escapeHtml(hidden.join(', '))}" style="cursor:help">+${hidden.length}</span>`;
+    } else {
+      tags = orgTags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    }
+    const ghm=o._gh?`<div class="gh-mini">
+      <span class="gh-s">⭐ <b>${fmt(o._gh.stars)}</b></span>
+      <span class="gh-s">🍴 <b>${fmt(o._gh.forks)}</b></span>
+      ${renderGfiBadge(o._gh)}
+      <span class="gh-s">🕐 <b>${escapeHtml(String(o._gh.lastCommit))}</b></span>
+    </div>`:'';
+    const globalIdx=ORGS.indexOf(o);
+    const inCompare=compareSet.has(globalIdx);
+    const isFocused=focusedIdx===i;
+    const logo=orgLogo(o);
+    const repoHref=repoUrl(o);
+    const repoPath=githubPathFromValue(o.github);
+    // shortRepo now handled by repoLinkLabel()
+    return`<div class="org-card${inCompare?' in-compare':''}${isFocused?' focused':''}"
+      role="article"
+      aria-label="Organization: ${escapeHtml(o.name)}"
+      onclick="openModal(${globalIdx})"
+      data-filtered-idx="${i}"
+      tabindex="0">
+      <div class="card-header-row">
+        ${logo?`<img class="org-logo" src="${escapeHtml(logo)}" alt="${escapeHtml((o.name||'')[0]||'') }" loading="lazy" onerror="imgErr(this)">`:``}
+        <div class="org-logo-info">
+          <div class="card-top-line">
+            <div class="org-name">${escapeHtml(o.name)}</div>
+            <div class="card-actions">
+              <button class="btn-card-compare${inCompare?' active':''}" onclick="toggleCompare(${globalIdx},event)" title="${inCompare?'Remove from compare':'Add to compare'}">⚖</button>
+              <span class="cat-pill ${catBdg(o.cat)}">${catLabel(o.cat)}</span>
+              <button type="button" onclick="toggleBookmark(event, ${globalIdx})" class="bookmark-btn" title="${isBookmarked(o.name) ? 'Remove bookmark' : 'Add bookmark'}" aria-label="${isBookmarked(o.name) ? 'Remove bookmark from ' : 'Add bookmark to '}${escapeHtml(o.name)}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-label="star" role="img">
+                  <path
+                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                    ${isBookmarked(o.name)
+                      ? 'fill="#FFC107" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"'
+                      : 'fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linejoin="round"'
+                    }
+                  />
+                </svg>
+              </button>
+            </div>
   renderWatchlist();
   updateAIInsights();
 }
@@ -1045,6 +1140,9 @@ function orgMatchesLanguages(org, selectedLanguages) {
   }
 }
 
+  if(pills.size===0){
+    container.innerHTML='<span class="empty-state-langs">No languages selected</span>';
+    return;
 function matchesFilters(o, cat, compF, search) {
   const orgName = o.name.toLowerCase();
   if (cat && o.cat !== cat) return false;
@@ -2552,6 +2650,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+// Event listeners for selects
+['categoryFilter', 'complexityFilter', 'sortSelect'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => applyFilters());
+});
   // Phase 2: Add programmatic event listeners to pills, empty state clear button, and compare modal button
   document.querySelectorAll('.pill[data-lang]').forEach(pill => {
     pill.addEventListener('click', () => {

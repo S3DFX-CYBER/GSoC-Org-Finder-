@@ -21,18 +21,47 @@ jobs:
       github.actor != 'github-actions[bot]'
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+        with:
+          persist-credentials: false
+
       - name: Analyze Issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issue = context.payload.issue;
+            const association = issue.author_association;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
             const issue_number = issue.number;
             const username = issue.user.login;
+
+            // Skip for maintainers
+            if (['OWNER', 'MEMBER', 'COLLABORATOR'].includes(association)) {
+              core.info('Skipping maintainer issue');
+              return;
+            }
+
+            // Skip for mentors
+            try {
+              const fs = require('fs');
+              const mentorsPath = '.github/reviewers/gssoc-mentors.json';
+              if (fs.existsSync(mentorsPath)) {
+                const mentorsData = JSON.parse(fs.readFileSync(mentorsPath, 'utf8'));
+                const mentors = new Set((mentorsData.reviewers || []).map(m => m.toLowerCase()));
+                if (mentors.has(username.toLowerCase())) {
+                  core.info('Skipping mentor issue');
+                  return;
+                }
+              }
+            } catch (err) {
+              core.setFailed(`Failed to load mentor list — skipping is not safe: ${err.message}`);
+              return;
+            }
 
             // Ignore bots
             if (
@@ -66,6 +95,21 @@ jobs:
 
             const body =
               (issue.body || '').trim();
+
+            // Skip known maintainer structured task prefixes (case-insensitive)
+            const ALLOWLIST_PREFIXES = [
+              'data research task:',
+              'fix mentor contact info for',
+              'update mentor stats:',
+              'refresh leaderboard:',
+              'update pending assignments:'
+            ];
+
+            const titleLower = title.toLowerCase();
+            if (ALLOWLIST_PREFIXES.some(prefix => titleLower.startsWith(prefix))) {
+              core.info('Skipping allowlisted maintainer task');
+              return;
+            }
 
             // Ignore weak issues
             if (title.length < 12) {
@@ -126,10 +170,13 @@ jobs:
               const setB =
                 new Set(tokenize(b));
 
-              if (
-                setA.size === 0 ||
-                setB.size === 0
-              ) {
+              // Both empty → perfect match (avoids false-negative on title-only issues)
+              if (setA.size === 0 && setB.size === 0) {
+                return 1;
+              }
+
+              // One empty, other not → no meaningful overlap
+              if (setA.size === 0 || setB.size === 0) {
                 return 0;
               }
 
@@ -237,8 +284,8 @@ jobs:
 
               // Conservative thresholds
               if (
-                finalScore >= 0.82 &&
-                keywordOverlap >= 3
+                finalScore >= 0.90 &&
+                keywordOverlap >= 4
               ) {
 
                 if (finalScore > bestScore) {

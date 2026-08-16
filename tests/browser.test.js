@@ -1,22 +1,28 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-// Mock browser globals for DOM environment
+require('./helpers/setup-globals.js');
+
+// Snapshot the globals this suite overrides so we can put them back afterwards.
+// Without this, the custom window/document/location/fetch below leak into any
+// test file that runs later in the same process, causing order-dependent fails.
+const _savedGlobals = {
+  window: globalThis.window,
+  document: globalThis.document,
+  location: globalThis.location,
+  fetch: globalThis.fetch
+};
+test.after(() => {
+  Object.assign(globalThis, _savedGlobals);
+});
+
+// Custom window/location for browser DOM tests (overrides the helper's stub)
 globalThis.window = {
   addEventListener: () => {},
   location: { search: '' },
   open: () => {}
 };
 globalThis.location = { search: '' };
-globalThis.localStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {}
-};
-globalThis.sessionStorage = {
-  getItem: () => null,
-  setItem: () => {}
-};
 
 function createStubElement(id, tag = 'div') {
   const element = {

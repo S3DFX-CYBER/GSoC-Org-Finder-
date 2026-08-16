@@ -89,26 +89,30 @@ jobs:
               // ------------------------------------
               // Metadata - new template format
               // ------------------------------------
+              
+              const normalizedBody = body.replace(/\r\n/g, '\n');
+              const has = (re) => re.test(normalizedBody);
 
               if (
-                body.includes('- [x] gssoc26') ||
-                body.includes('program: gssoc') ||
-                body.includes('- [x] gssoc')
+                has(/\bprogram\s*:\s*gssoc\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(gssoc26|gssoc|i am contributing under gssoc|i am participating via gssoc)\b/im) ||
+                has(/\bprogram\n\s*gssoc\b/i)
               ) {
                 actualPrograms.add('gssoc');
               }
 
               if (
-                body.includes('- [x] nsoc26') ||
-                body.includes('program: nsoc') ||
-                body.includes('- [x] nsoc')
+                has(/\bprogram\s*:\s*nsoc\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(nsoc26|nsoc|i am contributing under nsoc|i am participating via nsoc)\b/im) ||
+                has(/\bprogram\n\s*nsoc\b/i)
               ) {
                 actualPrograms.add('nsoc');
               }
 
               if (
-                body.includes('- [x] general contribution') ||
-                body.includes('program: general')
+                has(/\bprogram\s*:\s*general\b/i) ||
+                has(/^\s*[-*]\s*\[x\]\s*(general contribution|i am a general contributor)\b/im) ||
+                has(/\bprogram\n\s*general\b/i)
               ) {
                 hasGeneralContribution = true;
               }

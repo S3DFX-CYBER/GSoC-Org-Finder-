@@ -70,24 +70,65 @@ export default async function handler(req) {
     return res;
   };
 
+  const forwardHeaders = (githubRes) => {
+    const forward = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Content-Type': 'application/json',
+      'X-GitHub-Status': String(githubRes.status),
+    };
+
+    // Propagate rate limit headers if they exist
+    ['x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset', 'retry-after'].forEach(h => {
+      const val = githubRes.headers.get(h);
+      if (val) forward[h] = val;
+    });
+
+    return forward;
+  };
+
+  const checkRateLimit = (githubRes) => {
+    const isRateLimit = githubRes.status === 429 || (githubRes.status === 403 && (githubRes.headers.get('x-ratelimit-remaining') === '0' || githubRes.headers.get('retry-after')));
+    if (isRateLimit) {
+      return new Response(JSON.stringify({ error: `GitHub Rate Limit`, status: githubRes.status }), { 
+        status: 429, 
+        headers: {
+          ...forwardHeaders(githubRes),
+          'Cache-Control': 'no-store, max-age=0'
+        }
+      });
+    }
+    return null;
+  };
+
   // MODE: ?user=username → return user profile analysis for AI recommender
   if (user) {
     const cacheKey = 'user__' + user;
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+      return new Response(JSON.stringify({ ...cached, cached: true }), { 
+        status: 200, 
+        headers: { ...headers, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } 
+      });
     }
 
     try {
       let page = 1;
       let repos = [];
+      let lastGitHubRes = null;
+
       while (page <= 3) {
         try {
           const res = await fetchWithFallback(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated&page=${page}`, { 
             headers: ghHeaders,
             signal: AbortSignal.timeout(5000)
           });
+          lastGitHubRes = res;
+
           if (!res.ok) {
+            const rlRes = checkRateLimit(res);
+            if (rlRes) return rlRes;
             if (page === 1) return new Response(JSON.stringify({ error: `GitHub ${res.status}` }), { status: 502, headers });
             break;
           }
@@ -141,7 +182,13 @@ export default async function handler(req) {
       };
       
       safeCacheSet(cacheKey, result);
-      return new Response(JSON.stringify(result), { status: 200, headers });
+      return new Response(JSON.stringify(result), { 
+        status: 200, 
+        headers: { 
+          ...forwardHeaders(lastGitHubRes), 
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' 
+        } 
+      });
 
     } catch (err) {
       return new Response(JSON.stringify({ error: err.message }), { status: 500, headers });
@@ -153,7 +200,10 @@ export default async function handler(req) {
     const cacheKey = repo + '__issues';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { status: 200, headers });
+      return new Response(JSON.stringify({ total: cached.total, items: cached.items, cached: true }), { 
+        status: 200, 
+        headers: { ...headers, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } 
+      });
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
@@ -162,7 +212,12 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { status: 200, headers });
+        const rlRes = checkRateLimit(res);
+        if (rlRes) return rlRes;
+        return new Response(JSON.stringify({ total: 0, items: [], error: `GitHub ${res.status}` }), { 
+          status: 200, 
+          headers: forwardHeaders(res) 
+        });
       }
       const data = await res.json();
       const total = data.total_count ?? 0;
@@ -175,7 +230,13 @@ export default async function handler(req) {
       }));
       safeCacheSet(cacheKey, { total, items, ts: Date.now() });
       safeCacheSet(repo + '__gfi', { gfi: total, ts: Date.now() });
-      return new Response(JSON.stringify({ total, items }), { status: 200, headers });
+      return new Response(JSON.stringify({ total, items }), { 
+        status: 200, 
+        headers: { 
+          ...forwardHeaders(res), 
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' 
+        } 
+      });
     } catch (err) {
       return new Response(JSON.stringify({ total: 0, items: [], error: err.message }), { status: 200, headers });
     }
@@ -186,7 +247,10 @@ export default async function handler(req) {
     const cacheKey = repo + '__gfi';
     const cached = CACHE.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      return new Response(JSON.stringify({ gfi: cached.gfi }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi: cached.gfi }), { 
+        status: 200, 
+        headers: { ...headers, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } 
+      });
     }
     try {
       const q = encodeURIComponent(`repo:${repo} label:"good first issue" state:open`);
@@ -195,12 +259,23 @@ export default async function handler(req) {
         { headers: ghHeaders }
       );
       if (!res.ok) {
-        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { status: 200, headers });
+        const rlRes = checkRateLimit(res);
+        if (rlRes) return rlRes;
+        return new Response(JSON.stringify({ gfi: null, error: `GitHub ${res.status}` }), { 
+          status: 200, 
+          headers: forwardHeaders(res) 
+        });
       }
       const data = await res.json();
       const gfi = data.total_count ?? null;
       if (gfi !== null) safeCacheSet(cacheKey, { gfi, ts: Date.now() });
-      return new Response(JSON.stringify({ gfi }), { status: 200, headers });
+      return new Response(JSON.stringify({ gfi }), { 
+        status: 200, 
+        headers: { 
+          ...forwardHeaders(res), 
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' 
+        } 
+      });
     } catch (err) {
       return new Response(JSON.stringify({ gfi: null, error: err.message }), { status: 200, headers });
     }
@@ -209,7 +284,10 @@ export default async function handler(req) {
   // MODE: standard stats — NO GFI fetch here (avoids search API rate limits)
   const cached = CACHE.get(repo);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
-    return new Response(JSON.stringify({ ...cached, cached: true }), { status: 200, headers });
+    return new Response(JSON.stringify({ ...cached, cached: true }), { 
+      status: 200, 
+      headers: { ...headers, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } 
+    });
   }
 
   try {
@@ -219,8 +297,13 @@ export default async function handler(req) {
     ]);
 
     if (!repoRes.ok) {
+      const rlRes = checkRateLimit(repoRes);
+      if (rlRes) return rlRes;
       const err = await repoRes.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { status: repoRes.status, headers });
+      return new Response(JSON.stringify({ error: err.message || 'Repo not found' }), { 
+        status: repoRes.status, 
+        headers: forwardHeaders(repoRes) 
+      });
     }
 
     const repoData = await repoRes.json();
@@ -260,7 +343,13 @@ export default async function handler(req) {
     };
 
     safeCacheSet(repo, result);
-    return new Response(JSON.stringify(result), { status: 200, headers });
+    return new Response(JSON.stringify(result), { 
+      status: 200, 
+      headers: { 
+        ...forwardHeaders(repoRes), 
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' 
+      } 
+    });
 
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Fetch failed: ' + err.message }), { status: 500, headers });

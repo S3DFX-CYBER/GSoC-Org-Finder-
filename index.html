@@ -5845,5 +5845,40 @@ if(e.key.toLowerCase()==='r'){
     if (e.target === this) closeOrgPicker();
   });
 </script>
+
+<script>
+(function() {
+  var SCROLL_KEY = 'gsoc_finder_scroll_pos';
+  function saveScroll() {
+    try {
+      sessionStorage.setItem(SCROLL_KEY, JSON.stringify({
+        x: window.scrollX,
+        y: window.scrollY,
+        url: window.location.href
+      }));
+    } catch(e) {}
+  }
+  function restoreScroll() {
+    try {
+      var data = sessionStorage.getItem(SCROLL_KEY);
+      if (!data) return;
+      var pos = JSON.parse(data);
+      if (pos && pos.url === window.location.href) {
+        requestAnimationFrame(function() {
+          window.scrollTo(pos.x, pos.y);
+        });
+      } else {
+        sessionStorage.removeItem(SCROLL_KEY);
+      }
+    } catch(e) {}
+  }
+  window.addEventListener('beforeunload', saveScroll);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreScroll);
+  } else {
+    restoreScroll();
+  }
+})();
+</script>
 </body>
 </html>

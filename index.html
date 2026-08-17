@@ -1202,7 +1202,36 @@ kbd:hover{
   }
 }
 
-</style>
+
+    .copy-section-link {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+      padding: 2px 6px;
+      font-size: 0.75em;
+      opacity: 0;
+      transition: opacity 0.2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+      vertical-align: middle;
+    }
+    h2:hover .copy-section-link,
+    h2 .copy-section-link:focus-visible,
+    .copy-section-link:focus-visible {
+      opacity: 1;
+    }
+    @media (pointer: coarse) {
+      .copy-section-link { opacity: 0.7; }
+    }
+    .copy-section-link.copied {
+      color: #22c55e;
+    }
+    [id$="-section"] {
+      scroll-margin-top: 80px;
+    }
+  </style>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F46B0E" />
   <link rel="apple-touch-icon" href="src/assets/icon-512.png" />
@@ -1452,7 +1481,7 @@ kbd:hover{
 <section id="orgs" class="px-6 max-w-7xl mx-auto pb-20">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Find projects that fit you</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Organizations</h2>
+    <h2 id="organizations-section" class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Organizations<button class="copy-section-link" data-section="organizations-section" title="Copy link to section">🔗</button></h2>
     <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Browse and filter GSoC 2026 organizations by tech stack, difficulty level, and interests to discover projects that match your skills and goals.</p>
   </div>
   <!-- ═══════════════════ FILTER CHIPS (desktop only) ═══════════════════ -->
@@ -1635,7 +1664,7 @@ kbd:hover{
 <section id="ai-recommender" class="px-6 max-w-7xl mx-auto py-20 border-t border-zinc-100 dark:border-zinc-800">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">AI-Powered</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Personalized Org Suggestions</h2>
+    <h2 id="suggestions-section" class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Personalized Org Suggestions<button class="copy-section-link" data-section="suggestions-section" title="Copy link to section">🔗</button></h2>
     <p class="text-zinc-600 dark:text-zinc-400 mt-4 max-w-2xl">Enter your GitHub username or paste your resume to get deterministic AI-style organization recommendations tailored to your skills and experience.</p>
   </div>
 
@@ -1701,7 +1730,7 @@ kbd:hover{
     <div class="mb-12 flex items-start justify-between gap-4 flex-wrap">
       <div>
         <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Scholarly Sandbox</span>
-        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.</h2>
+        <h2 id="watchlist-section" class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Watchlist.<button class="copy-section-link" data-section="watchlist-section" title="Copy link to section">🔗</button></h2>
         <p class="text-zinc-600 mt-4 max-w-2xl">Curate your open-source journey. Track organizations, monitor deadlines, and prepare your proposals for GSoC 2026.</p>
       </div>
       <button id="clearAllBookmarksBtn"
@@ -1806,7 +1835,7 @@ kbd:hover{
 <section id="issues" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">First Contributions</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues</h2>
+    <h2 id="issues-section" class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Good First Issues<button class="copy-section-link" data-section="issues-section" title="Copy link to section">🔗</button></h2>
     <p class="text-zinc-600 mt-4 max-w-2xl">Pre-fetched from all GSoC 2026 orgs every 6 hours — no rate limits, no token required, instant results.</p>
   </div>
   <!-- Status Banner -->
@@ -1932,7 +1961,7 @@ kbd:hover{
 <section id="guide" class="py-20 px-6 max-w-7xl mx-auto">
   <div class="mb-12">
     <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-primary">Contributor Guide</span>
-    <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence</h2>
+    <h2 id="contributing-section" class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter mt-2">Start Contributing with Confidence<button class="copy-section-link" data-section="contributing-section" title="Copy link to section">🔗</button></h2>
     <p class="text-zinc-600 mt-4 max-w-3xl">New to open source or this project? Follow this quick path: learn the basics, set up locally, find a good first issue, and open your first PR.</p>
   </div>
 
@@ -5844,6 +5873,23 @@ if(e.key.toLowerCase()==='r'){
   document.getElementById('orgPickerModal').addEventListener('click', function(e) {
     if (e.target === this) closeOrgPicker();
   });
+</script>
+
+<script>
+(function() {
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.copy-section-link');
+    if (!btn) return;
+    var sectionId = btn.getAttribute('data-section');
+    if (!sectionId) return;
+    var url = window.location.origin + window.location.pathname + '#' + sectionId;
+    navigator.clipboard.writeText(url).then(function() {
+      btn.classList.add('copied');
+      btn.textContent = '✓';
+      setTimeout(function() { btn.classList.remove('copied'); btn.textContent = '🔗'; }, 1500);
+    }).catch(function() {});
+  });
+})();
 </script>
 </body>
 </html>

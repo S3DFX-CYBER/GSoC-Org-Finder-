@@ -481,6 +481,7 @@ function renderLiveStats() {
   setText('dash-org-count',       `${totalOrgs} Orgs`);
   setText('footerOrgCount',       String(totalOrgs));
   setText('footerVeteranOrgCount', String(veteranOrgs));
+  setText('footerNewcomerOrgCount', String(newcomerOrgs));
 }
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────

@@ -7,17 +7,7 @@
           class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg shadow-orange-500/20">
           <span class="text-white font-extrabold text-xl font-headline">G</span>
         </div>
-        <span class="text-2xl font-extrabold font-headline tracking-tight text-zinc-900 dark:text-zinc-50">FindMy<span
-            class="text-primary">GSoC</span></span>
-      </div>
-      <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-sm">
-        Discover Google Summer of Code organizations, search beginner-friendly issues, and compare programs in real
-        time.
-      </p>
-      <p class="text-xs text-zinc-400 dark:text-zinc-500 italic max-w-sm">
-        Built by developers, for developers, to empower the next generation of open source contributors.
-      </p>
-    </div>
+      </section>
 
     <!-- Quick Links Column -->
     <div>
@@ -45,7 +35,6 @@
           <span class="material-symbols-outlined text-base">forum</span> Community
         </a>
       </nav>
-    </div>
 
     <!-- Programs Column -->
     <div>
@@ -63,37 +52,32 @@
         <a class="footer-link text-sm text-zinc-600 hover:text-primary dark:text-zinc-300 dark:hover:text-primary transition-all"
           href="https://gssoc.girlscript.org/" target="_blank" rel="noopener noreferrer">GSSoC</a>
       </nav>
-    </div>
 
-    <!-- Platform Stats Column -->
-    <div>
-      <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100 mb-4 font-headline">
-        Platform Stats</h3>
-      <div class="flex flex-col gap-3">
-        <div class="footer-stat-card px-4 py-3 rounded-2xl flex items-center gap-3">
-          <span class="material-symbols-outlined text-primary text-xl">groups</span>
-          <div>
-            <p class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Total Orgs</p>
-            <p class="font-bold text-sm text-zinc-900 dark:text-zinc-50 font-mono" id="footerOrgCount">--</p>
-          </div>
+      <section class="footer-column footer-stats" aria-labelledby="footer-stats-title">
+        <h2 id="footer-stats-title" class="footer-heading">Platform Stats</h2>
+        <div class="footer-stat-card">
+          <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+          <span>
+            <span class="footer-stat-label">Total orgs</span>
+            <strong id="footerOrgCount">--</strong>
+          </span>
         </div>
-        <div class="footer-stat-card px-4 py-3 rounded-2xl flex items-center gap-3">
-          <span class="material-symbols-outlined text-secondary text-xl">military_tech</span>
-          <div>
-            <p class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Veterans</p>
-            <p class="font-bold text-sm text-zinc-900 dark:text-zinc-50 font-mono" id="footerVeteranOrgCount">--</p>
-          </div>
+        <div class="footer-stat-card">
+          <span class="material-symbols-outlined" aria-hidden="true">military_tech</span>
+          <span>
+            <span class="footer-stat-label">Veterans</span>
+            <strong id="footerVeteranOrgCount">--</strong>
+          </span>
         </div>
-        <div class="footer-stat-card px-4 py-3 rounded-2xl flex items-center gap-3">
-          <span class="material-symbols-outlined text-primary-container text-xl">fiber_new</span>
-          <div>
-            <p class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Newcomers</p>
-            <p class="font-bold text-sm text-zinc-900 dark:text-zinc-50 font-mono" id="footerNewcomerOrgCount">--</p>
-          </div>
+        <div class="footer-stat-card">
+          <span class="material-symbols-outlined" aria-hidden="true">fiber_new</span>
+          <span>
+            <span class="footer-stat-label">Newcomers</span>
+            <strong id="footerNewcomerOrgCount">--</strong>
+          </span>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
 
   <!-- Bottom Divider and Legal Section -->
   
